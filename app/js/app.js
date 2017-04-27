@@ -10,8 +10,6 @@
   var params = {
     ajaxTimeout: 10000,
     ajaxWithCredentials: true,
-    playsInline: true,
-    debugLevel: 1,
     maxNumRedirects: 4,
     skipMessage: 'Skip ad',
     skipWaitingMessage: 'Skip ad in',
