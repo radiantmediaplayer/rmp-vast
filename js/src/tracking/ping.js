@@ -46,7 +46,7 @@ var _replaceMacros = function (url, errorCode, assetUri) {
   return finalString;
 };
 
-var _ping = function (url, timeout) {
+var _ping = function (url) {
   let img = new Image();
   img.addEventListener('load', () => {
     if (DEBUG) {

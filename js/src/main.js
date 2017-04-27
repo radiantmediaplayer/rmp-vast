@@ -1,3 +1,4 @@
+import 'core-js/es6';
 import { FW } from './fw/fw';
 import { ENV } from './fw/env';
 import { FWVAST } from './fw/fw-vast';

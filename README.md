@@ -7,16 +7,17 @@ It aims at closely implementing the [IAB VAST 3 specification](https://www.iab.c
 
 rmp-vast is used (beta) and maintained by [Radiant Media Player](https://www.radiantmediaplayer.com/).
 
-rmp-vast is an open-source project released under MIT license. It is built with ES2015 JavaScript and ported to ES5 JavaScript with Babel.
+rmp-vast is an open-source project released under [MIT license](https://github.com/radiantmediaplayer/rmp-vast/blob/master/LICENSE). It is built with ES2015 JavaScript and ported to ES5 JavaScript with Babel.
 
 ## Supported VAST 3 features
 - Inline and Wrapper Ads
-- Linear Ads (MP4/WebM)
+- Linear Ads (MP4/WebM or HLS where natively supported)
 - Skippable Linear Ads (MP4/WebM or HLS where natively supported)
 - Non Linear Ads (Images)
 - Tracking Events
 - Error Reporting
 - Industry Icons
+- VAST 3 Macros
 
 VAST 2 resources should also be compatible with rmp-vast.
 
@@ -36,25 +37,23 @@ enough coverage to support current industry requirements and best practices.
 
 ## Supported environments
 
-### OS
-- Windows 10+
-- macOS 10.12+
-- Android 5+
-- iOS 10+
-
 ### Browsers
-- Chrome
-- Firefox
-- Safari
-- MS Edge
-- Opera
-- Vivaldi
+- Chrome for Android 5+
+- Chrome for Desktop
+- Firefox for Android 5+
+- Firefox for Desktop
+- Safari 10+ for macOS
+- Safari for iOS 10+
+- MS Edge for Desktop
+- Internet Explorer 11+ for Desktop
+- Opera for Desktop
+- Vivaldi for Desktop
 
 Specifically we support the latest stable release for each browser
 
 ### WebViews
-- iOS 10+
 - Android 5+
+- iOS 10+
 
 It is fairly possible that rmp-vast would work in other environments but they are not officially supported.
 
@@ -106,11 +105,11 @@ Once rmp-vast is loaded on your page you can create a new rmp-vast instance as f
 
 `id: String` is the id for the player container. This is a required parameter
 
-`params: Object` is an object representing various parameters that can be passed to a rmp-vast instance and that will affect the player inner-workings. Available properties for the params object follows:
+`params: Object` is an optional object representing various parameters that can be passed to a rmp-vast instance and that will affect the player inner-workings. Available properties for the params object follow:
 
-`params.ajaxTimeout: Number` timeout in ms for an Ajax request to load an ad tag from the ad server. Default 10000.
+`params.ajaxTimeout: Number` timeout in ms for an AJAX request to load a VAST tag from the ad server. Default 10000.
 
-`params.ajaxWithCredentials: Boolean` Ajax request to load VAST tag from ad server should or should not be made with credentials. Default: true.
+`params.ajaxWithCredentials: Boolean` AJAX request to load VAST tag from ad server should or should not be made with credentials. Default: true.
 
 `params.maxNumRedirects: Number` the number of VAST wrappers the player should follow before triggering an error. Default: 4.
 
@@ -215,3 +214,15 @@ Detecting autoplay capabilities for a targeted device is not within rmp-vast sco
 ## Contributing
 Contributions are welcome. Please review general code structure and stick to existing patterns.
 Provide test where appropriate (see test/ folder). Tests are written with Jasmine and are validated in latest stable Chrome for Windows 10.
+
+To develop rmp-vast do install it:
+
+`git clone https://github.com/radiantmediaplayer/rmp-vast.git`
+
+Make changes to code and then run:
+
+`grunt build`
+
+Before committing for a pull request - run test:
+
+go into test/ folder and run any .html files that may have been affected by your changes (title for .html files should be explicit) - run test in latest Chrome for Windows 10. Add tests if your changes are not covered by existing tests.
