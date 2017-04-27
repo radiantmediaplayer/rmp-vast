@@ -1,0 +1,21 @@
+{
+  "default": [
+    "shell:jshint",
+    "shell:browserify",
+    "concat",
+    "replace:sourceHeader",
+    "shell:stylelint",
+    "less",
+    "shell:uglify",
+    "compress"
+  ],
+  "build": [
+    "shell:jshint",
+    "shell:browserify",
+    "concat",
+    "replace:sourceHeader",
+    "shell:stylelint",
+    "less",
+    "shell:uglify"
+  ]
+}

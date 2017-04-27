@@ -1,0 +1,25 @@
+@charset 'utf-8';
+
+.margin-top-10 {
+  margin-top: 10px;
+}
+
+.margin-bottom-5 {
+  margin-top: 5px;
+}
+
+.rmp-container {
+  width: 640px;
+  height: 360px;
+  margin: auto;
+}
+
+#controls button,
+#controls input {
+  margin: 0 5px 5px;
+}
+
+#eventLogs {
+  max-height: 600px;
+  overflow: auto;
+}

@@ -1,0 +1,66 @@
+@charset 'utf-8';
+
+@import 'import-less/mixins.less';
+@import url('https://fonts.googleapis.com/css?family=Roboto');
+
+@black: #000;
+@grey: #333;
+@light-grey: #cfcfcf;
+@white: #fff;
+@light-shadow: rgba(0, 0, 0, 0.33);
+
+.rmp-container {
+  position: relative;
+  text-align: center;
+  outline: none;
+  background: @black;
+  padding: 0;
+  border: none;
+  display: block;
+  font-size: 12px;
+  max-width: none;
+  max-height: none;
+  overflow: hidden;
+  line-height: 1;
+  .font-rmp();
+  .box-sizing();
+}
+
+.rmp-container * {
+  .box-sizing();
+}
+
+.rmp-video,
+.rmp-content {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  left: 0;
+  top: 0;
+  margin: 0;
+  display: block;
+  outline: none;
+}
+
+.rmp-ad-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  text-align: left;
+}
+
+.rmp-fullscreen-on {
+  position: fixed !important;
+  width: 100% !important;
+  height: 100% !important;
+  background: @black !important;
+  overflow: hidden !important;
+  z-index: 9999 !important;
+  top: 0;
+  left: 0;
+}
+
+@import 'import-less/rmp-ad.less';

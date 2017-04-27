@@ -1,0 +1,29 @@
+{
+  "bitwise": true,
+  "curly": true,
+  "eqeqeq": true,
+  "forin": true,
+  "freeze": true,
+  "latedef": true,
+  "maxdepth": 16,
+  "maxparams": 8,
+  "nocomma": true,
+  "nonbsp": true,
+  "nonew": true,
+  "noarg": true,
+  "undef": true,
+  "unused": true,
+  "browser": true,
+  "jasmine": true,
+  "jquery": true,
+  "devel": true,
+  "esversion": 6,
+  "module": true,
+  "globals": {
+    "DEBUG": true,
+    "RmpVast": true,
+    "module": true,
+    "require": true,
+    "DocumentTouch": true
+  }
+}
