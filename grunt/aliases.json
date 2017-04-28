@@ -2,20 +2,24 @@
   "default": [
     "shell:jshint",
     "shell:browserify",
-    "concat",
+    "replace:debugOff",
     "replace:sourceHeader",
+    "concat",
     "shell:stylelint",
     "less",
     "shell:uglify",
+    "replace:debugOn",
     "compress"
   ],
   "build": [
     "shell:jshint",
     "shell:browserify",
-    "concat",
+    "replace:debugOff",
     "replace:sourceHeader",
+    "concat",
     "shell:stylelint",
     "less",
-    "shell:uglify"
+    "shell:uglify",
+    "replace:debugOn"
   ]
 }

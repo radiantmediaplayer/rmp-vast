@@ -41,9 +41,12 @@ describe("Test for Inline Linear ad", function () {
     container.addEventListener('adstarted', function (e) {
       _incrementAndLog(e);
       setTimeout(() => {
+        expect(rmpVast.getVolume()).toBe(1);
+        rmpVast.setVolume(0.5);
         rmpVast.pause();
         setTimeout(() => {
           rmpVast.play();
+          expect(rmpVast.getVolume()).toBe(0.5);
         }, 1000);
       }, 5000);
     });

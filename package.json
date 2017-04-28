@@ -1,19 +1,20 @@
 {
   "name": "rmp-vast",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "author": "Radiant Media Player <support@radiantmediaplayer.com>",
   "description": "A client-side JavaScript solution to load, parse and display VAST resources (advertising)",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/radiantmediaplayer/rmp-vast.git"
   },
-  "main": "dist/rmp-vast.min.js",
+  "main": "js/dist/rmp-vast.min.js",
   "keywords": [
     "vast",
     "advertising",
     "media",
     "video",
-    "html5"
+    "html5",
+    "javascript"
   ],
   "license": "MIT",
   "bugs": {

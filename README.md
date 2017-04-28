@@ -219,6 +219,10 @@ To develop rmp-vast do install it:
 
 `git clone https://github.com/radiantmediaplayer/rmp-vast.git`
 
+`npm install`
+
+Please review grunt/shell.js - you need to have jshint, browserify, watchify, uglifyjs and stylelint installed globally to move forward
+
 Make changes to code and then run:
 
 `grunt build`

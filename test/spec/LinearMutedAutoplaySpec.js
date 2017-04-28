@@ -46,7 +46,9 @@ describe("Test for Inline Linear muted autoplay ad", function () {
       setTimeout(() => {
         rmpVast.pause();
         setTimeout(() => {
+          expect(rmpVast.getAdPaused()).toBe(true);
           rmpVast.play();
+          expect(rmpVast.getMute()).toBe(true);
         }, 1000);
       }, 5000);
     });
