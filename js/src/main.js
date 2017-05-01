@@ -24,7 +24,7 @@ window.RmpVast = function (id, params) {
   this.contentPlayer = this.container.getElementsByClassName('rmp-video')[0];
   this.adContainer = null;
   this.isInFullscreen = false;
-  this.vastPlayerInitialized = false;
+  this.rmpVastInitialized = false;
   this.useContentPlayerForAds = false;
   if (ENV.isIos[0]) {
     // on iOS we use content player to play ads

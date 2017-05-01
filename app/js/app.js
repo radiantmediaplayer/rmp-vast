@@ -6,6 +6,8 @@
   var id = 'rmpPlayer';
   var container = document.getElementById(id);
   var video = container.getElementsByClassName('rmp-video')[0];
+  // the default adTag when none is provided
+  var adTag = 'https://www.radiantmediaplayer.com/vast/tags/inline-linear-5.xml';
   // the following params are the default
   var params = {
     ajaxTimeout: 10000,
@@ -207,13 +209,18 @@
     var newAdTagUrl = document.getElementById('newAdTagUrl');
     loadAds.addEventListener('click', function () {
       if (newAdTagUrl.value) {
-        rmpVast.loadAds(newAdTagUrl.value);
+        if (rmpVast.getInitialized()) {
+          rmpVast.loadAds(newAdTagUrl.value);
+        } else {
+          // if rmp-vast is not initialized then we just update adTag
+          // an explicit play interaction is still required (e.g. to prevent issues on mobiles)
+          adTag = newAdTagUrl.value;
+        }
       }
     });
 
   };
 
-  var adTag = 'https://www.radiantmediaplayer.com/vast/tags/inline-linear-5.xml';
   _wireUI();
 
   // at start up be it autoplay or through a user interaction we loadAds at play event

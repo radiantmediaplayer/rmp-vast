@@ -207,7 +207,7 @@ The following methods provide context information for the rmp-vast instance:
 - `getIsUsingContentPlayerForAds()`: on iOS (which we love) the VAST player is the content player. This is to avoid fullscreen management issues and to provide a consistent user experience. This method will return true for iOS, false otherwise
  
 ## Autoplay support
-This is done by adding the `autoplay` attribute to the video tag having the `rmp-video` class. For muted autoplay (mobile) also add the `muted` attribute on this element. 
+This is done by adding the `autoplay` attribute to the video tag having the `rmp-video` class. For muted autoplay (mobile) also add the `muted` attribute on this element. After that you just need to wait for the `play` event on the content player and call `loadAds` method. See the test/spec/LinearMutedAutoplaySpec.html file for a complete example.
 
 Detecting autoplay capabilities for a targeted device is not within rmp-vast scope of support but we strongly encourage you use a feature detection script to do so. Indeed OS may apply restrictions and users may have specific settings or accessibility requirements that can prevent autoplay of HTML5 video. In order to provide a good user experience and to avoid technical issues it is best to feature detect autoplay support before using it.
 
@@ -226,6 +226,12 @@ Please review grunt/shell.js - you need to have jshint, browserify, watchify, ug
 Make changes to code and then run:
 
 `grunt build`
+
+You can also use 
+
+`grunt concurrent` 
+
+to make developement easier (watchify task) and use the app/dev.html file (which references js/dist/rmp-vast.js).
 
 Before committing for a pull request - run test:
 

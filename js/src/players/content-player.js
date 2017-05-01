@@ -2,6 +2,12 @@ import { FW } from '../fw/fw';
 
 const CONTENTPLAYER = {};
 
+CONTENTPLAYER.init = function () {
+  FW.playPromise(this.contentPlayer);
+  this.contentPlayer.pause();
+};
+
+
 CONTENTPLAYER.play = function () {
   if (this.contentPlayer.paused) {
     FW.playPromise(this.contentPlayer);

@@ -7,7 +7,7 @@ import { CONTENTPLAYER } from '../players/content-player';
 const API = {};
 
 API.play = function () {
-  if (!this.vastPlayerInitialized) {
+  if (!this.rmpVastInitialized) {
     this.initialize();
     return;
   }
@@ -262,14 +262,17 @@ API.getIsUsingContentPlayerForAds = function () {
 };
 
 API.initialize = function () {
-  if (!this.vastPlayerInitialized) {
+  if (!this.rmpVastInitialized) {
     if (DEBUG) {
       FWVAST.logPerformance('RMP-VAST: on user interaction - player needs to be initialized');
     }
     VASTPLAYER.init.call(this);
-    FW.playPromise(this.contentPlayer);
-    this.contentPlayer.pause();
+    CONTENTPLAYER.init.call(this);
   }
+};
+
+API.getInitialized = function () {
+  return this.rmpVastInitialized;
 };
 
 export { API };

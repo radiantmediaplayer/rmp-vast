@@ -229,18 +229,18 @@ LINEAR.parse = function (linear) {
     }
   }
   let format = [];
-  // if we have MP4s and MP4 is supported - filter it by width
-  // otherwise do the same for WebM
-  if (ENV.okMp4 && mp4.length > 0) {
-    mp4.sort((a, b) => {
-      return a.width - b.width;
-    });
-    format = mp4;
-  } else if (ENV.okWebM && webm.length > 0) {
+  // if we have WebM and WebM is supported - filter it by width
+  // otherwise do the same for MP4
+  if (ENV.okWebM && webm.length > 0) {
     webm.sort((a, b) => {
       return a.width - b.width;
     });
     format = webm;
+  } else if (ENV.okMp4 && mp4.length > 0) {
+    mp4.sort((a, b) => {
+      return a.width - b.width;
+    });
+    format = mp4;
   }
 
   if (format.length === 0) {
@@ -259,13 +259,24 @@ LINEAR.parse = function (linear) {
 
   // we have files matching device capabilities
   // select the best one based on player current width
-  let retainedFormat = {};
+  let retainedFormat = format[0];
   let containerWidth = FW.getWidth(this.container);
-  for (let i = 0, len = format.length; i < len; i++) {
-    retainedFormat = format[i];
-    if (retainedFormat.width >= containerWidth) {
-      break;
+  let formatLength = format.length;
+  if (format[formatLength - 1].width < containerWidth) {
+    retainedFormat = format[formatLength - 1];
+  } else if (format[0].width > containerWidth) {
+    retainedFormat = format[0];
+  } else {
+    for (let i = 0, len = formatLength; i < len; i++) {
+      if (format[i].width >= containerWidth) {
+        retainedFormat = format[i];
+        break;
+      }
     }
+  }
+  if (DEBUG) {
+    FW.log('RMP-VAST: selected linear creative follows');
+    FW.log(retainedFormat);
   }
   this.adMediaUrl = retainedFormat.url;
   this.adMediaHeight = retainedFormat.height;

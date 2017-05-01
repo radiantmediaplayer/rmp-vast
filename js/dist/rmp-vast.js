@@ -1,6 +1,6 @@
 /**
  * @license Copyright (c) 2017 Radiant Media Player | https://www.radiantmediaplayer.com
- * rmp-vast 0.1.1
+ * rmp-vast 0.1.2
  * GitHub: https://github.com/radiantmediaplayer/rmp-vast
  * MIT License: https://github.com/radiantmediaplayer/rmp-vast/blob/master/LICENSE
  */
@@ -25,7 +25,7 @@ var _contentPlayer = require('../players/content-player');
 var API = {};
 
 API.play = function () {
-  if (!this.vastPlayerInitialized) {
+  if (!this.rmpVastInitialized) {
     this.initialize();
     return;
   }
@@ -279,14 +279,17 @@ API.getIsUsingContentPlayerForAds = function () {
 };
 
 API.initialize = function () {
-  if (!this.vastPlayerInitialized) {
+  if (!this.rmpVastInitialized) {
     if (DEBUG) {
       _fwVast.FWVAST.logPerformance('RMP-VAST: on user interaction - player needs to be initialized');
     }
     _vastPlayer.VASTPLAYER.init.call(this);
-    _fw.FW.playPromise(this.contentPlayer);
-    this.contentPlayer.pause();
+    _contentPlayer.CONTENTPLAYER.init.call(this);
   }
+};
+
+API.getInitialized = function () {
+  return this.rmpVastInitialized;
 };
 
 exports.API = API;
@@ -751,18 +754,18 @@ LINEAR.parse = function (linear) {
     }
   }
   var format = [];
-  // if we have MP4s and MP4 is supported - filter it by width
-  // otherwise do the same for WebM
-  if (_env.ENV.okMp4 && mp4.length > 0) {
-    mp4.sort(function (a, b) {
-      return a.width - b.width;
-    });
-    format = mp4;
-  } else if (_env.ENV.okWebM && webm.length > 0) {
+  // if we have WebM and WebM is supported - filter it by width
+  // otherwise do the same for MP4
+  if (_env.ENV.okWebM && webm.length > 0) {
     webm.sort(function (a, b) {
       return a.width - b.width;
     });
     format = webm;
+  } else if (_env.ENV.okMp4 && mp4.length > 0) {
+    mp4.sort(function (a, b) {
+      return a.width - b.width;
+    });
+    format = mp4;
   }
 
   if (format.length === 0) {
@@ -781,13 +784,24 @@ LINEAR.parse = function (linear) {
 
   // we have files matching device capabilities
   // select the best one based on player current width
-  var retainedFormat = {};
+  var retainedFormat = format[0];
   var containerWidth = _fw.FW.getWidth(this.container);
-  for (var _i2 = 0, _len2 = format.length; _i2 < _len2; _i2++) {
-    retainedFormat = format[_i2];
-    if (retainedFormat.width >= containerWidth) {
-      break;
+  var formatLength = format.length;
+  if (format[formatLength - 1].width < containerWidth) {
+    retainedFormat = format[formatLength - 1];
+  } else if (format[0].width > containerWidth) {
+    retainedFormat = format[0];
+  } else {
+    for (var _i2 = 0, _len2 = formatLength; _i2 < _len2; _i2++) {
+      if (format[_i2].width >= containerWidth) {
+        retainedFormat = format[_i2];
+        break;
+      }
     }
+  }
+  if (DEBUG) {
+    _fw.FW.log('RMP-VAST: selected linear creative follows');
+    _fw.FW.log(retainedFormat);
   }
   this.adMediaUrl = retainedFormat.url;
   this.adMediaHeight = retainedFormat.height;
@@ -1673,7 +1687,7 @@ window.RmpVast = function (id, params) {
   this.contentPlayer = this.container.getElementsByClassName('rmp-video')[0];
   this.adContainer = null;
   this.isInFullscreen = false;
-  this.vastPlayerInitialized = false;
+  this.rmpVastInitialized = false;
   this.useContentPlayerForAds = false;
   if (_env.ENV.isIos[0]) {
     // on iOS we use content player to play ads
@@ -2043,6 +2057,11 @@ var _fw = require('../fw/fw');
 
 var CONTENTPLAYER = {};
 
+CONTENTPLAYER.init = function () {
+  _fw.FW.playPromise(this.contentPlayer);
+  this.contentPlayer.pause();
+};
+
 CONTENTPLAYER.play = function () {
   if (this.contentPlayer.paused) {
     _fw.FW.playPromise(this.contentPlayer);
@@ -2196,6 +2215,13 @@ var _destroyVastPlayer = function _destroyVastPlayer() {
   _api.API.createEvent.call(this, 'addestroyed');
 };
 
+var _onContextMenu = function _onContextMenu(event) {
+  if (event) {
+    event.stopPropagation();
+    event.preventDefault();
+  }
+};
+
 VASTPLAYER.init = function () {
   if (DEBUG) {
     _fw.FW.log('RMP-VAST: init called on VASTPLAYER');
@@ -2217,16 +2243,23 @@ VASTPLAYER.init = function () {
     if (this.contentPlayer.muted) {
       this.vastPlayer.muted = true;
     }
+    // prevent built in menu to show on right click
+    this.onContextMenu = _onContextMenu.bind(this);
+    this.vastPlayer.addEventListener('contextmenu', this.onContextMenu);
     this.vastPlayer.setAttribute('x-webkit-airplay', 'allow');
     if (typeof this.contentPlayer.playsInline === 'boolean' && this.contentPlayer.playsInline) {
       this.vastPlayer.playsInline = true;
     } else if (_env.ENV.isMobile) {
-      // TO REVIEW
+      // this is for iOS/Android WebView where webkit-playsinline may be available
       this.vastPlayer.setAttribute('webkit-playsinline', true);
     }
     this.vastPlayer.preload = 'auto';
     this.vastPlayer.defaultPlaybackRate = 1;
-    if (_env.ENV.isMobile) {
+    // on mobile we need to init the vast player video tag
+    // we do this by calling play/pause as a result of a direct user interaction
+    // unless we are muted in which case we can use autoplay or HTMLMediaElement.play() 
+    // without having to worry about video tag init
+    if (_env.ENV.isMobile && !this.vastPlayer.muted) {
       if (DEBUG) {
         _fw.FW.log('RMP-VAST: fake start for mobiles to init video tag');
       }
@@ -2236,16 +2269,16 @@ VASTPLAYER.init = function () {
   } else {
     this.vastPlayer = this.contentPlayer;
   }
-  this.vastPlayerInitialized = true;
+  this.rmpVastInitialized = true;
 };
 
 VASTPLAYER.append = function (url, type) {
   // this is for autoplay on desktop
   // or muted autoplay on mobile where player is not initialize
-  if (!this.vastPlayerInitialized) {
+  if (!this.rmpVastInitialized) {
     VASTPLAYER.init.call(this);
   }
-  // in case loadAds is called several times - vastPlayerInitialized is already true
+  // in case loadAds is called several times - rmpVastInitialized is already true
   // but we still need to locate the vastPlayer
   if (!this.vastPlayer) {
     if (this.useContentPlayerForAds) {
@@ -2733,6 +2766,7 @@ RESET.internalVariables = function () {
   this.onNonLinearClickThrough = null;
   this.onFullscreenchange = null;
   this.onPlayingSeek = null;
+  this.onContextMenu = null;
   // init internal variables
   this.adTagUrl = null;
   this.vastPlayer = null;
@@ -2806,6 +2840,7 @@ RESET.unwireVastPlayerEvents = function () {
     this.vastPlayer.removeEventListener('durationchange', this.onDurationChange);
     this.vastPlayer.removeEventListener('loadedmetadata', this.onLoadedmetadataPlay);
     this.vastPlayer.removeEventListener('ended', this.onEndedResumeContent);
+    this.vastPlayer.removeEventListener('contextmenu', this.onContextMenu);
     // unwire HTML5 video events
     this.vastPlayer.removeEventListener('pause', this.onPause);
     this.vastPlayer.removeEventListener('play', this.onPlay);

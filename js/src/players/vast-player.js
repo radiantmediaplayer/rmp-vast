@@ -69,6 +69,13 @@ var _destroyVastPlayer = function () {
   API.createEvent.call(this, 'addestroyed');
 };
 
+var _onContextMenu = function (event) {
+  if (event) {
+    event.stopPropagation();
+    event.preventDefault();
+  }
+};
+
 VASTPLAYER.init = function () {
   if (DEBUG) {
     FW.log('RMP-VAST: init called on VASTPLAYER');
@@ -90,16 +97,23 @@ VASTPLAYER.init = function () {
     if (this.contentPlayer.muted) {
       this.vastPlayer.muted = true;
     }
+    // prevent built in menu to show on right click
+    this.onContextMenu = _onContextMenu.bind(this);
+    this.vastPlayer.addEventListener('contextmenu', this.onContextMenu);
     this.vastPlayer.setAttribute('x-webkit-airplay', 'allow');
     if (typeof this.contentPlayer.playsInline === 'boolean' && this.contentPlayer.playsInline) {
       this.vastPlayer.playsInline = true;
     } else if (ENV.isMobile) {
-      // TO REVIEW
+      // this is for iOS/Android WebView where webkit-playsinline may be available
       this.vastPlayer.setAttribute('webkit-playsinline', true);
     }
     this.vastPlayer.preload = 'auto';
     this.vastPlayer.defaultPlaybackRate = 1;
-    if (ENV.isMobile) {
+    // on mobile we need to init the vast player video tag
+    // we do this by calling play/pause as a result of a direct user interaction
+    // unless we are muted in which case we can use autoplay or HTMLMediaElement.play() 
+    // without having to worry about video tag init
+    if (ENV.isMobile && !this.vastPlayer.muted) {
       if (DEBUG) {
         FW.log('RMP-VAST: fake start for mobiles to init video tag');
       }
@@ -109,16 +123,16 @@ VASTPLAYER.init = function () {
   } else {
     this.vastPlayer = this.contentPlayer;
   }
-  this.vastPlayerInitialized = true;
+  this.rmpVastInitialized = true;
 };
 
 VASTPLAYER.append = function (url, type) {
   // this is for autoplay on desktop
   // or muted autoplay on mobile where player is not initialize
-  if (!this.vastPlayerInitialized) {
+  if (!this.rmpVastInitialized) {
     VASTPLAYER.init.call(this);
   }
-  // in case loadAds is called several times - vastPlayerInitialized is already true
+  // in case loadAds is called several times - rmpVastInitialized is already true
   // but we still need to locate the vastPlayer
   if (!this.vastPlayer) {
     if (this.useContentPlayerForAds) {

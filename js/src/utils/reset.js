@@ -29,6 +29,7 @@ RESET.internalVariables = function () {
   this.onNonLinearClickThrough = null;
   this.onFullscreenchange = null;
   this.onPlayingSeek = null;
+  this.onContextMenu = null;
   // init internal variables
   this.adTagUrl = null;
   this.vastPlayer = null;
@@ -102,6 +103,7 @@ RESET.unwireVastPlayerEvents = function () {
     this.vastPlayer.removeEventListener('durationchange', this.onDurationChange);
     this.vastPlayer.removeEventListener('loadedmetadata', this.onLoadedmetadataPlay);
     this.vastPlayer.removeEventListener('ended', this.onEndedResumeContent);
+    this.vastPlayer.removeEventListener('contextmenu', this.onContextMenu);
     // unwire HTML5 video events
     this.vastPlayer.removeEventListener('pause', this.onPause);
     this.vastPlayer.removeEventListener('play', this.onPlay);
