@@ -180,6 +180,7 @@ For linear ads rmp-vast exposes 2 players: a content player (for the actual cont
 - `stopAds()`: stop playing the ad on stage (either linear or non-linear)
 - `getAdTagUrl()`: return a string representing the current VAST tag URL
 - `getAdOnStage()`: return a boolean stating if an ad (linear or non-linear) is currently on stage
+- `getInitialized()`: return a boolean stating if rmp-vast has been initialized
 
 The following methods should be queried after the `adstarted` event has fired for accurate data:
 - `getAdMediaUrl()`: return a string representing the selected creative URL
