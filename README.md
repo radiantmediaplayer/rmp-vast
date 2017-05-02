@@ -210,7 +210,7 @@ The following methods provide context information for the rmp-vast instance:
 ## Autoplay support
 This is done by adding the `autoplay` attribute to the video tag having the `rmp-video` class. For muted autoplay (mobile) also add the `muted` attribute on this element. After that you just need to wait for the `play` event on the content player and call `loadAds` method. See the test/LinearMutedAutoplaySpec.html file for a complete example.
 
-Detecting autoplay capabilities for a targeted device is not within rmp-vast scope of support but we strongly encourage you use a feature detection script to do so. Indeed OS may apply restrictions and users may have specific settings or accessibility requirements that can prevent autoplay of HTML5 video. In order to provide a good user experience and to avoid technical issues it is best to feature detect autoplay support before using it.
+Detecting autoplay capabilities for a targeted device is not within rmp-vast scope of support but we strongly encourage you use a feature detection script to do so. At Radiant Media Player we use [rmp-detect-autoplay]( https://github.com/radiantmediaplayer/rmp-detect-autoplay) which we have created for this specific purpose. Indeed OS may apply restrictions and users may have specific settings or accessibility requirements that can prevent autoplay of HTML5 video. In order to provide a good user experience and to avoid technical issues it is best to feature detect autoplay support before using it.
 
 ## Contributing
 Contributions are welcome. Please review general code structure and stick to existing patterns.
