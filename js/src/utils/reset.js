@@ -68,6 +68,7 @@ RESET.internalVariables = function () {
   this.currentContentCurrentTime = -1;
   // skip
   this.isSkippableAd = false;
+  this.hasSkipEvent = false;
   this.skipoffset = '';
   this.progressEventOffsets = [];
   this.progressEventOffsetsSeconds = null;

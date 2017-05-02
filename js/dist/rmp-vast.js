@@ -1,6 +1,6 @@
 /**
  * @license Copyright (c) 2017 Radiant Media Player | https://www.radiantmediaplayer.com
- * rmp-vast 0.1.3
+ * rmp-vast 0.1.4
  * GitHub: https://github.com/radiantmediaplayer/rmp-vast
  * MIT License: https://github.com/radiantmediaplayer/rmp-vast/blob/master/LICENSE
  */
@@ -1010,6 +1010,8 @@ var _fwVast = require('../fw/fw-vast');
 
 var _vastPlayer = require('../players/vast-player');
 
+var _trackingEvents = require('../tracking/tracking-events');
+
 var _api = require('../api/api');
 
 var SKIP = {};
@@ -1049,7 +1051,11 @@ var _onClickSkip = function _onClickSkip() {
     // create API event
     _api.API.createEvent.call(this, 'adskipped');
     // request ping for skip event
-    _fwVast.FWVAST.dispatchPingEvent.call(this, 'skip');
+    if (this.hasSkipEvent) {
+      _fwVast.FWVAST.dispatchPingEvent.call(this, 'skip');
+    } else {
+      _trackingEvents.TRACKINGEVENTS.updateResetStatus.call(this);
+    }
     // resume content
     _vastPlayer.VASTPLAYER.resumeContent.call(this);
   }
@@ -1086,7 +1092,7 @@ SKIP.append = function () {
 
 exports.SKIP = SKIP;
 
-},{"../api/api":1,"../fw/fw":8,"../fw/fw-vast":7,"../players/vast-player":11}],6:[function(require,module,exports){
+},{"../api/api":1,"../fw/fw":8,"../fw/fw-vast":7,"../players/vast-player":11,"../tracking/tracking-events":13}],6:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2497,6 +2503,13 @@ var _pingTrackers = function _pingTrackers(trackers) {
   });
 };
 
+TRACKINGEVENTS.updateResetStatus = function () {
+  // in case a pause event is due to be ping - cancel it now (see above)
+  clearTimeout(this.adPauseEventTimeout);
+  this.readyForReset = true;
+  _fwVast.FWVAST.dispatchPingEvent.call(this, 'reset');
+};
+
 var _onEventPingTracking = function _onEventPingTracking(event) {
   var _this2 = this;
 
@@ -2524,9 +2537,7 @@ var _onEventPingTracking = function _onEventPingTracking(event) {
     // we need to tell the player it is ok to destroy as all pings have been sent
     if (this.vastPlayer && (event.type === 'complete' || event.type === 'skip')) {
       // in case a pause event is due to be ping - cancel it now (see above)
-      clearTimeout(this.adPauseEventTimeout);
-      this.readyForReset = true;
-      _fwVast.FWVAST.dispatchPingEvent.call(this, 'reset');
+      TRACKINGEVENTS.updateResetStatus.call(this);
     }
   }
 };
@@ -2579,7 +2590,7 @@ var _onTimeupdate = function _onTimeupdate() {
           return a.offsetSeconds - b.offsetSeconds;
         });
       }
-      if (Array.isArray(this.progressEventOffsetsSeconds) && this.progressEventOffsetsSeconds.length > 0 && this.vastPlayerCurrentTime >= this.progressEventOffsetsSeconds[0].offsetSeconds) {
+      if (Array.isArray(this.progressEventOffsetsSeconds) && this.progressEventOffsetsSeconds.length > 0 && this.vastPlayerCurrentTime >= this.progressEventOffsetsSeconds[0].offsetSeconds * 1000) {
         _fwVast.FWVAST.dispatchPingEvent.call(this, 'progress-' + this.progressEventOffsetsSeconds[0].offsetRaw);
         this.progressEventOffsetsSeconds.shift();
       }
@@ -2694,6 +2705,10 @@ TRACKINGEVENTS.wire = function () {
 
   // wire for VAST tracking events
   this.onEventPingTracking = _onEventPingTracking.bind(this);
+  if (DEBUG) {
+    _fw.FW.log('RMP-VAST: detected VAST events follow');
+    _fw.FW.log(this.trackingTags);
+  }
   for (var i = 0, len = this.trackingTags.length; i < len; i++) {
     if (this.vastPlayer) {
       this.vastPlayer.addEventListener(this.trackingTags[i].event, this.onEventPingTracking);
@@ -2711,14 +2726,20 @@ TRACKINGEVENTS.filter = function (trackingEvents) {
     var event = trackingTags[i].getAttribute('event');
     var url = _fwVast.FWVAST.getNodeValue(trackingTags[i], true);
     if (event !== null && event !== '' && _ping.PING.events.indexOf(event) > -1 && url !== null) {
-      if (event === 'progress') {
-        var offset = trackingTags[i].getAttribute('offset');
-        if (offset === null || offset === '' || !_fwVast.FWVAST.isValidOffset(offset)) {
-          // offset attribute is required on Tracking event="progress"
-          continue;
+      if (this.isSkippableAd) {
+        if (event === 'progress') {
+          var offset = trackingTags[i].getAttribute('offset');
+          if (offset === null || offset === '' || !_fwVast.FWVAST.isValidOffset(offset)) {
+            // offset attribute is required on Tracking event="progress"
+            continue;
+          }
+          this.progressEventOffsets.push(offset);
+          event = event + '-' + offset;
+        } else if (event === 'skip') {
+          // we make sure we have a skip event - this is expected for skippable ads
+          // but in case it is not there we still need to properly resume content
+          this.hasSkipEvent = true;
         }
-        this.progressEventOffsets.push(offset);
-        event = event + '-' + offset;
       }
       this.trackingTags.push({ event: event, url: url });
     }
@@ -2806,6 +2827,7 @@ RESET.internalVariables = function () {
   this.currentContentCurrentTime = -1;
   // skip
   this.isSkippableAd = false;
+  this.hasSkipEvent = false;
   this.skipoffset = '';
   this.progressEventOffsets = [];
   this.progressEventOffsetsSeconds = null;

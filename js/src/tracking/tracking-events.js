@@ -13,6 +13,13 @@ var _pingTrackers = function (trackers) {
   });
 };
 
+TRACKINGEVENTS.updateResetStatus = function () {
+  // in case a pause event is due to be ping - cancel it now (see above)
+  clearTimeout(this.adPauseEventTimeout);
+  this.readyForReset = true;
+  FWVAST.dispatchPingEvent.call(this, 'reset');
+};
+
 var _onEventPingTracking = function (event) {
   if (event && event.type) {
     if (DEBUG) {
@@ -38,9 +45,7 @@ var _onEventPingTracking = function (event) {
     // we need to tell the player it is ok to destroy as all pings have been sent
     if (this.vastPlayer && (event.type === 'complete' || event.type === 'skip')) {
       // in case a pause event is due to be ping - cancel it now (see above)
-      clearTimeout(this.adPauseEventTimeout);
-      this.readyForReset = true;
-      FWVAST.dispatchPingEvent.call(this, 'reset');
+      TRACKINGEVENTS.updateResetStatus.call(this);
     }
   }
 };
@@ -92,7 +97,7 @@ var _onTimeupdate = function () {
         });
       }
       if (Array.isArray(this.progressEventOffsetsSeconds) && this.progressEventOffsetsSeconds.length > 0 &&
-        this.vastPlayerCurrentTime >= this.progressEventOffsetsSeconds[0].offsetSeconds) {
+        this.vastPlayerCurrentTime >= this.progressEventOffsetsSeconds[0].offsetSeconds * 1000) {
         FWVAST.dispatchPingEvent.call(this, 'progress-' + this.progressEventOffsetsSeconds[0].offsetRaw);
         this.progressEventOffsetsSeconds.shift();
       }
@@ -207,6 +212,10 @@ TRACKINGEVENTS.wire = function () {
 
   // wire for VAST tracking events
   this.onEventPingTracking = _onEventPingTracking.bind(this);
+  if (DEBUG) {
+    FW.log('RMP-VAST: detected VAST events follow');
+    FW.log(this.trackingTags);
+  }
   for (let i = 0, len = this.trackingTags.length; i < len; i++) {
     if (this.vastPlayer) {
       this.vastPlayer.addEventListener(this.trackingTags[i].event, this.onEventPingTracking);
@@ -225,14 +234,20 @@ TRACKINGEVENTS.filter = function (trackingEvents) {
     let event = trackingTags[i].getAttribute('event');
     let url = FWVAST.getNodeValue(trackingTags[i], true);
     if (event !== null && event !== '' && PING.events.indexOf(event) > -1 && url !== null) {
-      if (event === 'progress') {
-        let offset = trackingTags[i].getAttribute('offset');
-        if (offset === null || offset === '' || !FWVAST.isValidOffset(offset)) {
-          // offset attribute is required on Tracking event="progress"
-          continue;
+      if (this.isSkippableAd) {
+        if (event === 'progress') {
+          let offset = trackingTags[i].getAttribute('offset');
+          if (offset === null || offset === '' || !FWVAST.isValidOffset(offset)) {
+            // offset attribute is required on Tracking event="progress"
+            continue;
+          }
+          this.progressEventOffsets.push(offset);
+          event = event + '-' + offset;
+        } else if (event === 'skip') {
+          // we make sure we have a skip event - this is expected for skippable ads
+          // but in case it is not there we still need to properly resume content
+          this.hasSkipEvent = true;
         }
-        this.progressEventOffsets.push(offset);
-        event = event + '-' + offset;
       }
       this.trackingTags.push({ event: event, url: url });
     }
