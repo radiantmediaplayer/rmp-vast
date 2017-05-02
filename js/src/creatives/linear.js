@@ -72,6 +72,13 @@ var _appendClickUIOnMobile = function () {
   this.adContainer.appendChild(this.clickUIOnMobile);
 };
 
+var _onContextMenu = function (event) {
+  if (event) {
+    event.stopPropagation();
+    event.preventDefault();
+  }
+};
+
 LINEAR.update = function (url, type) {
   if (DEBUG) {
     FW.log('RMP-VAST: update vast player for linear creative of type ' + type + ' located at ' + url);
@@ -86,6 +93,10 @@ LINEAR.update = function (url, type) {
   // when creative ends resume content
   this.onEndedResumeContent = _onEndedResumeContent.bind(this);
   this.vastPlayer.addEventListener('ended', this.onEndedResumeContent);
+
+  // prevent built in menu to show on right click
+  this.onContextMenu = _onContextMenu.bind(this);
+  this.vastPlayer.addEventListener('contextmenu', this.onContextMenu);
 
   // append source to vast player if not there already
   if (!this.useContentPlayerForAds) {

@@ -69,13 +69,6 @@ var _destroyVastPlayer = function () {
   API.createEvent.call(this, 'addestroyed');
 };
 
-var _onContextMenu = function (event) {
-  if (event) {
-    event.stopPropagation();
-    event.preventDefault();
-  }
-};
-
 VASTPLAYER.init = function () {
   if (DEBUG) {
     FW.log('RMP-VAST: init called on VASTPLAYER');
@@ -97,9 +90,6 @@ VASTPLAYER.init = function () {
     if (this.contentPlayer.muted) {
       this.vastPlayer.muted = true;
     }
-    // prevent built in menu to show on right click
-    this.onContextMenu = _onContextMenu.bind(this);
-    this.vastPlayer.addEventListener('contextmenu', this.onContextMenu);
     this.vastPlayer.setAttribute('x-webkit-airplay', 'allow');
     if (typeof this.contentPlayer.playsInline === 'boolean' && this.contentPlayer.playsInline) {
       this.vastPlayer.playsInline = true;

@@ -1,6 +1,6 @@
 /**
  * @license Copyright (c) 2017 Radiant Media Player | https://www.radiantmediaplayer.com
- * rmp-vast 0.1.2
+ * rmp-vast 0.1.3
  * GitHub: https://github.com/radiantmediaplayer/rmp-vast
  * MIT License: https://github.com/radiantmediaplayer/rmp-vast/blob/master/LICENSE
  */
@@ -597,6 +597,13 @@ var _appendClickUIOnMobile = function _appendClickUIOnMobile() {
   this.adContainer.appendChild(this.clickUIOnMobile);
 };
 
+var _onContextMenu = function _onContextMenu(event) {
+  if (event) {
+    event.stopPropagation();
+    event.preventDefault();
+  }
+};
+
 LINEAR.update = function (url, type) {
   if (DEBUG) {
     _fw.FW.log('RMP-VAST: update vast player for linear creative of type ' + type + ' located at ' + url);
@@ -611,6 +618,10 @@ LINEAR.update = function (url, type) {
   // when creative ends resume content
   this.onEndedResumeContent = _onEndedResumeContent.bind(this);
   this.vastPlayer.addEventListener('ended', this.onEndedResumeContent);
+
+  // prevent built in menu to show on right click
+  this.onContextMenu = _onContextMenu.bind(this);
+  this.vastPlayer.addEventListener('contextmenu', this.onContextMenu);
 
   // append source to vast player if not there already
   if (!this.useContentPlayerForAds) {
@@ -2215,13 +2226,6 @@ var _destroyVastPlayer = function _destroyVastPlayer() {
   _api.API.createEvent.call(this, 'addestroyed');
 };
 
-var _onContextMenu = function _onContextMenu(event) {
-  if (event) {
-    event.stopPropagation();
-    event.preventDefault();
-  }
-};
-
 VASTPLAYER.init = function () {
   if (DEBUG) {
     _fw.FW.log('RMP-VAST: init called on VASTPLAYER');
@@ -2243,9 +2247,6 @@ VASTPLAYER.init = function () {
     if (this.contentPlayer.muted) {
       this.vastPlayer.muted = true;
     }
-    // prevent built in menu to show on right click
-    this.onContextMenu = _onContextMenu.bind(this);
-    this.vastPlayer.addEventListener('contextmenu', this.onContextMenu);
     this.vastPlayer.setAttribute('x-webkit-airplay', 'allow');
     if (typeof this.contentPlayer.playsInline === 'boolean' && this.contentPlayer.playsInline) {
       this.vastPlayer.playsInline = true;
