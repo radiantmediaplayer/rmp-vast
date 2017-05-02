@@ -1,6 +1,6 @@
 /**
  * @license Copyright (c) 2017 Radiant Media Player | https://www.radiantmediaplayer.com
- * rmp-vast 0.1.4
+ * rmp-vast 0.1.5
  * GitHub: https://github.com/radiantmediaplayer/rmp-vast
  * MIT License: https://github.com/radiantmediaplayer/rmp-vast/blob/master/LICENSE
  */
@@ -1046,7 +1046,13 @@ var _onTimeupdateCheckSkip = function _onTimeupdateCheckSkip() {
   }
 };
 
-var _onClickSkip = function _onClickSkip() {
+var _onClickSkip = function _onClickSkip(event) {
+  if (event) {
+    event.stopPropagation();
+    if (event.type === 'touchend') {
+      event.preventDefault();
+    }
+  }
   if (this.skippableAdCanBeSkipped) {
     // create API event
     _api.API.createEvent.call(this, 'adskipped');
@@ -1082,6 +1088,7 @@ SKIP.append = function () {
 
   this.onClickSkip = _onClickSkip.bind(this);
   this.skipButton.addEventListener('click', this.onClickSkip);
+  this.skipButton.addEventListener('touchend', this.onClickSkip);
   this.skipButton.appendChild(this.skipWaiting);
   this.skipButton.appendChild(this.skipMessage);
   this.skipButton.appendChild(this.skipIcon);
@@ -2884,6 +2891,7 @@ RESET.unwireVastPlayerEvents = function () {
     this.vastPlayer.removeEventListener('timeupdate', this.onTimeupdateCheckSkip);
     if (this.skipButton) {
       this.skipButton.removeEventListener('click', this.onClickSkip);
+      this.skipButton.removeEventListener('touchend', this.onClickSkip);
     }
     // click UI on mobile
     if (this.clickUIOnMobile) {

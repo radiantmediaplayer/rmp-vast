@@ -36,7 +36,13 @@ var _onTimeupdateCheckSkip = function () {
   }
 };
 
-var _onClickSkip = function () {
+var _onClickSkip = function (event) {
+  if (event) {
+    event.stopPropagation();
+    if (event.type === 'touchend') {
+      event.preventDefault();
+    }
+  }
   if (this.skippableAdCanBeSkipped) {
     // create API event
     API.createEvent.call(this, 'adskipped');
@@ -72,6 +78,7 @@ SKIP.append = function () {
 
   this.onClickSkip = _onClickSkip.bind(this);
   this.skipButton.addEventListener('click', this.onClickSkip);
+  this.skipButton.addEventListener('touchend', this.onClickSkip);
   this.skipButton.appendChild(this.skipWaiting);
   this.skipButton.appendChild(this.skipMessage);
   this.skipButton.appendChild(this.skipIcon);

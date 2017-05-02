@@ -125,6 +125,7 @@ RESET.unwireVastPlayerEvents = function () {
     this.vastPlayer.removeEventListener('timeupdate', this.onTimeupdateCheckSkip);
     if (this.skipButton) {
       this.skipButton.removeEventListener('click', this.onClickSkip);
+      this.skipButton.removeEventListener('touchend', this.onClickSkip);
     }
     // click UI on mobile
     if (this.clickUIOnMobile) {
