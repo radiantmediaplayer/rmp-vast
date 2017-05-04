@@ -1,6 +1,6 @@
 {
   "name": "rmp-vast",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "author": "Radiant Media Player <support@radiantmediaplayer.com>",
   "description": "A client-side JavaScript solution to load, parse and display VAST resources (advertising)",
   "repository": {

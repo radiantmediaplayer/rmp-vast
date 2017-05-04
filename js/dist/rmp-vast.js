@@ -1,6 +1,6 @@
 /**
  * @license Copyright (c) 2017 Radiant Media Player | https://www.radiantmediaplayer.com
- * rmp-vast 0.1.6
+ * rmp-vast 0.1.7
  * GitHub: https://github.com/radiantmediaplayer/rmp-vast
  * MIT License: https://github.com/radiantmediaplayer/rmp-vast/blob/master/LICENSE
  */
@@ -1584,15 +1584,15 @@ FW.getHeight = function (element) {
 };
 
 FW.getComputedStyle = function (element, style) {
-  var cs = '';
+  var propertyValue = '';
   if (element && typeof window.getComputedStyle === 'function') {
-    var _cs = window.getComputedStyle(element, null);
-    if (_cs) {
-      var propertyValue = _cs.getPropertyValue(style);
+    var cs = window.getComputedStyle(element, null);
+    if (cs) {
+      propertyValue = cs.getPropertyValue(style);
       propertyValue = propertyValue.toString().toLowerCase();
     }
   }
-  return cs;
+  return propertyValue;
 };
 
 FW.show = function (element) {
