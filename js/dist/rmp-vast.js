@@ -1,6 +1,6 @@
 /**
  * @license Copyright (c) 2017 Radiant Media Player | https://www.radiantmediaplayer.com
- * rmp-vast 0.1.5
+ * rmp-vast 0.1.6
  * GitHub: https://github.com/radiantmediaplayer/rmp-vast
  * MIT License: https://github.com/radiantmediaplayer/rmp-vast/blob/master/LICENSE
  */
@@ -572,11 +572,10 @@ var _onClickThrough = function _onClickThrough(event) {
   try {
     if (event) {
       event.stopPropagation();
-      if (event.type === 'touchend') {
-        event.preventDefault();
-      }
     }
-    window.open(this.clickThroughUrl, '_blank');
+    if (!_env.ENV.isMobile) {
+      window.open(this.clickThroughUrl, '_blank');
+    }
     _api.API.createEvent.call(this, 'adclick');
     _fwVast.FWVAST.dispatchPingEvent.call(this, 'clickthrough');
   } catch (e) {
@@ -590,11 +589,24 @@ var _onPlaybackError = function _onPlaybackError() {
 };
 
 var _appendClickUIOnMobile = function _appendClickUIOnMobile() {
-  this.clickUIOnMobile = document.createElement('div');
+  var _this = this;
+
+  // we create a <a> tag rather than using window.open 
+  // because it works better in standalone mode and WebView
+  this.clickUIOnMobile = document.createElement('a');
+  this.clickUIOnMobile.style.opacity = 0;
   this.clickUIOnMobile.className = 'rmp-ad-click-ui-mobile';
   this.clickUIOnMobile.textContent = this.params.textForClickUIOnMobile;
-  this.clickUIOnMobile.addEventListener('touchend', this.onClickThrough);
+  this.clickUIOnMobile.addEventListener('click', this.onClickThrough);
+  this.clickUIOnMobile.href = this.clickThroughUrl;
+  this.clickUIOnMobile.target = '_blank';
   this.adContainer.appendChild(this.clickUIOnMobile);
+  // on iOS without this timeout we have an un-nice resizing quirk
+  setTimeout(function () {
+    if (_this.clickUIOnMobile) {
+      _this.clickUIOnMobile.style.opacity = 1;
+    }
+  }, 400);
 };
 
 var _onContextMenu = function _onContextMenu(event) {
@@ -1461,6 +1473,17 @@ FWVAST.logPerformance = function (data) {
   }
 };
 
+FWVAST.logVideoEvents = function (video) {
+  var events = ['loadstart', 'durationchange', 'loadedmetadata', 'loadeddata', 'progress', 'canplay', 'canplaythrough'];
+  events.forEach(function (value) {
+    video.addEventListener(value, function (e) {
+      if (e && e.type) {
+        _fw.FW.log('RMP-VAST: content player event - ' + e.type);
+      }
+    });
+  });
+};
+
 exports.FWVAST = FWVAST;
 
 },{"./fw":8}],8:[function(require,module,exports){
@@ -1559,11 +1582,15 @@ FW.getHeight = function (element) {
   }
   return 0;
 };
+
 FW.getComputedStyle = function (element, style) {
   var cs = '';
-  if (element) {
-    cs = window.getComputedStyle(element, null).getPropertyValue(style);
-    cs = cs.toString().toLowerCase();
+  if (element && typeof window.getComputedStyle === 'function') {
+    var _cs = window.getComputedStyle(element, null);
+    if (_cs) {
+      var propertyValue = _cs.getPropertyValue(style);
+      propertyValue = propertyValue.toString().toLowerCase();
+    }
   }
   return cs;
 };
@@ -1709,6 +1736,9 @@ window.RmpVast = function (id, params) {
   this.container = document.getElementById(this.id);
   this.content = this.container.getElementsByClassName('rmp-content')[0];
   this.contentPlayer = this.container.getElementsByClassName('rmp-video')[0];
+  if (DEBUG) {
+    _fwVast.FWVAST.logVideoEvents(this.contentPlayer);
+  }
   this.adContainer = null;
   this.isInFullscreen = false;
   this.rmpVastInitialized = false;
@@ -1998,43 +2028,9 @@ var _onXmlAvailable = function _onXmlAvailable(xml) {
   _parseCreatives.call(this, creative);
 };
 
-RmpVast.prototype.loadAds = function (vastUrl) {
+var _makeAjaxRequest = function _makeAjaxRequest(vastUrl) {
   var _this = this;
 
-  if (typeof vastUrl !== 'string' || vastUrl === '') {
-    _vastErrors.VASTERRORS.process.call(this, 1001);
-    return;
-  }
-  if (!_fwVast.FWVAST.hasDOMParser()) {
-    _vastErrors.VASTERRORS.process.call(this, 1002);
-    return;
-  }
-  // if we try to load ads when currentTime < 200 ms - be it linear or non-linear - we pause CONTENTPLAYER
-  // CONTENTPLAYER (non-linear) or VASTPLAYER (linear) will resume later when VAST has finished loading/parsing
-  // this is to avoid bad user experience where content may start for a few ms before ad starts
-  var contentCurrentTime = _contentPlayer.CONTENTPLAYER.getCurrentTime.call(this);
-  if (contentCurrentTime < 200) {
-    if (DEBUG) {
-      _fw.FW.log('RMP-VAST: pause content for pre-roll while processing loadAds');
-    }
-    _contentPlayer.CONTENTPLAYER.pause.call(this);
-  }
-  // for useContentPlayerForAds we need to know early what is the content src
-  // so that we can resume content when ad finishes or on aderror
-  if (this.useContentPlayerForAds) {
-    if (this.contentPlayer.currentSrc) {
-      this.currentContentSrc = this.contentPlayer.currentSrc;
-    } else if (this.contentPlayer.src) {
-      this.currentContentSrc = this.contentPlayer.src;
-    } else {
-      _vastErrors.VASTERRORS.process.call(this, 1003);
-      return;
-    }
-    if (DEBUG) {
-      _fw.FW.log('RMP-VAST: currentContentSrc is ' + this.currentContentSrc);
-    }
-    this.currentContentCurrentTime = contentCurrentTime;
-  }
   // if we already have an ad on stage - we need to destroy it first 
   if (this.adOnStage) {
     _api.API.stopAds.call(this);
@@ -2067,6 +2063,52 @@ RmpVast.prototype.loadAds = function (vastUrl) {
     _fw.FW.trace(e);
     _vastErrors.VASTERRORS.process.call(_this, 1000);
   });
+};
+
+RmpVast.prototype.loadAds = function (vastUrl) {
+  if (typeof vastUrl !== 'string' || vastUrl === '') {
+    _vastErrors.VASTERRORS.process.call(this, 1001);
+    return;
+  }
+  if (!_fwVast.FWVAST.hasDOMParser()) {
+    _vastErrors.VASTERRORS.process.call(this, 1002);
+    return;
+  }
+  // if we try to load ads when currentTime < 200 ms - be it linear or non-linear - we pause CONTENTPLAYER
+  // CONTENTPLAYER (non-linear) or VASTPLAYER (linear) will resume later when VAST has finished loading/parsing
+  // this is to avoid bad user experience where content may start for a few ms before ad starts
+  var contentCurrentTime = _contentPlayer.CONTENTPLAYER.getCurrentTime.call(this);
+  if (contentCurrentTime < 200) {
+    if (DEBUG) {
+      _fw.FW.log('RMP-VAST: pause content for pre-roll while processing loadAds');
+    }
+    _contentPlayer.CONTENTPLAYER.pause.call(this);
+  }
+  // for useContentPlayerForAds we need to know early what is the content src
+  // so that we can resume content when ad finishes or on aderror
+  if (this.useContentPlayerForAds) {
+    if (this.contentPlayer.currentSrc) {
+      this.currentContentSrc = this.contentPlayer.currentSrc;
+      _makeAjaxRequest.call(this, vastUrl);
+    } else {
+      // when muted autoplay is set iOS may only return 
+      // this.contentPlayer.currentSrc after loadstart event
+      var _updateInitialContentSrc = function _updateInitialContentSrc() {
+        this.contentPlayer.removeEventListener('loadstart', this.updateInitialContentSrc);
+        if (this.contentPlayer.currentSrc) {
+          this.currentContentSrc = this.contentPlayer.currentSrc;
+          _makeAjaxRequest.call(this, vastUrl);
+        } else {
+          _vastErrors.VASTERRORS.process.call(this, 1003);
+        }
+      };
+      this.updateInitialContentSrc = _updateInitialContentSrc.bind(this);
+      this.contentPlayer.addEventListener('loadstart', this.updateInitialContentSrc);
+    }
+    this.currentContentCurrentTime = contentCurrentTime;
+  } else {
+    _makeAjaxRequest.call(this, vastUrl);
+  }
 };
 
 },{"./api/api":1,"./creatives/linear":3,"./creatives/non-linear":4,"./fw/env":6,"./fw/fw":8,"./fw/fw-vast":7,"./players/content-player":10,"./tracking/ping":12,"./tracking/tracking-events":13,"./utils/reset":14,"./utils/vast-errors":15,"core-js/es6":16}],10:[function(require,module,exports){
@@ -2796,6 +2838,7 @@ RESET.internalVariables = function () {
   this.onFullscreenchange = null;
   this.onPlayingSeek = null;
   this.onContextMenu = null;
+  this.updateInitialContentSrc = null;
   // init internal variables
   this.adTagUrl = null;
   this.vastPlayer = null;
@@ -2895,7 +2938,7 @@ RESET.unwireVastPlayerEvents = function () {
     }
     // click UI on mobile
     if (this.clickUIOnMobile) {
-      this.clickUIOnMobile.addEventListener('touchend', this.onClickThrough);
+      this.clickUIOnMobile.removeEventListener('click', this.onClickThrough);
     }
     // fullscreen
     if (_env.ENV.hasNativeFullscreenSupport) {
@@ -2906,6 +2949,10 @@ RESET.unwireVastPlayerEvents = function () {
         this.vastPlayer.removeEventListener('webkitendfullscreen', this.onFullscreenchange);
       }
     }
+  }
+  if (this.contentPlayer) {
+    this.contentPlayer.removeEventListener('loadstart', this.updateInitialContentSrc);
+    this.contentPlayer.removeEventListener('playing', this.onPlayingSeek);
   }
 };
 

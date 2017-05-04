@@ -167,4 +167,16 @@ FWVAST.logPerformance = function (data) {
   }
 };
 
+FWVAST.logVideoEvents = function (video) {
+  let events = ['loadstart', 'durationchange', 'loadedmetadata',
+    'loadeddata', 'progress', 'canplay', 'canplaythrough'];
+  events.forEach((value) => {
+    video.addEventListener(value, (e) => {
+      if (e && e.type) {
+        FW.log('RMP-VAST: content player event - ' + e.type);
+      }
+    });
+  });
+};
+
 export { FWVAST };

@@ -22,6 +22,9 @@ window.RmpVast = function (id, params) {
   this.container = document.getElementById(this.id);
   this.content = this.container.getElementsByClassName('rmp-content')[0];
   this.contentPlayer = this.container.getElementsByClassName('rmp-video')[0];
+  if (DEBUG) {
+    FWVAST.logVideoEvents(this.contentPlayer);
+  }
   this.adContainer = null;
   this.isInFullscreen = false;
   this.rmpVastInitialized = false;
@@ -312,41 +315,7 @@ var _onXmlAvailable = function (xml) {
   _parseCreatives.call(this, creative);
 };
 
-RmpVast.prototype.loadAds = function (vastUrl) {
-  if (typeof vastUrl !== 'string' || vastUrl === '') {
-    VASTERRORS.process.call(this, 1001);
-    return;
-  }
-  if (!FWVAST.hasDOMParser()) {
-    VASTERRORS.process.call(this, 1002);
-    return;
-  }
-  // if we try to load ads when currentTime < 200 ms - be it linear or non-linear - we pause CONTENTPLAYER
-  // CONTENTPLAYER (non-linear) or VASTPLAYER (linear) will resume later when VAST has finished loading/parsing
-  // this is to avoid bad user experience where content may start for a few ms before ad starts
-  let contentCurrentTime = CONTENTPLAYER.getCurrentTime.call(this);
-  if (contentCurrentTime < 200) {
-    if (DEBUG) {
-      FW.log('RMP-VAST: pause content for pre-roll while processing loadAds');
-    }
-    CONTENTPLAYER.pause.call(this);
-  }
-  // for useContentPlayerForAds we need to know early what is the content src
-  // so that we can resume content when ad finishes or on aderror
-  if (this.useContentPlayerForAds) {
-    if (this.contentPlayer.currentSrc) {
-      this.currentContentSrc = this.contentPlayer.currentSrc;
-    } else if (this.contentPlayer.src) {
-      this.currentContentSrc = this.contentPlayer.src;
-    } else {
-      VASTERRORS.process.call(this, 1003);
-      return;
-    }
-    if (DEBUG) {
-      FW.log('RMP-VAST: currentContentSrc is ' + this.currentContentSrc);
-    }
-    this.currentContentCurrentTime = contentCurrentTime;
-  }
+var _makeAjaxRequest = function (vastUrl) {
   // if we already have an ad on stage - we need to destroy it first 
   if (this.adOnStage) {
     API.stopAds.call(this);
@@ -379,4 +348,50 @@ RmpVast.prototype.loadAds = function (vastUrl) {
     FW.trace(e);
     VASTERRORS.process.call(this, 1000);
   });
+};
+
+RmpVast.prototype.loadAds = function (vastUrl) {
+  if (typeof vastUrl !== 'string' || vastUrl === '') {
+    VASTERRORS.process.call(this, 1001);
+    return;
+  }
+  if (!FWVAST.hasDOMParser()) {
+    VASTERRORS.process.call(this, 1002);
+    return;
+  }
+  // if we try to load ads when currentTime < 200 ms - be it linear or non-linear - we pause CONTENTPLAYER
+  // CONTENTPLAYER (non-linear) or VASTPLAYER (linear) will resume later when VAST has finished loading/parsing
+  // this is to avoid bad user experience where content may start for a few ms before ad starts
+  let contentCurrentTime = CONTENTPLAYER.getCurrentTime.call(this);
+  if (contentCurrentTime < 200) {
+    if (DEBUG) {
+      FW.log('RMP-VAST: pause content for pre-roll while processing loadAds');
+    }
+    CONTENTPLAYER.pause.call(this);
+  }
+  // for useContentPlayerForAds we need to know early what is the content src
+  // so that we can resume content when ad finishes or on aderror
+  if (this.useContentPlayerForAds) {
+    if (this.contentPlayer.currentSrc) {
+      this.currentContentSrc = this.contentPlayer.currentSrc;
+      _makeAjaxRequest.call(this, vastUrl);
+    } else {
+      // when muted autoplay is set iOS may only return 
+      // this.contentPlayer.currentSrc after loadstart event
+      let _updateInitialContentSrc = function () {
+        this.contentPlayer.removeEventListener('loadstart', this.updateInitialContentSrc);
+        if (this.contentPlayer.currentSrc) {
+          this.currentContentSrc = this.contentPlayer.currentSrc;
+          _makeAjaxRequest.call(this, vastUrl);
+        } else {
+          VASTERRORS.process.call(this, 1003);
+        }
+      };
+      this.updateInitialContentSrc = _updateInitialContentSrc.bind(this);
+      this.contentPlayer.addEventListener('loadstart', this.updateInitialContentSrc);
+    }
+    this.currentContentCurrentTime = contentCurrentTime;
+  } else {
+    _makeAjaxRequest.call(this, vastUrl);
+  }
 };

@@ -30,6 +30,7 @@ RESET.internalVariables = function () {
   this.onFullscreenchange = null;
   this.onPlayingSeek = null;
   this.onContextMenu = null;
+  this.updateInitialContentSrc = null;
   // init internal variables
   this.adTagUrl = null;
   this.vastPlayer = null;
@@ -129,7 +130,7 @@ RESET.unwireVastPlayerEvents = function () {
     }
     // click UI on mobile
     if (this.clickUIOnMobile) {
-      this.clickUIOnMobile.addEventListener('touchend', this.onClickThrough);
+      this.clickUIOnMobile.removeEventListener('click', this.onClickThrough);
     }
     // fullscreen
     if (ENV.hasNativeFullscreenSupport) {
@@ -140,6 +141,10 @@ RESET.unwireVastPlayerEvents = function () {
         this.vastPlayer.removeEventListener('webkitendfullscreen', this.onFullscreenchange);
       }
     }
+  }
+  if (this.contentPlayer) {
+    this.contentPlayer.removeEventListener('loadstart', this.updateInitialContentSrc);
+    this.contentPlayer.removeEventListener('playing', this.onPlayingSeek);
   }
 };
 

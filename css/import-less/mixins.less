@@ -14,3 +14,12 @@
   -moz-box-sizing: @string;
   box-sizing: @string;
 }
+
+.transition(@property: background; @duration: 0.4s) {
+  -webkit-transition-property: @property;
+  -moz-transition-property: @property;
+  transition-property: @property;
+  -webkit-transition-duration: @duration;
+  -moz-transition-duration: @duration;
+  transition-duration: @duration;
+}

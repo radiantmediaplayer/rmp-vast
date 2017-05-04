@@ -10,29 +10,39 @@
   <link rel="stylesheet" href="css/app.css">
   <link rel="stylesheet" href="../css/rmp-vast.min.css">
   <script src="../js/dist/rmp-vast.js"></script>
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
 </head>
 
 <body>
   <div class="rmp-container" id="rmpPlayer">
     <div class="rmp-content">
-      <video class="rmp-video" preload="none" playsinline autoplay>
+      <video class="rmp-video" preload="none" playsinline muted autoplay>
         <source src="https://www.rmp-streaming.com/media/bbb-360p.mp4" type="video/mp4">
         <source src="https://www.rmp-streaming.com/media/bbb-360p.webm" type="video/webm">
       </video>
     </div>
   </div>
+
+  <!--<button id="play">PLAY</button>-->
   <script>
     var id = 'rmpPlayer';
     var container = document.getElementById(id);
     var video = container.getElementsByClassName('rmp-video')[0];
-    var ADTAG = 'https://www.radiantmediaplayer.com/vast/tags/inline-linear.xml';
+    var ADTAG = 'https://www.radiantmediaplayer.com/vast/tags/inline-linear-5.xml';
     var rmpVast = new RmpVast(id);
 
     var _onPlayLoadAds = function () {
+      console.log('PLAY');
       video.removeEventListener('play', _onPlayLoadAds);
       rmpVast.loadAds(ADTAG);
     };
 
     video.addEventListener('play', _onPlayLoadAds);
+
+    /*var play = document.getElementById('play');
+    play.addEventListener('click', function () {
+      rmpVast.play();
+    });*/
   </script>
 </body>

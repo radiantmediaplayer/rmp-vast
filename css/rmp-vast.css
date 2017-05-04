@@ -120,9 +120,31 @@
   border: 2px solid #fff;
   background: rgba(0, 0, 0, 0.33);
   color: #fff;
+  display: block;
   position: absolute;
   right: 8px;
   top: 8px;
   font-size: 18px;
   padding: 8px;
+  cursor: auto;
+  text-decoration: none;
+  -webkit-transition-property: opacity;
+  -moz-transition-property: opacity;
+  transition-property: opacity;
+  -webkit-transition-duration: 0.6s;
+  -moz-transition-duration: 0.6s;
+  transition-duration: 0.6s;
+}
+.rmp-ad-click-ui-mobile:visited {
+  color: #fff;
+  text-decoration: none;
+}
+.rmp-ad-click-ui-mobile:hover {
+  color: #fff;
+  cursor: pointer;
+  text-decoration: none;
+}
+.rmp-ad-click-ui-mobile:active {
+  color: #fff;
+  text-decoration: none;
 }

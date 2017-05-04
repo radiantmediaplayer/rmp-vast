@@ -47,11 +47,10 @@ var _onClickThrough = function (event) {
   try {
     if (event) {
       event.stopPropagation();
-      if (event.type === 'touchend') {
-        event.preventDefault();
-      }
     }
-    window.open(this.clickThroughUrl, '_blank');
+    if (!ENV.isMobile) {
+      window.open(this.clickThroughUrl, '_blank');
+    }
     API.createEvent.call(this, 'adclick');
     FWVAST.dispatchPingEvent.call(this, 'clickthrough');
   } catch (e) {
@@ -65,11 +64,23 @@ var _onPlaybackError = function () {
 };
 
 var _appendClickUIOnMobile = function () {
-  this.clickUIOnMobile = document.createElement('div');
+  // we create a <a> tag rather than using window.open 
+  // because it works better in standalone mode and WebView
+  this.clickUIOnMobile = document.createElement('a');
+  this.clickUIOnMobile.style.opacity = 0;
   this.clickUIOnMobile.className = 'rmp-ad-click-ui-mobile';
   this.clickUIOnMobile.textContent = this.params.textForClickUIOnMobile;
-  this.clickUIOnMobile.addEventListener('touchend', this.onClickThrough);
+  this.clickUIOnMobile.addEventListener('click', this.onClickThrough);
+  this.clickUIOnMobile.href = this.clickThroughUrl;
+  this.clickUIOnMobile.target = '_blank';
   this.adContainer.appendChild(this.clickUIOnMobile);
+  // on iOS without this timeout we have an un-nice resizing quirk
+  setTimeout(() => {
+    if (this.clickUIOnMobile) {
+      this.clickUIOnMobile.style.opacity = 1;
+    }
+  }, 400);
+
 };
 
 var _onContextMenu = function (event) {
