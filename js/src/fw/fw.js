@@ -91,15 +91,15 @@ FW.getHeight = function (element) {
 };
 
 FW.getComputedStyle = function (element, style) {
-  let cs = '';
+  let propertyValue = '';
   if (element && typeof window.getComputedStyle === 'function') {
     let cs = window.getComputedStyle(element, null);
     if (cs) {
-      let propertyValue = cs.getPropertyValue(style);
+      propertyValue = cs.getPropertyValue(style);
       propertyValue = propertyValue.toString().toLowerCase();
     }
   }
-  return cs;
+  return propertyValue;
 };
 
 FW.show = function (element) {
