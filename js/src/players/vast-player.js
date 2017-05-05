@@ -90,6 +90,8 @@ VASTPLAYER.init = function () {
     if (this.contentPlayer.muted) {
       this.vastPlayer.muted = true;
     }
+    // black poster based 64 GIF
+    this.vastPlayer.poster = 'data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=';
     this.vastPlayer.setAttribute('x-webkit-airplay', 'allow');
     if (typeof this.contentPlayer.playsInline === 'boolean' && this.contentPlayer.playsInline) {
       this.vastPlayer.playsInline = true;
