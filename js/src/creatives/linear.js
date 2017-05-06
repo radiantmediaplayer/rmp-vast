@@ -125,12 +125,6 @@ LINEAR.update = function (url, type) {
     }
   }
 
-  // append to rmp-ad-container if not there already
-  let existingVastPlayer = this.adContainer.getElementsByClassName('rmp-ad-vast-video-player')[0];
-  if (!this.useContentPlayerForAds && !existingVastPlayer) {
-    this.adContainer.appendChild(this.vastPlayer);
-  }
-
   // check fullscreen state
   // this is to account for non-trivial use-cases where player may be in fullscreen before
   // vastPlayer is in DOM

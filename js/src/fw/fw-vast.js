@@ -10,7 +10,7 @@ FWVAST.hasDOMParser = function () {
 };
 
 FWVAST.vastReadableTime = function (time) {
-  if (FW.isNumber(time)) {
+  if (FW.isNumber(time) && time >= 0) {
     let seconds = 0;
     let minutes = 0;
     let hours = 0;

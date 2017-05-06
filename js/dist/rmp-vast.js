@@ -1,6 +1,6 @@
 /**
  * @license Copyright (c) 2017 Radiant Media Player | https://www.radiantmediaplayer.com
- * rmp-vast 0.1.9
+ * rmp-vast 0.1.10
  * GitHub: https://github.com/radiantmediaplayer/rmp-vast
  * MIT License: https://github.com/radiantmediaplayer/rmp-vast/blob/master/LICENSE
  */
@@ -649,12 +649,6 @@ LINEAR.update = function (url, type) {
     } else {
       this.vastPlayerSource = existingVastPlayerSource;
     }
-  }
-
-  // append to rmp-ad-container if not there already
-  var existingVastPlayer = this.adContainer.getElementsByClassName('rmp-ad-vast-video-player')[0];
-  if (!this.useContentPlayerForAds && !existingVastPlayer) {
-    this.adContainer.appendChild(this.vastPlayer);
   }
 
   // check fullscreen state
@@ -1322,7 +1316,7 @@ FWVAST.hasDOMParser = function () {
 };
 
 FWVAST.vastReadableTime = function (time) {
-  if (_fw.FW.isNumber(time)) {
+  if (_fw.FW.isNumber(time) && time >= 0) {
     var seconds = 0;
     var minutes = 0;
     var hours = 0;
@@ -2325,6 +2319,8 @@ VASTPLAYER.init = function () {
     }
     this.vastPlayer.preload = 'auto';
     this.vastPlayer.defaultPlaybackRate = 1;
+    // append to rmp-ad-container
+    this.adContainer.appendChild(this.vastPlayer);
     // on mobile we need to init the vast player video tag
     // we do this by calling play/pause as a result of a direct user interaction
     // unless we are muted in which case we can use autoplay or HTMLMediaElement.play() 
@@ -2344,7 +2340,7 @@ VASTPLAYER.init = function () {
 
 VASTPLAYER.append = function (url, type) {
   // this is for autoplay on desktop
-  // or muted autoplay on mobile where player is not initialize
+  // or muted autoplay on mobile where player is not initialized
   if (!this.rmpVastInitialized) {
     VASTPLAYER.init.call(this);
   }

@@ -103,6 +103,8 @@ VASTPLAYER.init = function () {
     }
     this.vastPlayer.preload = 'auto';
     this.vastPlayer.defaultPlaybackRate = 1;
+    // append to rmp-ad-container
+    this.adContainer.appendChild(this.vastPlayer);
     // on mobile we need to init the vast player video tag
     // we do this by calling play/pause as a result of a direct user interaction
     // unless we are muted in which case we can use autoplay or HTMLMediaElement.play() 
@@ -122,7 +124,7 @@ VASTPLAYER.init = function () {
 
 VASTPLAYER.append = function (url, type) {
   // this is for autoplay on desktop
-  // or muted autoplay on mobile where player is not initialize
+  // or muted autoplay on mobile where player is not initialized
   if (!this.rmpVastInitialized) {
     VASTPLAYER.init.call(this);
   }
