@@ -882,6 +882,9 @@ var _onNonLinearLoadSuccess = function _onNonLinearLoadSuccess() {
 var _onNonLinearClickThrough = function _onNonLinearClickThrough() {
   try {
     window.open(this.clickThroughUrl, '_blank');
+    if (this.params.pauseOnClick) {
+      this.pause();
+    }
     _api.API.createEvent.call(this, 'adclick');
     _fwVast.FWVAST.dispatchPingEvent.call(this, 'clickthrough');
   } catch (e) {
