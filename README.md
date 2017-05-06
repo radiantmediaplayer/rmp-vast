@@ -113,6 +113,8 @@ Once rmp-vast is loaded on your page you can create a new rmp-vast instance as f
 
 `params.maxNumRedirects: Number` the number of VAST wrappers the player should follow before triggering an error. Default: 4.
 
+`params.pauseOnClick: Boolean` when an ad is clicked - pause or not VAST player (linear) or content player (non-linear). Default: true.
+
 `params.skipMessage: String` the skip message to show on player when a skippable ad is detected and the ad is in a state where it can be skipped. Default: 'Skip ad'.
 
 `params.skipWaitingMessage: String` the skip message to show on player when a skippable ad is detected and the ad is in a state where it cannot be skipped. Default: 'Skip ad in'. This will be completed by the number of seconds remaining before the ad state changes to a state where it can be skipped.
