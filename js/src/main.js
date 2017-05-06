@@ -43,6 +43,7 @@ window.RmpVast = function (id, params) {
     ajaxTimeout: 10000,
     ajaxWithCredentials: true,
     maxNumRedirects: 4,
+    pauseOnClick: true,
     skipMessage: 'Skip ad',
     skipWaitingMessage: 'Skip ad in',
     textForClickUIOnMobile: 'Learn more'
@@ -57,6 +58,9 @@ window.RmpVast = function (id, params) {
     }
     if (FW.isNumber(params.maxNumRedirects) && params.maxNumRedirects > 0 && params.maxNumRedirects !== 4) {
       this.params.maxNumRedirects = params.maxNumRedirects;
+    }
+    if (typeof params.pauseOnClick === 'boolean') {
+      this.params.pauseOnClick = params.pauseOnClick;
     }
     if (typeof params.skipMessage === 'string') {
       this.params.skipMessage = params.skipMessage;

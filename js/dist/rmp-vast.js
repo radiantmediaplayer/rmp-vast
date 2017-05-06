@@ -1,6 +1,6 @@
 /**
  * @license Copyright (c) 2017 Radiant Media Player | https://www.radiantmediaplayer.com
- * rmp-vast 0.1.8
+ * rmp-vast 0.1.9
  * GitHub: https://github.com/radiantmediaplayer/rmp-vast
  * MIT License: https://github.com/radiantmediaplayer/rmp-vast/blob/master/LICENSE
  */
@@ -575,6 +575,9 @@ var _onClickThrough = function _onClickThrough(event) {
     }
     if (!_env.ENV.isMobile) {
       window.open(this.clickThroughUrl, '_blank');
+    }
+    if (this.params.pauseOnClick) {
+      this.pause();
     }
     _api.API.createEvent.call(this, 'adclick');
     _fwVast.FWVAST.dispatchPingEvent.call(this, 'clickthrough');
@@ -1757,6 +1760,7 @@ window.RmpVast = function (id, params) {
     ajaxTimeout: 10000,
     ajaxWithCredentials: true,
     maxNumRedirects: 4,
+    pauseOnClick: true,
     skipMessage: 'Skip ad',
     skipWaitingMessage: 'Skip ad in',
     textForClickUIOnMobile: 'Learn more'
@@ -1771,6 +1775,9 @@ window.RmpVast = function (id, params) {
     }
     if (_fw.FW.isNumber(params.maxNumRedirects) && params.maxNumRedirects > 0 && params.maxNumRedirects !== 4) {
       this.params.maxNumRedirects = params.maxNumRedirects;
+    }
+    if (typeof params.pauseOnClick === 'boolean') {
+      this.params.pauseOnClick = params.pauseOnClick;
     }
     if (typeof params.skipMessage === 'string') {
       this.params.skipMessage = params.skipMessage;
@@ -2256,21 +2263,23 @@ var _destroyVastPlayer = function _destroyVastPlayer() {
     this.contentPlayer.src = this.currentContentSrc;
     this.contentPlayer.load();
   } else {
-    this.vastPlayer.pause();
-    _fw.FW.hide(this.vastPlayer);
     // empty buffer for vastPlayer
     try {
-      if (this.vastPlayer && this.vastPlayerSource) {
-        if (this.vastPlayerSource.hasAttribute('src')) {
-          this.vastPlayerSource.removeAttribute('src');
-          this.vastPlayer.load();
-          if (DEBUG) {
-            _fw.FW.log('RMP-VAST: emptied VAST player buffer');
+      if (this.vastPlayer) {
+        this.vastPlayer.pause();
+        _fw.FW.hide(this.vastPlayer);
+        if (this.vastPlayerSource) {
+          if (this.vastPlayerSource.hasAttribute('src')) {
+            this.vastPlayerSource.removeAttribute('src');
+            this.vastPlayer.load();
+            if (DEBUG) {
+              _fw.FW.log('RMP-VAST: emptied VAST player buffer');
+            }
           }
         }
-      }
-      if (this.nonLinearCreative) {
-        this.adContainer.removeChild(this.nonLinearCreative);
+        if (this.nonLinearCreative) {
+          this.adContainer.removeChild(this.nonLinearCreative);
+        }
       }
     } catch (e) {
       _fw.FW.trace(e);

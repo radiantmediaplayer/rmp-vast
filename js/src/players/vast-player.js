@@ -44,21 +44,23 @@ var _destroyVastPlayer = function () {
     this.contentPlayer.src = this.currentContentSrc;
     this.contentPlayer.load();
   } else {
-    this.vastPlayer.pause();
-    FW.hide(this.vastPlayer);
     // empty buffer for vastPlayer
     try {
-      if (this.vastPlayer && this.vastPlayerSource) {
-        if (this.vastPlayerSource.hasAttribute('src')) {
-          this.vastPlayerSource.removeAttribute('src');
-          this.vastPlayer.load();
-          if (DEBUG) {
-            FW.log('RMP-VAST: emptied VAST player buffer');
+      if (this.vastPlayer) {
+        this.vastPlayer.pause();
+        FW.hide(this.vastPlayer);
+        if (this.vastPlayerSource) {
+          if (this.vastPlayerSource.hasAttribute('src')) {
+            this.vastPlayerSource.removeAttribute('src');
+            this.vastPlayer.load();
+            if (DEBUG) {
+              FW.log('RMP-VAST: emptied VAST player buffer');
+            }
           }
         }
-      }
-      if (this.nonLinearCreative) {
-        this.adContainer.removeChild(this.nonLinearCreative);
+        if (this.nonLinearCreative) {
+          this.adContainer.removeChild(this.nonLinearCreative);
+        }
       }
     } catch (e) {
       FW.trace(e);

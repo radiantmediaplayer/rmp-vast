@@ -51,6 +51,9 @@ var _onClickThrough = function (event) {
     if (!ENV.isMobile) {
       window.open(this.clickThroughUrl, '_blank');
     }
+    if (this.params.pauseOnClick) {
+      this.pause();
+    }
     API.createEvent.call(this, 'adclick');
     FWVAST.dispatchPingEvent.call(this, 'clickthrough');
   } catch (e) {
