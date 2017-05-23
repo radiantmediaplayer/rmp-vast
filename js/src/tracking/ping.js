@@ -47,6 +47,9 @@ var _replaceMacros = function (url, errorCode, assetUri) {
 };
 
 var _ping = function (url) {
+  // we expect an image format for the tracker (generally a 1px GIF/PNG/JPG) as 
+  // this is the most common format in the industry 
+  // other format may produce errors and the related tracker may not be requested properly
   let img = new Image();
   img.addEventListener('load', () => {
     if (DEBUG) {

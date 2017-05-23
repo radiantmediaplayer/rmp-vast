@@ -40,7 +40,7 @@ window.RmpVast = function (id, params) {
   }
   // filter input params
   let defaultParams = {
-    ajaxTimeout: 10000,
+    ajaxTimeout: 8000,
     ajaxWithCredentials: true,
     maxNumRedirects: 4,
     pauseOnClick: true,
@@ -320,6 +320,16 @@ var _onXmlAvailable = function (xml) {
 };
 
 var _makeAjaxRequest = function (vastUrl) {
+  // we check for required VAST URL and API here
+  // as we need to have this.currentContentSrc available for iOS
+  if (typeof vastUrl !== 'string' || vastUrl === '') {
+    VASTERRORS.process.call(this, 1001);
+    return;
+  }
+  if (!FWVAST.hasDOMParser()) {
+    VASTERRORS.process.call(this, 1002);
+    return;
+  }
   // if we already have an ad on stage - we need to destroy it first 
   if (this.adOnStage) {
     API.stopAds.call(this);
@@ -355,14 +365,6 @@ var _makeAjaxRequest = function (vastUrl) {
 };
 
 RmpVast.prototype.loadAds = function (vastUrl) {
-  if (typeof vastUrl !== 'string' || vastUrl === '') {
-    VASTERRORS.process.call(this, 1001);
-    return;
-  }
-  if (!FWVAST.hasDOMParser()) {
-    VASTERRORS.process.call(this, 1002);
-    return;
-  }
   // if we try to load ads when currentTime < 200 ms - be it linear or non-linear - we pause CONTENTPLAYER
   // CONTENTPLAYER (non-linear) or VASTPLAYER (linear) will resume later when VAST has finished loading/parsing
   // this is to avoid bad user experience where content may start for a few ms before ad starts

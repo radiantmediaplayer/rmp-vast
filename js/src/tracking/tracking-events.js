@@ -217,9 +217,9 @@ TRACKINGEVENTS.wire = function () {
     FW.log(this.trackingTags);
   }
   for (let i = 0, len = this.trackingTags.length; i < len; i++) {
-    if (this.vastPlayer) {
+    if (this.vastPlayer && this.adIsLinear) {
       this.vastPlayer.addEventListener(this.trackingTags[i].event, this.onEventPingTracking);
-    } else if (this.nonLinearCreative) {
+    } else if (this.nonLinearCreative && !this.adIsLinear) {
       // non linear
       this.nonLinearCreative.addEventListener(this.trackingTags[i].event, this.onEventPingTracking);
     }

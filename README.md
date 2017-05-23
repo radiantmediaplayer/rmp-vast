@@ -14,7 +14,7 @@ rmp-vast is an open-source project released under [MIT license](https://github.c
 - Linear Ads (MP4/WebM or HLS where natively supported)
 - Skippable Linear Ads (MP4/WebM or HLS where natively supported)
 - Non Linear Ads (Images)
-- Tracking Events
+- Tracking Events (tracking URLs must return an image - generally a 1px GIF/PNG/JPG)
 - Error Reporting
 - Industry Icons
 - VAST 3 Macros

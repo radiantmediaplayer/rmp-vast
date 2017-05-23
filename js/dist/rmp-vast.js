@@ -1,6 +1,6 @@
 /**
  * @license Copyright (c) 2017 Radiant Media Player | https://www.radiantmediaplayer.com
- * rmp-vast 0.1.10
+ * rmp-vast 0.1.11
  * GitHub: https://github.com/radiantmediaplayer/rmp-vast
  * MIT License: https://github.com/radiantmediaplayer/rmp-vast/blob/master/LICENSE
  */
@@ -1754,7 +1754,7 @@ window.RmpVast = function (id, params) {
   }
   // filter input params
   var defaultParams = {
-    ajaxTimeout: 10000,
+    ajaxTimeout: 8000,
     ajaxWithCredentials: true,
     maxNumRedirects: 4,
     pauseOnClick: true,
@@ -2035,6 +2035,16 @@ var _onXmlAvailable = function _onXmlAvailable(xml) {
 var _makeAjaxRequest = function _makeAjaxRequest(vastUrl) {
   var _this = this;
 
+  // we check for required VAST URL and API here
+  // as we need to have this.currentContentSrc available for iOS
+  if (typeof vastUrl !== 'string' || vastUrl === '') {
+    _vastErrors.VASTERRORS.process.call(this, 1001);
+    return;
+  }
+  if (!_fwVast.FWVAST.hasDOMParser()) {
+    _vastErrors.VASTERRORS.process.call(this, 1002);
+    return;
+  }
   // if we already have an ad on stage - we need to destroy it first 
   if (this.adOnStage) {
     _api.API.stopAds.call(this);
@@ -2070,14 +2080,6 @@ var _makeAjaxRequest = function _makeAjaxRequest(vastUrl) {
 };
 
 RmpVast.prototype.loadAds = function (vastUrl) {
-  if (typeof vastUrl !== 'string' || vastUrl === '') {
-    _vastErrors.VASTERRORS.process.call(this, 1001);
-    return;
-  }
-  if (!_fwVast.FWVAST.hasDOMParser()) {
-    _vastErrors.VASTERRORS.process.call(this, 1002);
-    return;
-  }
   // if we try to load ads when currentTime < 200 ms - be it linear or non-linear - we pause CONTENTPLAYER
   // CONTENTPLAYER (non-linear) or VASTPLAYER (linear) will resume later when VAST has finished loading/parsing
   // this is to avoid bad user experience where content may start for a few ms before ad starts
@@ -2493,6 +2495,9 @@ var _replaceMacros = function _replaceMacros(url, errorCode, assetUri) {
 };
 
 var _ping = function _ping(url) {
+  // we expect an image format for the tracker (generally a 1px GIF/PNG/JPG) as 
+  // this is the most common format in the industry 
+  // other format may produce errors and the related tracker may not be requested properly
   var img = new Image();
   img.addEventListener('load', function () {
     if (DEBUG) {
@@ -2769,9 +2774,9 @@ TRACKINGEVENTS.wire = function () {
     _fw.FW.log(this.trackingTags);
   }
   for (var i = 0, len = this.trackingTags.length; i < len; i++) {
-    if (this.vastPlayer) {
+    if (this.vastPlayer && this.adIsLinear) {
       this.vastPlayer.addEventListener(this.trackingTags[i].event, this.onEventPingTracking);
-    } else if (this.nonLinearCreative) {
+    } else if (this.nonLinearCreative && !this.adIsLinear) {
       // non linear
       this.nonLinearCreative.addEventListener(this.trackingTags[i].event, this.onEventPingTracking);
     }
