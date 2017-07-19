@@ -241,4 +241,4 @@ Before committing for a pull request - run test:
 
 `grunt test` 
 
-You can refer to the [node.js selenium-webdriver](https://github.com/SeleniumHQ/selenium/tree/master/javascript/node/selenium-webdriver) for information on how to comply with Selenium-based testing and how to install chromedriver.
+You can refer to the [node.js selenium-webdriver](https://github.com/SeleniumHQ/selenium/tree/master/javascript/node/selenium-webdriver) for information on how to comply with Selenium-based testing and how to install chromedriver. Before running `grunt test` make sure to review test/spec/main/mainSpec.js and update the testUrls Array if needed with your local server path.
