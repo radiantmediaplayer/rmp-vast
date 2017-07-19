@@ -12,6 +12,8 @@ describe("Test for VPAID JS ad", function () {
   var video = container.getElementsByClassName('rmp-video')[0];
   var rmpVast = new RmpVast(id);
   var fw = rmpVast.getFW();
+  var testResults = document.getElementById('test-results');
+
 
   it("should load adTag and trigger an error", function (done) {
     var validSteps = 0;
@@ -36,6 +38,9 @@ describe("Test for VPAID JS ad", function () {
     container.addEventListener('addestroyed', function (e) {
       _incrementAndLog(e);
       expect(validSteps).toBe(3);
+      if (validSteps === 3) {
+        testResults.style.display = 'block';
+      }
       done();
     });
 

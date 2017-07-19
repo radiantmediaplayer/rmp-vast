@@ -10,6 +10,7 @@ import { API } from './api/api';
 import { CONTENTPLAYER } from './players/content-player';
 import { RESET } from './utils/reset';
 import { VASTERRORS } from './utils/vast-errors';
+import { ICONS } from './creatives/icons';
 
 window.DEBUG = true;
 
@@ -143,8 +144,8 @@ var _parseCreatives = function (creative) {
         }
         this.isSkippableAd = true;
         this.skipoffset = skipoffset;
-        // we  do not display skippable ads when useContentPlayerForAds is true
-        if (this.useContentPlayerForAds) {
+        // we  do not display skippable ads when useContentPlayerForAds is true on is iOS < 10
+        if (this.useContentPlayerForAds && ENV.isIos[0] && ENV.isIos[1] < 10) {
           PING.error.call(this, 200, this.inlineOrWrapperErrorTags);
           VASTERRORS.process.call(this, 200);
           return;
@@ -156,7 +157,7 @@ var _parseCreatives = function (creative) {
       // if present only one TrackingEvents is expected
       if (trackingEvents.length === 1) {
         TRACKINGEVENTS.filter.call(this, trackingEvents);
-      }
+      } 
 
       // VideoClicks for linear
       let videoClicks = linear[0].getElementsByTagName('VideoClicks');
@@ -178,6 +179,11 @@ var _parseCreatives = function (creative) {
 
       // return on wrapper
       if (this.isWrapper) {
+        // if icons are presents then we push valid icons to this.icons
+        let icons = linear[0].getElementsByTagName('Icons');
+        if (icons.length > 0) {
+          ICONS.parse.call(this, icons);
+        }
         _execRedirect.call(this);
         return;
       }
@@ -397,6 +403,8 @@ RmpVast.prototype.loadAds = function (vastUrl) {
       this.contentPlayer.addEventListener('loadstart', this.updateInitialContentSrc);
     }
     this.currentContentCurrentTime = contentCurrentTime;
+    // on iOS we need to prevent seeking when linear ad is on stage
+    CONTENTPLAYER.preventSeekingForCustomPlayback.call(this);
   } else {
     _makeAjaxRequest.call(this, vastUrl);
   }

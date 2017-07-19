@@ -12,6 +12,7 @@ describe("Test for Smart Ad Server ad", function () {
   var video = container.getElementsByClassName('rmp-video')[0];
   var rmpVast = new RmpVast(id);
   var fw = rmpVast.getFW();
+  var testResults = document.getElementById('test-results');
 
   it("should load adTag and play it", function (done) {
     var validSteps = 0;
@@ -48,6 +49,9 @@ describe("Test for Smart Ad Server ad", function () {
         setTimeout(() => {
           rmpVast.play();
         }, 1000);
+        setTimeout(() => {
+          rmpVast.stopAds();
+        }, 3000);
       }, 3000);
     });
 
@@ -67,25 +71,12 @@ describe("Test for Smart Ad Server ad", function () {
       _incrementAndLog(e);
     });
 
-    container.addEventListener('adcomplete', function (e) {
-      _incrementAndLog(e);
-    });
-
-    container.addEventListener('adfirstquartile', function (e) {
-      _incrementAndLog(e);
-    });
-
-    container.addEventListener('admidpoint', function (e) {
-      _incrementAndLog(e);
-    });
-
-    container.addEventListener('adthirdquartile', function (e) {
-      _incrementAndLog(e);
-    });
-
     container.addEventListener('addestroyed', function (e) {
       _incrementAndLog(e);
-      expect(validSteps).toBe(15);
+      expect(validSteps).toBe(10);
+      if (validSteps === 10) {
+        testResults.style.display = 'block';
+      }
       done();
     });
 

@@ -5,7 +5,7 @@ A client-side JavaScript solution to load, parse and display VAST resources (adv
 It aims at closely implementing the [IAB VAST 3 specification](https://www.iab.com/guidelines/digital-video-ad-serving-template-vast-3-0/) for web-based environments 
 (e.g. browser, WebView ...) where both HTML5 video and JavaScript are available.
 
-rmp-vast is used (beta) and maintained by [Radiant Media Player](https://www.radiantmediaplayer.com/).
+rmp-vast is used and maintained by [Radiant Media Player](https://www.radiantmediaplayer.com/).
 
 rmp-vast is an open-source project released under [MIT license](https://github.com/radiantmediaplayer/rmp-vast/blob/master/LICENSE). It is built with ES2015 JavaScript and ported to ES5 JavaScript with Babel.
 
@@ -63,7 +63,7 @@ First download latest rmp-vast package from the [release tab](https://github.com
 You must use rmp-vast in a well-formed HTML document. This means a web-page with a valid HTML5 DOCTYPE and other elements that are commonly available in today's web. See app/index.html for an example.
 
 - Include rmp-vast.min.css
-- Include rmp-vast.min.js - for debug logs include rmp-vast.debug.js (minified + logs) or rmp-vast.js (unminified + logs)
+- Include rmp-vast.min.js - for debug logs include rmp-vast.js
 - In order to use rmp-vast you must adhere to a specific HTML layout pattern. This pattern is as follows: 
 ```
 <div class="rmp-container" id="rmpPlayer">
@@ -103,11 +103,11 @@ Once rmp-vast is loaded on your page you can create a new rmp-vast instance as f
 
 `new RmpVast(id, params)`
 
-`id: String` is the id for the player container. This is a required parameter
+`id: String` is the id for the player container. This is a required parameter.
 
 `params: Object` is an optional object representing various parameters that can be passed to a rmp-vast instance and that will affect the player inner-workings. Available properties for the params object follow:
 
-`params.ajaxTimeout: Number` timeout in ms for an AJAX request to load a VAST tag from the ad server. Default 10000.
+`params.ajaxTimeout: Number` timeout in ms for an AJAX request to load a VAST tag from the ad server. Default 8000.
 
 `params.ajaxWithCredentials: Boolean` AJAX request to load VAST tag from ad server should or should not be made with credentials. Default: true.
 
@@ -122,7 +122,7 @@ Once rmp-vast is loaded on your page you can create a new rmp-vast instance as f
 `params.textForClickUIOnMobile: String` on mobile devices the click-through URL for a linear ad is provided in a box located at the top right corner of the player. This setting set the text for this box. Default: 'Learn more'.
 
 ### Starting the rmp-vast player
-It is important that the rmp-vast instance is properly initialized to avoid playback issues. 
+It is important for the rmp-vast instance to be properly initialized to avoid playback issues. 
 
 Playing video ads in HTML5 video is a non-trivial process that requires the overlaying of multiple video tags or changes in source depending on the targeted environments. On mobile devices a user interaction is required to properly initialized a video tag and various restrictions are set by the OS to limit the manipulation of a video tag with JavaScript.
 
@@ -159,6 +159,7 @@ Available events are:
 - `adclick`
 - `advolumemuted`
 - `advolumechanged`
+- `adclosed`
 - `aderror`
 - `addestroyed`
 
@@ -212,11 +213,11 @@ The following methods provide context information for the rmp-vast instance:
 ## Autoplay support
 This is done by adding the `autoplay` attribute to the video tag having the `rmp-video` class. For muted autoplay (mobile) also add the `muted` attribute on this element. After that you just need to wait for the `play` event on the content player and call `loadAds` method. See the test/LinearMutedAutoplaySpec.html file for a complete example.
 
-Detecting autoplay capabilities for a targeted device is not within rmp-vast scope of support but we strongly encourage you use a feature detection script to do so. At Radiant Media Player we use [rmp-detect-autoplay]( https://github.com/radiantmediaplayer/rmp-detect-autoplay) which we have created for this specific purpose. Indeed OS may apply restrictions and users may have specific settings or accessibility requirements that can prevent autoplay of HTML5 video. In order to provide a good user experience and to avoid technical issues it is best to feature detect autoplay support before using it.
+Detecting autoplay capabilities for a targeted device is not within rmp-vast scope of support but we strongly encourage you use a feature detection script to do so. At Radiant Media Player we use [rmp-detect-autoplay]( https://github.com/radiantmediaplayer/rmp-detect-autoplay) which we have created for this specific purpose. Indeed OS may apply restrictions and users may have specific settings or accessibility requirements that can prevent autoplay of HTML5 video. In order to provide a good user experience, save bandwidth and to avoid technical issues it is best to feature detect autoplay support before using it.
 
 ## Contributing
 Contributions are welcome. Please review general code structure and stick to existing patterns.
-Provide test where appropriate (see test/ folder). Tests are written with Jasmine and are validated in latest stable Chrome for Windows 10.
+Provide test where appropriate (see test/ folder). Tests are written with Jasmine and automated with Selenium and are validated in latest stable Chrome for Windows 10.
 
 To develop rmp-vast do install it:
 
@@ -224,7 +225,7 @@ To develop rmp-vast do install it:
 
 `npm install`
 
-Please review grunt/shell.js - you need to have jshint, browserify, watchify, uglifyjs and stylelint installed globally to move forward
+Please review grunt/shell.js - you need to have jshint, browserify, watchify, uglifyjs, jasmine and stylelint installed globally to move forward
 
 Make changes to code and then run:
 
@@ -238,4 +239,6 @@ to make developement easier (watchify task) and use the app/dev.html file (which
 
 Before committing for a pull request - run test:
 
-go into test/ folder and run any .html files that may have been affected by your changes (title for .html files should be explicit) - run test in latest Chrome for Windows 10. Add tests if your changes are not covered by existing tests.
+`grunt test` 
+
+You can refer to the [node.js selenium-webdriver](https://github.com/SeleniumHQ/selenium/tree/master/javascript/node/selenium-webdriver) for information on how to comply with Selenium-based testing and how to install chromedriver.

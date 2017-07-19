@@ -33,8 +33,12 @@ var _destroyVastPlayer = function () {
   }
   // hide rmp-ad-container
   FW.hide(this.adContainer);
+  // unwire anti-seek logic
+  clearInterval(this.antiSeekLogicInterval);
   if (this.useContentPlayerForAds) {
-    if (this.currentContentCurrentTime > 200) {
+    // when content is restored we need to seek to previously known currentTime
+    // this must happen on playing event
+    if (this.currentContentCurrentTime > 400) {
       this.onPlayingSeek = _onPlayingSeek.bind(this);
       this.contentPlayer.addEventListener('playing', this.onPlayingSeek);
     }
@@ -58,8 +62,8 @@ var _destroyVastPlayer = function () {
             }
           }
         }
-        if (this.nonLinearCreative) {
-          this.adContainer.removeChild(this.nonLinearCreative);
+        if (this.nonLinearContainer) {
+          this.adContainer.removeChild(this.nonLinearContainer);
         }
       }
     } catch (e) {
@@ -83,10 +87,11 @@ VASTPLAYER.init = function () {
   FW.hide(this.adContainer);
   if (!this.useContentPlayerForAds) {
     this.vastPlayer = document.createElement('video');
-    this.vastPlayer.className = 'rmp-ad-vast-video-player';
-    if (!ENV.isMobile) {
-      this.vastPlayer.style.cursor = 'pointer';
+    // disable casting of video ads for Android
+    if (ENV.isAndroid[0] && typeof this.vastPlayer.disableRemotePlayback !== 'undefined') {
+      this.vastPlayer.disableRemotePlayback = true;
     }
+    this.vastPlayer.className = 'rmp-ad-vast-video-player';
     FW.hide(this.vastPlayer);
     this.vastPlayer.controls = false;
     if (this.contentPlayer.muted) {

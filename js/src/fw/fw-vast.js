@@ -106,6 +106,28 @@ FWVAST.RFC3986EncodeURIComponent = function (str) {
   });
 };
 
+FWVAST.isValidDuration = function (duration) {
+  // HH:MM:SS or HH:MM:SS.mmm
+  let skipPattern = /^\d+:\d+:\d+(\.\d+)?$/i;
+  if (skipPattern.test(duration)) {
+    return true;
+  }
+  return false;
+};
+
+FWVAST.convertDurationToSeconds = function (duration) {
+  // duration is HH:MM:SS or HH:MM:SS.mmm
+  // remove .mmm
+  let splitNoMS = duration.split('.');
+  splitNoMS = splitNoMS[0];
+  let splitTime = splitNoMS.split(':');
+  let seconds = 0;
+  seconds = (parseInt(splitTime[0]) * 60 * 60) + (parseInt(splitTime[1]) * 60) +
+    parseInt(splitTime[2]);
+  return seconds;
+};
+
+
 FWVAST.isValidOffset = function (offset) {
   // HH:MM:SS or HH:MM:SS.mmm
   let skipPattern1 = /^\d+:\d+:\d+(\.\d+)?$/i;
@@ -142,8 +164,8 @@ FWVAST.dispatchPingEvent = function (event) {
     let element;
     if (this.adIsLinear && this.vastPlayer) {
       element = this.vastPlayer;
-    } else if (!this.adIsLinear && this.nonLinearCreative) {
-      element = this.nonLinearCreative;
+    } else if (!this.adIsLinear && this.nonLinearContainer) {
+      element = this.nonLinearContainer;
     }
     if (element) {
       if (Array.isArray(event)) {

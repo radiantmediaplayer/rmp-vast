@@ -15,9 +15,9 @@
 </head>
 
 <body>
-  <div class="rmp-container" id="rmpPlayer">
+  <div class="rmp-container" id="rmpPlayer" style="width:640px;height:360px;">
     <div class="rmp-content">
-      <video class="rmp-video" preload="none" playsinline autoplay>
+      <video class="rmp-video" preload="none" playsinline>
         <source src="https://www.rmp-streaming.com/media/bbb-360p.mp4" type="video/mp4">
         <source src="https://www.rmp-streaming.com/media/bbb-360p.webm" type="video/webm">
       </video>
@@ -25,14 +25,14 @@
   </div>
 
   <button id="play">PLAY</button><br>
-  <button id="pause">PAUSE</button>
+  <button id="pause">PAUSE</button><br>
+  <button id="fullscreen">FULLSCREEN</button>
   <script>
     var id = 'rmpPlayer';
     var container = document.getElementById(id);
     var video = container.getElementsByClassName('rmp-video')[0];
-    var ADTAG = 'https://www.radiantmediaplayer.com/vast/tags/inline-linear.xml';
+    var ADTAG = 'https://www.radiantmediaplayer.com/vast/tags/non-linear.xml';
     var params = {
-      pauseOnClick: true
     };
     var rmpVast = new RmpVast(id, params);
 
@@ -52,6 +52,11 @@
     var pause = document.getElementById('pause');
     pause.addEventListener('click', function () {
       rmpVast.pause();
+    });
+
+    var fullscreen = document.getElementById('fullscreen');
+    fullscreen.addEventListener('click', function () {
+      rmpVast.setFullscreen(true);
     });
   </script>
 </body>

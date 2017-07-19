@@ -9,18 +9,23 @@ ICONS.destroy = function () {
     FW.log('RMP-VAST: start destroying icons');
   }
   let icons = this.adContainer.getElementsByClassName('rmp-ad-container-icons');
+  let arrayIcons = [];
   for (let i = 0, len = icons.length; i < len; i++) {
-    this.adContainer.removeChild(icons[i]);
+    arrayIcons.push(icons[i]);
   }
+  arrayIcons.forEach((element) => {
+    this.adContainer.removeChild(element);
+  });
 };
 
 var _programAlreadyPresent = function (program) {
+  let newArray = [];
   for (let i = 0, len = this.icons.length; i < len; i++) {
-    if (this.icons[i].program === program) {
-      return true;
+    if (this.icons[i].program !== program) {
+      newArray.push(this.icons[i]);
     }
   }
-  return false;
+  this.icons = newArray;
 };
 
 ICONS.parse = function (icons) {
@@ -33,10 +38,6 @@ ICONS.parse = function (icons) {
     let program = currentIcon.getAttribute('program');
     // program is required attribute ignore the current icon if not present
     if (program === null || program === '') {
-      continue;
-    }
-    // if program already present we ignore it
-    if (_programAlreadyPresent.call(this, program)) {
       continue;
     }
     // width, height, xPosition, yPosition are all required attributes
@@ -72,6 +73,9 @@ ICONS.parse = function (icons) {
     if (staticResourceUrl === null) {
       continue;
     }
+    // if program already present we delete it
+    _programAlreadyPresent.call(this, program);
+
     let iconData = {
       program: program,
       width: width,

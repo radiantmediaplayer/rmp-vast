@@ -25,9 +25,11 @@ var _onNonLinearLoadSuccess = function () {
   FWVAST.dispatchPingEvent.call(this, ['impression', 'creativeView', 'start']);
 };
 
-var _onNonLinearClickThrough = function () {
+var _onNonLinearClickThrough = function (event) {
   try {
-    window.open(this.clickThroughUrl, '_blank');
+    if (event) {
+      event.stopPropagation();
+    }
     if (this.params.pauseOnClick) {
       this.pause();
     }
@@ -38,24 +40,71 @@ var _onNonLinearClickThrough = function () {
   }
 };
 
+var _onClickCloseNonLinear = function (event) {
+  if (event) {
+    event.stopPropagation();
+  }
+  this.nonLinearContainer.style.display = 'none';
+  API.createEvent.call(this, 'adclosed');
+  FWVAST.dispatchPingEvent.call(this, 'close');
+};
+
+var _appendCloseButton = function () {
+  this.nonLinearClose = document.createElement('div');
+  this.nonLinearClose.className = 'rmp-ad-non-linear-close';
+  if (this.nonLinearMinSuggestedDuration > 0) {
+    this.nonLinearClose.style.display = 'none';
+    setTimeout(() => {
+      if (this.nonLinearClose) {
+        this.nonLinearClose.style.display = 'block';
+      }
+    }, this.nonLinearMinSuggestedDuration * 1000);
+  } else {
+    this.nonLinearClose.style.display = 'block';
+  }
+  this.onClickCloseNonLinear = _onClickCloseNonLinear.bind(this);
+  this.nonLinearClose.addEventListener('click', this.onClickCloseNonLinear);
+  this.nonLinearContainer.appendChild(this.nonLinearClose);
+};
+
 NONLINEAR.update = function () {
   if (DEBUG) {
     FW.log('RMP-VAST: appending non-linear creative to .rmp-ad-container element');
   }
-  this.nonLinearCreative = document.createElement('img');
-  this.nonLinearCreative.className = 'rmp-ad-non-linear-creative';
-  this.nonLinearCreative.style.width = this.nonLinearCreativeWidth + 'px';
-  this.nonLinearCreative.style.height = this.nonLinearCreativeHeight + 'px';
-  this.onNonLinearLoadError = _onNonLinearLoadError.bind(this);
-  this.nonLinearCreative.addEventListener('error', this.onNonLinearLoadError);
-  this.onNonLinearLoadSuccess = _onNonLinearLoadSuccess.bind(this);
-  this.nonLinearCreative.addEventListener('load', this.onNonLinearLoadSuccess);
+
+  // non-linear ad container
+  this.nonLinearContainer = document.createElement('div');
+  this.nonLinearContainer.className = 'rmp-ad-non-linear-container';
+  this.nonLinearContainer.style.width = this.nonLinearCreativeWidth + 'px';
+  this.nonLinearContainer.style.height = this.nonLinearCreativeHeight + 'px';
+
+  // a tag to handle click - a tag is best for WebView support
+  this.nonLinearATag = document.createElement('a');
+  this.nonLinearATag.className = 'rmp-ad-non-linear-anchor';
   if (this.clickThroughUrl) {
+    this.nonLinearATag.href = this.clickThroughUrl;
+    this.nonLinearATag.target = '_blank';
     this.onNonLinearClickThrough = _onNonLinearClickThrough.bind(this);
-    this.nonLinearCreative.addEventListener('click', this.onNonLinearClickThrough);
+    this.nonLinearATag.addEventListener('click', this.onNonLinearClickThrough);
   }
-  this.nonLinearCreative.src = this.nonLinearCreativeUrl;
-  this.adContainer.appendChild(this.nonLinearCreative);
+
+  // non-linear creative image
+  this.nonLinearImg = document.createElement('img');
+  this.nonLinearImg.className = 'rmp-ad-non-linear-img';
+  this.onNonLinearLoadError = _onNonLinearLoadError.bind(this);
+  this.nonLinearImg.addEventListener('error', this.onNonLinearLoadError);
+  this.onNonLinearLoadSuccess = _onNonLinearLoadSuccess.bind(this);
+  this.nonLinearImg.addEventListener('load', this.onNonLinearLoadSuccess);
+  this.nonLinearImg.src = this.nonLinearCreativeUrl;
+
+  // append to adContainer
+  this.nonLinearATag.appendChild(this.nonLinearImg);
+  this.nonLinearContainer.appendChild(this.nonLinearATag);
+  this.adContainer.appendChild(this.nonLinearContainer);
+
+  // display a close button when non-linear ad has reached minSuggestedDuration
+  _appendCloseButton.call(this);
+
   FW.show(this.adContainer);
   CONTENTPLAYER.play.call(this);
 };
@@ -95,6 +144,11 @@ NONLINEAR.parse = function (nonLinearAds) {
     }
     if (parseInt(height) <= 0 || parseInt(width) <= 0) {
       continue;
+    }
+    // get minSuggestedDuration (optional)
+    let minSuggestedDuration = currentNonLinear.getAttribute('minSuggestedDuration');
+    if (minSuggestedDuration !== null && minSuggestedDuration !== '' && FWVAST.isValidDuration(minSuggestedDuration)) {
+      this.nonLinearMinSuggestedDuration = FWVAST.convertDurationToSeconds(minSuggestedDuration);
     }
     let staticResource = currentNonLinear.getElementsByTagName('StaticResource');
     // we expect at least one StaticResource tag

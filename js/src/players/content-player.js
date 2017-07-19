@@ -70,5 +70,19 @@ CONTENTPLAYER.seekTo = function (msSeek) {
   }
 };
 
+CONTENTPLAYER.preventSeekingForCustomPlayback = function () {
+  // after much poking it appears we cannot rely on seek events for iOS to 
+  // set this up reliably - so interval it is
+  this.antiSeekLogicInterval = setInterval(() => {
+    if (this.adIsLinear && this.adOnStage) {
+      let diff = Math.abs(this.customPlaybackCurrentTime - this.contentPlayer.currentTime);
+      if (diff > 1) {
+        this.contentPlayer.currentTime = this.customPlaybackCurrentTime;
+      }
+      this.customPlaybackCurrentTime = this.contentPlayer.currentTime;
+    }
+  }, 200);
+};
+
 
 export { CONTENTPLAYER };

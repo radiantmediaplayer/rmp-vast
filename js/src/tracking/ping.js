@@ -20,7 +20,8 @@ PING.events = [
   'exitFullscreen',
   'skip',
   'progress',
-  'clickthrough'
+  'clickthrough',
+  'close'
 ];
 
 var _replaceMacros = function (url, errorCode, assetUri) {

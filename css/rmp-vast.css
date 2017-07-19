@@ -62,10 +62,12 @@
   margin: 0;
   display: block;
   outline: none;
+  cursor: pointer;
 }
 .rmp-ad-container-icons {
   position: absolute;
   display: block;
+  cursor: pointer;
 }
 .rmp-ad-container-skip {
   position: absolute;
@@ -105,7 +107,7 @@
   background-repeat: no-repeat;
   background-position: center;
 }
-.rmp-ad-non-linear-creative {
+.rmp-ad-non-linear-container {
   text-align: center;
   left: 50%;
   position: absolute;
@@ -116,24 +118,49 @@
   -ms-transform: translate(-50%, 0);
   transform: translate(-50%, 0);
 }
+.rmp-ad-non-linear-anchor {
+  cursor: auto;
+  text-decoration: none;
+}
+.rmp-ad-non-linear-anchor:hover,
+.rmp-ad-non-linear-anchor:visited,
+.rmp-ad-non-linear-anchor:active {
+  text-decoration: none;
+}
+.rmp-ad-non-linear-img {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+}
+.rmp-ad-non-linear-close {
+  right: 0;
+  top: 0;
+  position: absolute;
+  cursor: pointer;
+  width: 20px;
+  height: 20px;
+  background-color: #000;
+  background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAHdJREFUeNqUk9EKwCAIRaX9/9MgEAZ9amsPsWVXdxV8Ec+B1Ep/o40UMuuEpK/RMvAUnEZysfAIlYRkg5/6tyGSQNgKPIkLIwGSuLAn8CSKeovgOMiaMKtKPQENjB5i1Pi7xkoMzD0kBg5PmYVnqv1MGXiT3AIMACNQPFnn5xfHAAAAAElFTkSuQmCC');
+  background-size: cover;
+  border: 4px solid #000;
+}
 .rmp-ad-click-ui-mobile {
   border: 2px solid #fff;
-  background: rgba(0, 0, 0, 0.33);
+  background: rgba(0, 0, 0, 0.4);
   color: #fff;
   display: block;
   position: absolute;
   right: 8px;
   top: 8px;
   font-size: 18px;
-  padding: 8px;
+  width: 112px;
+  height: 34px;
   cursor: auto;
   text-decoration: none;
-  -webkit-transition-property: opacity;
-  -moz-transition-property: opacity;
-  transition-property: opacity;
-  -webkit-transition-duration: 0.6s;
-  -moz-transition-duration: 0.6s;
-  transition-duration: 0.6s;
+  text-align: center;
+  line-height: 30px;
 }
 .rmp-ad-click-ui-mobile:visited {
   color: #fff;

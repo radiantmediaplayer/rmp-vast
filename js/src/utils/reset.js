@@ -67,6 +67,8 @@ RESET.internalVariables = function () {
   this.clickUIOnMobile = null;
   this.currentContentSrc = null;
   this.currentContentCurrentTime = -1;
+  this.customPlaybackCurrentTime = 0;
+  this.antiSeekLogicInterval = null;
   // skip
   this.isSkippableAd = false;
   this.hasSkipEvent = false;
@@ -79,22 +81,27 @@ RESET.internalVariables = function () {
   this.skipButton = null;
   this.skippableAdCanBeSkipped = false;
   // non linear
-  this.nonLinearCreative = null;
+  this.nonLinearContainer = null;
+  this.nonLinearATag = null;
+  this.nonLinearImg = null;
+  this.onClickCloseNonLinear = null;
   this.nonLinearCreativeUrl = null;
   this.nonLinearCreativeHeight = 0;
   this.nonLinearCreativeWidth = 0;
+  this.nonLinearMinSuggestedDuration = 0;
 };
 
 RESET.unwireVastPlayerEvents = function () {
   if (DEBUG) {
     FW.log('RMP-VAST: RESET unwireVastPlayerEvents');
   }
-  if (this.nonLinearCreative) {
-    this.nonLinearCreative.removeEventListener('load', this.onNonLinearLoadSuccess);
-    this.nonLinearCreative.removeEventListener('error', this.onNonLinearLoadError);
-    this.nonLinearCreative.removeEventListener('click', this.onNonLinearClickThrough);
+  if (this.nonLinearContainer) {
+    this.nonLinearImg.removeEventListener('load', this.onNonLinearLoadSuccess);
+    this.nonLinearImg.removeEventListener('error', this.onNonLinearLoadError);
+    this.nonLinearATag.removeEventListener('click', this.onNonLinearClickThrough);
+    this.nonLinearClose.removeEventListener('click', this.onClickCloseNonLinear);
     for (let i = 0, len = this.trackingTags.length; i < len; i++) {
-      this.nonLinearCreative.removeEventListener(this.trackingTags[i].event, this.onEventPingTracking);
+      this.nonLinearContainer.removeEventListener(this.trackingTags[i].event, this.onEventPingTracking);
     }
   }
   if (this.vastPlayer) {

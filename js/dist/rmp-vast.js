@@ -1,6 +1,6 @@
 /**
  * @license Copyright (c) 2017 Radiant Media Player | https://www.radiantmediaplayer.com
- * rmp-vast 0.1.11
+ * rmp-vast 1.0.0
  * GitHub: https://github.com/radiantmediaplayer/rmp-vast
  * MIT License: https://github.com/radiantmediaplayer/rmp-vast/blob/master/LICENSE
  */
@@ -239,7 +239,7 @@ API.getClickThroughUrl = function () {
 
 API.createEvent = function (event) {
   // adloaded, addurationchange, adclick, adimpression, adstarted, adtagloaded, adtagstartloading, adpaused, adresumed 
-  // advolumemuted, advolumechanged, adcomplete, adskipped, adskippablestatechanged
+  // advolumemuted, advolumechanged, adcomplete, adskipped, adskippablestatechanged, adclosed
   // adfirstquartile, admidpoint, adthirdquartile, aderror, adfollowingredirect, addestroyed
   if (typeof event === 'string' && event !== '' && this.container) {
     _fw.FW.createStdEvent(event, this.container);
@@ -311,22 +311,29 @@ var _ping = require('../tracking/ping');
 var ICONS = {};
 
 ICONS.destroy = function () {
+  var _this = this;
+
   if (DEBUG) {
     _fw.FW.log('RMP-VAST: start destroying icons');
   }
   var icons = this.adContainer.getElementsByClassName('rmp-ad-container-icons');
+  var arrayIcons = [];
   for (var i = 0, len = icons.length; i < len; i++) {
-    this.adContainer.removeChild(icons[i]);
+    arrayIcons.push(icons[i]);
   }
+  arrayIcons.forEach(function (element) {
+    _this.adContainer.removeChild(element);
+  });
 };
 
 var _programAlreadyPresent = function _programAlreadyPresent(program) {
+  var newArray = [];
   for (var i = 0, len = this.icons.length; i < len; i++) {
-    if (this.icons[i].program === program) {
-      return true;
+    if (this.icons[i].program !== program) {
+      newArray.push(this.icons[i]);
     }
   }
-  return false;
+  this.icons = newArray;
 };
 
 ICONS.parse = function (icons) {
@@ -339,10 +346,6 @@ ICONS.parse = function (icons) {
     var program = currentIcon.getAttribute('program');
     // program is required attribute ignore the current icon if not present
     if (program === null || program === '') {
-      continue;
-    }
-    // if program already present we ignore it
-    if (_programAlreadyPresent.call(this, program)) {
       continue;
     }
     // width, height, xPosition, yPosition are all required attributes
@@ -378,6 +381,9 @@ ICONS.parse = function (icons) {
     if (staticResourceUrl === null) {
       continue;
     }
+    // if program already present we delete it
+    _programAlreadyPresent.call(this, program);
+
     var iconData = {
       program: program,
       width: width,
@@ -420,7 +426,7 @@ ICONS.parse = function (icons) {
 };
 
 var _onIconClickThrough = function _onIconClickThrough(index) {
-  var _this = this;
+  var _this2 = this;
 
   if (DEBUG) {
     _fw.FW.log('RMP-VAST: click on icon with index ' + index);
@@ -433,7 +439,7 @@ var _onIconClickThrough = function _onIconClickThrough(index) {
       var iconClickTrackingUrl = this.icons[index].iconClickTrackingUrl;
       if (iconClickTrackingUrl.length > 0) {
         iconClickTrackingUrl.forEach(function (element) {
-          _ping.PING.tracking.call(_this, element, null);
+          _ping.PING.tracking.call(_this2, element, null);
         });
       }
     }
@@ -592,24 +598,15 @@ var _onPlaybackError = function _onPlaybackError() {
 };
 
 var _appendClickUIOnMobile = function _appendClickUIOnMobile() {
-  var _this = this;
-
   // we create a <a> tag rather than using window.open 
   // because it works better in standalone mode and WebView
   this.clickUIOnMobile = document.createElement('a');
-  this.clickUIOnMobile.style.opacity = 0;
   this.clickUIOnMobile.className = 'rmp-ad-click-ui-mobile';
   this.clickUIOnMobile.textContent = this.params.textForClickUIOnMobile;
   this.clickUIOnMobile.addEventListener('click', this.onClickThrough);
   this.clickUIOnMobile.href = this.clickThroughUrl;
   this.clickUIOnMobile.target = '_blank';
   this.adContainer.appendChild(this.clickUIOnMobile);
-  // on iOS without this timeout we have an un-nice resizing quirk
-  setTimeout(function () {
-    if (_this.clickUIOnMobile) {
-      _this.clickUIOnMobile.style.opacity = 1;
-    }
-  }, 400);
 };
 
 var _onContextMenu = function _onContextMenu(event) {
@@ -873,9 +870,11 @@ var _onNonLinearLoadSuccess = function _onNonLinearLoadSuccess() {
   _fwVast.FWVAST.dispatchPingEvent.call(this, ['impression', 'creativeView', 'start']);
 };
 
-var _onNonLinearClickThrough = function _onNonLinearClickThrough() {
+var _onNonLinearClickThrough = function _onNonLinearClickThrough(event) {
   try {
-    window.open(this.clickThroughUrl, '_blank');
+    if (event) {
+      event.stopPropagation();
+    }
     if (this.params.pauseOnClick) {
       this.pause();
     }
@@ -886,24 +885,73 @@ var _onNonLinearClickThrough = function _onNonLinearClickThrough() {
   }
 };
 
+var _onClickCloseNonLinear = function _onClickCloseNonLinear(event) {
+  if (event) {
+    event.stopPropagation();
+  }
+  this.nonLinearContainer.style.display = 'none';
+  _api.API.createEvent.call(this, 'adclosed');
+  _fwVast.FWVAST.dispatchPingEvent.call(this, 'close');
+};
+
+var _appendCloseButton = function _appendCloseButton() {
+  var _this = this;
+
+  this.nonLinearClose = document.createElement('div');
+  this.nonLinearClose.className = 'rmp-ad-non-linear-close';
+  if (this.nonLinearMinSuggestedDuration > 0) {
+    this.nonLinearClose.style.display = 'none';
+    setTimeout(function () {
+      if (_this.nonLinearClose) {
+        _this.nonLinearClose.style.display = 'block';
+      }
+    }, this.nonLinearMinSuggestedDuration * 1000);
+  } else {
+    this.nonLinearClose.style.display = 'block';
+  }
+  this.onClickCloseNonLinear = _onClickCloseNonLinear.bind(this);
+  this.nonLinearClose.addEventListener('click', this.onClickCloseNonLinear);
+  this.nonLinearContainer.appendChild(this.nonLinearClose);
+};
+
 NONLINEAR.update = function () {
   if (DEBUG) {
     _fw.FW.log('RMP-VAST: appending non-linear creative to .rmp-ad-container element');
   }
-  this.nonLinearCreative = document.createElement('img');
-  this.nonLinearCreative.className = 'rmp-ad-non-linear-creative';
-  this.nonLinearCreative.style.width = this.nonLinearCreativeWidth + 'px';
-  this.nonLinearCreative.style.height = this.nonLinearCreativeHeight + 'px';
-  this.onNonLinearLoadError = _onNonLinearLoadError.bind(this);
-  this.nonLinearCreative.addEventListener('error', this.onNonLinearLoadError);
-  this.onNonLinearLoadSuccess = _onNonLinearLoadSuccess.bind(this);
-  this.nonLinearCreative.addEventListener('load', this.onNonLinearLoadSuccess);
+
+  // non-linear ad container
+  this.nonLinearContainer = document.createElement('div');
+  this.nonLinearContainer.className = 'rmp-ad-non-linear-container';
+  this.nonLinearContainer.style.width = this.nonLinearCreativeWidth + 'px';
+  this.nonLinearContainer.style.height = this.nonLinearCreativeHeight + 'px';
+
+  // a tag to handle click - a tag is best for WebView support
+  this.nonLinearATag = document.createElement('a');
+  this.nonLinearATag.className = 'rmp-ad-non-linear-anchor';
   if (this.clickThroughUrl) {
+    this.nonLinearATag.href = this.clickThroughUrl;
+    this.nonLinearATag.target = '_blank';
     this.onNonLinearClickThrough = _onNonLinearClickThrough.bind(this);
-    this.nonLinearCreative.addEventListener('click', this.onNonLinearClickThrough);
+    this.nonLinearATag.addEventListener('click', this.onNonLinearClickThrough);
   }
-  this.nonLinearCreative.src = this.nonLinearCreativeUrl;
-  this.adContainer.appendChild(this.nonLinearCreative);
+
+  // non-linear creative image
+  this.nonLinearImg = document.createElement('img');
+  this.nonLinearImg.className = 'rmp-ad-non-linear-img';
+  this.onNonLinearLoadError = _onNonLinearLoadError.bind(this);
+  this.nonLinearImg.addEventListener('error', this.onNonLinearLoadError);
+  this.onNonLinearLoadSuccess = _onNonLinearLoadSuccess.bind(this);
+  this.nonLinearImg.addEventListener('load', this.onNonLinearLoadSuccess);
+  this.nonLinearImg.src = this.nonLinearCreativeUrl;
+
+  // append to adContainer
+  this.nonLinearATag.appendChild(this.nonLinearImg);
+  this.nonLinearContainer.appendChild(this.nonLinearATag);
+  this.adContainer.appendChild(this.nonLinearContainer);
+
+  // display a close button when non-linear ad has reached minSuggestedDuration
+  _appendCloseButton.call(this);
+
   _fw.FW.show(this.adContainer);
   _contentPlayer.CONTENTPLAYER.play.call(this);
 };
@@ -943,6 +991,11 @@ NONLINEAR.parse = function (nonLinearAds) {
     }
     if (parseInt(height) <= 0 || parseInt(width) <= 0) {
       continue;
+    }
+    // get minSuggestedDuration (optional)
+    var minSuggestedDuration = currentNonLinear.getAttribute('minSuggestedDuration');
+    if (minSuggestedDuration !== null && minSuggestedDuration !== '' && _fwVast.FWVAST.isValidDuration(minSuggestedDuration)) {
+      this.nonLinearMinSuggestedDuration = _fwVast.FWVAST.convertDurationToSeconds(minSuggestedDuration);
     }
     var staticResource = currentNonLinear.getElementsByTagName('StaticResource');
     // we expect at least one StaticResource tag
@@ -1412,6 +1465,26 @@ FWVAST.RFC3986EncodeURIComponent = function (str) {
   });
 };
 
+FWVAST.isValidDuration = function (duration) {
+  // HH:MM:SS or HH:MM:SS.mmm
+  var skipPattern = /^\d+:\d+:\d+(\.\d+)?$/i;
+  if (skipPattern.test(duration)) {
+    return true;
+  }
+  return false;
+};
+
+FWVAST.convertDurationToSeconds = function (duration) {
+  // duration is HH:MM:SS or HH:MM:SS.mmm
+  // remove .mmm
+  var splitNoMS = duration.split('.');
+  splitNoMS = splitNoMS[0];
+  var splitTime = splitNoMS.split(':');
+  var seconds = 0;
+  seconds = parseInt(splitTime[0]) * 60 * 60 + parseInt(splitTime[1]) * 60 + parseInt(splitTime[2]);
+  return seconds;
+};
+
 FWVAST.isValidOffset = function (offset) {
   // HH:MM:SS or HH:MM:SS.mmm
   var skipPattern1 = /^\d+:\d+:\d+(\.\d+)?$/i;
@@ -1448,8 +1521,8 @@ FWVAST.dispatchPingEvent = function (event) {
     var element = void 0;
     if (this.adIsLinear && this.vastPlayer) {
       element = this.vastPlayer;
-    } else if (!this.adIsLinear && this.nonLinearCreative) {
-      element = this.nonLinearCreative;
+    } else if (!this.adIsLinear && this.nonLinearContainer) {
+      element = this.nonLinearContainer;
     }
     if (element) {
       if (Array.isArray(event)) {
@@ -1725,6 +1798,8 @@ var _reset = require('./utils/reset');
 
 var _vastErrors = require('./utils/vast-errors');
 
+var _icons = require('./creatives/icons');
+
 window.DEBUG = true;
 
 window.RmpVast = function (id, params) {
@@ -1856,8 +1931,8 @@ var _parseCreatives = function _parseCreatives(creative) {
         }
         this.isSkippableAd = true;
         this.skipoffset = skipoffset;
-        // we  do not display skippable ads when useContentPlayerForAds is true
-        if (this.useContentPlayerForAds) {
+        // we  do not display skippable ads when useContentPlayerForAds is true on is iOS < 10
+        if (this.useContentPlayerForAds && _env.ENV.isIos[0] && _env.ENV.isIos[1] < 10) {
           _ping.PING.error.call(this, 200, this.inlineOrWrapperErrorTags);
           _vastErrors.VASTERRORS.process.call(this, 200);
           return;
@@ -1891,6 +1966,11 @@ var _parseCreatives = function _parseCreatives(creative) {
 
       // return on wrapper
       if (this.isWrapper) {
+        // if icons are presents then we push valid icons to this.icons
+        var icons = linear[0].getElementsByTagName('Icons');
+        if (icons.length > 0) {
+          _icons.ICONS.parse.call(this, icons);
+        }
         _execRedirect.call(this);
         return;
       }
@@ -2112,12 +2192,14 @@ RmpVast.prototype.loadAds = function (vastUrl) {
       this.contentPlayer.addEventListener('loadstart', this.updateInitialContentSrc);
     }
     this.currentContentCurrentTime = contentCurrentTime;
+    // on iOS we need to prevent seeking when linear ad is on stage
+    _contentPlayer.CONTENTPLAYER.preventSeekingForCustomPlayback.call(this);
   } else {
     _makeAjaxRequest.call(this, vastUrl);
   }
 };
 
-},{"./api/api":1,"./creatives/linear":3,"./creatives/non-linear":4,"./fw/env":6,"./fw/fw":8,"./fw/fw-vast":7,"./players/content-player":10,"./tracking/ping":12,"./tracking/tracking-events":13,"./utils/reset":14,"./utils/vast-errors":15,"core-js/es6":16}],10:[function(require,module,exports){
+},{"./api/api":1,"./creatives/icons":2,"./creatives/linear":3,"./creatives/non-linear":4,"./fw/env":6,"./fw/fw":8,"./fw/fw-vast":7,"./players/content-player":10,"./tracking/ping":12,"./tracking/tracking-events":13,"./utils/reset":14,"./utils/vast-errors":15,"core-js/es6":16}],10:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2196,6 +2278,22 @@ CONTENTPLAYER.seekTo = function (msSeek) {
   }
 };
 
+CONTENTPLAYER.preventSeekingForCustomPlayback = function () {
+  var _this = this;
+
+  // after much poking it appears we cannot rely on seek events for iOS to 
+  // set this up reliably - so interval it is
+  this.antiSeekLogicInterval = setInterval(function () {
+    if (_this.adIsLinear && _this.adOnStage) {
+      var diff = Math.abs(_this.customPlaybackCurrentTime - _this.contentPlayer.currentTime);
+      if (diff > 1) {
+        _this.contentPlayer.currentTime = _this.customPlaybackCurrentTime;
+      }
+      _this.customPlaybackCurrentTime = _this.contentPlayer.currentTime;
+    }
+  }, 200);
+};
+
 exports.CONTENTPLAYER = CONTENTPLAYER;
 
 },{"../fw/fw":8}],11:[function(require,module,exports){
@@ -2251,8 +2349,12 @@ var _destroyVastPlayer = function _destroyVastPlayer() {
   }
   // hide rmp-ad-container
   _fw.FW.hide(this.adContainer);
+  // unwire anti-seek logic
+  clearInterval(this.antiSeekLogicInterval);
   if (this.useContentPlayerForAds) {
-    if (this.currentContentCurrentTime > 200) {
+    // when content is restored we need to seek to previously known currentTime
+    // this must happen on playing event
+    if (this.currentContentCurrentTime > 400) {
       this.onPlayingSeek = _onPlayingSeek.bind(this);
       this.contentPlayer.addEventListener('playing', this.onPlayingSeek);
     }
@@ -2276,8 +2378,8 @@ var _destroyVastPlayer = function _destroyVastPlayer() {
             }
           }
         }
-        if (this.nonLinearCreative) {
-          this.adContainer.removeChild(this.nonLinearCreative);
+        if (this.nonLinearContainer) {
+          this.adContainer.removeChild(this.nonLinearContainer);
         }
       }
     } catch (e) {
@@ -2301,10 +2403,11 @@ VASTPLAYER.init = function () {
   _fw.FW.hide(this.adContainer);
   if (!this.useContentPlayerForAds) {
     this.vastPlayer = document.createElement('video');
-    this.vastPlayer.className = 'rmp-ad-vast-video-player';
-    if (!_env.ENV.isMobile) {
-      this.vastPlayer.style.cursor = 'pointer';
+    // disable casting of video ads for Android
+    if (_env.ENV.isAndroid[0] && typeof this.vastPlayer.disableRemotePlayback !== 'undefined') {
+      this.vastPlayer.disableRemotePlayback = true;
     }
+    this.vastPlayer.className = 'rmp-ad-vast-video-player';
     _fw.FW.hide(this.vastPlayer);
     this.vastPlayer.controls = false;
     if (this.contentPlayer.muted) {
@@ -2469,7 +2572,7 @@ var _contentPlayer = require('../players/content-player');
 
 var PING = {};
 
-PING.events = ['impression', 'creativeView', 'start', 'firstQuartile', 'midpoint', 'thirdQuartile', 'complete', 'mute', 'unmute', 'pause', 'resume', 'fullscreen', 'exitFullscreen', 'skip', 'progress', 'clickthrough'];
+PING.events = ['impression', 'creativeView', 'start', 'firstQuartile', 'midpoint', 'thirdQuartile', 'complete', 'mute', 'unmute', 'pause', 'resume', 'fullscreen', 'exitFullscreen', 'skip', 'progress', 'clickthrough', 'close'];
 
 var _replaceMacros = function _replaceMacros(url, errorCode, assetUri) {
   var pattern1 = /\[CACHEBUSTING\]/gi;
@@ -2776,9 +2879,9 @@ TRACKINGEVENTS.wire = function () {
   for (var i = 0, len = this.trackingTags.length; i < len; i++) {
     if (this.vastPlayer && this.adIsLinear) {
       this.vastPlayer.addEventListener(this.trackingTags[i].event, this.onEventPingTracking);
-    } else if (this.nonLinearCreative && !this.adIsLinear) {
+    } else if (this.nonLinearContainer && !this.adIsLinear) {
       // non linear
-      this.nonLinearCreative.addEventListener(this.trackingTags[i].event, this.onEventPingTracking);
+      this.nonLinearContainer.addEventListener(this.trackingTags[i].event, this.onEventPingTracking);
     }
   }
 };
@@ -2890,6 +2993,8 @@ RESET.internalVariables = function () {
   this.clickUIOnMobile = null;
   this.currentContentSrc = null;
   this.currentContentCurrentTime = -1;
+  this.customPlaybackCurrentTime = 0;
+  this.antiSeekLogicInterval = null;
   // skip
   this.isSkippableAd = false;
   this.hasSkipEvent = false;
@@ -2902,22 +3007,27 @@ RESET.internalVariables = function () {
   this.skipButton = null;
   this.skippableAdCanBeSkipped = false;
   // non linear
-  this.nonLinearCreative = null;
+  this.nonLinearContainer = null;
+  this.nonLinearATag = null;
+  this.nonLinearImg = null;
+  this.onClickCloseNonLinear = null;
   this.nonLinearCreativeUrl = null;
   this.nonLinearCreativeHeight = 0;
   this.nonLinearCreativeWidth = 0;
+  this.nonLinearMinSuggestedDuration = 0;
 };
 
 RESET.unwireVastPlayerEvents = function () {
   if (DEBUG) {
     _fw.FW.log('RMP-VAST: RESET unwireVastPlayerEvents');
   }
-  if (this.nonLinearCreative) {
-    this.nonLinearCreative.removeEventListener('load', this.onNonLinearLoadSuccess);
-    this.nonLinearCreative.removeEventListener('error', this.onNonLinearLoadError);
-    this.nonLinearCreative.removeEventListener('click', this.onNonLinearClickThrough);
+  if (this.nonLinearContainer) {
+    this.nonLinearImg.removeEventListener('load', this.onNonLinearLoadSuccess);
+    this.nonLinearImg.removeEventListener('error', this.onNonLinearLoadError);
+    this.nonLinearATag.removeEventListener('click', this.onNonLinearClickThrough);
+    this.nonLinearClose.removeEventListener('click', this.onClickCloseNonLinear);
     for (var i = 0, len = this.trackingTags.length; i < len; i++) {
-      this.nonLinearCreative.removeEventListener(this.trackingTags[i].event, this.onEventPingTracking);
+      this.nonLinearContainer.removeEventListener(this.trackingTags[i].event, this.onEventPingTracking);
     }
   }
   if (this.vastPlayer) {

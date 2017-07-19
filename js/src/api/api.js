@@ -222,7 +222,7 @@ API.getClickThroughUrl = function () {
 
 API.createEvent = function (event) {
   // adloaded, addurationchange, adclick, adimpression, adstarted, adtagloaded, adtagstartloading, adpaused, adresumed 
-  // advolumemuted, advolumechanged, adcomplete, adskipped, adskippablestatechanged
+  // advolumemuted, advolumechanged, adcomplete, adskipped, adskippablestatechanged, adclosed
   // adfirstquartile, admidpoint, adthirdquartile, aderror, adfollowingredirect, addestroyed
   if (typeof event === 'string' && event !== '' && this.container) {
     FW.createStdEvent(event, this.container);

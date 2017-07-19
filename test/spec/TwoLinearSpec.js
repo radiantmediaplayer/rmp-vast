@@ -13,6 +13,8 @@ describe("Test for 2 Inline Linear ads", function () {
   var video = container.getElementsByClassName('rmp-video')[0];
   var rmpVast = new RmpVast(id);
   var fw = rmpVast.getFW();
+  var testResults = document.getElementById('test-results');
+
 
   it("should load 2 adTag and play them", function (done) {
     var validSteps = 0;
@@ -79,13 +81,16 @@ describe("Test for 2 Inline Linear ads", function () {
       addestroyedCount++;
       if (addestroyedCount === 2) {
         expect(validSteps).toBe(29);
+        if (validSteps === 29) {
+          testResults.style.display = 'block';
+        }
         done();
         return;
       }
       expect(validSteps).toBe(15);
       setTimeout(function () {
         rmpVast.loadAds(ADTAG2);
-      }, 5000);
+      }, 3000);
     });
 
     video.addEventListener('play', _onPlayLoadAds);

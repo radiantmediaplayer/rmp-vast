@@ -12,6 +12,7 @@ describe("Test for Inline Skippable Linear ad", function () {
   var video = container.getElementsByClassName('rmp-video')[0];
   var rmpVast = new RmpVast(id);
   var fw = rmpVast.getFW();
+  var testResults = document.getElementById('test-results');
 
   it("should load adTag and play it", function (done) {
     var validSteps = 0;
@@ -69,6 +70,9 @@ describe("Test for Inline Skippable Linear ad", function () {
     container.addEventListener('addestroyed', function (e) {
       _incrementAndLog(e);
       expect(validSteps).toBe(10);
+      if (validSteps === 10) {
+        testResults.style.display = 'block';
+      }
       done();
     });
 

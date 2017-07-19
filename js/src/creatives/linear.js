@@ -70,20 +70,12 @@ var _appendClickUIOnMobile = function () {
   // we create a <a> tag rather than using window.open 
   // because it works better in standalone mode and WebView
   this.clickUIOnMobile = document.createElement('a');
-  this.clickUIOnMobile.style.opacity = 0;
   this.clickUIOnMobile.className = 'rmp-ad-click-ui-mobile';
   this.clickUIOnMobile.textContent = this.params.textForClickUIOnMobile;
   this.clickUIOnMobile.addEventListener('click', this.onClickThrough);
   this.clickUIOnMobile.href = this.clickThroughUrl;
   this.clickUIOnMobile.target = '_blank';
   this.adContainer.appendChild(this.clickUIOnMobile);
-  // on iOS without this timeout we have an un-nice resizing quirk
-  setTimeout(() => {
-    if (this.clickUIOnMobile) {
-      this.clickUIOnMobile.style.opacity = 1;
-    }
-  }, 400);
-
 };
 
 var _onContextMenu = function (event) {

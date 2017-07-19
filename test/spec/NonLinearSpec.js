@@ -12,6 +12,7 @@ describe("Test for Inline Non Linear ad", function () {
   var video = container.getElementsByClassName('rmp-video')[0];
   var rmpVast = new RmpVast(id);
   var fw = rmpVast.getFW();
+  var testResults = document.getElementById('test-results');
 
   it("should load adTag and play it", function (done) {
     var validSteps = 0;
@@ -40,7 +41,9 @@ describe("Test for Inline Non Linear ad", function () {
     container.addEventListener('adstarted', function (e) {
       _incrementAndLog(e);
       setTimeout(() => {
-        rmpVast.stopAds();
+        var close = document.getElementsByClassName('rmp-ad-non-linear-close')[0];
+        fw.log('click close');
+        fw.createStdEvent('click', close);
       }, 5000);
     });
 
@@ -52,9 +55,12 @@ describe("Test for Inline Non Linear ad", function () {
       _incrementAndLog(e);
     });
 
-    container.addEventListener('addestroyed', function (e) {
+    container.addEventListener('adclosed', function (e) {
       _incrementAndLog(e);
       expect(validSteps).toBe(7);
+      if (validSteps === 7) {
+        testResults.style.display = 'block';
+      }
       done();
     });
 

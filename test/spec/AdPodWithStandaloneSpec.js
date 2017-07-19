@@ -12,6 +12,7 @@ describe("Test for VAST3 Ad Pod with side standalone ad response", function () {
   var video = container.getElementsByClassName('rmp-video')[0];
   var rmpVast = new RmpVast(id);
   var fw = rmpVast.getFW();
+  var testResults = document.getElementById('test-results');
 
   it("should load adTag and play it", function (done) {
     var validSteps = 0;
@@ -45,7 +46,7 @@ describe("Test for VAST3 Ad Pod with side standalone ad response", function () {
         setTimeout(() => {
           rmpVast.play();
         }, 1000);
-      }, 5000);
+      }, 2500);
     });
     container.addEventListener('adtagstartloading', function (e) {
       _incrementAndLog(e);
@@ -75,6 +76,9 @@ describe("Test for VAST3 Ad Pod with side standalone ad response", function () {
     container.addEventListener('addestroyed', function (e) {
       _incrementAndLog(e);
       expect(validSteps).toBe(15);
+      if (validSteps === 15) {
+        testResults.style.display = 'block';
+      }
       done();
     });
 
