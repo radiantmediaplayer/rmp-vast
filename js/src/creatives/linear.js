@@ -25,13 +25,20 @@ var _onLoadedmetadataPlay = function () {
     FW.log('RMP-VAST: loadedmetadata for VAST player reached');
   }
   this.vastPlayer.removeEventListener('loadedmetadata', this.onLoadedmetadataPlay);
+  clearTimeout(this.creativeLoadTimeoutCallback);
   API.createEvent.call(this, 'adloaded');
+  if (DEBUG) {
+    FW.log('RMP-VAST: pause content player');
+  }
   CONTENTPLAYER.pause.call(this);
   // show ad container holding vast player
   FW.show(this.adContainer);
   FW.show(this.vastPlayer);
   this.adOnStage = true;
   // play VAST player
+  if (DEBUG) {
+    FW.log('RMP-VAST: play VAST player');
+  }
   VASTPLAYER.play.call(this);
 };
 
@@ -61,9 +68,17 @@ var _onClickThrough = function (event) {
   }
 };
 
-var _onPlaybackError = function () {
-  PING.error.call(this, 405);
-  VASTERRORS.process.call(this, 405);
+var _onPlaybackError = function (event) {
+  // MEDIA_ERR_SRC_NOT_SUPPORTED is sign of fatal error
+  // other errors may produce non-fatal error in the browser so we do not 
+  // act upon them
+  if (event && event.target && event.target.error && event.target.error.code) {
+    if (event.target.error.code !== event.target.error.MEDIA_ERR_SRC_NOT_SUPPORTED) {
+      return;
+    }
+  }
+  PING.error.call(this, 401);
+  VASTERRORS.process.call(this, 401);
 };
 
 var _appendClickUIOnMobile = function () {
@@ -104,34 +119,21 @@ LINEAR.update = function (url, type) {
   this.onContextMenu = _onContextMenu.bind(this);
   this.vastPlayer.addEventListener('contextmenu', this.onContextMenu);
 
-  // append source to vast player if not there already
-  if (!this.useContentPlayerForAds) {
-    let existingVastPlayerSource = this.adContainer.getElementsByTagName('source')[0];
-    if (!existingVastPlayerSource) {
-      this.vastPlayerSource = document.createElement('source');
-      this.onPlaybackError = _onPlaybackError.bind(this);
-      this.vastPlayerSource.addEventListener('error', this.onPlaybackError);
-      this.vastPlayer.appendChild(this.vastPlayerSource);
-    } else {
-      this.vastPlayerSource = existingVastPlayerSource;
-    }
-  }
+  this.onPlaybackError = _onPlaybackError.bind(this);
 
-  // check fullscreen state
-  // this is to account for non-trivial use-cases where player may be in fullscreen before
-  // vastPlayer is in DOM
-  if (FW.hasClass(this.container, 'rmp-fullscreen-on')) {
-    this.isInFullscreen = true;
-  }
-
+  // start creativeLoadTimeout
+  this.creativeLoadTimeoutCallback = setTimeout(()=> {
+    PING.error.call(this, 402);
+    VASTERRORS.process.call(this, 402);
+  }, this.params.creativeLoadTimeout);
   // load ad asset
   if (this.useContentPlayerForAds) {
+    this.contentPlayer.addEventListener('error', this.onPlaybackError);
     this.contentPlayer.src = url;
   } else {
-    this.vastPlayerSource.type = type;
-    this.vastPlayerSource.src = url;
+    this.vastPlayer.addEventListener('error', this.onPlaybackError);
+    this.vastPlayer.src = url;
   }
-  this.vastPlayer.load();
 
   // clickthrough interaction
   if (this.clickThroughUrl) {
@@ -219,7 +221,11 @@ LINEAR.parse = function (linear) {
     mediaFileItems[i].apiFramework = mediaFileValue.getAttribute('apiFramework');*/
   }
   // remove MediaFile items that do not hold VAST spec-compliant attributes or data
-  FW.removeIndexFromArray(mediaFileItems, mediaFileToRemove);
+  if (mediaFileToRemove.length > 0) {
+    for (let i = mediaFileToRemove.length - 1; i >= 0; i--) {
+      mediaFileItems.splice(mediaFileToRemove[i], 1);
+    }
+  }
   // we support HLS; MP4; WebM so let us fecth for those
   let mp4 = [];
   let webm = [];

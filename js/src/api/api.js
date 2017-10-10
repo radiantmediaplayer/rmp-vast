@@ -7,10 +7,6 @@ import { CONTENTPLAYER } from '../players/content-player';
 const API = {};
 
 API.play = function () {
-  if (!this.rmpVastInitialized) {
-    this.initialize();
-    return;
-  }
   if (this.adOnStage) {
     if (this.adIsLinear) {
       VASTPLAYER.play.call(this);
@@ -39,15 +35,6 @@ API.getAdPaused = function () {
     return this.vastPlayerPaused;
   }
   return null;
-};
-
-API.seekTo = function (msSeek) {
-  if (this.adOnStage && this.adIsLinear) {
-    // you cannot seek into a playing linear ad
-    return;
-  } else {
-    CONTENTPLAYER.seekTo.call(this, msSeek);
-  }
 };
 
 API.setVolume = function (level) {
@@ -101,34 +88,8 @@ API.getMute = function () {
   return CONTENTPLAYER.getMute.call(this);
 };
 
-API.setFullscreen = function (fs) {
-  if (typeof fs === 'boolean') {
-    if (DEBUG) {
-      FW.log('RMP-VAST: setFullscreen ' + fs);
-    }
-    if (this.isInFullscreen && !fs) {
-      if (this.adOnStage && this.adIsLinear) {
-        ENV.exitFullscreen(this.vastPlayer);
-      } else {
-        ENV.exitFullscreen(this.contentPlayer);
-      }
-    } else if (!this.isInFullscreen && fs) {
-      if (this.adOnStage && this.adIsLinear) {
-        ENV.requestFullscreen(this.container, this.vastPlayer);
-      } else {
-        ENV.requestFullscreen(this.container, this.contentPlayer);
-      }
-    }
-  }
-};
-
-API.getFullscreen = function () {
-  return this.isInFullscreen;
-};
-
 API.stopAds = function () {
   if (this.adOnStage) {
-    this.readyForReset = true;
     // this will destroy ad
     VASTPLAYER.resumeContent.call(this);
   }
@@ -168,7 +129,7 @@ API.getAdContentType = function () {
   return null;
 };
 
-API.getAdTitle = function () {
+API.getAdTitle = function () { 
   return this.adTitle;
 };
 
@@ -262,12 +223,15 @@ API.getIsUsingContentPlayerForAds = function () {
 };
 
 API.initialize = function () {
-  if (!this.rmpVastInitialized) {
+  if (this.rmpVastInitialized) {
+    if (DEBUG) {
+      FW.log('RMP-VAST: rmp-vast already initialized');
+    }
+  } else {
     if (DEBUG) {
       FWVAST.logPerformance('RMP-VAST: on user interaction - player needs to be initialized');
     }
     VASTPLAYER.init.call(this);
-    CONTENTPLAYER.init.call(this);
   }
 };
 

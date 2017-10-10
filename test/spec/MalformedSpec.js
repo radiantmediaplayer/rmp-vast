@@ -9,7 +9,6 @@ describe("Test for malformed VAST response", function () {
 
   var id = 'rmpPlayer';
   var container = document.getElementById(id);
-  var video = container.getElementsByClassName('rmp-video')[0];
   var rmpVast = new RmpVast(id);
   var fw = rmpVast.getFW();
   var testResults = document.getElementById('test-results');
@@ -24,28 +23,28 @@ describe("Test for malformed VAST response", function () {
       }
     };
 
-    var _onPlayLoadAds = function (e) {
-      video.removeEventListener('play', _onPlayLoadAds);
+    container.addEventListener('adtagloaded', function (e) {
       _incrementAndLog(e);
-      rmpVast.loadAds(ADTAG);
-    };
+    });
 
     container.addEventListener('aderror', function (e) {
       _incrementAndLog(e);
       expect(rmpVast.getAdVastErrorCode()).toBe(101);
     });
+
     container.addEventListener('addestroyed', function (e) {
       _incrementAndLog(e);
       expect(validSteps).toBe(3);
       if (validSteps === 3) {
         testResults.style.display = 'block';
       }
-      done();
+      setTimeout(function () {
+        done();
+      }, 2000);
     });
 
-    video.addEventListener('play', _onPlayLoadAds);
-    rmpVast.play();
-  });
+    rmpVast.loadAds(ADTAG);
 
+  });
 
 });

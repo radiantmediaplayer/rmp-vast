@@ -9,7 +9,6 @@ describe("Test for VAST wrapper to VAST wrapper", function () {
 
   var id = 'rmpPlayer';
   var container = document.getElementById(id);
-  var video = container.getElementsByClassName('rmp-video')[0];
   var rmpVast = new RmpVast(id);
   var fw = rmpVast.getFW();
   var testResults = document.getElementById('test-results');
@@ -24,11 +23,9 @@ describe("Test for VAST wrapper to VAST wrapper", function () {
       }
     };
 
-    var _onPlayLoadAds = function (e) {
-      video.removeEventListener('play', _onPlayLoadAds);
+    container.addEventListener('adtagloaded', function (e) {
       _incrementAndLog(e);
-      rmpVast.loadAds(ADTAG);
-    };
+    });
 
     container.addEventListener('adloaded', function (e) {
       _incrementAndLog(e);
@@ -42,25 +39,22 @@ describe("Test for VAST wrapper to VAST wrapper", function () {
       _incrementAndLog(e);
     });
 
-    container.addEventListener('adtagloaded', function (e) {
-      _incrementAndLog(e);
-    });
-
     container.addEventListener('adfollowingredirect', function (e) {
       _incrementAndLog(e);
     });
 
     container.addEventListener('addestroyed', function (e) {
       _incrementAndLog(e);
-      expect(validSteps).toBe(12);
-      if (validSteps === 12) {
+      expect(validSteps).toBe(11);
+      if (validSteps === 11) {
         testResults.style.display = 'block';
       }
-      done();
+      setTimeout(function () {
+        done();
+      }, 2000);
     });
 
-    video.addEventListener('play', _onPlayLoadAds);
-    rmpVast.play();
+    rmpVast.loadAds(ADTAG);
   });
 
 

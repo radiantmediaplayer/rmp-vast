@@ -1,6 +1,5 @@
 import { FW } from '../fw/fw';
 import { FWVAST } from '../fw/fw-vast';
-import { ENV } from '../fw/env';
 import { PING } from './ping';
 import { API } from '../api/api';
 import { VASTPLAYER } from '../players/vast-player';
@@ -11,13 +10,6 @@ var _pingTrackers = function (trackers) {
   trackers.forEach((element) => {
     PING.tracking.call(this, element.url, this.adMediaUrl);
   });
-};
-
-TRACKINGEVENTS.updateResetStatus = function () {
-  // in case a pause event is due to be ping - cancel it now (see above)
-  clearTimeout(this.adPauseEventTimeout);
-  this.readyForReset = true;
-  FWVAST.dispatchPingEvent.call(this, 'reset');
 };
 
 var _onEventPingTracking = function (event) {
@@ -31,21 +23,7 @@ var _onEventPingTracking = function (event) {
     });
     // send ping for each valid tracker
     if (trackers.length > 0) {
-      // we need to filter pause event - because it can fire just before HTML5 video ended event 
-      // and according to VAST spec we should not ping for this pause event - only for user initiated pause
-      if (this.vastPlayer && event.type === 'pause') {
-        clearTimeout(this.adPauseEventTimeout);
-        this.adPauseEventTimeout = setTimeout(() => {
-          _pingTrackers.call(this, trackers);
-        }, 200);
-      } else {
-        _pingTrackers.call(this, trackers);
-      }
-    }
-    // we need to tell the player it is ok to destroy as all pings have been sent
-    if (this.vastPlayer && (event.type === 'complete' || event.type === 'skip')) {
-      // in case a pause event is due to be ping - cancel it now (see above)
-      TRACKINGEVENTS.updateResetStatus.call(this);
+      _pingTrackers.call(this, trackers);
     }
   }
 };
@@ -140,39 +118,6 @@ var _onEnded = function () {
   FWVAST.dispatchPingEvent.call(this, 'complete');
 };
 
-var _onFullscreenchange = function (event) {
-  if (event && event.type) {
-    if (DEBUG) {
-      FW.log('RMP-VAST: event is ' + event.type + ' isInFullscreen before changes is ' + this.isInFullscreen);
-    }
-    if (event.type === 'fullscreenchange') {
-      if (this.isInFullscreen) {
-        this.isInFullscreen = false;
-        FW.removeClass(this.container, 'rmp-fullscreen-on');
-        if (this.adOnStage && this.adIsLinear) {
-          FWVAST.dispatchPingEvent.call(this, 'exitFullscreen');
-        }
-      } else {
-        this.isInFullscreen = true;
-        FW.addClass(this.container, 'rmp-fullscreen-on');
-        if (this.adOnStage && this.adIsLinear) {
-          FWVAST.dispatchPingEvent.call(this, 'fullscreen');
-        }
-      }
-    } else if (event.type === 'webkitbeginfullscreen') {
-      this.isInFullscreen = true;
-      if (this.adOnStage && this.adIsLinear) {
-        FWVAST.dispatchPingEvent.call(this, 'fullscreen');
-      }
-    } else if (event.type === 'webkitendfullscreen') {
-      this.isInFullscreen = false;
-      if (this.adOnStage && this.adIsLinear) {
-        FWVAST.dispatchPingEvent.call(this, 'exitFullscreen');
-      }
-    }
-  }
-};
-
 TRACKINGEVENTS.wire = function () {
   if (DEBUG) {
     FW.log('RMP-VAST: wire tracking events');
@@ -197,17 +142,6 @@ TRACKINGEVENTS.wire = function () {
 
     this.onTimeupdate = _onTimeupdate.bind(this);
     this.vastPlayer.addEventListener('timeupdate', this.onTimeupdate);
-
-    //if we have native fullscreen support we handle fullscreen events
-    if (ENV.hasNativeFullscreenSupport) {
-      this.onFullscreenchange = _onFullscreenchange.bind(this);
-      document.addEventListener('fullscreenchange', this.onFullscreenchange);
-      // for our beloved iOS 
-      if (this.useContentPlayerForAds) {
-        this.vastPlayer.addEventListener('webkitbeginfullscreen', this.onFullscreenchange);
-        this.vastPlayer.addEventListener('webkitendfullscreen', this.onFullscreenchange);
-      }
-    }
   }
 
   // wire for VAST tracking events

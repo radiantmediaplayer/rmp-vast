@@ -27,12 +27,15 @@ window.RmpVast = function (id, params) {
     FWVAST.logVideoEvents(this.contentPlayer);
   }
   this.adContainer = null;
-  this.isInFullscreen = false;
   this.rmpVastInitialized = false;
   this.useContentPlayerForAds = false;
-  if (ENV.isIos[0]) {
-    // on iOS we use content player to play ads
-    // to avoid issues related to fullscreen management 
+  this.contentPlayerCompleted = false;
+  this.currentContentCurrentTime = -1;
+  this.needsSeekAdjust = false;
+  this.seekAdjustAttached = false;
+  if (ENV.isIos[0] || (ENV.isMacOSX && ENV.isSafari[0])) {
+    // on iOS and macOS Safari we use content player to play ads
+    // to avoid issues related to fullscreen management and autoplay
     // as fullscreen on iOS is handled by the default OS player
     this.useContentPlayerForAds = true;
     if (DEBUG) {
@@ -42,17 +45,21 @@ window.RmpVast = function (id, params) {
   // filter input params
   let defaultParams = {
     ajaxTimeout: 8000,
-    ajaxWithCredentials: true,
+    creativeLoadTimeout: 10000,
+    ajaxWithCredentials: false,
     maxNumRedirects: 4,
     pauseOnClick: true,
     skipMessage: 'Skip ad',
     skipWaitingMessage: 'Skip ad in',
     textForClickUIOnMobile: 'Learn more'
   };
-  this.params = defaultParams;
+  this.params = defaultParams; 
   if (params && !FW.isEmptyObject(params)) {
     if (FW.isNumber(params.ajaxTimeout) && params.ajaxTimeout > 0) {
       this.params.ajaxTimeout = params.ajaxTimeout;
+    }
+    if (FW.isNumber(params.creativeLoadTimeout) && params.creativeLoadTimeout > 0) {
+      this.params.creativeLoadTimeout = params.creativeLoadTimeout;
     }
     if (typeof params.ajaxWithCredentials === 'boolean') {
       this.params.ajaxWithCredentials = params.ajaxWithCredentials;
@@ -75,6 +82,52 @@ window.RmpVast = function (id, params) {
   }
   // reset internal variables
   RESET.internalVariables.call(this);
+  // attach fullscreen states
+  // this assumes we have a polyfill for fullscreenchange event 
+  // see app/js/app.js
+  let isInFullscreen = false;
+  let onFullscreenchange = null;
+  let _onFullscreenchange = function (event) {
+    if (event && event.type) {
+      if (DEBUG) {
+        FW.log('RMP-VAST: event is ' + event.type);
+      }
+      if (event.type === 'fullscreenchange') {
+        if (isInFullscreen) {
+          isInFullscreen = false;
+          if (this.adOnStage && this.adIsLinear) {
+            FWVAST.dispatchPingEvent.call(this, 'exitFullscreen');
+          }
+        } else {
+          isInFullscreen = true;
+          if (this.adOnStage && this.adIsLinear) {
+            FWVAST.dispatchPingEvent.call(this, 'fullscreen');
+          }
+        }
+      } else if (event.type === 'webkitbeginfullscreen') {
+        // iOS uses webkitbeginfullscreen
+        if (this.adOnStage && this.adIsLinear) {
+          FWVAST.dispatchPingEvent.call(this, 'fullscreen');
+        }
+      } else if (event.type === 'webkitendfullscreen') {
+        // iOS uses webkitendfullscreen
+        if (this.adOnStage && this.adIsLinear) {
+          FWVAST.dispatchPingEvent.call(this, 'exitFullscreen');
+        }
+      }
+    }
+  };
+  // if we have native fullscreen support we handle fullscreen events
+  if (ENV.hasNativeFullscreenSupport) {
+    onFullscreenchange = _onFullscreenchange.bind(this);
+    // for our beloved iOS 
+    if (ENV.isIos[0]) {
+      this.contentPlayer.addEventListener('webkitbeginfullscreen', onFullscreenchange);
+      this.contentPlayer.addEventListener('webkitendfullscreen', onFullscreenchange);
+    } else {
+      document.addEventListener('fullscreenchange', onFullscreenchange);
+    }
+  }
 };
 
 // enrich RmpVast prototype with API methods
@@ -107,6 +160,10 @@ var _execRedirect = function () {
 };
 
 var _parseCreatives = function (creative) {
+  if (DEBUG) {
+    FW.log('RMP-VAST: _parseCreatives');
+    FW.log(creative);
+  }
   for (let i = 0, len = creative.length; i < len; i++) {
     let currentCreative = creative[i];
     //let creativeID = currentCreative[0].getAttribute('id');
@@ -116,7 +173,13 @@ var _parseCreatives = function (creative) {
     // we only pick the first creative that is either Linear or NonLinearAds
     let nonLinearAds = currentCreative.getElementsByTagName('NonLinearAds');
     let linear = currentCreative.getElementsByTagName('Linear');
+    let cretiveExtensions = currentCreative.getElementsByTagName('CretiveExtensions');
+    let companionAds = currentCreative.getElementsByTagName('CompanionAds');
+    if (cretiveExtensions.length > 0 || companionAds.length > 0) {
+      continue;
+    }
     // we expect only 1 Linear or NonLinearAds tag 
+    // reject CompanionAds for example
     if (nonLinearAds.length !== 1 && linear.length !== 1) {
       PING.error.call(this, 101, this.inlineOrWrapperErrorTags);
       VASTERRORS.process.call(this, 101);
@@ -144,8 +207,8 @@ var _parseCreatives = function (creative) {
         }
         this.isSkippableAd = true;
         this.skipoffset = skipoffset;
-        // we  do not display skippable ads when useContentPlayerForAds is true on is iOS < 10
-        if (this.useContentPlayerForAds && ENV.isIos[0] && ENV.isIos[1] < 10) {
+        // we  do not display skippable ads when on is iOS < 10
+        if (ENV.isIos[0] && ENV.isIos[1] < 10) {
           PING.error.call(this, 200, this.inlineOrWrapperErrorTags);
           VASTERRORS.process.call(this, 200);
           return;
@@ -157,7 +220,7 @@ var _parseCreatives = function (creative) {
       // if present only one TrackingEvents is expected
       if (trackingEvents.length === 1) {
         TRACKINGEVENTS.filter.call(this, trackingEvents);
-      } 
+      }
 
       // VideoClicks for linear
       let videoClicks = linear[0].getElementsByTagName('VideoClicks');
@@ -191,9 +254,20 @@ var _parseCreatives = function (creative) {
       return;
     }
   }
+  // in case wrapper with creative CompanionAds we still need to _execRedirect
+  if (this.isWrapper) {
+    _execRedirect.call(this);
+    return;
+  }
 };
 
 var _onXmlAvailable = function (xml) {
+  // if VMAP we abort
+  let vmap = xml.getElementsByTagName('vmap:VMAP');
+  if (vmap.length > 0) {
+    VASTERRORS.process.call(this, 200);
+    return;
+  }
   // check for VAST node
   this.vastDocument = xml.getElementsByTagName('VAST');
   if (this.vastDocument.length !== 1) {
@@ -315,7 +389,9 @@ var _onXmlAvailable = function (xml) {
   }
   if (!this.isWrapper) {
     this.adTitle = FWVAST.getNodeValue(adTitle[0], false);
-    this.adDescription = FWVAST.getNodeValue(adDescription[0], false);
+    if (adDescription.length > 0) {
+      this.adDescription = FWVAST.getNodeValue(adDescription[0], false);
+    }
   }
   // in case no Creative with Wrapper we make our redirect call here
   if (this.isWrapper && !creative) {
@@ -344,6 +420,9 @@ var _makeAjaxRequest = function (vastUrl) {
   this.isWrapper = false;
   this.vastAdTagURI = null;
   this.adTagUrl = vastUrl;
+  if (DEBUG) {
+    FW.log('RMP-VAST: try to load VAST tag at ' + this.adTagUrl);
+  }
   FW.ajax(this.adTagUrl, this.params.ajaxTimeout, true, this.params.ajaxWithCredentials).then((data) => {
     if (DEBUG) {
       FW.log('RMP-VAST: VAST loaded from ' + this.adTagUrl);
@@ -371,41 +450,26 @@ var _makeAjaxRequest = function (vastUrl) {
 };
 
 RmpVast.prototype.loadAds = function (vastUrl) {
+  if (DEBUG) {
+    FW.log('RMP-VAST: loadAds starts');
+  }
+  if (!this.rmpVastInitialized) {
+    this.initialize();
+  }
   // if we try to load ads when currentTime < 200 ms - be it linear or non-linear - we pause CONTENTPLAYER
   // CONTENTPLAYER (non-linear) or VASTPLAYER (linear) will resume later when VAST has finished loading/parsing
   // this is to avoid bad user experience where content may start for a few ms before ad starts
   let contentCurrentTime = CONTENTPLAYER.getCurrentTime.call(this);
-  if (contentCurrentTime < 200) {
-    if (DEBUG) {
-      FW.log('RMP-VAST: pause content for pre-roll while processing loadAds');
-    }
-    CONTENTPLAYER.pause.call(this);
-  }
   // for useContentPlayerForAds we need to know early what is the content src
   // so that we can resume content when ad finishes or on aderror
   if (this.useContentPlayerForAds) {
-    if (this.contentPlayer.currentSrc) {
-      this.currentContentSrc = this.contentPlayer.currentSrc;
-      _makeAjaxRequest.call(this, vastUrl);
-    } else {
-      // when muted autoplay is set iOS may only return 
-      // this.contentPlayer.currentSrc after loadstart event
-      let _updateInitialContentSrc = function () {
-        this.contentPlayer.removeEventListener('loadstart', this.updateInitialContentSrc);
-        if (this.contentPlayer.currentSrc) {
-          this.currentContentSrc = this.contentPlayer.currentSrc;
-          _makeAjaxRequest.call(this, vastUrl);
-        } else {
-          VASTERRORS.process.call(this, 1003);
-        }
-      };
-      this.updateInitialContentSrc = _updateInitialContentSrc.bind(this);
-      this.contentPlayer.addEventListener('loadstart', this.updateInitialContentSrc);
-    }
+    this.currentContentSrc = this.contentPlayer.src;
     this.currentContentCurrentTime = contentCurrentTime;
+    if (DEBUG) {
+      FW.log('RMP-VAST: currentContentCurrentTime ' + contentCurrentTime);
+    }
     // on iOS we need to prevent seeking when linear ad is on stage
     CONTENTPLAYER.preventSeekingForCustomPlayback.call(this);
-  } else {
-    _makeAjaxRequest.call(this, vastUrl);
   }
+  _makeAjaxRequest.call(this, vastUrl);
 };

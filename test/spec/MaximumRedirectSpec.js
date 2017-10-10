@@ -5,11 +5,10 @@ jasmine.DEFAULT_TIMEOUT_INTERVAL = 30000;
 var ADTAG = 'https://www.radiantmediaplayer.com/vast/tags/redirect-redirect-redirect.xml';
 
 
-describe("Test for Maximum Redirects", function () {
+describe("Test for MaximumRedirectSpec", function () {
 
   var id = 'rmpPlayer';
   var container = document.getElementById(id);
-  var video = container.getElementsByClassName('rmp-video')[0];
   var params = {
     maxNumRedirects: 2
   };
@@ -27,11 +26,13 @@ describe("Test for Maximum Redirects", function () {
       }
     };
 
-    var _onPlayLoadAds = function (e) {
-      video.removeEventListener('play', _onPlayLoadAds);
+    container.addEventListener('adtagloaded', function (e) {
       _incrementAndLog(e);
-      rmpVast.loadAds(ADTAG);
-    };
+    });
+
+    container.addEventListener('adfollowingredirect', function (e) {
+      _incrementAndLog(e);
+    });
 
     container.addEventListener('aderror', function (e) {
       _incrementAndLog(e);
@@ -40,15 +41,16 @@ describe("Test for Maximum Redirects", function () {
 
     container.addEventListener('addestroyed', function (e) {
       _incrementAndLog(e);
-      expect(validSteps).toBe(3);
-      if (validSteps === 3) {
+      expect(validSteps).toBe(8);
+      if (validSteps === 8) {
         testResults.style.display = 'block';
       }
-      done();
+      setTimeout(function () {
+        done();
+      }, 2000);
     });
 
-    video.addEventListener('play', _onPlayLoadAds);
-    rmpVast.play();
+    rmpVast.loadAds(ADTAG);
   });
 
 

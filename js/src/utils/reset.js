@@ -1,4 +1,3 @@
-import { ENV } from '../fw/env';
 import { FW } from '../fw/fw';
 
 const RESET = {};
@@ -11,7 +10,6 @@ RESET.internalVariables = function () {
   this.onLoadedmetadataPlay = null;
   this.onEndedResumeContent = null;
   this.onPlaybackError = null;
-  this.onReset = null;
   // init internal tracking events methods
   this.onPause = null;
   this.onPlay = null;
@@ -27,14 +25,10 @@ RESET.internalVariables = function () {
   this.onNonLinearLoadSuccess = null;
   this.onNonLinearLoadError = null;
   this.onNonLinearClickThrough = null;
-  this.onFullscreenchange = null;
-  this.onPlayingSeek = null;
   this.onContextMenu = null;
-  this.updateInitialContentSrc = null;
   // init internal variables
   this.adTagUrl = null;
   this.vastPlayer = null;
-  this.vastPlayerSource = null;
   this.vastDocument = null;
   this.trackingTags = [];
   this.vastErrorTags = [];
@@ -49,7 +43,6 @@ RESET.internalVariables = function () {
   this.midpointEventFired = false;
   this.thirdQuartileEventFired = false;
   this.vastPlayerPaused = false;
-  this.readyForReset = false;
   this.vastErrorCode = -1;
   this.vastErrorMessage = 'Error getting VAST error';
   this.adSystem = null;
@@ -58,7 +51,6 @@ RESET.internalVariables = function () {
   this.adTitle = null;
   this.adDescription = null;
   this.adOnStage = false;
-  this.adPauseEventTimeout = null;
   this.clickThroughUrl = null;
   this.isWrapper = false;
   this.vastAdTagURI = null;
@@ -66,9 +58,9 @@ RESET.internalVariables = function () {
   this.icons = [];
   this.clickUIOnMobile = null;
   this.currentContentSrc = null;
-  this.currentContentCurrentTime = -1;
   this.customPlaybackCurrentTime = 0;
   this.antiSeekLogicInterval = null;
+  this.creativeLoadTimeoutCallback = null;
   // skip
   this.isSkippableAd = false;
   this.hasSkipEvent = false;
@@ -78,7 +70,7 @@ RESET.internalVariables = function () {
   this.skipButton = null;
   this.skipWaiting = null;
   this.skipMessage = null;
-  this.skipButton = null;
+  this.skipIcon = null;
   this.skippableAdCanBeSkipped = false;
   // non linear
   this.nonLinearContainer = null;
@@ -105,9 +97,7 @@ RESET.unwireVastPlayerEvents = function () {
     }
   }
   if (this.vastPlayer) {
-    if (this.vastPlayerSource) {
-      this.vastPlayerSource.removeEventListener('error', this.onPlaybackError);
-    }
+    this.vastPlayer.removeEventListener('error', this.onPlaybackError);
     // vastPlayer content pause/resume events
     this.vastPlayer.removeEventListener('durationchange', this.onDurationChange);
     this.vastPlayer.removeEventListener('loadedmetadata', this.onLoadedmetadataPlay);
@@ -126,32 +116,28 @@ RESET.unwireVastPlayerEvents = function () {
       this.vastPlayer.removeEventListener(this.trackingTags[i].event, this.onEventPingTracking);
     }
     // remove clicktrough handling
-    this.vastPlayer.removeEventListener('click', this.onClickThrough);
+    if (this.onClickThrough !== null) {
+      this.vastPlayer.removeEventListener('click', this.onClickThrough);
+    }
     // remove icons 
-    this.vastPlayer.removeEventListener('playing', this.onPlayingAppendIcons);
+    if (this.onPlayingAppendIcons !== null) {
+      this.vastPlayer.removeEventListener('playing', this.onPlayingAppendIcons);
+    }
     // skip
-    this.vastPlayer.removeEventListener('timeupdate', this.onTimeupdateCheckSkip);
-    if (this.skipButton) {
+    if (this.onTimeupdateCheckSkip !== null) {
+      this.vastPlayer.removeEventListener('timeupdate', this.onTimeupdateCheckSkip);
+    }
+    if (this.skipButton && this.onClickSkip !== null) {
       this.skipButton.removeEventListener('click', this.onClickSkip);
       this.skipButton.removeEventListener('touchend', this.onClickSkip);
     }
     // click UI on mobile
-    if (this.clickUIOnMobile) {
+    if (this.clickUIOnMobile && this.onClickThrough !== null) {
       this.clickUIOnMobile.removeEventListener('click', this.onClickThrough);
-    }
-    // fullscreen
-    if (ENV.hasNativeFullscreenSupport) {
-      document.removeEventListener('fullscreenchange', this.onFullscreenchange);
-      // for our beloved iOS 
-      if (this.useContentPlayerForAds) {
-        this.vastPlayer.removeEventListener('webkitbeginfullscreen', this.onFullscreenchange);
-        this.vastPlayer.removeEventListener('webkitendfullscreen', this.onFullscreenchange);
-      }
     }
   }
   if (this.contentPlayer) {
-    this.contentPlayer.removeEventListener('loadstart', this.updateInitialContentSrc);
-    this.contentPlayer.removeEventListener('playing', this.onPlayingSeek);
+    this.contentPlayer.removeEventListener('error', this.onPlaybackError);
   }
 };
 

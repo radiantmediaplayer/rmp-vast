@@ -61,6 +61,32 @@ var _isIos = function (ua, isWindowsPhone, hasTouchEvents) {
   return support;
 };
 
+var _isMacOSX = function (ua, isIos) {
+  let pattern = /(macintosh|mac\s+os)/i;
+  if (pattern.test(ua) && !isIos[0]) {
+    return true;
+  }
+  return false;
+};
+
+var _isSafari = function (ua) {
+  let isSafari = false;
+  let safariVersion = -1;
+  let pattern1 = /safari\/\d+\.\d+/i;
+  let pattern2 = /chrome/i;
+  let pattern3 = /chromium/i;
+  let pattern4 = /android/i;
+  if (pattern1.test(ua) && !pattern2.test(ua) && !pattern3.test(ua) &&
+    !pattern4.test(ua)) {
+    isSafari = true;
+  }
+  if (isSafari) {
+    let versionPattern = /version\/(\d+)\./i;
+    safariVersion = _filterVersion(versionPattern, ua);
+  }
+  return [isSafari, safariVersion];
+};
+
 var _isAndroid = function (ua, isWindowsPhone, isIos, hasTouchEvents) {
   let isAndroid = false;
   let androidVersion = -1;
@@ -139,42 +165,13 @@ var _hasNativeFullscreenSupport = function () {
 };
 ENV.hasNativeFullscreenSupport = _hasNativeFullscreenSupport();
 
-ENV.requestFullscreen = function (container, video) {
-  if (container && video) {
-    if (typeof container.requestFullscreen !== 'undefined') {
-      container.requestFullscreen();
-    } else if (typeof container.webkitRequestFullscreen !== 'undefined') {
-      container.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
-    } else if (typeof container.mozRequestFullScreen !== 'undefined') {
-      container.mozRequestFullScreen();
-    } else if (typeof container.msRequestFullscreen !== 'undefined') {
-      container.msRequestFullscreen();
-    } else if (video && typeof video.webkitEnterFullscreen !== 'undefined') {
-      video.webkitEnterFullscreen();
-    }
-  }
-};
-
-ENV.exitFullscreen = function (video) {
-  if (typeof document.exitFullscreen !== 'undefined') {
-    document.exitFullscreen();
-  } else if (typeof document.webkitExitFullscreen !== 'undefined') {
-    document.webkitExitFullscreen();
-  } else if (typeof document.mozCancelFullScreen !== 'undefined') {
-    document.mozCancelFullScreen();
-  } else if (typeof document.msExitFullscreen !== 'undefined') {
-    document.msExitFullscreen();
-  } else if (video && typeof video.webkitExitFullscreen !== 'undefined') {
-    video.webkitExitFullscreen();
-  }
-};
-
 ENV.ua = _getUserAgent();
 ENV.hasTouchEvents = _hasTouchEvents();
 ENV.isWindowsPhone = _isWindowsPhone(ENV.ua, ENV.hasTouchEvents);
 ENV.isIos = _isIos(ENV.ua, ENV.isWindowsPhone, ENV.hasTouchEvents);
 ENV.isAndroid = _isAndroid(ENV.ua, ENV.isWindowsPhone, ENV.isIos, ENV.hasTouchEvents);
-
+ENV.isMacOSX = _isMacOSX(ENV.ua, ENV.isIos);
+ENV.isSafari = _isSafari(ENV.ua);
 ENV.isMobile = false;
 if (ENV.isIos[0] || ENV.isAndroid[0] || ENV.isWindowsPhone[0]) {
   ENV.isMobile = true;

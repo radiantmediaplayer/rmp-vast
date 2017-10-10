@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<!-- this page is used for development purposes refer to index.html for the full demo app -->
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+  <title>RmpVast - Example</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/app.css">
+  <link rel="stylesheet" href="../css/rmp-vast.min.css">
+  <script src="../js/dist/rmp-vast.js"></script>
+</head>
+
+<body>
+  <div class="rmp-container" id="rmpPlayer" style="width:640px;height:360px;">
+    <div class="rmp-content">
+      <video class="rmp-video" src="https://www.rmp-streaming.com/media/bbb-360p.mp4" playsinline>
+      </video>
+    </div>
+  </div>
+
+  <button id="play">PLAY</button><br>
+  <button id="pause">PAUSE</button><br>
+  <button id="seekNearEnd">seekNearEnd</button><br>
+  <script>
+    var id = 'rmpPlayer';
+    var container = document.getElementById(id);
+    var video = container.getElementsByClassName('rmp-video')[0];
+    var preroll = 'https://www.radiantmediaplayer.com/vast/tags/inline-linear.xml';
+    var midroll = 'https://www.radiantmediaplayer.com/vast/tags/inline-linear.xml';
+    var postroll = 'https://www.radiantmediaplayer.com/vast/tags/inline-linear.xml';
+    var params = {
+    };
+    var rmpVast = new RmpVast(id, params);
+
+
+    // first click - load preroll
+    var play = document.getElementById('play');
+    var firstClick = true;
+    play.addEventListener('click', function () {
+      if (firstClick) {
+        rmpVast.loadAds(preroll);
+        firstClick = false;
+      } else {
+        rmpVast.play();
+      }
+    });
+
+    // at 15 sec or past load a midroll
+    var ontimeupdate = function () {
+      if (!rmpVast.getAdOnStage() && video.currentTime * 1000 > 10000) {
+        video.removeEventListener('timeupdate', ontimeupdate);
+        rmpVast.loadAds(midroll);
+      }
+    };
+    video.addEventListener('timeupdate', ontimeupdate);
+
+    // when video ends load post roll
+    var loadPostRoll = function () {
+      if (!rmpVast.getAdOnStage()) {
+        video.removeEventListener('ended', loadPostRoll);
+        rmpVast.loadAds(postroll);
+      }
+    };
+    video.addEventListener('ended', loadPostRoll);
+
+    var pause = document.getElementById('pause');
+    pause.addEventListener('click', function () {
+      rmpVast.pause();
+    });
+
+    var seekNearEnd = document.getElementById('seekNearEnd');
+    seekNearEnd.addEventListener('click', function () {
+      video.currentTime = 95;
+    });
+  </script>
+</body>

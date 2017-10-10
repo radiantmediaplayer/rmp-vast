@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<!-- this page is used for development purposes refer to index.html for the full demo app -->
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+  <title>RmpVast - Example</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/app.css">
+  <link rel="stylesheet" href="../css/rmp-vast.min.css">
+  <script src="../js/dist/rmp-vast.js"></script>
+</head>
+
+<body>
+  <div class="rmp-container" id="rmpPlayer" style="width:640px;height:360px;">
+    <div class="rmp-content">
+      <video class="rmp-video" src="https://www.rmp-streaming.com/media/bbb-360p.mp4" playsinline muted>
+      </video>
+    </div>
+  </div>
+
+  <button id="play">PLAY</button><br>
+  <button id="pause">PAUSE</button>
+  <script>
+    var id = 'rmpPlayer';
+    var container = document.getElementById(id);
+    var video = container.getElementsByClassName('rmp-video')[0];
+    var ADTAG = 'https://www.radiantmediaplayer.com/vast/tags/inline-linear.xml';
+    var params = {
+    };
+    var rmpVast = new RmpVast(id, params);
+
+    var play = document.getElementById('play');
+    play.addEventListener('click', function () {
+      rmpVast.play();
+    });
+
+    var pause = document.getElementById('pause');
+    pause.addEventListener('click', function () {
+      rmpVast.pause();
+    });
+
+    rmpVast.loadAds(ADTAG);
+  </script>
+</body>

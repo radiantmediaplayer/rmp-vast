@@ -119,7 +119,6 @@ var _updateVastError = function (errorCode) {
 };
 
 VASTERRORS.process = function (errorCode) {
-  this.readyForReset = true;
   _updateVastError.call(this, errorCode);
   API.createEvent.call(this, 'aderror');
   VASTPLAYER.resumeContent.call(this);

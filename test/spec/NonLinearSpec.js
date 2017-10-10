@@ -9,7 +9,6 @@ describe("Test for Inline Non Linear ad", function () {
 
   var id = 'rmpPlayer';
   var container = document.getElementById(id);
-  var video = container.getElementsByClassName('rmp-video')[0];
   var rmpVast = new RmpVast(id);
   var fw = rmpVast.getFW();
   var testResults = document.getElementById('test-results');
@@ -22,12 +21,6 @@ describe("Test for Inline Non Linear ad", function () {
       if (event && event.type) {
         fw.log('RMP-VAST-TEST: ' + event.type);
       }
-    };
-
-    var _onPlayLoadAds = function (e) {
-      video.removeEventListener('play', _onPlayLoadAds);
-      _incrementAndLog(e);
-      rmpVast.loadAds(ADTAG);
     };
 
     container.addEventListener('adloaded', function (e) {
@@ -44,7 +37,7 @@ describe("Test for Inline Non Linear ad", function () {
         var close = document.getElementsByClassName('rmp-ad-non-linear-close')[0];
         fw.log('click close');
         fw.createStdEvent('click', close);
-      }, 5000);
+      }, 7000);
     });
 
     container.addEventListener('adtagstartloading', function (e) {
@@ -57,15 +50,16 @@ describe("Test for Inline Non Linear ad", function () {
 
     container.addEventListener('adclosed', function (e) {
       _incrementAndLog(e);
-      expect(validSteps).toBe(7);
-      if (validSteps === 7) {
+      expect(validSteps).toBe(6);
+      if (validSteps === 6) {
         testResults.style.display = 'block';
       }
-      done();
+      setTimeout(function () {
+        done();
+      }, 2000);
     });
 
-    video.addEventListener('play', _onPlayLoadAds);
-    rmpVast.play();
+    rmpVast.loadAds(ADTAG);
   });
 
 

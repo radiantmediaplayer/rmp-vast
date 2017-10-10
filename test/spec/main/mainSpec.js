@@ -4,23 +4,33 @@ jasmine.DEFAULT_TIMEOUT_INTERVAL = 120000;
 
 const { Builder, By, until } = require('../../../node_modules/selenium-webdriver/');
 const WAITTIMEOUT = 120000;
+const pathToTest = 'http://localhost/rmp-vast/test/';
 
 var testUrls = [
-	'http://localhost/rmp-vast/test/AdPodNoStandaloneSpec.html',
-	'http://localhost/rmp-vast/test/AdPodWithStandaloneSpec.html',
-	'http://localhost/rmp-vast/test/EmptySpec.html',
-	'http://localhost/rmp-vast/test/LinearMutedAutoplaySpec.html',
-	'http://localhost/rmp-vast/test/LinearSpec.html',
-	'http://localhost/rmp-vast/test/LinearVAST2Spec.html',
-	'http://localhost/rmp-vast/test/MalformedSpec.html',
-	'http://localhost/rmp-vast/test/MaximumRedirectSpec.html',
-	'http://localhost/rmp-vast/test/NonLinearSpec.html',
-	'http://localhost/rmp-vast/test/RedirectRedirectSpec.html',
-	'http://localhost/rmp-vast/test/RedirectSpec.html',
-	'http://localhost/rmp-vast/test/SkippableSpec.html',
-	'http://localhost/rmp-vast/test/SmartAdServerSpec.html',
-	'http://localhost/rmp-vast/test/TwoLinearSpec.html',
-	'http://localhost/rmp-vast/test/VPAIDSpec.html'
+	pathToTest + 'AdPodNoStandaloneSpec.html',
+	pathToTest + 'AdPodWithStandaloneSpec.html',
+	pathToTest + 'EmptySpec.html',
+	pathToTest + 'ErrorMediaSpec.html',
+	pathToTest + 'IABVAST2Spec.html',
+	pathToTest + 'IABVAST3RedirectSpec.html',
+	pathToTest + 'IABVAST3Spec.html',
+	pathToTest + 'ImaInlineLinearSpec.html',
+	pathToTest + 'ImaRedirectLinearSpec.html',
+	pathToTest + 'LinearMutedAutoplaySpec.html',
+	pathToTest + 'LinearSpec.html',
+	pathToTest + 'LinearVAST2Spec.html',
+	pathToTest + 'MalformedSpec.html',
+	pathToTest + 'MaximumRedirectSpec.html',
+	pathToTest + 'NonLinearSpec.html',
+	pathToTest + 'NonLinearSpecIABVAST2Spec.html',
+	pathToTest + 'NonLinearSpecIABVAST3Spec.html',
+	pathToTest + 'RedirectRedirectSpec.html',
+	pathToTest + 'RedirectSpec.html',
+	pathToTest + 'SkippableSpec.html',
+	pathToTest + 'SmartAdServerSpec.html',
+	pathToTest + 'ThreeConsecutiveWithErrorLinearSpec.html',
+	pathToTest + 'TwoConsecutiveLinearSpec.html',
+	pathToTest + 'VPAIDSpec.html'
 ];
 
 var driver = new Builder()

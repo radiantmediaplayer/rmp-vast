@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>ThreeConsecutiveWithErrorLinearSpec</title>
+
+  <link rel="shortcut icon" type="image/png" href="lib/jasmine-2.5.2/jasmine_favicon.png">
+  <link rel="stylesheet" href="lib/jasmine-2.5.2/jasmine.css">
+
+  <link rel="stylesheet" href="../css/rmp-vast.min.css">
+  <link rel="stylesheet" href="../app/css/app.css">
+
+  <script src="lib/jasmine-2.5.2/jasmine.js"></script>
+  <script src="lib/jasmine-2.5.2/jasmine-html.js"></script>
+  <script src="lib/jasmine-2.5.2/boot.js"></script>
+
+  <!-- include source files here... -->
+  <script src="../js/dist/rmp-vast.js"></script>
+
+</head>
+
+<body>
+  <div class="rmp-container" id="rmpPlayer">
+    <div class="rmp-content">
+      <video class="rmp-video" src="https://www.rmp-streaming.com/media/bbb-360p.mp4" preload="none" playsinline>
+      </video>
+    </div>
+  </div>
+  <div id="test-results" style="display: none;">TEST COMPLETED</div>
+  <!-- include spec files here... -->
+  <script src="spec/ThreeConsecutiveWithErrorLinearSpec.js"></script>
+</body>
+
+</html>

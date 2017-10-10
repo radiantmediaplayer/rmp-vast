@@ -12,11 +12,6 @@ import { VASTERRORS } from '../utils/vast-errors';
 
 const VASTPLAYER = {};
 
-var _onPlayingSeek = function () {
-  this.contentPlayer.removeEventListener('playing', this.onPlayingSeek);
-  CONTENTPLAYER.seekTo.call(this, this.currentContentCurrentTime);
-};
-
 var _destroyVastPlayer = function () {
   if (DEBUG) {
     FW.log('RMP-VAST: start destroying vast player');
@@ -31,37 +26,49 @@ var _destroyVastPlayer = function () {
   if (this.clickUIOnMobile) {
     this.adContainer.removeChild(this.clickUIOnMobile);
   }
+  if (this.isSkippableAd) {
+    this.adContainer.removeChild(this.skipButton);
+  }
   // hide rmp-ad-container
   FW.hide(this.adContainer);
-  // unwire anti-seek logic
+  // unwire anti-seek logic (iOS)
   clearInterval(this.antiSeekLogicInterval);
+  // reset creativeLoadTimeout
+  clearTimeout(this.creativeLoadTimeoutCallback);
   if (this.useContentPlayerForAds) {
     // when content is restored we need to seek to previously known currentTime
     // this must happen on playing event
-    if (this.currentContentCurrentTime > 400) {
-      this.onPlayingSeek = _onPlayingSeek.bind(this);
-      this.contentPlayer.addEventListener('playing', this.onPlayingSeek);
+    // the below is some hack I come up with because Safari is confused with 
+    // what it is asked to do when post roll come into play
+    if (this.currentContentCurrentTime > 4000) {
+      this.needsSeekAdjust = true;
+      if (this.contentPlayerCompleted) {
+        this.needsSeekAdjust = false;
+      }
+      if (!this.seekAdjustAttached) {
+        this.seekAdjustAttached = true;
+        this.contentPlayer.addEventListener('playing', () => {
+          if (this.needsSeekAdjust) {
+            CONTENTPLAYER.seekTo.call(this, this.currentContentCurrentTime);
+            this.needsSeekAdjust = false;
+          }
+        });
+      }
     }
     if (DEBUG) {
-      FW.log('RMP-VAST: recovering content with src ' + this.currentContentSrc);
+      FW.log('RMP-VAST: recovering content with src ' + this.currentContentSrc +
+        ' - at time: ' + this.currentContentCurrentTime);
     }
     this.contentPlayer.src = this.currentContentSrc;
-    this.contentPlayer.load();
   } else {
     // empty buffer for vastPlayer
     try {
       if (this.vastPlayer) {
         this.vastPlayer.pause();
+        // empty buffer
+        this.vastPlayer.removeAttribute('src');
+        this.vastPlayer.load();
         FW.hide(this.vastPlayer);
-        if (this.vastPlayerSource) {
-          if (this.vastPlayerSource.hasAttribute('src')) {
-            this.vastPlayerSource.removeAttribute('src');
-            this.vastPlayer.load();
-            if (DEBUG) {
-              FW.log('RMP-VAST: emptied VAST player buffer');
-            }
-          }
-        }
         if (this.nonLinearContainer) {
           this.adContainer.removeChild(this.nonLinearContainer);
         }
@@ -71,19 +78,20 @@ var _destroyVastPlayer = function () {
     }
   }
   // reset internal variables for next ad if any
-  RESET.internalVariables.call(this);
-  API.createEvent.call(this, 'addestroyed');
+  // we tick to let buffer empty
+  setTimeout(() => {
+    RESET.internalVariables.call(this);
+    API.createEvent.call(this, 'addestroyed');
+  }, 100);
 };
 
 VASTPLAYER.init = function () {
   if (DEBUG) {
-    FW.log('RMP-VAST: init called on VASTPLAYER');
+    FW.log('RMP-VAST: init called');
   }
-  if (!this.adContainer) {
-    this.adContainer = document.createElement('div');
-    this.adContainer.className = 'rmp-ad-container';
-    this.content.appendChild(this.adContainer);
-  }
+  this.adContainer = document.createElement('div');
+  this.adContainer.className = 'rmp-ad-container';
+  this.content.appendChild(this.adContainer);
   FW.hide(this.adContainer);
   if (!this.useContentPlayerForAds) {
     this.vastPlayer = document.createElement('video');
@@ -92,8 +100,11 @@ VASTPLAYER.init = function () {
       this.vastPlayer.disableRemotePlayback = true;
     }
     this.vastPlayer.className = 'rmp-ad-vast-video-player';
-    FW.hide(this.vastPlayer);
     this.vastPlayer.controls = false;
+    // this.contentPlayer.muted may not be set because of a bug in some version of Chromium
+    if (this.contentPlayer.hasAttribute('muted')) {
+      this.contentPlayer.muted = true;
+    }
     if (this.contentPlayer.muted) {
       this.vastPlayer.muted = true;
     }
@@ -106,39 +117,50 @@ VASTPLAYER.init = function () {
       // this is for iOS/Android WebView where webkit-playsinline may be available
       this.vastPlayer.setAttribute('webkit-playsinline', true);
     }
-    this.vastPlayer.preload = 'auto';
     this.vastPlayer.defaultPlaybackRate = 1;
     // append to rmp-ad-container
+    FW.hide(this.vastPlayer);
     this.adContainer.appendChild(this.vastPlayer);
-    // on mobile we need to init the vast player video tag
-    // we do this by calling play/pause as a result of a direct user interaction
-    // unless we are muted in which case we can use autoplay or HTMLMediaElement.play() 
-    // without having to worry about video tag init
-    if (ENV.isMobile && !this.vastPlayer.muted) {
-      if (DEBUG) {
-        FW.log('RMP-VAST: fake start for mobiles to init video tag');
-      }
-      FW.playPromise(this.vastPlayer);
-      this.vastPlayer.pause();
-    }
   } else {
     this.vastPlayer = this.contentPlayer;
+  }
+  // we track ended state for content player
+  this.contentPlayer.addEventListener('ended', () => {
+    if (this.adOnStage) {
+      return;
+    }
+    this.contentPlayerCompleted = true;
+  });
+  // we need the loadedmetadata event so we force preload 
+  // in case it was set differently
+  this.vastPlayer.preload = 'metadata';
+  // we need to init the vast player video tag
+  // according to https://developers.google.com/interactive-media-ads/docs/sdks/html5/mobile_video
+  // to initialize the content element, a call to the load() method is sufficient.
+  if (ENV.isMobile && !this.useContentPlayerForAds) {
+    // on Android both this.contentPlayer (to resume content)
+    // and this.vastPlayer (to start ads) needs to be init
+    this.contentPlayer.load();
+    this.vastPlayer.load();
+  } else if (this.useContentPlayerForAds) {
+    if (DEBUG) {
+      FW.log('RMP-VAST: call load on VAST player to init HTML5 video tag');
+    }
+    // on iOS and macOS Safari only init this.vastPlayer (as same as this.contentPlayer)
+    this.vastPlayer.load();
   }
   this.rmpVastInitialized = true;
 };
 
 VASTPLAYER.append = function (url, type) {
-  // this is for autoplay on desktop
-  // or muted autoplay on mobile where player is not initialized
-  if (!this.rmpVastInitialized) {
-    VASTPLAYER.init.call(this);
-  }
   // in case loadAds is called several times - rmpVastInitialized is already true
   // but we still need to locate the vastPlayer
   if (!this.vastPlayer) {
     if (this.useContentPlayerForAds) {
       this.vastPlayer = this.contentPlayer;
     } else {
+      // we use existing rmp-ad-vast-video-player as it is already 
+      // available and initialized (no need for user interaction)
       let existingVastPlayer = this.adContainer.getElementsByClassName('rmp-ad-vast-video-player')[0];
       if (!existingVastPlayer) {
         VASTERRORS.process.call(this, 1004);
@@ -165,77 +187,81 @@ VASTPLAYER.append = function (url, type) {
 };
 
 VASTPLAYER.setVolume = function (level) {
-  this.vastPlayer.volume = level;
+  if (this.vastPlayer) {
+    this.vastPlayer.volume = level;
+  }
 };
 
 VASTPLAYER.getVolume = function () {
-  return this.vastPlayer.volume;
+  if (this.vastPlayer) {
+    return this.vastPlayer.volume;
+  }
+  return null;
 };
 
 VASTPLAYER.setMute = function (muted) {
-  if (muted && !this.vastPlayer.muted) {
-    this.vastPlayer.muted = true;
-    FWVAST.dispatchPingEvent.call(this, 'mute');
-  } else if (!muted && this.vastPlayer.muted) {
-    this.vastPlayer.muted = false;
-    FWVAST.dispatchPingEvent.call(this, 'unmute');
+  if (this.vastPlayer) {
+    if (muted && !this.vastPlayer.muted) {
+      this.vastPlayer.muted = true;
+      FWVAST.dispatchPingEvent.call(this, 'mute');
+    } else if (!muted && this.vastPlayer.muted) {
+      this.vastPlayer.muted = false;
+      FWVAST.dispatchPingEvent.call(this, 'unmute');
+    }
   }
 };
 
 VASTPLAYER.getMute = function () {
-  return this.vastPlayer.muted;
+  if (this.vastPlayer) {
+    return this.vastPlayer.muted;
+  }
+  return null;
 };
 
 VASTPLAYER.play = function () {
-  if (this.vastPlayer.paused) {
+  if (this.vastPlayer && this.vastPlayer.paused) {
     FW.playPromise(this.vastPlayer);
   }
 };
 
 VASTPLAYER.pause = function () {
-  if (!this.vastPlayer.paused) {
+  if (this.vastPlayer && !this.vastPlayer.paused) {
     this.vastPlayer.pause();
   }
 };
 
 VASTPLAYER.getDuration = function () {
-  let duration = this.vastPlayer.duration;
-  if (FW.isNumber(duration)) {
-    return Math.round(duration * 1000);
+  if (this.vastPlayer) {
+    let duration = this.vastPlayer.duration;
+    if (FW.isNumber(duration)) {
+      return Math.round(duration * 1000);
+    }
   }
   return -1;
 };
 
 VASTPLAYER.getCurrentTime = function () {
-  let currentTime = this.vastPlayer.currentTime;
-  if (FW.isNumber(currentTime)) {
-    return Math.round(currentTime * 1000);
+  if (this.vastPlayer) {
+    let currentTime = this.vastPlayer.currentTime;
+    if (FW.isNumber(currentTime)) {
+      return Math.round(currentTime * 1000);
+    }
   }
   return -1;
-};
-
-var _onReset = function () {
-  if (DEBUG) {
-    FW.log('RMP-VAST: processing onReset after adcontentresumerequested');
-  }
-  if (this.vastPlayer) {
-    this.vastPlayer.removeEventListener('reset', this.onReset);
-  }
-  _destroyVastPlayer.call(this);
-  CONTENTPLAYER.play.call(this);
 };
 
 VASTPLAYER.resumeContent = function () {
   if (DEBUG) {
     FW.log('RMP-VAST: resumeContent');
   }
-  this.onReset = _onReset.bind(this);
-  if (this.readyForReset) {
-    this.onReset();
-  } else {
-    // in case we need to wait for the ping on complete/skip
-    this.vastPlayer.addEventListener('reset', this.onReset);
-  }
+  // tick to let last ping events (complete/skip) to be sent
+  setTimeout(() => {
+    _destroyVastPlayer.call(this);
+    if (!this.contentPlayerCompleted) {
+      CONTENTPLAYER.play.call(this);
+    }
+    this.contentPlayerCompleted = false;
+  }, 100);
 };
 
 export { VASTPLAYER };

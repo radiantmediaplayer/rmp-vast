@@ -5,12 +5,12 @@
   // our elements
   var id = 'rmpPlayer';
   var container = document.getElementById(id);
-  var video = container.getElementsByClassName('rmp-video')[0];
   // the default adTag when none is provided
-  var adTag = 'https://www.radiantmediaplayer.com/vast/tags/inline-linear-5.xml';
+  var adTag = 'https://www.radiantmediaplayer.com/vast/tags/inline-linear.xml';
   // the following params are the default
   var params = {
-    ajaxTimeout: 10000,
+    ajaxTimeout: 8000,
+    creativeLoadTimeout: 10000,
     ajaxWithCredentials: true,
     maxNumRedirects: 4,
     skipMessage: 'Skip ad',
@@ -21,8 +21,11 @@
   var rmpVast = new RmpVast(id, params);
   // we get rmpVast framework to help us out for the app
   var fw = rmpVast.getFW();
+ 
 
-  // first we need some polyfill to handle fullscreen changes
+  /*** start of fullscreen management logic ***/
+  /* yes HTML5 video fullscreen is probably not as easy as it sounds */
+  // first we need some polyfill to handle fullscreenchange event in a unified way
   var _proxyFullscreenEvents = function (event) {
     if (event && event.type) {
       let newType = event.type.replace(/^(webkit|moz|MS)/, '').toLowerCase();
@@ -36,15 +39,76 @@
   document.addEventListener('MSFullscreenChange', _proxyFullscreenEvents);
   document.addEventListener('MSFullscreenError', _proxyFullscreenEvents);
 
+  var isInFullscreen = false;
+  var _onfullscreenchange = function () {
+    if (!isInFullscreen) {
+      isInFullscreen = true;
+      fw.addClass(container, 'rmp-fullscreen-on');
+    } else {
+      isInFullscreen = false;
+      fw.removeClass(container, 'rmp-fullscreen-on');
+    }
+  };
+  // on iOS webkitbeginfullscreen/webkitendfullscreen are used but we do not care
+  // because we do not need rmp-fullscreen-on on container on iOS (iOS uses its own fullscreen player)
+  document.addEventListener('fullscreenchange', _onfullscreenchange);
+  
+  var _requestFullscreen = function (container, video) {
+    if (container && video) {
+      if (typeof container.requestFullscreen !== 'undefined') {
+        container.requestFullscreen();
+      } else if (typeof container.webkitRequestFullscreen !== 'undefined') {
+        container.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
+      } else if (typeof container.mozRequestFullScreen !== 'undefined') {
+        container.mozRequestFullScreen();
+      } else if (typeof container.msRequestFullscreen !== 'undefined') {
+        container.msRequestFullscreen();
+      } else if (video && typeof video.webkitEnterFullscreen !== 'undefined') {
+        // we still need to tell iOS to go fullscreen
+        video.webkitEnterFullscreen();
+      }
+    }
+  };
+  
+  var _exitFullscreen = function (video) {
+    if (typeof document.exitFullscreen !== 'undefined') {
+      document.exitFullscreen();
+    } else if (typeof document.webkitExitFullscreen !== 'undefined') {
+      document.webkitExitFullscreen();
+    } else if (typeof document.mozCancelFullScreen !== 'undefined') {
+      document.mozCancelFullScreen();
+    } else if (typeof document.msExitFullscreen !== 'undefined') {
+      document.msExitFullscreen();
+    } else if (video && typeof video.webkitExitFullscreen !== 'undefined') {
+      // we still need to tell iOS to exit fullscreen
+      video.webkitExitFullscreen();
+    }
+  };
+
+  var _setFullscreen = function (fs) {
+    if (typeof fs === 'boolean') {
+      var contentPlayer = rmpVast.getContentPlayer();
+      var vastPlayer = rmpVast.getVastPlayer();
+      if (isInFullscreen && !fs) {
+        if (rmpVast.getAdOnStage() && rmpVast.getAdLinear()) {
+          _exitFullscreen(vastPlayer);
+        } else {
+          _exitFullscreen(contentPlayer);
+        }
+      } else if (!isInFullscreen && fs) {
+        if (rmpVast.getAdOnStage() && rmpVast.getAdLinear()) {
+          _requestFullscreen(container, vastPlayer);
+        } else {
+          _requestFullscreen(container, contentPlayer);
+        }
+      }
+    }
+  };
+  /*** end of fullscreen management logic ***/
+
   /*** START of resizing logic ***/
   // following is just some basic resizing logic for the purpose of the 
-  // demo - you probably want to upgrade it or write your own 
-  // the concept is to properly size container in pixels
-  // inner elements of container will follow because they are % based
-  var originalContainerWidth = fw.getWidth(container);
-  var originalContainerHeight = fw.getHeight(container);
-  var ratio = originalContainerWidth / originalContainerHeight;
-
+  // demo - you probably want to upgrade it
   var _getViewportWidth = function () {
     var viewportWidth = 0;
     if (document.documentElement && typeof document.documentElement.clientWidth === 'number') {
@@ -54,47 +118,45 @@
     }
     return viewportWidth;
   };
-
-  var _setContainerSize = function (width, height) {
-    if (width && height) {
-      container.style.width = width + 'px';
-      container.style.height = height + 'px';
-    }
-  };
-
-  var _resize = function () {
-    if (rmpVast.getFullscreen()) {
-      return;
-    }
-    var containerWidth = fw.getWidth(container);
-    // the - 30 is specific the demo layout (e.g. bootstrap left/right 15px padding on col-*)
-    var viewportWidth = _getViewportWidth() - 30;
-    if (containerWidth > viewportWidth) {
-      _setContainerSize(viewportWidth, viewportWidth / ratio);
-    } else if (containerWidth <= viewportWidth) {
-      if (originalContainerWidth <= viewportWidth) {
-        _setContainerSize(originalContainerWidth, originalContainerWidth / ratio);
-      } else {
-        _setContainerSize(viewportWidth, viewportWidth / ratio);
-      }
-    }
-  };
-
-  window.addEventListener('orientationchange', _resize);
-  window.addEventListener('resize', _resize);
-  _resize();
+  var viewportWidth = _getViewportWidth();
+  var playerWidth = 640;
+  var playerHeight = 360;
+  if (viewportWidth < 640) {
+    playerWidth = 480;
+    playerHeight = 270;
+  }
+  if (viewportWidth < 480) {
+    playerWidth = 320;
+    playerHeight = 180;
+  }
+  container.style.width = playerWidth + 'px';
+  container.style.height = playerHeight + 'px';
   /*** END of resizing logic ***/
 
-
   fw.log('APP: rmpVast instance created');
+
+  var nowOffset = 0;
+  var _getNow = function () {
+    if (window.performance && typeof window.performance.now === 'function') {
+      return Math.round(window.performance.now());
+    }
+    return 0;
+  };
 
   // we wire our demo app UI for user interactions and logging
   var _wireUI = function () {
 
     // UI buttons
     var play = document.getElementById('play');
+    var firstClick = true;
     play.addEventListener('click', function () {
-      rmpVast.play();
+      if (firstClick) {
+        firstClick = false;
+        nowOffset = _getNow();
+        rmpVast.loadAds(adTag);
+      } else {
+        rmpVast.play();
+      }
     });
 
     var pause = document.getElementById('pause');
@@ -104,10 +166,10 @@
 
     var fullscreen = document.getElementById('fullscreen');
     fullscreen.addEventListener('click', function () {
-      if (rmpVast.getFullscreen()) {
-        rmpVast.setFullscreen(false);
+      if (isInFullscreen) {
+        _setFullscreen(false);
       } else {
-        rmpVast.setFullscreen(true);
+        _setFullscreen(true);
       }
     });
 
@@ -145,7 +207,6 @@
       'getAdPaused',
       'getVolume',
       'getMute',
-      'getFullscreen',
       'getAdTagUrl',
       'getAdMediaUrl',
       'getAdLinear',
@@ -186,9 +247,7 @@
     var _logEvent = function (event) {
       if (event && event.type) {
         var data = event.type;
-        if (window.performance && typeof window.performance.now === 'function') {
-          data += ' - ' + Math.round(window.performance.now()) + ' ms';
-        }
+        data += ' - ' + (_getNow() - nowOffset) + ' ms';
         fw.log(data);
         eventLogs.insertAdjacentHTML('afterbegin', '<p>' + data + '</p>');
         if (event.type === 'aderror') {
@@ -208,26 +267,16 @@
     var loadAds = document.getElementById('loadAds');
     var newAdTagUrl = document.getElementById('newAdTagUrl');
     loadAds.addEventListener('click', function () {
+      firstClick = false;
+      nowOffset = _getNow();
       if (newAdTagUrl.value) {
-        if (rmpVast.getInitialized()) {
-          rmpVast.loadAds(newAdTagUrl.value);
-        } else {
-          // if rmp-vast is not initialized then we just update adTag
-          // an explicit play interaction is still required (e.g. to prevent issues on mobiles)
-          adTag = newAdTagUrl.value;
-        }
+        adTag = newAdTagUrl.value;
       }
+      rmpVast.loadAds(adTag);
     });
 
   };
 
   _wireUI();
 
-  // at start up be it autoplay or through a user interaction we loadAds at play event
-  var _onPlayLoadAds = function () {
-    video.removeEventListener('play', _onPlayLoadAds);
-    fw.log('APP: play event reached on content player - loadAds');
-    rmpVast.loadAds(adTag);
-  };
-  video.addEventListener('play', _onPlayLoadAds);
 })();

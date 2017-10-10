@@ -9,7 +9,6 @@ describe("Test for Smart Ad Server ad", function () {
 
   var id = 'rmpPlayer';
   var container = document.getElementById(id);
-  var video = container.getElementsByClassName('rmp-video')[0];
   var rmpVast = new RmpVast(id);
   var fw = rmpVast.getFW();
   var testResults = document.getElementById('test-results');
@@ -22,12 +21,6 @@ describe("Test for Smart Ad Server ad", function () {
       if (event && event.type) {
         fw.log('RMP-VAST-TEST: ' + event.type);
       }
-    };
-
-    var _onPlayLoadAds = function (e) {
-      video.removeEventListener('play', _onPlayLoadAds);
-      _incrementAndLog(e);
-      rmpVast.loadAds(ADTAG);
     };
 
     container.addEventListener('adloaded', function (e) {
@@ -44,15 +37,6 @@ describe("Test for Smart Ad Server ad", function () {
 
     container.addEventListener('adstarted', function (e) {
       _incrementAndLog(e);
-      setTimeout(() => {
-        rmpVast.pause();
-        setTimeout(() => {
-          rmpVast.play();
-        }, 1000);
-        setTimeout(() => {
-          rmpVast.stopAds();
-        }, 3000);
-      }, 3000);
     });
 
     container.addEventListener('adtagstartloading', function (e) {
@@ -63,25 +47,18 @@ describe("Test for Smart Ad Server ad", function () {
       _incrementAndLog(e);
     });
 
-    container.addEventListener('adpaused', function (e) {
-      _incrementAndLog(e);
-    });
-
-    container.addEventListener('adresumed', function (e) {
-      _incrementAndLog(e);
-    });
-
     container.addEventListener('addestroyed', function (e) {
       _incrementAndLog(e);
-      expect(validSteps).toBe(10);
-      if (validSteps === 10) {
+      expect(validSteps).toBe(7);
+      if (validSteps === 7) {
         testResults.style.display = 'block';
       }
-      done();
+      setTimeout(function () {
+        done();
+      }, 2000);
     });
 
-    video.addEventListener('play', _onPlayLoadAds);
-    rmpVast.play();
+    rmpVast.loadAds(ADTAG);
   });
 
 

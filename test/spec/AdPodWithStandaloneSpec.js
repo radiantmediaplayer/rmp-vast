@@ -9,7 +9,6 @@ describe("Test for VAST3 Ad Pod with side standalone ad response", function () {
 
   var id = 'rmpPlayer';
   var container = document.getElementById(id);
-  var video = container.getElementsByClassName('rmp-video')[0];
   var rmpVast = new RmpVast(id);
   var fw = rmpVast.getFW();
   var testResults = document.getElementById('test-results');
@@ -24,11 +23,6 @@ describe("Test for VAST3 Ad Pod with side standalone ad response", function () {
       }
     };
 
-    var _onPlayLoadAds = function (e) {
-      video.removeEventListener('play', _onPlayLoadAds);
-      _incrementAndLog(e);
-      rmpVast.loadAds(ADTAG);
-    };
 
     container.addEventListener('adloaded', function (e) {
       _incrementAndLog(e);
@@ -75,15 +69,16 @@ describe("Test for VAST3 Ad Pod with side standalone ad response", function () {
     });
     container.addEventListener('addestroyed', function (e) {
       _incrementAndLog(e);
-      expect(validSteps).toBe(15);
-      if (validSteps === 15) {
+      expect(validSteps).toBe(14);
+      if (validSteps === 14) {
         testResults.style.display = 'block';
       }
-      done();
+      setTimeout(function () {
+        done();
+      }, 2000);
     });
 
-    video.addEventListener('play', _onPlayLoadAds);
-    rmpVast.play();
+    rmpVast.loadAds(ADTAG);
   });
 
 

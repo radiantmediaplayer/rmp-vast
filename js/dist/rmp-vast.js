@@ -1,6 +1,6 @@
 /**
  * @license Copyright (c) 2017 Radiant Media Player | https://www.radiantmediaplayer.com
- * rmp-vast 1.0.0
+ * rmp-vast 1.1.0
  * GitHub: https://github.com/radiantmediaplayer/rmp-vast
  * MIT License: https://github.com/radiantmediaplayer/rmp-vast/blob/master/LICENSE
  */
@@ -25,10 +25,6 @@ var _contentPlayer = require('../players/content-player');
 var API = {};
 
 API.play = function () {
-  if (!this.rmpVastInitialized) {
-    this.initialize();
-    return;
-  }
   if (this.adOnStage) {
     if (this.adIsLinear) {
       _vastPlayer.VASTPLAYER.play.call(this);
@@ -57,15 +53,6 @@ API.getAdPaused = function () {
     return this.vastPlayerPaused;
   }
   return null;
-};
-
-API.seekTo = function (msSeek) {
-  if (this.adOnStage && this.adIsLinear) {
-    // you cannot seek into a playing linear ad
-    return;
-  } else {
-    _contentPlayer.CONTENTPLAYER.seekTo.call(this, msSeek);
-  }
 };
 
 API.setVolume = function (level) {
@@ -118,34 +105,8 @@ API.getMute = function () {
   return _contentPlayer.CONTENTPLAYER.getMute.call(this);
 };
 
-API.setFullscreen = function (fs) {
-  if (typeof fs === 'boolean') {
-    if (DEBUG) {
-      _fw.FW.log('RMP-VAST: setFullscreen ' + fs);
-    }
-    if (this.isInFullscreen && !fs) {
-      if (this.adOnStage && this.adIsLinear) {
-        _env.ENV.exitFullscreen(this.vastPlayer);
-      } else {
-        _env.ENV.exitFullscreen(this.contentPlayer);
-      }
-    } else if (!this.isInFullscreen && fs) {
-      if (this.adOnStage && this.adIsLinear) {
-        _env.ENV.requestFullscreen(this.container, this.vastPlayer);
-      } else {
-        _env.ENV.requestFullscreen(this.container, this.contentPlayer);
-      }
-    }
-  }
-};
-
-API.getFullscreen = function () {
-  return this.isInFullscreen;
-};
-
 API.stopAds = function () {
   if (this.adOnStage) {
-    this.readyForReset = true;
     // this will destroy ad
     _vastPlayer.VASTPLAYER.resumeContent.call(this);
   }
@@ -279,12 +240,15 @@ API.getIsUsingContentPlayerForAds = function () {
 };
 
 API.initialize = function () {
-  if (!this.rmpVastInitialized) {
+  if (this.rmpVastInitialized) {
+    if (DEBUG) {
+      _fw.FW.log('RMP-VAST: rmp-vast already initialized');
+    }
+  } else {
     if (DEBUG) {
       _fwVast.FWVAST.logPerformance('RMP-VAST: on user interaction - player needs to be initialized');
     }
     _vastPlayer.VASTPLAYER.init.call(this);
-    _contentPlayer.CONTENTPLAYER.init.call(this);
   }
 };
 
@@ -556,13 +520,20 @@ var _onLoadedmetadataPlay = function _onLoadedmetadataPlay() {
     _fw.FW.log('RMP-VAST: loadedmetadata for VAST player reached');
   }
   this.vastPlayer.removeEventListener('loadedmetadata', this.onLoadedmetadataPlay);
+  clearTimeout(this.creativeLoadTimeoutCallback);
   _api.API.createEvent.call(this, 'adloaded');
+  if (DEBUG) {
+    _fw.FW.log('RMP-VAST: pause content player');
+  }
   _contentPlayer.CONTENTPLAYER.pause.call(this);
   // show ad container holding vast player
   _fw.FW.show(this.adContainer);
   _fw.FW.show(this.vastPlayer);
   this.adOnStage = true;
   // play VAST player
+  if (DEBUG) {
+    _fw.FW.log('RMP-VAST: play VAST player');
+  }
   _vastPlayer.VASTPLAYER.play.call(this);
 };
 
@@ -592,9 +563,17 @@ var _onClickThrough = function _onClickThrough(event) {
   }
 };
 
-var _onPlaybackError = function _onPlaybackError() {
-  _ping.PING.error.call(this, 405);
-  _vastErrors.VASTERRORS.process.call(this, 405);
+var _onPlaybackError = function _onPlaybackError(event) {
+  // MEDIA_ERR_SRC_NOT_SUPPORTED is sign of fatal error
+  // other errors may produce non-fatal error in the browser so we do not 
+  // act upon them
+  if (event && event.target && event.target.error && event.target.error.code) {
+    if (event.target.error.code !== event.target.error.MEDIA_ERR_SRC_NOT_SUPPORTED) {
+      return;
+    }
+  }
+  _ping.PING.error.call(this, 401);
+  _vastErrors.VASTERRORS.process.call(this, 401);
 };
 
 var _appendClickUIOnMobile = function _appendClickUIOnMobile() {
@@ -617,6 +596,8 @@ var _onContextMenu = function _onContextMenu(event) {
 };
 
 LINEAR.update = function (url, type) {
+  var _this = this;
+
   if (DEBUG) {
     _fw.FW.log('RMP-VAST: update vast player for linear creative of type ' + type + ' located at ' + url);
   }
@@ -635,34 +616,21 @@ LINEAR.update = function (url, type) {
   this.onContextMenu = _onContextMenu.bind(this);
   this.vastPlayer.addEventListener('contextmenu', this.onContextMenu);
 
-  // append source to vast player if not there already
-  if (!this.useContentPlayerForAds) {
-    var existingVastPlayerSource = this.adContainer.getElementsByTagName('source')[0];
-    if (!existingVastPlayerSource) {
-      this.vastPlayerSource = document.createElement('source');
-      this.onPlaybackError = _onPlaybackError.bind(this);
-      this.vastPlayerSource.addEventListener('error', this.onPlaybackError);
-      this.vastPlayer.appendChild(this.vastPlayerSource);
-    } else {
-      this.vastPlayerSource = existingVastPlayerSource;
-    }
-  }
+  this.onPlaybackError = _onPlaybackError.bind(this);
 
-  // check fullscreen state
-  // this is to account for non-trivial use-cases where player may be in fullscreen before
-  // vastPlayer is in DOM
-  if (_fw.FW.hasClass(this.container, 'rmp-fullscreen-on')) {
-    this.isInFullscreen = true;
-  }
-
+  // start creativeLoadTimeout
+  this.creativeLoadTimeoutCallback = setTimeout(function () {
+    _ping.PING.error.call(_this, 402);
+    _vastErrors.VASTERRORS.process.call(_this, 402);
+  }, this.params.creativeLoadTimeout);
   // load ad asset
   if (this.useContentPlayerForAds) {
+    this.contentPlayer.addEventListener('error', this.onPlaybackError);
     this.contentPlayer.src = url;
   } else {
-    this.vastPlayerSource.type = type;
-    this.vastPlayerSource.src = url;
+    this.vastPlayer.addEventListener('error', this.onPlaybackError);
+    this.vastPlayer.src = url;
   }
-  this.vastPlayer.load();
 
   // clickthrough interaction
   if (this.clickThroughUrl) {
@@ -750,23 +718,27 @@ LINEAR.parse = function (linear) {
     mediaFileItems[i].apiFramework = mediaFileValue.getAttribute('apiFramework');*/
   }
   // remove MediaFile items that do not hold VAST spec-compliant attributes or data
-  _fw.FW.removeIndexFromArray(mediaFileItems, mediaFileToRemove);
+  if (mediaFileToRemove.length > 0) {
+    for (var _i = mediaFileToRemove.length - 1; _i >= 0; _i--) {
+      mediaFileItems.splice(mediaFileToRemove[_i], 1);
+    }
+  }
   // we support HLS; MP4; WebM so let us fecth for those
   var mp4 = [];
   var webm = [];
-  for (var _i = 0, _len = mediaFileItems.length; _i < _len; _i++) {
-    if (mediaFileItems[_i].delivery === 'streaming') {
+  for (var _i2 = 0, _len = mediaFileItems.length; _i2 < _len; _i2++) {
+    if (mediaFileItems[_i2].delivery === 'streaming') {
       // we have HLS and it is supported - display ad with HLS
-      if ((mediaFileItems[_i].type === 'application/vnd.apple.mpegurl' || mediaFileItems[_i].type === 'x-mpegurl') && _env.ENV.okHls) {
-        _vastPlayer.VASTPLAYER.append.call(this, mediaFileItems[_i].url, mediaFileItems[_i].type);
+      if ((mediaFileItems[_i2].type === 'application/vnd.apple.mpegurl' || mediaFileItems[_i2].type === 'x-mpegurl') && _env.ENV.okHls) {
+        _vastPlayer.VASTPLAYER.append.call(this, mediaFileItems[_i2].url, mediaFileItems[_i2].type);
         return;
       }
     } else {
       // we gather MP4 and WebM files
-      if (mediaFileItems[_i].type === 'video/mp4' && _env.ENV.okMp4) {
-        mp4.push(mediaFileItems[_i]);
-      } else if (mediaFileItems[_i].type === 'video/webm' && _env.ENV.okWebM) {
-        webm.push(mediaFileItems[_i]);
+      if (mediaFileItems[_i2].type === 'video/mp4' && _env.ENV.okMp4) {
+        mp4.push(mediaFileItems[_i2]);
+      } else if (mediaFileItems[_i2].type === 'video/webm' && _env.ENV.okWebM) {
+        webm.push(mediaFileItems[_i2]);
       }
     }
   }
@@ -809,9 +781,9 @@ LINEAR.parse = function (linear) {
   } else if (format[0].width > containerWidth) {
     retainedFormat = format[0];
   } else {
-    for (var _i2 = 0, _len2 = formatLength; _i2 < _len2; _i2++) {
-      if (format[_i2].width >= containerWidth) {
-        retainedFormat = format[_i2];
+    for (var _i3 = 0, _len2 = formatLength; _i3 < _len2; _i3++) {
+      if (format[_i3].width >= containerWidth) {
+        retainedFormat = format[_i3];
         break;
       }
     }
@@ -1232,6 +1204,31 @@ var _isIos = function _isIos(ua, isWindowsPhone, hasTouchEvents) {
   return support;
 };
 
+var _isMacOSX = function _isMacOSX(ua, isIos) {
+  var pattern = /(macintosh|mac\s+os)/i;
+  if (pattern.test(ua) && !isIos[0]) {
+    return true;
+  }
+  return false;
+};
+
+var _isSafari = function _isSafari(ua) {
+  var isSafari = false;
+  var safariVersion = -1;
+  var pattern1 = /safari\/\d+\.\d+/i;
+  var pattern2 = /chrome/i;
+  var pattern3 = /chromium/i;
+  var pattern4 = /android/i;
+  if (pattern1.test(ua) && !pattern2.test(ua) && !pattern3.test(ua) && !pattern4.test(ua)) {
+    isSafari = true;
+  }
+  if (isSafari) {
+    var versionPattern = /version\/(\d+)\./i;
+    safariVersion = _filterVersion(versionPattern, ua);
+  }
+  return [isSafari, safariVersion];
+};
+
 var _isAndroid = function _isAndroid(ua, isWindowsPhone, isIos, hasTouchEvents) {
   var isAndroid = false;
   var androidVersion = -1;
@@ -1306,42 +1303,13 @@ var _hasNativeFullscreenSupport = function _hasNativeFullscreenSupport() {
 };
 ENV.hasNativeFullscreenSupport = _hasNativeFullscreenSupport();
 
-ENV.requestFullscreen = function (container, video) {
-  if (container && video) {
-    if (typeof container.requestFullscreen !== 'undefined') {
-      container.requestFullscreen();
-    } else if (typeof container.webkitRequestFullscreen !== 'undefined') {
-      container.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
-    } else if (typeof container.mozRequestFullScreen !== 'undefined') {
-      container.mozRequestFullScreen();
-    } else if (typeof container.msRequestFullscreen !== 'undefined') {
-      container.msRequestFullscreen();
-    } else if (video && typeof video.webkitEnterFullscreen !== 'undefined') {
-      video.webkitEnterFullscreen();
-    }
-  }
-};
-
-ENV.exitFullscreen = function (video) {
-  if (typeof document.exitFullscreen !== 'undefined') {
-    document.exitFullscreen();
-  } else if (typeof document.webkitExitFullscreen !== 'undefined') {
-    document.webkitExitFullscreen();
-  } else if (typeof document.mozCancelFullScreen !== 'undefined') {
-    document.mozCancelFullScreen();
-  } else if (typeof document.msExitFullscreen !== 'undefined') {
-    document.msExitFullscreen();
-  } else if (video && typeof video.webkitExitFullscreen !== 'undefined') {
-    video.webkitExitFullscreen();
-  }
-};
-
 ENV.ua = _getUserAgent();
 ENV.hasTouchEvents = _hasTouchEvents();
 ENV.isWindowsPhone = _isWindowsPhone(ENV.ua, ENV.hasTouchEvents);
 ENV.isIos = _isIos(ENV.ua, ENV.isWindowsPhone, ENV.hasTouchEvents);
 ENV.isAndroid = _isAndroid(ENV.ua, ENV.isWindowsPhone, ENV.isIos, ENV.hasTouchEvents);
-
+ENV.isMacOSX = _isMacOSX(ENV.ua, ENV.isIos);
+ENV.isSafari = _isSafari(ENV.ua);
 ENV.isMobile = false;
 if (ENV.isIos[0] || ENV.isAndroid[0] || ENV.isWindowsPhone[0]) {
   ENV.isMobile = true;
@@ -1734,18 +1702,6 @@ FW.trace = function (data) {
   }
 };
 
-FW.removeIndexFromArray = function (arrayInput, indexArrayInput) {
-  var array = arrayInput;
-  var indexArray = indexArrayInput;
-  indexArray.sort(function (a, b) {
-    return b - a;
-  });
-  for (var i = 0; i < indexArray.length; i++) {
-    array.splice(indexArray[i], 1);
-  }
-  return array;
-};
-
 FW.playPromise = function (video) {
   if (video) {
     var playPromise = video.play();
@@ -1815,12 +1771,15 @@ window.RmpVast = function (id, params) {
     _fwVast.FWVAST.logVideoEvents(this.contentPlayer);
   }
   this.adContainer = null;
-  this.isInFullscreen = false;
   this.rmpVastInitialized = false;
   this.useContentPlayerForAds = false;
-  if (_env.ENV.isIos[0]) {
-    // on iOS we use content player to play ads
-    // to avoid issues related to fullscreen management 
+  this.contentPlayerCompleted = false;
+  this.currentContentCurrentTime = -1;
+  this.needsSeekAdjust = false;
+  this.seekAdjustAttached = false;
+  if (_env.ENV.isIos[0] || _env.ENV.isMacOSX && _env.ENV.isSafari[0]) {
+    // on iOS and macOS Safari we use content player to play ads
+    // to avoid issues related to fullscreen management and autoplay
     // as fullscreen on iOS is handled by the default OS player
     this.useContentPlayerForAds = true;
     if (DEBUG) {
@@ -1830,7 +1789,8 @@ window.RmpVast = function (id, params) {
   // filter input params
   var defaultParams = {
     ajaxTimeout: 8000,
-    ajaxWithCredentials: true,
+    creativeLoadTimeout: 10000,
+    ajaxWithCredentials: false,
     maxNumRedirects: 4,
     pauseOnClick: true,
     skipMessage: 'Skip ad',
@@ -1841,6 +1801,9 @@ window.RmpVast = function (id, params) {
   if (params && !_fw.FW.isEmptyObject(params)) {
     if (_fw.FW.isNumber(params.ajaxTimeout) && params.ajaxTimeout > 0) {
       this.params.ajaxTimeout = params.ajaxTimeout;
+    }
+    if (_fw.FW.isNumber(params.creativeLoadTimeout) && params.creativeLoadTimeout > 0) {
+      this.params.creativeLoadTimeout = params.creativeLoadTimeout;
     }
     if (typeof params.ajaxWithCredentials === 'boolean') {
       this.params.ajaxWithCredentials = params.ajaxWithCredentials;
@@ -1863,6 +1826,52 @@ window.RmpVast = function (id, params) {
   }
   // reset internal variables
   _reset.RESET.internalVariables.call(this);
+  // attach fullscreen states
+  // this assumes we have a polyfill for fullscreenchange event 
+  // see app/js/app.js
+  var isInFullscreen = false;
+  var onFullscreenchange = null;
+  var _onFullscreenchange = function _onFullscreenchange(event) {
+    if (event && event.type) {
+      if (DEBUG) {
+        _fw.FW.log('RMP-VAST: event is ' + event.type);
+      }
+      if (event.type === 'fullscreenchange') {
+        if (isInFullscreen) {
+          isInFullscreen = false;
+          if (this.adOnStage && this.adIsLinear) {
+            _fwVast.FWVAST.dispatchPingEvent.call(this, 'exitFullscreen');
+          }
+        } else {
+          isInFullscreen = true;
+          if (this.adOnStage && this.adIsLinear) {
+            _fwVast.FWVAST.dispatchPingEvent.call(this, 'fullscreen');
+          }
+        }
+      } else if (event.type === 'webkitbeginfullscreen') {
+        // iOS uses webkitbeginfullscreen
+        if (this.adOnStage && this.adIsLinear) {
+          _fwVast.FWVAST.dispatchPingEvent.call(this, 'fullscreen');
+        }
+      } else if (event.type === 'webkitendfullscreen') {
+        // iOS uses webkitendfullscreen
+        if (this.adOnStage && this.adIsLinear) {
+          _fwVast.FWVAST.dispatchPingEvent.call(this, 'exitFullscreen');
+        }
+      }
+    }
+  };
+  // if we have native fullscreen support we handle fullscreen events
+  if (_env.ENV.hasNativeFullscreenSupport) {
+    onFullscreenchange = _onFullscreenchange.bind(this);
+    // for our beloved iOS 
+    if (_env.ENV.isIos[0]) {
+      this.contentPlayer.addEventListener('webkitbeginfullscreen', onFullscreenchange);
+      this.contentPlayer.addEventListener('webkitendfullscreen', onFullscreenchange);
+    } else {
+      document.addEventListener('fullscreenchange', onFullscreenchange);
+    }
+  }
 };
 
 // enrich RmpVast prototype with API methods
@@ -1895,6 +1904,10 @@ var _execRedirect = function _execRedirect() {
 };
 
 var _parseCreatives = function _parseCreatives(creative) {
+  if (DEBUG) {
+    _fw.FW.log('RMP-VAST: _parseCreatives');
+    _fw.FW.log(creative);
+  }
   for (var _i = 0, _len = creative.length; _i < _len; _i++) {
     var currentCreative = creative[_i];
     //let creativeID = currentCreative[0].getAttribute('id');
@@ -1904,7 +1917,13 @@ var _parseCreatives = function _parseCreatives(creative) {
     // we only pick the first creative that is either Linear or NonLinearAds
     var nonLinearAds = currentCreative.getElementsByTagName('NonLinearAds');
     var linear = currentCreative.getElementsByTagName('Linear');
+    var cretiveExtensions = currentCreative.getElementsByTagName('CretiveExtensions');
+    var companionAds = currentCreative.getElementsByTagName('CompanionAds');
+    if (cretiveExtensions.length > 0 || companionAds.length > 0) {
+      continue;
+    }
     // we expect only 1 Linear or NonLinearAds tag 
+    // reject CompanionAds for example
     if (nonLinearAds.length !== 1 && linear.length !== 1) {
       _ping.PING.error.call(this, 101, this.inlineOrWrapperErrorTags);
       _vastErrors.VASTERRORS.process.call(this, 101);
@@ -1931,8 +1950,8 @@ var _parseCreatives = function _parseCreatives(creative) {
         }
         this.isSkippableAd = true;
         this.skipoffset = skipoffset;
-        // we  do not display skippable ads when useContentPlayerForAds is true on is iOS < 10
-        if (this.useContentPlayerForAds && _env.ENV.isIos[0] && _env.ENV.isIos[1] < 10) {
+        // we  do not display skippable ads when on is iOS < 10
+        if (_env.ENV.isIos[0] && _env.ENV.isIos[1] < 10) {
           _ping.PING.error.call(this, 200, this.inlineOrWrapperErrorTags);
           _vastErrors.VASTERRORS.process.call(this, 200);
           return;
@@ -1978,9 +1997,20 @@ var _parseCreatives = function _parseCreatives(creative) {
       return;
     }
   }
+  // in case wrapper with creative CompanionAds we still need to _execRedirect
+  if (this.isWrapper) {
+    _execRedirect.call(this);
+    return;
+  }
 };
 
 var _onXmlAvailable = function _onXmlAvailable(xml) {
+  // if VMAP we abort
+  var vmap = xml.getElementsByTagName('vmap:VMAP');
+  if (vmap.length > 0) {
+    _vastErrors.VASTERRORS.process.call(this, 200);
+    return;
+  }
   // check for VAST node
   this.vastDocument = xml.getElementsByTagName('VAST');
   if (this.vastDocument.length !== 1) {
@@ -2102,7 +2132,9 @@ var _onXmlAvailable = function _onXmlAvailable(xml) {
   }
   if (!this.isWrapper) {
     this.adTitle = _fwVast.FWVAST.getNodeValue(adTitle[0], false);
-    this.adDescription = _fwVast.FWVAST.getNodeValue(adDescription[0], false);
+    if (adDescription.length > 0) {
+      this.adDescription = _fwVast.FWVAST.getNodeValue(adDescription[0], false);
+    }
   }
   // in case no Creative with Wrapper we make our redirect call here
   if (this.isWrapper && !creative) {
@@ -2133,6 +2165,9 @@ var _makeAjaxRequest = function _makeAjaxRequest(vastUrl) {
   this.isWrapper = false;
   this.vastAdTagURI = null;
   this.adTagUrl = vastUrl;
+  if (DEBUG) {
+    _fw.FW.log('RMP-VAST: try to load VAST tag at ' + this.adTagUrl);
+  }
   _fw.FW.ajax(this.adTagUrl, this.params.ajaxTimeout, true, this.params.ajaxWithCredentials).then(function (data) {
     if (DEBUG) {
       _fw.FW.log('RMP-VAST: VAST loaded from ' + _this.adTagUrl);
@@ -2160,43 +2195,28 @@ var _makeAjaxRequest = function _makeAjaxRequest(vastUrl) {
 };
 
 RmpVast.prototype.loadAds = function (vastUrl) {
+  if (DEBUG) {
+    _fw.FW.log('RMP-VAST: loadAds starts');
+  }
+  if (!this.rmpVastInitialized) {
+    this.initialize();
+  }
   // if we try to load ads when currentTime < 200 ms - be it linear or non-linear - we pause CONTENTPLAYER
   // CONTENTPLAYER (non-linear) or VASTPLAYER (linear) will resume later when VAST has finished loading/parsing
   // this is to avoid bad user experience where content may start for a few ms before ad starts
   var contentCurrentTime = _contentPlayer.CONTENTPLAYER.getCurrentTime.call(this);
-  if (contentCurrentTime < 200) {
-    if (DEBUG) {
-      _fw.FW.log('RMP-VAST: pause content for pre-roll while processing loadAds');
-    }
-    _contentPlayer.CONTENTPLAYER.pause.call(this);
-  }
   // for useContentPlayerForAds we need to know early what is the content src
   // so that we can resume content when ad finishes or on aderror
   if (this.useContentPlayerForAds) {
-    if (this.contentPlayer.currentSrc) {
-      this.currentContentSrc = this.contentPlayer.currentSrc;
-      _makeAjaxRequest.call(this, vastUrl);
-    } else {
-      // when muted autoplay is set iOS may only return 
-      // this.contentPlayer.currentSrc after loadstart event
-      var _updateInitialContentSrc = function _updateInitialContentSrc() {
-        this.contentPlayer.removeEventListener('loadstart', this.updateInitialContentSrc);
-        if (this.contentPlayer.currentSrc) {
-          this.currentContentSrc = this.contentPlayer.currentSrc;
-          _makeAjaxRequest.call(this, vastUrl);
-        } else {
-          _vastErrors.VASTERRORS.process.call(this, 1003);
-        }
-      };
-      this.updateInitialContentSrc = _updateInitialContentSrc.bind(this);
-      this.contentPlayer.addEventListener('loadstart', this.updateInitialContentSrc);
-    }
+    this.currentContentSrc = this.contentPlayer.src;
     this.currentContentCurrentTime = contentCurrentTime;
+    if (DEBUG) {
+      _fw.FW.log('RMP-VAST: currentContentCurrentTime ' + contentCurrentTime);
+    }
     // on iOS we need to prevent seeking when linear ad is on stage
     _contentPlayer.CONTENTPLAYER.preventSeekingForCustomPlayback.call(this);
-  } else {
-    _makeAjaxRequest.call(this, vastUrl);
   }
+  _makeAjaxRequest.call(this, vastUrl);
 };
 
 },{"./api/api":1,"./creatives/icons":2,"./creatives/linear":3,"./creatives/non-linear":4,"./fw/env":6,"./fw/fw":8,"./fw/fw-vast":7,"./players/content-player":10,"./tracking/ping":12,"./tracking/tracking-events":13,"./utils/reset":14,"./utils/vast-errors":15,"core-js/es6":16}],10:[function(require,module,exports){
@@ -2211,55 +2231,64 @@ var _fw = require('../fw/fw');
 
 var CONTENTPLAYER = {};
 
-CONTENTPLAYER.init = function () {
-  _fw.FW.playPromise(this.contentPlayer);
-  this.contentPlayer.pause();
-};
-
 CONTENTPLAYER.play = function () {
-  if (this.contentPlayer.paused) {
+  if (this.contentPlayer && this.contentPlayer.paused) {
     _fw.FW.playPromise(this.contentPlayer);
   }
 };
 
 CONTENTPLAYER.pause = function () {
-  if (!this.contentPlayer.paused) {
+  if (this.contentPlayer && !this.contentPlayer.paused) {
     this.contentPlayer.pause();
   }
 };
 
 CONTENTPLAYER.setVolume = function (level) {
-  this.contentPlayer.volume = level;
+  if (this.contentPlayer) {
+    this.contentPlayer.volume = level;
+  }
 };
 
 CONTENTPLAYER.getVolume = function () {
-  return this.contentPlayer.volume;
+  if (this.contentPlayer) {
+    return this.contentPlayer.volume;
+  }
+  return null;
 };
 
 CONTENTPLAYER.getMute = function () {
-  return this.contentPlayer.muted;
+  if (this.contentPlayer) {
+    return this.contentPlayer.muted;
+  }
+  return null;
 };
 
 CONTENTPLAYER.setMute = function (muted) {
-  if (muted && !this.contentPlayer.muted) {
-    this.contentPlayer.muted = true;
-  } else if (!muted && this.contentPlayer.muted) {
-    this.contentPlayer.muted = false;
+  if (this.contentPlayer) {
+    if (muted && !this.contentPlayer.muted) {
+      this.contentPlayer.muted = true;
+    } else if (!muted && this.contentPlayer.muted) {
+      this.contentPlayer.muted = false;
+    }
   }
 };
 
 CONTENTPLAYER.getDuration = function () {
-  var duration = this.contentPlayer.duration;
-  if (_fw.FW.isNumber(duration)) {
-    return Math.round(duration * 1000);
+  if (this.contentPlayer) {
+    var duration = this.contentPlayer.duration;
+    if (_fw.FW.isNumber(duration)) {
+      return Math.round(duration * 1000);
+    }
   }
   return -1;
 };
 
 CONTENTPLAYER.getCurrentTime = function () {
-  var currentTime = this.contentPlayer.currentTime;
-  if (_fw.FW.isNumber(currentTime)) {
-    return Math.round(currentTime * 1000);
+  if (this.contentPlayer) {
+    var currentTime = this.contentPlayer.currentTime;
+    if (_fw.FW.isNumber(currentTime)) {
+      return Math.round(currentTime * 1000);
+    }
   }
   return -1;
 };
@@ -2268,13 +2297,9 @@ CONTENTPLAYER.seekTo = function (msSeek) {
   if (!_fw.FW.isNumber(msSeek)) {
     return;
   }
-  if (msSeek >= 0) {
+  if (msSeek >= 0 && this.contentPlayer) {
     var seekValue = Math.round(msSeek / 1000 * 100) / 100;
-    try {
-      this.contentPlayer.currentTime = seekValue;
-    } catch (e) {
-      _fw.FW.trace(e);
-    }
+    this.contentPlayer.currentTime = seekValue;
   }
 };
 
@@ -2283,15 +2308,17 @@ CONTENTPLAYER.preventSeekingForCustomPlayback = function () {
 
   // after much poking it appears we cannot rely on seek events for iOS to 
   // set this up reliably - so interval it is
-  this.antiSeekLogicInterval = setInterval(function () {
-    if (_this.adIsLinear && _this.adOnStage) {
-      var diff = Math.abs(_this.customPlaybackCurrentTime - _this.contentPlayer.currentTime);
-      if (diff > 1) {
-        _this.contentPlayer.currentTime = _this.customPlaybackCurrentTime;
+  if (this.contentPlayer) {
+    this.antiSeekLogicInterval = setInterval(function () {
+      if (_this.adIsLinear && _this.adOnStage) {
+        var diff = Math.abs(_this.customPlaybackCurrentTime - _this.contentPlayer.currentTime);
+        if (diff > 1) {
+          _this.contentPlayer.currentTime = _this.customPlaybackCurrentTime;
+        }
+        _this.customPlaybackCurrentTime = _this.contentPlayer.currentTime;
       }
-      _this.customPlaybackCurrentTime = _this.contentPlayer.currentTime;
-    }
-  }, 200);
+    }, 200);
+  }
 };
 
 exports.CONTENTPLAYER = CONTENTPLAYER;
@@ -2328,12 +2355,9 @@ var _vastErrors = require('../utils/vast-errors');
 
 var VASTPLAYER = {};
 
-var _onPlayingSeek = function _onPlayingSeek() {
-  this.contentPlayer.removeEventListener('playing', this.onPlayingSeek);
-  _contentPlayer.CONTENTPLAYER.seekTo.call(this, this.currentContentCurrentTime);
-};
-
 var _destroyVastPlayer = function _destroyVastPlayer() {
+  var _this = this;
+
   if (DEBUG) {
     _fw.FW.log('RMP-VAST: start destroying vast player');
   }
@@ -2347,37 +2371,48 @@ var _destroyVastPlayer = function _destroyVastPlayer() {
   if (this.clickUIOnMobile) {
     this.adContainer.removeChild(this.clickUIOnMobile);
   }
+  if (this.isSkippableAd) {
+    this.adContainer.removeChild(this.skipButton);
+  }
   // hide rmp-ad-container
   _fw.FW.hide(this.adContainer);
-  // unwire anti-seek logic
+  // unwire anti-seek logic (iOS)
   clearInterval(this.antiSeekLogicInterval);
+  // reset creativeLoadTimeout
+  clearTimeout(this.creativeLoadTimeoutCallback);
   if (this.useContentPlayerForAds) {
     // when content is restored we need to seek to previously known currentTime
     // this must happen on playing event
-    if (this.currentContentCurrentTime > 400) {
-      this.onPlayingSeek = _onPlayingSeek.bind(this);
-      this.contentPlayer.addEventListener('playing', this.onPlayingSeek);
+    // the below is some hack I come up with because Safari is confused with 
+    // what it is asked to do when post roll come into play
+    if (this.currentContentCurrentTime > 4000) {
+      this.needsSeekAdjust = true;
+      if (this.contentPlayerCompleted) {
+        this.needsSeekAdjust = false;
+      }
+      if (!this.seekAdjustAttached) {
+        this.seekAdjustAttached = true;
+        this.contentPlayer.addEventListener('playing', function () {
+          if (_this.needsSeekAdjust) {
+            _contentPlayer.CONTENTPLAYER.seekTo.call(_this, _this.currentContentCurrentTime);
+            _this.needsSeekAdjust = false;
+          }
+        });
+      }
     }
     if (DEBUG) {
-      _fw.FW.log('RMP-VAST: recovering content with src ' + this.currentContentSrc);
+      _fw.FW.log('RMP-VAST: recovering content with src ' + this.currentContentSrc + ' - at time: ' + this.currentContentCurrentTime);
     }
     this.contentPlayer.src = this.currentContentSrc;
-    this.contentPlayer.load();
   } else {
     // empty buffer for vastPlayer
     try {
       if (this.vastPlayer) {
         this.vastPlayer.pause();
+        // empty buffer
+        this.vastPlayer.removeAttribute('src');
+        this.vastPlayer.load();
         _fw.FW.hide(this.vastPlayer);
-        if (this.vastPlayerSource) {
-          if (this.vastPlayerSource.hasAttribute('src')) {
-            this.vastPlayerSource.removeAttribute('src');
-            this.vastPlayer.load();
-            if (DEBUG) {
-              _fw.FW.log('RMP-VAST: emptied VAST player buffer');
-            }
-          }
-        }
         if (this.nonLinearContainer) {
           this.adContainer.removeChild(this.nonLinearContainer);
         }
@@ -2387,19 +2422,22 @@ var _destroyVastPlayer = function _destroyVastPlayer() {
     }
   }
   // reset internal variables for next ad if any
-  _reset.RESET.internalVariables.call(this);
-  _api.API.createEvent.call(this, 'addestroyed');
+  // we tick to let buffer empty
+  setTimeout(function () {
+    _reset.RESET.internalVariables.call(_this);
+    _api.API.createEvent.call(_this, 'addestroyed');
+  }, 100);
 };
 
 VASTPLAYER.init = function () {
+  var _this2 = this;
+
   if (DEBUG) {
-    _fw.FW.log('RMP-VAST: init called on VASTPLAYER');
+    _fw.FW.log('RMP-VAST: init called');
   }
-  if (!this.adContainer) {
-    this.adContainer = document.createElement('div');
-    this.adContainer.className = 'rmp-ad-container';
-    this.content.appendChild(this.adContainer);
-  }
+  this.adContainer = document.createElement('div');
+  this.adContainer.className = 'rmp-ad-container';
+  this.content.appendChild(this.adContainer);
   _fw.FW.hide(this.adContainer);
   if (!this.useContentPlayerForAds) {
     this.vastPlayer = document.createElement('video');
@@ -2408,8 +2446,11 @@ VASTPLAYER.init = function () {
       this.vastPlayer.disableRemotePlayback = true;
     }
     this.vastPlayer.className = 'rmp-ad-vast-video-player';
-    _fw.FW.hide(this.vastPlayer);
     this.vastPlayer.controls = false;
+    // this.contentPlayer.muted may not be set because of a bug in some version of Chromium
+    if (this.contentPlayer.hasAttribute('muted')) {
+      this.contentPlayer.muted = true;
+    }
     if (this.contentPlayer.muted) {
       this.vastPlayer.muted = true;
     }
@@ -2422,39 +2463,50 @@ VASTPLAYER.init = function () {
       // this is for iOS/Android WebView where webkit-playsinline may be available
       this.vastPlayer.setAttribute('webkit-playsinline', true);
     }
-    this.vastPlayer.preload = 'auto';
     this.vastPlayer.defaultPlaybackRate = 1;
     // append to rmp-ad-container
+    _fw.FW.hide(this.vastPlayer);
     this.adContainer.appendChild(this.vastPlayer);
-    // on mobile we need to init the vast player video tag
-    // we do this by calling play/pause as a result of a direct user interaction
-    // unless we are muted in which case we can use autoplay or HTMLMediaElement.play() 
-    // without having to worry about video tag init
-    if (_env.ENV.isMobile && !this.vastPlayer.muted) {
-      if (DEBUG) {
-        _fw.FW.log('RMP-VAST: fake start for mobiles to init video tag');
-      }
-      _fw.FW.playPromise(this.vastPlayer);
-      this.vastPlayer.pause();
-    }
   } else {
     this.vastPlayer = this.contentPlayer;
+  }
+  // we track ended state for content player
+  this.contentPlayer.addEventListener('ended', function () {
+    if (_this2.adOnStage) {
+      return;
+    }
+    _this2.contentPlayerCompleted = true;
+  });
+  // we need the loadedmetadata event so we force preload 
+  // in case it was set differently
+  this.vastPlayer.preload = 'metadata';
+  // we need to init the vast player video tag
+  // according to https://developers.google.com/interactive-media-ads/docs/sdks/html5/mobile_video
+  // to initialize the content element, a call to the load() method is sufficient.
+  if (_env.ENV.isMobile && !this.useContentPlayerForAds) {
+    // on Android both this.contentPlayer (to resume content)
+    // and this.vastPlayer (to start ads) needs to be init
+    this.contentPlayer.load();
+    this.vastPlayer.load();
+  } else if (this.useContentPlayerForAds) {
+    if (DEBUG) {
+      _fw.FW.log('RMP-VAST: call load on VAST player to init HTML5 video tag');
+    }
+    // on iOS and macOS Safari only init this.vastPlayer (as same as this.contentPlayer)
+    this.vastPlayer.load();
   }
   this.rmpVastInitialized = true;
 };
 
 VASTPLAYER.append = function (url, type) {
-  // this is for autoplay on desktop
-  // or muted autoplay on mobile where player is not initialized
-  if (!this.rmpVastInitialized) {
-    VASTPLAYER.init.call(this);
-  }
   // in case loadAds is called several times - rmpVastInitialized is already true
   // but we still need to locate the vastPlayer
   if (!this.vastPlayer) {
     if (this.useContentPlayerForAds) {
       this.vastPlayer = this.contentPlayer;
     } else {
+      // we use existing rmp-ad-vast-video-player as it is already 
+      // available and initialized (no need for user interaction)
       var existingVastPlayer = this.adContainer.getElementsByClassName('rmp-ad-vast-video-player')[0];
       if (!existingVastPlayer) {
         _vastErrors.VASTERRORS.process.call(this, 1004);
@@ -2481,77 +2533,83 @@ VASTPLAYER.append = function (url, type) {
 };
 
 VASTPLAYER.setVolume = function (level) {
-  this.vastPlayer.volume = level;
+  if (this.vastPlayer) {
+    this.vastPlayer.volume = level;
+  }
 };
 
 VASTPLAYER.getVolume = function () {
-  return this.vastPlayer.volume;
+  if (this.vastPlayer) {
+    return this.vastPlayer.volume;
+  }
+  return null;
 };
 
 VASTPLAYER.setMute = function (muted) {
-  if (muted && !this.vastPlayer.muted) {
-    this.vastPlayer.muted = true;
-    _fwVast.FWVAST.dispatchPingEvent.call(this, 'mute');
-  } else if (!muted && this.vastPlayer.muted) {
-    this.vastPlayer.muted = false;
-    _fwVast.FWVAST.dispatchPingEvent.call(this, 'unmute');
+  if (this.vastPlayer) {
+    if (muted && !this.vastPlayer.muted) {
+      this.vastPlayer.muted = true;
+      _fwVast.FWVAST.dispatchPingEvent.call(this, 'mute');
+    } else if (!muted && this.vastPlayer.muted) {
+      this.vastPlayer.muted = false;
+      _fwVast.FWVAST.dispatchPingEvent.call(this, 'unmute');
+    }
   }
 };
 
 VASTPLAYER.getMute = function () {
-  return this.vastPlayer.muted;
+  if (this.vastPlayer) {
+    return this.vastPlayer.muted;
+  }
+  return null;
 };
 
 VASTPLAYER.play = function () {
-  if (this.vastPlayer.paused) {
+  if (this.vastPlayer && this.vastPlayer.paused) {
     _fw.FW.playPromise(this.vastPlayer);
   }
 };
 
 VASTPLAYER.pause = function () {
-  if (!this.vastPlayer.paused) {
+  if (this.vastPlayer && !this.vastPlayer.paused) {
     this.vastPlayer.pause();
   }
 };
 
 VASTPLAYER.getDuration = function () {
-  var duration = this.vastPlayer.duration;
-  if (_fw.FW.isNumber(duration)) {
-    return Math.round(duration * 1000);
+  if (this.vastPlayer) {
+    var duration = this.vastPlayer.duration;
+    if (_fw.FW.isNumber(duration)) {
+      return Math.round(duration * 1000);
+    }
   }
   return -1;
 };
 
 VASTPLAYER.getCurrentTime = function () {
-  var currentTime = this.vastPlayer.currentTime;
-  if (_fw.FW.isNumber(currentTime)) {
-    return Math.round(currentTime * 1000);
+  if (this.vastPlayer) {
+    var currentTime = this.vastPlayer.currentTime;
+    if (_fw.FW.isNumber(currentTime)) {
+      return Math.round(currentTime * 1000);
+    }
   }
   return -1;
 };
 
-var _onReset = function _onReset() {
-  if (DEBUG) {
-    _fw.FW.log('RMP-VAST: processing onReset after adcontentresumerequested');
-  }
-  if (this.vastPlayer) {
-    this.vastPlayer.removeEventListener('reset', this.onReset);
-  }
-  _destroyVastPlayer.call(this);
-  _contentPlayer.CONTENTPLAYER.play.call(this);
-};
-
 VASTPLAYER.resumeContent = function () {
+  var _this3 = this;
+
   if (DEBUG) {
     _fw.FW.log('RMP-VAST: resumeContent');
   }
-  this.onReset = _onReset.bind(this);
-  if (this.readyForReset) {
-    this.onReset();
-  } else {
-    // in case we need to wait for the ping on complete/skip
-    this.vastPlayer.addEventListener('reset', this.onReset);
-  }
+  // tick to let last ping events (complete/skip) to be sent
+  setTimeout(function () {
+    _destroyVastPlayer.call(_this3);
+    if (!_this3.contentPlayerCompleted) {
+      _contentPlayer.CONTENTPLAYER.play.call(_this3);
+    }
+    _this3.contentPlayerCompleted = false;
+  }, 100);
 };
 
 exports.VASTPLAYER = VASTPLAYER;
@@ -2652,8 +2710,6 @@ var _fw = require('../fw/fw');
 
 var _fwVast = require('../fw/fw-vast');
 
-var _env = require('../fw/env');
-
 var _ping = require('./ping');
 
 var _api = require('../api/api');
@@ -2670,16 +2726,7 @@ var _pingTrackers = function _pingTrackers(trackers) {
   });
 };
 
-TRACKINGEVENTS.updateResetStatus = function () {
-  // in case a pause event is due to be ping - cancel it now (see above)
-  clearTimeout(this.adPauseEventTimeout);
-  this.readyForReset = true;
-  _fwVast.FWVAST.dispatchPingEvent.call(this, 'reset');
-};
-
 var _onEventPingTracking = function _onEventPingTracking(event) {
-  var _this2 = this;
-
   if (event && event.type) {
     if (DEBUG) {
       _fw.FW.log('RMP-VAST: ping tracking for ' + event.type + ' VAST event');
@@ -2690,21 +2737,7 @@ var _onEventPingTracking = function _onEventPingTracking(event) {
     });
     // send ping for each valid tracker
     if (trackers.length > 0) {
-      // we need to filter pause event - because it can fire just before HTML5 video ended event 
-      // and according to VAST spec we should not ping for this pause event - only for user initiated pause
-      if (this.vastPlayer && event.type === 'pause') {
-        clearTimeout(this.adPauseEventTimeout);
-        this.adPauseEventTimeout = setTimeout(function () {
-          _pingTrackers.call(_this2, trackers);
-        }, 200);
-      } else {
-        _pingTrackers.call(this, trackers);
-      }
-    }
-    // we need to tell the player it is ok to destroy as all pings have been sent
-    if (this.vastPlayer && (event.type === 'complete' || event.type === 'skip')) {
-      // in case a pause event is due to be ping - cancel it now (see above)
-      TRACKINGEVENTS.updateResetStatus.call(this);
+      _pingTrackers.call(this, trackers);
     }
   }
 };
@@ -2724,7 +2757,7 @@ var _onVolumeChange = function _onVolumeChange() {
 };
 
 var _onTimeupdate = function _onTimeupdate() {
-  var _this3 = this;
+  var _this2 = this;
 
   this.vastPlayerCurrentTime = _vastPlayer.VASTPLAYER.getCurrentTime.call(this);
   if (this.vastPlayerCurrentTime > 0) {
@@ -2748,8 +2781,8 @@ var _onTimeupdate = function _onTimeupdate() {
       if (this.progressEventOffsetsSeconds === null) {
         this.progressEventOffsetsSeconds = [];
         this.progressEventOffsets.forEach(function (element) {
-          _this3.progressEventOffsetsSeconds.push({
-            offsetSeconds: _fwVast.FWVAST.convertOffsetToSeconds(element, _this3.vastPlayerDuration),
+          _this2.progressEventOffsetsSeconds.push({
+            offsetSeconds: _fwVast.FWVAST.convertOffsetToSeconds(element, _this2.vastPlayerDuration),
             offsetRaw: element
           });
         });
@@ -2800,39 +2833,6 @@ var _onEnded = function _onEnded() {
   _fwVast.FWVAST.dispatchPingEvent.call(this, 'complete');
 };
 
-var _onFullscreenchange = function _onFullscreenchange(event) {
-  if (event && event.type) {
-    if (DEBUG) {
-      _fw.FW.log('RMP-VAST: event is ' + event.type + ' isInFullscreen before changes is ' + this.isInFullscreen);
-    }
-    if (event.type === 'fullscreenchange') {
-      if (this.isInFullscreen) {
-        this.isInFullscreen = false;
-        _fw.FW.removeClass(this.container, 'rmp-fullscreen-on');
-        if (this.adOnStage && this.adIsLinear) {
-          _fwVast.FWVAST.dispatchPingEvent.call(this, 'exitFullscreen');
-        }
-      } else {
-        this.isInFullscreen = true;
-        _fw.FW.addClass(this.container, 'rmp-fullscreen-on');
-        if (this.adOnStage && this.adIsLinear) {
-          _fwVast.FWVAST.dispatchPingEvent.call(this, 'fullscreen');
-        }
-      }
-    } else if (event.type === 'webkitbeginfullscreen') {
-      this.isInFullscreen = true;
-      if (this.adOnStage && this.adIsLinear) {
-        _fwVast.FWVAST.dispatchPingEvent.call(this, 'fullscreen');
-      }
-    } else if (event.type === 'webkitendfullscreen') {
-      this.isInFullscreen = false;
-      if (this.adOnStage && this.adIsLinear) {
-        _fwVast.FWVAST.dispatchPingEvent.call(this, 'exitFullscreen');
-      }
-    }
-  }
-};
-
 TRACKINGEVENTS.wire = function () {
   if (DEBUG) {
     _fw.FW.log('RMP-VAST: wire tracking events');
@@ -2857,17 +2857,6 @@ TRACKINGEVENTS.wire = function () {
 
     this.onTimeupdate = _onTimeupdate.bind(this);
     this.vastPlayer.addEventListener('timeupdate', this.onTimeupdate);
-
-    //if we have native fullscreen support we handle fullscreen events
-    if (_env.ENV.hasNativeFullscreenSupport) {
-      this.onFullscreenchange = _onFullscreenchange.bind(this);
-      document.addEventListener('fullscreenchange', this.onFullscreenchange);
-      // for our beloved iOS 
-      if (this.useContentPlayerForAds) {
-        this.vastPlayer.addEventListener('webkitbeginfullscreen', this.onFullscreenchange);
-        this.vastPlayer.addEventListener('webkitendfullscreen', this.onFullscreenchange);
-      }
-    }
   }
 
   // wire for VAST tracking events
@@ -2915,15 +2904,13 @@ TRACKINGEVENTS.filter = function (trackingEvents) {
 
 exports.TRACKINGEVENTS = TRACKINGEVENTS;
 
-},{"../api/api":1,"../fw/env":6,"../fw/fw":8,"../fw/fw-vast":7,"../players/vast-player":11,"./ping":12}],14:[function(require,module,exports){
+},{"../api/api":1,"../fw/fw":8,"../fw/fw-vast":7,"../players/vast-player":11,"./ping":12}],14:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.RESET = undefined;
-
-var _env = require('../fw/env');
 
 var _fw = require('../fw/fw');
 
@@ -2937,7 +2924,6 @@ RESET.internalVariables = function () {
   this.onLoadedmetadataPlay = null;
   this.onEndedResumeContent = null;
   this.onPlaybackError = null;
-  this.onReset = null;
   // init internal tracking events methods
   this.onPause = null;
   this.onPlay = null;
@@ -2953,14 +2939,10 @@ RESET.internalVariables = function () {
   this.onNonLinearLoadSuccess = null;
   this.onNonLinearLoadError = null;
   this.onNonLinearClickThrough = null;
-  this.onFullscreenchange = null;
-  this.onPlayingSeek = null;
   this.onContextMenu = null;
-  this.updateInitialContentSrc = null;
   // init internal variables
   this.adTagUrl = null;
   this.vastPlayer = null;
-  this.vastPlayerSource = null;
   this.vastDocument = null;
   this.trackingTags = [];
   this.vastErrorTags = [];
@@ -2975,7 +2957,6 @@ RESET.internalVariables = function () {
   this.midpointEventFired = false;
   this.thirdQuartileEventFired = false;
   this.vastPlayerPaused = false;
-  this.readyForReset = false;
   this.vastErrorCode = -1;
   this.vastErrorMessage = 'Error getting VAST error';
   this.adSystem = null;
@@ -2984,7 +2965,6 @@ RESET.internalVariables = function () {
   this.adTitle = null;
   this.adDescription = null;
   this.adOnStage = false;
-  this.adPauseEventTimeout = null;
   this.clickThroughUrl = null;
   this.isWrapper = false;
   this.vastAdTagURI = null;
@@ -2992,9 +2972,9 @@ RESET.internalVariables = function () {
   this.icons = [];
   this.clickUIOnMobile = null;
   this.currentContentSrc = null;
-  this.currentContentCurrentTime = -1;
   this.customPlaybackCurrentTime = 0;
   this.antiSeekLogicInterval = null;
+  this.creativeLoadTimeoutCallback = null;
   // skip
   this.isSkippableAd = false;
   this.hasSkipEvent = false;
@@ -3004,7 +2984,7 @@ RESET.internalVariables = function () {
   this.skipButton = null;
   this.skipWaiting = null;
   this.skipMessage = null;
-  this.skipButton = null;
+  this.skipIcon = null;
   this.skippableAdCanBeSkipped = false;
   // non linear
   this.nonLinearContainer = null;
@@ -3031,9 +3011,7 @@ RESET.unwireVastPlayerEvents = function () {
     }
   }
   if (this.vastPlayer) {
-    if (this.vastPlayerSource) {
-      this.vastPlayerSource.removeEventListener('error', this.onPlaybackError);
-    }
+    this.vastPlayer.removeEventListener('error', this.onPlaybackError);
     // vastPlayer content pause/resume events
     this.vastPlayer.removeEventListener('durationchange', this.onDurationChange);
     this.vastPlayer.removeEventListener('loadedmetadata', this.onLoadedmetadataPlay);
@@ -3052,38 +3030,34 @@ RESET.unwireVastPlayerEvents = function () {
       this.vastPlayer.removeEventListener(this.trackingTags[_i].event, this.onEventPingTracking);
     }
     // remove clicktrough handling
-    this.vastPlayer.removeEventListener('click', this.onClickThrough);
+    if (this.onClickThrough !== null) {
+      this.vastPlayer.removeEventListener('click', this.onClickThrough);
+    }
     // remove icons 
-    this.vastPlayer.removeEventListener('playing', this.onPlayingAppendIcons);
+    if (this.onPlayingAppendIcons !== null) {
+      this.vastPlayer.removeEventListener('playing', this.onPlayingAppendIcons);
+    }
     // skip
-    this.vastPlayer.removeEventListener('timeupdate', this.onTimeupdateCheckSkip);
-    if (this.skipButton) {
+    if (this.onTimeupdateCheckSkip !== null) {
+      this.vastPlayer.removeEventListener('timeupdate', this.onTimeupdateCheckSkip);
+    }
+    if (this.skipButton && this.onClickSkip !== null) {
       this.skipButton.removeEventListener('click', this.onClickSkip);
       this.skipButton.removeEventListener('touchend', this.onClickSkip);
     }
     // click UI on mobile
-    if (this.clickUIOnMobile) {
+    if (this.clickUIOnMobile && this.onClickThrough !== null) {
       this.clickUIOnMobile.removeEventListener('click', this.onClickThrough);
-    }
-    // fullscreen
-    if (_env.ENV.hasNativeFullscreenSupport) {
-      document.removeEventListener('fullscreenchange', this.onFullscreenchange);
-      // for our beloved iOS 
-      if (this.useContentPlayerForAds) {
-        this.vastPlayer.removeEventListener('webkitbeginfullscreen', this.onFullscreenchange);
-        this.vastPlayer.removeEventListener('webkitendfullscreen', this.onFullscreenchange);
-      }
     }
   }
   if (this.contentPlayer) {
-    this.contentPlayer.removeEventListener('loadstart', this.updateInitialContentSrc);
-    this.contentPlayer.removeEventListener('playing', this.onPlayingSeek);
+    this.contentPlayer.removeEventListener('error', this.onPlaybackError);
   }
 };
 
 exports.RESET = RESET;
 
-},{"../fw/env":6,"../fw/fw":8}],15:[function(require,module,exports){
+},{"../fw/fw":8}],15:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -3214,7 +3188,6 @@ var _updateVastError = function _updateVastError(errorCode) {
 };
 
 VASTERRORS.process = function (errorCode) {
-  this.readyForReset = true;
   _updateVastError.call(this, errorCode);
   _api.API.createEvent.call(this, 'aderror');
   _vastPlayer.VASTPLAYER.resumeContent.call(this);

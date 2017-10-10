@@ -168,16 +168,6 @@ FW.trace = function (data) {
   }
 };
 
-FW.removeIndexFromArray = function (arrayInput, indexArrayInput) {
-  let array = arrayInput;
-  let indexArray = indexArrayInput;
-  indexArray.sort((a, b) => { return b - a; });
-  for (let i = 0; i < indexArray.length; i++) {
-    array.splice(indexArray[i], 1);
-  }
-  return array;
-};
-
 FW.playPromise = function (video) {
   if (video) {
     let playPromise = video.play();
