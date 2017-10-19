@@ -19,6 +19,7 @@ $RECYCLE.BIN/
 
 # node
 node_modules/ 
+debug.log
 
 # site
 site/
