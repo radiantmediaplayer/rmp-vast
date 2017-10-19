@@ -24,6 +24,7 @@
     "RmpVast": true,
     "module": true,
     "require": true,
-    "DocumentTouch": true
+    "DocumentTouch": true,
+    "exports": true
   }
 }

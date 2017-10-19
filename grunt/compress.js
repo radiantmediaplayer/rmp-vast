@@ -1,7 +1,7 @@
 module.exports = {
   main: {
     options: {
-      archive: '../backup/rmp-vast/rmp-vast-<%= package.version %>.zip'
+      archive: '../../../backup/rmp-vast/rmp-vast-<%= package.version %>.zip'
     },
     files: [{
       expand: true,

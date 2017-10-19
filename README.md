@@ -66,7 +66,7 @@ You must use rmp-vast in a well-formed HTML document. This means a web-page with
 - Include rmp-vast.min.css
 - Include rmp-vast.min.js - for debug logs include rmp-vast.js instead
 - In order to use rmp-vast you must adhere to a specific HTML layout pattern. This pattern is as follows: 
-```
+```html
 <div class="rmp-container" id="rmpPlayer">
   <div class="rmp-content">
     <video class="rmp-video" preload="none" src="https://www.rmp-streaming.com/media/bbb-360p.mp4" playsinline></video>
@@ -74,17 +74,21 @@ You must use rmp-vast in a well-formed HTML document. This means a web-page with
 </div>
 ```
 This structure must not be altered. CSS classes on the above elements must not be renamed.
-The HTML5 video tag used for content must use the src property on the HTML5 video (e.g. do not use <source> tag)
+The HTML5 video tag used for content must use the src property on the HTML5 video (e.g. do not use source tag)
 - Init rmp-vast with JavaScript:
-```
+```javascript
 var adTag = 'https://www.radiantmediaplayer.com/vast/tags/inline-linear-5.xml';
 var id = 'rmpPlayer';
 var container = document.getElementById(id);
 var video = container.getElementsByClassName('rmp-video')[0];
+
+// create RmpVast instance
 var rmpVast = new RmpVast(id);
-// this will start the ad loading process, display the ad and resume content automatically in the case of pre-roll
-// in this case we will autoplay
+
+// call loadAds - this will start the ad loading process, display the ad and resume content automatically in the case of linear pre-roll
+// in this case we use autoplay
 rmpVast.loadAds(adTag);
+
 // or if autoplay is not wanted the call to loadAds must be the result 
 // of a user interaction (click, touchend ...)
 // playButton.addEventListener('click', function() {
@@ -99,7 +103,7 @@ This example can be found live at https://www.radiantmediaplayer.com/rmp-vast/ap
 Source code for rmp-vast is available for review in js/src/ folder. Code comments should be available at key points to better understand rmp-vast inner workings.
 
 ### Creating a rmp-vast instance
-Once rmp-vast is loaded on your page you can create a new rmp-vast instance as follows:
+Once rmp-vast library is loaded on your page you can create a new rmp-vast instance as follows:
 
 `new RmpVast(id, params)`
 
@@ -131,7 +135,7 @@ Playing video ads in HTML5 video is a non-trivial process that requires the over
 To sum up: use the rmp-vast API `loadAds()` method to start playback. On mobile devices this should be the result of a direct user interaction. You can also use autoplay (desktop) or muted autoplay (mobiles) to start playback. Refer to the autoplay support section.
 
 If you do not want to call `loadAds()` method directly - call `initialize()` method (as a result of a user interaction or on page 
-load for autoplay) then call `loadAds()` when you wish to load a VAST tag.
+load for autoplay) then call `loadAds()` later on when you wish to load a VAST tag.
 
 ### API events
 rmp-vast will fire VAST-related events on the player container as they occur. 
@@ -180,7 +184,7 @@ rmpVast.setVolume(0.5);
 For linear ads rmp-vast exposes 2 players: a content player (for the actual content) and a vast player (for the loaded ad).
 - `play()`: play content or vast player depending on what is on stage
 - `pause()`: pause content or vast player depending on what is on stage
-- `loadAds()`: load a new VAST tag and start displaying it - if rmp-vast is not initialized when loadAds is called then `initialize()` is called
+- `loadAds()`: load a new VAST tag and start displaying it - if rmp-vast is not initialized when loadAds is called then `initialize()` is called first
 - `initialize()`: initialize rmp-vast - this method can be used in case of deferred use of `loadAds()` - Note that when autoplay is not wanted the call to `initialize()` must be the result of a direct user interaction
 - `getAdPaused()`: return a boolean stating if the ad on stage is paused or not. Null is returned if no ad is on stage or if the ad is non-linear
 - `setVolume(volume)`: set the volume of the content or vast player depending on what is on stage. Input value should be a number between 0 and 1
@@ -215,10 +219,10 @@ The following methods provide context information for the rmp-vast instance:
 - `getFWVAST()`: returns the VAST-specific internal rmp-vast framework
 - `getVastPlayer()`: returns the VAST player video tag
 - `getContentPlayer()`: returns the content player video tag
-- `getIsUsingContentPlayerForAds()`: on iOS (which we love) the VAST player is the content player. This is to avoid fullscreen management issues and to provide a consistent user experience. This method will return true for iOS, false otherwise
+- `getIsUsingContentPlayerForAds()`: on iOS and macOS Safari the VAST player is the content player. This is to avoid fullscreen management and autoplay issues and to provide a consistent user experience. This method will return true for iOS and macOS Safari, false otherwise
  
 ### Autoplay support
-This is done by simply calling `loadAds` method on page load (after HTML5 content video player is in DOM and rmp-vast loaded). For muted autoplay (mobile) also add the `muted` attribute on the HTML5 content video player. See the test/LinearMutedAutoplaySpec.html file for an example.
+This is done by simply calling `loadAds` method on page load (after HTML5 content video player is in DOM and rmp-vast library is loaded and instantiated). For muted autoplay (mobile) also add the `muted` attribute on the HTML5 content video player. See the test/LinearMutedAutoplaySpec.html file for an example.
 
 ### Fullscreen management
 rmp-vast supports fullscreen for the global player (e.g. content + vast players) but there is an extra layer to add to your application. See the app/js/app.js file around line 25 for an example of implementation.
@@ -228,7 +232,7 @@ rmp-vast can handle pre/mid/post rolls ad breaks through the loadAds API method.
 
 ## Contributing
 Contributions are welcome. Please review general code structure and stick to existing patterns.
-Provide test where appropriate (see test/ folder). Tests are written with Jasmine and automated with Selenium and are validated in latest stable Chrome for Windows 10.
+Provide test where appropriate (see test/ folder). Tests are written with Jasmine and automated with [node.js 6.11+ and selenium web driver 3.6+](https://www.npmjs.com/package/selenium-webdriver) and are validated in latest stable Chrome for Windows 10 with latest [Chrome driver](http://chromedriver.storage.googleapis.com/index.html).
 
 To develop rmp-vast do install it:
 
@@ -236,7 +240,7 @@ To develop rmp-vast do install it:
 
 `npm install`
 
-Please review grunt/shell.js - you need to have jshint, browserify, watchify, uglifyjs, jasmine and stylelint installed globally to move forward
+Please review grunt/shell.js - you need to have jshint, browserify, watchify, uglifyjs, node and stylelint installed globally to move forward.
 
 Make changes to code and then run:
 
@@ -252,4 +256,4 @@ Before committing for a pull request - run test:
 
 `grunt test` 
 
-You can refer to the [node.js selenium-webdriver](https://github.com/SeleniumHQ/selenium/tree/master/javascript/node/selenium-webdriver) for information on how to comply with Selenium-based testing and how to install chromedriver. Before running `grunt test` make sure to review test/spec/main/mainSpec.js and update the testUrls Array if needed with your local server path.
+Before running `grunt test` make sure to review test/spec/main/
