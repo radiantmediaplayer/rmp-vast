@@ -58,6 +58,9 @@ Specifically we support the latest stable release for each browser
 
 It is fairly possible that rmp-vast would work in other environments but they are not officially supported.
 
+## CORS requirements
+rmp-vast uses JavaScript XMLHttpRequests to load VAST tags. Hence proper [CORS configuration](https://enable-cors.org/) is required on your ad-server in order for rmp-vast to be able to retrieve VAST tags. Refer to this [Google documentation](https://developers.google.com/interactive-media-ads/docs/sdks/html5/cors) for more information.
+
 ## Quick start guide
 First download latest rmp-vast package from the [release tab](https://github.com/radiantmediaplayer/rmp-vast/releases).
 
@@ -141,7 +144,7 @@ load for autoplay) then call `loadAds()` later on when you wish to load a VAST t
 rmp-vast will fire VAST-related events on the player container as they occur. 
 
 Events are registered and unregistered with the addEventListener and removeEventListener JavaScript methods set on the player container. Example:
-```
+```javascript
 var id = 'rmpPlayer';
 var container = document.getElementById(id);
 ...
@@ -174,7 +177,7 @@ Available events are:
 
 ### API methods
 Once a rmp-vast instance is created you can query the API methods to interact with the player. Example:
-```
+```javascript
 var rmpVast = new RmpVast(id);
 ...
 rmpVast.pause();
