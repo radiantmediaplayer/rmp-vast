@@ -82,8 +82,6 @@ The HTML5 video tag used for content must use the src property on the HTML5 vide
 ```javascript
 var adTag = 'https://www.radiantmediaplayer.com/vast/tags/inline-linear-5.xml';
 var id = 'rmpPlayer';
-var container = document.getElementById(id);
-var video = container.getElementsByClassName('rmp-video')[0];
 
 // create RmpVast instance
 var rmpVast = new RmpVast(id);
@@ -98,8 +96,7 @@ rmpVast.loadAds(adTag);
 //   rmpVast.loadAds(adTag);
 // });
 ```
-A complete implementation example is provided in the app/ folder. You should look at 
-app/js/app.js. 
+A complete implementation example is provided in app/index.html. You should look at app/js/app.js. 
 This example can be found live at https://www.radiantmediaplayer.com/rmp-vast/app/.
 
 ## Documentation
