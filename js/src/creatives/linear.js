@@ -4,12 +4,17 @@ import { ENV } from '../fw/env';
 import { PING } from '../tracking/ping';
 import { CONTENTPLAYER } from '../players/content-player';
 import { VASTPLAYER } from '../players/vast-player';
+import { VPAID } from '../players/vpaid';
 import { API } from '../api/api';
 import { SKIP } from './skip';
 import { ICONS } from './icons';
 import { VASTERRORS } from '../utils/vast-errors';
 
 const LINEAR = {};
+
+var patternVPAID = /vpaid/i;
+var patternJavaScript = /\/javascript/i;
+var hlsPattern = /(application\/vnd\.apple\.mpegurl|x-mpegurl)/i;
 
 var _onDurationChange = function () {
   if (DEBUG) {
@@ -122,7 +127,7 @@ LINEAR.update = function (url, type) {
   this.onPlaybackError = _onPlaybackError.bind(this);
 
   // start creativeLoadTimeout
-  this.creativeLoadTimeoutCallback = setTimeout(()=> {
+  this.creativeLoadTimeoutCallback = setTimeout(() => {
     PING.error.call(this, 402);
     VASTERRORS.process.call(this, 402);
   }, this.params.creativeLoadTimeout);
@@ -169,6 +174,17 @@ LINEAR.parse = function (linear) {
     VASTERRORS.process.call(this, 101);
     return;
   }
+  // Industry Icons - currently we only support one icon
+  let icons = linear[0].getElementsByTagName('Icons');
+  if (icons.length > 0) {
+    ICONS.parse.call(this, icons);
+  }
+  // check for AdParameters tag in case we have a VPAID creative
+  let adParameters = linear[0].getElementsByTagName('AdParameters');
+  let adParametersData = '';
+  if (adParameters.length > 0) {
+    adParametersData = FWVAST.getNodeValue(adParameters[0], false);
+  }
   let mediaFile = mediaFiles[0].getElementsByTagName('MediaFile');
   if (mediaFile.length < 1) {
     // at least 1 MediaFile element must be present otherwise VAST document is not spec compliant 
@@ -187,13 +203,31 @@ LINEAR.parse = function (linear) {
       mediaFileToRemove.push(i);
       continue;
     }
-    let delivery = currentMediaFile.getAttribute('delivery');
-    if (delivery !== 'progressive' && delivery !== 'streaming') {
+    let type = currentMediaFile.getAttribute('type');
+    if (type === null || type === '') {
       mediaFileToRemove.push(i);
       continue;
     }
-    let type = currentMediaFile.getAttribute('type');
-    if (type === null || type === '') {
+    mediaFileItems[i].url = mediaFileValue;
+    mediaFileItems[i].type = type;
+    // check for potential VPAID
+    let apiFramework = mediaFileItems[i].apiFramework = currentMediaFile.getAttribute('apiFramework');
+    // we have a VPAID JS - we break
+    // for VPAID we may not have a width, height or delivery
+    if (this.params.enableVpaid && !this.useContentPlayerForAds && apiFramework &&
+      patternVPAID.test(apiFramework) && patternJavaScript.test(type)) {
+      if (DEBUG) {
+        FW.log('RMP-VAST: VPAID creative detected');
+      }
+      let currentMediaFileItem = mediaFileItems[i];
+      mediaFileItems = [];
+      mediaFileToRemove = [];
+      mediaFileItems[0] = currentMediaFileItem;
+      this.isVPAID = true;
+      break;
+    }
+    let delivery = currentMediaFile.getAttribute('delivery');
+    if (delivery !== 'progressive' && delivery !== 'streaming') {
       mediaFileToRemove.push(i);
       continue;
     }
@@ -207,9 +241,6 @@ LINEAR.parse = function (linear) {
       mediaFileToRemove.push(i);
       continue;
     }
-    mediaFileItems[i].url = mediaFileValue;
-    mediaFileItems[i].delivery = delivery;
-    mediaFileItems[i].type = type;
     mediaFileItems[i].width = parseInt(width);
     mediaFileItems[i].height = parseInt(height);
     // optional as per VAST 3 
@@ -217,8 +248,8 @@ LINEAR.parse = function (linear) {
     mediaFileItems[i].id = mediaFileValue.getAttribute('id');
     mediaFileItems[i].bitrate = mediaFileValue.getAttribute('bitrate');
     mediaFileItems[i].scalable = mediaFileValue.getAttribute('scalable');
-    mediaFileItems[i].maintainAspectRatio = mediaFileValue.getAttribute('maintainAspectRatio');
-    mediaFileItems[i].apiFramework = mediaFileValue.getAttribute('apiFramework');*/
+    mediaFileItems[i].maintainAspectRatio = mediaFileValue.getAttribute('maintainAspectRatio');*/
+
   }
   // remove MediaFile items that do not hold VAST spec-compliant attributes or data
   if (mediaFileToRemove.length > 0) {
@@ -226,25 +257,32 @@ LINEAR.parse = function (linear) {
       mediaFileItems.splice(mediaFileToRemove[i], 1);
     }
   }
-  // we support HLS; MP4; WebM so let us fecth for those
+  // we support HLS; MP4; WebM: VPAID so let us fecth for those
   let mp4 = [];
   let webm = [];
   for (let i = 0, len = mediaFileItems.length; i < len; i++) {
-    if (mediaFileItems[i].delivery === 'streaming') {
-      // we have HLS and it is supported - display ad with HLS
-      if ((mediaFileItems[i].type === 'application/vnd.apple.mpegurl' || mediaFileItems[i].type === 'x-mpegurl') && ENV.okHls) {
-        VASTPLAYER.append.call(this, mediaFileItems[i].url, mediaFileItems[i].type);
-        return;
-      }
-    } else {
-      // we gather MP4 and WebM files
-      if (mediaFileItems[i].type === 'video/mp4' && ENV.okMp4) {
-        mp4.push(mediaFileItems[i]);
-      } else if (mediaFileItems[i].type === 'video/webm' && ENV.okWebM) {
-        webm.push(mediaFileItems[i]);
-      }
+    let currentMediaFileItem = mediaFileItems[i];
+    let type = currentMediaFileItem.type;
+    let url = currentMediaFileItem.url;
+    if (this.isVPAID && url) {
+      VPAID.loadCreative.call(this, url, adParametersData, this.params.vpaidSettings);
+      this.adContentType = type;
+      return;
+    }
+    // we have HLS and it is supported - display ad with HLS in priority
+    if (hlsPattern.test(type) && ENV.okHls) {
+      VASTPLAYER.append.call(this, url, type);
+      this.adContentType = type;
+      return;
+    }
+    // we gather MP4 and WebM files
+    if (type === 'video/mp4' && ENV.okMp4) {
+      mp4.push(currentMediaFileItem);
+    } else if (type === 'video/webm' && ENV.okWebM) {
+      webm.push(currentMediaFileItem);
     }
   }
+
   let format = [];
   // if we have WebM and WebM is supported - filter it by width
   // otherwise do the same for MP4
@@ -265,13 +303,6 @@ LINEAR.parse = function (linear) {
     PING.error.call(this, 403, this.inlineOrWrapperErrorTags);
     VASTERRORS.process.call(this, 403);
     return;
-  }
-
-  // icons
-  // currently we only support one icon
-  let icons = linear[0].getElementsByTagName('Icons');
-  if (icons.length > 0) {
-    ICONS.parse.call(this, icons);
   }
 
   // we have files matching device capabilities

@@ -1,9 +1,8 @@
 'use strict';
 
-var ADTAG1 = 'https://www.radiantmediaplayer.com/vast/tags/vpaid-4-js-linear.xml';
-var ADTAG2 = 'https://www.radiantmediaplayer.com/vast/tags/inline-linear-1.xml';
+var ADTAG = 'https://www.radiantmediaplayer.com/vast/tags/vpaid-1-js-linear.xml';
 
-describe("Test for TwoConsecutiveLinearSpec", function () {
+describe("Test for vpaid-js-linear-1", function () {
 
   var id = 'rmpPlayer';
   var container = document.getElementById(id);
@@ -21,8 +20,7 @@ describe("Test for TwoConsecutiveLinearSpec", function () {
   var fw = rmpVast.getFW();
   var title = document.getElementsByTagName('title')[0];
 
-
-  it("should load 2 consecutive adTag and play them", function (done) {
+  it("should load and play vpaid-js-linear-1", function (done) {
     var validSteps = 0;
 
     var _incrementAndLog = function (event) {
@@ -35,16 +33,22 @@ describe("Test for TwoConsecutiveLinearSpec", function () {
     container.addEventListener('adloaded', function (e) {
       _incrementAndLog(e);
     });
+    container.addEventListener('addurationchange', function (e) {
+      _incrementAndLog(e);
+    });
     container.addEventListener('adimpression', function (e) {
+      _incrementAndLog(e);
+    });
+    container.addEventListener('adstarted', function (e) {
+      _incrementAndLog(e);
+    });
+    container.addEventListener('adskippablestatechanged', function (e) {
       _incrementAndLog(e);
     });
     container.addEventListener('adtagstartloading', function (e) {
       _incrementAndLog(e);
     });
     container.addEventListener('adtagloaded', function (e) {
-      _incrementAndLog(e);
-    });
-    container.addEventListener('adcomplete', function (e) {
       _incrementAndLog(e);
     });
     container.addEventListener('adfirstquartile', function (e) {
@@ -56,26 +60,24 @@ describe("Test for TwoConsecutiveLinearSpec", function () {
     container.addEventListener('adthirdquartile', function (e) {
       _incrementAndLog(e);
     });
-    var addestroyedCount = 0;
+    container.addEventListener('adcomplete', function (e) {
+      _incrementAndLog(e);
+    });
+    container.addEventListener('aderror', function (e) {
+      _incrementAndLog(e);
+    });
     container.addEventListener('addestroyed', function (e) {
       _incrementAndLog(e);
-      addestroyedCount++;
-      if (addestroyedCount === 1) {
-        expect(validSteps).toBe(9);
-        rmpVast.loadAds(ADTAG2);
+      expect(validSteps).toBe(12);
+      if (validSteps === 12) {
+        title.textContent = 'Test completed';
       }
-      if (addestroyedCount === 2) {
-        expect(validSteps).toBe(18);
-        if (validSteps === 18) {
-          title.textContent = 'Test completed';
-        }
-        setTimeout(function () {
-          done();
-        }, 100);
-      }
+      setTimeout(function () {
+        done();
+      }, 100);
     });
 
-    rmpVast.loadAds(ADTAG1);
+    rmpVast.loadAds(ADTAG);
   });
 
 

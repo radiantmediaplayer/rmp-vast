@@ -1,4 +1,3 @@
-import { FW } from '../fw/fw';
 import { FWVAST } from '../fw/fw-vast';
 import { VASTPLAYER } from '../players/vast-player';
 import { TRACKINGEVENTS } from '../tracking/tracking-events';
@@ -23,7 +22,7 @@ var _onTimeupdateCheckSkip = function () {
     this.skipButton.style.display = 'block';
   }
   this.vastPlayerCurrentTime = this.vastPlayer.currentTime;
-  if (FW.isNumber(this.vastPlayerCurrentTime) && this.vastPlayerCurrentTime > 0) {
+  if (typeof this.vastPlayerCurrentTime === 'number' && this.vastPlayerCurrentTime > 0) {
     let skipoffsetSeconds = FWVAST.convertOffsetToSeconds(this.skipoffset, this.vastPlayerDuration);
     if (this.vastPlayerCurrentTime >= skipoffsetSeconds) {
       this.vastPlayer.removeEventListener('timeupdate', this.onTimeupdateCheckSkip);

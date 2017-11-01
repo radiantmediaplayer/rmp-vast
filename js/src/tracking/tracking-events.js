@@ -125,7 +125,7 @@ TRACKINGEVENTS.wire = function () {
 
   // we filter through all HTML5 video events and create new VAST events 
   // those VAST events are based on PING.events
-  if (this.vastPlayer) {
+  if (this.vastPlayer && !this.isVPAID) {
     this.onPause = _onPause.bind(this);
     this.vastPlayer.addEventListener('pause', this.onPause);
     this.onPlay = _onPlay.bind(this);
@@ -151,9 +151,9 @@ TRACKINGEVENTS.wire = function () {
     FW.log(this.trackingTags);
   }
   for (let i = 0, len = this.trackingTags.length; i < len; i++) {
-    if (this.vastPlayer && this.adIsLinear) {
+    if (this.adIsLinear || this.isVPAID) {
       this.vastPlayer.addEventListener(this.trackingTags[i].event, this.onEventPingTracking);
-    } else if (this.nonLinearContainer && !this.adIsLinear) {
+    } else {
       // non linear
       this.nonLinearContainer.addEventListener(this.trackingTags[i].event, this.onEventPingTracking);
     }

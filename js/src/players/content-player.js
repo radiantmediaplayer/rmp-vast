@@ -47,7 +47,7 @@ CONTENTPLAYER.setMute = function (muted) {
 CONTENTPLAYER.getDuration = function () {
   if (this.contentPlayer) {
     let duration = this.contentPlayer.duration;
-    if (FW.isNumber(duration)) {
+    if (typeof duration === 'number' && isFinite(duration)) {
       return Math.round(duration * 1000);
     }
   }
@@ -57,7 +57,7 @@ CONTENTPLAYER.getDuration = function () {
 CONTENTPLAYER.getCurrentTime = function () {
   if (this.contentPlayer) {
     let currentTime = this.contentPlayer.currentTime;
-    if (FW.isNumber(currentTime)) {
+    if (typeof currentTime === 'number' && isFinite(currentTime)) {
       return Math.round(currentTime * 1000);
     }
   }
@@ -65,7 +65,7 @@ CONTENTPLAYER.getCurrentTime = function () {
 };
 
 CONTENTPLAYER.seekTo = function (msSeek) {
-  if (!FW.isNumber(msSeek)) {
+  if (typeof msSeek !== 'number') {
     return;
   }
   if (msSeek >= 0 && this.contentPlayer) {

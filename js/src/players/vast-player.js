@@ -2,6 +2,7 @@ import { FW } from '../fw/fw';
 import { FWVAST } from '../fw/fw-vast';
 import { ENV } from '../fw/env';
 import { CONTENTPLAYER } from '../players/content-player';
+import { VPAID } from '../players/vpaid';
 import { ICONS } from '../creatives/icons';
 import { RESET } from '../utils/reset';
 import { TRACKINGEVENTS } from '../tracking/tracking-events';
@@ -20,6 +21,9 @@ var _destroyVastPlayer = function () {
   if (this.icons.length > 0) {
     ICONS.destroy.call(this);
   }
+  if (this.isVPAID) {
+    VPAID.destroy();
+  }
   // unwire events
   RESET.unwireVastPlayerEvents.call(this);
   // remove clickUI on mobile
@@ -35,46 +39,48 @@ var _destroyVastPlayer = function () {
   clearInterval(this.antiSeekLogicInterval);
   // reset creativeLoadTimeout
   clearTimeout(this.creativeLoadTimeoutCallback);
-  if (this.useContentPlayerForAds) {
-    // when content is restored we need to seek to previously known currentTime
-    // this must happen on playing event
-    // the below is some hack I come up with because Safari is confused with 
-    // what it is asked to do when post roll come into play
-    if (this.currentContentCurrentTime > 4000) {
-      this.needsSeekAdjust = true;
-      if (this.contentPlayerCompleted) {
-        this.needsSeekAdjust = false;
-      }
-      if (!this.seekAdjustAttached) {
-        this.seekAdjustAttached = true;
-        this.contentPlayer.addEventListener('playing', () => {
-          if (this.needsSeekAdjust) {
-            CONTENTPLAYER.seekTo.call(this, this.currentContentCurrentTime);
-            this.needsSeekAdjust = false;
-          }
-        });
-      }
-    }
-    if (DEBUG) {
-      FW.log('RMP-VAST: recovering content with src ' + this.currentContentSrc +
-        ' - at time: ' + this.currentContentCurrentTime);
-    }
-    this.contentPlayer.src = this.currentContentSrc;
-  } else {
-    // empty buffer for vastPlayer
-    try {
-      if (this.vastPlayer) {
-        this.vastPlayer.pause();
-        // empty buffer
-        this.vastPlayer.removeAttribute('src');
-        this.vastPlayer.load();
-        FW.hide(this.vastPlayer);
-        if (this.nonLinearContainer) {
-          this.adContainer.removeChild(this.nonLinearContainer);
+  if (!this.isVPAID) {
+    if (this.useContentPlayerForAds) {
+      // when content is restored we need to seek to previously known currentTime
+      // this must happen on playing event
+      // the below is some hack I come up with because Safari is confused with 
+      // what it is asked to do when post roll come into play
+      if (this.currentContentCurrentTime > 4000) {
+        this.needsSeekAdjust = true;
+        if (this.contentPlayerCompleted) {
+          this.needsSeekAdjust = false;
+        }
+        if (!this.seekAdjustAttached) {
+          this.seekAdjustAttached = true;
+          this.contentPlayer.addEventListener('playing', () => {
+            if (this.needsSeekAdjust) {
+              CONTENTPLAYER.seekTo.call(this, this.currentContentCurrentTime);
+              this.needsSeekAdjust = false;
+            }
+          });
         }
       }
-    } catch (e) {
-      FW.trace(e);
+      if (DEBUG) {
+        FW.log('RMP-VAST: recovering content with src ' + this.currentContentSrc +
+          ' - at time: ' + this.currentContentCurrentTime);
+      }
+      this.contentPlayer.src = this.currentContentSrc;
+    } else {
+      // empty buffer for vastPlayer
+      try {
+        if (this.vastPlayer) {
+          this.vastPlayer.pause();
+          // empty buffer
+          this.vastPlayer.removeAttribute('src');
+          this.vastPlayer.load();
+          FW.hide(this.vastPlayer);
+          if (this.nonLinearContainer) {
+            this.adContainer.removeChild(this.nonLinearContainer);
+          }
+        }
+      } catch (e) {
+        FW.trace(e);
+      }
     }
   }
   // reset internal variables for next ad if any
@@ -233,7 +239,7 @@ VASTPLAYER.pause = function () {
 VASTPLAYER.getDuration = function () {
   if (this.vastPlayer) {
     let duration = this.vastPlayer.duration;
-    if (FW.isNumber(duration)) {
+    if (typeof duration === 'number' && isFinite(duration)) {
       return Math.round(duration * 1000);
     }
   }
@@ -243,7 +249,7 @@ VASTPLAYER.getDuration = function () {
 VASTPLAYER.getCurrentTime = function () {
   if (this.vastPlayer) {
     let currentTime = this.vastPlayer.currentTime;
-    if (FW.isNumber(currentTime)) {
+    if (typeof currentTime === 'number' && isFinite(currentTime)) {
       return Math.round(currentTime * 1000);
     }
   }

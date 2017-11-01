@@ -29,7 +29,6 @@ RESET.internalVariables = function () {
   // init internal variables
   this.adTagUrl = null;
   this.vastPlayer = null;
-  this.vastDocument = null;
   this.trackingTags = [];
   this.vastErrorTags = [];
   this.inlineOrWrapperErrorTags = [];
@@ -81,6 +80,8 @@ RESET.internalVariables = function () {
   this.nonLinearCreativeHeight = 0;
   this.nonLinearCreativeWidth = 0;
   this.nonLinearMinSuggestedDuration = 0;
+  // VPAID
+  this.isVPAID = false;
 };
 
 RESET.unwireVastPlayerEvents = function () {

@@ -1,6 +1,6 @@
 const ENV = {};
 
-ENV.testVideo = document.createElement('video');
+var testVideo = document.createElement('video');
 
 var _filterVersion = function (pattern, ua) {
   if (ua === null) {
@@ -106,7 +106,7 @@ var _isAndroid = function (ua, isWindowsPhone, isIos, hasTouchEvents) {
 
 var _video5 = function () {
   try {
-    if (typeof ENV.testVideo.canPlayType !== 'undefined') {
+    if (typeof testVideo.canPlayType !== 'undefined') {
       return true;
     }
     return false;
@@ -114,41 +114,41 @@ var _video5 = function () {
     return false;
   }
 };
-ENV.video5 = _video5();
+var html5VideoSupport = _video5();
 
-var _okMp4 = function (video5) {
-  if (video5) {
-    let canPlayType = ENV.testVideo.canPlayType('video/mp4; codecs="avc1.42E01E,mp4a.40.2"');
+var _okMp4 = function () {
+  if (html5VideoSupport) {
+    let canPlayType = testVideo.canPlayType('video/mp4; codecs="avc1.42E01E,mp4a.40.2"');
     if (canPlayType !== '') {
       return true;
     }
   }
   return false;
 };
-ENV.okMp4 = _okMp4(ENV.video5);
+ENV.okMp4 = _okMp4();
 
-var _okWebM = function (video5) {
-  if (video5) {
-    let canPlayType = ENV.testVideo.canPlayType('video/webm; codecs="vp8,vorbis"');
+var _okWebM = function () {
+  if (html5VideoSupport) {
+    let canPlayType = testVideo.canPlayType('video/webm; codecs="vp8,vorbis"');
     if (canPlayType !== '') {
       return true;
     }
   }
   return false;
 };
-ENV.okWebM = _okWebM(ENV.video5);
+ENV.okWebM = _okWebM();
 
-var _okHls = function (video5, okMp4) {
-  if (video5 && okMp4) {
-    let isSupp1 = ENV.testVideo.canPlayType('application/vnd.apple.mpegurl');
-    let isSupp2 = ENV.testVideo.canPlayType('application/x-mpegurl');
+var _okHls = function (okMp4) {
+  if (html5VideoSupport && okMp4) {
+    let isSupp1 = testVideo.canPlayType('application/vnd.apple.mpegurl');
+    let isSupp2 = testVideo.canPlayType('application/x-mpegurl');
     if (isSupp1 !== '' || isSupp2 !== '') {
       return true;
     }
   }
   return false;
 };
-ENV.okHls = _okHls(ENV.video5, ENV.okMp4);
+ENV.okHls = _okHls(ENV.okMp4);
 
 var _hasNativeFullscreenSupport = function () {
   let doc = document.documentElement;
@@ -157,7 +157,7 @@ var _hasNativeFullscreenSupport = function () {
       typeof doc.webkitRequestFullscreen !== 'undefined' ||
       typeof doc.mozRequestFullScreen !== 'undefined' ||
       typeof doc.msRequestFullscreen !== 'undefined' ||
-      typeof ENV.testVideo.webkitEnterFullscreen !== 'undefined') {
+      typeof testVideo.webkitEnterFullscreen !== 'undefined') {
       return true;
     }
   }
@@ -165,15 +165,15 @@ var _hasNativeFullscreenSupport = function () {
 };
 ENV.hasNativeFullscreenSupport = _hasNativeFullscreenSupport();
 
-ENV.ua = _getUserAgent();
-ENV.hasTouchEvents = _hasTouchEvents();
-ENV.isWindowsPhone = _isWindowsPhone(ENV.ua, ENV.hasTouchEvents);
-ENV.isIos = _isIos(ENV.ua, ENV.isWindowsPhone, ENV.hasTouchEvents);
-ENV.isAndroid = _isAndroid(ENV.ua, ENV.isWindowsPhone, ENV.isIos, ENV.hasTouchEvents);
-ENV.isMacOSX = _isMacOSX(ENV.ua, ENV.isIos);
-ENV.isSafari = _isSafari(ENV.ua);
+var userAgent = _getUserAgent();
+var hasTouchEvents = _hasTouchEvents();
+var isWindowsPhone = _isWindowsPhone(userAgent, hasTouchEvents);
+ENV.isIos = _isIos(userAgent, isWindowsPhone, hasTouchEvents);
+ENV.isAndroid = _isAndroid(userAgent, isWindowsPhone, ENV.isIos, hasTouchEvents);
+ENV.isMacOSX = _isMacOSX(userAgent, ENV.isIos);
+ENV.isSafari = _isSafari(userAgent);
 ENV.isMobile = false;
-if (ENV.isIos[0] || ENV.isAndroid[0] || ENV.isWindowsPhone[0]) {
+if (ENV.isIos[0] || ENV.isAndroid[0] || isWindowsPhone[0]) {
   ENV.isMobile = true;
 }
 

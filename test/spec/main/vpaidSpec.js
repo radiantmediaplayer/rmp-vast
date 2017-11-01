@@ -3,9 +3,12 @@
 const TEST = require('../helpers/test');
 
 var testUrls = [
-	TEST.pathToTest + 'apiSpec/pre-mid-post.html',
-	TEST.pathToTest + 'apiSpec/ThreeConsecutiveWithErrorLinearSpec.html',
-	TEST.pathToTest + 'apiSpec/TwoConsecutiveLinearSpec.html'
+	TEST.pathToTest + 'vpaidSpec/vpaid-fails-loading-js.html',
+	TEST.pathToTest + 'vpaidSpec/vpaid-flash.html',
+	TEST.pathToTest + 'vpaidSpec/vpaid-js-linear-1-interaction.html',
+	TEST.pathToTest + 'vpaidSpec/vpaid-js-linear-1.html',
+	TEST.pathToTest + 'vpaidSpec/vpaid-js-linear-2.html',
+	TEST.pathToTest + 'vpaidSpec/vpaid-js-linear-3-api.html'
 ];
 
 var intialTime = TEST.getTime();

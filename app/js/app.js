@@ -5,23 +5,12 @@
   // our elements
   var id = 'rmpPlayer';
   var container = document.getElementById(id);
+  var rmpVast;
+  var fw;
+  var playerWidth = 640;
+  var playerHeight = 360;
   // the default adTag when none is provided
   var adTag = 'https://www.radiantmediaplayer.com/vast/tags/inline-linear.xml';
-  // the following params are the default
-  var params = {
-    ajaxTimeout: 8000,
-    creativeLoadTimeout: 10000,
-    ajaxWithCredentials: true,
-    maxNumRedirects: 4,
-    skipMessage: 'Skip ad',
-    skipWaitingMessage: 'Skip ad in',
-    textForClickUIOnMobile: 'Learn more'
-  };
-  // new RmpVast instance - we pass id (required) and params (optional) 
-  var rmpVast = new RmpVast(id, params);
-  // we get rmpVast framework to help us out for the app
-  var fw = rmpVast.getFW();
- 
 
   /*** start of fullscreen management logic ***/
   /* yes HTML5 video fullscreen is probably not as easy as it sounds */
@@ -44,15 +33,17 @@
     if (!isInFullscreen) {
       isInFullscreen = true;
       fw.addClass(container, 'rmp-fullscreen-on');
+      rmpVast.resizeAd(window.screen.width, window.screen.height, 'fullscreen');
     } else {
       isInFullscreen = false;
       fw.removeClass(container, 'rmp-fullscreen-on');
+      rmpVast.resizeAd(playerWidth, playerHeight, 'normal');
     }
   };
   // on iOS webkitbeginfullscreen/webkitendfullscreen are used but we do not care
   // because we do not need rmp-fullscreen-on on container on iOS (iOS uses its own fullscreen player)
   document.addEventListener('fullscreenchange', _onfullscreenchange);
-  
+
   var _requestFullscreen = function (container, video) {
     if (container && video) {
       if (typeof container.requestFullscreen !== 'undefined') {
@@ -69,7 +60,7 @@
       }
     }
   };
-  
+
   var _exitFullscreen = function (video) {
     if (typeof document.exitFullscreen !== 'undefined') {
       document.exitFullscreen();
@@ -119,8 +110,6 @@
     return viewportWidth;
   };
   var viewportWidth = _getViewportWidth();
-  var playerWidth = 640;
-  var playerHeight = 360;
   if (viewportWidth < 640) {
     playerWidth = 480;
     playerHeight = 270;
@@ -133,7 +122,31 @@
   container.style.height = playerHeight + 'px';
   /*** END of resizing logic ***/
 
+  /*** START RmpVast instantiation  ***/
+  // the following params are the default
+  var params = {
+    ajaxTimeout: 8000,
+    creativeLoadTimeout: 10000,
+    ajaxWithCredentials: true,
+    maxNumRedirects: 4,
+    skipMessage: 'Skip ad',
+    skipWaitingMessage: 'Skip ad in',
+    textForClickUIOnMobile: 'Learn more',
+    enableVpaid: true,
+    vpaidSettings: {
+      width: playerWidth,
+      height: playerHeight,
+      viewMode: 'normal',
+      desiredBitrate: 500,
+      vpaidTimeout: 8000
+    }
+  };
+  // new RmpVast instance - we pass id (required) and params (optional) 
+  rmpVast = new RmpVast(id, params);
+  // we get rmpVast framework to help us out for the app
+  fw = rmpVast.getFW();
   fw.log('APP: rmpVast instance created');
+  /*** END RmpVast instantiation  ***/
 
   var nowOffset = 0;
   var _getNow = function () {

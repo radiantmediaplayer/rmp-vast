@@ -1,12 +1,5 @@
 const FW = {};
 
-FW.isNumber = function (n) {
-  if (typeof n === 'number' && isFinite(n)) {
-    return true;
-  }
-  return false;
-};
-
 FW.addClass = function (element, className) {
   if (element && typeof className === 'string') {
     if (element.className) {
@@ -24,16 +17,6 @@ FW.removeClass = function (element, className) {
     if (element.className.indexOf(className) > -1) {
       element.className = (element.className.replace(className, '')).replace(/\s\s+/g, ' ');
     }
-  }
-};
-
-FW.hasClass = function (element, className) {
-  if (element &&
-    typeof element.className === 'string' && typeof className === 'string') {
-    if (element.className.indexOf(className) > -1) {
-      return true;
-    }
-    return false;
   }
 };
 
@@ -59,8 +42,20 @@ FW.createStdEvent = function (eventName, element) {
   }
 };
 
-FW.getStyleAttributeData = function (element, style) {
-  let styleAttributeData = FW.getComputedStyle(element, style) || 0;
+var _getComputedStyle = function (element, style) {
+  let propertyValue = '';
+  if (element && typeof window.getComputedStyle === 'function') {
+    let cs = window.getComputedStyle(element, null);
+    if (cs) {
+      propertyValue = cs.getPropertyValue(style);
+      propertyValue = propertyValue.toString().toLowerCase();
+    }
+  }
+  return propertyValue;
+};
+
+var _getStyleAttributeData = function (element, style) {
+  let styleAttributeData = _getComputedStyle(element, style) || 0;
   styleAttributeData = styleAttributeData.toString();
   if (styleAttributeData.indexOf('px') > -1) {
     styleAttributeData = styleAttributeData.replace('px', '');
@@ -73,33 +68,10 @@ FW.getWidth = function (element) {
     if (typeof element.offsetWidth === 'number' && element.offsetWidth !== 0) {
       return element.offsetWidth;
     } else {
-      return FW.getStyleAttributeData(element, 'width');
+      return _getStyleAttributeData(element, 'width');
     }
   }
   return 0;
-};
-
-FW.getHeight = function (element) {
-  if (element) {
-    if (typeof element.offsetHeight === 'number' && element.offsetHeight !== 0) {
-      return element.offsetHeight;
-    } else {
-      return FW.getStyleAttributeData(element, 'height');
-    }
-  }
-  return 0;
-};
-
-FW.getComputedStyle = function (element, style) {
-  let propertyValue = '';
-  if (element && typeof window.getComputedStyle === 'function') {
-    let cs = window.getComputedStyle(element, null);
-    if (cs) {
-      propertyValue = cs.getPropertyValue(style);
-      propertyValue = propertyValue.toString().toLowerCase();
-    }
-  }
-  return propertyValue;
 };
 
 FW.show = function (element) {

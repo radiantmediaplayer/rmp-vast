@@ -21,7 +21,9 @@ PING.events = [
   'skip',
   'progress',
   'clickthrough',
-  'close'
+  'close',
+  'collapse',
+  'acceptInvitation'
 ];
 
 var _replaceMacros = function (url, errorCode, assetUri) {

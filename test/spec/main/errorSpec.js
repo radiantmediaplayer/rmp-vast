@@ -7,8 +7,7 @@ var testUrls = [
 	TEST.pathToTest + 'errorSpec/EmptySpec.html',
 	TEST.pathToTest + 'errorSpec/ErrorMediaSpec.html',
 	TEST.pathToTest + 'errorSpec/MalformedSpec.html',
-	TEST.pathToTest + 'errorSpec/VMAPSpec.html',
-	TEST.pathToTest + 'errorSpec/VPAIDSpec.html'
+	TEST.pathToTest + 'errorSpec/VMAPSpec.html'
 ];
 
 var intialTime = TEST.getTime();

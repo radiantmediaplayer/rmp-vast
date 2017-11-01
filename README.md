@@ -18,6 +18,7 @@ rmp-vast is an open-source project released under [MIT license](https://github.c
 - Error Reporting
 - Industry Icons
 - VAST 3 Macros
+- VPAID 1 and 2 (JavaScript)
 
 VAST 2 resources should also be compatible with rmp-vast.
 
@@ -32,7 +33,6 @@ enough coverage to support current industry requirements and best practices.
 ## Currently unsupported VAST features
 - Ad Pods
 - Companion Ads
-- VPAID
 - VMAP
 
 ## Supported environments
@@ -130,6 +130,20 @@ Once rmp-vast library is loaded on your page you can create a new rmp-vast insta
 
 `params.textForClickUIOnMobile: String` on mobile devices the click-through URL for a linear ad is provided in a box located at the top right corner of the player. This setting set the text for this box. Default: 'Learn more'.
 
+`params.enableVpaid: Boolean` VPAID support is currently in BETA and needs to be 
+enabled with this setting. Default: false.
+
+`params.vpaidSettings: Object` information required to properly display VPAID creatives - note that it is to the parent application of rmp-vast to provide those informations - below values are default (see test/spec/vpaidSpec/ for examples):
+```javascript
+vpaidSettings: {
+  width: 640,
+  height: 360,
+  viewMode: 'normal',
+  desiredBitrate: 500,
+  vpaidTimeout: 8000
+}
+```
+
 ### Starting the rmp-vast player
 It is important for the rmp-vast instance to be properly initialized to avoid playback issues. 
 
@@ -175,6 +189,13 @@ Available events are:
 - `aderror`
 - `addestroyed`
 
+VPAID-related events:
+- `adlinearchange`
+- `adsizechange`
+- `adexpandedchange`
+- `adremainingtimechange`
+- `adinteraction`
+
 ### API methods
 Once a rmp-vast instance is created you can query the API methods to interact with the player. Example:
 ```javascript
@@ -189,40 +210,58 @@ For linear ads rmp-vast exposes 2 players: a content player (for the actual cont
 - `pause()`: pause content or vast player depending on what is on stage
 - `loadAds()`: load a new VAST tag and start displaying it - if rmp-vast is not initialized when loadAds is called then `initialize()` is called first
 - `initialize()`: initialize rmp-vast - this method can be used in case of deferred use of `loadAds()` - Note that when autoplay is not wanted the call to `initialize()` must be the result of a direct user interaction
-- `getAdPaused()`: return a boolean stating if the ad on stage is paused or not. Null is returned if no ad is on stage or if the ad is non-linear
+- `getAdPaused()`: return (boolean|null) stating if the ad on stage is paused or not. Null is returned if no ad is on stage or if the ad is non-linear
 - `setVolume(volume)`: set the volume of the content or vast player depending on what is on stage. Input value should be a number between 0 and 1
-- `getVolume()`: return the volume of the content or vast player depending on what is on stage. Returned value is a number between 0 and 1
+- `getVolume()`: return (number|null) the volume of the content or vast player depending on what is on stage. Returned value is a number between 0 and 1
 - `setMute(muted)`: set the mute state of the content or vast player depending on what is on stage. Input value should be a boolean
-- `getMute()`: return the mute state of the content or vast player depending on what is on stage.  Returned value is a boolean
+- `getMute()`: return (boolean|null) the mute state of the content or vast player depending on what is on stage.  Returned value is a boolean
 - `stopAds()`: stop playing the ad on stage (either linear or non-linear)
-- `getAdTagUrl()`: return a string representing the current VAST tag URL
-- `getAdOnStage()`: return a boolean stating if an ad (linear or non-linear) is currently on stage
-- `getInitialized()`: return a boolean stating if rmp-vast has been initialized
+- `getAdTagUrl()`: return (string|null) representing the current VAST tag URL
+- `getAdOnStage()`: return a (boolean) stating if an ad (linear or non-linear) is currently on stage
+- `getInitialized()`: return a (boolean) stating if rmp-vast has been initialized
 
 The following methods should be queried after the `adstarted` event has fired for accurate data:
-- `getAdMediaUrl()`: return a string representing the selected creative URL
-- `getAdLinear()`: return a boolean representing the type of the selected creative either linear (true) or non linear (false)
-- `getAdSystem()`: return a string representing the VAST AdSystem tag
-- `getAdContentType()`: return a string representing the MIME type for the selected creative
-- `getAdTitle()`: return a string representing the VAST AdTitle tag
-- `getAdDescription()`: return a string representing the VAST Description tag
-- `getAdDuration()`: return a number in ms representing the duration of the selected linear creative
-- `getAdCurrentTime()`: return a number in ms representing the current timestamp in the selected linear creative
-- `getAdMediaWidth()`: return a number representing the width of the selected creative
-- `getAdMediaHeight()`: return a number representing the height of the selected creative
-- `getClickThroughUrl()`: return a string representing the click-through (e.g. destination) URL for the selected creative
+- `getAdMediaUrl()`: return (string|null) representing the selected creative URL
+- `getAdLinear()`: return (boolean|null) representing the type of the selected creative either linear (true) or non linear (false)
+- `getAdSystem()`: return (string|null) representing the VAST AdSystem tag
+- `getAdContentType()`: return (string|null) representing the MIME type for the selected creative
+- `getAdTitle()`: return (string|null) representing the VAST AdTitle tag
+- `getAdDescription()`: return (string|null) representing the VAST Description tag
+- `getAdDuration()`: return (number|-1) in ms representing the duration of the selected linear creative
+- `getAdCurrentTime()`: return (number|-1) in ms representing the current timestamp in the selected linear creative
+- `getAdRemainingTime()`: return (number|-1) in ms representing the current time remaining in the selected linear creative
+- `getAdMediaWidth()`: return (number|null) representing the width of the selected creative
+- `getAdMediaHeight()`: return (number|null) representing the height of the selected creative
+- `getClickThroughUrl()`: return (string|null) representing the click-through (e.g. destination) URL for the selected creative
+
+Additional VPAID-related methods
+- `resizeAd(width, height, viewMode)`: resizes the VPAID creative based on width (number), height (number) and viewMode (string). viewMode should be either 'normal' or 'fullscreen' 
+- `expandAd()`: expands the VPAID creative on stage
+- `collapseAd()`: collapses the VPAID creative on stage
+- `skipAd()`: skips the VPAID creative on stage
+- `getVpaidCreative()`: return (object|null) reference to the VPAID creative 
+- `getAdExpanded()`: return (boolean|null) stating if the VPAID creative on stage is expanded or not
+- `getAdSkippableState()`: return (boolean|null) stating if the VPAID creative on stage can be skipped or not
+- `getAdCompanions()`: return (string|null) that provides ad companion details in VAST 3.0 format for the `<CompanionAds>` element
 
 The following methods should be queried after the `aderror` event has fired for accurate data:
-- `getAdErrorMessage()`: return a string representing the error message for the current error
-- `getAdVastErrorCode()`: return a string representing the VAST error code for the current error
+- `getAdErrorMessage()`: return (string) representing the error message for the current error
+- `getAdVastErrorCode()`: return (number|-1) representing the VAST error code for the current error
 
 The following methods provide context information for the rmp-vast instance:
 - `getEnv()`: returns the environment object
 - `getFW()`: returns the core internal rmp-vast framework
-- `getFWVAST()`: returns the VAST-specific internal rmp-vast framework
 - `getVastPlayer()`: returns the VAST player video tag
 - `getContentPlayer()`: returns the content player video tag
-- `getIsUsingContentPlayerForAds()`: on iOS and macOS Safari the VAST player is the content player. This is to avoid fullscreen management and autoplay issues and to provide a consistent user experience. This method will return true for iOS and macOS Safari, false otherwise
+- `getIsUsingContentPlayerForAds()`: return (boolean) - on iOS and macOS Safari the VAST player is the content player. This is to avoid fullscreen management and autoplay issues and to provide a consistent user experience. This method will return true for iOS and macOS Safari, false otherwise
+
+### VPAID support
+**We need your help!**
+VPAID support in rmp-vast should be okay but is currently in BETA. It is no secret that VPAID in the industry is a jungle and we need your help to best implement it. Any feedback and test adTag that can improve VPAID support in rmp-vast are welcome - open an issue if needs be.
+Current VPAID support limitations:
+- no iOS or macOS Safari support (coming later)
+- supports only linear VPAID (non-linear support may be coming later)
+- no support for changes in linearity (likely to cause playback issues): we need production adTag to test this but we have not found reliable resources for it - please share if you have some available
  
 ### Autoplay support
 This is done by simply calling `loadAds` method on page load (after HTML5 content video player is in DOM and rmp-vast library is loaded and instantiated). For muted autoplay (mobile) also add the `muted` attribute on the HTML5 content video player. See the test/LinearMutedAutoplaySpec.html file for an example.

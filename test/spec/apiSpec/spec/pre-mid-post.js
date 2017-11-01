@@ -1,9 +1,10 @@
 'use strict';
 
-var ADTAG1 = 'https://www.radiantmediaplayer.com/vast/tags/vpaid-4-js-linear.xml';
-var ADTAG2 = 'https://www.radiantmediaplayer.com/vast/tags/inline-linear-1.xml';
+var ADTAG1 = 'https://www.radiantmediaplayer.com/vast/tags/inline-linear-2.xml';
+var ADTAG2 = 'https://www.radiantmediaplayer.com/vast/tags/vpaid-2-js-linear.xml';
+var ADTAG3 = 'https://www.radiantmediaplayer.com/vast/tags/inline-linear-1.xml';
 
-describe("Test for TwoConsecutiveLinearSpec", function () {
+describe("Test for pre-mid-post", function () {
 
   var id = 'rmpPlayer';
   var container = document.getElementById(id);
@@ -22,7 +23,7 @@ describe("Test for TwoConsecutiveLinearSpec", function () {
   var title = document.getElementsByTagName('title')[0];
 
 
-  it("should load 2 consecutive adTag and play them", function (done) {
+  it("should load pre-mid-post", function (done) {
     var validSteps = 0;
 
     var _incrementAndLog = function (event) {
@@ -33,9 +34,6 @@ describe("Test for TwoConsecutiveLinearSpec", function () {
     };
 
     container.addEventListener('adloaded', function (e) {
-      _incrementAndLog(e);
-    });
-    container.addEventListener('adimpression', function (e) {
       _incrementAndLog(e);
     });
     container.addEventListener('adtagstartloading', function (e) {
@@ -57,16 +55,30 @@ describe("Test for TwoConsecutiveLinearSpec", function () {
       _incrementAndLog(e);
     });
     var addestroyedCount = 0;
+    var contentPlayer;
     container.addEventListener('addestroyed', function (e) {
       _incrementAndLog(e);
       addestroyedCount++;
+      if (!contentPlayer) {
+        contentPlayer = rmpVast.getContentPlayer();
+      }
       if (addestroyedCount === 1) {
-        expect(validSteps).toBe(9);
-        rmpVast.loadAds(ADTAG2);
+        expect(validSteps).toBe(8);
+        contentPlayer.currentTime = 15;
+        setTimeout(() => {
+          rmpVast.loadAds(ADTAG2);
+        }, 1000);
+        contentPlayer.addEventListener('ended', () => {
+          rmpVast.loadAds(ADTAG3);
+        });
       }
       if (addestroyedCount === 2) {
-        expect(validSteps).toBe(18);
-        if (validSteps === 18) {
+        expect(validSteps).toBe(16);
+        contentPlayer.currentTime = 98;
+      }
+      if (addestroyedCount === 3) {
+        expect(validSteps).toBe(24);
+        if (validSteps === 24) {
           title.textContent = 'Test completed';
         }
         setTimeout(function () {

@@ -6,7 +6,7 @@ var ADTAG = 'https://www.radiantmediaplayer.com/vast/tags/inline-linear-error-me
 describe("Test for ErrorMediaSpec", function () {
 
   var id = 'rmpPlayer';
-  var container = document.getElementById(id); 
+  var container = document.getElementById(id);
   var rmpVast = new RmpVast(id);
   var fw = rmpVast.getFW();
   var title = document.getElementsByTagName('title')[0];
@@ -27,8 +27,9 @@ describe("Test for ErrorMediaSpec", function () {
     });
 
     container.addEventListener('aderror', function (e) {
-      _incrementAndLog(e);
-      expect(rmpVast.getAdVastErrorCode()).toBe(401);
+      if (rmpVast.getAdVastErrorCode() === 401) {
+        _incrementAndLog(e);
+      }
     });
 
     container.addEventListener('addestroyed', function (e) {
@@ -43,7 +44,7 @@ describe("Test for ErrorMediaSpec", function () {
     });
 
     rmpVast.loadAds(ADTAG);
-    
+
   });
 
 

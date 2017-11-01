@@ -14,6 +14,8 @@ import { ICONS } from './creatives/icons';
 
 window.DEBUG = true;
 
+var vastDocument;
+
 window.RmpVast = function (id, params) {
   if (typeof id !== 'string' || id === '') {
     FW.log('RMP-VAST: invalid id to create new instance - exit');
@@ -43,48 +45,13 @@ window.RmpVast = function (id, params) {
     }
   }
   // filter input params
-  let defaultParams = {
-    ajaxTimeout: 8000,
-    creativeLoadTimeout: 10000,
-    ajaxWithCredentials: false,
-    maxNumRedirects: 4,
-    pauseOnClick: true,
-    skipMessage: 'Skip ad',
-    skipWaitingMessage: 'Skip ad in',
-    textForClickUIOnMobile: 'Learn more'
-  };
-  this.params = defaultParams; 
-  if (params && !FW.isEmptyObject(params)) {
-    if (FW.isNumber(params.ajaxTimeout) && params.ajaxTimeout > 0) {
-      this.params.ajaxTimeout = params.ajaxTimeout;
-    }
-    if (FW.isNumber(params.creativeLoadTimeout) && params.creativeLoadTimeout > 0) {
-      this.params.creativeLoadTimeout = params.creativeLoadTimeout;
-    }
-    if (typeof params.ajaxWithCredentials === 'boolean') {
-      this.params.ajaxWithCredentials = params.ajaxWithCredentials;
-    }
-    if (FW.isNumber(params.maxNumRedirects) && params.maxNumRedirects > 0 && params.maxNumRedirects !== 4) {
-      this.params.maxNumRedirects = params.maxNumRedirects;
-    }
-    if (typeof params.pauseOnClick === 'boolean') {
-      this.params.pauseOnClick = params.pauseOnClick;
-    }
-    if (typeof params.skipMessage === 'string') {
-      this.params.skipMessage = params.skipMessage;
-    }
-    if (typeof params.skipWaitingMessage === 'string') {
-      this.params.skipWaitingMessage = params.skipWaitingMessage;
-    }
-    if (typeof params.textForClickUIOnMobile === 'string') {
-      this.params.textForClickUIOnMobile = params.textForClickUIOnMobile;
-    }
-  }
+  FWVAST.filterParams.call(this, params);
   // reset internal variables
   RESET.internalVariables.call(this);
   // attach fullscreen states
   // this assumes we have a polyfill for fullscreenchange event 
   // see app/js/app.js
+  // we need this to handle VAST fullscreen events
   let isInFullscreen = false;
   let onFullscreenchange = null;
   let _onFullscreenchange = function (event) {
@@ -190,6 +157,10 @@ var _parseCreatives = function (creative) {
       // if present only one TrackingEvents is expected
       if (trackingEvents.length === 1) {
         TRACKINGEVENTS.filter.call(this, trackingEvents);
+      } else if (trackingEvents.length > 1) {
+        PING.error.call(this, 101, this.inlineOrWrapperErrorTags);
+        VASTERRORS.process.call(this, 101);
+        return;
       }
       if (this.isWrapper) {
         _execRedirect.call(this);
@@ -220,6 +191,10 @@ var _parseCreatives = function (creative) {
       // if present only one TrackingEvents is expected
       if (trackingEvents.length === 1) {
         TRACKINGEVENTS.filter.call(this, trackingEvents);
+      } else if (trackingEvents.length > 1) {
+        PING.error.call(this, 101, this.inlineOrWrapperErrorTags);
+        VASTERRORS.process.call(this, 101);
+        return;
       }
 
       // VideoClicks for linear
@@ -269,13 +244,13 @@ var _onXmlAvailable = function (xml) {
     return;
   }
   // check for VAST node
-  this.vastDocument = xml.getElementsByTagName('VAST');
-  if (this.vastDocument.length !== 1) {
+  vastDocument = xml.getElementsByTagName('VAST');
+  if (vastDocument.length !== 1) {
     VASTERRORS.process.call(this, 100);
     return;
   }
   // VAST/Error node
-  let errorNode = this.vastDocument[0].getElementsByTagName('Error');
+  let errorNode = vastDocument[0].getElementsByTagName('Error');
   if (errorNode.length === 1) {
     let errorUrl = FWVAST.getNodeValue(errorNode[0], true);
     if (errorUrl !== null) {
@@ -284,14 +259,14 @@ var _onXmlAvailable = function (xml) {
   }
   //check for VAST version 2 or 3
   let pattern = /^(2|3)\./i;
-  let version = this.vastDocument[0].getAttribute('version');
+  let version = vastDocument[0].getAttribute('version');
   if (!pattern.test(version)) {
     PING.error.call(this, 102, this.vastErrorTags);
     VASTERRORS.process.call(this, 102);
     return;
   }
   // if empty VAST return
-  let ad = this.vastDocument[0].getElementsByTagName('Ad');
+  let ad = vastDocument[0].getElementsByTagName('Ad');
   if (ad.length === 0) {
     PING.error.call(this, 303, this.vastErrorTags);
     VASTERRORS.process.call(this, 303);

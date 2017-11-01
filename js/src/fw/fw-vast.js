@@ -10,7 +10,7 @@ FWVAST.hasDOMParser = function () {
 };
 
 FWVAST.vastReadableTime = function (time) {
-  if (FW.isNumber(time) && time >= 0) {
+  if (typeof time === 'number' && time >= 0) {
     let seconds = 0;
     let minutes = 0;
     let hours = 0;
@@ -83,7 +83,7 @@ FWVAST.getNodeValue = function (element, http) {
     }
   }
   if (value) {
-    // in case we have some leftovers CDATA - not sure this check needs to be done 
+    // in case we have some leftovers CDATA - mainly for VPAID
     let pattern = /^<!\[CDATA\[.*\]\]>$/i;
     if (pattern.test(value)) {
       value = value.replace('<![CDATA[', '').replace(']]>', '');
@@ -190,8 +190,8 @@ FWVAST.logPerformance = function (data) {
 };
 
 FWVAST.logVideoEvents = function (video) {
-  let events = ['loadstart', 'durationchange', 'loadedmetadata',
-    'loadeddata', 'progress', 'canplay', 'canplaythrough'];
+  let events = ['loadstart', 'durationchange', 
+  'loadedmetadata', 'loadeddata', 'canplay', 'canplaythrough'];
   events.forEach((value) => {
     video.addEventListener(value, (e) => {
       if (e && e.type) {
@@ -199,6 +199,74 @@ FWVAST.logVideoEvents = function (video) {
       }
     });
   });
+};
+
+FWVAST.filterParams = function (params) {
+  let defaultParams = {
+    ajaxTimeout: 8000,
+    creativeLoadTimeout: 10000,
+    ajaxWithCredentials: false,
+    maxNumRedirects: 4,
+    pauseOnClick: true,
+    skipMessage: 'Skip ad',
+    skipWaitingMessage: 'Skip ad in',
+    textForClickUIOnMobile: 'Learn more',
+    enableVpaid: false,
+    vpaidSettings: {
+      width: 640,
+      height: 360,
+      viewMode: 'normal',
+      desiredBitrate: 500,
+      vpaidTimeout: 8000
+    }
+  };
+  this.params = defaultParams;
+  if (params && !FW.isEmptyObject(params)) {
+    if (typeof params.ajaxTimeout === 'number' && params.ajaxTimeout > 0) {
+      this.params.ajaxTimeout = params.ajaxTimeout;
+    }
+    if (typeof params.creativeLoadTimeout === 'number' && params.creativeLoadTimeout > 0) {
+      this.params.creativeLoadTimeout = params.creativeLoadTimeout;
+    }
+    if (typeof params.ajaxWithCredentials === 'boolean') {
+      this.params.ajaxWithCredentials = params.ajaxWithCredentials;
+    }
+    if (typeof params.maxNumRedirects === 'number' && params.maxNumRedirects > 0 && params.maxNumRedirects !== 4) {
+      this.params.maxNumRedirects = params.maxNumRedirects;
+    }
+    if (typeof params.pauseOnClick === 'boolean') {
+      this.params.pauseOnClick = params.pauseOnClick;
+    }
+    if (typeof params.skipMessage === 'string') {
+      this.params.skipMessage = params.skipMessage;
+    }
+    if (typeof params.skipWaitingMessage === 'string') {
+      this.params.skipWaitingMessage = params.skipWaitingMessage;
+    }
+    if (typeof params.textForClickUIOnMobile === 'string') {
+      this.params.textForClickUIOnMobile = params.textForClickUIOnMobile;
+    }
+    if (typeof params.enableVpaid === 'boolean') {
+      this.params.enableVpaid = params.enableVpaid;
+    }
+    if (typeof params.vpaidSettings === 'object') {
+      if (typeof params.vpaidSettings.width === 'number') {
+        this.params.vpaidSettings.width = params.vpaidSettings.width;
+      }
+      if (typeof params.vpaidSettings.height === 'number') {
+        this.params.vpaidSettings.height = params.vpaidSettings.height;
+      }
+      if (typeof params.vpaidSettings.viewMode === 'string') {
+        this.params.vpaidSettings.viewMode = params.vpaidSettings.viewMode;
+      }
+      if (typeof params.vpaidSettings.desiredBitrate === 'number') {
+        this.params.vpaidSettings.desiredBitrate = params.vpaidSettings.desiredBitrate;
+      }
+      if (typeof params.vpaidSettings.vpaidTimeout === 'number') {
+        this.params.vpaidSettings.vpaidTimeout = params.vpaidSettings.vpaidTimeout;
+      }
+    }
+  }
 };
 
 export { FWVAST };
