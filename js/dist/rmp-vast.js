@@ -1,6 +1,6 @@
 /**
  * @license Copyright (c) 2017 Radiant Media Player | https://www.radiantmediaplayer.com
- * rmp-vast 1.2.0
+ * rmp-vast 1.2.1
  * GitHub: https://github.com/radiantmediaplayer/rmp-vast
  * MIT License: https://github.com/radiantmediaplayer/rmp-vast/blob/master/LICENSE
  */
@@ -2073,27 +2073,23 @@ var _parseCreatives = function _parseCreatives(creative) {
     // we only pick the first creative that is either Linear or NonLinearAds
     var nonLinearAds = currentCreative.getElementsByTagName('NonLinearAds');
     var linear = currentCreative.getElementsByTagName('Linear');
-    var cretiveExtensions = currentCreative.getElementsByTagName('CretiveExtensions');
+    // for now we ignore CreativeExtensions tag
+    //let creativeExtensions = currentCreative.getElementsByTagName('CreativeExtensions');
     var companionAds = currentCreative.getElementsByTagName('CompanionAds');
-    if (cretiveExtensions.length > 0 || companionAds.length > 0) {
+    if (companionAds.length > 0) {
       continue;
     }
-    // we expect only 1 Linear or NonLinearAds tag 
-    // reject CompanionAds for example
-    if (nonLinearAds.length !== 1 && linear.length !== 1) {
+    // we expect 1 Linear or NonLinearAds tag 
+    if (nonLinearAds.length === 0 && linear.length === 0) {
       _ping.PING.error.call(this, 101, this.inlineOrWrapperErrorTags);
       _vastErrors.VASTERRORS.process.call(this, 101);
       return;
     }
-    if (nonLinearAds.length === 1) {
+    if (nonLinearAds.length > 0) {
       var trackingEvents = nonLinearAds[0].getElementsByTagName('TrackingEvents');
-      // if present only one TrackingEvents is expected
-      if (trackingEvents.length === 1) {
+      // if TrackingEvents tag
+      if (trackingEvents.length > 0) {
         _trackingEvents2.TRACKINGEVENTS.filter.call(this, trackingEvents);
-      } else if (trackingEvents.length > 1) {
-        _ping.PING.error.call(this, 101, this.inlineOrWrapperErrorTags);
-        _vastErrors.VASTERRORS.process.call(this, 101);
-        return;
       }
       if (this.isWrapper) {
         _execRedirect.call(this);
@@ -2101,7 +2097,7 @@ var _parseCreatives = function _parseCreatives(creative) {
       }
       _nonLinear.NONLINEAR.parse.call(this, nonLinearAds);
       return;
-    } else if (linear.length === 1) {
+    } else if (linear.length > 0) {
       // check for skippable ads (Linear skipoffset)
       var skipoffset = linear[0].getAttribute('skipoffset');
       if (this.params.skipMessage !== '' && skipoffset !== null && skipoffset !== '' && _fwVast.FWVAST.isValidOffset(skipoffset)) {
@@ -2120,21 +2116,17 @@ var _parseCreatives = function _parseCreatives(creative) {
 
       // TrackingEvents
       var _trackingEvents = linear[0].getElementsByTagName('TrackingEvents');
-      // if present only one TrackingEvents is expected
-      if (_trackingEvents.length === 1) {
+      // if present TrackingEvents
+      if (_trackingEvents.length > 0) {
         _trackingEvents2.TRACKINGEVENTS.filter.call(this, _trackingEvents);
-      } else if (_trackingEvents.length > 1) {
-        _ping.PING.error.call(this, 101, this.inlineOrWrapperErrorTags);
-        _vastErrors.VASTERRORS.process.call(this, 101);
-        return;
       }
 
       // VideoClicks for linear
       var videoClicks = linear[0].getElementsByTagName('VideoClicks');
-      if (videoClicks.length === 1) {
+      if (videoClicks.length > 0) {
         var clickThrough = videoClicks[0].getElementsByTagName('ClickThrough');
         var clickTracking = videoClicks[0].getElementsByTagName('ClickTracking');
-        if (clickThrough.length === 1) {
+        if (clickThrough.length > 0) {
           this.clickThroughUrl = _fwVast.FWVAST.getNodeValue(clickThrough[0], true);
         }
         if (clickTracking.length > 0) {
@@ -2177,13 +2169,13 @@ var _onXmlAvailable = function _onXmlAvailable(xml) {
   }
   // check for VAST node
   vastDocument = xml.getElementsByTagName('VAST');
-  if (vastDocument.length !== 1) {
+  if (vastDocument.length === 0) {
     _vastErrors.VASTERRORS.process.call(this, 100);
     return;
   }
   // VAST/Error node
   var errorNode = vastDocument[0].getElementsByTagName('Error');
-  if (errorNode.length === 1) {
+  if (errorNode.length > 0) {
     var errorUrl = _fwVast.FWVAST.getNodeValue(errorNode[0], true);
     if (errorUrl !== null) {
       this.vastErrorTags.push({ event: 'error', url: errorUrl });
@@ -2222,7 +2214,7 @@ var _onXmlAvailable = function _onXmlAvailable(xml) {
     for (var _i4 = 0, _len4 = adPod.length; _i4 < _len4; _i4++) {
       var _inline = adPod[_i4].getElementsByTagName('InLine');
       var _wrapper = adPod[_i4].getElementsByTagName('Wrapper');
-      if (_inline.length === 1 || _wrapper.length === 1) {
+      if (_inline.length > 0 || _wrapper.length > 0) {
         _ping.PING.error.call(this, 200, this.vastErrorTags);
       }
     }
@@ -2232,14 +2224,14 @@ var _onXmlAvailable = function _onXmlAvailable(xml) {
   //let adId = retainedAd[0].getAttribute('id');
   var inline = retainedAd.getElementsByTagName('InLine');
   var wrapper = retainedAd.getElementsByTagName('Wrapper');
-  // only 1 InLine or Wrapper element must be present 
-  if (inline.length !== 1 && wrapper.length !== 1) {
+  // 1 InLine or Wrapper element must be present 
+  if (inline.length === 0 && wrapper.length === 0) {
     _ping.PING.error.call(this, 101, this.vastErrorTags);
     _vastErrors.VASTERRORS.process.call(this, 101);
     return;
   }
   var inlineOrWrapper = void 0;
-  if (wrapper.length === 1) {
+  if (wrapper.length > 0) {
     this.isWrapper = true;
     inlineOrWrapper = wrapper;
     this.vastAdTagURI = inlineOrWrapper[0].getElementsByTagName('VASTAdTagURI');
@@ -2250,7 +2242,7 @@ var _onXmlAvailable = function _onXmlAvailable(xml) {
   var impression = inlineOrWrapper[0].getElementsByTagName('Impression');
   // VAST/Ad/InLine/Error node
   errorNode = inlineOrWrapper[0].getElementsByTagName('Error');
-  if (errorNode.length === 1) {
+  if (errorNode.length > 0) {
     var _errorUrl = _fwVast.FWVAST.getNodeValue(errorNode[0], true);
     if (_errorUrl !== null) {
       this.inlineOrWrapperErrorTags.push({ event: 'error', url: _errorUrl });
@@ -2265,13 +2257,13 @@ var _onXmlAvailable = function _onXmlAvailable(xml) {
   // Required Wrapper Elements are AdSystem, vastAdTagURI, Impression
   // if not present exit and ping InLine/Wrapper Error element
   if (this.isWrapper) {
-    if (adSystem.length !== 1 || this.vastAdTagURI.length !== 1 || impression.length !== 1) {
+    if (adSystem.length === 0 || this.vastAdTagURI.length === 0 || impression.length === 0) {
       _ping.PING.error.call(this, 101, this.inlineOrWrapperErrorTags);
       _vastErrors.VASTERRORS.process.call(this, 101);
       return;
     }
   } else {
-    if (adSystem.length !== 1 || adTitle.length !== 1 || impression.length !== 1 || creatives.length < 1) {
+    if (adSystem.length === 0 || adTitle.length === 0 || impression.length === 0 || creatives.length === 0) {
       _ping.PING.error.call(this, 101, this.inlineOrWrapperErrorTags);
       _vastErrors.VASTERRORS.process.call(this, 101);
       return;
@@ -2279,10 +2271,10 @@ var _onXmlAvailable = function _onXmlAvailable(xml) {
   }
 
   var creative = void 0;
-  if (creatives.length === 1) {
+  if (creatives.length > 0) {
     creative = creatives[0].getElementsByTagName('Creative');
     // at least one creative tag is expected for InLine
-    if (!this.isWrapper && creative.length < 1) {
+    if (!this.isWrapper && creative.length === 0) {
       _ping.PING.error.call(this, 101, this.inlineOrWrapperErrorTags);
       _vastErrors.VASTERRORS.process.call(this, 101);
       return;
