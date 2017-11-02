@@ -203,7 +203,7 @@ FWVAST.logVideoEvents = function (video) {
 
 FWVAST.filterParams = function (params) {
   let defaultParams = {
-    ajaxTimeout: 8000,
+    ajaxTimeout: 7000,
     creativeLoadTimeout: 10000,
     ajaxWithCredentials: false,
     maxNumRedirects: 4,
@@ -216,8 +216,7 @@ FWVAST.filterParams = function (params) {
       width: 640,
       height: 360,
       viewMode: 'normal',
-      desiredBitrate: 500,
-      vpaidTimeout: 8000
+      desiredBitrate: 500
     }
   };
   this.params = defaultParams;
@@ -261,9 +260,6 @@ FWVAST.filterParams = function (params) {
       }
       if (typeof params.vpaidSettings.desiredBitrate === 'number') {
         this.params.vpaidSettings.desiredBitrate = params.vpaidSettings.desiredBitrate;
-      }
-      if (typeof params.vpaidSettings.vpaidTimeout === 'number') {
-        this.params.vpaidSettings.vpaidTimeout = params.vpaidSettings.vpaidTimeout;
       }
     }
   }

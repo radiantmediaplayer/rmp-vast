@@ -111,7 +111,7 @@ Once rmp-vast library is loaded on your page you can create a new rmp-vast insta
 
 `params: Object` is an optional object representing various parameters that can be passed to a rmp-vast instance and that will affect the player inner-workings. Available properties for the params object follow:
 
-`params.ajaxTimeout: Number` timeout in ms for an AJAX request to load a VAST tag from the ad server. Default 8000.
+`params.ajaxTimeout: Number` timeout in ms for an AJAX request to load a VAST tag from the ad server. Default 7000.
 
 `params.creativeLoadTimeout: Number` timeout in ms to load linear media creative from the server. Default 10000.
 
@@ -136,8 +136,7 @@ vpaidSettings: {
   width: 640,
   height: 360,
   viewMode: 'normal',
-  desiredBitrate: 500,
-  vpaidTimeout: 8000
+  desiredBitrate: 500
 }
 ```
 

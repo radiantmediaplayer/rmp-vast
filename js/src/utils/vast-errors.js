@@ -106,7 +106,7 @@ var _updateVastError = function (errorCode) {
   let error = VASTERRORS.list.filter((value) => {
     return value.code === errorCode;
   });
-  if (error.length === 1) {
+  if (error.length > 0) { 
     this.vastErrorCode = error[0].code;
     this.vastErrorMessage = error[0].description;
   } else {

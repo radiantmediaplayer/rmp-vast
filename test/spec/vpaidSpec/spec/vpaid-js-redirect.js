@@ -12,8 +12,7 @@ describe("Test for vpaid-js-redirect", function () {
       width: 640,
       height: 360,
       viewMode: 'normal',
-      desiredBitrate: 500,
-      vpaidTimeout: 8000
+      desiredBitrate: 500
     }
   };
   var rmpVast = new RmpVast(id, params);

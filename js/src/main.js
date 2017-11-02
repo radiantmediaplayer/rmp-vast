@@ -167,7 +167,8 @@ var _parseCreatives = function (creative) {
     } else if (linear.length > 0) {
       // check for skippable ads (Linear skipoffset)
       let skipoffset = linear[0].getAttribute('skipoffset');
-      if (this.params.skipMessage !== '' && skipoffset !== null && skipoffset !== '' &&
+      // if we have a wrapper we ignore skipoffset in case it is present
+      if (!this.isWrapper && this.params.skipMessage !== '' && skipoffset !== null && skipoffset !== '' &&
         FWVAST.isValidOffset(skipoffset)) {
         if (DEBUG) {
           FW.log('RMP-VAST: skippable ad detected with offset ' + skipoffset);

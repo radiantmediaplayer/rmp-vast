@@ -28,10 +28,18 @@ var _destroyVastPlayer = function () {
   RESET.unwireVastPlayerEvents.call(this);
   // remove clickUI on mobile
   if (this.clickUIOnMobile) {
-    this.adContainer.removeChild(this.clickUIOnMobile);
+    try {
+      this.adContainer.removeChild(this.clickUIOnMobile);
+    } catch (e) {
+      FW.trace(e);
+    }
   }
   if (this.isSkippableAd) {
-    this.adContainer.removeChild(this.skipButton);
+    try {
+      this.adContainer.removeChild(this.skipButton);
+    } catch (e) {
+      FW.trace(e);
+    }
   }
   // hide rmp-ad-container
   FW.hide(this.adContainer);
@@ -75,7 +83,11 @@ var _destroyVastPlayer = function () {
           this.vastPlayer.load();
           FW.hide(this.vastPlayer);
           if (this.nonLinearContainer) {
-            this.adContainer.removeChild(this.nonLinearContainer);
+            try {
+              this.adContainer.removeChild(this.nonLinearContainer);
+            } catch (e) {
+              FW.trace(e);
+            }
           }
         }
       } catch (e) {

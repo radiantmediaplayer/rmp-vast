@@ -125,7 +125,7 @@
   /*** START RmpVast instantiation  ***/
   // the following params are the default
   var params = {
-    ajaxTimeout: 8000,
+    ajaxTimeout: 7000,
     creativeLoadTimeout: 10000,
     ajaxWithCredentials: true,
     maxNumRedirects: 4,
@@ -137,8 +137,7 @@
       width: playerWidth,
       height: playerHeight,
       viewMode: 'normal',
-      desiredBitrate: 500,
-      vpaidTimeout: 8000
+      desiredBitrate: 500
     }
   };
   // new RmpVast instance - we pass id (required) and params (optional) 

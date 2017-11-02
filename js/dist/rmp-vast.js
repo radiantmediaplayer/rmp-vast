@@ -1,6 +1,6 @@
 /**
  * @license Copyright (c) 2017 Radiant Media Player | https://www.radiantmediaplayer.com
- * rmp-vast 1.2.1
+ * rmp-vast 1.2.2
  * GitHub: https://github.com/radiantmediaplayer/rmp-vast
  * MIT License: https://github.com/radiantmediaplayer/rmp-vast/blob/master/LICENSE
  */
@@ -404,7 +404,11 @@ ICONS.destroy = function () {
     arrayIcons.push(icons[i]);
   }
   arrayIcons.forEach(function (element) {
-    _this.adContainer.removeChild(element);
+    try {
+      _this.adContainer.removeChild(element);
+    } catch (e) {
+      _fw.FW.trace(e);
+    }
   });
 };
 
@@ -433,11 +437,11 @@ ICONS.parse = function (icons) {
     // width, height, xPosition, yPosition are all required attributes
     // if one is missing we ignore the current icon
     var width = currentIcon.getAttribute('width');
-    if (width === null || width === '' || parseInt(width) < 1) {
+    if (width === null || width === '' || parseInt(width) <= 0) {
       continue;
     }
     var height = currentIcon.getAttribute('height');
-    if (height === null || height === '' || parseInt(height) < 1) {
+    if (height === null || height === '' || parseInt(height) <= 0) {
       continue;
     }
     var xPosition = currentIcon.getAttribute('xPosition');
@@ -450,7 +454,7 @@ ICONS.parse = function (icons) {
     }
     var staticResource = currentIcon.getElementsByTagName('StaticResource');
     // we only support StaticResource (IFrameResource HTMLResource not supported)
-    if (staticResource.length !== 1) {
+    if (staticResource.length === 0) {
       continue;
     }
     // in StaticResource we only support images (application/x-javascript and application/x-shockwave-flash not supported)
@@ -482,7 +486,7 @@ ICONS.parse = function (icons) {
     }
     //optional IconClicks
     var iconClicks = currentIcon.getElementsByTagName('IconClicks');
-    if (iconClicks.length === 1) {
+    if (iconClicks.length > 0) {
       var iconClickThrough = iconClicks[0].getElementsByTagName('IconClickThrough');
       var iconClickThroughUrl = _fwVast.FWVAST.getNodeValue(iconClickThrough[0], true);
       if (iconClickThroughUrl !== null) {
@@ -674,6 +678,9 @@ var _onClickThrough = function _onClickThrough(event) {
     if (event) {
       event.stopPropagation();
     }
+    if (DEBUG) {
+      _fw.FW.log('RMP-VAST: onClickThrough');
+    }
     if (!_env.ENV.isMobile) {
       window.open(this.clickThroughUrl, '_blank');
     }
@@ -777,14 +784,14 @@ LINEAR.parse = function (linear) {
   // we have an InLine Linear which is not a Wrapper - process MediaFiles
   this.adIsLinear = true;
   var duration = linear[0].getElementsByTagName('Duration');
-  if (duration.length !== 1) {
+  if (duration.length === 0) {
     // 1 Duration element must be present otherwise VAST document is not spec compliant
     _ping.PING.error.call(this, 101, this.inlineOrWrapperErrorTags);
     _vastErrors.VASTERRORS.process.call(this, 101);
     return;
   }
   var mediaFiles = linear[0].getElementsByTagName('MediaFiles');
-  if (mediaFiles.length !== 1) {
+  if (mediaFiles.length === 0) {
     // 1 MediaFiles element must be present otherwise VAST document is not spec compliant 
     _ping.PING.error.call(this, 101, this.inlineOrWrapperErrorTags);
     _vastErrors.VASTERRORS.process.call(this, 101);
@@ -802,7 +809,7 @@ LINEAR.parse = function (linear) {
     adParametersData = _fwVast.FWVAST.getNodeValue(adParameters[0], false);
   }
   var mediaFile = mediaFiles[0].getElementsByTagName('MediaFile');
-  if (mediaFile.length < 1) {
+  if (mediaFile.length === 0) {
     // at least 1 MediaFile element must be present otherwise VAST document is not spec compliant 
     _ping.PING.error.call(this, 101, this.inlineOrWrapperErrorTags);
     _vastErrors.VASTERRORS.process.call(this, 101);
@@ -879,7 +886,7 @@ LINEAR.parse = function (linear) {
     var _type = _currentMediaFileItem.type;
     var url = _currentMediaFileItem.url;
     if (this.isVPAID && url) {
-      _vpaid.VPAID.loadCreative.call(this, url, adParametersData, this.params.vpaidSettings);
+      _vpaid.VPAID.loadCreative.call(this, url, adParametersData, this.params.vpaidSettings, this.params.ajaxTimeout, this.params.creativeLoadTimeout);
       this.adContentType = _type;
       return;
     }
@@ -1086,7 +1093,7 @@ NONLINEAR.parse = function (nonLinearAds) {
   // at least 1 NonLinear is expected to continue
   // but according to spec this should not trigger an error
   // 2.3.4 One or more <NonLinear> ads may be included within a <NonLinearAds> element.
-  if (nonLinear.length < 1) {
+  if (nonLinear.length === 0) {
     return;
   }
   var currentNonLinear = void 0;
@@ -1120,7 +1127,7 @@ NONLINEAR.parse = function (nonLinearAds) {
     var staticResource = currentNonLinear.getElementsByTagName('StaticResource');
     // we expect at least one StaticResource tag
     // we do not support IFrameResource or HTMLResource
-    if (staticResource.length < 1) {
+    if (staticResource.length === 0) {
       continue;
     }
     var creativeType = void 0;
@@ -1163,8 +1170,8 @@ NONLINEAR.parse = function (nonLinearAds) {
     _fw.FW.log('RMP-VAST: valid non-linear creative data at ' + this.nonLinearCreativeUrl);
   }
   var nonLinearClickThrough = currentNonLinear.getElementsByTagName('NonLinearClickThrough');
-  // if NonLinearClickThrough is present we only expect one tag
-  if (nonLinearClickThrough.length === 1) {
+  // if NonLinearClickThrough is present we expect one tag
+  if (nonLinearClickThrough.length > 0) {
     this.clickThroughUrl = _fwVast.FWVAST.getNodeValue(nonLinearClickThrough[0], true);
     var nonLinearClickTracking = nonLinear[0].getElementsByTagName('NonLinearClickTracking');
     if (nonLinearClickTracking.length > 0) {
@@ -1675,7 +1682,7 @@ FWVAST.logVideoEvents = function (video) {
 
 FWVAST.filterParams = function (params) {
   var defaultParams = {
-    ajaxTimeout: 8000,
+    ajaxTimeout: 7000,
     creativeLoadTimeout: 10000,
     ajaxWithCredentials: false,
     maxNumRedirects: 4,
@@ -1688,8 +1695,7 @@ FWVAST.filterParams = function (params) {
       width: 640,
       height: 360,
       viewMode: 'normal',
-      desiredBitrate: 500,
-      vpaidTimeout: 8000
+      desiredBitrate: 500
     }
   };
   this.params = defaultParams;
@@ -1733,9 +1739,6 @@ FWVAST.filterParams = function (params) {
       }
       if (typeof params.vpaidSettings.desiredBitrate === 'number') {
         this.params.vpaidSettings.desiredBitrate = params.vpaidSettings.desiredBitrate;
-      }
-      if (typeof params.vpaidSettings.vpaidTimeout === 'number') {
-        this.params.vpaidSettings.vpaidTimeout = params.vpaidSettings.vpaidTimeout;
       }
     }
   }
@@ -2100,7 +2103,8 @@ var _parseCreatives = function _parseCreatives(creative) {
     } else if (linear.length > 0) {
       // check for skippable ads (Linear skipoffset)
       var skipoffset = linear[0].getAttribute('skipoffset');
-      if (this.params.skipMessage !== '' && skipoffset !== null && skipoffset !== '' && _fwVast.FWVAST.isValidOffset(skipoffset)) {
+      // if we have a wrapper we ignore skipoffset in case it is present
+      if (!this.isWrapper && this.params.skipMessage !== '' && skipoffset !== null && skipoffset !== '' && _fwVast.FWVAST.isValidOffset(skipoffset)) {
         if (DEBUG) {
           _fw.FW.log('RMP-VAST: skippable ad detected with offset ' + skipoffset);
         }
@@ -2530,10 +2534,18 @@ var _destroyVastPlayer = function _destroyVastPlayer() {
   _reset.RESET.unwireVastPlayerEvents.call(this);
   // remove clickUI on mobile
   if (this.clickUIOnMobile) {
-    this.adContainer.removeChild(this.clickUIOnMobile);
+    try {
+      this.adContainer.removeChild(this.clickUIOnMobile);
+    } catch (e) {
+      _fw.FW.trace(e);
+    }
   }
   if (this.isSkippableAd) {
-    this.adContainer.removeChild(this.skipButton);
+    try {
+      this.adContainer.removeChild(this.skipButton);
+    } catch (e) {
+      _fw.FW.trace(e);
+    }
   }
   // hide rmp-ad-container
   _fw.FW.hide(this.adContainer);
@@ -2576,7 +2588,11 @@ var _destroyVastPlayer = function _destroyVastPlayer() {
           this.vastPlayer.load();
           _fw.FW.hide(this.vastPlayer);
           if (this.nonLinearContainer) {
-            this.adContainer.removeChild(this.nonLinearContainer);
+            try {
+              this.adContainer.removeChild(this.nonLinearContainer);
+            } catch (e) {
+              _fw.FW.trace(e);
+            }
           }
         }
       } catch (e) {
@@ -2830,7 +2846,8 @@ var initialWidth = 640;
 var initialHeight = 360;
 var initialViewMode = 'normal';
 var desiredBitrate = 500;
-var vpaidTimeout = 8000;
+var ajaxTimeout = 7000;
+var creativeLoadTimeout = 10000;
 var hadAdLoaded = false;
 var hasAdStarted = false;
 
@@ -2930,7 +2947,7 @@ var _onAdLoaded = function _onAdLoaded() {
       _vastPlayer.VASTPLAYER.resumeContent.call(rmpVast);
     }
     hasAdStarted = false;
-  }, vpaidTimeout);
+  }, ajaxTimeout);
   _fw.FW.show(slot);
   _fw.FW.show(vpaidPlayer);
   // pause content player
@@ -3300,7 +3317,7 @@ VPAID.stopAd = function () {
   // AdStopped event follows
   adStoppedTimeout = setTimeout(function () {
     _onAdStopped();
-  }, vpaidTimeout);
+  }, ajaxTimeout);
   vpaidCreative.stopAd();
 };
 
@@ -3350,7 +3367,7 @@ VPAID.skipAd = function () {
   // AdSkipped event follows
   adSkippedTimeout = setTimeout(function () {
     _onAdStopped();
-  }, vpaidTimeout);
+  }, ajaxTimeout);
   vpaidCreative.skipAd();
 };
 
@@ -3484,7 +3501,7 @@ var _onVPAIDAvailable = function _onVPAIDAvailable() {
         _vastPlayer.VASTPLAYER.resumeContent.call(rmpVast);
       }
       hadAdLoaded = false;
-    }, vpaidTimeout);
+    }, ajaxTimeout);
     vpaidCreative.initAd(initialWidth, initialHeight, initialViewMode, desiredBitrate, creativeData, environmentVars);
   }
 };
@@ -3518,12 +3535,13 @@ var _onJSVPAIDError = function _onJSVPAIDError() {
   _vastErrors.VASTERRORS.process.call(rmpVast, 901);
 };
 
-VPAID.loadCreative = function (creativeUrl, adParams, vpaidSettings) {
+VPAID.loadCreative = function (creativeUrl, adParams, vpaidSettings, ajaxTimeoutParam, creativeLoadTimeoutParam) {
   rmpVast = this;
   if (!rmpVast) {
     return;
   }
-  vpaidTimeout = vpaidSettings.vpaidTimeout;
+  ajaxTimeout = ajaxTimeoutParam;
+  creativeLoadTimeout = creativeLoadTimeoutParam;
   initialWidth = vpaidSettings.width;
   initialHeight = vpaidSettings.height;
   initialViewMode = vpaidSettings.viewMode;
@@ -3567,7 +3585,7 @@ VPAID.loadCreative = function (creativeUrl, adParams, vpaidSettings) {
     scriptVPAID.removeEventListener('load', _onJSVPAIDLoaded);
     scriptVPAID.removeEventListener('error', _onJSVPAIDError);
     _vastPlayer.VASTPLAYER.resumeContent.call(rmpVast);
-  }, vpaidTimeout);
+  }, creativeLoadTimeout);
   scriptVPAID.addEventListener('load', _onJSVPAIDLoaded);
   scriptVPAID.addEventListener('error', _onJSVPAIDError);
   scriptVPAID.src = jsCreativeUrl;
@@ -3627,7 +3645,8 @@ VPAID.destroy = function () {
     initialHeight = 360;
     initialViewMode = 'normal';
     desiredBitrate = 500;
-    vpaidTimeout = 8000;
+    ajaxTimeout = 7000;
+    creativeLoadTimeout = 10000;
     hadAdLoaded = false;
     hasAdStarted = false;
   }, 100);
@@ -4197,7 +4216,7 @@ var _updateVastError = function _updateVastError(errorCode) {
   var error = VASTERRORS.list.filter(function (value) {
     return value.code === errorCode;
   });
-  if (error.length === 1) {
+  if (error.length > 0) {
     this.vastErrorCode = error[0].code;
     this.vastErrorMessage = error[0].description;
   } else {

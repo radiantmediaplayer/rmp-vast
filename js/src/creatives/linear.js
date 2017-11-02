@@ -60,6 +60,9 @@ var _onClickThrough = function (event) {
     if (event) {
       event.stopPropagation();
     }
+    if (DEBUG) {
+      FW.log('RMP-VAST: onClickThrough');
+    }
     if (!ENV.isMobile) {
       window.open(this.clickThroughUrl, '_blank');
     }
@@ -161,14 +164,14 @@ LINEAR.parse = function (linear) {
   // we have an InLine Linear which is not a Wrapper - process MediaFiles
   this.adIsLinear = true;
   let duration = linear[0].getElementsByTagName('Duration');
-  if (duration.length !== 1) {
+  if (duration.length === 0) {
     // 1 Duration element must be present otherwise VAST document is not spec compliant
     PING.error.call(this, 101, this.inlineOrWrapperErrorTags);
     VASTERRORS.process.call(this, 101);
     return;
   }
   let mediaFiles = linear[0].getElementsByTagName('MediaFiles');
-  if (mediaFiles.length !== 1) {
+  if (mediaFiles.length === 0) {
     // 1 MediaFiles element must be present otherwise VAST document is not spec compliant 
     PING.error.call(this, 101, this.inlineOrWrapperErrorTags);
     VASTERRORS.process.call(this, 101);
@@ -186,7 +189,7 @@ LINEAR.parse = function (linear) {
     adParametersData = FWVAST.getNodeValue(adParameters[0], false);
   }
   let mediaFile = mediaFiles[0].getElementsByTagName('MediaFile');
-  if (mediaFile.length < 1) {
+  if (mediaFile.length === 0) {
     // at least 1 MediaFile element must be present otherwise VAST document is not spec compliant 
     PING.error.call(this, 101, this.inlineOrWrapperErrorTags);
     VASTERRORS.process.call(this, 101);
@@ -265,7 +268,14 @@ LINEAR.parse = function (linear) {
     let type = currentMediaFileItem.type;
     let url = currentMediaFileItem.url;
     if (this.isVPAID && url) {
-      VPAID.loadCreative.call(this, url, adParametersData, this.params.vpaidSettings);
+      VPAID.loadCreative.call(
+        this,
+        url,
+        adParametersData,
+        this.params.vpaidSettings,
+        this.params.ajaxTimeout,
+        this.params.creativeLoadTimeout
+      );
       this.adContentType = type;
       return;
     }

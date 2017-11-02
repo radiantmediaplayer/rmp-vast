@@ -35,7 +35,8 @@ var initialWidth = 640;
 var initialHeight = 360;
 var initialViewMode = 'normal';
 var desiredBitrate = 500;
-var vpaidTimeout = 8000;
+var ajaxTimeout = 7000;
+var creativeLoadTimeout = 10000;
 var hadAdLoaded = false;
 var hasAdStarted = false;
 
@@ -136,7 +137,7 @@ var _onAdLoaded = function () {
       VASTPLAYER.resumeContent.call(rmpVast);
     }
     hasAdStarted = false;
-  }, vpaidTimeout);
+  }, ajaxTimeout);
   FW.show(slot);
   FW.show(vpaidPlayer);
   // pause content player
@@ -506,7 +507,7 @@ VPAID.stopAd = function () {
   // AdStopped event follows
   adStoppedTimeout = setTimeout(() => {
     _onAdStopped();
-  }, vpaidTimeout);
+  }, ajaxTimeout);
   vpaidCreative.stopAd();
 };
 
@@ -556,7 +557,7 @@ VPAID.skipAd = function () {
   // AdSkipped event follows
   adSkippedTimeout = setTimeout(() => {
     _onAdStopped();
-  }, vpaidTimeout);
+  }, ajaxTimeout);
   vpaidCreative.skipAd();
 };
 
@@ -701,7 +702,7 @@ var _onVPAIDAvailable = function () {
         VASTPLAYER.resumeContent.call(rmpVast);
       }
       hadAdLoaded = false;
-    }, vpaidTimeout);
+    }, ajaxTimeout);
     vpaidCreative.initAd(initialWidth, initialHeight, initialViewMode,
       desiredBitrate, creativeData, environmentVars);
   }
@@ -736,12 +737,13 @@ var _onJSVPAIDError = function () {
   VASTERRORS.process.call(rmpVast, 901);
 };
 
-VPAID.loadCreative = function (creativeUrl, adParams, vpaidSettings) {
+VPAID.loadCreative = function (creativeUrl, adParams, vpaidSettings, ajaxTimeoutParam, creativeLoadTimeoutParam) {
   rmpVast = this;
   if (!rmpVast) {
     return;
   }
-  vpaidTimeout = vpaidSettings.vpaidTimeout;
+  ajaxTimeout = ajaxTimeoutParam;
+  creativeLoadTimeout = creativeLoadTimeoutParam;
   initialWidth = vpaidSettings.width;
   initialHeight = vpaidSettings.height;
   initialViewMode = vpaidSettings.viewMode;
@@ -785,7 +787,7 @@ VPAID.loadCreative = function (creativeUrl, adParams, vpaidSettings) {
     scriptVPAID.removeEventListener('load', _onJSVPAIDLoaded);
     scriptVPAID.removeEventListener('error', _onJSVPAIDError);
     VASTPLAYER.resumeContent.call(rmpVast);
-  }, vpaidTimeout);
+  }, creativeLoadTimeout);
   scriptVPAID.addEventListener('load', _onJSVPAIDLoaded);
   scriptVPAID.addEventListener('error', _onJSVPAIDError);
   scriptVPAID.src = jsCreativeUrl;
@@ -845,7 +847,8 @@ VPAID.destroy = function () {
     initialHeight = 360;
     initialViewMode = 'normal';
     desiredBitrate = 500;
-    vpaidTimeout = 8000;
+    ajaxTimeout = 7000;
+    creativeLoadTimeout = 10000;
     hadAdLoaded = false;
     hasAdStarted = false;
   }, 100);

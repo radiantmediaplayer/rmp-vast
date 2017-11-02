@@ -14,7 +14,11 @@ ICONS.destroy = function () {
     arrayIcons.push(icons[i]);
   }
   arrayIcons.forEach((element) => {
-    this.adContainer.removeChild(element);
+    try {
+      this.adContainer.removeChild(element);
+    } catch (e) {
+      FW.trace(e);
+    }
   });
 };
 
@@ -43,11 +47,11 @@ ICONS.parse = function (icons) {
     // width, height, xPosition, yPosition are all required attributes
     // if one is missing we ignore the current icon
     let width = currentIcon.getAttribute('width');
-    if (width === null || width === '' || parseInt(width) < 1) {
+    if (width === null || width === '' || parseInt(width) <= 0) {
       continue;
     }
     let height = currentIcon.getAttribute('height');
-    if (height === null || height === '' || parseInt(height) < 1) {
+    if (height === null || height === '' || parseInt(height) <= 0) {
       continue;
     }
     let xPosition = currentIcon.getAttribute('xPosition');
@@ -60,7 +64,7 @@ ICONS.parse = function (icons) {
     }
     let staticResource = currentIcon.getElementsByTagName('StaticResource');
     // we only support StaticResource (IFrameResource HTMLResource not supported)
-    if (staticResource.length !== 1) {
+    if (staticResource.length === 0) {
       continue;
     }
     // in StaticResource we only support images (application/x-javascript and application/x-shockwave-flash not supported)
@@ -92,7 +96,7 @@ ICONS.parse = function (icons) {
     }
     //optional IconClicks
     let iconClicks = currentIcon.getElementsByTagName('IconClicks');
-    if (iconClicks.length === 1) {
+    if (iconClicks.length > 0) {
       let iconClickThrough = iconClicks[0].getElementsByTagName('IconClickThrough');
       let iconClickThroughUrl = FWVAST.getNodeValue(iconClickThrough[0], true);
       if (iconClickThroughUrl !== null) {

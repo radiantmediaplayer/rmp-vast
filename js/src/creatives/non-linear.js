@@ -119,7 +119,7 @@ NONLINEAR.parse = function (nonLinearAds) {
   // at least 1 NonLinear is expected to continue
   // but according to spec this should not trigger an error
   // 2.3.4 One or more <NonLinear> ads may be included within a <NonLinearAds> element.
-  if (nonLinear.length < 1) {
+  if (nonLinear.length === 0) {
     return;
   }
   let currentNonLinear;
@@ -153,7 +153,7 @@ NONLINEAR.parse = function (nonLinearAds) {
     let staticResource = currentNonLinear.getElementsByTagName('StaticResource');
     // we expect at least one StaticResource tag
     // we do not support IFrameResource or HTMLResource
-    if (staticResource.length < 1) {
+    if (staticResource.length === 0) {
       continue;
     }
     let creativeType;
@@ -196,8 +196,8 @@ NONLINEAR.parse = function (nonLinearAds) {
     FW.log('RMP-VAST: valid non-linear creative data at ' + this.nonLinearCreativeUrl);
   }
   let nonLinearClickThrough = currentNonLinear.getElementsByTagName('NonLinearClickThrough');
-  // if NonLinearClickThrough is present we only expect one tag
-  if (nonLinearClickThrough.length === 1) {
+  // if NonLinearClickThrough is present we expect one tag
+  if (nonLinearClickThrough.length > 0) {
     this.clickThroughUrl = FWVAST.getNodeValue(nonLinearClickThrough[0], true);
     let nonLinearClickTracking = nonLinear[0].getElementsByTagName('NonLinearClickTracking');
     if (nonLinearClickTracking.length > 0) {
