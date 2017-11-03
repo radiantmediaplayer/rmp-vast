@@ -1,6 +1,6 @@
 /**
  * @license Copyright (c) 2017 Radiant Media Player | https://www.radiantmediaplayer.com
- * rmp-vast 1.2.2
+ * rmp-vast 1.2.3
  * GitHub: https://github.com/radiantmediaplayer/rmp-vast
  * MIT License: https://github.com/radiantmediaplayer/rmp-vast/blob/master/LICENSE
  */
@@ -2259,15 +2259,18 @@ var _onXmlAvailable = function _onXmlAvailable(xml) {
 
   // Required InLine Elements are AdSystem, AdTitle, Impression, Creatives
   // Required Wrapper Elements are AdSystem, vastAdTagURI, Impression
-  // if not present exit and ping InLine/Wrapper Error element
+  // however in real word some adTag do not have impression or adSystem/adTitle tags 
+  // especially in the context of multiple redirects - since the IMA SDK allows those tags 
+  // to render we should do the same even if those adTags are not VAST-compliant
+  // so we only check and exit if missing required information to display ads 
   if (this.isWrapper) {
-    if (adSystem.length === 0 || this.vastAdTagURI.length === 0 || impression.length === 0) {
+    if (this.vastAdTagURI.length === 0) {
       _ping.PING.error.call(this, 101, this.inlineOrWrapperErrorTags);
       _vastErrors.VASTERRORS.process.call(this, 101);
       return;
     }
   } else {
-    if (adSystem.length === 0 || adTitle.length === 0 || impression.length === 0 || creatives.length === 0) {
+    if (creatives.length === 0) {
       _ping.PING.error.call(this, 101, this.inlineOrWrapperErrorTags);
       _vastErrors.VASTERRORS.process.call(this, 101);
       return;
@@ -2284,14 +2287,19 @@ var _onXmlAvailable = function _onXmlAvailable(xml) {
       return;
     }
   }
-
-  this.adSystem = _fwVast.FWVAST.getNodeValue(adSystem[0], false);
-  var impressionUrl = _fwVast.FWVAST.getNodeValue(impression[0], true);
-  if (impressionUrl !== null) {
-    this.trackingTags.push({ event: 'impression', url: impressionUrl });
+  if (adTitle.length > 0) {
+    this.adSystem = _fwVast.FWVAST.getNodeValue(adSystem[0], false);
+  }
+  if (impression.length > 0) {
+    var impressionUrl = _fwVast.FWVAST.getNodeValue(impression[0], true);
+    if (impressionUrl !== null) {
+      this.trackingTags.push({ event: 'impression', url: impressionUrl });
+    }
   }
   if (!this.isWrapper) {
-    this.adTitle = _fwVast.FWVAST.getNodeValue(adTitle[0], false);
+    if (adTitle.length > 0) {
+      this.adTitle = _fwVast.FWVAST.getNodeValue(adTitle[0], false);
+    }
     if (adDescription.length > 0) {
       this.adDescription = _fwVast.FWVAST.getNodeValue(adDescription[0], false);
     }
@@ -2657,22 +2665,28 @@ VASTPLAYER.init = function () {
     _this2.contentPlayerCompleted = true;
   });
   // we need the loadedmetadata event so we force preload 
-  // in case it was set differently
-  this.vastPlayer.preload = 'metadata';
+  // in case it was set differently for useContentPlayerForAds
+  if (this.vastPlayer.preload && this.vastPlayer.preload === 'none') {
+    this.vastPlayer.preload = 'metadata';
+  }
   // we need to init the vast player video tag
   // according to https://developers.google.com/interactive-media-ads/docs/sdks/html5/mobile_video
   // to initialize the content element, a call to the load() method is sufficient.
-  if (_env.ENV.isMobile && !this.useContentPlayerForAds) {
+  if (_env.ENV.isMobile) {
     // on Android both this.contentPlayer (to resume content)
     // and this.vastPlayer (to start ads) needs to be init
-    this.contentPlayer.load();
-    this.vastPlayer.load();
-  } else if (this.useContentPlayerForAds) {
-    if (DEBUG) {
-      _fw.FW.log('RMP-VAST: call load on VAST player to init HTML5 video tag');
+    // on iOS only init this.vastPlayer (as same as this.contentPlayer)
+    if (!this.useContentPlayerForAds) {
+      this.contentPlayer.load();
     }
-    // on iOS and macOS Safari only init this.vastPlayer (as same as this.contentPlayer)
     this.vastPlayer.load();
+  } else {
+    // due to autoplay being blocked on macOS Safari 11+
+    // we also need to init player on this browser
+    // this also work on previous version of Safari
+    if (this.useContentPlayerForAds) {
+      this.vastPlayer.load();
+    }
   }
   this.rmpVastInitialized = true;
 };

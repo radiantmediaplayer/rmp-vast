@@ -7,6 +7,7 @@ var testUrls = [
 	TEST.pathToTest + 'errorSpec/EmptySpec.html',
 	TEST.pathToTest + 'errorSpec/ErrorMediaSpec.html',
 	TEST.pathToTest + 'errorSpec/MalformedSpec.html',
+	TEST.pathToTest + 'errorSpec/no-impression-tag.html',
 	TEST.pathToTest + 'errorSpec/VMAPSpec.html'
 ];
 

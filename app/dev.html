@@ -15,7 +15,7 @@
 <body>
   <div class="rmp-container" id="rmpPlayer">
     <div class="rmp-content">
-      <video class="rmp-video" src="https://www.rmp-streaming.com/media/bbb-360p.mp4" playsinline>
+      <video class="rmp-video" src="https://www.rmp-streaming.com/media/bbb-360p.mp4" playsinline muted>
       </video>
     </div>
   </div>
@@ -27,12 +27,8 @@
     var id = 'rmpPlayer';
     var container = document.getElementById(id);
     var video = container.getElementsByClassName('rmp-video')[0];
-    //var ADTAG1 = 'https://pubads.g.doubleclick.net/gampad/ads?sz=640x480&iu=/124319096/external/ad_rule_samples&ciu_szs=300x250&ad_rule=1&impl=s&gdfp_req=1&env=vp&output=vmap&unviewed_position_start=1&cust_params=deployment%3Ddevsite%26sample_ar%3Dpremidpost&cmsid=496&vid=short_onecue&correlator=' + Date.now();
-    var ADTAG2 = 'https://vads.net.vn/Ad?z=36&w=2&domain=2sao.vn/cat0&isvast=1';
-    var params = {
-      creativeLoadTimeout: 9000
-    };
-    var rmpVast = new RmpVast(id, params);
+    var ADTAG2 = 'https://www.radiantmediaplayer.com/vast/tags/inline-linear-1.xml';
+    var rmpVast = new RmpVast(id);
 
     var play = document.getElementById('play');
     var firstClick = true;
@@ -49,5 +45,7 @@
     pause.addEventListener('click', function () {
       rmpVast.pause();
     });
+
+    rmpVast.loadAds(ADTAG2);
   </script>
 </body>

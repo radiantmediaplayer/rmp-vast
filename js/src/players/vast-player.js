@@ -150,22 +150,28 @@ VASTPLAYER.init = function () {
     this.contentPlayerCompleted = true;
   });
   // we need the loadedmetadata event so we force preload 
-  // in case it was set differently
-  this.vastPlayer.preload = 'metadata';
+  // in case it was set differently for useContentPlayerForAds
+  if (this.vastPlayer.preload && this.vastPlayer.preload === 'none') {
+    this.vastPlayer.preload = 'metadata';
+  }
   // we need to init the vast player video tag
   // according to https://developers.google.com/interactive-media-ads/docs/sdks/html5/mobile_video
   // to initialize the content element, a call to the load() method is sufficient.
-  if (ENV.isMobile && !this.useContentPlayerForAds) {
+  if (ENV.isMobile) {
     // on Android both this.contentPlayer (to resume content)
     // and this.vastPlayer (to start ads) needs to be init
-    this.contentPlayer.load();
-    this.vastPlayer.load();
-  } else if (this.useContentPlayerForAds) {
-    if (DEBUG) {
-      FW.log('RMP-VAST: call load on VAST player to init HTML5 video tag');
+    // on iOS only init this.vastPlayer (as same as this.contentPlayer)
+    if (!this.useContentPlayerForAds) {
+      this.contentPlayer.load();
     }
-    // on iOS and macOS Safari only init this.vastPlayer (as same as this.contentPlayer)
     this.vastPlayer.load();
+  } else {
+    // due to autoplay being blocked on macOS Safari 11+
+    // we also need to init player on this browser
+    // this also work on previous version of Safari
+    if (this.useContentPlayerForAds) {
+      this.vastPlayer.load();
+    }
   }
   this.rmpVastInitialized = true;
 };

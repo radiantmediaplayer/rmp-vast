@@ -324,15 +324,18 @@ var _onXmlAvailable = function (xml) {
 
   // Required InLine Elements are AdSystem, AdTitle, Impression, Creatives
   // Required Wrapper Elements are AdSystem, vastAdTagURI, Impression
-  // if not present exit and ping InLine/Wrapper Error element
+  // however in real word some adTag do not have impression or adSystem/adTitle tags 
+  // especially in the context of multiple redirects - since the IMA SDK allows those tags 
+  // to render we should do the same even if those adTags are not VAST-compliant
+  // so we only check and exit if missing required information to display ads 
   if (this.isWrapper) {
-    if (adSystem.length === 0 || this.vastAdTagURI.length === 0 || impression.length === 0) {
+    if (this.vastAdTagURI.length === 0) {
       PING.error.call(this, 101, this.inlineOrWrapperErrorTags);
       VASTERRORS.process.call(this, 101);
       return;
     }
   } else {
-    if (adSystem.length === 0 || adTitle.length === 0 || impression.length === 0 || creatives.length === 0) {
+    if (creatives.length === 0) {
       PING.error.call(this, 101, this.inlineOrWrapperErrorTags);
       VASTERRORS.process.call(this, 101);
       return;
@@ -349,14 +352,19 @@ var _onXmlAvailable = function (xml) {
       return;
     }
   }
-
-  this.adSystem = FWVAST.getNodeValue(adSystem[0], false);
-  let impressionUrl = FWVAST.getNodeValue(impression[0], true);
-  if (impressionUrl !== null) {
-    this.trackingTags.push({ event: 'impression', url: impressionUrl });
+  if (adTitle.length > 0) {
+    this.adSystem = FWVAST.getNodeValue(adSystem[0], false);
+  }
+  if (impression.length > 0) {
+    let impressionUrl = FWVAST.getNodeValue(impression[0], true);
+    if (impressionUrl !== null) {
+      this.trackingTags.push({ event: 'impression', url: impressionUrl });
+    }
   }
   if (!this.isWrapper) {
-    this.adTitle = FWVAST.getNodeValue(adTitle[0], false);
+    if (adTitle.length > 0) {
+      this.adTitle = FWVAST.getNodeValue(adTitle[0], false);
+    }
     if (adDescription.length > 0) {
       this.adDescription = FWVAST.getNodeValue(adDescription[0], false);
     }
