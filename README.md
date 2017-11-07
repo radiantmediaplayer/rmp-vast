@@ -271,7 +271,7 @@ rmp-vast can handle pre/mid/post rolls ad breaks through the loadAds API method.
 
 ## Contributing
 Contributions are welcome. Please review general code structure and stick to existing patterns.
-Provide test where appropriate (see test/ folder). Tests are written with Jasmine and automated with [node.js 6.11+ and selenium web driver 3.6+](https://www.npmjs.com/package/selenium-webdriver) and are validated in latest stable Chrome for Windows 10 with latest [Chrome driver](http://chromedriver.storage.googleapis.com/index.html).
+Provide test where appropriate (see test/ folder). Tests are written with Jasmine and automated with [node.js 6.11+ and selenium web driver 3.6+](https://www.npmjs.com/package/selenium-webdriver) and are validated in latest webdriver for Chrome, Firefox and MS Edge for Windows 10.
 
 To develop rmp-vast do install it:
 
