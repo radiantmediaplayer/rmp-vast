@@ -2,13 +2,20 @@
 
 const { Builder, until } = require('../../../node_modules/selenium-webdriver/');
 const TEST = {};
-const driver = new Builder()
-  .forBrowser('chrome')
-  .build();
+
+TEST.driverCount = 3;
 
 TEST.pathToTest = 'http://localhost/rmp-vast/test/spec/';
 
-TEST.getDriver = function () {
+TEST.getDriver = function (which) {
+  let driver;
+  if (which === 'chrome' || !which) {
+    driver = new Builder().forBrowser('chrome').build();
+  } else if (which === 'firefox') {
+    driver = new Builder().forBrowser('firefox').build();
+  } else if (which === 'MicrosoftEdge') {
+    driver = new Builder().forBrowser('MicrosoftEdge').build();
+  }
   return driver;
 };
 
@@ -16,7 +23,7 @@ TEST.getTime = function () {
   return Date.now();
 };
 
-TEST.loadHTMLSpec = function (url) {
+TEST.loadHTMLSpec = function (driver, url) {
   return new Promise((resolve, reject) => {
     driver.get(url).then(() => {
       driver.wait(until.titleIs('Test completed')).then(() => {

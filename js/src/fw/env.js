@@ -104,6 +104,14 @@ var _isAndroid = function (ua, isWindowsPhone, isIos, hasTouchEvents) {
   return support;
 };
 
+var _isFirefox = function (ua) {
+  let firefoxPattern = /mozilla\/[.0-9]*.+rv:.+gecko\/[.0-9]*.+firefox\/[.0-9]*/i;
+  if (firefoxPattern.test(ua)) {
+    return true;
+  }
+  return false;
+};
+
 var _video5 = function () {
   try {
     if (typeof testVideo.canPlayType !== 'undefined') {
@@ -172,6 +180,7 @@ ENV.isIos = _isIos(userAgent, isWindowsPhone, hasTouchEvents);
 ENV.isAndroid = _isAndroid(userAgent, isWindowsPhone, ENV.isIos, hasTouchEvents);
 ENV.isMacOSX = _isMacOSX(userAgent, ENV.isIos);
 ENV.isSafari = _isSafari(userAgent);
+ENV.isFirefox = _isFirefox(userAgent);
 ENV.isMobile = false;
 if (ENV.isIos[0] || ENV.isAndroid[0] || isWindowsPhone[0]) {
   ENV.isMobile = true;

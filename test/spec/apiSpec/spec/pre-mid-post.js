@@ -1,6 +1,6 @@
 'use strict';
 
-var ADTAG1 = 'https://www.radiantmediaplayer.com/vast/tags/inline-linear-2.xml';
+var ADTAG1 = 'https://www.radiantmediaplayer.com/vast/tags/inline-linear-1.xml';
 var ADTAG2 = 'https://www.radiantmediaplayer.com/vast/tags/vpaid-2-js-linear.xml';
 var ADTAG3 = 'https://www.radiantmediaplayer.com/vast/tags/inline-linear-1.xml';
 

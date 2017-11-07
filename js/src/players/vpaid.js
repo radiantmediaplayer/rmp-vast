@@ -1,4 +1,5 @@
 import { FW } from '../fw/fw';
+import { ENV } from '../fw/env';
 import { FWVAST } from '../fw/fw-vast';
 import { VASTERRORS } from '../utils/vast-errors';
 import { API } from '../api/api';
@@ -138,8 +139,6 @@ var _onAdLoaded = function () {
     }
     hasAdStarted = false;
   }, ajaxTimeout);
-  FW.show(slot);
-  FW.show(vpaidPlayer);
   // pause content player
   CONTENTPLAYER.pause.call(rmpVast);
   rmpVast.adOnStage = true;
@@ -492,7 +491,7 @@ VPAID.resizeAd = function (width, height, viewMode) {
   }
   if (DEBUG) {
     FW.log('RMP-VAST: VPAID resizeAd with width ' + width + ' - height ' + height + ' - viewMode ' + viewMode);
-  } 
+  }
   vpaidCreative.resizeAd(width, height, validViewMode);
 };
 
@@ -702,7 +701,9 @@ var _onVPAIDAvailable = function () {
         VASTPLAYER.resumeContent.call(rmpVast);
       }
       hadAdLoaded = false;
-    }, ajaxTimeout);
+    }, creativeLoadTimeout);
+    FW.show(slot);
+    FW.show(vpaidPlayer);
     vpaidCreative.initAd(initialWidth, initialHeight, initialViewMode,
       desiredBitrate, creativeData, environmentVars);
   }
@@ -768,30 +769,67 @@ VPAID.loadCreative = function (creativeUrl, adParams, vpaidSettings, ajaxTimeout
   // create FiF 
   iframe = document.createElement('iframe');
   iframe.id = 'vpaid-frame';
-  iframe.style.display = 'none';
+  // do not use display: none;
+  // https://bugzilla.mozilla.org/show_bug.cgi?id=548397
+  iframe.style.visibility = 'hidden';
   iframe.style.width = '0px';
   iframe.style.height = '0px';
   iframe.style.border = 'none';
-  slot.appendChild(iframe);
-  if (!iframe.contentWindow || !iframe.contentWindow.document || !iframe.contentWindow.document.body) {
-    return;
+  // this is to adhere to Best Practices for Rich Media Ads 
+  // in Asynchronous Ad Environments  http://www.iab.net/media/file/rich_media_ajax_best_practices.pdf
+  let src = 'about:self';
+  // ... however this does not work in Firefox (onload is never reached)
+  // https://bugzilla.mozilla.org/show_bug.cgi?id=444165
+  // ... iframes are troubles
+  if (ENV.isFirefox) {
+    src = '';
   }
-  let iframeWindow = iframe.contentWindow;
-  let iframeDocument = iframeWindow.document;
-  let iframeBody = iframeDocument.body;
-  scriptVPAID = iframeDocument.createElement('script');
-  jsLoadTimeout = setTimeout(() => {
-    if (!rmpVast || !scriptVPAID) {
+  iframe.onload = function () {
+    if (DEBUG) {
+      FW.log('RMP-VAST: iframe.onload');
+    }
+    // we unwire listeners
+    iframe.onload = function () { return null; };
+    iframe.onerror = function () { return null; };
+    if (!iframe.contentWindow || !iframe.contentWindow.document || !iframe.contentWindow.document.body) {
+      // PING error and resume content
+      PING.error.call(rmpVast, 901);
+      VASTERRORS.process.call(rmpVast, 901);
       return;
     }
-    scriptVPAID.removeEventListener('load', _onJSVPAIDLoaded);
-    scriptVPAID.removeEventListener('error', _onJSVPAIDError);
-    VASTPLAYER.resumeContent.call(rmpVast);
-  }, creativeLoadTimeout);
-  scriptVPAID.addEventListener('load', _onJSVPAIDLoaded);
-  scriptVPAID.addEventListener('error', _onJSVPAIDError);
-  scriptVPAID.src = jsCreativeUrl;
-  iframeBody.appendChild(scriptVPAID);
+    let iframeWindow = iframe.contentWindow;
+    let iframeDocument = iframeWindow.document;
+    let iframeBody = iframeDocument.body;
+    scriptVPAID = iframeDocument.createElement('script');
+    jsLoadTimeout = setTimeout(() => {
+      if (!rmpVast || !scriptVPAID) {
+        return;
+      }
+      if (DEBUG) {
+        FW.log('RMP-VAST: could not load VPAID JS Creative or getVPAIDAd in iframeWindow - resume content');
+      }
+      scriptVPAID.removeEventListener('load', _onJSVPAIDLoaded);
+      scriptVPAID.removeEventListener('error', _onJSVPAIDError);
+      VASTPLAYER.resumeContent.call(rmpVast);
+    }, creativeLoadTimeout);
+    scriptVPAID.addEventListener('load', _onJSVPAIDLoaded);
+    scriptVPAID.addEventListener('error', _onJSVPAIDError);
+    iframeBody.appendChild(scriptVPAID);
+    scriptVPAID.src = jsCreativeUrl;
+  };
+  iframe.onerror = function () {
+    if (DEBUG) {
+      FW.log('RMP-VAST: iframe.onerror');
+    }
+    // we unwire listeners
+    iframe.onload = function () { return null; };
+    iframe.onerror = function () { return null; };
+    // PING error and resume content
+    PING.error.call(rmpVast, 901);
+    VASTERRORS.process.call(rmpVast, 901);
+  };
+  iframe.src = src;
+  slot.appendChild(iframe);
 };
 
 VPAID.destroy = function () {
@@ -808,8 +846,10 @@ VPAID.destroy = function () {
     clearTimeout(startAdTimeout);
   }
   _unsetCallbacksForCreative();
-  scriptVPAID.removeEventListener('load', _onJSVPAIDLoaded);
-  scriptVPAID.removeEventListener('error', _onJSVPAIDError);
+  if (scriptVPAID) {
+    scriptVPAID.removeEventListener('load', _onJSVPAIDLoaded);
+    scriptVPAID.removeEventListener('error', _onJSVPAIDError);
+  }
   if (vpaidPlayer) {
     // empty buffer
     vpaidPlayer.removeAttribute('src');

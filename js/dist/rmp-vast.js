@@ -1,6 +1,6 @@
 /**
  * @license Copyright (c) 2017 Radiant Media Player | https://www.radiantmediaplayer.com
- * rmp-vast 1.2.3
+ * rmp-vast 1.2.4
  * GitHub: https://github.com/radiantmediaplayer/rmp-vast
  * MIT License: https://github.com/radiantmediaplayer/rmp-vast/blob/master/LICENSE
  */
@@ -1399,6 +1399,14 @@ var _isAndroid = function _isAndroid(ua, isWindowsPhone, isIos, hasTouchEvents) 
   return support;
 };
 
+var _isFirefox = function _isFirefox(ua) {
+  var firefoxPattern = /mozilla\/[.0-9]*.+rv:.+gecko\/[.0-9]*.+firefox\/[.0-9]*/i;
+  if (firefoxPattern.test(ua)) {
+    return true;
+  }
+  return false;
+};
+
 var _video5 = function _video5() {
   try {
     if (typeof testVideo.canPlayType !== 'undefined') {
@@ -1463,6 +1471,7 @@ ENV.isIos = _isIos(userAgent, isWindowsPhone, hasTouchEvents);
 ENV.isAndroid = _isAndroid(userAgent, isWindowsPhone, ENV.isIos, hasTouchEvents);
 ENV.isMacOSX = _isMacOSX(userAgent, ENV.isIos);
 ENV.isSafari = _isSafari(userAgent);
+ENV.isFirefox = _isFirefox(userAgent);
 ENV.isMobile = false;
 if (ENV.isIos[0] || ENV.isAndroid[0] || isWindowsPhone[0]) {
   ENV.isMobile = true;
@@ -2817,6 +2826,8 @@ exports.VPAID = undefined;
 
 var _fw = require('../fw/fw');
 
+var _env = require('../fw/env');
+
 var _fwVast = require('../fw/fw-vast');
 
 var _vastErrors = require('../utils/vast-errors');
@@ -2962,8 +2973,6 @@ var _onAdLoaded = function _onAdLoaded() {
     }
     hasAdStarted = false;
   }, ajaxTimeout);
-  _fw.FW.show(slot);
-  _fw.FW.show(vpaidPlayer);
   // pause content player
   _contentPlayer.CONTENTPLAYER.pause.call(rmpVast);
   rmpVast.adOnStage = true;
@@ -3515,7 +3524,9 @@ var _onVPAIDAvailable = function _onVPAIDAvailable() {
         _vastPlayer.VASTPLAYER.resumeContent.call(rmpVast);
       }
       hadAdLoaded = false;
-    }, ajaxTimeout);
+    }, creativeLoadTimeout);
+    _fw.FW.show(slot);
+    _fw.FW.show(vpaidPlayer);
     vpaidCreative.initAd(initialWidth, initialHeight, initialViewMode, desiredBitrate, creativeData, environmentVars);
   }
 };
@@ -3580,30 +3591,75 @@ VPAID.loadCreative = function (creativeUrl, adParams, vpaidSettings, ajaxTimeout
   // create FiF 
   iframe = document.createElement('iframe');
   iframe.id = 'vpaid-frame';
-  iframe.style.display = 'none';
+  // do not use display: none;
+  // https://bugzilla.mozilla.org/show_bug.cgi?id=548397
+  iframe.style.visibility = 'hidden';
   iframe.style.width = '0px';
   iframe.style.height = '0px';
   iframe.style.border = 'none';
-  slot.appendChild(iframe);
-  if (!iframe.contentWindow || !iframe.contentWindow.document || !iframe.contentWindow.document.body) {
-    return;
+  // this is to adhere to Best Practices for Rich Media Ads 
+  // in Asynchronous Ad Environments  http://www.iab.net/media/file/rich_media_ajax_best_practices.pdf
+  var src = 'about:self';
+  // ... however this does not work in Firefox (onload is never reached)
+  // https://bugzilla.mozilla.org/show_bug.cgi?id=444165
+  // ... iframes are troubles
+  if (_env.ENV.isFirefox) {
+    src = '';
   }
-  var iframeWindow = iframe.contentWindow;
-  var iframeDocument = iframeWindow.document;
-  var iframeBody = iframeDocument.body;
-  scriptVPAID = iframeDocument.createElement('script');
-  jsLoadTimeout = setTimeout(function () {
-    if (!rmpVast || !scriptVPAID) {
+  iframe.onload = function () {
+    if (DEBUG) {
+      _fw.FW.log('RMP-VAST: iframe.onload');
+    }
+    // we unwire listeners
+    iframe.onload = function () {
+      return null;
+    };
+    iframe.onerror = function () {
+      return null;
+    };
+    if (!iframe.contentWindow || !iframe.contentWindow.document || !iframe.contentWindow.document.body) {
+      // PING error and resume content
+      _ping.PING.error.call(rmpVast, 901);
+      _vastErrors.VASTERRORS.process.call(rmpVast, 901);
       return;
     }
-    scriptVPAID.removeEventListener('load', _onJSVPAIDLoaded);
-    scriptVPAID.removeEventListener('error', _onJSVPAIDError);
-    _vastPlayer.VASTPLAYER.resumeContent.call(rmpVast);
-  }, creativeLoadTimeout);
-  scriptVPAID.addEventListener('load', _onJSVPAIDLoaded);
-  scriptVPAID.addEventListener('error', _onJSVPAIDError);
-  scriptVPAID.src = jsCreativeUrl;
-  iframeBody.appendChild(scriptVPAID);
+    var iframeWindow = iframe.contentWindow;
+    var iframeDocument = iframeWindow.document;
+    var iframeBody = iframeDocument.body;
+    scriptVPAID = iframeDocument.createElement('script');
+    jsLoadTimeout = setTimeout(function () {
+      if (!rmpVast || !scriptVPAID) {
+        return;
+      }
+      if (DEBUG) {
+        _fw.FW.log('RMP-VAST: could not load VPAID JS Creative or getVPAIDAd in iframeWindow - resume content');
+      }
+      scriptVPAID.removeEventListener('load', _onJSVPAIDLoaded);
+      scriptVPAID.removeEventListener('error', _onJSVPAIDError);
+      _vastPlayer.VASTPLAYER.resumeContent.call(rmpVast);
+    }, creativeLoadTimeout);
+    scriptVPAID.addEventListener('load', _onJSVPAIDLoaded);
+    scriptVPAID.addEventListener('error', _onJSVPAIDError);
+    iframeBody.appendChild(scriptVPAID);
+    scriptVPAID.src = jsCreativeUrl;
+  };
+  iframe.onerror = function () {
+    if (DEBUG) {
+      _fw.FW.log('RMP-VAST: iframe.onerror');
+    }
+    // we unwire listeners
+    iframe.onload = function () {
+      return null;
+    };
+    iframe.onerror = function () {
+      return null;
+    };
+    // PING error and resume content
+    _ping.PING.error.call(rmpVast, 901);
+    _vastErrors.VASTERRORS.process.call(rmpVast, 901);
+  };
+  iframe.src = src;
+  slot.appendChild(iframe);
 };
 
 VPAID.destroy = function () {
@@ -3620,8 +3676,10 @@ VPAID.destroy = function () {
     clearTimeout(startAdTimeout);
   }
   _unsetCallbacksForCreative();
-  scriptVPAID.removeEventListener('load', _onJSVPAIDLoaded);
-  scriptVPAID.removeEventListener('error', _onJSVPAIDError);
+  if (scriptVPAID) {
+    scriptVPAID.removeEventListener('load', _onJSVPAIDLoaded);
+    scriptVPAID.removeEventListener('error', _onJSVPAIDError);
+  }
   if (vpaidPlayer) {
     // empty buffer
     vpaidPlayer.removeAttribute('src');
@@ -3668,7 +3726,7 @@ VPAID.destroy = function () {
 
 exports.VPAID = VPAID;
 
-},{"../api/api":1,"../creatives/icons":2,"../fw/fw":8,"../fw/fw-vast":7,"../players/content-player":10,"../players/vast-player":11,"../tracking/ping":13,"../tracking/tracking-events":14,"../utils/vast-errors":16}],13:[function(require,module,exports){
+},{"../api/api":1,"../creatives/icons":2,"../fw/env":6,"../fw/fw":8,"../fw/fw-vast":7,"../players/content-player":10,"../players/vast-player":11,"../tracking/ping":13,"../tracking/tracking-events":14,"../utils/vast-errors":16}],13:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
