@@ -27,6 +27,7 @@ RESET.internalVariables = function () {
   this.onNonLinearClickThrough = null;
   this.onContextMenu = null;
   // init internal variables
+  this.vastDocument = null;
   this.adTagUrl = null;
   this.vastPlayer = null;
   this.trackingTags = [];
@@ -82,6 +83,31 @@ RESET.internalVariables = function () {
   this.nonLinearMinSuggestedDuration = 0;
   // VPAID
   this.isVPAID = false;
+  this.vpaidCreative = null;
+  this.vpaidScript = null;
+  this.vpaidIframe = null;
+  this.vpaidLoadTimeout = null;
+  this.initAdTimeout = null;
+  this.startAdTimeout = null;
+  this.vpaidAvailableInterval = null;
+  this.adStoppedTimeout = null;
+  this.adSkippedTimeout = null;
+  this.adParametersData = '';
+  this.vpaidCurrentVolume = 1;
+  this.vpaidPaused = true;
+  this.vpaidCreativeUrl = '';
+  this.vpaidRemainingTime = -1;
+  this.vpaidVersion = -1;
+  this.vpaid1AdDuration = -1;
+  this.initialWidth = 640;
+  this.initialHeight = 360;
+  this.initialViewMode = 'normal';
+  this.desiredBitrate = 500;
+  this.vpaidAdLoaded = false;
+  this.vpaidAdStarted = false;
+  this.vpaidCallbacks = {};
+  this.onJSVPAIDLoaded = FW.nullFn;
+  this.onJSVPAIDError = FW.nullFn;
 };
 
 RESET.unwireVastPlayerEvents = function () {

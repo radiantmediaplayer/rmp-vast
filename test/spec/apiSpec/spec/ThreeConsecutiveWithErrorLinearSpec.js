@@ -8,8 +8,15 @@ describe("Test for ThreeConsecutiveWithErrorLinearSpec", function () {
 
   var id = 'rmpPlayer';
   var container = document.getElementById(id);
+  var video = document.querySelector('.rmp-video');
   var rmpVast = new RmpVast(id);
   var fw = rmpVast.getFW();
+  var env = rmpVast.getEnv();
+  if (env.isAndroid[0]) {
+    container.style.width = '320px';
+    container.style.height = '180px';
+    video.setAttribute('muted', 'muted');
+  }
   var title = document.getElementsByTagName('title')[0];
 
   it("should load 3 consecutive adTag and play them", function (done) {
@@ -23,6 +30,9 @@ describe("Test for ThreeConsecutiveWithErrorLinearSpec", function () {
     };
 
     container.addEventListener('adloaded', function (e) {
+      _incrementAndLog(e);
+    });
+    container.addEventListener('adstarted', function (e) {
       _incrementAndLog(e);
     });
     container.addEventListener('addurationchange', function (e) {
@@ -57,16 +67,16 @@ describe("Test for ThreeConsecutiveWithErrorLinearSpec", function () {
       _incrementAndLog(e);
       addestroyedCount++;
       if (addestroyedCount === 1) {
-        expect(validSteps).toBe(10);
+        expect(validSteps).toBe(11);
         rmpVast.loadAds(ADTAG2);
       }
       if (addestroyedCount === 2) {
-        expect(validSteps).toBe(13);
+        expect(validSteps).toBe(14);
         rmpVast.loadAds(ADTAG3);
       }
       if (addestroyedCount === 3) {
-        expect(validSteps).toBe(23);
-        if (validSteps === 23) {
+        expect(validSteps).toBe(25);
+        if (validSteps === 25) {
           title.textContent = 'Test completed';
         }
         setTimeout(function () {

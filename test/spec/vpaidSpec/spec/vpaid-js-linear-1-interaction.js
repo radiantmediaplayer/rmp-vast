@@ -6,6 +6,7 @@ describe("Test for vpaid-js-linear-1-interaction", function () {
 
   var id = 'rmpPlayer';
   var container = document.getElementById(id);
+  var video = document.querySelector('.rmp-video');
   var params = {
     enableVpaid: true,
     vpaidSettings: {
@@ -17,6 +18,12 @@ describe("Test for vpaid-js-linear-1-interaction", function () {
   };
   var rmpVast = new RmpVast(id, params);
   var fw = rmpVast.getFW();
+  var env = rmpVast.getEnv();
+  if (env.isAndroid[0]) {
+    container.style.width = '320px';
+    container.style.height = '180px';
+    video.setAttribute('muted', 'muted');
+  }
   var title = document.getElementsByTagName('title')[0];
 
   it("should load and play vpaid-js-linear-1-interaction", function (done) {
@@ -33,6 +40,9 @@ describe("Test for vpaid-js-linear-1-interaction", function () {
       _incrementAndLog(e);
     });
     container.addEventListener('adstarted', function (e) {
+      if (env.isAndroid[0]) {
+        rmpVast.resizeAd(320, 180, 'normal');
+      }
       _incrementAndLog(e);
       setTimeout(() => {
         rmpVast.pause();

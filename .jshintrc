@@ -25,6 +25,7 @@
     "module": true,
     "require": true,
     "DocumentTouch": true,
-    "exports": true
+    "exports": true,
+    "process": true
   }
 }

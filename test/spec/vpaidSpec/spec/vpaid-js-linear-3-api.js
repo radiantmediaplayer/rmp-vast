@@ -6,6 +6,7 @@ describe("Test for vpaid-js-linear-3", function () {
 
   var id = 'rmpPlayer';
   var container = document.getElementById(id);
+  var video = document.querySelector('.rmp-video');
   var params = {
     enableVpaid: true,
     vpaidSettings: {
@@ -17,6 +18,12 @@ describe("Test for vpaid-js-linear-3", function () {
   };
   var rmpVast = new RmpVast(id, params);
   var fw = rmpVast.getFW();
+  var env = rmpVast.getEnv();
+  if (env.isAndroid[0]) {
+    container.style.width = '320px';
+    container.style.height = '180px';
+    video.setAttribute('muted', 'muted');
+  }
   var title = document.getElementsByTagName('title')[0];
 
   it("should load and play vpaid-js-linear-3", function (done) {
@@ -32,20 +39,24 @@ describe("Test for vpaid-js-linear-3", function () {
     container.addEventListener('adloaded', function (e) {
       _incrementAndLog(e);
     });
-    container.addEventListener('addurationchange', function (e) {
-      _incrementAndLog(e);
-    });
     container.addEventListener('adstarted', function (e) {
+      if (env.isAndroid[0]) {
+        rmpVast.resizeAd(320, 180, 'normal');
+      }
       _incrementAndLog(e);
       setTimeout(() => {
-        rmpVast.setMute(true);
+        if (!env.isAndroid[0]) {
+          rmpVast.setMute(true);
+        }
       }, 500);
     });
     container.addEventListener('advolumechanged', function (e) {
       if (rmpVast.getMute()) {
         _incrementAndLog(e);
         setTimeout(() => {
-          rmpVast.setMute(false);
+          if (!env.isAndroid[0]) {
+            rmpVast.setMute(false);
+          }
           if (rmpVast.getAdTagUrl() !== ADTAG) {
             return;
           }
@@ -61,10 +72,10 @@ describe("Test for vpaid-js-linear-3", function () {
           if (!rmpVast.getAdOnStage()) {
             return;
           }
-          if (rmpVast.getAdMediaWidth() !== 640) {
+          if (rmpVast.getAdMediaWidth() !== 640 && rmpVast.getAdMediaWidth() !== 320) {
             return;
           }
-          if (rmpVast.getAdMediaHeight() !== 360) {
+          if (rmpVast.getAdMediaHeight() !== 360 && rmpVast.getAdMediaWidth() !== 180) {
             return;
           }
           if (rmpVast.getAdDuration() !== 15140) {
@@ -84,9 +95,16 @@ describe("Test for vpaid-js-linear-3", function () {
     });
     container.addEventListener('addestroyed', function (e) {
       _incrementAndLog(e);
-      expect(validSteps).toBe(7);
-      if (validSteps === 7) {
-        title.textContent = 'Test completed';
+      if (!env.isAndroid[0]) {
+        expect(validSteps).toBe(6);
+        if (validSteps === 6) {
+          title.textContent = 'Test completed';
+        }
+      } else {
+        expect(validSteps).toBe(5);
+        if (validSteps === 5) {
+          title.textContent = 'Test completed';
+        }
       }
       setTimeout(() => {
         done();

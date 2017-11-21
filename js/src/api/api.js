@@ -10,7 +10,7 @@ const API = {};
 API.play = function () {
   if (this.adOnStage && this.adIsLinear) {
     if (this.isVPAID) {
-      VPAID.resumeAd();
+      VPAID.resumeAd.call(this);
     } else {
       VASTPLAYER.play.call(this);
     }
@@ -22,7 +22,7 @@ API.play = function () {
 API.pause = function () {
   if (this.adOnStage && this.adIsLinear) {
     if (this.isVPAID) {
-      VPAID.pauseAd();
+      VPAID.pauseAd.call(this);
     } else {
       VASTPLAYER.pause.call(this);
     }
@@ -34,7 +34,7 @@ API.pause = function () {
 API.getAdPaused = function () { 
   if (this.adOnStage && this.adIsLinear) {
     if (this.isVPAID) {
-      return VPAID.getAdPaused();
+      return VPAID.getAdPaused.call(this);
     } else {
       return this.vastPlayerPaused;
     }
@@ -56,7 +56,7 @@ API.setVolume = function (level) {
   }
   if (this.adOnStage && this.adIsLinear) {
     if (this.isVPAID) {
-      VPAID.setAdVolume(level);
+      VPAID.setAdVolume.call(this,level);
     } else {
       VASTPLAYER.setVolume.call(this, level);
     }
@@ -67,7 +67,7 @@ API.setVolume = function (level) {
 API.getVolume = function () {
   if (this.adOnStage && this.adIsLinear) {
     if (this.isVPAID) {
-      return VPAID.getAdVolume();
+      return VPAID.getAdVolume.call(this);
     } else {
       return VASTPLAYER.getVolume.call(this);
     }
@@ -83,9 +83,9 @@ API.setMute = function (muted) {
   if (this.adOnStage && this.adIsLinear) {
     if (this.isVPAID) {
       if (muted) {
-        VPAID.setAdVolume(0);
+        VPAID.setAdVolume.call(this,0);
       } else {
-        VPAID.setAdVolume(1);
+        VPAID.setAdVolume.call(this,1);
       }
     } else {
       VASTPLAYER.setMute.call(this, muted);
@@ -97,7 +97,7 @@ API.setMute = function (muted) {
 API.getMute = function () {
   if (this.adOnStage && this.adIsLinear) {
     if (this.isVPAID) {
-      if (VPAID.getAdVolume() === 0) {
+      if (VPAID.getAdVolume.call(this) === 0) {
         return true;
       }
       return false;
@@ -111,7 +111,7 @@ API.getMute = function () {
 API.stopAds = function () {
   if (this.adOnStage) {
     if (this.isVPAID) {
-      VPAID.stopAd();
+      VPAID.stopAd.call(this);
     } else {
       // this will destroy ad
       VASTPLAYER.resumeContent.call(this);
@@ -126,7 +126,7 @@ API.getAdTagUrl = function () {
 API.getAdMediaUrl = function () {
   if (this.adOnStage) {
     if (this.isVPAID) {
-      return VPAID.getCreativeUrl();
+      return VPAID.getCreativeUrl.call(this);
     } else if (this.adIsLinear) {
       return this.adMediaUrl;
     } else {
@@ -166,7 +166,7 @@ API.getAdDescription = function () {
 API.getAdDuration = function () {
   if (this.adOnStage && this.adIsLinear) {
     if (this.isVPAID) {
-      let duration = VPAID.getAdDuration();
+      let duration = VPAID.getAdDuration.call(this);
       if (duration > 0) {
         duration = duration * 1000;
       }
@@ -181,8 +181,8 @@ API.getAdDuration = function () {
 API.getAdCurrentTime = function () {
   if (this.adOnStage && this.adIsLinear) {
     if (this.isVPAID) {
-      let remainingTime = VPAID.getAdRemainingTime();
-      let duration = VPAID.getAdDuration();
+      let remainingTime = VPAID.getAdRemainingTime.call(this);
+      let duration = VPAID.getAdDuration.call(this);
       if (remainingTime === -1 || duration === -1 || remainingTime > duration) {
         return -1;
       }
@@ -197,7 +197,7 @@ API.getAdCurrentTime = function () {
 API.getAdRemainingTime = function () {
   if (this.adOnStage && this.adIsLinear) {
     if (this.isVPAID) {
-      return VPAID.getAdRemainingTime();
+      return VPAID.getAdRemainingTime.call(this);
     } else {
       let currentTime = VASTPLAYER.getCurrentTime.call(this);
       let duration = VASTPLAYER.getDuration.call(this);
@@ -217,7 +217,7 @@ API.getAdOnStage = function () {
 API.getAdMediaWidth = function () {
   if (this.adOnStage) {
     if (this.isVPAID) {
-      return VPAID.getAdWidth();
+      return VPAID.getAdWidth.call(this);
     } else if (this.adIsLinear) {
       return this.adMediaWidth;
     } else {
@@ -230,7 +230,7 @@ API.getAdMediaWidth = function () {
 API.getAdMediaHeight = function () {
   if (this.adOnStage) {
     if (this.isVPAID) {
-      return VPAID.getAdHeight();
+      return VPAID.getAdHeight.call(this);
     } else if (this.adIsLinear) {
       return this.adMediaHeight;
     } else {
@@ -284,7 +284,7 @@ API.getContentPlayer = function () {
 
 API.getVpaidCreative = function () {
   if (this.adOnStage && this.isVPAID) {
-    return VPAID.getVpaidCreative();
+    return VPAID.getVpaidCreative.call(this);
   }
   return null;
 };
@@ -313,45 +313,45 @@ API.getInitialized = function () {
 // VPAID methods
 API.resizeAd = function (width, height, viewMode) {
   if (this.adOnStage && this.isVPAID) {
-    VPAID.resizeAd(width, height, viewMode);
+    VPAID.resizeAd.call(this, width, height, viewMode);
   }
 };
 
 API.expandAd = function () {
   if (this.adOnStage && this.isVPAID) {
-    VPAID.expandAd();
+    VPAID.expandAd.call(this);
   }
 };
 
 API.collapseAd = function () {
   if (this.adOnStage && this.isVPAID) {
-    VPAID.collapseAd();
+    VPAID.collapseAd.call(this);
   }
 };
 
 API.skipAd = function () {
   if (this.adOnStage && this.isVPAID) {
-    VPAID.skipAd();
+    VPAID.skipAd.call(this);
   }
 };
 
 API.getAdExpanded = function () {
   if (this.adOnStage && this.isVPAID) {
-    VPAID.getAdExpanded();
+    VPAID.getAdExpanded.call(this);
   }
   return null;
 };
 
 API.getAdSkippableState = function () {
   if (this.adOnStage && this.isVPAID) {
-    VPAID.getAdSkippableState();
+    VPAID.getAdSkippableState.call(this);
   }
   return null;
 };
 
 API.getAdCompanions = function () {
   if (this.adOnStage && this.isVPAID) {
-    VPAID.getAdCompanions();
+    VPAID.getAdCompanions.call(this);
   }
   return null;
 };

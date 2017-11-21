@@ -24,5 +24,8 @@
   ],
   "test": [
     "shell:test"
+  ],
+  "testAndroid": [
+    "shell:testAndroid"
   ]
 }

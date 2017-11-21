@@ -8,6 +8,7 @@ describe("Test for pre-mid-post", function () {
 
   var id = 'rmpPlayer';
   var container = document.getElementById(id);
+  var video = document.querySelector('.rmp-video');
   var params = {
     enableVpaid: true,
     vpaidSettings: {
@@ -19,6 +20,12 @@ describe("Test for pre-mid-post", function () {
   };
   var rmpVast = new RmpVast(id, params);
   var fw = rmpVast.getFW();
+  var env = rmpVast.getEnv();
+  if (env.isAndroid[0]) {
+    container.style.width = '320px';
+    container.style.height = '180px';
+    video.setAttribute('muted', 'muted');
+  }
   var title = document.getElementsByTagName('title')[0];
 
 
@@ -33,6 +40,12 @@ describe("Test for pre-mid-post", function () {
     };
 
     container.addEventListener('adloaded', function (e) {
+      _incrementAndLog(e);
+    });
+    container.addEventListener('adstarted', function (e) {
+      if (env.isAndroid[0]) {
+        rmpVast.resizeAd(320, 180, 'normal');
+      }
       _incrementAndLog(e);
     });
     container.addEventListener('adtagstartloading', function (e) {
@@ -62,7 +75,7 @@ describe("Test for pre-mid-post", function () {
         contentPlayer = rmpVast.getContentPlayer();
       }
       if (addestroyedCount === 1) {
-        expect(validSteps).toBe(8);
+        expect(validSteps).toBe(9);
         contentPlayer.currentTime = 15;
         setTimeout(() => {
           rmpVast.loadAds(ADTAG2);
@@ -72,12 +85,12 @@ describe("Test for pre-mid-post", function () {
         });
       }
       if (addestroyedCount === 2) {
-        expect(validSteps).toBe(16);
+        expect(validSteps).toBe(18);
         contentPlayer.currentTime = 98;
       }
       if (addestroyedCount === 3) {
-        expect(validSteps).toBe(24);
-        if (validSteps === 24) {
+        expect(validSteps).toBe(27);
+        if (validSteps === 27) {
           title.textContent = 'Test completed';
         }
         setTimeout(function () {

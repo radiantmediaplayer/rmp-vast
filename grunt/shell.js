@@ -23,5 +23,25 @@ module.exports = {
       'node test/spec/main/redirectSpec.js',
       'node test/spec/main/vpaidSpec.js'
     ].join('&&')
+  },
+  testAndroid: {
+    command: [
+      'node test/spec/main/apiSpec.js android',
+      'node test/spec/main/errorSpec.js android',
+      'node test/spec/main/inlineLinearSpec.js android',
+      'node test/spec/main/nonLinearSpec.js android',
+      'node test/spec/main/redirectSpec.js android',
+      'node test/spec/main/vpaidSpec.js android'
+    ].join('&&')
+  },
+  testSafari: {
+    command: [
+      'node test/spec/main/apiSpec.js safari',
+      'node test/spec/main/errorSpec.js safari',
+      'node test/spec/main/inlineLinearSpec.js safari',
+      'node test/spec/main/nonLinearSpec.js safari',
+      'node test/spec/main/redirectSpec.js safari',
+      'node test/spec/main/vpaidSpec.js safari'
+    ].join('&&')
   }
 };

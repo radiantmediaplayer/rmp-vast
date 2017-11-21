@@ -2,6 +2,19 @@
 
 const TEST = require('../helpers/test');
 
+var driver;
+var driverCount = 1;
+
+const args = process.argv;
+if (args[2] === 'android') {
+	driver = TEST.getDriver('android');
+} else if (args[2] === 'safari') {
+	driver = TEST.getDriver('safari');
+} else {
+	driverCount = TEST.driverCount;
+	driver = TEST.getDriver('chrome');
+} 
+
 var testUrls = [
 	TEST.pathToTest + 'inlineLinearSpec/AdPodWithStandaloneSpec.html',
 	TEST.pathToTest + 'inlineLinearSpec/IABVAST2Spec.html',
@@ -14,8 +27,7 @@ var testUrls = [
 
 var intialTime = TEST.getTime();
 var index = 0;
-var driver = TEST.getDriver('chrome');
-let count = 0;
+var count = 0;
 
 var _run = function () {
 	console.log('Run HTML spec ' + testUrls[index] + ' at: ' +
@@ -24,7 +36,7 @@ var _run = function () {
 	p.then(() => {
 		if (index === testUrls.length - 1) {
 			driver.quit();
-			if (count === TEST.driverCount - 1) {
+			if (count === driverCount - 1) {
 			} else {
 				if (count === 0) {
 					driver = TEST.getDriver('firefox');

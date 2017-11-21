@@ -184,9 +184,9 @@ LINEAR.parse = function (linear) {
   }
   // check for AdParameters tag in case we have a VPAID creative
   let adParameters = linear[0].getElementsByTagName('AdParameters');
-  let adParametersData = '';
+  this.adParametersData = '';
   if (adParameters.length > 0) {
-    adParametersData = FWVAST.getNodeValue(adParameters[0], false);
+    this.adParametersData = FWVAST.getNodeValue(adParameters[0], false);
   }
   let mediaFile = mediaFiles[0].getElementsByTagName('MediaFile');
   if (mediaFile.length === 0) {
@@ -271,10 +271,7 @@ LINEAR.parse = function (linear) {
       VPAID.loadCreative.call(
         this,
         url,
-        adParametersData,
-        this.params.vpaidSettings,
-        this.params.ajaxTimeout,
-        this.params.creativeLoadTimeout
+        this.params.vpaidSettings
       );
       this.adContentType = type;
       return;

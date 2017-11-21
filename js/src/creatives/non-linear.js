@@ -124,9 +124,11 @@ NONLINEAR.parse = function (nonLinearAds) {
   }
   let currentNonLinear;
   let nonLinearCreativeUrl = '';
+  let isDimensionError = false;
   // The video player should poll each <NonLinear> element to determine 
   // which creative is offered in a format the video player can support.
   for (let i = 0, len = nonLinear.length; i < len; i++) {
+    isDimensionError = false;
     currentNonLinear = nonLinear[i];
     let width = currentNonLinear.getAttribute('width');
     // width attribute is required
@@ -168,10 +170,10 @@ NONLINEAR.parse = function (nonLinearAds) {
       if (!imagePattern.test(creativeType)) {
         continue;
       }
-      let containerWidth = FW.getWidth(this.container);
       // if width of non-linear creative does not fit within current player container width 
       // we should skip this creative
-      if (parseInt(width) > containerWidth) {
+      if (parseInt(width) > FW.getWidth(this.container)) {
+        isDimensionError = true;
         continue;
       }
       nonLinearCreativeUrl = FWVAST.getNodeValue(currentStaticResource, true);
@@ -183,13 +185,17 @@ NONLINEAR.parse = function (nonLinearAds) {
       this.nonLinearCreativeHeight = height;
       this.nonLinearCreativeWidth = width;
       this.nonLinearContentType = creativeType;
-      break;
+      break; 
     }
   }
   // if not supported NonLinear type ping for error
   if (!this.nonLinearCreativeUrl || !currentNonLinear) {
-    PING.error.call(this, 503, this.inlineOrWrapperErrorTags);
-    VASTERRORS.process.call(this, 503);
+    let vastErrorCode = 503;
+    if (isDimensionError) {
+      vastErrorCode = 501;
+    }
+    PING.error.call(this, vastErrorCode, this.inlineOrWrapperErrorTags);
+    VASTERRORS.process.call(this, vastErrorCode);
     return;
   }
   if (DEBUG) {

@@ -1,5 +1,9 @@
 const FW = {};
 
+FW.nullFn = function () {
+  return null;
+};
+
 FW.addClass = function (element, className) {
   if (element && typeof className === 'string') {
     if (element.className) {

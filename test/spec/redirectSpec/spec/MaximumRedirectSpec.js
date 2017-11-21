@@ -6,11 +6,18 @@ describe("Test for MaximumRedirectSpec", function () {
 
   var id = 'rmpPlayer';
   var container = document.getElementById(id);
+  var video = document.querySelector('.rmp-video');
   var params = {
     maxNumRedirects: 2
   };
   var rmpVast = new RmpVast(id, params);
   var fw = rmpVast.getFW();
+  var env = rmpVast.getEnv();
+  if (env.isAndroid[0]) {
+    container.style.width = '320px';
+    container.style.height = '180px';
+    video.setAttribute('muted', 'muted');
+  }
   var title = document.getElementsByTagName('title')[0];
 
   it("should load adTag and trigger an error", function (done) {

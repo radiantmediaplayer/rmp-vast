@@ -1,6 +1,6 @@
 /**
  * @license Copyright (c) 2017 Radiant Media Player | https://www.radiantmediaplayer.com
- * rmp-vast 1.2.4
+ * rmp-vast 1.2.5
  * GitHub: https://github.com/radiantmediaplayer/rmp-vast
  * MIT License: https://github.com/radiantmediaplayer/rmp-vast/blob/master/LICENSE
  */
@@ -29,7 +29,7 @@ var API = {};
 API.play = function () {
   if (this.adOnStage && this.adIsLinear) {
     if (this.isVPAID) {
-      _vpaid.VPAID.resumeAd();
+      _vpaid.VPAID.resumeAd.call(this);
     } else {
       _vastPlayer.VASTPLAYER.play.call(this);
     }
@@ -41,7 +41,7 @@ API.play = function () {
 API.pause = function () {
   if (this.adOnStage && this.adIsLinear) {
     if (this.isVPAID) {
-      _vpaid.VPAID.pauseAd();
+      _vpaid.VPAID.pauseAd.call(this);
     } else {
       _vastPlayer.VASTPLAYER.pause.call(this);
     }
@@ -53,7 +53,7 @@ API.pause = function () {
 API.getAdPaused = function () {
   if (this.adOnStage && this.adIsLinear) {
     if (this.isVPAID) {
-      return _vpaid.VPAID.getAdPaused();
+      return _vpaid.VPAID.getAdPaused.call(this);
     } else {
       return this.vastPlayerPaused;
     }
@@ -75,7 +75,7 @@ API.setVolume = function (level) {
   }
   if (this.adOnStage && this.adIsLinear) {
     if (this.isVPAID) {
-      _vpaid.VPAID.setAdVolume(level);
+      _vpaid.VPAID.setAdVolume.call(this, level);
     } else {
       _vastPlayer.VASTPLAYER.setVolume.call(this, level);
     }
@@ -86,7 +86,7 @@ API.setVolume = function (level) {
 API.getVolume = function () {
   if (this.adOnStage && this.adIsLinear) {
     if (this.isVPAID) {
-      return _vpaid.VPAID.getAdVolume();
+      return _vpaid.VPAID.getAdVolume.call(this);
     } else {
       return _vastPlayer.VASTPLAYER.getVolume.call(this);
     }
@@ -101,9 +101,9 @@ API.setMute = function (muted) {
   if (this.adOnStage && this.adIsLinear) {
     if (this.isVPAID) {
       if (muted) {
-        _vpaid.VPAID.setAdVolume(0);
+        _vpaid.VPAID.setAdVolume.call(this, 0);
       } else {
-        _vpaid.VPAID.setAdVolume(1);
+        _vpaid.VPAID.setAdVolume.call(this, 1);
       }
     } else {
       _vastPlayer.VASTPLAYER.setMute.call(this, muted);
@@ -115,7 +115,7 @@ API.setMute = function (muted) {
 API.getMute = function () {
   if (this.adOnStage && this.adIsLinear) {
     if (this.isVPAID) {
-      if (_vpaid.VPAID.getAdVolume() === 0) {
+      if (_vpaid.VPAID.getAdVolume.call(this) === 0) {
         return true;
       }
       return false;
@@ -129,7 +129,7 @@ API.getMute = function () {
 API.stopAds = function () {
   if (this.adOnStage) {
     if (this.isVPAID) {
-      _vpaid.VPAID.stopAd();
+      _vpaid.VPAID.stopAd.call(this);
     } else {
       // this will destroy ad
       _vastPlayer.VASTPLAYER.resumeContent.call(this);
@@ -144,7 +144,7 @@ API.getAdTagUrl = function () {
 API.getAdMediaUrl = function () {
   if (this.adOnStage) {
     if (this.isVPAID) {
-      return _vpaid.VPAID.getCreativeUrl();
+      return _vpaid.VPAID.getCreativeUrl.call(this);
     } else if (this.adIsLinear) {
       return this.adMediaUrl;
     } else {
@@ -184,7 +184,7 @@ API.getAdDescription = function () {
 API.getAdDuration = function () {
   if (this.adOnStage && this.adIsLinear) {
     if (this.isVPAID) {
-      var duration = _vpaid.VPAID.getAdDuration();
+      var duration = _vpaid.VPAID.getAdDuration.call(this);
       if (duration > 0) {
         duration = duration * 1000;
       }
@@ -199,8 +199,8 @@ API.getAdDuration = function () {
 API.getAdCurrentTime = function () {
   if (this.adOnStage && this.adIsLinear) {
     if (this.isVPAID) {
-      var remainingTime = _vpaid.VPAID.getAdRemainingTime();
-      var duration = _vpaid.VPAID.getAdDuration();
+      var remainingTime = _vpaid.VPAID.getAdRemainingTime.call(this);
+      var duration = _vpaid.VPAID.getAdDuration.call(this);
       if (remainingTime === -1 || duration === -1 || remainingTime > duration) {
         return -1;
       }
@@ -215,7 +215,7 @@ API.getAdCurrentTime = function () {
 API.getAdRemainingTime = function () {
   if (this.adOnStage && this.adIsLinear) {
     if (this.isVPAID) {
-      return _vpaid.VPAID.getAdRemainingTime();
+      return _vpaid.VPAID.getAdRemainingTime.call(this);
     } else {
       var currentTime = _vastPlayer.VASTPLAYER.getCurrentTime.call(this);
       var duration = _vastPlayer.VASTPLAYER.getDuration.call(this);
@@ -235,7 +235,7 @@ API.getAdOnStage = function () {
 API.getAdMediaWidth = function () {
   if (this.adOnStage) {
     if (this.isVPAID) {
-      return _vpaid.VPAID.getAdWidth();
+      return _vpaid.VPAID.getAdWidth.call(this);
     } else if (this.adIsLinear) {
       return this.adMediaWidth;
     } else {
@@ -248,7 +248,7 @@ API.getAdMediaWidth = function () {
 API.getAdMediaHeight = function () {
   if (this.adOnStage) {
     if (this.isVPAID) {
-      return _vpaid.VPAID.getAdHeight();
+      return _vpaid.VPAID.getAdHeight.call(this);
     } else if (this.adIsLinear) {
       return this.adMediaHeight;
     } else {
@@ -302,7 +302,7 @@ API.getContentPlayer = function () {
 
 API.getVpaidCreative = function () {
   if (this.adOnStage && this.isVPAID) {
-    return _vpaid.VPAID.getVpaidCreative();
+    return _vpaid.VPAID.getVpaidCreative.call(this);
   }
   return null;
 };
@@ -331,45 +331,45 @@ API.getInitialized = function () {
 // VPAID methods
 API.resizeAd = function (width, height, viewMode) {
   if (this.adOnStage && this.isVPAID) {
-    _vpaid.VPAID.resizeAd(width, height, viewMode);
+    _vpaid.VPAID.resizeAd.call(this, width, height, viewMode);
   }
 };
 
 API.expandAd = function () {
   if (this.adOnStage && this.isVPAID) {
-    _vpaid.VPAID.expandAd();
+    _vpaid.VPAID.expandAd.call(this);
   }
 };
 
 API.collapseAd = function () {
   if (this.adOnStage && this.isVPAID) {
-    _vpaid.VPAID.collapseAd();
+    _vpaid.VPAID.collapseAd.call(this);
   }
 };
 
 API.skipAd = function () {
   if (this.adOnStage && this.isVPAID) {
-    _vpaid.VPAID.skipAd();
+    _vpaid.VPAID.skipAd.call(this);
   }
 };
 
 API.getAdExpanded = function () {
   if (this.adOnStage && this.isVPAID) {
-    _vpaid.VPAID.getAdExpanded();
+    _vpaid.VPAID.getAdExpanded.call(this);
   }
   return null;
 };
 
 API.getAdSkippableState = function () {
   if (this.adOnStage && this.isVPAID) {
-    _vpaid.VPAID.getAdSkippableState();
+    _vpaid.VPAID.getAdSkippableState.call(this);
   }
   return null;
 };
 
 API.getAdCompanions = function () {
   if (this.adOnStage && this.isVPAID) {
-    _vpaid.VPAID.getAdCompanions();
+    _vpaid.VPAID.getAdCompanions.call(this);
   }
   return null;
 };
@@ -804,9 +804,9 @@ LINEAR.parse = function (linear) {
   }
   // check for AdParameters tag in case we have a VPAID creative
   var adParameters = linear[0].getElementsByTagName('AdParameters');
-  var adParametersData = '';
+  this.adParametersData = '';
   if (adParameters.length > 0) {
-    adParametersData = _fwVast.FWVAST.getNodeValue(adParameters[0], false);
+    this.adParametersData = _fwVast.FWVAST.getNodeValue(adParameters[0], false);
   }
   var mediaFile = mediaFiles[0].getElementsByTagName('MediaFile');
   if (mediaFile.length === 0) {
@@ -886,7 +886,7 @@ LINEAR.parse = function (linear) {
     var _type = _currentMediaFileItem.type;
     var url = _currentMediaFileItem.url;
     if (this.isVPAID && url) {
-      _vpaid.VPAID.loadCreative.call(this, url, adParametersData, this.params.vpaidSettings, this.params.ajaxTimeout, this.params.creativeLoadTimeout);
+      _vpaid.VPAID.loadCreative.call(this, url, this.params.vpaidSettings);
       this.adContentType = _type;
       return;
     }
@@ -1098,9 +1098,11 @@ NONLINEAR.parse = function (nonLinearAds) {
   }
   var currentNonLinear = void 0;
   var nonLinearCreativeUrl = '';
+  var isDimensionError = false;
   // The video player should poll each <NonLinear> element to determine 
   // which creative is offered in a format the video player can support.
   for (var i = 0, len = nonLinear.length; i < len; i++) {
+    isDimensionError = false;
     currentNonLinear = nonLinear[i];
     var width = currentNonLinear.getAttribute('width');
     // width attribute is required
@@ -1142,10 +1144,10 @@ NONLINEAR.parse = function (nonLinearAds) {
       if (!imagePattern.test(creativeType)) {
         continue;
       }
-      var containerWidth = _fw.FW.getWidth(this.container);
       // if width of non-linear creative does not fit within current player container width 
       // we should skip this creative
-      if (parseInt(width) > containerWidth) {
+      if (parseInt(width) > _fw.FW.getWidth(this.container)) {
+        isDimensionError = true;
         continue;
       }
       nonLinearCreativeUrl = _fwVast.FWVAST.getNodeValue(currentStaticResource, true);
@@ -1162,8 +1164,12 @@ NONLINEAR.parse = function (nonLinearAds) {
   }
   // if not supported NonLinear type ping for error
   if (!this.nonLinearCreativeUrl || !currentNonLinear) {
-    _ping.PING.error.call(this, 503, this.inlineOrWrapperErrorTags);
-    _vastErrors.VASTERRORS.process.call(this, 503);
+    var vastErrorCode = 503;
+    if (isDimensionError) {
+      vastErrorCode = 501;
+    }
+    _ping.PING.error.call(this, vastErrorCode, this.inlineOrWrapperErrorTags);
+    _vastErrors.VASTERRORS.process.call(this, vastErrorCode);
     return;
   }
   if (DEBUG) {
@@ -1763,6 +1769,10 @@ Object.defineProperty(exports, "__esModule", {
 });
 var FW = {};
 
+FW.nullFn = function () {
+  return null;
+};
+
 FW.addClass = function (element, className) {
   if (element && typeof className === 'string') {
     if (element.className) {
@@ -1958,8 +1968,6 @@ var _vastErrors = require('./utils/vast-errors');
 var _icons = require('./creatives/icons');
 
 window.DEBUG = true;
-
-var vastDocument;
 
 window.RmpVast = function (id, params) {
   if (typeof id !== 'string' || id === '') {
@@ -2181,13 +2189,13 @@ var _onXmlAvailable = function _onXmlAvailable(xml) {
     return;
   }
   // check for VAST node
-  vastDocument = xml.getElementsByTagName('VAST');
-  if (vastDocument.length === 0) {
+  this.vastDocument = xml.getElementsByTagName('VAST');
+  if (this.vastDocument.length === 0) {
     _vastErrors.VASTERRORS.process.call(this, 100);
     return;
   }
   // VAST/Error node
-  var errorNode = vastDocument[0].getElementsByTagName('Error');
+  var errorNode = this.vastDocument[0].getElementsByTagName('Error');
   if (errorNode.length > 0) {
     var errorUrl = _fwVast.FWVAST.getNodeValue(errorNode[0], true);
     if (errorUrl !== null) {
@@ -2196,14 +2204,14 @@ var _onXmlAvailable = function _onXmlAvailable(xml) {
   }
   //check for VAST version 2 or 3
   var pattern = /^(2|3)\./i;
-  var version = vastDocument[0].getAttribute('version');
+  var version = this.vastDocument[0].getAttribute('version');
   if (!pattern.test(version)) {
     _ping.PING.error.call(this, 102, this.vastErrorTags);
     _vastErrors.VASTERRORS.process.call(this, 102);
     return;
   }
   // if empty VAST return
-  var ad = vastDocument[0].getElementsByTagName('Ad');
+  var ad = this.vastDocument[0].getElementsByTagName('Ad');
   if (ad.length === 0) {
     _ping.PING.error.call(this, 303, this.vastErrorTags);
     _vastErrors.VASTERRORS.process.call(this, 303);
@@ -2545,7 +2553,7 @@ var _destroyVastPlayer = function _destroyVastPlayer() {
     _icons.ICONS.destroy.call(this);
   }
   if (this.isVPAID) {
-    _vpaid.VPAID.destroy();
+    _vpaid.VPAID.destroy.call(this);
   }
   // unwire events
   _reset.RESET.unwireVastPlayerEvents.call(this);
@@ -2650,8 +2658,8 @@ VASTPLAYER.init = function () {
     if (this.contentPlayer.muted) {
       this.vastPlayer.muted = true;
     }
-    // black poster based 64 GIF
-    this.vastPlayer.poster = 'data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=';
+    // black poster based 64 png
+    this.vastPlayer.poster = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=';
     this.vastPlayer.setAttribute('x-webkit-airplay', 'allow');
     if (typeof this.contentPlayer.playsInline === 'boolean' && this.contentPlayer.playsInline) {
       this.vastPlayer.playsInline = true;
@@ -2846,321 +2854,276 @@ var _contentPlayer = require('../players/content-player');
 
 var VPAID = {};
 
-var slot;
-var vpaidPlayer;
-var rmpVast;
-var vpaidCreative = null;
-var scriptVPAID = null;
-var iframe = null;
-var jsLoadTimeout = null;
-var initAdTimeout = null;
-var startAdTimeout = null;
-var vpaidAvailableInterval = null;
-var adStoppedTimeout = null;
-var adSkippedTimeout = null;
-var adParametersData = '';
-var clickThroughUrl = '';
-var currentVPAIDVolume = 1;
-var vpaidPaused = true;
-var jsCreativeUrl = '';
-var vpaidRemainingTime = -1;
-var intVpaidVersion = -1;
-var adDurationVPAID1 = -1;
-var vpaidIsLinear = true;
-var initialWidth = 640;
-var initialHeight = 360;
-var initialViewMode = 'normal';
-var desiredBitrate = 500;
-var ajaxTimeout = 7000;
-var creativeLoadTimeout = 10000;
-var hadAdLoaded = false;
-var hasAdStarted = false;
-
 // vpaidCreative getters
-VPAID.getCreativeVersion = function () {
-  return intVpaidVersion;
-};
+
 VPAID.getAdWidth = function () {
-  if (vpaidCreative && typeof vpaidCreative.getAdWidth === 'function') {
-    return vpaidCreative.getAdWidth();
+  if (this.vpaidCreative && typeof this.vpaidCreative.getAdWidth === 'function') {
+    return this.vpaidCreative.getAdWidth();
   }
   return null;
 };
+
 VPAID.getAdHeight = function () {
-  if (vpaidCreative && typeof vpaidCreative.getAdHeight === 'function') {
-    return vpaidCreative.getAdHeight();
+  if (this.vpaidCreative && typeof this.vpaidCreative.getAdHeight === 'function') {
+    return this.vpaidCreative.getAdHeight();
   }
   return null;
 };
+
 VPAID.getAdDuration = function () {
-  if (vpaidCreative) {
-    if (typeof vpaidCreative.getAdDuration === 'function') {
-      return vpaidCreative.getAdDuration();
-    } else if (adDurationVPAID1 > -1) {
-      return adDurationVPAID1;
+  if (this.vpaidCreative) {
+    if (typeof this.vpaidCreative.getAdDuration === 'function') {
+      return this.vpaidCreative.getAdDuration();
+    } else if (this.vpaid1AdDuration > -1) {
+      return this.vpaid1AdDuration;
     }
   }
   return -1;
 };
+
 VPAID.getAdRemainingTime = function () {
-  if (vpaidRemainingTime >= 0) {
-    return vpaidRemainingTime;
+  if (this.vpaidRemainingTime >= 0) {
+    return this.vpaidRemainingTime;
   }
   return -1;
 };
+
 VPAID.getCreativeUrl = function () {
-  if (jsCreativeUrl) {
-    return jsCreativeUrl;
+  if (this.vpaidCreativeUrl) {
+    return this.vpaidCreativeUrl;
   }
   return null;
 };
+
 VPAID.getVpaidCreative = function () {
-  if (vpaidCreative) {
-    return vpaidCreative;
-  }
-  return null;
+  return this.vpaidCreative;
 };
+
 VPAID.getAdVolume = function () {
-  if (vpaidCreative && typeof vpaidCreative.getAdVolume === 'function') {
-    return vpaidCreative.getAdVolume();
+  if (this.vpaidCreative && typeof this.vpaidCreative.getAdVolume === 'function') {
+    return this.vpaidCreative.getAdVolume();
   }
   return null;
 };
+
 VPAID.getAdPaused = function () {
-  return vpaidPaused;
+  return this.vpaidPaused;
 };
+
 VPAID.getAdExpanded = function () {
-  if (vpaidCreative && typeof vpaidCreative.getAdExpanded === 'function') {
-    return vpaidCreative.getAdExpanded();
+  if (this.vpaidCreative && typeof this.vpaidCreative.getAdExpanded === 'function') {
+    return this.vpaidCreative.getAdExpanded();
   }
   return null;
 };
+
 VPAID.getAdSkippableState = function () {
-  if (vpaidCreative && typeof vpaidCreative.getAdSkippableState === 'function') {
-    return vpaidCreative.getAdSkippableState();
+  if (this.vpaidCreative && typeof this.vpaidCreative.getAdSkippableState === 'function') {
+    return this.vpaidCreative.getAdSkippableState();
   }
   return null;
 };
+
 VPAID.getAdIcons = function () {
-  if (vpaidCreative && typeof vpaidCreative.getAdIcons === 'function') {
-    return vpaidCreative.getAdIcons();
+  if (this.vpaidCreative && typeof this.vpaidCreative.getAdIcons === 'function') {
+    return this.vpaidCreative.getAdIcons();
   }
   return null;
 };
+
 VPAID.getAdCompanions = function () {
-  if (vpaidCreative && typeof vpaidCreative.getAdCompanions === 'function') {
-    return vpaidCreative.getAdCompanions();
+  if (this.vpaidCreative && typeof this.vpaidCreative.getAdCompanions === 'function') {
+    return this.vpaidCreative.getAdCompanions();
   }
   return null;
 };
 
 // VPAID creative events
 var _onAdLoaded = function _onAdLoaded() {
+  var _this = this;
+
   if (DEBUG) {
     _fw.FW.log('RMP-VAST: VPAID AdLoaded event');
   }
-  hadAdLoaded = true;
-  if (!rmpVast || !vpaidCreative) {
+  this.vpaidAdLoaded = true;
+  if (!this.vpaidCreative) {
     return;
   }
-  if (initAdTimeout) {
-    clearTimeout(initAdTimeout);
+  if (this.initAdTimeout) {
+    clearTimeout(this.initAdTimeout);
   }
-  vpaidCreative.unsubscribe(_onAdLoaded, 'AdLoaded');
-  startAdTimeout = setTimeout(function () {
-    if (rmpVast && !hasAdStarted) {
-      _vastPlayer.VASTPLAYER.resumeContent.call(rmpVast);
+  if (this.vpaidCallbacks.AdLoaded) {
+    this.vpaidCreative.unsubscribe(this.vpaidCallbacks.AdLoaded, 'AdLoaded');
+  }
+  // when we call startAd we expect AdStarted event to follow closely
+  // otherwise we need to resume content
+  this.startAdTimeout = setTimeout(function () {
+    if (!_this.vpaidAdStarted) {
+      _vastPlayer.VASTPLAYER.resumeContent.call(_this);
     }
-    hasAdStarted = false;
-  }, ajaxTimeout);
+    _this.vpaidAdStarted = false;
+  }, this.params.ajaxTimeout);
   // pause content player
-  _contentPlayer.CONTENTPLAYER.pause.call(rmpVast);
-  rmpVast.adOnStage = true;
-  vpaidCreative.startAd();
-  _api.API.createEvent.call(rmpVast, 'adloaded');
+  _contentPlayer.CONTENTPLAYER.pause.call(this);
+  this.adOnStage = true;
+  this.vpaidCreative.startAd();
+  _api.API.createEvent.call(this, 'adloaded');
 };
 
 var _onAdStarted = function _onAdStarted() {
   if (DEBUG) {
     _fw.FW.log('RMP-VAST: VPAID AdStarted event');
   }
-  hasAdStarted = true;
-  if (!rmpVast || !vpaidCreative) {
+  this.vpaidAdStarted = true;
+  if (!this.vpaidCreative) {
     return;
   }
-  if (startAdTimeout) {
-    clearTimeout(startAdTimeout);
+  if (this.startAdTimeout) {
+    clearTimeout(this.startAdTimeout);
   }
-  vpaidCreative.unsubscribe(_onAdStarted, 'AdStarted');
+  if (this.vpaidCallbacks.AdStarted) {
+    this.vpaidCreative.unsubscribe(this.vpaidCallbacks.AdStarted, 'AdStarted');
+  }
   // update duration for VPAID 1.*
-  if (intVpaidVersion === 1) {
-    adDurationVPAID1 = VPAID.getAdRemainingTime();
+  if (this.vpaidVersion === 1) {
+    this.vpaid1AdDuration = VPAID.getAdRemainingTime.call(this);
   }
   // append icons - if VPAID does not handle them
-  if (!VPAID.getAdIcons() && !rmpVast.useContentPlayerForAds && rmpVast.icons.length > 0) {
-    _icons.ICONS.append.call(rmpVast);
+  if (!VPAID.getAdIcons.call(this) && !this.useContentPlayerForAds && this.icons.length > 0) {
+    _icons.ICONS.append.call(this);
   }
-  if (typeof vpaidCreative.getAdLinear === 'function') {
-    vpaidIsLinear = rmpVast.adIsLinear = vpaidCreative.getAdLinear();
-    if (!vpaidIsLinear) {
+  if (typeof this.vpaidCreative.getAdLinear === 'function') {
+    this.adIsLinear = this.vpaidCreative.getAdLinear();
+    if (this.adIsLinear === false) {
       // we currently do not support Click-to-Linear Video Ad
-      VPAID.stopAd();
+      VPAID.stopAd.call(this);
+      return;
     }
   }
-  _fwVast.FWVAST.dispatchPingEvent.call(rmpVast, 'creativeView');
+  _fwVast.FWVAST.dispatchPingEvent.call(this, 'creativeView');
 };
 
 var _onAdStopped = function _onAdStopped() {
   if (DEBUG) {
     _fw.FW.log('RMP-VAST: VPAID AdStopped event');
   }
-  if (adStoppedTimeout) {
-    clearTimeout(adStoppedTimeout);
+  if (this.adStoppedTimeout) {
+    clearTimeout(this.adStoppedTimeout);
   }
-  if (rmpVast) {
-    _vastPlayer.VASTPLAYER.resumeContent.call(rmpVast);
-  }
+  _vastPlayer.VASTPLAYER.resumeContent.call(this);
 };
 
 var _onAdSkipped = function _onAdSkipped() {
   if (DEBUG) {
     _fw.FW.log('RMP-VAST: VPAID AdSkipped event');
   }
-  if (adSkippedTimeout) {
-    clearTimeout(adSkippedTimeout);
+  if (this.adSkippedTimeout) {
+    clearTimeout(this.adSkippedTimeout);
   }
-  if (rmpVast) {
-    _api.API.createEvent.call(rmpVast, 'adskipped');
-    _fwVast.FWVAST.dispatchPingEvent.call(rmpVast, 'skip');
-  }
+  _api.API.createEvent.call(this, 'adskipped');
+  _fwVast.FWVAST.dispatchPingEvent.call(this, 'skip');
 };
 
 var _onAdSkippableStateChange = function _onAdSkippableStateChange() {
   if (DEBUG) {
     _fw.FW.log('RMP-VAST: VPAID AdSkippableStateChange event');
   }
-  if (rmpVast) {
-    _api.API.createEvent.call(rmpVast, 'adskippablestatechanged');
-  }
+  _api.API.createEvent.call(this, 'adskippablestatechanged');
 };
 
 var _onAdDurationChange = function _onAdDurationChange() {
   if (DEBUG) {
-    _fw.FW.log('RMP-VAST: VPAID AdDurationChange event ' + VPAID.getAdDuration());
+    _fw.FW.log('RMP-VAST: VPAID AdDurationChange event ' + VPAID.getAdDuration.call(this));
   }
-  if (!rmpVast || !vpaidCreative) {
+  if (!this.vpaidCreative) {
     return;
   }
-  if (typeof vpaidCreative.getAdRemainingTime === 'function') {
-    var remainingTime = vpaidCreative.getAdRemainingTime();
+  if (typeof this.vpaidCreative.getAdRemainingTime === 'function') {
+    var remainingTime = this.vpaidCreative.getAdRemainingTime();
     if (remainingTime >= 0) {
-      vpaidRemainingTime = remainingTime;
+      this.vpaidRemainingTime = remainingTime;
     }
   }
-  _api.API.createEvent.call(rmpVast, 'addurationchange');
+  _api.API.createEvent.call(this, 'addurationchange');
 };
 
 var _onAdVolumeChange = function _onAdVolumeChange() {
   if (DEBUG) {
     _fw.FW.log('RMP-VAST: VPAID AdVolumeChange event');
   }
-  if (!rmpVast) {
-    return;
-  }
-  var newVolume = VPAID.getAdVolume();
+  var newVolume = VPAID.getAdVolume.call(this);
   if (newVolume === null) {
     return;
   }
-  if (currentVPAIDVolume > 0 && newVolume === 0) {
-    _fwVast.FWVAST.dispatchPingEvent.call(rmpVast, 'mute');
-  } else if (currentVPAIDVolume === 0 && newVolume > 0) {
-    _fwVast.FWVAST.dispatchPingEvent.call(rmpVast, 'unmute');
+  if (this.vpaidCurrentVolume > 0 && newVolume === 0) {
+    _fwVast.FWVAST.dispatchPingEvent.call(this, 'mute');
+  } else if (this.vpaidCurrentVolume === 0 && newVolume > 0) {
+    _fwVast.FWVAST.dispatchPingEvent.call(this, 'unmute');
   }
-  currentVPAIDVolume = newVolume;
-  _api.API.createEvent.call(rmpVast, 'advolumechanged');
+  this.vpaidCurrentVolume = newVolume;
+  _api.API.createEvent.call(this, 'advolumechanged');
 };
 
 var _onAdImpression = function _onAdImpression() {
   if (DEBUG) {
     _fw.FW.log('RMP-VAST: VPAID AdImpression event');
   }
-  if (!rmpVast) {
-    return;
-  }
-  _api.API.createEvent.call(rmpVast, 'adimpression');
-  _fwVast.FWVAST.dispatchPingEvent.call(rmpVast, 'impression');
+  _api.API.createEvent.call(this, 'adimpression');
+  _fwVast.FWVAST.dispatchPingEvent.call(this, 'impression');
 };
 
 var _onAdVideoStart = function _onAdVideoStart() {
   if (DEBUG) {
     _fw.FW.log('RMP-VAST: VPAID AdVideoStart event');
   }
-  if (!rmpVast) {
-    return;
-  }
-  vpaidPaused = false;
-  var newVolume = VPAID.getAdVolume();
+  this.vpaidPaused = false;
+  var newVolume = VPAID.getAdVolume.call(this);
   if (newVolume === null) {
     newVolume = 1;
   }
-  currentVPAIDVolume = newVolume;
-  _api.API.createEvent.call(rmpVast, 'adstarted');
-  _fwVast.FWVAST.dispatchPingEvent.call(rmpVast, 'start');
+  this.vpaidCurrentVolume = newVolume;
+  _api.API.createEvent.call(this, 'adstarted');
+  _fwVast.FWVAST.dispatchPingEvent.call(this, 'start');
 };
 
 var _onAdVideoFirstQuartile = function _onAdVideoFirstQuartile() {
   if (DEBUG) {
     _fw.FW.log('RMP-VAST: VPAID AdVideoFirstQuartile event');
   }
-  if (!rmpVast) {
-    return;
-  }
-  _api.API.createEvent.call(rmpVast, 'adfirstquartile');
-  _fwVast.FWVAST.dispatchPingEvent.call(rmpVast, 'firstQuartile');
+  _api.API.createEvent.call(this, 'adfirstquartile');
+  _fwVast.FWVAST.dispatchPingEvent.call(this, 'firstQuartile');
 };
 
 var _onAdVideoMidpoint = function _onAdVideoMidpoint() {
   if (DEBUG) {
     _fw.FW.log('RMP-VAST: VPAID AdVideoMidpoint event');
   }
-  if (!rmpVast) {
-    return;
-  }
-  _api.API.createEvent.call(rmpVast, 'admidpoint');
-  _fwVast.FWVAST.dispatchPingEvent.call(rmpVast, 'midpoint');
+  _api.API.createEvent.call(this, 'admidpoint');
+  _fwVast.FWVAST.dispatchPingEvent.call(this, 'midpoint');
 };
 
 var _onAdVideoThirdQuartile = function _onAdVideoThirdQuartile() {
   if (DEBUG) {
     _fw.FW.log('RMP-VAST: VPAID AdVideoThirdQuartile event');
   }
-  if (!rmpVast) {
-    return;
-  }
-  _api.API.createEvent.call(rmpVast, 'adthirdquartile');
-  _fwVast.FWVAST.dispatchPingEvent.call(rmpVast, 'thirdQuartile');
+  _api.API.createEvent.call(this, 'adthirdquartile');
+  _fwVast.FWVAST.dispatchPingEvent.call(this, 'thirdQuartile');
 };
 
 var _onAdVideoComplete = function _onAdVideoComplete() {
   if (DEBUG) {
     _fw.FW.log('RMP-VAST: VPAID AdVideoComplete event');
   }
-  if (!rmpVast) {
-    return;
-  }
-  _api.API.createEvent.call(rmpVast, 'adcomplete');
-  _fwVast.FWVAST.dispatchPingEvent.call(rmpVast, 'complete');
+  _api.API.createEvent.call(this, 'adcomplete');
+  _fwVast.FWVAST.dispatchPingEvent.call(this, 'complete');
 };
 
 var _onAdClickThru = function _onAdClickThru(url, id, playerHandles) {
   if (DEBUG) {
     _fw.FW.log('RMP-VAST: VPAID AdClickThru event');
   }
-  if (!rmpVast) {
-    return;
-  }
-  _api.API.createEvent.call(rmpVast, 'adclick');
-  _fwVast.FWVAST.dispatchPingEvent.call(rmpVast, 'clickthrough');
+  _api.API.createEvent.call(this, 'adclick');
+  _fwVast.FWVAST.dispatchPingEvent.call(this, 'clickthrough');
   if (typeof playerHandles !== 'boolean') {
     return;
   }
@@ -3170,13 +3133,13 @@ var _onAdClickThru = function _onAdClickThru(url, id, playerHandles) {
     var destUrl = void 0;
     if (url) {
       destUrl = url;
-    } else if (clickThroughUrl) {
-      destUrl = clickThroughUrl;
+    } else if (this.clickThroughUrl) {
+      destUrl = this.clickThroughUrl;
     }
     if (destUrl) {
       // for getClickThroughUrl API method
-      rmpVast.clickThroughUrl = destUrl;
-      window.open(destUrl, '_blank');
+      this.clickThroughUrl = destUrl;
+      window.open(this.clickThroughUrl, '_blank');
     }
   }
 };
@@ -3185,24 +3148,18 @@ var _onAdPaused = function _onAdPaused() {
   if (DEBUG) {
     _fw.FW.log('RMP-VAST: VPAID AdPaused event');
   }
-  if (!rmpVast) {
-    return;
-  }
-  vpaidPaused = true;
-  _api.API.createEvent.call(rmpVast, 'adpaused');
-  _fwVast.FWVAST.dispatchPingEvent.call(rmpVast, 'pause');
+  this.vpaidPaused = true;
+  _api.API.createEvent.call(this, 'adpaused');
+  _fwVast.FWVAST.dispatchPingEvent.call(this, 'pause');
 };
 
 var _onAdPlaying = function _onAdPlaying() {
   if (DEBUG) {
     _fw.FW.log('RMP-VAST: VPAID AdPlaying event');
   }
-  if (!rmpVast) {
-    return;
-  }
-  vpaidPaused = false;
-  _api.API.createEvent.call(rmpVast, 'adresumed');
-  _fwVast.FWVAST.dispatchPingEvent.call(rmpVast, 'resume');
+  this.vpaidPaused = false;
+  _api.API.createEvent.call(this, 'adresumed');
+  _fwVast.FWVAST.dispatchPingEvent.call(this, 'resume');
 };
 
 var _onAdLog = function _onAdLog(message) {
@@ -3215,73 +3172,55 @@ var _onAdError = function _onAdError(message) {
   if (DEBUG) {
     _fw.FW.log('RMP-VAST: VPAID AdError event ' + message);
   }
-  if (!rmpVast) {
-    return;
-  }
-  _ping.PING.error.call(rmpVast, 901);
-  _vastErrors.VASTERRORS.process.call(rmpVast, 901);
+  _ping.PING.error.call(this, 901);
+  _vastErrors.VASTERRORS.process.call(this, 901);
 };
 
 var _onAdInteraction = function _onAdInteraction() {
   if (DEBUG) {
     _fw.FW.log('RMP-VAST: VPAID AdInteraction event');
   }
-  if (!rmpVast) {
-    return;
-  }
-  _api.API.createEvent.call(rmpVast, 'adinteraction');
+  _api.API.createEvent.call(this, 'adinteraction');
 };
 
 var _onAdUserAcceptInvitation = function _onAdUserAcceptInvitation() {
   if (DEBUG) {
     _fw.FW.log('RMP-VAST: VPAID AdUserAcceptInvitation event');
   }
-  if (!rmpVast) {
-    return;
-  }
-  _api.API.createEvent.call(rmpVast, 'aduseracceptinvitation');
-  _fwVast.FWVAST.dispatchPingEvent.call(rmpVast, 'acceptInvitation');
+  _api.API.createEvent.call(this, 'aduseracceptinvitation');
+  _fwVast.FWVAST.dispatchPingEvent.call(this, 'acceptInvitation');
 };
 
 var _onAdUserMinimize = function _onAdUserMinimize() {
   if (DEBUG) {
     _fw.FW.log('RMP-VAST: VPAID AdUserMinimize event');
   }
-  if (!rmpVast) {
-    return;
-  }
-  _api.API.createEvent.call(rmpVast, 'adcollapse');
-  _fwVast.FWVAST.dispatchPingEvent.call(rmpVast, 'collapse');
+  _api.API.createEvent.call(this, 'adcollapse');
+  _fwVast.FWVAST.dispatchPingEvent.call(this, 'collapse');
 };
 
 var _onAdUserClose = function _onAdUserClose() {
   if (DEBUG) {
     _fw.FW.log('RMP-VAST: VPAID AdUserClose event');
   }
-  if (!rmpVast) {
-    return;
-  }
-  _api.API.createEvent.call(rmpVast, 'adclose');
-  _fwVast.FWVAST.dispatchPingEvent.call(rmpVast, 'close');
+  _api.API.createEvent.call(this, 'adclose');
+  _fwVast.FWVAST.dispatchPingEvent.call(this, 'close');
 };
 
 var _onAdSizeChange = function _onAdSizeChange() {
   if (DEBUG) {
     _fw.FW.log('RMP-VAST: VPAID AdSizeChange event');
   }
-  _api.API.createEvent.call(rmpVast, 'adsizechange');
+  _api.API.createEvent.call(this, 'adsizechange');
 };
 
 var _onAdLinearChange = function _onAdLinearChange() {
   if (DEBUG) {
     _fw.FW.log('RMP-VAST: VPAID AdLinearChange event');
   }
-  if (!vpaidCreative) {
-    return;
-  }
-  if (typeof vpaidCreative.getAdLinear === 'function') {
-    vpaidIsLinear = rmpVast.adIsLinear = vpaidCreative.getAdLinear();
-    _api.API.createEvent.call(rmpVast, 'adlinearchange');
+  if (this.vpaidCreative && typeof this.vpaidCreative.getAdLinear === 'function') {
+    this.adIsLinear = this.vpaidCreative.getAdLinear();
+    _api.API.createEvent.call(this, 'adlinearchange');
   }
 };
 
@@ -3289,28 +3228,25 @@ var _onAdExpandedChange = function _onAdExpandedChange() {
   if (DEBUG) {
     _fw.FW.log('RMP-VAST: VPAID AdExpandedChange event');
   }
-  _api.API.createEvent.call(rmpVast, 'adexpandedchange');
+  _api.API.createEvent.call(this, 'adexpandedchange');
 };
 
 var _onAdRemainingTimeChange = function _onAdRemainingTimeChange() {
   if (DEBUG) {
     _fw.FW.log('RMP-VAST: VPAID AdRemainingTimeChange event');
   }
-  if (!rmpVast || !vpaidCreative) {
-    return;
-  }
-  if (typeof vpaidCreative.getAdRemainingTime === 'function') {
-    var remainingTime = vpaidCreative.getAdRemainingTime();
+  if (!this.vpaidCreative && typeof this.vpaidCreative.getAdRemainingTime === 'function') {
+    var remainingTime = this.vpaidCreative.getAdRemainingTime();
     if (remainingTime >= 0) {
-      vpaidRemainingTime = remainingTime;
+      this.vpaidRemainingTime = remainingTime;
     }
   }
-  _api.API.createEvent.call(rmpVast, 'adremainingtimechange');
+  _api.API.createEvent.call(this, 'adremainingtimechange');
 };
 
 // vpaidCreative methods
 VPAID.resizeAd = function (width, height, viewMode) {
-  if (!vpaidCreative) {
+  if (!this.vpaidCreative) {
     return;
   }
   if (typeof width !== 'number' || typeof height !== 'number' || typeof viewMode !== 'string') {
@@ -3326,11 +3262,13 @@ VPAID.resizeAd = function (width, height, viewMode) {
   if (DEBUG) {
     _fw.FW.log('RMP-VAST: VPAID resizeAd with width ' + width + ' - height ' + height + ' - viewMode ' + viewMode);
   }
-  vpaidCreative.resizeAd(width, height, validViewMode);
+  this.vpaidCreative.resizeAd(width, height, validViewMode);
 };
 
 VPAID.stopAd = function () {
-  if (!vpaidCreative) {
+  var _this2 = this;
+
+  if (!this.vpaidCreative) {
     return;
   }
   if (DEBUG) {
@@ -3338,119 +3276,111 @@ VPAID.stopAd = function () {
   }
   // when stopAd is called we need to check a 
   // AdStopped event follows
-  adStoppedTimeout = setTimeout(function () {
-    _onAdStopped();
-  }, ajaxTimeout);
-  vpaidCreative.stopAd();
+  this.adStoppedTimeout = setTimeout(function () {
+    _onAdStopped.call(_this2);
+  }, this.params.ajaxTimeout);
+  this.vpaidCreative.stopAd();
 };
 
 VPAID.pauseAd = function () {
-  if (!vpaidCreative) {
-    return;
-  }
   if (DEBUG) {
     _fw.FW.log('RMP-VAST: pauseAd');
   }
-  if (!vpaidPaused) {
-    vpaidCreative.pauseAd();
+  if (this.vpaidCreative && !this.vpaidPaused) {
+    this.vpaidCreative.pauseAd();
   }
 };
 
 VPAID.resumeAd = function () {
-  if (!vpaidCreative) {
-    return;
-  }
   if (DEBUG) {
     _fw.FW.log('RMP-VAST: resumeAd');
   }
-  if (vpaidPaused) {
-    vpaidCreative.resumeAd();
+  if (this.vpaidCreative && this.vpaidPaused) {
+    this.vpaidCreative.resumeAd();
   }
 };
 
 VPAID.expandAd = function () {
-  if (!vpaidCreative) {
-    return;
+  if (this.vpaidCreative) {
+    this.vpaidCreative.expandAd();
   }
-  vpaidCreative.expandAd();
 };
 
 VPAID.collapseAd = function () {
-  if (!vpaidCreative) {
-    return;
+  if (this.vpaidCreative) {
+    this.vpaidCreative.collapseAd();
   }
-  vpaidCreative.collapseAd();
 };
 
 VPAID.skipAd = function () {
-  if (!vpaidCreative) {
+  var _this3 = this;
+
+  if (!this.vpaidCreative) {
     return;
   }
   // when skipAd is called we need to check a 
   // AdSkipped event follows
-  adSkippedTimeout = setTimeout(function () {
-    _onAdStopped();
-  }, ajaxTimeout);
-  vpaidCreative.skipAd();
+  this.adSkippedTimeout = setTimeout(function () {
+    _onAdStopped.call(_this3);
+  }, this.params.ajaxTimeout);
+  this.vpaidCreative.skipAd();
 };
 
 VPAID.setAdVolume = function (volume) {
-  if (!vpaidCreative) {
-    return;
+  if (this.vpaidCreative && typeof volume === 'number' && volume >= 0 && volume <= 1 && typeof this.vpaidCreative.setAdVolume === 'function') {
+    this.vpaidCreative.setAdVolume(volume);
   }
-  if (typeof volume === 'number' && volume >= 0 && volume <= 1 && typeof vpaidCreative.setAdVolume === 'function') {
-    vpaidCreative.setAdVolume(volume);
-  }
-};
-
-var _callbacks = {
-  AdLoaded: _onAdLoaded,
-  AdStarted: _onAdStarted,
-  AdStopped: _onAdStopped,
-  AdSkipped: _onAdSkipped,
-  AdSkippableStateChange: _onAdSkippableStateChange,
-  AdDurationChange: _onAdDurationChange,
-  AdVolumeChange: _onAdVolumeChange,
-  AdImpression: _onAdImpression,
-  AdVideoStart: _onAdVideoStart,
-  AdVideoFirstQuartile: _onAdVideoFirstQuartile,
-  AdVideoMidpoint: _onAdVideoMidpoint,
-  AdVideoThirdQuartile: _onAdVideoThirdQuartile,
-  AdVideoComplete: _onAdVideoComplete,
-  AdClickThru: _onAdClickThru,
-  AdPaused: _onAdPaused,
-  AdPlaying: _onAdPlaying,
-  AdLog: _onAdLog,
-  AdError: _onAdError,
-  AdInteraction: _onAdInteraction,
-  AdUserAcceptInvitation: _onAdUserAcceptInvitation,
-  AdUserMinimize: _onAdUserMinimize,
-  AdUserClose: _onAdUserClose,
-  AdSizeChange: _onAdSizeChange,
-  AdLinearChange: _onAdLinearChange,
-  AdExpandedChange: _onAdExpandedChange,
-  AdRemainingTimeChange: _onAdRemainingTimeChange
 };
 
 var _setCallbacksForCreative = function _setCallbacksForCreative() {
+  if (!this.vpaidCreative) {
+    return;
+  }
+  this.vpaidCallbacks = {
+    AdLoaded: _onAdLoaded.bind(this),
+    AdStarted: _onAdStarted.bind(this),
+    AdStopped: _onAdStopped.bind(this),
+    AdSkipped: _onAdSkipped.bind(this),
+    AdSkippableStateChange: _onAdSkippableStateChange.bind(this),
+    AdDurationChange: _onAdDurationChange.bind(this),
+    AdVolumeChange: _onAdVolumeChange.bind(this),
+    AdImpression: _onAdImpression.bind(this),
+    AdVideoStart: _onAdVideoStart.bind(this),
+    AdVideoFirstQuartile: _onAdVideoFirstQuartile.bind(this),
+    AdVideoMidpoint: _onAdVideoMidpoint.bind(this),
+    AdVideoThirdQuartile: _onAdVideoThirdQuartile.bind(this),
+    AdVideoComplete: _onAdVideoComplete.bind(this),
+    AdClickThru: _onAdClickThru.bind(this),
+    AdPaused: _onAdPaused.bind(this),
+    AdPlaying: _onAdPlaying.bind(this),
+    AdLog: _onAdLog.bind(this),
+    AdError: _onAdError.bind(this),
+    AdInteraction: _onAdInteraction.bind(this),
+    AdUserAcceptInvitation: _onAdUserAcceptInvitation.bind(this),
+    AdUserMinimize: _onAdUserMinimize.bind(this),
+    AdUserClose: _onAdUserClose.bind(this),
+    AdSizeChange: _onAdSizeChange.bind(this),
+    AdLinearChange: _onAdLinearChange.bind(this),
+    AdExpandedChange: _onAdExpandedChange.bind(this),
+    AdRemainingTimeChange: _onAdRemainingTimeChange.bind(this)
+  };
   // Looping through the object and registering each of the callbacks with the creative
-  var callbacksKeys = Object.keys(_callbacks);
+  var callbacksKeys = Object.keys(this.vpaidCallbacks);
   for (var i = 0, len = callbacksKeys.length; i < len; i++) {
     var currentKey = callbacksKeys[i];
-    if (vpaidCreative) {
-      vpaidCreative.subscribe(_callbacks[currentKey], currentKey);
-    }
+    this.vpaidCreative.subscribe(this.vpaidCallbacks[currentKey], currentKey);
   }
 };
 
 var _unsetCallbacksForCreative = function _unsetCallbacksForCreative() {
+  if (!this.vpaidCreative) {
+    return;
+  }
   // Looping through the object and registering each of the callbacks with the creative
-  var callbacksKeys = Object.keys(_callbacks);
+  var callbacksKeys = Object.keys(this.vpaidCallbacks);
   for (var i = 0, len = callbacksKeys.length; i < len; i++) {
     var currentKey = callbacksKeys[i];
-    if (vpaidCreative) {
-      vpaidCreative.unsubscribe(_callbacks[currentKey], currentKey);
-    }
+    this.vpaidCreative.unsubscribe(this.vpaidCallbacks[currentKey], currentKey);
   }
 };
 
@@ -3462,87 +3392,91 @@ var _isValidVPAID = function _isValidVPAID(creative) {
 };
 
 var _onVPAIDAvailable = function _onVPAIDAvailable() {
+  var _this4 = this;
+
   if (DEBUG) {
     _fw.FW.log('RMP-VAST: VPAID available for initAd after being loaded');
   }
-  if (vpaidAvailableInterval) {
-    clearInterval(vpaidAvailableInterval);
+  if (this.vpaidAvailableInterval) {
+    clearInterval(this.vpaidAvailableInterval);
   }
-  if (jsLoadTimeout) {
-    clearTimeout(jsLoadTimeout);
+  if (this.vpaidLoadTimeout) {
+    clearTimeout(this.vpaidLoadTimeout);
   }
-  vpaidCreative = iframe.contentWindow.getVPAIDAd();
-  if (vpaidCreative && typeof vpaidCreative.handshakeVersion === 'function') {
+  this.vpaidCreative = this.vpaidIframe.contentWindow.getVPAIDAd();
+  if (this.vpaidCreative && typeof this.vpaidCreative.handshakeVersion === 'function') {
     // we need to insure handshakeVersion return
     var vpaidVersion = void 0;
     try {
-      vpaidVersion = vpaidCreative.handshakeVersion('2.0');
+      vpaidVersion = this.vpaidCreative.handshakeVersion('2.0');
     } catch (e) {
       _fw.FW.log(e);
       if (DEBUG) {
         _fw.FW.log('RMP-VAST: could not validate VPAID ad unit handshakeVersion');
       }
-      _ping.PING.error.call(rmpVast, 901);
-      _vastErrors.VASTERRORS.process.call(rmpVast, 901);
+      _ping.PING.error.call(this, 901);
+      _vastErrors.VASTERRORS.process.call(this, 901);
       return;
     }
-    intVpaidVersion = parseInt(vpaidVersion);
-    if (intVpaidVersion < 1) {
+    this.vpaidVersion = parseInt(vpaidVersion);
+    if (this.vpaidVersion < 1) {
       if (DEBUG) {
         _fw.FW.log('RMP-VAST: unsupported VPAID version');
       }
-      _ping.PING.error.call(rmpVast, 901);
-      _vastErrors.VASTERRORS.process.call(rmpVast, 901);
+      _ping.PING.error.call(this, 901);
+      _vastErrors.VASTERRORS.process.call(this, 901);
       return;
     }
-    if (!_isValidVPAID(vpaidCreative)) {
+    if (!_isValidVPAID(this.vpaidCreative)) {
       //The VPAID creative doesn't conform to the VPAID spec
-      _ping.PING.error.call(rmpVast, 901);
-      _vastErrors.VASTERRORS.process.call(rmpVast, 901);
+      _ping.PING.error.call(this, 901);
+      _vastErrors.VASTERRORS.process.call(this, 901);
       return;
     }
     // wire callback for VPAID events
-    _setCallbacksForCreative();
+    _setCallbacksForCreative.call(this);
     // wire tracking events for VAST pings
-    _trackingEvents.TRACKINGEVENTS.wire.call(rmpVast);
+    _trackingEvents.TRACKINGEVENTS.wire.call(this);
     var creativeData = {};
-    creativeData.AdParameters = adParametersData;
+    creativeData.AdParameters = this.adParametersData;
     if (DEBUG) {
       _fw.FW.log('RMP-VAST: VPAID AdParameters follow:');
-      _fw.FW.log(adParametersData);
+      _fw.FW.log(this.adParametersData);
     }
     var environmentVars = {};
-    environmentVars.slot = slot;
-    environmentVars.videoSlot = vpaidPlayer;
-    // we assume we can autoplay (or at least muted autoplay) because rmpVast.vastPlayer 
+    environmentVars.slot = this.adContainer;
+    environmentVars.videoSlot = this.vastPlayer;
+    // we assume we can autoplay (or at least muted autoplay) because this.vastPlayer 
     // has been init
     environmentVars.videoSlotCanAutoPlay = true;
     // when we call initAd we expect AdLoaded event to follow closely
     // if not we need to resume content
-    initAdTimeout = setTimeout(function () {
-      if (rmpVast && !hadAdLoaded) {
-        _vastPlayer.VASTPLAYER.resumeContent.call(rmpVast);
+    this.initAdTimeout = setTimeout(function () {
+      if (!_this4.vpaidAdLoaded) {
+        _vastPlayer.VASTPLAYER.resumeContent.call(_this4);
       }
-      hadAdLoaded = false;
-    }, creativeLoadTimeout);
-    _fw.FW.show(slot);
-    _fw.FW.show(vpaidPlayer);
-    vpaidCreative.initAd(initialWidth, initialHeight, initialViewMode, desiredBitrate, creativeData, environmentVars);
+      _this4.vpaidAdLoaded = false;
+    }, this.params.creativeLoadTimeout);
+    _fw.FW.show(this.adContainer);
+    _fw.FW.show(this.vastPlayer);
+    this.vpaidCreative.initAd(this.initialWidth, this.initialHeight, this.initialViewMode, this.desiredBitrate, creativeData, environmentVars);
   }
 };
 
 var _onJSVPAIDLoaded = function _onJSVPAIDLoaded() {
+  var _this5 = this;
+
   if (DEBUG) {
     _fw.FW.log('RMP-VAST: VPAID JS loaded');
   }
-  scriptVPAID.removeEventListener('load', _onJSVPAIDLoaded);
-  var iframeWindow = iframe.contentWindow;
+  this.vpaidScript.removeEventListener('load', this.onJSVPAIDLoaded);
+  var iframeWindow = this.vpaidIframe.contentWindow;
   if (typeof iframeWindow.getVPAIDAd === 'function') {
-    _onVPAIDAvailable();
+    _onVPAIDAvailable.call(this);
   } else {
-    vpaidAvailableInterval = setInterval(function () {
+    this.vpaidAvailableInterval = setInterval(function () {
       if (typeof iframeWindow.getVPAIDAd === 'function') {
-        _onVPAIDAvailable();
+        _onVPAIDAvailable.call(_this5);
       }
     }, 100);
   }
@@ -3552,51 +3486,36 @@ var _onJSVPAIDError = function _onJSVPAIDError() {
   if (DEBUG) {
     _fw.FW.log('RMP-VAST: VPAID JS error loading');
   }
-  if (!scriptVPAID || !rmpVast) {
-    return;
-  }
-  scriptVPAID.removeEventListener('error', _onJSVPAIDError);
-  _ping.PING.error.call(rmpVast, 901);
-  _vastErrors.VASTERRORS.process.call(rmpVast, 901);
+  this.vpaidScript.removeEventListener('error', this.onJSVPAIDError);
+  _ping.PING.error.call(this, 901);
+  _vastErrors.VASTERRORS.process.call(this, 901);
 };
 
-VPAID.loadCreative = function (creativeUrl, adParams, vpaidSettings, ajaxTimeoutParam, creativeLoadTimeoutParam) {
-  rmpVast = this;
-  if (!rmpVast) {
-    return;
-  }
-  ajaxTimeout = ajaxTimeoutParam;
-  creativeLoadTimeout = creativeLoadTimeoutParam;
-  initialWidth = vpaidSettings.width;
-  initialHeight = vpaidSettings.height;
-  initialViewMode = vpaidSettings.viewMode;
-  desiredBitrate = vpaidSettings.desiredBitrate;
-  jsCreativeUrl = creativeUrl;
-  adParametersData = adParams;
-  slot = rmpVast.adContainer;
-  if (!rmpVast.vastPlayer) {
+VPAID.loadCreative = function (creativeUrl, vpaidSettings) {
+  this.initialWidth = vpaidSettings.width;
+  this.initialHeight = vpaidSettings.height;
+  this.initialViewMode = vpaidSettings.viewMode;
+  this.desiredBitrate = vpaidSettings.desiredBitrate;
+  this.vpaidCreativeUrl = creativeUrl;
+  if (!this.vastPlayer) {
     // we use existing rmp-ad-vast-video-player as it is already 
     // available and initialized (no need for user interaction)
-    var existingVastPlayer = rmpVast.adContainer.getElementsByClassName('rmp-ad-vast-video-player')[0];
+    var existingVastPlayer = this.adContainer.getElementsByClassName('rmp-ad-vast-video-player')[0];
     if (!existingVastPlayer) {
-      _vastErrors.VASTERRORS.process.call(rmpVast, 1004);
+      _vastErrors.VASTERRORS.process.call(this, 1004);
       return;
     }
-    rmpVast.vastPlayer = existingVastPlayer;
-  }
-  vpaidPlayer = rmpVast.vastPlayer;
-  if (rmpVast.clickThroughUrl) {
-    clickThroughUrl = rmpVast.clickThroughUrl;
+    this.vastPlayer = existingVastPlayer;
   }
   // create FiF 
-  iframe = document.createElement('iframe');
-  iframe.id = 'vpaid-frame';
+  this.vpaidIframe = document.createElement('iframe');
+  this.vpaidIframe.id = 'vpaid-frame';
   // do not use display: none;
   // https://bugzilla.mozilla.org/show_bug.cgi?id=548397
-  iframe.style.visibility = 'hidden';
-  iframe.style.width = '0px';
-  iframe.style.height = '0px';
-  iframe.style.border = 'none';
+  this.vpaidIframe.style.visibility = 'hidden';
+  this.vpaidIframe.style.width = '0px';
+  this.vpaidIframe.style.height = '0px';
+  this.vpaidIframe.style.border = 'none';
   // this is to adhere to Best Practices for Rich Media Ads 
   // in Asynchronous Ad Environments  http://www.iab.net/media/file/rich_media_ajax_best_practices.pdf
   var src = 'about:self';
@@ -3606,122 +3525,87 @@ VPAID.loadCreative = function (creativeUrl, adParams, vpaidSettings, ajaxTimeout
   if (_env.ENV.isFirefox) {
     src = '';
   }
-  iframe.onload = function () {
+  this.vpaidIframe.onload = function () {
+    var _this6 = this;
+
     if (DEBUG) {
       _fw.FW.log('RMP-VAST: iframe.onload');
     }
     // we unwire listeners
-    iframe.onload = function () {
-      return null;
-    };
-    iframe.onerror = function () {
-      return null;
-    };
-    if (!iframe.contentWindow || !iframe.contentWindow.document || !iframe.contentWindow.document.body) {
+    this.vpaidIframe.onload = this.vpaidIframe.onerror = _fw.FW.nullFn;
+    if (!this.vpaidIframe.contentWindow || !this.vpaidIframe.contentWindow.document || !this.vpaidIframe.contentWindow.document.body) {
       // PING error and resume content
-      _ping.PING.error.call(rmpVast, 901);
-      _vastErrors.VASTERRORS.process.call(rmpVast, 901);
+      _ping.PING.error.call(this, 901);
+      _vastErrors.VASTERRORS.process.call(this, 901);
       return;
     }
-    var iframeWindow = iframe.contentWindow;
+    var iframeWindow = this.vpaidIframe.contentWindow;
     var iframeDocument = iframeWindow.document;
     var iframeBody = iframeDocument.body;
-    scriptVPAID = iframeDocument.createElement('script');
-    jsLoadTimeout = setTimeout(function () {
-      if (!rmpVast || !scriptVPAID) {
-        return;
-      }
+    this.vpaidScript = iframeDocument.createElement('script');
+
+    this.vpaidLoadTimeout = setTimeout(function () {
       if (DEBUG) {
         _fw.FW.log('RMP-VAST: could not load VPAID JS Creative or getVPAIDAd in iframeWindow - resume content');
       }
-      scriptVPAID.removeEventListener('load', _onJSVPAIDLoaded);
-      scriptVPAID.removeEventListener('error', _onJSVPAIDError);
-      _vastPlayer.VASTPLAYER.resumeContent.call(rmpVast);
-    }, creativeLoadTimeout);
-    scriptVPAID.addEventListener('load', _onJSVPAIDLoaded);
-    scriptVPAID.addEventListener('error', _onJSVPAIDError);
-    iframeBody.appendChild(scriptVPAID);
-    scriptVPAID.src = jsCreativeUrl;
-  };
-  iframe.onerror = function () {
+      _this6.vpaidScript.removeEventListener('load', _this6.onJSVPAIDLoaded);
+      _this6.vpaidScript.removeEventListener('error', _this6.onJSVPAIDError);
+      _vastPlayer.VASTPLAYER.resumeContent.call(_this6);
+    }, this.params.creativeLoadTimeout);
+    this.onJSVPAIDLoaded = _onJSVPAIDLoaded.bind(this);
+    this.onJSVPAIDError = _onJSVPAIDError.bind(this);
+    this.vpaidScript.addEventListener('load', this.onJSVPAIDLoaded);
+    this.vpaidScript.addEventListener('error', this.onJSVPAIDError);
+    iframeBody.appendChild(this.vpaidScript);
+    this.vpaidScript.src = this.vpaidCreativeUrl;
+  }.bind(this);
+
+  this.vpaidIframe.onerror = function () {
     if (DEBUG) {
       _fw.FW.log('RMP-VAST: iframe.onerror');
     }
     // we unwire listeners
-    iframe.onload = function () {
-      return null;
-    };
-    iframe.onerror = function () {
-      return null;
-    };
+    this.vpaidIframe.onload = this.vpaidIframe.onerror = _fw.FW.nullFn;
     // PING error and resume content
-    _ping.PING.error.call(rmpVast, 901);
-    _vastErrors.VASTERRORS.process.call(rmpVast, 901);
-  };
-  iframe.src = src;
-  slot.appendChild(iframe);
+    _ping.PING.error.call(this, 901);
+    _vastErrors.VASTERRORS.process.call(this, 901);
+  }.bind(this);
+
+  this.vpaidIframe.src = src;
+  this.adContainer.appendChild(this.vpaidIframe);
 };
 
 VPAID.destroy = function () {
-  if (vpaidAvailableInterval) {
-    clearInterval(vpaidAvailableInterval);
+  if (this.vpaidAvailableInterval) {
+    clearInterval(this.vpaidAvailableInterval);
   }
-  if (jsLoadTimeout) {
-    clearTimeout(jsLoadTimeout);
+  if (this.vpaidLoadTimeout) {
+    clearTimeout(this.vpaidLoadTimeout);
   }
-  if (initAdTimeout) {
-    clearTimeout(initAdTimeout);
+  if (this.initAdTimeout) {
+    clearTimeout(this.initAdTimeout);
   }
-  if (startAdTimeout) {
-    clearTimeout(startAdTimeout);
+  if (this.startAdTimeout) {
+    clearTimeout(this.startAdTimeout);
   }
-  _unsetCallbacksForCreative();
-  if (scriptVPAID) {
-    scriptVPAID.removeEventListener('load', _onJSVPAIDLoaded);
-    scriptVPAID.removeEventListener('error', _onJSVPAIDError);
+  _unsetCallbacksForCreative.call(this);
+  if (this.vpaidScript) {
+    this.vpaidScript.removeEventListener('load', this.onJSVPAIDLoaded);
+    this.vpaidScript.removeEventListener('error', this.onJSVPAIDError);
   }
-  if (vpaidPlayer) {
+  if (this.vastPlayer) {
     // empty buffer
-    vpaidPlayer.removeAttribute('src');
-    vpaidPlayer.load();
-    _fw.FW.hide(vpaidPlayer);
+    this.vastPlayer.removeAttribute('src');
+    this.vastPlayer.load();
+    _fw.FW.hide(this.vastPlayer);
   }
-  var vpaidIframe = document.getElementById('vpaid-frame');
-  if (vpaidIframe !== null) {
+  if (this.vpaidIframe) {
     try {
-      slot.removeChild(vpaidIframe);
+      this.adContainer.removeChild(this.vpaidIframe);
     } catch (e) {
       _fw.FW.trace(e);
     }
   }
-  setTimeout(function () {
-    vpaidCreative = null;
-    scriptVPAID = null;
-    iframe = null;
-    jsLoadTimeout = null;
-    initAdTimeout = null;
-    startAdTimeout = null;
-    vpaidAvailableInterval = null;
-    adStoppedTimeout = null;
-    adSkippedTimeout = null;
-    adParametersData = '';
-    clickThroughUrl = '';
-    currentVPAIDVolume = 1;
-    vpaidPaused = true;
-    jsCreativeUrl = '';
-    vpaidRemainingTime = -1;
-    intVpaidVersion = -1;
-    adDurationVPAID1 = -1;
-    vpaidIsLinear = true;
-    initialWidth = 640;
-    initialHeight = 360;
-    initialViewMode = 'normal';
-    desiredBitrate = 500;
-    ajaxTimeout = 7000;
-    creativeLoadTimeout = 10000;
-    hadAdLoaded = false;
-    hasAdStarted = false;
-  }, 100);
 };
 
 exports.VPAID = VPAID;
@@ -4053,6 +3937,7 @@ RESET.internalVariables = function () {
   this.onNonLinearClickThrough = null;
   this.onContextMenu = null;
   // init internal variables
+  this.vastDocument = null;
   this.adTagUrl = null;
   this.vastPlayer = null;
   this.trackingTags = [];
@@ -4108,6 +3993,31 @@ RESET.internalVariables = function () {
   this.nonLinearMinSuggestedDuration = 0;
   // VPAID
   this.isVPAID = false;
+  this.vpaidCreative = null;
+  this.vpaidScript = null;
+  this.vpaidIframe = null;
+  this.vpaidLoadTimeout = null;
+  this.initAdTimeout = null;
+  this.startAdTimeout = null;
+  this.vpaidAvailableInterval = null;
+  this.adStoppedTimeout = null;
+  this.adSkippedTimeout = null;
+  this.adParametersData = '';
+  this.vpaidCurrentVolume = 1;
+  this.vpaidPaused = true;
+  this.vpaidCreativeUrl = '';
+  this.vpaidRemainingTime = -1;
+  this.vpaidVersion = -1;
+  this.vpaid1AdDuration = -1;
+  this.initialWidth = 640;
+  this.initialHeight = 360;
+  this.initialViewMode = 'normal';
+  this.desiredBitrate = 500;
+  this.vpaidAdLoaded = false;
+  this.vpaidAdStarted = false;
+  this.vpaidCallbacks = {};
+  this.onJSVPAIDLoaded = _fw.FW.nullFn;
+  this.onJSVPAIDError = _fw.FW.nullFn;
 };
 
 RESET.unwireVastPlayerEvents = function () {

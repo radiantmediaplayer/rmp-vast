@@ -6,8 +6,15 @@ describe("Test for NonLinearSpecIABVAST2", function () {
 
   var id = 'rmpPlayer';
   var container = document.getElementById(id);
+  var video = document.querySelector('.rmp-video');
   var rmpVast = new RmpVast(id);
   var fw = rmpVast.getFW();
+  var env = rmpVast.getEnv();
+  if (env.isAndroid[0]) {
+    container.style.width = '320px';
+    container.style.height = '180px';
+    video.setAttribute('muted', 'muted');
+  }
   var title = document.getElementsByTagName('title')[0];
 
   it("should load adTag and play it", function (done) {
@@ -22,6 +29,20 @@ describe("Test for NonLinearSpecIABVAST2", function () {
 
     container.addEventListener('adloaded', function (e) {
       _incrementAndLog(e);
+    });
+
+    container.addEventListener('aderror', function (e) {
+      var errorCode = rmpVast.getAdVastErrorCode();
+      if (env.isAndroid[0] && errorCode === 501) {
+        _incrementAndLog(e);
+        expect(validSteps).toBe(3);
+        if (validSteps === 3) {
+          title.textContent = 'Test completed';
+        }
+        setTimeout(function () {
+          done();
+        }, 200);
+      }
     });
 
     container.addEventListener('adimpression', function (e) {
@@ -53,7 +74,7 @@ describe("Test for NonLinearSpecIABVAST2", function () {
       }
       setTimeout(function () {
         done();
-      }, 500);
+      }, 200);
     });
 
     rmpVast.loadAds(ADTAG);

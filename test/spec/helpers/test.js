@@ -1,22 +1,32 @@
 'use strict';
 
 const { Builder, until } = require('../../../node_modules/selenium-webdriver/');
+const { Options } = require('../../../node_modules/selenium-webdriver/chrome');
 const TEST = {};
 
 TEST.driverCount = 3;
 
-TEST.pathToTest = 'http://localhost/rmp-vast/test/spec/';
+TEST.pathToTest = 'http://192.168.1.98/rmp-vast/test/spec/';
 
 TEST.getDriver = function (which) {
-  let driver;
+  var driver;
   if (which === 'chrome' || !which) {
     driver = new Builder().forBrowser('chrome').build();
   } else if (which === 'firefox') {
     driver = new Builder().forBrowser('firefox').build();
   } else if (which === 'MicrosoftEdge') {
     driver = new Builder().forBrowser('MicrosoftEdge').build();
+  } else if (which === 'internet explorer') {
+    driver = new Builder().forBrowser('internet explorer').build();
+  } else if (which === 'android') {
+    driver = new Builder().
+      forBrowser('chrome').
+      setChromeOptions(new Options().androidChrome()).
+      build(); 
+  } else if (which === 'safari') {
+    driver = new Builder().forBrowser('safari').build();
   }
-  return driver;
+  return driver; 
 };
 
 TEST.getTime = function () {

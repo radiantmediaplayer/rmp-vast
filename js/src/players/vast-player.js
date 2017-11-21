@@ -22,7 +22,7 @@ var _destroyVastPlayer = function () {
     ICONS.destroy.call(this);
   }
   if (this.isVPAID) {
-    VPAID.destroy();
+    VPAID.destroy.call(this);
   }
   // unwire events
   RESET.unwireVastPlayerEvents.call(this);
@@ -126,8 +126,8 @@ VASTPLAYER.init = function () {
     if (this.contentPlayer.muted) {
       this.vastPlayer.muted = true;
     }
-    // black poster based 64 GIF
-    this.vastPlayer.poster = 'data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=';
+    // black poster based 64 png
+    this.vastPlayer.poster = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=';
     this.vastPlayer.setAttribute('x-webkit-airplay', 'allow');
     if (typeof this.contentPlayer.playsInline === 'boolean' && this.contentPlayer.playsInline) {
       this.vastPlayer.playsInline = true;

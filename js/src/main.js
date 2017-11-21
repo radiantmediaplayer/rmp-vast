@@ -14,8 +14,6 @@ import { ICONS } from './creatives/icons';
 
 window.DEBUG = true;
 
-var vastDocument;
-
 window.RmpVast = function (id, params) {
   if (typeof id !== 'string' || id === '') {
     FW.log('RMP-VAST: invalid id to create new instance - exit');
@@ -237,13 +235,13 @@ var _onXmlAvailable = function (xml) {
     return;
   }
   // check for VAST node
-  vastDocument = xml.getElementsByTagName('VAST');
-  if (vastDocument.length === 0) {
+  this.vastDocument = xml.getElementsByTagName('VAST');
+  if (this.vastDocument.length === 0) {
     VASTERRORS.process.call(this, 100);
     return;
   }
   // VAST/Error node
-  let errorNode = vastDocument[0].getElementsByTagName('Error');
+  let errorNode = this.vastDocument[0].getElementsByTagName('Error');
   if (errorNode.length > 0) {
     let errorUrl = FWVAST.getNodeValue(errorNode[0], true);
     if (errorUrl !== null) {
@@ -252,14 +250,14 @@ var _onXmlAvailable = function (xml) {
   }
   //check for VAST version 2 or 3
   let pattern = /^(2|3)\./i;
-  let version = vastDocument[0].getAttribute('version');
+  let version = this.vastDocument[0].getAttribute('version');
   if (!pattern.test(version)) {
     PING.error.call(this, 102, this.vastErrorTags);
     VASTERRORS.process.call(this, 102);
     return;
   }
   // if empty VAST return
-  let ad = vastDocument[0].getElementsByTagName('Ad');
+  let ad = this.vastDocument[0].getElementsByTagName('Ad');
   if (ad.length === 0) {
     PING.error.call(this, 303, this.vastErrorTags);
     VASTERRORS.process.call(this, 303);
