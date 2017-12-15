@@ -230,6 +230,8 @@ The following methods should be queried after the `adstarted` event has fired fo
 - `getAdMediaWidth()`: return (number|null) representing the width of the selected creative
 - `getAdMediaHeight()`: return (number|null) representing the height of the selected creative
 - `getClickThroughUrl()`: return (string|null) representing the click-through (e.g. destination) URL for the selected creative
+- `getContentPlayerCompleted()`: return (boolean) stating if content player has reached end of content
+- `setContentPlayerCompleted(value)`: input value must be a (boolean) - sets the contentPlayerCompleted state of the player, this is used when source on content player changes and we need to explicitly reset contentPlayerCompleted internal value so that content can resume as expected on next ad load
 
 Additional VPAID-related methods
 - `resizeAd(width, height, viewMode)`: resizes the VPAID creative based on width (number), height (number) and viewMode (string). viewMode should be either 'normal' or 'fullscreen' 

@@ -1,6 +1,6 @@
 /**
  * @license Copyright (c) 2017 Radiant Media Player | https://www.radiantmediaplayer.com
- * rmp-vast 1.2.5
+ * rmp-vast 1.2.6
  * GitHub: https://github.com/radiantmediaplayer/rmp-vast
  * MIT License: https://github.com/radiantmediaplayer/rmp-vast/blob/master/LICENSE
  */
@@ -260,6 +260,16 @@ API.getAdMediaHeight = function () {
 
 API.getClickThroughUrl = function () {
   return this.clickThroughUrl;
+};
+
+API.getContentPlayerCompleted = function () {
+  return this.contentPlayerCompleted;
+};
+
+API.setContentPlayerCompleted = function (value) {
+  if (typeof value === 'boolean') {
+    this.contentPlayerCompleted = value;
+  }
 };
 
 API.createEvent = function (event) {
@@ -1388,11 +1398,11 @@ var _isSafari = function _isSafari(ua) {
   return [isSafari, safariVersion];
 };
 
-var _isAndroid = function _isAndroid(ua, isWindowsPhone, isIos, hasTouchEvents) {
+var _isAndroid = function _isAndroid(ua, isWindowsPhone, isIos) {
   var isAndroid = false;
   var androidVersion = -1;
   var support = [isAndroid, androidVersion];
-  if (isWindowsPhone[0] || isIos[0] || !hasTouchEvents) {
+  if (isWindowsPhone[0] || isIos[0]) {
     return support;
   }
   var pattern = /android/i;
@@ -1474,12 +1484,16 @@ var userAgent = _getUserAgent();
 var hasTouchEvents = _hasTouchEvents();
 var isWindowsPhone = _isWindowsPhone(userAgent, hasTouchEvents);
 ENV.isIos = _isIos(userAgent, isWindowsPhone, hasTouchEvents);
-ENV.isAndroid = _isAndroid(userAgent, isWindowsPhone, ENV.isIos, hasTouchEvents);
+ENV.isAndroid = _isAndroid(userAgent, isWindowsPhone, ENV.isIos);
+ENV.isMobileAndroid = false;
+if (ENV.isAndroid[0] && hasTouchEvents) {
+  ENV.isMobileAndroid = true;
+}
 ENV.isMacOSX = _isMacOSX(userAgent, ENV.isIos);
 ENV.isSafari = _isSafari(userAgent);
 ENV.isFirefox = _isFirefox(userAgent);
 ENV.isMobile = false;
-if (ENV.isIos[0] || ENV.isAndroid[0] || isWindowsPhone[0]) {
+if (ENV.isIos[0] || ENV.isMobileAndroid || isWindowsPhone[0]) {
   ENV.isMobile = true;
 }
 
@@ -2646,7 +2660,7 @@ VASTPLAYER.init = function () {
   if (!this.useContentPlayerForAds) {
     this.vastPlayer = document.createElement('video');
     // disable casting of video ads for Android
-    if (_env.ENV.isAndroid[0] && typeof this.vastPlayer.disableRemotePlayback !== 'undefined') {
+    if (_env.ENV.isMobileAndroid && typeof this.vastPlayer.disableRemotePlayback !== 'undefined') {
       this.vastPlayer.disableRemotePlayback = true;
     }
     this.vastPlayer.className = 'rmp-ad-vast-video-player';
@@ -2815,6 +2829,10 @@ VASTPLAYER.resumeContent = function () {
   // tick to let last ping events (complete/skip) to be sent
   setTimeout(function () {
     _destroyVastPlayer.call(_this3);
+    // if this.contentPlayerCompleted = true - we are in a post-roll situation
+    // in that case we must not resume content once the post-roll has completed
+    // you can use setContentPlayerCompleted/getContentPlayerCompleted to support 
+    // custom use-cases when dynamically changing source for content
     if (!_this3.contentPlayerCompleted) {
       _contentPlayer.CONTENTPLAYER.play.call(_this3);
     }

@@ -244,6 +244,16 @@ API.getClickThroughUrl = function () {
   return this.clickThroughUrl;
 };
 
+API.getContentPlayerCompleted = function() {
+  return this.contentPlayerCompleted;
+};
+
+API.setContentPlayerCompleted = function(value) {
+  if (typeof value === 'boolean') {
+    this.contentPlayerCompleted = value;
+  }
+};
+
 API.createEvent = function (event) {
   // adloaded, addurationchange, adclick, adimpression, adstarted, 
   // adtagloaded, adtagstartloading, adpaused, adresumed 

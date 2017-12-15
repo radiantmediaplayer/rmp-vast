@@ -87,11 +87,11 @@ var _isSafari = function (ua) {
   return [isSafari, safariVersion];
 };
 
-var _isAndroid = function (ua, isWindowsPhone, isIos, hasTouchEvents) {
+var _isAndroid = function (ua, isWindowsPhone, isIos) {
   let isAndroid = false;
   let androidVersion = -1;
   let support = [isAndroid, androidVersion];
-  if (isWindowsPhone[0] || isIos[0] || !hasTouchEvents) {
+  if (isWindowsPhone[0] || isIos[0]) {
     return support;
   }
   let pattern = /android/i;
@@ -177,12 +177,16 @@ var userAgent = _getUserAgent();
 var hasTouchEvents = _hasTouchEvents();
 var isWindowsPhone = _isWindowsPhone(userAgent, hasTouchEvents);
 ENV.isIos = _isIos(userAgent, isWindowsPhone, hasTouchEvents);
-ENV.isAndroid = _isAndroid(userAgent, isWindowsPhone, ENV.isIos, hasTouchEvents);
+ENV.isAndroid = _isAndroid(userAgent, isWindowsPhone, ENV.isIos);
+ENV.isMobileAndroid = false;
+if (ENV.isAndroid[0] && hasTouchEvents) {
+  ENV.isMobileAndroid = true;
+} 
 ENV.isMacOSX = _isMacOSX(userAgent, ENV.isIos);
 ENV.isSafari = _isSafari(userAgent);
 ENV.isFirefox = _isFirefox(userAgent);
 ENV.isMobile = false;
-if (ENV.isIos[0] || ENV.isAndroid[0] || isWindowsPhone[0]) {
+if (ENV.isIos[0] || ENV.isMobileAndroid || isWindowsPhone[0]) {
   ENV.isMobile = true;
 }
 

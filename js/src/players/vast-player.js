@@ -114,7 +114,7 @@ VASTPLAYER.init = function () {
   if (!this.useContentPlayerForAds) {
     this.vastPlayer = document.createElement('video');
     // disable casting of video ads for Android
-    if (ENV.isAndroid[0] && typeof this.vastPlayer.disableRemotePlayback !== 'undefined') {
+    if (ENV.isMobileAndroid && typeof this.vastPlayer.disableRemotePlayback !== 'undefined') {
       this.vastPlayer.disableRemotePlayback = true;
     }
     this.vastPlayer.className = 'rmp-ad-vast-video-player';
@@ -281,6 +281,10 @@ VASTPLAYER.resumeContent = function () {
   // tick to let last ping events (complete/skip) to be sent
   setTimeout(() => {
     _destroyVastPlayer.call(this);
+    // if this.contentPlayerCompleted = true - we are in a post-roll situation
+    // in that case we must not resume content once the post-roll has completed
+    // you can use setContentPlayerCompleted/getContentPlayerCompleted to support 
+    // custom use-cases when dynamically changing source for content
     if (!this.contentPlayerCompleted) {
       CONTENTPLAYER.play.call(this);
     }
