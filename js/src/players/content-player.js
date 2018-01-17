@@ -47,7 +47,7 @@ CONTENTPLAYER.setMute = function (muted) {
 CONTENTPLAYER.getDuration = function () {
   if (this.contentPlayer) {
     let duration = this.contentPlayer.duration;
-    if (typeof duration === 'number' && isFinite(duration)) {
+    if (typeof duration === 'number' && Number.isFinite(duration)) {
       return Math.round(duration * 1000);
     }
   }
@@ -57,7 +57,7 @@ CONTENTPLAYER.getDuration = function () {
 CONTENTPLAYER.getCurrentTime = function () {
   if (this.contentPlayer) {
     let currentTime = this.contentPlayer.currentTime;
-    if (typeof currentTime === 'number' && isFinite(currentTime)) {
+    if (typeof currentTime === 'number' && Number.isFinite(currentTime)) {
       return Math.round(currentTime * 1000);
     }
   }

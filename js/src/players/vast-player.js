@@ -257,7 +257,7 @@ VASTPLAYER.pause = function () {
 VASTPLAYER.getDuration = function () {
   if (this.vastPlayer) {
     let duration = this.vastPlayer.duration;
-    if (typeof duration === 'number' && isFinite(duration)) {
+    if (typeof duration === 'number' && Number.isFinite(duration)) {
       return Math.round(duration * 1000);
     }
   }
@@ -267,7 +267,7 @@ VASTPLAYER.getDuration = function () {
 VASTPLAYER.getCurrentTime = function () {
   if (this.vastPlayer) {
     let currentTime = this.vastPlayer.currentTime;
-    if (typeof currentTime === 'number' && isFinite(currentTime)) {
+    if (typeof currentTime === 'number' && Number.isFinite(currentTime)) {
       return Math.round(currentTime * 1000);
     }
   }

@@ -1,4 +1,22 @@
-import 'core-js/es6';
+import 'core-js/fn/object/keys';
+
+import 'core-js/fn/function/bind';
+
+import 'core-js/fn/array/is-array';
+import 'core-js/fn/array/index-of';
+import 'core-js/fn/array/for-each';
+import 'core-js/fn/array/filter';
+import 'core-js/fn/array/sort';
+
+import 'core-js/fn/string/trim';
+
+import 'core-js/fn/number/is-finite';
+
+import 'core-js/es6/promise';
+
+import 'core-js/fn/parse-float';
+import 'core-js/fn/parse-int';
+
 import { FW } from './fw/fw';
 import { ENV } from './fw/env';
 import { FWVAST } from './fw/fw-vast';
