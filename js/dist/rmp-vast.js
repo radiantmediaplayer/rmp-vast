@@ -1,6 +1,6 @@
 /**
  * @license Copyright (c) 2017 Radiant Media Player | https://www.radiantmediaplayer.com
- * rmp-vast 1.2.7
+ * rmp-vast 1.2.8
  * GitHub: https://github.com/radiantmediaplayer/rmp-vast
  * MIT License: https://github.com/radiantmediaplayer/rmp-vast/blob/master/LICENSE
  */
@@ -793,12 +793,11 @@ LINEAR.update = function (url, type) {
 LINEAR.parse = function (linear) {
   // we have an InLine Linear which is not a Wrapper - process MediaFiles
   this.adIsLinear = true;
-  var duration = linear[0].getElementsByTagName('Duration');
-  if (duration.length === 0) {
-    // 1 Duration element must be present otherwise VAST document is not spec compliant
-    _ping.PING.error.call(this, 101, this.inlineOrWrapperErrorTags);
-    _vastErrors.VASTERRORS.process.call(this, 101);
-    return;
+  if (DEBUG) {
+    var duration = linear[0].getElementsByTagName('Duration');
+    if (duration.length === 0) {
+      _fw.FW.log('RMP-VAST: missing Duration tag child of Linear tag - this is not a VAST 3 spec compliant adTag - continuing anyway (same as IMA)');
+    }
   }
   var mediaFiles = linear[0].getElementsByTagName('MediaFiles');
   if (mediaFiles.length === 0) {
@@ -860,18 +859,24 @@ LINEAR.parse = function (linear) {
     }
     var delivery = currentMediaFile.getAttribute('delivery');
     if (delivery !== 'progressive' && delivery !== 'streaming') {
-      mediaFileToRemove.push(i);
-      continue;
+      delivery = 'progressive';
+      if (DEBUG) {
+        _fw.FW.log('RMP-VAST: missing required delivery attribute on MediaFile tag - this is not a VAST 3 spec compliant adTag - continuing anyway (same as IMA)');
+      }
     }
     var width = currentMediaFile.getAttribute('width');
     if (width === null || width === '') {
-      mediaFileToRemove.push(i);
-      continue;
+      if (DEBUG) {
+        _fw.FW.log('RMP-VAST: missing required width attribute on MediaFile tag - this is not a VAST 3 spec compliant adTag - continuing anyway (same as IMA)');
+      }
+      width = 480;
     }
     var height = currentMediaFile.getAttribute('height');
     if (height === null || height === '') {
-      mediaFileToRemove.push(i);
-      continue;
+      if (DEBUG) {
+        _fw.FW.log('RMP-VAST: missing required height attribute on MediaFile tag - this is not a VAST 3 spec compliant adTag - continuing anyway (same as IMA)');
+      }
+      height = 270;
     }
     mediaFileItems[i].width = parseInt(width);
     mediaFileItems[i].height = parseInt(height);
@@ -2236,8 +2241,8 @@ var _onXmlAvailable = function (xml) {
       this.vastErrorTags.push({ event: 'error', url: errorUrl });
     }
   }
-  //check for VAST version 2 or 3
-  var pattern = /^(2|3)\./i;
+  //check for VAST version 2, 3 or 4 (we support VAST 4 in the limit of what is supported in VAST 3)
+  var pattern = /^(2|3|4)\./i;
   var version = this.vastDocument[0].getAttribute('version');
   if (!pattern.test(version)) {
     _ping.PING.error.call(this, 102, this.vastErrorTags);

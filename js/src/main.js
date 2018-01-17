@@ -15,7 +15,7 @@ import 'core-js/fn/number/is-finite';
 import 'core-js/es6/promise';
 
 import 'core-js/fn/parse-float';
-import 'core-js/fn/parse-int';
+import 'core-js/fn/parse-int'; 
 
 import { FW } from './fw/fw';
 import { ENV } from './fw/env';
@@ -266,8 +266,8 @@ var _onXmlAvailable = function (xml) {
       this.vastErrorTags.push({ event: 'error', url: errorUrl });
     }
   }
-  //check for VAST version 2 or 3
-  let pattern = /^(2|3)\./i;
+  //check for VAST version 2, 3 or 4 (we support VAST 4 in the limit of what is supported in VAST 3)
+  let pattern = /^(2|3|4)\./i;
   let version = this.vastDocument[0].getAttribute('version');
   if (!pattern.test(version)) {
     PING.error.call(this, 102, this.vastErrorTags);
