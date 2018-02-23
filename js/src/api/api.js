@@ -240,8 +240,12 @@ API.getAdMediaHeight = function () {
   return null;
 };
 
-API.getClickThroughUrl = function () {
+API.getClickThroughUrl = function () { 
   return this.clickThroughUrl;
+};
+
+API.getIsSkippableAd = function () {
+  return this.isSkippableAd;
 };
 
 API.getContentPlayerCompleted = function() {
