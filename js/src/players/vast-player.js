@@ -47,52 +47,53 @@ var _destroyVastPlayer = function () {
   clearInterval(this.antiSeekLogicInterval);
   // reset creativeLoadTimeout
   clearTimeout(this.creativeLoadTimeoutCallback);
-  if (!this.isVPAID) {
-    if (this.useContentPlayerForAds) {
-      // when content is restored we need to seek to previously known currentTime
-      // this must happen on playing event
-      // the below is some hack I come up with because Safari is confused with 
-      // what it is asked to do when post roll come into play
-      if (this.currentContentCurrentTime > 4000) {
-        this.needsSeekAdjust = true;
-        if (this.contentPlayerCompleted) {
-          this.needsSeekAdjust = false;
-        }
-        if (!this.seekAdjustAttached) {
-          this.seekAdjustAttached = true;
-          this.contentPlayer.addEventListener('playing', () => {
-            if (this.needsSeekAdjust) {
-              CONTENTPLAYER.seekTo.call(this, this.currentContentCurrentTime);
-              this.needsSeekAdjust = false;
-            }
-          });
-        }
+  if (this.useContentPlayerForAds) {
+    // when content is restored we need to seek to previously known currentTime
+    // this must happen on playing event
+    // the below is some hack I come up with because Safari is confused with 
+    // what it is asked to do when post roll come into play
+    if (this.currentContentCurrentTime > 4000) {
+      this.needsSeekAdjust = true;
+      if (this.contentPlayerCompleted) {
+        this.needsSeekAdjust = false;
       }
-      if (DEBUG) {
-        FW.log('RMP-VAST: recovering content with src ' + this.currentContentSrc +
-          ' - at time: ' + this.currentContentCurrentTime);
-      }
-      this.contentPlayer.src = this.currentContentSrc;
-    } else {
-      // empty buffer for vastPlayer
-      try {
-        if (this.vastPlayer) {
-          this.vastPlayer.pause();
-          // empty buffer
-          this.vastPlayer.removeAttribute('src');
-          this.vastPlayer.load();
-          FW.hide(this.vastPlayer);
-          if (this.nonLinearContainer) {
-            try {
-              this.adContainer.removeChild(this.nonLinearContainer);
-            } catch (e) {
-              FW.trace(e);
-            }
+      if (!this.seekAdjustAttached) {
+        this.seekAdjustAttached = true;
+        this.contentPlayer.addEventListener('playing', () => {
+          if (this.needsSeekAdjust) {
+            this.needsSeekAdjust = false;
+            CONTENTPLAYER.seekTo.call(this, this.currentContentCurrentTime);
           }
-        }
-      } catch (e) {
-        FW.trace(e);
+        });
       }
+    }
+    if (DEBUG) {
+      FW.log('RMP-VAST: recovering content with src ' + this.currentContentSrc +
+        ' - at time: ' + this.currentContentCurrentTime);
+    }
+    this.contentPlayer.src = this.currentContentSrc;
+  } else {
+    // flush vastPlayer
+    try {
+      if (this.vastPlayer) {
+        this.vastPlayer.pause();
+        // empty buffer
+        this.vastPlayer.removeAttribute('src');
+        this.vastPlayer.load();
+        FW.hide(this.vastPlayer);
+        if (DEBUG) {
+          FW.log('RMP-VAST: vastPlayer flushed');
+        }
+      }
+      if (this.nonLinearContainer) {
+        try {
+          this.adContainer.removeChild(this.nonLinearContainer);
+        } catch (e) {
+          FW.trace(e);
+        }
+      }
+    } catch (e) {
+      FW.trace(e);
     }
   }
   // reset internal variables for next ad if any

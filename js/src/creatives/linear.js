@@ -216,7 +216,7 @@ LINEAR.parse = function (linear) {
     let apiFramework = mediaFileItems[i].apiFramework = currentMediaFile.getAttribute('apiFramework');
     // we have a VPAID JS - we break
     // for VPAID we may not have a width, height or delivery
-    if (this.params.enableVpaid && !this.useContentPlayerForAds && apiFramework &&
+    if (this.params.enableVpaid && apiFramework &&
       patternVPAID.test(apiFramework) && patternJavaScript.test(type)) {
       if (DEBUG) {
         FW.log('RMP-VAST: VPAID creative detected');
@@ -273,11 +273,7 @@ LINEAR.parse = function (linear) {
     let type = currentMediaFileItem.type;
     let url = currentMediaFileItem.url;
     if (this.isVPAID && url) {
-      VPAID.loadCreative.call(
-        this,
-        url,
-        this.params.vpaidSettings
-      );
+      VPAID.loadCreative.call(this, url, this.params.vpaidSettings);
       this.adContentType = type;
       return;
     }

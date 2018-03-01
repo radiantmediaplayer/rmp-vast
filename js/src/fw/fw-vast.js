@@ -203,7 +203,7 @@ FWVAST.logVideoEvents = function (video) {
 
 FWVAST.filterParams = function (params) {
   let defaultParams = {
-    ajaxTimeout: 7000,
+    ajaxTimeout: 8000,
     creativeLoadTimeout: 10000,
     ajaxWithCredentials: false,
     maxNumRedirects: 4,
@@ -211,7 +211,7 @@ FWVAST.filterParams = function (params) {
     skipMessage: 'Skip ad',
     skipWaitingMessage: 'Skip ad in',
     textForClickUIOnMobile: 'Learn more',
-    enableVpaid: false,
+    enableVpaid: true,
     vpaidSettings: {
       width: 640,
       height: 360,

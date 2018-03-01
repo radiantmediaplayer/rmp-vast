@@ -112,7 +112,7 @@ Once rmp-vast library is loaded on your page you can create a new rmp-vast insta
 
 `params: Object` is an optional object representing various parameters that can be passed to a rmp-vast instance and that will affect the player inner-workings. Available properties for the params object follow:
 
-`params.ajaxTimeout: Number` timeout in ms for an AJAX request to load a VAST tag from the ad server. Default 7000.
+`params.ajaxTimeout: Number` timeout in ms for an AJAX request to load a VAST tag from the ad server. Default 8000.
 
 `params.creativeLoadTimeout: Number` timeout in ms to load linear media creative from the server. Default 10000.
 
@@ -128,8 +128,7 @@ Once rmp-vast library is loaded on your page you can create a new rmp-vast insta
 
 `params.textForClickUIOnMobile: String` on mobile devices the click-through URL for a linear ad is provided in a box located at the top right corner of the player. This setting set the text for this box. Default: 'Learn more'.
 
-`params.enableVpaid: Boolean` VPAID support is currently in BETA and needs to be 
-enabled with this setting. Default: false.
+`params.enableVpaid: Boolean` Enables VPAID support or not. Default: true.
 
 `params.vpaidSettings: Object` information required to properly display VPAID creatives - note that it is to the parent application of rmp-vast to provide those informations - below values are default (see test/spec/vpaidSpec/ for examples):
 ```javascript
@@ -257,9 +256,9 @@ The following methods provide context information for the rmp-vast instance:
 
 ### VPAID support
 **We need your help!**
-VPAID support in rmp-vast should be okay but is currently in BETA. It is no secret that VPAID in the industry is a jungle and we need your help to best implement it. Any feedback and test adTag that can improve VPAID support in rmp-vast are welcome - open an issue if needs be.
+It is no secret that VPAID in the industry is a jungle and we need your help to best implement it. 
+Any feedback and test adTags that can improve VPAID support in rmp-vast are welcome - open an issue when needed.
 Current VPAID support limitations:
-- no iOS or macOS Safari support (coming later)
 - supports only linear VPAID (non-linear support may be coming later)
 - no support for changes in linearity (likely to cause playback issues): we need production adTag to test this but we have not found reliable resources for it - please share if you have some available
  

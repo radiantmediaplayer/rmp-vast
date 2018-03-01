@@ -118,7 +118,7 @@ var _onAdLoaded = function () {
       VASTPLAYER.resumeContent.call(this);
     }
     this.vpaidAdStarted = false;
-  }, this.params.ajaxTimeout);
+  }, this.params.creativeLoadTimeout);
   // pause content player
   CONTENTPLAYER.pause.call(this);
   this.adOnStage = true;
@@ -151,7 +151,7 @@ var _onAdStarted = function () {
   if (typeof this.vpaidCreative.getAdLinear === 'function') {
     this.adIsLinear = this.vpaidCreative.getAdLinear();
     if (this.adIsLinear === false) {
-      // we currently do not support Click-to-Linear Video Ad
+      // we currently do not support Click-to-Linear Video Ad or non-linear VPAID ads
       VPAID.stopAd.call(this);
       return;
     }
@@ -432,7 +432,7 @@ VPAID.stopAd = function () {
   // AdStopped event follows
   this.adStoppedTimeout = setTimeout(() => {
     _onAdStopped.call(this);
-  }, this.params.ajaxTimeout);
+  }, this.params.creativeLoadTimeout);
   this.vpaidCreative.stopAd();
 };
 
@@ -474,7 +474,7 @@ VPAID.skipAd = function () {
   // AdSkipped event follows
   this.adSkippedTimeout = setTimeout(() => {
     _onAdStopped.call(this);
-  }, this.params.ajaxTimeout);
+  }, this.params.creativeLoadTimeout);
   this.vpaidCreative.skipAd();
 };
 
@@ -582,7 +582,7 @@ var _onVPAIDAvailable = function () {
     this.vpaidVersion = parseInt(vpaidVersion);
     if (this.vpaidVersion < 1) {
       if (DEBUG) {
-        FW.log('RMP-VAST: unsupported VPAID version');
+        FW.log('RMP-VAST: unsupported VPAID version - exit');
       }
       PING.error.call(this, 901);
       VASTERRORS.process.call(this, 901);
@@ -590,6 +590,9 @@ var _onVPAIDAvailable = function () {
     }
     if (!_isValidVPAID(this.vpaidCreative)) {
       //The VPAID creative doesn't conform to the VPAID spec
+      if (DEBUG) {
+        FW.log('RMP-VAST: VPAID creative does not conform to VPAID spec - exit');
+      }
       PING.error.call(this, 901);
       VASTERRORS.process.call(this, 901);
       return;
@@ -687,8 +690,9 @@ VPAID.loadCreative = function (creativeUrl, vpaidSettings) {
   let src = 'about:self';
   // ... however this does not work in Firefox (onload is never reached)
   // https://bugzilla.mozilla.org/show_bug.cgi?id=444165
-  // ... iframes are troubles
-  if (ENV.isFirefox) {
+  // about:self also causes protocol mis-match issues with iframes in iOS/macOS Safari
+  // ... TL;DR iframes are troubles
+  if (ENV.isFirefox || this.useContentPlayerForAds) {
     src = '';
   }
   this.vpaidIframe.onload = function () {
@@ -697,7 +701,7 @@ VPAID.loadCreative = function (creativeUrl, vpaidSettings) {
     }
     // we unwire listeners
     this.vpaidIframe.onload = this.vpaidIframe.onerror = FW.nullFn;
-    if (!this.vpaidIframe.contentWindow || !this.vpaidIframe.contentWindow.document || 
+    if (!this.vpaidIframe.contentWindow || !this.vpaidIframe.contentWindow.document ||
       !this.vpaidIframe.contentWindow.document.body) {
       // PING error and resume content
       PING.error.call(this, 901);
@@ -757,12 +761,6 @@ VPAID.destroy = function () {
   if (this.vpaidScript) {
     this.vpaidScript.removeEventListener('load', this.onJSVPAIDLoaded);
     this.vpaidScript.removeEventListener('error', this.onJSVPAIDError);
-  }
-  if (this.vastPlayer) {
-    // empty buffer
-    this.vastPlayer.removeAttribute('src');
-    this.vastPlayer.load();
-    FW.hide(this.vastPlayer);
   }
   if (this.vpaidIframe) {
     try {

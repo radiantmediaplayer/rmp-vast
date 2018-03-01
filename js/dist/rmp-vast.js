@@ -1,6 +1,6 @@
 /**
  * @license Copyright (c) 2017 Radiant Media Player | https://www.radiantmediaplayer.com
- * rmp-vast 1.2.9
+ * rmp-vast 1.3.0
  * GitHub: https://github.com/radiantmediaplayer/rmp-vast
  * MIT License: https://github.com/radiantmediaplayer/rmp-vast/blob/master/LICENSE
  */
@@ -145,10 +145,8 @@ API.getAdMediaUrl = function () {
   if (this.adOnStage) {
     if (this.isVPAID) {
       return _vpaid.VPAID.getCreativeUrl.call(this);
-    } else if (this.adIsLinear) {
-      return this.adMediaUrl;
     } else {
-      return this.nonLinearCreativeUrl;
+      return this.adMediaUrl;
     }
   }
   return null;
@@ -850,7 +848,7 @@ LINEAR.parse = function (linear) {
     var apiFramework = mediaFileItems[i].apiFramework = currentMediaFile.getAttribute('apiFramework');
     // we have a VPAID JS - we break
     // for VPAID we may not have a width, height or delivery
-    if (this.params.enableVpaid && !this.useContentPlayerForAds && apiFramework && patternVPAID.test(apiFramework) && patternJavaScript.test(type)) {
+    if (this.params.enableVpaid && apiFramework && patternVPAID.test(apiFramework) && patternJavaScript.test(type)) {
       if (DEBUG) {
         _fw.FW.log('RMP-VAST: VPAID creative detected');
       }
@@ -1006,10 +1004,9 @@ var _onNonLinearLoadError = function () {
 
 var _onNonLinearLoadSuccess = function () {
   if (DEBUG) {
-    _fw.FW.log('RMP-VAST: success loading non-linear creative at ' + this.nonLinearCreativeUrl);
+    _fw.FW.log('RMP-VAST: success loading non-linear creative at ' + this.adMediaUrl);
   }
   this.adOnStage = true;
-  this.adMediaUrl = this.nonLinearCreativeUrl;
   _api.API.createEvent.call(this, 'adloaded');
   _api.API.createEvent.call(this, 'adimpression');
   _api.API.createEvent.call(this, 'adstarted');
@@ -1088,7 +1085,7 @@ NONLINEAR.update = function () {
   this.nonLinearImg.addEventListener('error', this.onNonLinearLoadError);
   this.onNonLinearLoadSuccess = _onNonLinearLoadSuccess.bind(this);
   this.nonLinearImg.addEventListener('load', this.onNonLinearLoadSuccess);
-  this.nonLinearImg.src = this.nonLinearCreativeUrl;
+  this.nonLinearImg.src = this.adMediaUrl;
 
   // append to adContainer
   this.nonLinearATag.appendChild(this.nonLinearImg);
@@ -1116,7 +1113,7 @@ NONLINEAR.parse = function (nonLinearAds) {
     return;
   }
   var currentNonLinear = void 0;
-  var nonLinearCreativeUrl = '';
+  var adMediaUrl = '';
   var isDimensionError = false;
   // The video player should poll each <NonLinear> element to determine 
   // which creative is offered in a format the video player can support.
@@ -1169,12 +1166,12 @@ NONLINEAR.parse = function (nonLinearAds) {
         isDimensionError = true;
         continue;
       }
-      nonLinearCreativeUrl = _fwVast.FWVAST.getNodeValue(currentStaticResource, true);
+      adMediaUrl = _fwVast.FWVAST.getNodeValue(currentStaticResource, true);
       break;
     }
     // we have a valid NonLinear/StaticResource with supported creativeType - we break
-    if (nonLinearCreativeUrl !== '') {
-      this.nonLinearCreativeUrl = nonLinearCreativeUrl;
+    if (adMediaUrl !== '') {
+      this.adMediaUrl = adMediaUrl;
       this.nonLinearCreativeHeight = height;
       this.nonLinearCreativeWidth = width;
       this.nonLinearContentType = creativeType;
@@ -1182,7 +1179,7 @@ NONLINEAR.parse = function (nonLinearAds) {
     }
   }
   // if not supported NonLinear type ping for error
-  if (!this.nonLinearCreativeUrl || !currentNonLinear) {
+  if (!this.adMediaUrl || !currentNonLinear) {
     var vastErrorCode = 503;
     if (isDimensionError) {
       vastErrorCode = 501;
@@ -1190,9 +1187,6 @@ NONLINEAR.parse = function (nonLinearAds) {
     _ping.PING.error.call(this, vastErrorCode, this.inlineOrWrapperErrorTags);
     _vastErrors.VASTERRORS.process.call(this, vastErrorCode);
     return;
-  }
-  if (DEBUG) {
-    _fw.FW.log('RMP-VAST: valid non-linear creative data at ' + this.nonLinearCreativeUrl);
   }
   var nonLinearClickThrough = currentNonLinear.getElementsByTagName('NonLinearClickThrough');
   // if NonLinearClickThrough is present we expect one tag
@@ -1718,7 +1712,7 @@ FWVAST.logVideoEvents = function (video) {
 
 FWVAST.filterParams = function (params) {
   var defaultParams = {
-    ajaxTimeout: 7000,
+    ajaxTimeout: 8000,
     creativeLoadTimeout: 10000,
     ajaxWithCredentials: false,
     maxNumRedirects: 4,
@@ -1726,7 +1720,7 @@ FWVAST.filterParams = function (params) {
     skipMessage: 'Skip ad',
     skipWaitingMessage: 'Skip ad in',
     textForClickUIOnMobile: 'Learn more',
-    enableVpaid: false,
+    enableVpaid: true,
     vpaidSettings: {
       width: 640,
       height: 360,
@@ -2621,51 +2615,52 @@ var _destroyVastPlayer = function () {
   clearInterval(this.antiSeekLogicInterval);
   // reset creativeLoadTimeout
   clearTimeout(this.creativeLoadTimeoutCallback);
-  if (!this.isVPAID) {
-    if (this.useContentPlayerForAds) {
-      // when content is restored we need to seek to previously known currentTime
-      // this must happen on playing event
-      // the below is some hack I come up with because Safari is confused with 
-      // what it is asked to do when post roll come into play
-      if (this.currentContentCurrentTime > 4000) {
-        this.needsSeekAdjust = true;
-        if (this.contentPlayerCompleted) {
-          this.needsSeekAdjust = false;
-        }
-        if (!this.seekAdjustAttached) {
-          this.seekAdjustAttached = true;
-          this.contentPlayer.addEventListener('playing', function () {
-            if (_this.needsSeekAdjust) {
-              _contentPlayer.CONTENTPLAYER.seekTo.call(_this, _this.currentContentCurrentTime);
-              _this.needsSeekAdjust = false;
-            }
-          });
-        }
+  if (this.useContentPlayerForAds) {
+    // when content is restored we need to seek to previously known currentTime
+    // this must happen on playing event
+    // the below is some hack I come up with because Safari is confused with 
+    // what it is asked to do when post roll come into play
+    if (this.currentContentCurrentTime > 4000) {
+      this.needsSeekAdjust = true;
+      if (this.contentPlayerCompleted) {
+        this.needsSeekAdjust = false;
       }
-      if (DEBUG) {
-        _fw.FW.log('RMP-VAST: recovering content with src ' + this.currentContentSrc + ' - at time: ' + this.currentContentCurrentTime);
-      }
-      this.contentPlayer.src = this.currentContentSrc;
-    } else {
-      // empty buffer for vastPlayer
-      try {
-        if (this.vastPlayer) {
-          this.vastPlayer.pause();
-          // empty buffer
-          this.vastPlayer.removeAttribute('src');
-          this.vastPlayer.load();
-          _fw.FW.hide(this.vastPlayer);
-          if (this.nonLinearContainer) {
-            try {
-              this.adContainer.removeChild(this.nonLinearContainer);
-            } catch (e) {
-              _fw.FW.trace(e);
-            }
+      if (!this.seekAdjustAttached) {
+        this.seekAdjustAttached = true;
+        this.contentPlayer.addEventListener('playing', function () {
+          if (_this.needsSeekAdjust) {
+            _this.needsSeekAdjust = false;
+            _contentPlayer.CONTENTPLAYER.seekTo.call(_this, _this.currentContentCurrentTime);
           }
-        }
-      } catch (e) {
-        _fw.FW.trace(e);
+        });
       }
+    }
+    if (DEBUG) {
+      _fw.FW.log('RMP-VAST: recovering content with src ' + this.currentContentSrc + ' - at time: ' + this.currentContentCurrentTime);
+    }
+    this.contentPlayer.src = this.currentContentSrc;
+  } else {
+    // flush vastPlayer
+    try {
+      if (this.vastPlayer) {
+        this.vastPlayer.pause();
+        // empty buffer
+        this.vastPlayer.removeAttribute('src');
+        this.vastPlayer.load();
+        _fw.FW.hide(this.vastPlayer);
+        if (DEBUG) {
+          _fw.FW.log('RMP-VAST: vastPlayer flushed');
+        }
+      }
+      if (this.nonLinearContainer) {
+        try {
+          this.adContainer.removeChild(this.nonLinearContainer);
+        } catch (e) {
+          _fw.FW.trace(e);
+        }
+      }
+    } catch (e) {
+      _fw.FW.trace(e);
     }
   }
   // reset internal variables for next ad if any
@@ -3009,7 +3004,7 @@ var _onAdLoaded = function () {
       _vastPlayer.VASTPLAYER.resumeContent.call(_this);
     }
     _this.vpaidAdStarted = false;
-  }, this.params.ajaxTimeout);
+  }, this.params.creativeLoadTimeout);
   // pause content player
   _contentPlayer.CONTENTPLAYER.pause.call(this);
   this.adOnStage = true;
@@ -3042,7 +3037,7 @@ var _onAdStarted = function () {
   if (typeof this.vpaidCreative.getAdLinear === 'function') {
     this.adIsLinear = this.vpaidCreative.getAdLinear();
     if (this.adIsLinear === false) {
-      // we currently do not support Click-to-Linear Video Ad
+      // we currently do not support Click-to-Linear Video Ad or non-linear VPAID ads
       VPAID.stopAd.call(this);
       return;
     }
@@ -3325,7 +3320,7 @@ VPAID.stopAd = function () {
   // AdStopped event follows
   this.adStoppedTimeout = setTimeout(function () {
     _onAdStopped.call(_this2);
-  }, this.params.ajaxTimeout);
+  }, this.params.creativeLoadTimeout);
   this.vpaidCreative.stopAd();
 };
 
@@ -3369,7 +3364,7 @@ VPAID.skipAd = function () {
   // AdSkipped event follows
   this.adSkippedTimeout = setTimeout(function () {
     _onAdStopped.call(_this3);
-  }, this.params.ajaxTimeout);
+  }, this.params.creativeLoadTimeout);
   this.vpaidCreative.skipAd();
 };
 
@@ -3468,7 +3463,7 @@ var _onVPAIDAvailable = function () {
     this.vpaidVersion = parseInt(vpaidVersion);
     if (this.vpaidVersion < 1) {
       if (DEBUG) {
-        _fw.FW.log('RMP-VAST: unsupported VPAID version');
+        _fw.FW.log('RMP-VAST: unsupported VPAID version - exit');
       }
       _ping.PING.error.call(this, 901);
       _vastErrors.VASTERRORS.process.call(this, 901);
@@ -3476,6 +3471,9 @@ var _onVPAIDAvailable = function () {
     }
     if (!_isValidVPAID(this.vpaidCreative)) {
       //The VPAID creative doesn't conform to the VPAID spec
+      if (DEBUG) {
+        _fw.FW.log('RMP-VAST: VPAID creative does not conform to VPAID spec - exit');
+      }
       _ping.PING.error.call(this, 901);
       _vastErrors.VASTERRORS.process.call(this, 901);
       return;
@@ -3568,8 +3566,9 @@ VPAID.loadCreative = function (creativeUrl, vpaidSettings) {
   var src = 'about:self';
   // ... however this does not work in Firefox (onload is never reached)
   // https://bugzilla.mozilla.org/show_bug.cgi?id=444165
-  // ... iframes are troubles
-  if (_env.ENV.isFirefox) {
+  // about:self also causes protocol mis-match issues with iframes in iOS/macOS Safari
+  // ... TL;DR iframes are troubles
+  if (_env.ENV.isFirefox || this.useContentPlayerForAds) {
     src = '';
   }
   this.vpaidIframe.onload = function () {
@@ -3639,12 +3638,6 @@ VPAID.destroy = function () {
   if (this.vpaidScript) {
     this.vpaidScript.removeEventListener('load', this.onJSVPAIDLoaded);
     this.vpaidScript.removeEventListener('error', this.onJSVPAIDError);
-  }
-  if (this.vastPlayer) {
-    // empty buffer
-    this.vastPlayer.removeAttribute('src');
-    this.vastPlayer.load();
-    _fw.FW.hide(this.vastPlayer);
   }
   if (this.vpaidIframe) {
     try {
@@ -3765,7 +3758,7 @@ var _pingTrackers = function (trackers) {
   var _this = this;
 
   trackers.forEach(function (element) {
-    _ping.PING.tracking.call(_this, element.url, _this.adMediaUrl);
+    _ping.PING.tracking.call(_this, element.url, _this.getAdMediaUrl());
   });
 };
 
@@ -4034,7 +4027,6 @@ RESET.internalVariables = function () {
   this.nonLinearATag = null;
   this.nonLinearImg = null;
   this.onClickCloseNonLinear = null;
-  this.nonLinearCreativeUrl = null;
   this.nonLinearCreativeHeight = 0;
   this.nonLinearCreativeWidth = 0;
   this.nonLinearMinSuggestedDuration = 0;

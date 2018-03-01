@@ -77,7 +77,6 @@ RESET.internalVariables = function () {
   this.nonLinearATag = null;
   this.nonLinearImg = null;
   this.onClickCloseNonLinear = null;
-  this.nonLinearCreativeUrl = null;
   this.nonLinearCreativeHeight = 0;
   this.nonLinearCreativeWidth = 0;
   this.nonLinearMinSuggestedDuration = 0;

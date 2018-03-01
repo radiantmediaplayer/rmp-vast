@@ -15,10 +15,9 @@ var _onNonLinearLoadError = function () {
 
 var _onNonLinearLoadSuccess = function () {
   if (DEBUG) {
-    FW.log('RMP-VAST: success loading non-linear creative at ' + this.nonLinearCreativeUrl);
+    FW.log('RMP-VAST: success loading non-linear creative at ' + this.adMediaUrl);
   }
   this.adOnStage = true;
-  this.adMediaUrl = this.nonLinearCreativeUrl;
   API.createEvent.call(this, 'adloaded');
   API.createEvent.call(this, 'adimpression');
   API.createEvent.call(this, 'adstarted');
@@ -95,7 +94,7 @@ NONLINEAR.update = function () {
   this.nonLinearImg.addEventListener('error', this.onNonLinearLoadError);
   this.onNonLinearLoadSuccess = _onNonLinearLoadSuccess.bind(this);
   this.nonLinearImg.addEventListener('load', this.onNonLinearLoadSuccess);
-  this.nonLinearImg.src = this.nonLinearCreativeUrl;
+  this.nonLinearImg.src = this.adMediaUrl;
 
   // append to adContainer
   this.nonLinearATag.appendChild(this.nonLinearImg);
@@ -123,7 +122,7 @@ NONLINEAR.parse = function (nonLinearAds) {
     return;
   }
   let currentNonLinear;
-  let nonLinearCreativeUrl = '';
+  let adMediaUrl = '';
   let isDimensionError = false;
   // The video player should poll each <NonLinear> element to determine 
   // which creative is offered in a format the video player can support.
@@ -176,12 +175,12 @@ NONLINEAR.parse = function (nonLinearAds) {
         isDimensionError = true;
         continue;
       }
-      nonLinearCreativeUrl = FWVAST.getNodeValue(currentStaticResource, true);
+      adMediaUrl = FWVAST.getNodeValue(currentStaticResource, true);
       break;
     }
     // we have a valid NonLinear/StaticResource with supported creativeType - we break
-    if (nonLinearCreativeUrl !== '') {
-      this.nonLinearCreativeUrl = nonLinearCreativeUrl;
+    if (adMediaUrl !== '') {
+      this.adMediaUrl = adMediaUrl;
       this.nonLinearCreativeHeight = height;
       this.nonLinearCreativeWidth = width;
       this.nonLinearContentType = creativeType;
@@ -189,7 +188,7 @@ NONLINEAR.parse = function (nonLinearAds) {
     }
   }
   // if not supported NonLinear type ping for error
-  if (!this.nonLinearCreativeUrl || !currentNonLinear) {
+  if (!this.adMediaUrl || !currentNonLinear) {
     let vastErrorCode = 503;
     if (isDimensionError) {
       vastErrorCode = 501;
@@ -197,9 +196,6 @@ NONLINEAR.parse = function (nonLinearAds) {
     PING.error.call(this, vastErrorCode, this.inlineOrWrapperErrorTags);
     VASTERRORS.process.call(this, vastErrorCode);
     return;
-  }
-  if (DEBUG) {
-    FW.log('RMP-VAST: valid non-linear creative data at ' + this.nonLinearCreativeUrl);
   }
   let nonLinearClickThrough = currentNonLinear.getElementsByTagName('NonLinearClickThrough');
   // if NonLinearClickThrough is present we expect one tag

@@ -8,7 +8,7 @@ const TRACKINGEVENTS = {};
 
 var _pingTrackers = function (trackers) {
   trackers.forEach((element) => {
-    PING.tracking.call(this, element.url, this.adMediaUrl);
+    PING.tracking.call(this, element.url, this.getAdMediaUrl());
   });
 };
 

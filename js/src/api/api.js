@@ -127,10 +127,8 @@ API.getAdMediaUrl = function () {
   if (this.adOnStage) {
     if (this.isVPAID) {
       return VPAID.getCreativeUrl.call(this);
-    } else if (this.adIsLinear) {
-      return this.adMediaUrl;
     } else {
-      return this.nonLinearCreativeUrl;
+      return this.adMediaUrl;
     }
   }
   return null;
