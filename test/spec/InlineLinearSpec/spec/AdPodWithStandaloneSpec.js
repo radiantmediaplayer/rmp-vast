@@ -15,6 +15,8 @@ describe("Test for VAST3 Ad Pod with side standalone ad response", function () {
     container.style.width = '320px';
     container.style.height = '180px';
     video.setAttribute('muted', 'muted');
+  } else if (env.isMacOSX && env.isSafari[0]) {
+    video.setAttribute('muted', 'muted');
   }
   var title = document.getElementsByTagName('title')[0];
 

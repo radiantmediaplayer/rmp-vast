@@ -14,6 +14,8 @@ describe("Test for MalformedSpec", function () {
     container.style.width = '320px';
     container.style.height = '180px';
     video.setAttribute('muted', 'muted');
+  } else if (env.isMacOSX && env.isSafari[0]) {
+    video.setAttribute('muted', 'muted');
   }
   var title = document.getElementsByTagName('title')[0];
 

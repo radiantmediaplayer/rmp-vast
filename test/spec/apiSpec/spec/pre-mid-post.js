@@ -25,9 +25,11 @@ describe("Test for pre-mid-post", function () {
     container.style.width = '320px';
     container.style.height = '180px';
     video.setAttribute('muted', 'muted');
+  } else if (env.isMacOSX && env.isSafari[0]) {
+    video.setAttribute('muted', 'muted');
   }
-  var title = document.getElementsByTagName('title')[0];
 
+  var title = document.getElementsByTagName('title')[0];
 
   it("should load pre-mid-post", function (done) {
     var validSteps = 0;

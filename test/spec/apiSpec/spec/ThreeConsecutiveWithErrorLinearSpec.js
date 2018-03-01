@@ -16,7 +16,10 @@ describe("Test for ThreeConsecutiveWithErrorLinearSpec", function () {
     container.style.width = '320px';
     container.style.height = '180px';
     video.setAttribute('muted', 'muted');
+  } else if (env.isMacOSX && env.isSafari[0]) {
+    video.setAttribute('muted', 'muted');
   }
+  
   var title = document.getElementsByTagName('title')[0];
 
   it("should load 3 consecutive adTag and play them", function (done) {
