@@ -15,7 +15,7 @@ describe("Test for VMAPSpec", function () {
     container.style.height = '180px';
     video.setAttribute('muted', 'muted');
   } else if (env.isMacOSX && env.isSafari[0]) {
-    video.setAttribute('muted', 'muted');
+    video.muted = true;
   }
   var title = document.getElementsByTagName('title')[0];
 

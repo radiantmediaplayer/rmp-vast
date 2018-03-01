@@ -3543,14 +3543,18 @@ VPAID.loadCreative = function (creativeUrl, vpaidSettings) {
   this.desiredBitrate = vpaidSettings.desiredBitrate;
   this.vpaidCreativeUrl = creativeUrl;
   if (!this.vastPlayer) {
-    // we use existing rmp-ad-vast-video-player as it is already 
-    // available and initialized (no need for user interaction)
-    var existingVastPlayer = this.adContainer.getElementsByClassName('rmp-ad-vast-video-player')[0];
-    if (!existingVastPlayer) {
-      _vastErrors.VASTERRORS.process.call(this, 1004);
-      return;
+    if (this.useContentPlayerForAds) {
+      this.vastPlayer = this.contentPlayer;
+    } else {
+      // we use existing rmp-ad-vast-video-player as it is already 
+      // available and initialized (no need for user interaction)
+      var existingVastPlayer = this.adContainer.getElementsByClassName('rmp-ad-vast-video-player')[0];
+      if (!existingVastPlayer) {
+        _vastErrors.VASTERRORS.process.call(this, 1004);
+        return;
+      }
+      this.vastPlayer = existingVastPlayer;
     }
-    this.vastPlayer = existingVastPlayer;
   }
   // create FiF 
   this.vpaidIframe = document.createElement('iframe');
@@ -3876,7 +3880,7 @@ TRACKINGEVENTS.wire = function () {
 
   // we filter through all HTML5 video events and create new VAST events 
   // those VAST events are based on PING.events
-  if (this.vastPlayer && !this.isVPAID) {
+  if (this.vastPlayer && this.adIsLinear && !this.isVPAID) {
     this.onPause = _onPause.bind(this);
     this.vastPlayer.addEventListener('pause', this.onPause);
     this.onPlay = _onPlay.bind(this);

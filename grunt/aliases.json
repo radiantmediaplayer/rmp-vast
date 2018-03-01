@@ -27,5 +27,8 @@
   ],
   "testAndroid": [
     "shell:testAndroid"
+  ],
+  "testSafari": [
+    "shell:testSafari"
   ]
 }

@@ -15,7 +15,7 @@
 <body>
   <div class="rmp-container" id="rmpPlayer" style="width:640px;height:360px;">
     <div class="rmp-content">
-      <video class="rmp-video" src="https://www.rmp-streaming.com/media/bbb-360p.mp4" playsinline>
+      <video class="rmp-video" src="https://www.rmp-streaming.com/media/bbb-360p.mp4" playsinline muted>
       </video>
     </div>
   </div>
@@ -27,9 +27,9 @@
     var id = 'rmpPlayer';
     var container = document.getElementById(id);
     var video = container.getElementsByClassName('rmp-video')[0];
-    var preroll = 'https://www.radiantmediaplayer.com/vast/tags/inline-linear.xml';
-    var midroll = 'https://www.radiantmediaplayer.com/vast/tags/inline-linear-1.xml';
-    var postroll = 'https://www.radiantmediaplayer.com/vast/tags/inline-linear.xml';
+    var preroll = 'https://www.radiantmediaplayer.com/vast/tags/inline-linear-1.xml';
+    var midroll = 'https://www.radiantmediaplayer.com/vast/tags/inline-linear-2.xml';
+    var postroll = 'https://www.radiantmediaplayer.com/vast/tags/inline-linear-1.xml';
     var params = {
     };
     var rmpVast = new RmpVast(id, params);
@@ -74,5 +74,7 @@
     seekNearEnd.addEventListener('click', function () {
       video.currentTime = 95;
     });
+
+            rmpVast.loadAds(preroll);
   </script>
 </body>

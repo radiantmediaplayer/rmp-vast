@@ -26,7 +26,7 @@ describe("Test for pre-mid-post", function () {
     container.style.height = '180px';
     video.setAttribute('muted', 'muted');
   } else if (env.isMacOSX && env.isSafari[0]) {
-    video.setAttribute('muted', 'muted');
+    video.muted = true;
   }
 
   var title = document.getElementsByTagName('title')[0];
@@ -70,6 +70,7 @@ describe("Test for pre-mid-post", function () {
     });
     var addestroyedCount = 0;
     var contentPlayer;
+    var loadPostRoll = true;
     container.addEventListener('addestroyed', function (e) {
       _incrementAndLog(e);
       addestroyedCount++;
@@ -78,17 +79,25 @@ describe("Test for pre-mid-post", function () {
       }
       if (addestroyedCount === 1) {
         expect(validSteps).toBe(9);
-        contentPlayer.currentTime = 15;
+        setTimeout(() => {
+          contentPlayer.currentTime = 15;
+        }, 1000);
+
         setTimeout(() => {
           rmpVast.loadAds(ADTAG2);
-        }, 1000);
-        contentPlayer.addEventListener('ended', () => {
-          rmpVast.loadAds(ADTAG3);
-        });
+        }, 3000);
       }
       if (addestroyedCount === 2) {
         expect(validSteps).toBe(18);
-        contentPlayer.currentTime = 98;
+        contentPlayer.addEventListener('ended', () => {
+          if (loadPostRoll) {
+            loadPostRoll = false;
+            rmpVast.loadAds(ADTAG3);
+          }
+        });
+        setTimeout(() => {
+          contentPlayer.currentTime = 96;
+        }, 1000);
       }
       if (addestroyedCount === 3) {
         expect(validSteps).toBe(27);

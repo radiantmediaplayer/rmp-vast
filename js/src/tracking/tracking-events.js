@@ -125,7 +125,7 @@ TRACKINGEVENTS.wire = function () {
 
   // we filter through all HTML5 video events and create new VAST events 
   // those VAST events are based on PING.events
-  if (this.vastPlayer && !this.isVPAID) {
+  if (this.vastPlayer && this.adIsLinear && !this.isVPAID) {
     this.onPause = _onPause.bind(this);
     this.vastPlayer.addEventListener('pause', this.onPause);
     this.onPlay = _onPlay.bind(this);

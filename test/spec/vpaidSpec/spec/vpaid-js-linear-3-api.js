@@ -24,7 +24,7 @@ describe("Test for vpaid-js-linear-3", function () {
     container.style.height = '180px';
     video.setAttribute('muted', 'muted');
   } else if (env.isMacOSX && env.isSafari[0]) {
-    video.setAttribute('muted', 'muted');
+    video.muted = true;
   }
   var title = document.getElementsByTagName('title')[0];
 
@@ -47,7 +47,7 @@ describe("Test for vpaid-js-linear-3", function () {
       }
       _incrementAndLog(e);
       setTimeout(() => {
-        if (!env.isAndroid[0]) {
+        if (!env.isAndroid[0] && !(env.isMacOSX && env.isSafari[0])) {
           rmpVast.setMute(true);
         }
       }, 500);
@@ -56,7 +56,7 @@ describe("Test for vpaid-js-linear-3", function () {
       if (rmpVast.getMute()) {
         _incrementAndLog(e);
         setTimeout(() => {
-          if (!env.isAndroid[0]) {
+          if (!env.isAndroid[0] && !(env.isMacOSX && env.isSafari[0])) {
             rmpVast.setMute(false);
           }
           if (rmpVast.getAdTagUrl() !== ADTAG) {
@@ -97,7 +97,7 @@ describe("Test for vpaid-js-linear-3", function () {
     });
     container.addEventListener('addestroyed', function (e) {
       _incrementAndLog(e);
-      if (!env.isAndroid[0]) {
+      if (!env.isAndroid[0] && !(env.isMacOSX && env.isSafari[0])) {
         expect(validSteps).toBe(6);
         if (validSteps === 6) {
           title.textContent = 'Test completed';
