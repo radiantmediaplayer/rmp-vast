@@ -555,9 +555,6 @@ var _isValidVPAID = function (creative) {
 };
 
 var _onVPAIDAvailable = function () {
-  if (DEBUG) {
-    FW.log('RMP-VAST: VPAID available for initAd after being loaded');
-  }
   if (this.vpaidAvailableInterval) {
     clearInterval(this.vpaidAvailableInterval);
   }
@@ -604,11 +601,21 @@ var _onVPAIDAvailable = function () {
     let creativeData = {};
     creativeData.AdParameters = this.adParametersData;
     if (DEBUG) {
-      FW.log('RMP-VAST: VPAID AdParameters follow:');
+      FW.log('RMP-VAST: VPAID AdParameters follow');
       FW.log(this.adParametersData);
     }
+    FW.show(this.adContainer);
+    FW.show(this.vastPlayer);
     let environmentVars = {};
-    environmentVars.slot = this.adContainer;
+    // we create a new slot for VPAID creative - using adContainer can cause some VPAID to ill-render
+    // from spec:
+    // The 'environmentVars' object contains a reference, 'slot', to the HTML element
+    // on the page in which the ad is to be rendered. The ad unit essentially gets
+    // control of that element. 
+    this.vpaidSlot = document.createElement('div');
+    this.vpaidSlot.className = 'rmp-vpaid-container';
+    this.adContainer.appendChild(this.vpaidSlot);
+    environmentVars.slot = this.vpaidSlot;
     environmentVars.videoSlot = this.vastPlayer;
     // we assume we can autoplay (or at least muted autoplay) because this.vastPlayer 
     // has been init
@@ -617,12 +624,16 @@ var _onVPAIDAvailable = function () {
     // if not we need to resume content
     this.initAdTimeout = setTimeout(() => {
       if (!this.vpaidAdLoaded) {
+        if (DEBUG) {
+          FW.log('RMP-VAST: initAdTimeout');
+        }
         VASTPLAYER.resumeContent.call(this);
       }
       this.vpaidAdLoaded = false;
-    }, this.params.creativeLoadTimeout);
-    FW.show(this.adContainer);
-    FW.show(this.vastPlayer);
+    }, this.params.creativeLoadTimeout * 10);
+    if (DEBUG) {
+      FW.log('RMP-VAST: calling initAd on VPAID creative now');
+    }
     this.vpaidCreative.initAd(
       this.initialWidth,
       this.initialHeight,
@@ -749,6 +760,9 @@ VPAID.loadCreative = function (creativeUrl, vpaidSettings) {
 };
 
 VPAID.destroy = function () {
+  if (DEBUG) {
+    FW.log('RMP-VAST: destroy VPAID dependencies');
+  }
   if (this.vpaidAvailableInterval) {
     clearInterval(this.vpaidAvailableInterval);
   }
@@ -765,6 +779,13 @@ VPAID.destroy = function () {
   if (this.vpaidScript) {
     this.vpaidScript.removeEventListener('load', this.onJSVPAIDLoaded);
     this.vpaidScript.removeEventListener('error', this.onJSVPAIDError);
+  }
+  if (this.vpaidSlot) {
+    try {
+      this.adContainer.removeChild(this.vpaidSlot);
+    } catch (e) {
+      FW.trace(e);
+    }
   }
   if (this.vpaidIframe) {
     try {

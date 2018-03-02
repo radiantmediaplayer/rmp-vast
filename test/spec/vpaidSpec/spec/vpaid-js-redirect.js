@@ -45,7 +45,7 @@ describe("Test for vpaid-js-redirect", function () {
       _incrementAndLog(e);
       // this VPAID does not support muted autoplay 
       // and thus cannot be auto-tested on Android
-      if (env.isAndroid[0]) {
+      if (env.isAndroid[0] || (env.isMacOSX && env.isSafari[0])) {
         expect(validSteps).toBe(1);
         if (validSteps === 1) {
           title.textContent = 'Test completed';

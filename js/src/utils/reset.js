@@ -30,6 +30,7 @@ RESET.internalVariables = function () {
   this.vastDocument = null;
   this.adTagUrl = null;
   this.vastPlayer = null;
+  this.vpaidSlot = null;
   this.trackingTags = [];
   this.vastErrorTags = [];
   this.inlineOrWrapperErrorTags = [];

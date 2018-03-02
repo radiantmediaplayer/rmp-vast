@@ -1,6 +1,6 @@
 /**
  * @license Copyright (c) 2017 Radiant Media Player | https://www.radiantmediaplayer.com
- * rmp-vast 1.3.0
+ * rmp-vast 1.3.1
  * GitHub: https://github.com/radiantmediaplayer/rmp-vast
  * MIT License: https://github.com/radiantmediaplayer/rmp-vast/blob/master/LICENSE
  */
@@ -3436,9 +3436,6 @@ var _isValidVPAID = function (creative) {
 var _onVPAIDAvailable = function () {
   var _this4 = this;
 
-  if (DEBUG) {
-    _fw.FW.log('RMP-VAST: VPAID available for initAd after being loaded');
-  }
   if (this.vpaidAvailableInterval) {
     clearInterval(this.vpaidAvailableInterval);
   }
@@ -3485,11 +3482,21 @@ var _onVPAIDAvailable = function () {
     var creativeData = {};
     creativeData.AdParameters = this.adParametersData;
     if (DEBUG) {
-      _fw.FW.log('RMP-VAST: VPAID AdParameters follow:');
+      _fw.FW.log('RMP-VAST: VPAID AdParameters follow');
       _fw.FW.log(this.adParametersData);
     }
+    _fw.FW.show(this.adContainer);
+    _fw.FW.show(this.vastPlayer);
     var environmentVars = {};
-    environmentVars.slot = this.adContainer;
+    // we create a new slot for VPAID creative - using adContainer can cause some VPAID to ill-render
+    // from spec:
+    // The 'environmentVars' object contains a reference, 'slot', to the HTML element
+    // on the page in which the ad is to be rendered. The ad unit essentially gets
+    // control of that element. 
+    this.vpaidSlot = document.createElement('div');
+    this.vpaidSlot.className = 'rmp-vpaid-container';
+    this.adContainer.appendChild(this.vpaidSlot);
+    environmentVars.slot = this.vpaidSlot;
     environmentVars.videoSlot = this.vastPlayer;
     // we assume we can autoplay (or at least muted autoplay) because this.vastPlayer 
     // has been init
@@ -3498,12 +3505,16 @@ var _onVPAIDAvailable = function () {
     // if not we need to resume content
     this.initAdTimeout = setTimeout(function () {
       if (!_this4.vpaidAdLoaded) {
+        if (DEBUG) {
+          _fw.FW.log('RMP-VAST: initAdTimeout');
+        }
         _vastPlayer.VASTPLAYER.resumeContent.call(_this4);
       }
       _this4.vpaidAdLoaded = false;
-    }, this.params.creativeLoadTimeout);
-    _fw.FW.show(this.adContainer);
-    _fw.FW.show(this.vastPlayer);
+    }, this.params.creativeLoadTimeout * 10);
+    if (DEBUG) {
+      _fw.FW.log('RMP-VAST: calling initAd on VPAID creative now');
+    }
     this.vpaidCreative.initAd(this.initialWidth, this.initialHeight, this.initialViewMode, this.desiredBitrate, creativeData, environmentVars);
   }
 };
@@ -3626,6 +3637,9 @@ VPAID.loadCreative = function (creativeUrl, vpaidSettings) {
 };
 
 VPAID.destroy = function () {
+  if (DEBUG) {
+    _fw.FW.log('RMP-VAST: destroy VPAID dependencies');
+  }
   if (this.vpaidAvailableInterval) {
     clearInterval(this.vpaidAvailableInterval);
   }
@@ -3642,6 +3656,13 @@ VPAID.destroy = function () {
   if (this.vpaidScript) {
     this.vpaidScript.removeEventListener('load', this.onJSVPAIDLoaded);
     this.vpaidScript.removeEventListener('error', this.onJSVPAIDError);
+  }
+  if (this.vpaidSlot) {
+    try {
+      this.adContainer.removeChild(this.vpaidSlot);
+    } catch (e) {
+      _fw.FW.trace(e);
+    }
   }
   if (this.vpaidIframe) {
     try {
@@ -3984,6 +4005,7 @@ RESET.internalVariables = function () {
   this.vastDocument = null;
   this.adTagUrl = null;
   this.vastPlayer = null;
+  this.vpaidSlot = null;
   this.trackingTags = [];
   this.vastErrorTags = [];
   this.inlineOrWrapperErrorTags = [];
