@@ -18,7 +18,7 @@ rmp-vast is an open-source project released under [MIT license](https://github.c
 - Error Reporting
 - Industry Icons
 - VAST 3 Macros
-- VPAID 1 and 2 JavaScript (BETA)
+- VPAID 1 and 2 JavaScript
 
 VAST 2 resources should also be compatible with rmp-vast.
 
