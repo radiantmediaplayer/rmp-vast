@@ -27,19 +27,20 @@
     var id = 'rmpPlayer';
     var container = document.getElementById(id);
     var video = container.getElementsByClassName('rmp-video')[0];
-    var ADTAG2 = 'https://www.radiantmediaplayer.com/vast/tags/vpaid-1-js-linear.xml';
+    var ADTAG2 = 'https://www.radiantmediaplayer.com/vast/tags/iab/vast3/Inline_Non-Linear_Tag-test.xml';
     //var ADTAG2 = 'https://www.radiantmediaplayer.com/vast/tags/new_bad_vast.xml';
     var rmpVast = new RmpVast(id);
 
     var play = document.getElementById('play');
     var firstClick = true;
     play.addEventListener('click', function () {
-      if (firstClick) {
+      rmpVast.stopAds();
+      /*if (firstClick) {
         rmpVast.loadAds(ADTAG2);
         firstClick = false;
       } else {
         rmpVast.play();
-      }
+      }*/
     });
 
     var pause = document.getElementById('pause');
@@ -53,8 +54,8 @@
       }
       first = false;
       setTimeout(function () {
-        rmpVast.loadAds('https://www.radiantmediaplayer.com/vast/tags/vpaid-2-js-linear.xml');
-      }, 2000);
+        rmpVast.loadAds('https://www.radiantmediaplayer.com/vast/tags/iab/vast3/Inline_Non-Linear_Tag-test.xml');
+      }, 12000);
     });
     rmpVast.loadAds(ADTAG2);
   </script>

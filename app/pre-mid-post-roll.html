@@ -27,8 +27,8 @@
     var id = 'rmpPlayer';
     var container = document.getElementById(id);
     var video = container.getElementsByClassName('rmp-video')[0];
-    var preroll = 'https://www.radiantmediaplayer.com/vast/tags/inline-linear-1.xml';
-    var midroll = 'https://www.radiantmediaplayer.com/vast/tags/inline-linear-2.xml';
+    var preroll = 'https://www.radiantmediaplayer.com/vast/tags/iab/vast3/Inline_Non-Linear_Tag-test.xml';
+    var midroll = 'https://www.radiantmediaplayer.com/vast/tags/iab/vast3/Inline_Non-Linear_Tag-test.xml';
     var postroll = 'https://www.radiantmediaplayer.com/vast/tags/inline-linear-1.xml';
     var params = {
     };
@@ -49,7 +49,7 @@
 
     // at 15 sec or past load a midroll
     var ontimeupdate = function () {
-      if (!rmpVast.getAdOnStage() && video.currentTime * 1000 > 10000) {
+      if (/*!rmpVast.getAdOnStage() && */video.currentTime * 1000 > 10000) {
         video.removeEventListener('timeupdate', ontimeupdate);
         rmpVast.loadAds(midroll);
       }

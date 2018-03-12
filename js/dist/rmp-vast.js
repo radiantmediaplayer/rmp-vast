@@ -1,6 +1,6 @@
 /**
  * @license Copyright (c) 2017 Radiant Media Player | https://www.radiantmediaplayer.com
- * rmp-vast 1.3.2
+ * rmp-vast 1.3.3
  * GitHub: https://github.com/radiantmediaplayer/rmp-vast
  * MIT License: https://github.com/radiantmediaplayer/rmp-vast/blob/master/LICENSE
  */
@@ -2630,29 +2630,37 @@ var _destroyVastPlayer = function () {
   // reset creativeLoadTimeout
   clearTimeout(this.creativeLoadTimeoutCallback);
   if (this.useContentPlayerForAds) {
-    // when content is restored we need to seek to previously known currentTime
-    // this must happen on playing event
-    // the below is some hack I come up with because Safari is confused with 
-    // what it is asked to do when post roll come into play
-    if (this.currentContentCurrentTime > 4000) {
-      this.needsSeekAdjust = true;
-      if (this.contentPlayerCompleted) {
-        this.needsSeekAdjust = false;
+    if (this.nonLinearContainer) {
+      try {
+        this.adContainer.removeChild(this.nonLinearContainer);
+      } catch (e) {
+        _fw.FW.trace(e);
       }
-      if (!this.seekAdjustAttached) {
-        this.seekAdjustAttached = true;
-        this.contentPlayer.addEventListener('playing', function () {
-          if (_this.needsSeekAdjust) {
-            _this.needsSeekAdjust = false;
-            _contentPlayer.CONTENTPLAYER.seekTo.call(_this, _this.currentContentCurrentTime);
-          }
-        });
+    } else {
+      // when content is restored we need to seek to previously known currentTime
+      // this must happen on playing event
+      // the below is some hack I come up with because Safari is confused with 
+      // what it is asked to do when post roll come into play
+      if (this.currentContentCurrentTime > 4000) {
+        this.needsSeekAdjust = true;
+        if (this.contentPlayerCompleted) {
+          this.needsSeekAdjust = false;
+        }
+        if (!this.seekAdjustAttached) {
+          this.seekAdjustAttached = true;
+          this.contentPlayer.addEventListener('playing', function () {
+            if (_this.needsSeekAdjust) {
+              _this.needsSeekAdjust = false;
+              _contentPlayer.CONTENTPLAYER.seekTo.call(_this, _this.currentContentCurrentTime);
+            }
+          });
+        }
       }
+      if (DEBUG) {
+        _fw.FW.log('RMP-VAST: recovering content with src ' + this.currentContentSrc + ' - at time: ' + this.currentContentCurrentTime);
+      }
+      this.contentPlayer.src = this.currentContentSrc;
     }
-    if (DEBUG) {
-      _fw.FW.log('RMP-VAST: recovering content with src ' + this.currentContentSrc + ' - at time: ' + this.currentContentCurrentTime);
-    }
-    this.contentPlayer.src = this.currentContentSrc;
   } else {
     // flush vastPlayer
     try {

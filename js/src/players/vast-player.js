@@ -48,30 +48,38 @@ var _destroyVastPlayer = function () {
   // reset creativeLoadTimeout
   clearTimeout(this.creativeLoadTimeoutCallback);
   if (this.useContentPlayerForAds) {
-    // when content is restored we need to seek to previously known currentTime
-    // this must happen on playing event
-    // the below is some hack I come up with because Safari is confused with 
-    // what it is asked to do when post roll come into play
-    if (this.currentContentCurrentTime > 4000) {
-      this.needsSeekAdjust = true;
-      if (this.contentPlayerCompleted) {
-        this.needsSeekAdjust = false;
+    if (this.nonLinearContainer) {
+      try {
+        this.adContainer.removeChild(this.nonLinearContainer);
+      } catch (e) {
+        FW.trace(e);
       }
-      if (!this.seekAdjustAttached) {
-        this.seekAdjustAttached = true;
-        this.contentPlayer.addEventListener('playing', () => {
-          if (this.needsSeekAdjust) {
-            this.needsSeekAdjust = false;
-            CONTENTPLAYER.seekTo.call(this, this.currentContentCurrentTime);
-          }
-        });
+    } else {
+      // when content is restored we need to seek to previously known currentTime
+      // this must happen on playing event
+      // the below is some hack I come up with because Safari is confused with 
+      // what it is asked to do when post roll come into play
+      if (this.currentContentCurrentTime > 4000) {
+        this.needsSeekAdjust = true;
+        if (this.contentPlayerCompleted) {
+          this.needsSeekAdjust = false;
+        }
+        if (!this.seekAdjustAttached) {
+          this.seekAdjustAttached = true;
+          this.contentPlayer.addEventListener('playing', () => {
+            if (this.needsSeekAdjust) {
+              this.needsSeekAdjust = false;
+              CONTENTPLAYER.seekTo.call(this, this.currentContentCurrentTime);
+            }
+          });
+        }
       }
+      if (DEBUG) {
+        FW.log('RMP-VAST: recovering content with src ' + this.currentContentSrc +
+          ' - at time: ' + this.currentContentCurrentTime);
+      }
+      this.contentPlayer.src = this.currentContentSrc;
     }
-    if (DEBUG) {
-      FW.log('RMP-VAST: recovering content with src ' + this.currentContentSrc +
-        ' - at time: ' + this.currentContentCurrentTime);
-    }
-    this.contentPlayer.src = this.currentContentSrc;
   } else {
     // flush vastPlayer
     try {
