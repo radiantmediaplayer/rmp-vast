@@ -16,12 +16,12 @@ module.exports = {
   },
   test: {
     command: [
-      'node test/spec/main/apiSpec.js',
+      /*'node test/spec/main/apiSpec.js',
       'node test/spec/main/errorSpec.js',
       'node test/spec/main/inlineLinearSpec.js',
-      'node test/spec/main/nonLinearSpec.js',
+      'node test/spec/main/nonLinearSpec.js',*/
       'node test/spec/main/redirectSpec.js',
-      'node test/spec/main/vpaidSpec.js'
+      //'node test/spec/main/vpaidSpec.js'
     ].join('&&')
   },
   testAndroid: {

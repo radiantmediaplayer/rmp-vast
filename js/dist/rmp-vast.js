@@ -1,6 +1,6 @@
 /**
  * @license Copyright (c) 2017 Radiant Media Player | https://www.radiantmediaplayer.com
- * rmp-vast 1.3.1
+ * rmp-vast 1.3.2
  * GitHub: https://github.com/radiantmediaplayer/rmp-vast
  * MIT License: https://github.com/radiantmediaplayer/rmp-vast/blob/master/LICENSE
  */
@@ -2025,6 +2025,7 @@ window.RmpVast = function (id, params) {
   this.currentContentCurrentTime = -1;
   this.needsSeekAdjust = false;
   this.seekAdjustAttached = false;
+  this.onDestroyLoadAds = null;
   if (_env.ENV.isIos[0] || _env.ENV.isMacOSX && _env.ENV.isSafari[0]) {
     // on iOS and macOS Safari we use content player to play ads
     // to avoid issues related to fullscreen management and autoplay
@@ -2416,12 +2417,25 @@ var _makeAjaxRequest = function (vastUrl) {
   });
 };
 
+var _onDestroyLoadAds = function (vastUrl) {
+  this.container.removeEventListener('addestroyed', this.onDestroyLoadAds);
+  this.loadAds(vastUrl);
+};
+
 RmpVast.prototype.loadAds = function (vastUrl) {
   if (DEBUG) {
     _fw.FW.log('RMP-VAST: loadAds starts');
   }
+  // if player is not initialized - this must be done now
   if (!this.rmpVastInitialized) {
     this.initialize();
+  }
+  // if an ad is already on stage we need to clear it first before we can accept another ad request
+  if (this.getAdOnStage()) {
+    this.onDestroyLoadAds = _onDestroyLoadAds.bind(this, vastUrl);
+    this.container.addEventListener('addestroyed', this.onDestroyLoadAds);
+    this.stopAds();
+    return;
   }
   // if we try to load ads when currentTime < 200 ms - be it linear or non-linear - we pause CONTENTPLAYER
   // CONTENTPLAYER (non-linear) or VASTPLAYER (linear) will resume later when VAST has finished loading/parsing

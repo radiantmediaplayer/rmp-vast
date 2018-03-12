@@ -27,7 +27,7 @@
     var id = 'rmpPlayer';
     var container = document.getElementById(id);
     var video = container.getElementsByClassName('rmp-video')[0];
-    var ADTAG2 = 'https://www.radiantmediaplayer.com/vast/tags/vpaid-4-js-linear.xml';
+    var ADTAG2 = 'https://www.radiantmediaplayer.com/vast/tags/vpaid-1-js-linear.xml';
     //var ADTAG2 = 'https://www.radiantmediaplayer.com/vast/tags/new_bad_vast.xml';
     var rmpVast = new RmpVast(id);
 
@@ -46,7 +46,16 @@
     pause.addEventListener('click', function () {
       rmpVast.pause();
     });
-
+    var first = true;
+    container.addEventListener('adstarted', function () {
+      if (!first) {
+        return;
+      }
+      first = false;
+      setTimeout(function () {
+        rmpVast.loadAds('https://www.radiantmediaplayer.com/vast/tags/vpaid-2-js-linear.xml');
+      }, 2000);
+    });
     rmpVast.loadAds(ADTAG2);
   </script>
 </body>
