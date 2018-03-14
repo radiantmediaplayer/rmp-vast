@@ -46,7 +46,7 @@
   padding: 0;
   outline: none;
   display: block;
-  text-align: left;
+  text-align: initial;
 }
 .rmp-fullscreen-on {
   position: fixed !important;
