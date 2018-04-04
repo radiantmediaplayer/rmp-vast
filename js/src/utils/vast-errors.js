@@ -4,7 +4,27 @@ import { VASTPLAYER } from '../players/vast-player';
 
 const VASTERRORS = {};
 
-VASTERRORS.list = [{
+// Indicates that the error was encountered when the ad was being loaded. 
+// Possible causes: there was no response from the ad server, malformed ad response was returned ...
+const loadErrorList = [
+  100, 101, 102,
+  300, 301, 302, 303,
+  900,
+  1000, 1001
+];
+
+// Indicates that the error was encountered after the ad loaded, during ad play. 
+// Possible causes: ad assets could not be loaded, etc.
+const playErrorList = [
+  200, 201, 202, 203,
+  400, 401, 402, 403, 405,
+  500, 501, 502, 503,
+  600, 601, 602, 603, 604,
+  901,
+  1002, 1003, 1004
+];
+
+const vastErrorsList = [{
   code: 100,
   description: 'XML parsing error.'
 }, {
@@ -103,18 +123,27 @@ VASTERRORS.list = [{
 }];
 
 var _updateVastError = function (errorCode) {
-  let error = VASTERRORS.list.filter((value) => {
+  let error = vastErrorsList.filter((value) => {
     return value.code === errorCode;
   });
-  if (error.length > 0) { 
+  if (error.length > 0) {
     this.vastErrorCode = error[0].code;
     this.vastErrorMessage = error[0].description;
   } else {
     this.vastErrorCode = -1;
     this.vastErrorMessage = 'Error getting VAST error';
   }
+  if (this.vastErrorCode > -1) {
+    if (loadErrorList.indexOf(this.vastErrorCode) > -1) {
+      this.adErrorType = 'adLoadError';
+    } else if (playErrorList.indexOf(this.vastErrorCode) > -1) {
+      this.adErrorType = 'adPlayError';
+    }
+  }
   if (DEBUG) {
-    FW.trace('RMP-VAST: VAST error ' + this.vastErrorCode + ' - ' + this.vastErrorMessage);
+    FW.log('RMP-VAST: VAST error code is ' + this.vastErrorCode);
+    FW.log('RMP-VAST: VAST error message is ' + this.vastErrorMessage);
+    FW.log('RMP-VAST: Ad error type is ' + this.adErrorType);
   }
 };
 

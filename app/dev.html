@@ -15,48 +15,16 @@
 <body>
   <div class="rmp-container" id="rmpPlayer">
     <div class="rmp-content">
-      <video class="rmp-video" src="https://www.rmp-streaming.com/media/bbb-360p.mp4" playsinline muted>
+      <video class="rmp-video" src="https://www.rmp-streaming.com/media/bbb-360p.mp4" playsinline muted controls>
       </video>
     </div>
   </div>
-
-  <button id="play">PLAY</button>
-  <br>
-  <button id="pause">PAUSE</button>
   <script>
     var id = 'rmpPlayer';
     var container = document.getElementById(id);
     var video = container.getElementsByClassName('rmp-video')[0];
-    var ADTAG2 = 'https://www.radiantmediaplayer.com/vast/tags/iab/vast3/Inline_Non-Linear_Tag-test.xml';
-    //var ADTAG2 = 'https://www.radiantmediaplayer.com/vast/tags/new_bad_vast.xml';
+    var ADTAG2 = 'https://www.radiantmediaplayer.com/vast/tags/inline-linear-error-media.xml';
     var rmpVast = new RmpVast(id);
-
-    var play = document.getElementById('play');
-    var firstClick = true;
-    play.addEventListener('click', function () {
-      rmpVast.stopAds();
-      /*if (firstClick) {
-        rmpVast.loadAds(ADTAG2);
-        firstClick = false;
-      } else {
-        rmpVast.play();
-      }*/
-    });
-
-    var pause = document.getElementById('pause');
-    pause.addEventListener('click', function () {
-      rmpVast.pause();
-    });
-    var first = true;
-    container.addEventListener('adstarted', function () {
-      if (!first) {
-        return;
-      }
-      first = false;
-      setTimeout(function () {
-        rmpVast.loadAds('https://www.radiantmediaplayer.com/vast/tags/iab/vast3/Inline_Non-Linear_Tag-test.xml');
-      }, 12000);
-    });
     rmpVast.loadAds(ADTAG2);
   </script>
 </body>

@@ -256,6 +256,8 @@ var _onXmlAvailable = function (xml) {
   // check for VAST node
   this.vastDocument = xml.getElementsByTagName('VAST');
   if (this.vastDocument.length === 0) {
+    // in case this is a wrapper we need to ping for errors on originating tags
+    PING.error.call(this, 100, this.inlineOrWrapperErrorTags);
     VASTERRORS.process.call(this, 100);
     return;
   }
@@ -264,6 +266,8 @@ var _onXmlAvailable = function (xml) {
   if (errorNode.length > 0) {
     let errorUrl = FWVAST.getNodeValue(errorNode[0], true);
     if (errorUrl !== null) {
+      // we use an array here for vastErrorTags but we only have item in it
+      // this is to be able to use PING.error for both vastErrorTags and inlineOrWrapperErrorTags
       this.vastErrorTags.push({ event: 'error', url: errorUrl });
     }
   }
@@ -271,14 +275,18 @@ var _onXmlAvailable = function (xml) {
   let pattern = /^(2|3|4)\./i;
   let version = this.vastDocument[0].getAttribute('version');
   if (!pattern.test(version)) {
-    PING.error.call(this, 102, this.vastErrorTags);
+    // in case this is a wrapper we need to ping for errors on originating tags
+    PING.error.call(this, 102, this.inlineOrWrapperErrorTags);
     VASTERRORS.process.call(this, 102);
     return;
   }
   // if empty VAST return
   let ad = this.vastDocument[0].getElementsByTagName('Ad');
   if (ad.length === 0) {
+    // here we ping vastErrorTags with error code 303 according to spec
     PING.error.call(this, 303, this.vastErrorTags);
+    // in case this is a wrapper we also need to ping for errors on originating tags
+    PING.error.call(this, 303, this.inlineOrWrapperErrorTags);
     VASTERRORS.process.call(this, 303);
     return;
   }
@@ -296,14 +304,8 @@ var _onXmlAvailable = function (xml) {
     }
   }
   if (!retainedAd) {
-    // we ping Error for each detected item within the Ad Pods as required by spec
-    for (let i = 0, len = adPod.length; i < len; i++) {
-      let inline = adPod[i].getElementsByTagName('InLine');
-      let wrapper = adPod[i].getElementsByTagName('Wrapper');
-      if (inline.length > 0 || wrapper.length > 0) {
-        PING.error.call(this, 200, this.vastErrorTags);
-      }
-    }
+    // in case this is a wrapper we need to ping for errors on originating tags
+    PING.error.call(this, 200, this.inlineOrWrapperErrorTags);
     VASTERRORS.process.call(this, 200);
     return;
   }
@@ -312,7 +314,8 @@ var _onXmlAvailable = function (xml) {
   let wrapper = retainedAd.getElementsByTagName('Wrapper');
   // 1 InLine or Wrapper element must be present 
   if (inline.length === 0 && wrapper.length === 0) {
-    PING.error.call(this, 101, this.vastErrorTags);
+    // in case this is a wrapper we need to ping for errors on originating tags
+    PING.error.call(this, 101, this.inlineOrWrapperErrorTags);
     VASTERRORS.process.call(this, 101);
     return;
   }
@@ -432,17 +435,21 @@ var _makeAjaxRequest = function (vastUrl) {
       }
     } catch (e) {
       FW.trace(e);
+      // in case this is a wrapper we need to ping for errors on originating tags
+      PING.error.call(this, 100, this.inlineOrWrapperErrorTags);
       VASTERRORS.process.call(this, 100);
       return;
     }
     _onXmlAvailable.call(this, xml);
   }).catch((e) => {
     FW.trace(e);
+    // in case this is a wrapper we need to ping for errors on originating tags
+    PING.error.call(this, 1000, this.inlineOrWrapperErrorTags);
     VASTERRORS.process.call(this, 1000);
   });
 };
 
-var _onDestroyLoadAds = function(vastUrl) {
+var _onDestroyLoadAds = function (vastUrl) {
   this.container.removeEventListener('addestroyed', this.onDestroyLoadAds);
   this.loadAds(vastUrl);
 };
@@ -456,7 +463,7 @@ RmpVast.prototype.loadAds = function (vastUrl) {
     this.initialize();
   }
   // if an ad is already on stage we need to clear it first before we can accept another ad request
-  if (this.getAdOnStage()) { 
+  if (this.getAdOnStage()) {
     this.onDestroyLoadAds = _onDestroyLoadAds.bind(this, vastUrl);
     this.container.addEventListener('addestroyed', this.onDestroyLoadAds);
     this.stopAds();

@@ -1,6 +1,6 @@
 /**
- * @license Copyright (c) 2017 Radiant Media Player | https://www.radiantmediaplayer.com
- * rmp-vast 1.3.4
+ * @license Copyright (c) 2017-2018 Radiant Media Player | https://www.radiantmediaplayer.com
+ * rmp-vast 1.3.5
  * GitHub: https://github.com/radiantmediaplayer/rmp-vast
  * MIT License: https://github.com/radiantmediaplayer/rmp-vast/blob/master/LICENSE
  */
@@ -294,6 +294,10 @@ API.getAdErrorMessage = function () {
 
 API.getAdVastErrorCode = function () {
   return this.vastErrorCode;
+};
+
+API.getAdErrorType = function () {
+  return this.adErrorType;
 };
 
 API.getEnv = function () {
@@ -2229,6 +2233,8 @@ var _onXmlAvailable = function (xml) {
   // check for VAST node
   this.vastDocument = xml.getElementsByTagName('VAST');
   if (this.vastDocument.length === 0) {
+    // in case this is a wrapper we need to ping for errors on originating tags
+    _ping.PING.error.call(this, 100, this.inlineOrWrapperErrorTags);
     _vastErrors.VASTERRORS.process.call(this, 100);
     return;
   }
@@ -2237,6 +2243,8 @@ var _onXmlAvailable = function (xml) {
   if (errorNode.length > 0) {
     var errorUrl = _fwVast.FWVAST.getNodeValue(errorNode[0], true);
     if (errorUrl !== null) {
+      // we use an array here for vastErrorTags but we only have item in it
+      // this is to be able to use PING.error for both vastErrorTags and inlineOrWrapperErrorTags
       this.vastErrorTags.push({ event: 'error', url: errorUrl });
     }
   }
@@ -2244,14 +2252,18 @@ var _onXmlAvailable = function (xml) {
   var pattern = /^(2|3|4)\./i;
   var version = this.vastDocument[0].getAttribute('version');
   if (!pattern.test(version)) {
-    _ping.PING.error.call(this, 102, this.vastErrorTags);
+    // in case this is a wrapper we need to ping for errors on originating tags
+    _ping.PING.error.call(this, 102, this.inlineOrWrapperErrorTags);
     _vastErrors.VASTERRORS.process.call(this, 102);
     return;
   }
   // if empty VAST return
   var ad = this.vastDocument[0].getElementsByTagName('Ad');
   if (ad.length === 0) {
+    // here we ping vastErrorTags with error code 303 according to spec
     _ping.PING.error.call(this, 303, this.vastErrorTags);
+    // in case this is a wrapper we also need to ping for errors on originating tags
+    _ping.PING.error.call(this, 303, this.inlineOrWrapperErrorTags);
     _vastErrors.VASTERRORS.process.call(this, 303);
     return;
   }
@@ -2269,14 +2281,8 @@ var _onXmlAvailable = function (xml) {
     }
   }
   if (!retainedAd) {
-    // we ping Error for each detected item within the Ad Pods as required by spec
-    for (var _i4 = 0, _len4 = adPod.length; _i4 < _len4; _i4++) {
-      var _inline = adPod[_i4].getElementsByTagName('InLine');
-      var _wrapper = adPod[_i4].getElementsByTagName('Wrapper');
-      if (_inline.length > 0 || _wrapper.length > 0) {
-        _ping.PING.error.call(this, 200, this.vastErrorTags);
-      }
-    }
+    // in case this is a wrapper we need to ping for errors on originating tags
+    _ping.PING.error.call(this, 200, this.inlineOrWrapperErrorTags);
     _vastErrors.VASTERRORS.process.call(this, 200);
     return;
   }
@@ -2285,7 +2291,8 @@ var _onXmlAvailable = function (xml) {
   var wrapper = retainedAd.getElementsByTagName('Wrapper');
   // 1 InLine or Wrapper element must be present 
   if (inline.length === 0 && wrapper.length === 0) {
-    _ping.PING.error.call(this, 101, this.vastErrorTags);
+    // in case this is a wrapper we need to ping for errors on originating tags
+    _ping.PING.error.call(this, 101, this.inlineOrWrapperErrorTags);
     _vastErrors.VASTERRORS.process.call(this, 101);
     return;
   }
@@ -2407,12 +2414,16 @@ var _makeAjaxRequest = function (vastUrl) {
       }
     } catch (e) {
       _fw.FW.trace(e);
+      // in case this is a wrapper we need to ping for errors on originating tags
+      _ping.PING.error.call(_this, 100, _this.inlineOrWrapperErrorTags);
       _vastErrors.VASTERRORS.process.call(_this, 100);
       return;
     }
     _onXmlAvailable.call(_this, xml);
   }).catch(function (e) {
     _fw.FW.trace(e);
+    // in case this is a wrapper we need to ping for errors on originating tags
+    _ping.PING.error.call(_this, 1000, _this.inlineOrWrapperErrorTags);
     _vastErrors.VASTERRORS.process.call(_this, 1000);
   });
 };
@@ -4042,6 +4053,7 @@ RESET.internalVariables = function () {
   this.thirdQuartileEventFired = false;
   this.vastPlayerPaused = false;
   this.vastErrorCode = -1;
+  this.adErrorType = '';
   this.vastErrorMessage = 'Error getting VAST error';
   this.adSystem = null;
   this.adIsLinear = null;
@@ -4183,7 +4195,15 @@ var _vastPlayer = require('../players/vast-player');
 
 var VASTERRORS = {};
 
-VASTERRORS.list = [{
+// Indicates that the error was encountered when the ad was being loaded. 
+// Possible causes: there was no response from the ad server, malformed ad response was returned ...
+var loadErrorList = [100, 101, 102, 300, 301, 302, 303, 900, 1000, 1001];
+
+// Indicates that the error was encountered after the ad loaded, during ad play. 
+// Possible causes: ad assets could not be loaded, etc.
+var playErrorList = [200, 201, 202, 203, 400, 401, 402, 403, 405, 500, 501, 502, 503, 600, 601, 602, 603, 604, 901, 1002, 1003, 1004];
+
+var vastErrorsList = [{
   code: 100,
   description: 'XML parsing error.'
 }, {
@@ -4282,7 +4302,7 @@ VASTERRORS.list = [{
 }];
 
 var _updateVastError = function (errorCode) {
-  var error = VASTERRORS.list.filter(function (value) {
+  var error = vastErrorsList.filter(function (value) {
     return value.code === errorCode;
   });
   if (error.length > 0) {
@@ -4292,8 +4312,17 @@ var _updateVastError = function (errorCode) {
     this.vastErrorCode = -1;
     this.vastErrorMessage = 'Error getting VAST error';
   }
+  if (this.vastErrorCode > -1) {
+    if (loadErrorList.indexOf(this.vastErrorCode) > -1) {
+      this.adErrorType = 'adLoadError';
+    } else if (playErrorList.indexOf(this.vastErrorCode) > -1) {
+      this.adErrorType = 'adPlayError';
+    }
+  }
   if (DEBUG) {
-    _fw.FW.trace('RMP-VAST: VAST error ' + this.vastErrorCode + ' - ' + this.vastErrorMessage);
+    _fw.FW.log('RMP-VAST: VAST error code is ' + this.vastErrorCode);
+    _fw.FW.log('RMP-VAST: VAST error message is ' + this.vastErrorMessage);
+    _fw.FW.log('RMP-VAST: Ad error type is ' + this.adErrorType);
   }
 };
 

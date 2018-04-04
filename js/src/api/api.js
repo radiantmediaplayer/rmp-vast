@@ -278,6 +278,10 @@ API.getAdVastErrorCode = function () {
   return this.vastErrorCode;
 };
 
+API.getAdErrorType = function () {
+  return this.adErrorType;
+};
+
 API.getEnv = function () {
   return ENV;
 };

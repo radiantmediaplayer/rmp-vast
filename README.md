@@ -246,6 +246,7 @@ Additional VPAID-related methods
 The following methods should be queried after the `aderror` event has fired for accurate data:
 - `getAdErrorMessage()`: return (string) representing the error message for the current error
 - `getAdVastErrorCode()`: return (number|-1) representing the VAST error code for the current error
+- `getAdErrorType()`: return (string) representing the detected ad error type, possible values: 'adLoadError', 'adPlayError' or '' (if unknown error type)
 
 The following methods provide context information for the rmp-vast instance:
 - `getEnv()`: returns the environment object

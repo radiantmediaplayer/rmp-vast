@@ -45,6 +45,7 @@ RESET.internalVariables = function () {
   this.thirdQuartileEventFired = false;
   this.vastPlayerPaused = false;
   this.vastErrorCode = -1;
+  this.adErrorType = '';
   this.vastErrorMessage = 'Error getting VAST error';
   this.adSystem = null;
   this.adIsLinear = null;
