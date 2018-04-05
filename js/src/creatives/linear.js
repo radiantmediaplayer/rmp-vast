@@ -76,17 +76,41 @@ var _onClickThrough = function (event) {
   }
 };
 
+var _errorTypes = [
+  'MEDIA_ERR_CUSTOM',
+  'MEDIA_ERR_ABORTED',
+  'MEDIA_ERR_NETWORK',
+  'MEDIA_ERR_DECODE',
+  'MEDIA_ERR_SRC_NOT_SUPPORTED',
+  'MEDIA_ERR_ENCRYPTED'
+]; 
+
 var _onPlaybackError = function (event) {
+  // https://www.w3.org/TR/html50/embedded-content-0.html#mediaerror
   // MEDIA_ERR_SRC_NOT_SUPPORTED is sign of fatal error
   // other errors may produce non-fatal error in the browser so we do not 
   // act upon them
-  if (event && event.target && event.target.error && event.target.error.code) {
-    if (event.target.error.code !== event.target.error.MEDIA_ERR_SRC_NOT_SUPPORTED) {
-      return;
+  if (event && event.target) {
+    let videoElement = event.target;
+    if (typeof videoElement.error === 'object' && typeof videoElement.error.code === 'number') {
+      let errorCode = videoElement.error.code;
+      let errorMessage = '';
+      if (typeof videoElement.error.message === 'string') {
+        errorMessage = videoElement.error.message;
+      }
+      if (DEBUG) {
+        FW.log('RMP-VAST: error on video element with code ' + errorCode.toString() + ' and message ' + errorMessage);
+        if (_errorTypes[errorCode]) {
+          FW.log('RMP-VAST: error type is ' + _errorTypes[errorCode]);
+        }
+      }
+      // EDIA_ERR_SRC_NOT_SUPPORTED (numeric value 4)
+      if (errorCode === 4) {
+        PING.error.call(this, 401);
+        VASTERRORS.process.call(this, 401);
+      }
     }
   }
-  PING.error.call(this, 401);
-  VASTERRORS.process.call(this, 401);
 };
 
 var _appendClickUIOnMobile = function () {

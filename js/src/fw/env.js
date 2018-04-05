@@ -29,27 +29,11 @@ var _getUserAgent = function () {
   }
 };
 
-var _isWindowsPhone = function (ua, hasTouchEvents) {
-  let isWP = false;
-  let wpVersion = -1;
-  let support = [isWP, wpVersion];
-  if (!hasTouchEvents) {
-    return support;
-  }
-  let pattern = /windows\s+phone/i;
-  if (pattern.test(ua)) {
-    isWP = true;
-    let pattern2 = /windows\s+phone\s+(\d+)\./i;
-    support = [isWP, _filterVersion(pattern2, ua)];
-  }
-  return support;
-};
-
-var _isIos = function (ua, isWindowsPhone, hasTouchEvents) {
+var _isIos = function (ua, hasTouchEvents) {
   let isIOS = false;
   let iOSVersion = -1;
   let support = [isIOS, iOSVersion];
-  if (isWindowsPhone[0] || !hasTouchEvents) {
+  if (!hasTouchEvents) {
     return support;
   }
   let pattern = /(ipad|iphone|ipod)/i;
@@ -87,17 +71,17 @@ var _isSafari = function (ua) {
   return [isSafari, safariVersion];
 };
 
-var _isAndroid = function (ua, isWindowsPhone, isIos) {
+var _isAndroid = function (ua, isIos, hasTouchEvents) {
   let isAndroid = false;
   let androidVersion = -1;
   let support = [isAndroid, androidVersion];
-  if (isWindowsPhone[0] || isIos[0]) {
+  if (isIos[0] || !hasTouchEvents) {
     return support;
   }
   let pattern = /android/i;
   if (pattern.test(ua)) {
     isAndroid = true;
-    let pattern2 = /android\s+(\d+)\./i;
+    let pattern2 = /android\s*(\d+)\./i;
     androidVersion = _filterVersion(pattern2, ua);
     support = [isAndroid, androidVersion];
   }
@@ -105,8 +89,10 @@ var _isAndroid = function (ua, isWindowsPhone, isIos) {
 };
 
 var _isFirefox = function (ua) {
-  let firefoxPattern = /mozilla\/[.0-9]*.+rv:.+gecko\/[.0-9]*.+firefox\/[.0-9]*/i;
-  if (firefoxPattern.test(ua)) {
+  // from https://developer.mozilla.org/en-US/docs/Web/HTTP/Browser_detection_using_the_user_agent
+  let firefoxPattern = /firefox\//i;
+  let seamonkeyPattern = /seamonkey\//i;
+  if (firefoxPattern.test(ua) && !seamonkeyPattern.test(ua)) {
     return true;
   }
   return false;
@@ -175,18 +161,13 @@ ENV.hasNativeFullscreenSupport = _hasNativeFullscreenSupport();
 
 var userAgent = _getUserAgent();
 var hasTouchEvents = _hasTouchEvents();
-var isWindowsPhone = _isWindowsPhone(userAgent, hasTouchEvents);
-ENV.isIos = _isIos(userAgent, isWindowsPhone, hasTouchEvents);
-ENV.isAndroid = _isAndroid(userAgent, isWindowsPhone, ENV.isIos);
-ENV.isMobileAndroid = false;
-if (ENV.isAndroid[0] && hasTouchEvents) {
-  ENV.isMobileAndroid = true;
-} 
+ENV.isIos = _isIos(userAgent, hasTouchEvents);
+ENV.isAndroid = _isAndroid(userAgent, ENV.isIos, hasTouchEvents);
 ENV.isMacOSX = _isMacOSX(userAgent, ENV.isIos);
 ENV.isSafari = _isSafari(userAgent);
 ENV.isFirefox = _isFirefox(userAgent);
 ENV.isMobile = false;
-if (ENV.isIos[0] || ENV.isMobileAndroid || isWindowsPhone[0]) {
+if (ENV.isIos[0] || ENV.isAndroid[0]) {
   ENV.isMobile = true;
 }
 

@@ -123,7 +123,7 @@ VASTPLAYER.init = function () {
   if (!this.useContentPlayerForAds) {
     this.vastPlayer = document.createElement('video');
     // disable casting of video ads for Android
-    if (ENV.isMobileAndroid && typeof this.vastPlayer.disableRemotePlayback !== 'undefined') {
+    if (ENV.isAndroid[0] && typeof this.vastPlayer.disableRemotePlayback !== 'undefined') {
       this.vastPlayer.disableRemotePlayback = true;
     }
     this.vastPlayer.className = 'rmp-ad-vast-video-player';

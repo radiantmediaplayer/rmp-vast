@@ -1,6 +1,6 @@
 /**
  * @license Copyright (c) 2017-2018 Radiant Media Player | https://www.radiantmediaplayer.com
- * rmp-vast 1.3.5
+ * rmp-vast 1.3.6
  * GitHub: https://github.com/radiantmediaplayer/rmp-vast
  * MIT License: https://github.com/radiantmediaplayer/rmp-vast/blob/master/LICENSE
  */
@@ -710,17 +710,34 @@ var _onClickThrough = function (event) {
   }
 };
 
+var _errorTypes = ['MEDIA_ERR_CUSTOM', 'MEDIA_ERR_ABORTED', 'MEDIA_ERR_NETWORK', 'MEDIA_ERR_DECODE', 'MEDIA_ERR_SRC_NOT_SUPPORTED', 'MEDIA_ERR_ENCRYPTED'];
+
 var _onPlaybackError = function (event) {
+  // https://www.w3.org/TR/html50/embedded-content-0.html#mediaerror
   // MEDIA_ERR_SRC_NOT_SUPPORTED is sign of fatal error
   // other errors may produce non-fatal error in the browser so we do not 
   // act upon them
-  if (event && event.target && event.target.error && event.target.error.code) {
-    if (event.target.error.code !== event.target.error.MEDIA_ERR_SRC_NOT_SUPPORTED) {
-      return;
+  if (event && event.target) {
+    var videoElement = event.target;
+    if (typeof videoElement.error === 'object' && typeof videoElement.error.code === 'number') {
+      var errorCode = videoElement.error.code;
+      var errorMessage = '';
+      if (typeof videoElement.error.message === 'string') {
+        errorMessage = videoElement.error.message;
+      }
+      if (DEBUG) {
+        _fw.FW.log('RMP-VAST: error on video element with code ' + errorCode.toString() + ' and message ' + errorMessage);
+        if (_errorTypes[errorCode]) {
+          _fw.FW.log('RMP-VAST: error type is ' + _errorTypes[errorCode]);
+        }
+      }
+      // EDIA_ERR_SRC_NOT_SUPPORTED (numeric value 4)
+      if (errorCode === 4) {
+        _ping.PING.error.call(this, 401);
+        _vastErrors.VASTERRORS.process.call(this, 401);
+      }
     }
   }
-  _ping.PING.error.call(this, 401);
-  _vastErrors.VASTERRORS.process.call(this, 401);
 };
 
 var _appendClickUIOnMobile = function () {
@@ -1348,27 +1365,11 @@ var _getUserAgent = function () {
   }
 };
 
-var _isWindowsPhone = function (ua, hasTouchEvents) {
-  var isWP = false;
-  var wpVersion = -1;
-  var support = [isWP, wpVersion];
-  if (!hasTouchEvents) {
-    return support;
-  }
-  var pattern = /windows\s+phone/i;
-  if (pattern.test(ua)) {
-    isWP = true;
-    var pattern2 = /windows\s+phone\s+(\d+)\./i;
-    support = [isWP, _filterVersion(pattern2, ua)];
-  }
-  return support;
-};
-
-var _isIos = function (ua, isWindowsPhone, hasTouchEvents) {
+var _isIos = function (ua, hasTouchEvents) {
   var isIOS = false;
   var iOSVersion = -1;
   var support = [isIOS, iOSVersion];
-  if (isWindowsPhone[0] || !hasTouchEvents) {
+  if (!hasTouchEvents) {
     return support;
   }
   var pattern = /(ipad|iphone|ipod)/i;
@@ -1405,17 +1406,17 @@ var _isSafari = function (ua) {
   return [isSafari, safariVersion];
 };
 
-var _isAndroid = function (ua, isWindowsPhone, isIos) {
+var _isAndroid = function (ua, isIos, hasTouchEvents) {
   var isAndroid = false;
   var androidVersion = -1;
   var support = [isAndroid, androidVersion];
-  if (isWindowsPhone[0] || isIos[0]) {
+  if (isIos[0] || !hasTouchEvents) {
     return support;
   }
   var pattern = /android/i;
   if (pattern.test(ua)) {
     isAndroid = true;
-    var pattern2 = /android\s+(\d+)\./i;
+    var pattern2 = /android\s*(\d+)\./i;
     androidVersion = _filterVersion(pattern2, ua);
     support = [isAndroid, androidVersion];
   }
@@ -1423,8 +1424,10 @@ var _isAndroid = function (ua, isWindowsPhone, isIos) {
 };
 
 var _isFirefox = function (ua) {
-  var firefoxPattern = /mozilla\/[.0-9]*.+rv:.+gecko\/[.0-9]*.+firefox\/[.0-9]*/i;
-  if (firefoxPattern.test(ua)) {
+  // from https://developer.mozilla.org/en-US/docs/Web/HTTP/Browser_detection_using_the_user_agent
+  var firefoxPattern = /firefox\//i;
+  var seamonkeyPattern = /seamonkey\//i;
+  if (firefoxPattern.test(ua) && !seamonkeyPattern.test(ua)) {
     return true;
   }
   return false;
@@ -1489,18 +1492,13 @@ ENV.hasNativeFullscreenSupport = _hasNativeFullscreenSupport();
 
 var userAgent = _getUserAgent();
 var hasTouchEvents = _hasTouchEvents();
-var isWindowsPhone = _isWindowsPhone(userAgent, hasTouchEvents);
-ENV.isIos = _isIos(userAgent, isWindowsPhone, hasTouchEvents);
-ENV.isAndroid = _isAndroid(userAgent, isWindowsPhone, ENV.isIos);
-ENV.isMobileAndroid = false;
-if (ENV.isAndroid[0] && hasTouchEvents) {
-  ENV.isMobileAndroid = true;
-}
+ENV.isIos = _isIos(userAgent, hasTouchEvents);
+ENV.isAndroid = _isAndroid(userAgent, ENV.isIos, hasTouchEvents);
 ENV.isMacOSX = _isMacOSX(userAgent, ENV.isIos);
 ENV.isSafari = _isSafari(userAgent);
 ENV.isFirefox = _isFirefox(userAgent);
 ENV.isMobile = false;
-if (ENV.isIos[0] || ENV.isMobileAndroid || isWindowsPhone[0]) {
+if (ENV.isIos[0] || ENV.isAndroid[0]) {
   ENV.isMobile = true;
 }
 
@@ -2717,7 +2715,7 @@ VASTPLAYER.init = function () {
   if (!this.useContentPlayerForAds) {
     this.vastPlayer = document.createElement('video');
     // disable casting of video ads for Android
-    if (_env.ENV.isMobileAndroid && typeof this.vastPlayer.disableRemotePlayback !== 'undefined') {
+    if (_env.ENV.isAndroid[0] && typeof this.vastPlayer.disableRemotePlayback !== 'undefined') {
       this.vastPlayer.disableRemotePlayback = true;
     }
     this.vastPlayer.className = 'rmp-ad-vast-video-player';
