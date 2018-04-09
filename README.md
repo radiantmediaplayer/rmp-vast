@@ -77,8 +77,7 @@ You must use rmp-vast in a well-formed HTML document. This means a web-page with
 </div>
 ```
 This structure must not be altered. CSS classes on the above elements must not be renamed.
-The HTML5 video tag used for content must use the src property on the HTML5 video (e.g. do not use source tag). We recommend not 
-setting the HTML5 video preload attribute to avoid niche issues when using MSE-based streaming.
+The HTML5 video tag used for content must use the src property on the HTML5 video (e.g. do not use source tag).
 - Init rmp-vast with JavaScript:
 ```javascript
 var adTag = 'https://www.radiantmediaplayer.com/vast/tags/inline-linear-5.xml';

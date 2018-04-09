@@ -1,6 +1,6 @@
 /**
  * @license Copyright (c) 2017-2018 Radiant Media Player | https://www.radiantmediaplayer.com
- * rmp-vast 1.3.6
+ * rmp-vast 1.3.7
  * GitHub: https://github.com/radiantmediaplayer/rmp-vast
  * MIT License: https://github.com/radiantmediaplayer/rmp-vast/blob/master/LICENSE
  */
@@ -2750,11 +2750,6 @@ VASTPLAYER.init = function () {
     }
     _this2.contentPlayerCompleted = true;
   });
-  // we need the loadedmetadata event so we force preload 
-  // in case it was set differently for useContentPlayerForAds
-  if (this.vastPlayer.preload && this.vastPlayer.preload === 'none') {
-    this.vastPlayer.preload = 'metadata';
-  }
   // we need to init the vast player video tag
   // according to https://developers.google.com/interactive-media-ads/docs/sdks/html5/mobile_video
   // to initialize the content element, a call to the load() method is sufficient.
