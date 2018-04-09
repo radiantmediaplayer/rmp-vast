@@ -174,6 +174,10 @@ VASTPLAYER.init = function () {
     // we also need to init player on this browser
     // this also work on previous version of Safari
     if (this.useContentPlayerForAds) {
+      // this preload thing is some serious hack for macOS Safari
+      // in order for the player to recover content
+      // the default preload setting does not work
+      this.vastPlayer.preload = 'auto';
       this.vastPlayer.load();
     }
   }

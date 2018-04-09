@@ -83,7 +83,7 @@ var _errorTypes = [
   'MEDIA_ERR_DECODE',
   'MEDIA_ERR_SRC_NOT_SUPPORTED',
   'MEDIA_ERR_ENCRYPTED'
-]; 
+];
 
 var _onPlaybackError = function (event) {
   // https://www.w3.org/TR/html50/embedded-content-0.html#mediaerror

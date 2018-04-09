@@ -1,6 +1,6 @@
 /**
  * @license Copyright (c) 2017-2018 Radiant Media Player | https://www.radiantmediaplayer.com
- * rmp-vast 1.3.7
+ * rmp-vast 1.3.8
  * GitHub: https://github.com/radiantmediaplayer/rmp-vast
  * MIT License: https://github.com/radiantmediaplayer/rmp-vast/blob/master/LICENSE
  */
@@ -2766,6 +2766,10 @@ VASTPLAYER.init = function () {
     // we also need to init player on this browser
     // this also work on previous version of Safari
     if (this.useContentPlayerForAds) {
+      // this preload thing is some serious hack for macOS Safari
+      // in order for the player to recover content
+      // the default preload setting does not work
+      this.vastPlayer.preload = 'auto';
       this.vastPlayer.load();
     }
   }
