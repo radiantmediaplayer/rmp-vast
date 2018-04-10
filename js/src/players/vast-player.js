@@ -158,6 +158,11 @@ VASTPLAYER.init = function () {
     }
     this.contentPlayerCompleted = true;
   });
+  // we need to force preload on iOS and macOS Safari (don't ask why)
+  // the default preload setting does not work
+  if (this.useContentPlayerForAds) {
+    this.vastPlayer.preload = 'auto';
+  }
   // we need to init the vast player video tag
   // according to https://developers.google.com/interactive-media-ads/docs/sdks/html5/mobile_video
   // to initialize the content element, a call to the load() method is sufficient.
@@ -174,10 +179,6 @@ VASTPLAYER.init = function () {
     // we also need to init player on this browser
     // this also work on previous version of Safari
     if (this.useContentPlayerForAds) {
-      // this preload thing is some serious hack for macOS Safari
-      // in order for the player to recover content
-      // the default preload setting does not work
-      this.vastPlayer.preload = 'auto';
       this.vastPlayer.load();
     }
   }

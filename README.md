@@ -47,8 +47,6 @@ enough coverage to support current industry requirements and best practices.
 - Safari for iOS 10+
 - MS Edge for Desktop
 - Internet Explorer 11+ for Desktop
-- Opera for Desktop
-- Vivaldi for Desktop
 
 Specifically we support the latest stable release for each browser
 
