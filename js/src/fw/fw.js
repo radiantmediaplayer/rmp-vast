@@ -144,27 +144,4 @@ FW.trace = function (data) {
   }
 };
 
-FW.playPromise = function (video) {
-  if (video) {
-    let playPromise = video.play();
-    // on Chrome 50+ play() returns a promise
-    // https://developers.google.com/web/updates/2016/03/play-returns-promise
-    // but not all browsers support this - so we just catch the potential Chrome error that 
-    // may result if pause() is called in between - pause should overwrite play 
-    // and in this case causes a promise rejection
-    if (playPromise !== undefined) {
-      playPromise.then(() => {
-        if (DEBUG) {
-          FW.log('RMP: playPromise on content has resolved');
-        }
-      }).catch((e) => {
-        if (DEBUG) {
-          FW.log(e);
-          FW.log('RMP: playPromise on content has been rejected');
-        }
-      });
-    }
-  }
-};
-
 export { FW };

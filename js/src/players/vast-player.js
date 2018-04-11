@@ -10,6 +10,7 @@ import { NONLINEAR } from '../creatives/non-linear';
 import { LINEAR } from '../creatives/linear';
 import { API } from '../api/api';
 import { VASTERRORS } from '../utils/vast-errors';
+import { HELPERS } from '../utils/helpers';
 
 const VASTPLAYER = {};
 
@@ -158,11 +159,10 @@ VASTPLAYER.init = function () {
     }
     this.contentPlayerCompleted = true;
   });
-  // we need to force preload on iOS and macOS Safari (don't ask why)
-  // the default preload setting does not work
-  if (this.useContentPlayerForAds) {
-    this.vastPlayer.preload = 'auto';
-  }
+  // we need to preload as much creative data as possible
+  // also on macOS and iOS Safari we need to force preload to avoid 
+  // playback issues
+  this.vastPlayer.preload = 'auto';
   // we need to init the vast player video tag
   // according to https://developers.google.com/interactive-media-ads/docs/sdks/html5/mobile_video
   // to initialize the content element, a call to the load() method is sufficient.
@@ -251,9 +251,9 @@ VASTPLAYER.getMute = function () {
   return null;
 };
 
-VASTPLAYER.play = function () {
+VASTPLAYER.play = function (firstVastPlayerPlayRequest) {
   if (this.vastPlayer && this.vastPlayer.paused) {
-    FW.playPromise(this.vastPlayer);
+    HELPERS.playPromise.call(this, 'vast', firstVastPlayerPlayRequest);
   }
 };
 

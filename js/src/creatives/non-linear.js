@@ -105,7 +105,10 @@ NONLINEAR.update = function () {
   _appendCloseButton.call(this);
 
   FW.show(this.adContainer);
-  CONTENTPLAYER.play.call(this);
+  CONTENTPLAYER.play.call(this, this.firstContentPlayerPlayRequest);
+  if (this.firstContentPlayerPlayRequest) {
+    this.firstContentPlayerPlayRequest = false;
+  }
 };
 
 NONLINEAR.parse = function (nonLinearAds) {

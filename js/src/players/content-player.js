@@ -1,10 +1,10 @@
-import { FW } from '../fw/fw';
+import { HELPERS } from '../utils/helpers';
 
 const CONTENTPLAYER = {};
 
-CONTENTPLAYER.play = function () {
+CONTENTPLAYER.play = function (firstContentPlayerPlayRequest) {
   if (this.contentPlayer && this.contentPlayer.paused) {
-    FW.playPromise(this.contentPlayer);
+    HELPERS.playPromise.call(this, 'content', firstContentPlayerPlayRequest);
   }
 };
 

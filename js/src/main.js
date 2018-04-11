@@ -52,6 +52,8 @@ window.RmpVast = function (id, params) {
   this.needsSeekAdjust = false;
   this.seekAdjustAttached = false;
   this.onDestroyLoadAds = null;
+  this.firstVastPlayerPlayRequest = true;
+  this.firstContentPlayerPlayRequest = true;
   if (ENV.isIos[0] || (ENV.isMacOSX && ENV.isSafari[0])) {
     // on iOS and macOS Safari we use content player to play ads
     // to avoid issues related to fullscreen management and autoplay

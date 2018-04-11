@@ -44,7 +44,10 @@ var _onLoadedmetadataPlay = function () {
   if (DEBUG) {
     FW.log('RMP-VAST: play VAST player');
   }
-  VASTPLAYER.play.call(this);
+  VASTPLAYER.play.call(this, this.firstVastPlayerPlayRequest);
+  if (this.firstVastPlayerPlayRequest) {
+    this.firstVastPlayerPlayRequest = false;
+  }
 };
 
 var _onEndedResumeContent = function () {
