@@ -1,5 +1,4 @@
 import { FW } from '../fw/fw';
-import { FWVAST } from '../fw/fw-vast';
 import { ENV } from '../fw/env';
 import { CONTENTPLAYER } from '../players/content-player';
 import { VPAID } from '../players/vpaid';
@@ -236,10 +235,10 @@ VASTPLAYER.setMute = function (muted) {
   if (this.vastPlayer) {
     if (muted && !this.vastPlayer.muted) {
       this.vastPlayer.muted = true;
-      FWVAST.dispatchPingEvent.call(this, 'mute');
+      FW.dispatchPingEvent.call(this, 'mute');
     } else if (!muted && this.vastPlayer.muted) {
       this.vastPlayer.muted = false;
-      FWVAST.dispatchPingEvent.call(this, 'unmute');
+      FW.dispatchPingEvent.call(this, 'unmute');
     }
   }
 };

@@ -1,5 +1,5 @@
 import { FW } from '../fw/fw';
-import { FWVAST } from '../fw/fw-vast';
+import { ENV } from '../fw/env';
 import { PING } from '../tracking/ping';
 import { VASTPLAYER } from '../players/vast-player';
 import { CONTENTPLAYER } from '../players/content-player';
@@ -21,7 +21,7 @@ var _onNonLinearLoadSuccess = function () {
   API.createEvent.call(this, 'adloaded');
   API.createEvent.call(this, 'adimpression');
   API.createEvent.call(this, 'adstarted');
-  FWVAST.dispatchPingEvent.call(this, ['impression', 'creativeView', 'start']);
+  FW.dispatchPingEvent.call(this, ['impression', 'creativeView', 'start']);
 };
 
 var _onNonLinearClickThrough = function (event) {
@@ -33,7 +33,7 @@ var _onNonLinearClickThrough = function (event) {
       this.pause();
     }
     API.createEvent.call(this, 'adclick');
-    FWVAST.dispatchPingEvent.call(this, 'clickthrough');
+    FW.dispatchPingEvent.call(this, 'clickthrough');
   } catch (e) {
     FW.trace(e);
   }
@@ -42,10 +42,13 @@ var _onNonLinearClickThrough = function (event) {
 var _onClickCloseNonLinear = function (event) {
   if (event) {
     event.stopPropagation();
+    if (event.type === 'touchend') {
+      event.preventDefault();
+    }
   }
   this.nonLinearContainer.style.display = 'none';
   API.createEvent.call(this, 'adclosed');
-  FWVAST.dispatchPingEvent.call(this, 'close');
+  FW.dispatchPingEvent.call(this, 'close');
 };
 
 var _appendCloseButton = function () {
@@ -62,6 +65,7 @@ var _appendCloseButton = function () {
     this.nonLinearClose.style.display = 'block';
   }
   this.onClickCloseNonLinear = _onClickCloseNonLinear.bind(this);
+  this.nonLinearClose.addEventListener('touchend', this.onClickCloseNonLinear);
   this.nonLinearClose.addEventListener('click', this.onClickCloseNonLinear);
   this.nonLinearContainer.appendChild(this.nonLinearClose);
 };
@@ -74,8 +78,8 @@ NONLINEAR.update = function () {
   // non-linear ad container
   this.nonLinearContainer = document.createElement('div');
   this.nonLinearContainer.className = 'rmp-ad-non-linear-container';
-  this.nonLinearContainer.style.width = this.nonLinearCreativeWidth + 'px';
-  this.nonLinearContainer.style.height = this.nonLinearCreativeHeight + 'px';
+  this.nonLinearContainer.style.width = (this.nonLinearCreativeWidth).toString() + 'px';
+  this.nonLinearContainer.style.height = (this.nonLinearCreativeHeight).toString() + 'px';
 
   // a tag to handle click - a tag is best for WebView support
   this.nonLinearATag = document.createElement('a');
@@ -84,7 +88,11 @@ NONLINEAR.update = function () {
     this.nonLinearATag.href = this.clickThroughUrl;
     this.nonLinearATag.target = '_blank';
     this.onNonLinearClickThrough = _onNonLinearClickThrough.bind(this);
-    this.nonLinearATag.addEventListener('click', this.onNonLinearClickThrough);
+    if (ENV.isMobile) {
+      this.nonLinearATag.addEventListener('touchend', this.onNonLinearClickThrough);
+    } else {
+      this.nonLinearATag.addEventListener('click', this.onNonLinearClickThrough);
+    }
   }
 
   // non-linear creative image
@@ -146,13 +154,15 @@ NONLINEAR.parse = function (nonLinearAds) {
       VASTERRORS.process.call(this, 101);
       continue;
     }
-    if (parseInt(height) <= 0 || parseInt(width) <= 0) {
+    width = parseInt(width);
+    height = parseInt(height);
+    if (width <= 0 || height <= 0) {
       continue;
     }
     // get minSuggestedDuration (optional)
     let minSuggestedDuration = currentNonLinear.getAttribute('minSuggestedDuration');
-    if (minSuggestedDuration !== null && minSuggestedDuration !== '' && FWVAST.isValidDuration(minSuggestedDuration)) {
-      this.nonLinearMinSuggestedDuration = FWVAST.convertDurationToSeconds(minSuggestedDuration);
+    if (minSuggestedDuration !== null && minSuggestedDuration !== '' && FW.isValidDuration(minSuggestedDuration)) {
+      this.nonLinearMinSuggestedDuration = FW.convertDurationToSeconds(minSuggestedDuration);
     }
     let staticResource = currentNonLinear.getElementsByTagName('StaticResource');
     // we expect at least one StaticResource tag
@@ -174,20 +184,20 @@ NONLINEAR.parse = function (nonLinearAds) {
       }
       // if width of non-linear creative does not fit within current player container width 
       // we should skip this creative
-      if (parseInt(width) > FW.getWidth(this.container)) {
+      if (width > FW.getWidth(this.container)) {
         isDimensionError = true;
         continue;
       }
-      adMediaUrl = FWVAST.getNodeValue(currentStaticResource, true);
+      adMediaUrl = FW.getNodeValue(currentStaticResource, true);
       break;
     }
     // we have a valid NonLinear/StaticResource with supported creativeType - we break
     if (adMediaUrl !== '') {
       this.adMediaUrl = adMediaUrl;
-      this.nonLinearCreativeHeight = height;
       this.nonLinearCreativeWidth = width;
+      this.nonLinearCreativeHeight = height;
       this.nonLinearContentType = creativeType;
-      break; 
+      break;
     }
   }
   // if not supported NonLinear type ping for error
@@ -203,11 +213,11 @@ NONLINEAR.parse = function (nonLinearAds) {
   let nonLinearClickThrough = currentNonLinear.getElementsByTagName('NonLinearClickThrough');
   // if NonLinearClickThrough is present we expect one tag
   if (nonLinearClickThrough.length > 0) {
-    this.clickThroughUrl = FWVAST.getNodeValue(nonLinearClickThrough[0], true);
+    this.clickThroughUrl = FW.getNodeValue(nonLinearClickThrough[0], true);
     let nonLinearClickTracking = nonLinear[0].getElementsByTagName('NonLinearClickTracking');
     if (nonLinearClickTracking.length > 0) {
       for (let i = 0, len = nonLinearClickTracking.length; i < len; i++) {
-        let nonLinearClickTrackingUrl = FWVAST.getNodeValue(nonLinearClickTracking[i], true);
+        let nonLinearClickTrackingUrl = FW.getNodeValue(nonLinearClickTracking[i], true);
         if (nonLinearClickTrackingUrl !== null) {
           this.trackingTags.push({ event: 'clickthrough', url: nonLinearClickTrackingUrl });
         }

@@ -1,6 +1,5 @@
 import { FW } from '../fw/fw';
 import { ENV } from '../fw/env';
-import { FWVAST } from '../fw/fw-vast';
 import { VASTERRORS } from '../utils/vast-errors';
 import { API } from '../api/api';
 import { PING } from '../tracking/ping';
@@ -150,13 +149,8 @@ var _onAdStarted = function () {
   }
   if (typeof this.vpaidCreative.getAdLinear === 'function') {
     this.adIsLinear = this.vpaidCreative.getAdLinear();
-    if (this.adIsLinear === false) {
-      // we currently do not support Click-to-Linear Video Ad or non-linear VPAID ads
-      VPAID.stopAd.call(this);
-      return;
-    }
   }
-  FWVAST.dispatchPingEvent.call(this, 'creativeView');
+  FW.dispatchPingEvent.call(this, 'creativeView');
 };
 
 var _onAdStopped = function () {
@@ -177,7 +171,7 @@ var _onAdSkipped = function () {
     clearTimeout(this.adSkippedTimeout);
   }
   API.createEvent.call(this, 'adskipped');
-  FWVAST.dispatchPingEvent.call(this, 'skip');
+  FW.dispatchPingEvent.call(this, 'skip');
 };
 
 var _onAdSkippableStateChange = function () {
@@ -212,9 +206,9 @@ var _onAdVolumeChange = function () {
     return;
   }
   if (this.vpaidCurrentVolume > 0 && newVolume === 0) {
-    FWVAST.dispatchPingEvent.call(this, 'mute');
+    FW.dispatchPingEvent.call(this, 'mute');
   } else if (this.vpaidCurrentVolume === 0 && newVolume > 0) {
-    FWVAST.dispatchPingEvent.call(this, 'unmute');
+    FW.dispatchPingEvent.call(this, 'unmute');
   }
   this.vpaidCurrentVolume = newVolume;
   API.createEvent.call(this, 'advolumechanged');
@@ -225,7 +219,7 @@ var _onAdImpression = function () {
     FW.log('RMP-VAST: VPAID AdImpression event');
   }
   API.createEvent.call(this, 'adimpression');
-  FWVAST.dispatchPingEvent.call(this, 'impression');
+  FW.dispatchPingEvent.call(this, 'impression');
 };
 
 var _onAdVideoStart = function () {
@@ -239,7 +233,7 @@ var _onAdVideoStart = function () {
   }
   this.vpaidCurrentVolume = newVolume;
   API.createEvent.call(this, 'adstarted');
-  FWVAST.dispatchPingEvent.call(this, 'start');
+  FW.dispatchPingEvent.call(this, 'start');
 };
 
 var _onAdVideoFirstQuartile = function () {
@@ -247,7 +241,7 @@ var _onAdVideoFirstQuartile = function () {
     FW.log('RMP-VAST: VPAID AdVideoFirstQuartile event');
   }
   API.createEvent.call(this, 'adfirstquartile');
-  FWVAST.dispatchPingEvent.call(this, 'firstQuartile');
+  FW.dispatchPingEvent.call(this, 'firstQuartile');
 };
 
 var _onAdVideoMidpoint = function () {
@@ -255,7 +249,7 @@ var _onAdVideoMidpoint = function () {
     FW.log('RMP-VAST: VPAID AdVideoMidpoint event');
   }
   API.createEvent.call(this, 'admidpoint');
-  FWVAST.dispatchPingEvent.call(this, 'midpoint');
+  FW.dispatchPingEvent.call(this, 'midpoint');
 };
 
 var _onAdVideoThirdQuartile = function () {
@@ -263,7 +257,7 @@ var _onAdVideoThirdQuartile = function () {
     FW.log('RMP-VAST: VPAID AdVideoThirdQuartile event');
   }
   API.createEvent.call(this, 'adthirdquartile');
-  FWVAST.dispatchPingEvent.call(this, 'thirdQuartile');
+  FW.dispatchPingEvent.call(this, 'thirdQuartile');
 };
 
 var _onAdVideoComplete = function () {
@@ -271,7 +265,7 @@ var _onAdVideoComplete = function () {
     FW.log('RMP-VAST: VPAID AdVideoComplete event');
   }
   API.createEvent.call(this, 'adcomplete');
-  FWVAST.dispatchPingEvent.call(this, 'complete');
+  FW.dispatchPingEvent.call(this, 'complete');
 };
 
 var _onAdClickThru = function (url, id, playerHandles) {
@@ -279,7 +273,7 @@ var _onAdClickThru = function (url, id, playerHandles) {
     FW.log('RMP-VAST: VPAID AdClickThru event');
   }
   API.createEvent.call(this, 'adclick');
-  FWVAST.dispatchPingEvent.call(this, 'clickthrough');
+  FW.dispatchPingEvent.call(this, 'clickthrough');
   if (typeof playerHandles !== 'boolean') {
     return;
   }
@@ -295,7 +289,7 @@ var _onAdClickThru = function (url, id, playerHandles) {
     if (destUrl) {
       // for getClickThroughUrl API method
       this.clickThroughUrl = destUrl;
-      window.open(this.clickThroughUrl, '_blank');
+      FW.openWindow(this.clickThroughUrl);
     }
   }
 };
@@ -306,7 +300,7 @@ var _onAdPaused = function () {
   }
   this.vpaidPaused = true;
   API.createEvent.call(this, 'adpaused');
-  FWVAST.dispatchPingEvent.call(this, 'pause');
+  FW.dispatchPingEvent.call(this, 'pause');
 };
 
 var _onAdPlaying = function () {
@@ -315,7 +309,7 @@ var _onAdPlaying = function () {
   }
   this.vpaidPaused = false;
   API.createEvent.call(this, 'adresumed');
-  FWVAST.dispatchPingEvent.call(this, 'resume');
+  FW.dispatchPingEvent.call(this, 'resume');
 };
 
 var _onAdLog = function (message) {
@@ -344,7 +338,7 @@ var _onAdUserAcceptInvitation = function () {
     FW.log('RMP-VAST: VPAID AdUserAcceptInvitation event');
   }
   API.createEvent.call(this, 'aduseracceptinvitation');
-  FWVAST.dispatchPingEvent.call(this, 'acceptInvitation');
+  FW.dispatchPingEvent.call(this, 'acceptInvitation');
 };
 
 var _onAdUserMinimize = function () {
@@ -352,7 +346,7 @@ var _onAdUserMinimize = function () {
     FW.log('RMP-VAST: VPAID AdUserMinimize event');
   }
   API.createEvent.call(this, 'adcollapse');
-  FWVAST.dispatchPingEvent.call(this, 'collapse');
+  FW.dispatchPingEvent.call(this, 'collapse');
 };
 
 var _onAdUserClose = function () {
@@ -360,7 +354,7 @@ var _onAdUserClose = function () {
     FW.log('RMP-VAST: VPAID AdUserClose event');
   }
   API.createEvent.call(this, 'adclose');
-  FWVAST.dispatchPingEvent.call(this, 'close');
+  FW.dispatchPingEvent.call(this, 'close');
 };
 
 var _onAdSizeChange = function () {

@@ -1,5 +1,4 @@
 import { FW } from '../fw/fw';
-import { FWVAST } from '../fw/fw-vast';
 import { PING } from './ping';
 import { API } from '../api/api';
 import { VASTPLAYER } from '../players/vast-player';
@@ -31,11 +30,11 @@ var _onEventPingTracking = function (event) {
 var _onVolumeChange = function () {
   if (this.vastPlayer.muted || this.vastPlayer.volume === 0) {
     API.createEvent.call(this, 'advolumemuted');
-    FWVAST.dispatchPingEvent.call(this, 'mute');
+    FW.dispatchPingEvent.call(this, 'mute');
     this.vastPlayerMuted = true;
   } else {
     if (this.vastPlayerMuted) {
-      FWVAST.dispatchPingEvent.call(this, 'unmute');
+      FW.dispatchPingEvent.call(this, 'unmute');
       this.vastPlayerMuted = false;
     }
   }
@@ -49,15 +48,15 @@ var _onTimeupdate = function () {
       if (this.vastPlayerCurrentTime >= this.vastPlayerDuration * 0.25 && !this.firstQuartileEventFired) {
         this.firstQuartileEventFired = true;
         API.createEvent.call(this, 'adfirstquartile');
-        FWVAST.dispatchPingEvent.call(this, 'firstQuartile');
+        FW.dispatchPingEvent.call(this, 'firstQuartile');
       } else if (this.vastPlayerCurrentTime >= this.vastPlayerDuration * 0.5 && !this.midpointEventFired) {
         this.midpointEventFired = true;
         API.createEvent.call(this, 'admidpoint');
-        FWVAST.dispatchPingEvent.call(this, 'midpoint');
+        FW.dispatchPingEvent.call(this, 'midpoint');
       } else if (this.vastPlayerCurrentTime >= this.vastPlayerDuration * 0.75 && !this.thirdQuartileEventFired) {
         this.thirdQuartileEventFired = true;
         API.createEvent.call(this, 'adthirdquartile');
-        FWVAST.dispatchPingEvent.call(this, 'thirdQuartile');
+        FW.dispatchPingEvent.call(this, 'thirdQuartile');
       }
     }
     if (this.isSkippableAd) {
@@ -66,7 +65,7 @@ var _onTimeupdate = function () {
         this.progressEventOffsetsSeconds = [];
         this.progressEventOffsets.forEach((element) => {
           this.progressEventOffsetsSeconds.push({
-            offsetSeconds: FWVAST.convertOffsetToSeconds(element, this.vastPlayerDuration),
+            offsetSeconds: FW.convertOffsetToSeconds(element, this.vastPlayerDuration),
             offsetRaw: element
           });
         });
@@ -76,7 +75,7 @@ var _onTimeupdate = function () {
       }
       if (Array.isArray(this.progressEventOffsetsSeconds) && this.progressEventOffsetsSeconds.length > 0 &&
         this.vastPlayerCurrentTime >= this.progressEventOffsetsSeconds[0].offsetSeconds * 1000) {
-        FWVAST.dispatchPingEvent.call(this, 'progress-' + this.progressEventOffsetsSeconds[0].offsetRaw);
+        FW.dispatchPingEvent.call(this, 'progress-' + this.progressEventOffsetsSeconds[0].offsetRaw);
         this.progressEventOffsetsSeconds.shift();
       }
     }
@@ -93,7 +92,7 @@ var _onPause = function () {
         return;
       }
     }
-    FWVAST.dispatchPingEvent.call(this, 'pause');
+    FW.dispatchPingEvent.call(this, 'pause');
   }
 };
 
@@ -101,7 +100,7 @@ var _onPlay = function () {
   if (this.vastPlayerPaused) {
     this.vastPlayerPaused = false;
     API.createEvent.call(this, 'adresumed');
-    FWVAST.dispatchPingEvent.call(this, 'resume');
+    FW.dispatchPingEvent.call(this, 'resume');
   }
 };
 
@@ -109,13 +108,13 @@ var _onPlaying = function () {
   this.vastPlayer.removeEventListener('playing', this.onPlaying);
   API.createEvent.call(this, 'adimpression');
   API.createEvent.call(this, 'adstarted');
-  FWVAST.dispatchPingEvent.call(this, ['impression', 'creativeView', 'start']);
+  FW.dispatchPingEvent.call(this, ['impression', 'creativeView', 'start']);
 };
 
 var _onEnded = function () {
   this.vastPlayer.removeEventListener('ended', this.onEnded);
   API.createEvent.call(this, 'adcomplete');
-  FWVAST.dispatchPingEvent.call(this, 'complete');
+  FW.dispatchPingEvent.call(this, 'complete');
 };
 
 TRACKINGEVENTS.wire = function () {
@@ -166,12 +165,12 @@ TRACKINGEVENTS.filter = function (trackingEvents) {
   // collect supported tracking events with valid event names and tracking urls
   for (let i = 0, len = trackingTags.length; i < len; i++) {
     let event = trackingTags[i].getAttribute('event');
-    let url = FWVAST.getNodeValue(trackingTags[i], true);
+    let url = FW.getNodeValue(trackingTags[i], true);
     if (event !== null && event !== '' && PING.events.indexOf(event) > -1 && url !== null) {
       if (this.isSkippableAd) {
         if (event === 'progress') {
           let offset = trackingTags[i].getAttribute('offset');
-          if (offset === null || offset === '' || !FWVAST.isValidOffset(offset)) {
+          if (offset === null || offset === '' || !FW.isValidOffset(offset)) {
             // offset attribute is required on Tracking event="progress"
             continue;
           }

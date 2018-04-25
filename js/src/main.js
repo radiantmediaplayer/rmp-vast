@@ -19,7 +19,6 @@ import 'core-js/fn/parse-int';
 
 import { FW } from './fw/fw';
 import { ENV } from './fw/env';
-import { FWVAST } from './fw/fw-vast';
 import { PING } from './tracking/ping';
 import { LINEAR } from './creatives/linear';
 import { NONLINEAR } from './creatives/non-linear';
@@ -42,7 +41,7 @@ window.RmpVast = function (id, params) {
   this.content = this.container.getElementsByClassName('rmp-content')[0];
   this.contentPlayer = this.container.getElementsByClassName('rmp-video')[0];
   if (DEBUG) {
-    FWVAST.logVideoEvents(this.contentPlayer);
+    FW.logVideoEvents(this.contentPlayer);
   }
   this.adContainer = null;
   this.rmpVastInitialized = false;
@@ -64,7 +63,7 @@ window.RmpVast = function (id, params) {
     }
   }
   // filter input params
-  FWVAST.filterParams.call(this, params);
+  FW.filterParams.call(this, params);
   // reset internal variables
   RESET.internalVariables.call(this);
   // attach fullscreen states
@@ -82,23 +81,23 @@ window.RmpVast = function (id, params) {
         if (isInFullscreen) {
           isInFullscreen = false;
           if (this.adOnStage && this.adIsLinear) {
-            FWVAST.dispatchPingEvent.call(this, 'exitFullscreen');
+            FW.dispatchPingEvent.call(this, 'exitFullscreen');
           }
         } else {
           isInFullscreen = true;
           if (this.adOnStage && this.adIsLinear) {
-            FWVAST.dispatchPingEvent.call(this, 'fullscreen');
+            FW.dispatchPingEvent.call(this, 'fullscreen');
           }
         }
       } else if (event.type === 'webkitbeginfullscreen') {
         // iOS uses webkitbeginfullscreen
         if (this.adOnStage && this.adIsLinear) {
-          FWVAST.dispatchPingEvent.call(this, 'fullscreen');
+          FW.dispatchPingEvent.call(this, 'fullscreen');
         }
       } else if (event.type === 'webkitendfullscreen') {
         // iOS uses webkitendfullscreen
         if (this.adOnStage && this.adIsLinear) {
-          FWVAST.dispatchPingEvent.call(this, 'exitFullscreen');
+          FW.dispatchPingEvent.call(this, 'exitFullscreen');
         }
       }
     }
@@ -125,7 +124,7 @@ for (let i = 0, len = apiKeys.length; i < len; i++) {
 
 var _execRedirect = function () {
   API.createEvent.call(this, 'adfollowingredirect');
-  let redirectUrl = FWVAST.getNodeValue(this.vastAdTagURI[0], true);
+  let redirectUrl = FW.getNodeValue(this.vastAdTagURI[0], true);
   if (DEBUG) {
     FW.log('RMP-VAST: redirect URL is ' + redirectUrl);
   }
@@ -188,7 +187,7 @@ var _parseCreatives = function (creative) {
       let skipoffset = linear[0].getAttribute('skipoffset');
       // if we have a wrapper we ignore skipoffset in case it is present
       if (!this.isWrapper && this.params.skipMessage !== '' && skipoffset !== null && skipoffset !== '' &&
-        FWVAST.isValidOffset(skipoffset)) {
+        FW.isValidOffset(skipoffset)) {
         if (DEBUG) {
           FW.log('RMP-VAST: skippable ad detected with offset ' + skipoffset);
         }
@@ -215,11 +214,11 @@ var _parseCreatives = function (creative) {
         let clickThrough = videoClicks[0].getElementsByTagName('ClickThrough');
         let clickTracking = videoClicks[0].getElementsByTagName('ClickTracking');
         if (clickThrough.length > 0) {
-          this.clickThroughUrl = FWVAST.getNodeValue(clickThrough[0], true);
+          this.clickThroughUrl = FW.getNodeValue(clickThrough[0], true);
         }
         if (clickTracking.length > 0) {
           for (let i = 0, len = clickTracking.length; i < len; i++) {
-            let clickTrackingUrl = FWVAST.getNodeValue(clickTracking[i], true);
+            let clickTrackingUrl = FW.getNodeValue(clickTracking[i], true);
             if (clickTrackingUrl !== null) {
               this.trackingTags.push({ event: 'clickthrough', url: clickTrackingUrl });
             }
@@ -266,7 +265,7 @@ var _onXmlAvailable = function (xml) {
   // VAST/Error node
   let errorNode = this.vastDocument[0].getElementsByTagName('Error');
   if (errorNode.length > 0) {
-    let errorUrl = FWVAST.getNodeValue(errorNode[0], true);
+    let errorUrl = FW.getNodeValue(errorNode[0], true);
     if (errorUrl !== null) {
       // we use an array here for vastErrorTags but we only have item in it
       // this is to be able to use PING.error for both vastErrorTags and inlineOrWrapperErrorTags
@@ -334,7 +333,7 @@ var _onXmlAvailable = function (xml) {
   // VAST/Ad/InLine/Error node
   errorNode = inlineOrWrapper[0].getElementsByTagName('Error');
   if (errorNode.length > 0) {
-    let errorUrl = FWVAST.getNodeValue(errorNode[0], true);
+    let errorUrl = FW.getNodeValue(errorNode[0], true);
     if (errorUrl !== null) {
       this.inlineOrWrapperErrorTags.push({ event: 'error', url: errorUrl });
     }
@@ -375,20 +374,20 @@ var _onXmlAvailable = function (xml) {
     }
   }
   if (adTitle.length > 0) {
-    this.adSystem = FWVAST.getNodeValue(adSystem[0], false);
+    this.adSystem = FW.getNodeValue(adSystem[0], false);
   }
   if (impression.length > 0) {
-    let impressionUrl = FWVAST.getNodeValue(impression[0], true);
+    let impressionUrl = FW.getNodeValue(impression[0], true);
     if (impressionUrl !== null) {
       this.trackingTags.push({ event: 'impression', url: impressionUrl });
     }
   }
   if (!this.isWrapper) {
     if (adTitle.length > 0) {
-      this.adTitle = FWVAST.getNodeValue(adTitle[0], false);
+      this.adTitle = FW.getNodeValue(adTitle[0], false);
     }
     if (adDescription.length > 0) {
-      this.adDescription = FWVAST.getNodeValue(adDescription[0], false);
+      this.adDescription = FW.getNodeValue(adDescription[0], false);
     }
   }
   // in case no Creative with Wrapper we make our redirect call here
@@ -406,7 +405,7 @@ var _makeAjaxRequest = function (vastUrl) {
     VASTERRORS.process.call(this, 1001);
     return;
   }
-  if (!FWVAST.hasDOMParser()) {
+  if (!FW.hasDOMParser()) {
     VASTERRORS.process.call(this, 1002);
     return;
   }

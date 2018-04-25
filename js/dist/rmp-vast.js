@@ -1,6 +1,6 @@
 /**
  * @license Copyright (c) 2017-2018 Radiant Media Player | https://www.radiantmediaplayer.com
- * rmp-vast 1.3.10
+ * rmp-vast 1.3.11
  * GitHub: https://github.com/radiantmediaplayer/rmp-vast
  * MIT License: https://github.com/radiantmediaplayer/rmp-vast/blob/master/LICENSE
  */
@@ -13,8 +13,6 @@ Object.defineProperty(exports, "__esModule", {
 exports.API = undefined;
 
 var _fw = require('../fw/fw');
-
-var _fwVast = require('../fw/fw-vast');
 
 var _env = require('../fw/env');
 
@@ -76,9 +74,8 @@ API.setVolume = function (level) {
   if (this.adOnStage && this.adIsLinear) {
     if (this.isVPAID) {
       _vpaid.VPAID.setAdVolume.call(this, level);
-    } else {
-      _vastPlayer.VASTPLAYER.setVolume.call(this, level);
     }
+    _vastPlayer.VASTPLAYER.setVolume.call(this, level);
   }
   _contentPlayer.CONTENTPLAYER.setVolume.call(this, level);
 };
@@ -240,7 +237,7 @@ API.getAdMediaWidth = function () {
       return this.nonLinearCreativeWidth;
     }
   }
-  return null;
+  return -1;
 };
 
 API.getAdMediaHeight = function () {
@@ -253,7 +250,7 @@ API.getAdMediaHeight = function () {
       return this.nonLinearCreativeHeight;
     }
   }
-  return null;
+  return -1;
 };
 
 API.getClickThroughUrl = function () {
@@ -334,7 +331,7 @@ API.initialize = function () {
     }
   } else {
     if (DEBUG) {
-      _fwVast.FWVAST.logPerformance('RMP-VAST: on user interaction - player needs to be initialized');
+      _fw.FW.logPerformance('RMP-VAST: on user interaction - player needs to be initialized');
     }
     _vastPlayer.VASTPLAYER.init.call(this);
   }
@@ -392,7 +389,7 @@ API.getAdCompanions = function () {
 
 exports.API = API;
 
-},{"../fw/env":6,"../fw/fw":8,"../fw/fw-vast":7,"../players/content-player":10,"../players/vast-player":11,"../players/vpaid":12}],2:[function(require,module,exports){
+},{"../fw/env":6,"../fw/fw":7,"../players/content-player":9,"../players/vast-player":10,"../players/vpaid":11}],2:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -401,8 +398,6 @@ Object.defineProperty(exports, "__esModule", {
 exports.ICONS = undefined;
 
 var _fw = require('../fw/fw');
-
-var _fwVast = require('../fw/fw-vast');
 
 var _ping = require('../tracking/ping');
 
@@ -479,7 +474,7 @@ ICONS.parse = function (icons) {
     if (creativeType === null || creativeType === '' || !imagePattern.test(creativeType)) {
       continue;
     }
-    var staticResourceUrl = _fwVast.FWVAST.getNodeValue(staticResource[0], true);
+    var staticResourceUrl = _fw.FW.getNodeValue(staticResource[0], true);
     if (staticResourceUrl === null) {
       continue;
     }
@@ -496,7 +491,7 @@ ICONS.parse = function (icons) {
     };
     // optional IconViewTracking
     var iconViewTracking = currentIcon.getElementsByTagName('IconViewTracking');
-    var iconViewTrackingUrl = _fwVast.FWVAST.getNodeValue(iconViewTracking[0], true);
+    var iconViewTrackingUrl = _fw.FW.getNodeValue(iconViewTracking[0], true);
     if (iconViewTrackingUrl !== null) {
       iconData.iconViewTrackingUrl = iconViewTrackingUrl;
     }
@@ -504,14 +499,14 @@ ICONS.parse = function (icons) {
     var iconClicks = currentIcon.getElementsByTagName('IconClicks');
     if (iconClicks.length > 0) {
       var iconClickThrough = iconClicks[0].getElementsByTagName('IconClickThrough');
-      var iconClickThroughUrl = _fwVast.FWVAST.getNodeValue(iconClickThrough[0], true);
+      var iconClickThroughUrl = _fw.FW.getNodeValue(iconClickThrough[0], true);
       if (iconClickThroughUrl !== null) {
         iconData.iconClickThroughUrl = iconClickThroughUrl;
         var iconClickTracking = iconClicks[0].getElementsByTagName('IconClickTracking');
         if (iconClickTracking.length > 0) {
           iconData.iconClickTrackingUrl = [];
           for (var _i = 0, _len = iconClickTracking.length; _i < _len; _i++) {
-            var iconClickTrackingUrl = _fwVast.FWVAST.getNodeValue(iconClickTracking[_i], true);
+            var iconClickTrackingUrl = _fw.FW.getNodeValue(iconClickTracking[_i], true);
             if (iconClickTrackingUrl !== null) {
               iconData.iconClickTrackingUrl.push(iconClickTrackingUrl);
             }
@@ -527,26 +522,27 @@ ICONS.parse = function (icons) {
   }
 };
 
-var _onIconClickThrough = function (index) {
+var _onIconClickThrough = function (index, event) {
   var _this2 = this;
 
   if (DEBUG) {
     _fw.FW.log('RMP-VAST: click on icon with index ' + index);
   }
-  try {
-    // open ClickThrough link for icon
-    window.open(this.icons[index].iconClickThroughUrl, '_blank ');
-    // send trackers if any for IconClickTracking
-    if (typeof this.icons[index].iconClickTrackingUrl !== 'undefined') {
-      var iconClickTrackingUrl = this.icons[index].iconClickTrackingUrl;
-      if (iconClickTrackingUrl.length > 0) {
-        iconClickTrackingUrl.forEach(function (element) {
-          _ping.PING.tracking.call(_this2, element, null);
-        });
-      }
+  if (event) {
+    event.stopPropagation();
+    if (event.type === 'touchend') {
+      event.preventDefault();
     }
-  } catch (e) {
-    _fw.FW.trace(e);
+  }
+  _fw.FW.openWindow(this.icons[index].iconClickThroughUrl);
+  // send trackers if any for IconClickTracking
+  if (typeof this.icons[index].iconClickTrackingUrl !== 'undefined') {
+    var iconClickTrackingUrl = this.icons[index].iconClickTrackingUrl;
+    if (iconClickTrackingUrl.length > 0) {
+      iconClickTrackingUrl.forEach(function (element) {
+        _ping.PING.tracking.call(_this2, element, null);
+      });
+    }
   }
 };
 
@@ -597,6 +593,7 @@ var _onPlayingAppendIcons = function () {
     }
 
     if (typeof this.icons[i].iconClickThroughUrl !== 'undefined') {
+      icon.addEventListener('touchend', _onIconClickThrough.bind(this, i));
       icon.addEventListener('click', _onIconClickThrough.bind(this, i));
     }
 
@@ -614,7 +611,7 @@ ICONS.append = function () {
 
 exports.ICONS = ICONS;
 
-},{"../fw/fw":8,"../fw/fw-vast":7,"../tracking/ping":13}],3:[function(require,module,exports){
+},{"../fw/fw":7,"../tracking/ping":12}],3:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -623,8 +620,6 @@ Object.defineProperty(exports, "__esModule", {
 exports.LINEAR = undefined;
 
 var _fw = require('../fw/fw');
-
-var _fwVast = require('../fw/fw-vast');
 
 var _env = require('../fw/env');
 
@@ -693,24 +688,20 @@ var _onEndedResumeContent = function () {
 };
 
 var _onClickThrough = function (event) {
-  try {
-    if (event) {
-      event.stopPropagation();
-    }
-    if (DEBUG) {
-      _fw.FW.log('RMP-VAST: onClickThrough');
-    }
-    if (!_env.ENV.isMobile) {
-      window.open(this.clickThroughUrl, '_blank');
-    }
-    if (this.params.pauseOnClick) {
-      this.pause();
-    }
-    _api.API.createEvent.call(this, 'adclick');
-    _fwVast.FWVAST.dispatchPingEvent.call(this, 'clickthrough');
-  } catch (e) {
-    _fw.FW.trace(e);
+  if (event) {
+    event.stopPropagation();
   }
+  if (DEBUG) {
+    _fw.FW.log('RMP-VAST: onClickThrough');
+  }
+  if (!_env.ENV.isMobile) {
+    _fw.FW.openWindow(this.clickThroughUrl);
+  }
+  if (this.params.pauseOnClick) {
+    this.pause();
+  }
+  _api.API.createEvent.call(this, 'adclick');
+  _fw.FW.dispatchPingEvent.call(this, 'clickthrough');
 };
 
 var _errorTypes = ['MEDIA_ERR_CUSTOM', 'MEDIA_ERR_ABORTED', 'MEDIA_ERR_NETWORK', 'MEDIA_ERR_DECODE', 'MEDIA_ERR_SRC_NOT_SUPPORTED', 'MEDIA_ERR_ENCRYPTED'];
@@ -749,7 +740,7 @@ var _appendClickUIOnMobile = function () {
   this.clickUIOnMobile = document.createElement('a');
   this.clickUIOnMobile.className = 'rmp-ad-click-ui-mobile';
   this.clickUIOnMobile.textContent = this.params.textForClickUIOnMobile;
-  this.clickUIOnMobile.addEventListener('click', this.onClickThrough);
+  this.clickUIOnMobile.addEventListener('touchend', this.onClickThrough);
   this.clickUIOnMobile.href = this.clickThroughUrl;
   this.clickUIOnMobile.target = '_blank';
   this.adContainer.appendChild(this.clickUIOnMobile);
@@ -800,8 +791,8 @@ LINEAR.update = function (url, type) {
   }
 
   // clickthrough interaction
+  this.onClickThrough = _onClickThrough.bind(this);
   if (this.clickThroughUrl) {
-    this.onClickThrough = _onClickThrough.bind(this);
     if (_env.ENV.isMobile) {
       _appendClickUIOnMobile.call(this);
     } else {
@@ -841,7 +832,7 @@ LINEAR.parse = function (linear) {
   var adParameters = linear[0].getElementsByTagName('AdParameters');
   this.adParametersData = '';
   if (adParameters.length > 0) {
-    this.adParametersData = _fwVast.FWVAST.getNodeValue(adParameters[0], false);
+    this.adParametersData = _fw.FW.getNodeValue(adParameters[0], false);
   }
   var mediaFile = mediaFiles[0].getElementsByTagName('MediaFile');
   if (mediaFile.length === 0) {
@@ -856,7 +847,7 @@ LINEAR.parse = function (linear) {
     mediaFileItems[i] = {};
     // required per VAST3 spec CDATA URL location to media, delivery, type, width, height
     var currentMediaFile = mediaFile[i];
-    var mediaFileValue = _fwVast.FWVAST.getNodeValue(currentMediaFile, true);
+    var mediaFileValue = _fw.FW.getNodeValue(currentMediaFile, true);
     if (mediaFileValue === null) {
       mediaFileToRemove.push(i);
       continue;
@@ -997,7 +988,7 @@ LINEAR.parse = function (linear) {
 
 exports.LINEAR = LINEAR;
 
-},{"../api/api":1,"../fw/env":6,"../fw/fw":8,"../fw/fw-vast":7,"../players/content-player":10,"../players/vast-player":11,"../players/vpaid":12,"../tracking/ping":13,"../utils/vast-errors":17,"./icons":2,"./skip":5}],4:[function(require,module,exports){
+},{"../api/api":1,"../fw/env":6,"../fw/fw":7,"../players/content-player":9,"../players/vast-player":10,"../players/vpaid":11,"../tracking/ping":12,"../utils/vast-errors":16,"./icons":2,"./skip":5}],4:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1007,7 +998,7 @@ exports.NONLINEAR = undefined;
 
 var _fw = require('../fw/fw');
 
-var _fwVast = require('../fw/fw-vast');
+var _env = require('../fw/env');
 
 var _ping = require('../tracking/ping');
 
@@ -1034,7 +1025,7 @@ var _onNonLinearLoadSuccess = function () {
   _api.API.createEvent.call(this, 'adloaded');
   _api.API.createEvent.call(this, 'adimpression');
   _api.API.createEvent.call(this, 'adstarted');
-  _fwVast.FWVAST.dispatchPingEvent.call(this, ['impression', 'creativeView', 'start']);
+  _fw.FW.dispatchPingEvent.call(this, ['impression', 'creativeView', 'start']);
 };
 
 var _onNonLinearClickThrough = function (event) {
@@ -1046,7 +1037,7 @@ var _onNonLinearClickThrough = function (event) {
       this.pause();
     }
     _api.API.createEvent.call(this, 'adclick');
-    _fwVast.FWVAST.dispatchPingEvent.call(this, 'clickthrough');
+    _fw.FW.dispatchPingEvent.call(this, 'clickthrough');
   } catch (e) {
     _fw.FW.trace(e);
   }
@@ -1055,10 +1046,13 @@ var _onNonLinearClickThrough = function (event) {
 var _onClickCloseNonLinear = function (event) {
   if (event) {
     event.stopPropagation();
+    if (event.type === 'touchend') {
+      event.preventDefault();
+    }
   }
   this.nonLinearContainer.style.display = 'none';
   _api.API.createEvent.call(this, 'adclosed');
-  _fwVast.FWVAST.dispatchPingEvent.call(this, 'close');
+  _fw.FW.dispatchPingEvent.call(this, 'close');
 };
 
 var _appendCloseButton = function () {
@@ -1077,6 +1071,7 @@ var _appendCloseButton = function () {
     this.nonLinearClose.style.display = 'block';
   }
   this.onClickCloseNonLinear = _onClickCloseNonLinear.bind(this);
+  this.nonLinearClose.addEventListener('touchend', this.onClickCloseNonLinear);
   this.nonLinearClose.addEventListener('click', this.onClickCloseNonLinear);
   this.nonLinearContainer.appendChild(this.nonLinearClose);
 };
@@ -1089,8 +1084,8 @@ NONLINEAR.update = function () {
   // non-linear ad container
   this.nonLinearContainer = document.createElement('div');
   this.nonLinearContainer.className = 'rmp-ad-non-linear-container';
-  this.nonLinearContainer.style.width = this.nonLinearCreativeWidth + 'px';
-  this.nonLinearContainer.style.height = this.nonLinearCreativeHeight + 'px';
+  this.nonLinearContainer.style.width = this.nonLinearCreativeWidth.toString() + 'px';
+  this.nonLinearContainer.style.height = this.nonLinearCreativeHeight.toString() + 'px';
 
   // a tag to handle click - a tag is best for WebView support
   this.nonLinearATag = document.createElement('a');
@@ -1099,7 +1094,11 @@ NONLINEAR.update = function () {
     this.nonLinearATag.href = this.clickThroughUrl;
     this.nonLinearATag.target = '_blank';
     this.onNonLinearClickThrough = _onNonLinearClickThrough.bind(this);
-    this.nonLinearATag.addEventListener('click', this.onNonLinearClickThrough);
+    if (_env.ENV.isMobile) {
+      this.nonLinearATag.addEventListener('touchend', this.onNonLinearClickThrough);
+    } else {
+      this.nonLinearATag.addEventListener('click', this.onNonLinearClickThrough);
+    }
   }
 
   // non-linear creative image
@@ -1161,13 +1160,15 @@ NONLINEAR.parse = function (nonLinearAds) {
       _vastErrors.VASTERRORS.process.call(this, 101);
       continue;
     }
-    if (parseInt(height) <= 0 || parseInt(width) <= 0) {
+    width = parseInt(width);
+    height = parseInt(height);
+    if (width <= 0 || height <= 0) {
       continue;
     }
     // get minSuggestedDuration (optional)
     var minSuggestedDuration = currentNonLinear.getAttribute('minSuggestedDuration');
-    if (minSuggestedDuration !== null && minSuggestedDuration !== '' && _fwVast.FWVAST.isValidDuration(minSuggestedDuration)) {
-      this.nonLinearMinSuggestedDuration = _fwVast.FWVAST.convertDurationToSeconds(minSuggestedDuration);
+    if (minSuggestedDuration !== null && minSuggestedDuration !== '' && _fw.FW.isValidDuration(minSuggestedDuration)) {
+      this.nonLinearMinSuggestedDuration = _fw.FW.convertDurationToSeconds(minSuggestedDuration);
     }
     var staticResource = currentNonLinear.getElementsByTagName('StaticResource');
     // we expect at least one StaticResource tag
@@ -1189,18 +1190,18 @@ NONLINEAR.parse = function (nonLinearAds) {
       }
       // if width of non-linear creative does not fit within current player container width 
       // we should skip this creative
-      if (parseInt(width) > _fw.FW.getWidth(this.container)) {
+      if (width > _fw.FW.getWidth(this.container)) {
         isDimensionError = true;
         continue;
       }
-      adMediaUrl = _fwVast.FWVAST.getNodeValue(currentStaticResource, true);
+      adMediaUrl = _fw.FW.getNodeValue(currentStaticResource, true);
       break;
     }
     // we have a valid NonLinear/StaticResource with supported creativeType - we break
     if (adMediaUrl !== '') {
       this.adMediaUrl = adMediaUrl;
-      this.nonLinearCreativeHeight = height;
       this.nonLinearCreativeWidth = width;
+      this.nonLinearCreativeHeight = height;
       this.nonLinearContentType = creativeType;
       break;
     }
@@ -1218,11 +1219,11 @@ NONLINEAR.parse = function (nonLinearAds) {
   var nonLinearClickThrough = currentNonLinear.getElementsByTagName('NonLinearClickThrough');
   // if NonLinearClickThrough is present we expect one tag
   if (nonLinearClickThrough.length > 0) {
-    this.clickThroughUrl = _fwVast.FWVAST.getNodeValue(nonLinearClickThrough[0], true);
+    this.clickThroughUrl = _fw.FW.getNodeValue(nonLinearClickThrough[0], true);
     var nonLinearClickTracking = nonLinear[0].getElementsByTagName('NonLinearClickTracking');
     if (nonLinearClickTracking.length > 0) {
       for (var _i2 = 0, _len2 = nonLinearClickTracking.length; _i2 < _len2; _i2++) {
-        var nonLinearClickTrackingUrl = _fwVast.FWVAST.getNodeValue(nonLinearClickTracking[_i2], true);
+        var nonLinearClickTrackingUrl = _fw.FW.getNodeValue(nonLinearClickTracking[_i2], true);
         if (nonLinearClickTrackingUrl !== null) {
           this.trackingTags.push({ event: 'clickthrough', url: nonLinearClickTrackingUrl });
         }
@@ -1234,7 +1235,7 @@ NONLINEAR.parse = function (nonLinearAds) {
 
 exports.NONLINEAR = NONLINEAR;
 
-},{"../api/api":1,"../fw/fw":8,"../fw/fw-vast":7,"../players/content-player":10,"../players/vast-player":11,"../tracking/ping":13,"../utils/vast-errors":17}],5:[function(require,module,exports){
+},{"../api/api":1,"../fw/env":6,"../fw/fw":7,"../players/content-player":9,"../players/vast-player":10,"../tracking/ping":12,"../utils/vast-errors":16}],5:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1242,7 +1243,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.SKIP = undefined;
 
-var _fwVast = require('../fw/fw-vast');
+var _fw = require('../fw/fw');
 
 var _vastPlayer = require('../players/vast-player');
 
@@ -1270,7 +1271,7 @@ var _onTimeupdateCheckSkip = function () {
   }
   this.vastPlayerCurrentTime = this.vastPlayer.currentTime;
   if (typeof this.vastPlayerCurrentTime === 'number' && this.vastPlayerCurrentTime > 0) {
-    var skipoffsetSeconds = _fwVast.FWVAST.convertOffsetToSeconds(this.skipoffset, this.vastPlayerDuration);
+    var skipoffsetSeconds = _fw.FW.convertOffsetToSeconds(this.skipoffset, this.vastPlayerDuration);
     if (this.vastPlayerCurrentTime >= skipoffsetSeconds) {
       this.vastPlayer.removeEventListener('timeupdate', this.onTimeupdateCheckSkip);
       _setCanBeSkippedUI.call(this);
@@ -1294,7 +1295,7 @@ var _onClickSkip = function (event) {
     _api.API.createEvent.call(this, 'adskipped');
     // request ping for skip event
     if (this.hasSkipEvent) {
-      _fwVast.FWVAST.dispatchPingEvent.call(this, 'skip');
+      _fw.FW.dispatchPingEvent.call(this, 'skip');
     } else {
       _trackingEvents.TRACKINGEVENTS.updateResetStatus.call(this);
     }
@@ -1335,7 +1336,7 @@ SKIP.append = function () {
 
 exports.SKIP = SKIP;
 
-},{"../api/api":1,"../fw/fw-vast":7,"../players/vast-player":11,"../tracking/tracking-events":14}],6:[function(require,module,exports){
+},{"../api/api":1,"../fw/fw":7,"../players/vast-player":10,"../tracking/tracking-events":13}],6:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1516,281 +1517,9 @@ exports.ENV = ENV;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.FWVAST = undefined;
-
-var _fw = require('./fw');
-
-var FWVAST = {};
-
-FWVAST.hasDOMParser = function () {
-  if (typeof window.DOMParser !== 'undefined') {
-    return true;
-  }
-  return false;
-};
-
-FWVAST.vastReadableTime = function (time) {
-  if (typeof time === 'number' && time >= 0) {
-    var seconds = 0;
-    var minutes = 0;
-    var hours = 0;
-    var ms = Math.floor(time % 1000);
-    if (ms === 0) {
-      ms = '000';
-    } else if (ms < 10) {
-      ms = '00' + ms;
-    } else if (ms < 100) {
-      ms = '0' + ms;
-    } else {
-      ms = ms.toString();
-    }
-    seconds = Math.floor(time * 1.0 / 1000);
-    if (seconds > 59) {
-      minutes = Math.floor(seconds * 1.0 / 60);
-      seconds = seconds - minutes * 60;
-    }
-    if (seconds === 0) {
-      seconds = '00';
-    } else if (seconds < 10) {
-      seconds = '0' + seconds;
-    } else {
-      seconds = seconds.toString();
-    }
-    if (minutes > 59) {
-      hours = Math.floor(minutes * 1.0 / 60);
-      minutes = minutes - hours * 60;
-    }
-    if (minutes === 0) {
-      minutes = '00';
-    } else if (minutes < 10) {
-      minutes = '0' + minutes;
-    } else {
-      minutes = minutes.toString();
-    }
-    if (hours === 0) {
-      hours = '00';
-    } else if (hours < 10) {
-      hours = '0' + hours;
-    } else {
-      if (hours > 23) {
-        hours = '00';
-      } else {
-        hours = hours.toString();
-      }
-    }
-    return hours + ':' + minutes + ':' + seconds + '.' + ms;
-  } else {
-    return '00:00:00.000';
-  }
-};
-
-FWVAST.generateCacheBusting = function () {
-  var text = '';
-  var possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  for (var i = 0; i < 8; i++) {
-    text += possible.charAt(Math.floor(Math.random() * possible.length));
-  }
-  return text;
-};
-
-FWVAST.getNodeValue = function (element, http) {
-  var childNodes = element.childNodes;
-  var value = '';
-  // sometimes we have may several nodes - some of which may hold whitespaces
-  for (var i = 0, len = childNodes.length; i < len; i++) {
-    if (childNodes[i] && childNodes[i].textContent) {
-      value += childNodes[i].textContent.trim();
-    }
-  }
-  if (value) {
-    // in case we have some leftovers CDATA - mainly for VPAID
-    var pattern = /^<!\[CDATA\[.*\]\]>$/i;
-    if (pattern.test(value)) {
-      value = value.replace('<![CDATA[', '').replace(']]>', '');
-    }
-    if (http) {
-      var httpPattern = /^(https?:)?\/\//i;
-      if (httpPattern.test(value)) {
-        return value;
-      }
-    } else {
-      return value;
-    }
-  }
-  return null;
-};
-
-FWVAST.RFC3986EncodeURIComponent = function (str) {
-  return encodeURIComponent(str).replace(/[!'()*]/g, function (c) {
-    return '%' + c.charCodeAt(0).toString(16);
-  });
-};
-
-FWVAST.isValidDuration = function (duration) {
-  // HH:MM:SS or HH:MM:SS.mmm
-  var skipPattern = /^\d+:\d+:\d+(\.\d+)?$/i;
-  if (skipPattern.test(duration)) {
-    return true;
-  }
-  return false;
-};
-
-FWVAST.convertDurationToSeconds = function (duration) {
-  // duration is HH:MM:SS or HH:MM:SS.mmm
-  // remove .mmm
-  var splitNoMS = duration.split('.');
-  splitNoMS = splitNoMS[0];
-  var splitTime = splitNoMS.split(':');
-  var seconds = 0;
-  seconds = parseInt(splitTime[0]) * 60 * 60 + parseInt(splitTime[1]) * 60 + parseInt(splitTime[2]);
-  return seconds;
-};
-
-FWVAST.isValidOffset = function (offset) {
-  // HH:MM:SS or HH:MM:SS.mmm
-  var skipPattern1 = /^\d+:\d+:\d+(\.\d+)?$/i;
-  // n%
-  var skipPattern2 = /^\d+%$/i;
-  if (skipPattern1.test(offset) || skipPattern2.test(offset)) {
-    return true;
-  }
-  return false;
-};
-
-FWVAST.convertOffsetToSeconds = function (offset, duration) {
-  // HH:MM:SS or HH:MM:SS.mmm
-  var skipPattern1 = /^\d+:\d+:\d+(\.\d+)?$/i;
-  // n%
-  var skipPattern2 = /^\d+%$/i;
-  var seconds = 0;
-  if (skipPattern1.test(offset)) {
-    // remove .mmm
-    var splitNoMS = offset.split('.');
-    splitNoMS = splitNoMS[0];
-    var splitTime = splitNoMS.split(':');
-    seconds = parseInt(splitTime[0]) * 60 * 60 + parseInt(splitTime[1]) * 60 + parseInt(splitTime[2]);
-  } else if (skipPattern2.test(offset) && duration > 0) {
-    var percent = offset.split('%');
-    percent = parseInt(percent[0]);
-    seconds = Math.round(duration * percent / 100);
-  }
-  return seconds;
-};
-
-FWVAST.dispatchPingEvent = function (event) {
-  if (event) {
-    var element = void 0;
-    if (this.adIsLinear && this.vastPlayer) {
-      element = this.vastPlayer;
-    } else if (!this.adIsLinear && this.nonLinearContainer) {
-      element = this.nonLinearContainer;
-    }
-    if (element) {
-      if (Array.isArray(event)) {
-        event.forEach(function (currentEvent) {
-          _fw.FW.createStdEvent(currentEvent, element);
-        });
-      } else {
-        _fw.FW.createStdEvent(event, element);
-      }
-    }
-  }
-};
-
-FWVAST.logPerformance = function (data) {
-  if (window.performance && typeof window.performance.now === 'function') {
-    var output = '';
-    if (data) {
-      output += data;
-    }
-    _fw.FW.log(output + ' - ' + Math.round(window.performance.now()) + ' ms');
-  }
-};
-
-FWVAST.logVideoEvents = function (video) {
-  var events = ['loadstart', 'durationchange', 'loadedmetadata', 'loadeddata', 'canplay', 'canplaythrough'];
-  events.forEach(function (value) {
-    video.addEventListener(value, function (e) {
-      if (e && e.type) {
-        _fw.FW.log('RMP-VAST: content player event - ' + e.type);
-      }
-    });
-  });
-};
-
-FWVAST.filterParams = function (params) {
-  var defaultParams = {
-    ajaxTimeout: 8000,
-    creativeLoadTimeout: 10000,
-    ajaxWithCredentials: false,
-    maxNumRedirects: 4,
-    pauseOnClick: true,
-    skipMessage: 'Skip ad',
-    skipWaitingMessage: 'Skip ad in',
-    textForClickUIOnMobile: 'Learn more',
-    enableVpaid: true,
-    vpaidSettings: {
-      width: 640,
-      height: 360,
-      viewMode: 'normal',
-      desiredBitrate: 500
-    }
-  };
-  this.params = defaultParams;
-  if (params && !_fw.FW.isEmptyObject(params)) {
-    if (typeof params.ajaxTimeout === 'number' && params.ajaxTimeout > 0) {
-      this.params.ajaxTimeout = params.ajaxTimeout;
-    }
-    if (typeof params.creativeLoadTimeout === 'number' && params.creativeLoadTimeout > 0) {
-      this.params.creativeLoadTimeout = params.creativeLoadTimeout;
-    }
-    if (typeof params.ajaxWithCredentials === 'boolean') {
-      this.params.ajaxWithCredentials = params.ajaxWithCredentials;
-    }
-    if (typeof params.maxNumRedirects === 'number' && params.maxNumRedirects > 0 && params.maxNumRedirects !== 4) {
-      this.params.maxNumRedirects = params.maxNumRedirects;
-    }
-    if (typeof params.pauseOnClick === 'boolean') {
-      this.params.pauseOnClick = params.pauseOnClick;
-    }
-    if (typeof params.skipMessage === 'string') {
-      this.params.skipMessage = params.skipMessage;
-    }
-    if (typeof params.skipWaitingMessage === 'string') {
-      this.params.skipWaitingMessage = params.skipWaitingMessage;
-    }
-    if (typeof params.textForClickUIOnMobile === 'string') {
-      this.params.textForClickUIOnMobile = params.textForClickUIOnMobile;
-    }
-    if (typeof params.enableVpaid === 'boolean') {
-      this.params.enableVpaid = params.enableVpaid;
-    }
-    if (typeof params.vpaidSettings === 'object') {
-      if (typeof params.vpaidSettings.width === 'number') {
-        this.params.vpaidSettings.width = params.vpaidSettings.width;
-      }
-      if (typeof params.vpaidSettings.height === 'number') {
-        this.params.vpaidSettings.height = params.vpaidSettings.height;
-      }
-      if (typeof params.vpaidSettings.viewMode === 'string') {
-        this.params.vpaidSettings.viewMode = params.vpaidSettings.viewMode;
-      }
-      if (typeof params.vpaidSettings.desiredBitrate === 'number') {
-        this.params.vpaidSettings.desiredBitrate = params.vpaidSettings.desiredBitrate;
-      }
-    }
-  }
-};
-
-exports.FWVAST = FWVAST;
-
-},{"./fw":8}],8:[function(require,module,exports){
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
 var FW = {};
+
+/* FW from Radiant Media Player core */
 
 FW.nullFn = function () {
   return null;
@@ -1936,9 +1665,281 @@ FW.trace = function (data) {
   }
 };
 
+/* FW specific to rmp-vast */
+FW.hasDOMParser = function () {
+  if (typeof window.DOMParser !== 'undefined') {
+    return true;
+  }
+  return false;
+};
+
+FW.vastReadableTime = function (time) {
+  if (typeof time === 'number' && time >= 0) {
+    var seconds = 0;
+    var minutes = 0;
+    var hours = 0;
+    var ms = Math.floor(time % 1000);
+    if (ms === 0) {
+      ms = '000';
+    } else if (ms < 10) {
+      ms = '00' + ms;
+    } else if (ms < 100) {
+      ms = '0' + ms;
+    } else {
+      ms = ms.toString();
+    }
+    seconds = Math.floor(time * 1.0 / 1000);
+    if (seconds > 59) {
+      minutes = Math.floor(seconds * 1.0 / 60);
+      seconds = seconds - minutes * 60;
+    }
+    if (seconds === 0) {
+      seconds = '00';
+    } else if (seconds < 10) {
+      seconds = '0' + seconds;
+    } else {
+      seconds = seconds.toString();
+    }
+    if (minutes > 59) {
+      hours = Math.floor(minutes * 1.0 / 60);
+      minutes = minutes - hours * 60;
+    }
+    if (minutes === 0) {
+      minutes = '00';
+    } else if (minutes < 10) {
+      minutes = '0' + minutes;
+    } else {
+      minutes = minutes.toString();
+    }
+    if (hours === 0) {
+      hours = '00';
+    } else if (hours < 10) {
+      hours = '0' + hours;
+    } else {
+      if (hours > 23) {
+        hours = '00';
+      } else {
+        hours = hours.toString();
+      }
+    }
+    return hours + ':' + minutes + ':' + seconds + '.' + ms;
+  } else {
+    return '00:00:00.000';
+  }
+};
+
+FW.generateCacheBusting = function () {
+  var text = '';
+  var possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  for (var i = 0; i < 8; i++) {
+    text += possible.charAt(Math.floor(Math.random() * possible.length));
+  }
+  return text;
+};
+
+FW.getNodeValue = function (element, http) {
+  var childNodes = element.childNodes;
+  var value = '';
+  // sometimes we have may several nodes - some of which may hold whitespaces
+  for (var i = 0, len = childNodes.length; i < len; i++) {
+    if (childNodes[i] && childNodes[i].textContent) {
+      value += childNodes[i].textContent.trim();
+    }
+  }
+  if (value) {
+    // in case we have some leftovers CDATA - mainly for VPAID
+    var pattern = /^<!\[CDATA\[.*\]\]>$/i;
+    if (pattern.test(value)) {
+      value = value.replace('<![CDATA[', '').replace(']]>', '');
+    }
+    if (http) {
+      var httpPattern = /^(https?:)?\/\//i;
+      if (httpPattern.test(value)) {
+        return value;
+      }
+    } else {
+      return value;
+    }
+  }
+  return null;
+};
+
+FW.RFC3986EncodeURIComponent = function (str) {
+  return encodeURIComponent(str).replace(/[!'()*]/g, function (c) {
+    return '%' + c.charCodeAt(0).toString(16);
+  });
+};
+
+FW.isValidDuration = function (duration) {
+  // HH:MM:SS or HH:MM:SS.mmm
+  var skipPattern = /^\d+:\d+:\d+(\.\d+)?$/i;
+  if (skipPattern.test(duration)) {
+    return true;
+  }
+  return false;
+};
+
+FW.convertDurationToSeconds = function (duration) {
+  // duration is HH:MM:SS or HH:MM:SS.mmm
+  // remove .mmm
+  var splitNoMS = duration.split('.');
+  splitNoMS = splitNoMS[0];
+  var splitTime = splitNoMS.split(':');
+  var seconds = 0;
+  seconds = parseInt(splitTime[0]) * 60 * 60 + parseInt(splitTime[1]) * 60 + parseInt(splitTime[2]);
+  return seconds;
+};
+
+FW.isValidOffset = function (offset) {
+  // HH:MM:SS or HH:MM:SS.mmm
+  var skipPattern1 = /^\d+:\d+:\d+(\.\d+)?$/i;
+  // n%
+  var skipPattern2 = /^\d+%$/i;
+  if (skipPattern1.test(offset) || skipPattern2.test(offset)) {
+    return true;
+  }
+  return false;
+};
+
+FW.convertOffsetToSeconds = function (offset, duration) {
+  // HH:MM:SS or HH:MM:SS.mmm
+  var skipPattern1 = /^\d+:\d+:\d+(\.\d+)?$/i;
+  // n%
+  var skipPattern2 = /^\d+%$/i;
+  var seconds = 0;
+  if (skipPattern1.test(offset)) {
+    // remove .mmm
+    var splitNoMS = offset.split('.');
+    splitNoMS = splitNoMS[0];
+    var splitTime = splitNoMS.split(':');
+    seconds = parseInt(splitTime[0]) * 60 * 60 + parseInt(splitTime[1]) * 60 + parseInt(splitTime[2]);
+  } else if (skipPattern2.test(offset) && duration > 0) {
+    var percent = offset.split('%');
+    percent = parseInt(percent[0]);
+    seconds = Math.round(duration * percent / 100);
+  }
+  return seconds;
+};
+
+FW.dispatchPingEvent = function (event) {
+  if (event) {
+    var element = void 0;
+    if (this.adIsLinear && this.vastPlayer) {
+      element = this.vastPlayer;
+    } else if (!this.adIsLinear && this.nonLinearContainer) {
+      element = this.nonLinearContainer;
+    }
+    if (element) {
+      if (Array.isArray(event)) {
+        event.forEach(function (currentEvent) {
+          FW.createStdEvent(currentEvent, element);
+        });
+      } else {
+        FW.createStdEvent(event, element);
+      }
+    }
+  }
+};
+
+FW.logPerformance = function (data) {
+  if (window.performance && typeof window.performance.now === 'function') {
+    var output = '';
+    if (data) {
+      output += data;
+    }
+    FW.log(output + ' - ' + Math.round(window.performance.now()) + ' ms');
+  }
+};
+
+FW.logVideoEvents = function (video) {
+  var events = ['loadstart', 'durationchange', 'loadedmetadata', 'loadeddata', 'canplay', 'canplaythrough'];
+  events.forEach(function (value) {
+    video.addEventListener(value, function (e) {
+      if (e && e.type) {
+        FW.log('RMP-VAST: content player event - ' + e.type);
+      }
+    });
+  });
+};
+
+FW.filterParams = function (params) {
+  var defaultParams = {
+    ajaxTimeout: 8000,
+    creativeLoadTimeout: 10000,
+    ajaxWithCredentials: false,
+    maxNumRedirects: 4,
+    pauseOnClick: true,
+    skipMessage: 'Skip ad',
+    skipWaitingMessage: 'Skip ad in',
+    textForClickUIOnMobile: 'Learn more',
+    enableVpaid: true,
+    vpaidSettings: {
+      width: 640,
+      height: 360,
+      viewMode: 'normal',
+      desiredBitrate: 500
+    }
+  };
+  this.params = defaultParams;
+  if (params && !FW.isEmptyObject(params)) {
+    if (typeof params.ajaxTimeout === 'number' && params.ajaxTimeout > 0) {
+      this.params.ajaxTimeout = params.ajaxTimeout;
+    }
+    if (typeof params.creativeLoadTimeout === 'number' && params.creativeLoadTimeout > 0) {
+      this.params.creativeLoadTimeout = params.creativeLoadTimeout;
+    }
+    if (typeof params.ajaxWithCredentials === 'boolean') {
+      this.params.ajaxWithCredentials = params.ajaxWithCredentials;
+    }
+    if (typeof params.maxNumRedirects === 'number' && params.maxNumRedirects > 0 && params.maxNumRedirects !== 4) {
+      this.params.maxNumRedirects = params.maxNumRedirects;
+    }
+    if (typeof params.pauseOnClick === 'boolean') {
+      this.params.pauseOnClick = params.pauseOnClick;
+    }
+    if (typeof params.skipMessage === 'string') {
+      this.params.skipMessage = params.skipMessage;
+    }
+    if (typeof params.skipWaitingMessage === 'string') {
+      this.params.skipWaitingMessage = params.skipWaitingMessage;
+    }
+    if (typeof params.textForClickUIOnMobile === 'string') {
+      this.params.textForClickUIOnMobile = params.textForClickUIOnMobile;
+    }
+    if (typeof params.enableVpaid === 'boolean') {
+      this.params.enableVpaid = params.enableVpaid;
+    }
+    if (typeof params.vpaidSettings === 'object') {
+      if (typeof params.vpaidSettings.width === 'number') {
+        this.params.vpaidSettings.width = params.vpaidSettings.width;
+      }
+      if (typeof params.vpaidSettings.height === 'number') {
+        this.params.vpaidSettings.height = params.vpaidSettings.height;
+      }
+      if (typeof params.vpaidSettings.viewMode === 'string') {
+        this.params.vpaidSettings.viewMode = params.vpaidSettings.viewMode;
+      }
+      if (typeof params.vpaidSettings.desiredBitrate === 'number') {
+        this.params.vpaidSettings.desiredBitrate = params.vpaidSettings.desiredBitrate;
+      }
+    }
+  }
+};
+
+FW.openWindow = function (link) {
+  try {
+    // I would like to use named window here to have better performance like 
+    // window.open(link, 'rmpVastAdPageArea'); but focus is not set on updated window with such approach
+    // in MS Edge and FF - so _blank it is
+    window.open(link, '_blank');
+  } catch (e) {
+    FW.trace(e);
+  }
+};
+
 exports.FW = FW;
 
-},{}],9:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 'use strict';
 
 require('core-js/fn/object/keys');
@@ -1968,8 +1969,6 @@ require('core-js/fn/parse-int');
 var _fw = require('./fw/fw');
 
 var _env = require('./fw/env');
-
-var _fwVast = require('./fw/fw-vast');
 
 var _ping = require('./tracking/ping');
 
@@ -2001,7 +2000,7 @@ window.RmpVast = function (id, params) {
   this.content = this.container.getElementsByClassName('rmp-content')[0];
   this.contentPlayer = this.container.getElementsByClassName('rmp-video')[0];
   if (DEBUG) {
-    _fwVast.FWVAST.logVideoEvents(this.contentPlayer);
+    _fw.FW.logVideoEvents(this.contentPlayer);
   }
   this.adContainer = null;
   this.rmpVastInitialized = false;
@@ -2023,7 +2022,7 @@ window.RmpVast = function (id, params) {
     }
   }
   // filter input params
-  _fwVast.FWVAST.filterParams.call(this, params);
+  _fw.FW.filterParams.call(this, params);
   // reset internal variables
   _reset.RESET.internalVariables.call(this);
   // attach fullscreen states
@@ -2041,23 +2040,23 @@ window.RmpVast = function (id, params) {
         if (isInFullscreen) {
           isInFullscreen = false;
           if (this.adOnStage && this.adIsLinear) {
-            _fwVast.FWVAST.dispatchPingEvent.call(this, 'exitFullscreen');
+            _fw.FW.dispatchPingEvent.call(this, 'exitFullscreen');
           }
         } else {
           isInFullscreen = true;
           if (this.adOnStage && this.adIsLinear) {
-            _fwVast.FWVAST.dispatchPingEvent.call(this, 'fullscreen');
+            _fw.FW.dispatchPingEvent.call(this, 'fullscreen');
           }
         }
       } else if (event.type === 'webkitbeginfullscreen') {
         // iOS uses webkitbeginfullscreen
         if (this.adOnStage && this.adIsLinear) {
-          _fwVast.FWVAST.dispatchPingEvent.call(this, 'fullscreen');
+          _fw.FW.dispatchPingEvent.call(this, 'fullscreen');
         }
       } else if (event.type === 'webkitendfullscreen') {
         // iOS uses webkitendfullscreen
         if (this.adOnStage && this.adIsLinear) {
-          _fwVast.FWVAST.dispatchPingEvent.call(this, 'exitFullscreen');
+          _fw.FW.dispatchPingEvent.call(this, 'exitFullscreen');
         }
       }
     }
@@ -2084,7 +2083,7 @@ for (var i = 0, len = apiKeys.length; i < len; i++) {
 
 var _execRedirect = function () {
   _api.API.createEvent.call(this, 'adfollowingredirect');
-  var redirectUrl = _fwVast.FWVAST.getNodeValue(this.vastAdTagURI[0], true);
+  var redirectUrl = _fw.FW.getNodeValue(this.vastAdTagURI[0], true);
   if (DEBUG) {
     _fw.FW.log('RMP-VAST: redirect URL is ' + redirectUrl);
   }
@@ -2146,7 +2145,7 @@ var _parseCreatives = function (creative) {
       // check for skippable ads (Linear skipoffset)
       var skipoffset = linear[0].getAttribute('skipoffset');
       // if we have a wrapper we ignore skipoffset in case it is present
-      if (!this.isWrapper && this.params.skipMessage !== '' && skipoffset !== null && skipoffset !== '' && _fwVast.FWVAST.isValidOffset(skipoffset)) {
+      if (!this.isWrapper && this.params.skipMessage !== '' && skipoffset !== null && skipoffset !== '' && _fw.FW.isValidOffset(skipoffset)) {
         if (DEBUG) {
           _fw.FW.log('RMP-VAST: skippable ad detected with offset ' + skipoffset);
         }
@@ -2173,11 +2172,11 @@ var _parseCreatives = function (creative) {
         var clickThrough = videoClicks[0].getElementsByTagName('ClickThrough');
         var clickTracking = videoClicks[0].getElementsByTagName('ClickTracking');
         if (clickThrough.length > 0) {
-          this.clickThroughUrl = _fwVast.FWVAST.getNodeValue(clickThrough[0], true);
+          this.clickThroughUrl = _fw.FW.getNodeValue(clickThrough[0], true);
         }
         if (clickTracking.length > 0) {
           for (var _i2 = 0, _len2 = clickTracking.length; _i2 < _len2; _i2++) {
-            var clickTrackingUrl = _fwVast.FWVAST.getNodeValue(clickTracking[_i2], true);
+            var clickTrackingUrl = _fw.FW.getNodeValue(clickTracking[_i2], true);
             if (clickTrackingUrl !== null) {
               this.trackingTags.push({ event: 'clickthrough', url: clickTrackingUrl });
             }
@@ -2224,7 +2223,7 @@ var _onXmlAvailable = function (xml) {
   // VAST/Error node
   var errorNode = this.vastDocument[0].getElementsByTagName('Error');
   if (errorNode.length > 0) {
-    var errorUrl = _fwVast.FWVAST.getNodeValue(errorNode[0], true);
+    var errorUrl = _fw.FW.getNodeValue(errorNode[0], true);
     if (errorUrl !== null) {
       // we use an array here for vastErrorTags but we only have item in it
       // this is to be able to use PING.error for both vastErrorTags and inlineOrWrapperErrorTags
@@ -2292,7 +2291,7 @@ var _onXmlAvailable = function (xml) {
   // VAST/Ad/InLine/Error node
   errorNode = inlineOrWrapper[0].getElementsByTagName('Error');
   if (errorNode.length > 0) {
-    var _errorUrl = _fwVast.FWVAST.getNodeValue(errorNode[0], true);
+    var _errorUrl = _fw.FW.getNodeValue(errorNode[0], true);
     if (_errorUrl !== null) {
       this.inlineOrWrapperErrorTags.push({ event: 'error', url: _errorUrl });
     }
@@ -2333,20 +2332,20 @@ var _onXmlAvailable = function (xml) {
     }
   }
   if (adTitle.length > 0) {
-    this.adSystem = _fwVast.FWVAST.getNodeValue(adSystem[0], false);
+    this.adSystem = _fw.FW.getNodeValue(adSystem[0], false);
   }
   if (impression.length > 0) {
-    var impressionUrl = _fwVast.FWVAST.getNodeValue(impression[0], true);
+    var impressionUrl = _fw.FW.getNodeValue(impression[0], true);
     if (impressionUrl !== null) {
       this.trackingTags.push({ event: 'impression', url: impressionUrl });
     }
   }
   if (!this.isWrapper) {
     if (adTitle.length > 0) {
-      this.adTitle = _fwVast.FWVAST.getNodeValue(adTitle[0], false);
+      this.adTitle = _fw.FW.getNodeValue(adTitle[0], false);
     }
     if (adDescription.length > 0) {
-      this.adDescription = _fwVast.FWVAST.getNodeValue(adDescription[0], false);
+      this.adDescription = _fw.FW.getNodeValue(adDescription[0], false);
     }
   }
   // in case no Creative with Wrapper we make our redirect call here
@@ -2366,7 +2365,7 @@ var _makeAjaxRequest = function (vastUrl) {
     _vastErrors.VASTERRORS.process.call(this, 1001);
     return;
   }
-  if (!_fwVast.FWVAST.hasDOMParser()) {
+  if (!_fw.FW.hasDOMParser()) {
     _vastErrors.VASTERRORS.process.call(this, 1002);
     return;
   }
@@ -2449,7 +2448,7 @@ RmpVast.prototype.loadAds = function (vastUrl) {
   _makeAjaxRequest.call(this, vastUrl);
 };
 
-},{"./api/api":1,"./creatives/icons":2,"./creatives/linear":3,"./creatives/non-linear":4,"./fw/env":6,"./fw/fw":8,"./fw/fw-vast":7,"./players/content-player":10,"./tracking/ping":13,"./tracking/tracking-events":14,"./utils/reset":16,"./utils/vast-errors":17,"core-js/es6/promise":18,"core-js/fn/array/filter":19,"core-js/fn/array/for-each":20,"core-js/fn/array/index-of":21,"core-js/fn/array/is-array":22,"core-js/fn/array/sort":23,"core-js/fn/function/bind":24,"core-js/fn/number/is-finite":25,"core-js/fn/object/keys":26,"core-js/fn/parse-float":27,"core-js/fn/parse-int":28,"core-js/fn/string/trim":29}],10:[function(require,module,exports){
+},{"./api/api":1,"./creatives/icons":2,"./creatives/linear":3,"./creatives/non-linear":4,"./fw/env":6,"./fw/fw":7,"./players/content-player":9,"./tracking/ping":12,"./tracking/tracking-events":13,"./utils/reset":15,"./utils/vast-errors":16,"core-js/es6/promise":17,"core-js/fn/array/filter":18,"core-js/fn/array/for-each":19,"core-js/fn/array/index-of":20,"core-js/fn/array/is-array":21,"core-js/fn/array/sort":22,"core-js/fn/function/bind":23,"core-js/fn/number/is-finite":24,"core-js/fn/object/keys":25,"core-js/fn/parse-float":26,"core-js/fn/parse-int":27,"core-js/fn/string/trim":28}],9:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2553,7 +2552,7 @@ CONTENTPLAYER.preventSeekingForCustomPlayback = function () {
 
 exports.CONTENTPLAYER = CONTENTPLAYER;
 
-},{"../utils/helpers":15}],11:[function(require,module,exports){
+},{"../utils/helpers":14}],10:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2562,8 +2561,6 @@ Object.defineProperty(exports, "__esModule", {
 exports.VASTPLAYER = undefined;
 
 var _fw = require('../fw/fw');
-
-var _fwVast = require('../fw/fw-vast');
 
 var _env = require('../fw/env');
 
@@ -2814,10 +2811,10 @@ VASTPLAYER.setMute = function (muted) {
   if (this.vastPlayer) {
     if (muted && !this.vastPlayer.muted) {
       this.vastPlayer.muted = true;
-      _fwVast.FWVAST.dispatchPingEvent.call(this, 'mute');
+      _fw.FW.dispatchPingEvent.call(this, 'mute');
     } else if (!muted && this.vastPlayer.muted) {
       this.vastPlayer.muted = false;
-      _fwVast.FWVAST.dispatchPingEvent.call(this, 'unmute');
+      _fw.FW.dispatchPingEvent.call(this, 'unmute');
     }
   }
 };
@@ -2883,7 +2880,7 @@ VASTPLAYER.resumeContent = function () {
 
 exports.VASTPLAYER = VASTPLAYER;
 
-},{"../api/api":1,"../creatives/icons":2,"../creatives/linear":3,"../creatives/non-linear":4,"../fw/env":6,"../fw/fw":8,"../fw/fw-vast":7,"../players/content-player":10,"../players/vpaid":12,"../tracking/tracking-events":14,"../utils/helpers":15,"../utils/reset":16,"../utils/vast-errors":17}],12:[function(require,module,exports){
+},{"../api/api":1,"../creatives/icons":2,"../creatives/linear":3,"../creatives/non-linear":4,"../fw/env":6,"../fw/fw":7,"../players/content-player":9,"../players/vpaid":11,"../tracking/tracking-events":13,"../utils/helpers":14,"../utils/reset":15,"../utils/vast-errors":16}],11:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2894,8 +2891,6 @@ exports.VPAID = undefined;
 var _fw = require('../fw/fw');
 
 var _env = require('../fw/env');
-
-var _fwVast = require('../fw/fw-vast');
 
 var _vastErrors = require('../utils/vast-errors');
 
@@ -3053,13 +3048,8 @@ var _onAdStarted = function () {
   }
   if (typeof this.vpaidCreative.getAdLinear === 'function') {
     this.adIsLinear = this.vpaidCreative.getAdLinear();
-    if (this.adIsLinear === false) {
-      // we currently do not support Click-to-Linear Video Ad or non-linear VPAID ads
-      VPAID.stopAd.call(this);
-      return;
-    }
   }
-  _fwVast.FWVAST.dispatchPingEvent.call(this, 'creativeView');
+  _fw.FW.dispatchPingEvent.call(this, 'creativeView');
 };
 
 var _onAdStopped = function () {
@@ -3080,7 +3070,7 @@ var _onAdSkipped = function () {
     clearTimeout(this.adSkippedTimeout);
   }
   _api.API.createEvent.call(this, 'adskipped');
-  _fwVast.FWVAST.dispatchPingEvent.call(this, 'skip');
+  _fw.FW.dispatchPingEvent.call(this, 'skip');
 };
 
 var _onAdSkippableStateChange = function () {
@@ -3115,9 +3105,9 @@ var _onAdVolumeChange = function () {
     return;
   }
   if (this.vpaidCurrentVolume > 0 && newVolume === 0) {
-    _fwVast.FWVAST.dispatchPingEvent.call(this, 'mute');
+    _fw.FW.dispatchPingEvent.call(this, 'mute');
   } else if (this.vpaidCurrentVolume === 0 && newVolume > 0) {
-    _fwVast.FWVAST.dispatchPingEvent.call(this, 'unmute');
+    _fw.FW.dispatchPingEvent.call(this, 'unmute');
   }
   this.vpaidCurrentVolume = newVolume;
   _api.API.createEvent.call(this, 'advolumechanged');
@@ -3128,7 +3118,7 @@ var _onAdImpression = function () {
     _fw.FW.log('RMP-VAST: VPAID AdImpression event');
   }
   _api.API.createEvent.call(this, 'adimpression');
-  _fwVast.FWVAST.dispatchPingEvent.call(this, 'impression');
+  _fw.FW.dispatchPingEvent.call(this, 'impression');
 };
 
 var _onAdVideoStart = function () {
@@ -3142,7 +3132,7 @@ var _onAdVideoStart = function () {
   }
   this.vpaidCurrentVolume = newVolume;
   _api.API.createEvent.call(this, 'adstarted');
-  _fwVast.FWVAST.dispatchPingEvent.call(this, 'start');
+  _fw.FW.dispatchPingEvent.call(this, 'start');
 };
 
 var _onAdVideoFirstQuartile = function () {
@@ -3150,7 +3140,7 @@ var _onAdVideoFirstQuartile = function () {
     _fw.FW.log('RMP-VAST: VPAID AdVideoFirstQuartile event');
   }
   _api.API.createEvent.call(this, 'adfirstquartile');
-  _fwVast.FWVAST.dispatchPingEvent.call(this, 'firstQuartile');
+  _fw.FW.dispatchPingEvent.call(this, 'firstQuartile');
 };
 
 var _onAdVideoMidpoint = function () {
@@ -3158,7 +3148,7 @@ var _onAdVideoMidpoint = function () {
     _fw.FW.log('RMP-VAST: VPAID AdVideoMidpoint event');
   }
   _api.API.createEvent.call(this, 'admidpoint');
-  _fwVast.FWVAST.dispatchPingEvent.call(this, 'midpoint');
+  _fw.FW.dispatchPingEvent.call(this, 'midpoint');
 };
 
 var _onAdVideoThirdQuartile = function () {
@@ -3166,7 +3156,7 @@ var _onAdVideoThirdQuartile = function () {
     _fw.FW.log('RMP-VAST: VPAID AdVideoThirdQuartile event');
   }
   _api.API.createEvent.call(this, 'adthirdquartile');
-  _fwVast.FWVAST.dispatchPingEvent.call(this, 'thirdQuartile');
+  _fw.FW.dispatchPingEvent.call(this, 'thirdQuartile');
 };
 
 var _onAdVideoComplete = function () {
@@ -3174,7 +3164,7 @@ var _onAdVideoComplete = function () {
     _fw.FW.log('RMP-VAST: VPAID AdVideoComplete event');
   }
   _api.API.createEvent.call(this, 'adcomplete');
-  _fwVast.FWVAST.dispatchPingEvent.call(this, 'complete');
+  _fw.FW.dispatchPingEvent.call(this, 'complete');
 };
 
 var _onAdClickThru = function (url, id, playerHandles) {
@@ -3182,7 +3172,7 @@ var _onAdClickThru = function (url, id, playerHandles) {
     _fw.FW.log('RMP-VAST: VPAID AdClickThru event');
   }
   _api.API.createEvent.call(this, 'adclick');
-  _fwVast.FWVAST.dispatchPingEvent.call(this, 'clickthrough');
+  _fw.FW.dispatchPingEvent.call(this, 'clickthrough');
   if (typeof playerHandles !== 'boolean') {
     return;
   }
@@ -3198,7 +3188,7 @@ var _onAdClickThru = function (url, id, playerHandles) {
     if (destUrl) {
       // for getClickThroughUrl API method
       this.clickThroughUrl = destUrl;
-      window.open(this.clickThroughUrl, '_blank');
+      _fw.FW.openWindow(this.clickThroughUrl);
     }
   }
 };
@@ -3209,7 +3199,7 @@ var _onAdPaused = function () {
   }
   this.vpaidPaused = true;
   _api.API.createEvent.call(this, 'adpaused');
-  _fwVast.FWVAST.dispatchPingEvent.call(this, 'pause');
+  _fw.FW.dispatchPingEvent.call(this, 'pause');
 };
 
 var _onAdPlaying = function () {
@@ -3218,7 +3208,7 @@ var _onAdPlaying = function () {
   }
   this.vpaidPaused = false;
   _api.API.createEvent.call(this, 'adresumed');
-  _fwVast.FWVAST.dispatchPingEvent.call(this, 'resume');
+  _fw.FW.dispatchPingEvent.call(this, 'resume');
 };
 
 var _onAdLog = function (message) {
@@ -3247,7 +3237,7 @@ var _onAdUserAcceptInvitation = function () {
     _fw.FW.log('RMP-VAST: VPAID AdUserAcceptInvitation event');
   }
   _api.API.createEvent.call(this, 'aduseracceptinvitation');
-  _fwVast.FWVAST.dispatchPingEvent.call(this, 'acceptInvitation');
+  _fw.FW.dispatchPingEvent.call(this, 'acceptInvitation');
 };
 
 var _onAdUserMinimize = function () {
@@ -3255,7 +3245,7 @@ var _onAdUserMinimize = function () {
     _fw.FW.log('RMP-VAST: VPAID AdUserMinimize event');
   }
   _api.API.createEvent.call(this, 'adcollapse');
-  _fwVast.FWVAST.dispatchPingEvent.call(this, 'collapse');
+  _fw.FW.dispatchPingEvent.call(this, 'collapse');
 };
 
 var _onAdUserClose = function () {
@@ -3263,7 +3253,7 @@ var _onAdUserClose = function () {
     _fw.FW.log('RMP-VAST: VPAID AdUserClose event');
   }
   _api.API.createEvent.call(this, 'adclose');
-  _fwVast.FWVAST.dispatchPingEvent.call(this, 'close');
+  _fw.FW.dispatchPingEvent.call(this, 'close');
 };
 
 var _onAdSizeChange = function () {
@@ -3692,7 +3682,7 @@ VPAID.destroy = function () {
 
 exports.VPAID = VPAID;
 
-},{"../api/api":1,"../creatives/icons":2,"../fw/env":6,"../fw/fw":8,"../fw/fw-vast":7,"../players/content-player":10,"../players/vast-player":11,"../tracking/ping":13,"../tracking/tracking-events":14,"../utils/vast-errors":17}],13:[function(require,module,exports){
+},{"../api/api":1,"../creatives/icons":2,"../fw/env":6,"../fw/fw":7,"../players/content-player":9,"../players/vast-player":10,"../tracking/ping":12,"../tracking/tracking-events":13,"../utils/vast-errors":16}],12:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -3701,8 +3691,6 @@ Object.defineProperty(exports, "__esModule", {
 exports.PING = undefined;
 
 var _fw = require('../fw/fw');
-
-var _fwVast = require('../fw/fw-vast');
 
 var _contentPlayer = require('../players/content-player');
 
@@ -3714,7 +3702,7 @@ var _replaceMacros = function (url, errorCode, assetUri) {
   var pattern1 = /\[CACHEBUSTING\]/gi;
   var finalString = url;
   if (pattern1.test(finalString)) {
-    finalString = finalString.replace(pattern1, _fwVast.FWVAST.generateCacheBusting());
+    finalString = finalString.replace(pattern1, _fw.FW.generateCacheBusting());
   }
   var pattern2 = /\[ERRORCODE\]/gi;
   if (pattern2.test(finalString) && typeof errorCode === 'number' && errorCode > 0 && errorCode < 1000) {
@@ -3723,12 +3711,12 @@ var _replaceMacros = function (url, errorCode, assetUri) {
   var pattern3 = /\[CONTENTPLAYHEAD\]/gi;
   var currentTime = _contentPlayer.CONTENTPLAYER.getCurrentTime.call(this);
   if (pattern3.test(finalString) && currentTime > -1) {
-    currentTime = _fwVast.FWVAST.vastReadableTime(currentTime);
-    finalString = finalString.replace(pattern3, _fwVast.FWVAST.RFC3986EncodeURIComponent(currentTime));
+    currentTime = _fw.FW.vastReadableTime(currentTime);
+    finalString = finalString.replace(pattern3, _fw.FW.RFC3986EncodeURIComponent(currentTime));
   }
   var pattern4 = /\[ASSETURI\]/gi;
   if (pattern4.test(finalString) && typeof assetUri === 'string' && assetUri !== '') {
-    finalString = finalString.replace(pattern4, _fwVast.FWVAST.RFC3986EncodeURIComponent(assetUri));
+    finalString = finalString.replace(pattern4, _fw.FW.RFC3986EncodeURIComponent(assetUri));
   }
   return finalString;
 };
@@ -3776,7 +3764,7 @@ PING.error = function (errorCode, errorTags) {
 
 exports.PING = PING;
 
-},{"../fw/fw":8,"../fw/fw-vast":7,"../players/content-player":10}],14:[function(require,module,exports){
+},{"../fw/fw":7,"../players/content-player":9}],13:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -3785,8 +3773,6 @@ Object.defineProperty(exports, "__esModule", {
 exports.TRACKINGEVENTS = undefined;
 
 var _fw = require('../fw/fw');
-
-var _fwVast = require('../fw/fw-vast');
 
 var _ping = require('./ping');
 
@@ -3823,11 +3809,11 @@ var _onEventPingTracking = function (event) {
 var _onVolumeChange = function () {
   if (this.vastPlayer.muted || this.vastPlayer.volume === 0) {
     _api.API.createEvent.call(this, 'advolumemuted');
-    _fwVast.FWVAST.dispatchPingEvent.call(this, 'mute');
+    _fw.FW.dispatchPingEvent.call(this, 'mute');
     this.vastPlayerMuted = true;
   } else {
     if (this.vastPlayerMuted) {
-      _fwVast.FWVAST.dispatchPingEvent.call(this, 'unmute');
+      _fw.FW.dispatchPingEvent.call(this, 'unmute');
       this.vastPlayerMuted = false;
     }
   }
@@ -3843,15 +3829,15 @@ var _onTimeupdate = function () {
       if (this.vastPlayerCurrentTime >= this.vastPlayerDuration * 0.25 && !this.firstQuartileEventFired) {
         this.firstQuartileEventFired = true;
         _api.API.createEvent.call(this, 'adfirstquartile');
-        _fwVast.FWVAST.dispatchPingEvent.call(this, 'firstQuartile');
+        _fw.FW.dispatchPingEvent.call(this, 'firstQuartile');
       } else if (this.vastPlayerCurrentTime >= this.vastPlayerDuration * 0.5 && !this.midpointEventFired) {
         this.midpointEventFired = true;
         _api.API.createEvent.call(this, 'admidpoint');
-        _fwVast.FWVAST.dispatchPingEvent.call(this, 'midpoint');
+        _fw.FW.dispatchPingEvent.call(this, 'midpoint');
       } else if (this.vastPlayerCurrentTime >= this.vastPlayerDuration * 0.75 && !this.thirdQuartileEventFired) {
         this.thirdQuartileEventFired = true;
         _api.API.createEvent.call(this, 'adthirdquartile');
-        _fwVast.FWVAST.dispatchPingEvent.call(this, 'thirdQuartile');
+        _fw.FW.dispatchPingEvent.call(this, 'thirdQuartile');
       }
     }
     if (this.isSkippableAd) {
@@ -3860,7 +3846,7 @@ var _onTimeupdate = function () {
         this.progressEventOffsetsSeconds = [];
         this.progressEventOffsets.forEach(function (element) {
           _this2.progressEventOffsetsSeconds.push({
-            offsetSeconds: _fwVast.FWVAST.convertOffsetToSeconds(element, _this2.vastPlayerDuration),
+            offsetSeconds: _fw.FW.convertOffsetToSeconds(element, _this2.vastPlayerDuration),
             offsetRaw: element
           });
         });
@@ -3869,7 +3855,7 @@ var _onTimeupdate = function () {
         });
       }
       if (Array.isArray(this.progressEventOffsetsSeconds) && this.progressEventOffsetsSeconds.length > 0 && this.vastPlayerCurrentTime >= this.progressEventOffsetsSeconds[0].offsetSeconds * 1000) {
-        _fwVast.FWVAST.dispatchPingEvent.call(this, 'progress-' + this.progressEventOffsetsSeconds[0].offsetRaw);
+        _fw.FW.dispatchPingEvent.call(this, 'progress-' + this.progressEventOffsetsSeconds[0].offsetRaw);
         this.progressEventOffsetsSeconds.shift();
       }
     }
@@ -3886,7 +3872,7 @@ var _onPause = function () {
         return;
       }
     }
-    _fwVast.FWVAST.dispatchPingEvent.call(this, 'pause');
+    _fw.FW.dispatchPingEvent.call(this, 'pause');
   }
 };
 
@@ -3894,7 +3880,7 @@ var _onPlay = function () {
   if (this.vastPlayerPaused) {
     this.vastPlayerPaused = false;
     _api.API.createEvent.call(this, 'adresumed');
-    _fwVast.FWVAST.dispatchPingEvent.call(this, 'resume');
+    _fw.FW.dispatchPingEvent.call(this, 'resume');
   }
 };
 
@@ -3902,13 +3888,13 @@ var _onPlaying = function () {
   this.vastPlayer.removeEventListener('playing', this.onPlaying);
   _api.API.createEvent.call(this, 'adimpression');
   _api.API.createEvent.call(this, 'adstarted');
-  _fwVast.FWVAST.dispatchPingEvent.call(this, ['impression', 'creativeView', 'start']);
+  _fw.FW.dispatchPingEvent.call(this, ['impression', 'creativeView', 'start']);
 };
 
 var _onEnded = function () {
   this.vastPlayer.removeEventListener('ended', this.onEnded);
   _api.API.createEvent.call(this, 'adcomplete');
-  _fwVast.FWVAST.dispatchPingEvent.call(this, 'complete');
+  _fw.FW.dispatchPingEvent.call(this, 'complete');
 };
 
 TRACKINGEVENTS.wire = function () {
@@ -3958,12 +3944,12 @@ TRACKINGEVENTS.filter = function (trackingEvents) {
   // collect supported tracking events with valid event names and tracking urls
   for (var i = 0, len = trackingTags.length; i < len; i++) {
     var event = trackingTags[i].getAttribute('event');
-    var url = _fwVast.FWVAST.getNodeValue(trackingTags[i], true);
+    var url = _fw.FW.getNodeValue(trackingTags[i], true);
     if (event !== null && event !== '' && _ping.PING.events.indexOf(event) > -1 && url !== null) {
       if (this.isSkippableAd) {
         if (event === 'progress') {
           var offset = trackingTags[i].getAttribute('offset');
-          if (offset === null || offset === '' || !_fwVast.FWVAST.isValidOffset(offset)) {
+          if (offset === null || offset === '' || !_fw.FW.isValidOffset(offset)) {
             // offset attribute is required on Tracking event="progress"
             continue;
           }
@@ -3982,7 +3968,7 @@ TRACKINGEVENTS.filter = function (trackingEvents) {
 
 exports.TRACKINGEVENTS = TRACKINGEVENTS;
 
-},{"../api/api":1,"../fw/fw":8,"../fw/fw-vast":7,"../players/vast-player":11,"./ping":13}],15:[function(require,module,exports){
+},{"../api/api":1,"../fw/fw":7,"../players/vast-player":10,"./ping":12}],14:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -4016,11 +4002,9 @@ HELPERS.playPromise = function (whichPlayer, firstPlayerPlayRequest) {
   }
   if (targetPlayer) {
     var playPromise = targetPlayer.play();
-    // on Chrome 50+ play() returns a promise
+    // most modern browsers support play as a Promise
+    // this lets us handle autoplay rejection 
     // https://developers.google.com/web/updates/2016/03/play-returns-promise
-    // but not all browsers support this - so we just catch the potential Chrome error that 
-    // may result if pause() is called in between - pause should overwrite play 
-    // and in this case causes a promise rejection
     if (playPromise !== undefined) {
       playPromise.then(function () {
         if (DEBUG) {
@@ -4054,7 +4038,7 @@ HELPERS.playPromise = function (whichPlayer, firstPlayerPlayRequest) {
 
 exports.HELPERS = HELPERS;
 
-},{"../api/api":1,"../fw/fw":8,"../tracking/ping":13,"../utils/vast-errors":17}],16:[function(require,module,exports){
+},{"../api/api":1,"../fw/fw":7,"../tracking/ping":12,"../utils/vast-errors":16}],15:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -4183,7 +4167,9 @@ RESET.unwireVastPlayerEvents = function () {
     this.nonLinearImg.removeEventListener('load', this.onNonLinearLoadSuccess);
     this.nonLinearImg.removeEventListener('error', this.onNonLinearLoadError);
     this.nonLinearATag.removeEventListener('click', this.onNonLinearClickThrough);
+    this.nonLinearATag.removeEventListener('touchend', this.onNonLinearClickThrough);
     this.nonLinearClose.removeEventListener('click', this.onClickCloseNonLinear);
+    this.nonLinearClose.removeEventListener('touchend', this.onClickCloseNonLinear);
     for (var i = 0, len = this.trackingTags.length; i < len; i++) {
       this.nonLinearContainer.removeEventListener(this.trackingTags[i].event, this.onEventPingTracking);
     }
@@ -4225,7 +4211,7 @@ RESET.unwireVastPlayerEvents = function () {
     }
     // click UI on mobile
     if (this.clickUIOnMobile && this.onClickThrough !== null) {
-      this.clickUIOnMobile.removeEventListener('click', this.onClickThrough);
+      this.clickUIOnMobile.removeEventListener('touchend', this.onClickThrough);
     }
   }
   if (this.contentPlayer) {
@@ -4235,7 +4221,7 @@ RESET.unwireVastPlayerEvents = function () {
 
 exports.RESET = RESET;
 
-},{"../fw/fw":8}],17:[function(require,module,exports){
+},{"../fw/fw":7}],16:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -4390,64 +4376,64 @@ VASTERRORS.process = function (errorCode) {
 
 exports.VASTERRORS = VASTERRORS;
 
-},{"../api/api":1,"../fw/fw":8,"../players/vast-player":11}],18:[function(require,module,exports){
+},{"../api/api":1,"../fw/fw":7,"../players/vast-player":10}],17:[function(require,module,exports){
 require('../modules/es6.object.to-string');
 require('../modules/es6.string.iterator');
 require('../modules/web.dom.iterable');
 require('../modules/es6.promise');
 module.exports = require('../modules/_core').Promise;
 
-},{"../modules/_core":41,"../modules/es6.object.to-string":111,"../modules/es6.promise":114,"../modules/es6.string.iterator":115,"../modules/web.dom.iterable":117}],19:[function(require,module,exports){
+},{"../modules/_core":40,"../modules/es6.object.to-string":110,"../modules/es6.promise":113,"../modules/es6.string.iterator":114,"../modules/web.dom.iterable":116}],18:[function(require,module,exports){
 require('../../modules/es6.array.filter');
 module.exports = require('../../modules/_core').Array.filter;
 
-},{"../../modules/_core":41,"../../modules/es6.array.filter":102}],20:[function(require,module,exports){
+},{"../../modules/_core":40,"../../modules/es6.array.filter":101}],19:[function(require,module,exports){
 require('../../modules/es6.array.for-each');
 module.exports = require('../../modules/_core').Array.forEach;
 
-},{"../../modules/_core":41,"../../modules/es6.array.for-each":103}],21:[function(require,module,exports){
+},{"../../modules/_core":40,"../../modules/es6.array.for-each":102}],20:[function(require,module,exports){
 require('../../modules/es6.array.index-of');
 module.exports = require('../../modules/_core').Array.indexOf;
 
-},{"../../modules/_core":41,"../../modules/es6.array.index-of":104}],22:[function(require,module,exports){
+},{"../../modules/_core":40,"../../modules/es6.array.index-of":103}],21:[function(require,module,exports){
 require('../../modules/es6.array.is-array');
 module.exports = require('../../modules/_core').Array.isArray;
 
-},{"../../modules/_core":41,"../../modules/es6.array.is-array":105}],23:[function(require,module,exports){
+},{"../../modules/_core":40,"../../modules/es6.array.is-array":104}],22:[function(require,module,exports){
 require('../../modules/es6.array.sort');
 module.exports = require('../../modules/_core').Array.sort;
 
-},{"../../modules/_core":41,"../../modules/es6.array.sort":107}],24:[function(require,module,exports){
+},{"../../modules/_core":40,"../../modules/es6.array.sort":106}],23:[function(require,module,exports){
 require('../../modules/es6.function.bind');
 module.exports = require('../../modules/_core').Function.bind;
 
-},{"../../modules/_core":41,"../../modules/es6.function.bind":108}],25:[function(require,module,exports){
+},{"../../modules/_core":40,"../../modules/es6.function.bind":107}],24:[function(require,module,exports){
 require('../../modules/es6.number.is-finite');
 module.exports = require('../../modules/_core').Number.isFinite;
 
-},{"../../modules/_core":41,"../../modules/es6.number.is-finite":109}],26:[function(require,module,exports){
+},{"../../modules/_core":40,"../../modules/es6.number.is-finite":108}],25:[function(require,module,exports){
 require('../../modules/es6.object.keys');
 module.exports = require('../../modules/_core').Object.keys;
 
-},{"../../modules/_core":41,"../../modules/es6.object.keys":110}],27:[function(require,module,exports){
+},{"../../modules/_core":40,"../../modules/es6.object.keys":109}],26:[function(require,module,exports){
 require('../modules/es6.parse-float');
 module.exports = require('../modules/_core').parseFloat;
 
-},{"../modules/_core":41,"../modules/es6.parse-float":112}],28:[function(require,module,exports){
+},{"../modules/_core":40,"../modules/es6.parse-float":111}],27:[function(require,module,exports){
 require('../modules/es6.parse-int');
 module.exports = require('../modules/_core').parseInt;
 
-},{"../modules/_core":41,"../modules/es6.parse-int":113}],29:[function(require,module,exports){
+},{"../modules/_core":40,"../modules/es6.parse-int":112}],28:[function(require,module,exports){
 require('../../modules/es6.string.trim');
 module.exports = require('../../modules/_core').String.trim;
 
-},{"../../modules/_core":41,"../../modules/es6.string.trim":116}],30:[function(require,module,exports){
+},{"../../modules/_core":40,"../../modules/es6.string.trim":115}],29:[function(require,module,exports){
 module.exports = function (it) {
   if (typeof it != 'function') throw TypeError(it + ' is not a function!');
   return it;
 };
 
-},{}],31:[function(require,module,exports){
+},{}],30:[function(require,module,exports){
 // 22.1.3.31 Array.prototype[@@unscopables]
 var UNSCOPABLES = require('./_wks')('unscopables');
 var ArrayProto = Array.prototype;
@@ -4456,21 +4442,21 @@ module.exports = function (key) {
   ArrayProto[UNSCOPABLES][key] = true;
 };
 
-},{"./_hide":52,"./_wks":100}],32:[function(require,module,exports){
+},{"./_hide":51,"./_wks":99}],31:[function(require,module,exports){
 module.exports = function (it, Constructor, name, forbiddenField) {
   if (!(it instanceof Constructor) || (forbiddenField !== undefined && forbiddenField in it)) {
     throw TypeError(name + ': incorrect invocation!');
   } return it;
 };
 
-},{}],33:[function(require,module,exports){
+},{}],32:[function(require,module,exports){
 var isObject = require('./_is-object');
 module.exports = function (it) {
   if (!isObject(it)) throw TypeError(it + ' is not an object!');
   return it;
 };
 
-},{"./_is-object":59}],34:[function(require,module,exports){
+},{"./_is-object":58}],33:[function(require,module,exports){
 // false -> Array#indexOf
 // true  -> Array#includes
 var toIObject = require('./_to-iobject');
@@ -4495,7 +4481,7 @@ module.exports = function (IS_INCLUDES) {
   };
 };
 
-},{"./_to-absolute-index":93,"./_to-iobject":95,"./_to-length":96}],35:[function(require,module,exports){
+},{"./_to-absolute-index":92,"./_to-iobject":94,"./_to-length":95}],34:[function(require,module,exports){
 // 0 -> Array#forEach
 // 1 -> Array#map
 // 2 -> Array#filter
@@ -4541,7 +4527,7 @@ module.exports = function (TYPE, $create) {
   };
 };
 
-},{"./_array-species-create":37,"./_ctx":42,"./_iobject":56,"./_to-length":96,"./_to-object":97}],36:[function(require,module,exports){
+},{"./_array-species-create":36,"./_ctx":41,"./_iobject":55,"./_to-length":95,"./_to-object":96}],35:[function(require,module,exports){
 var isObject = require('./_is-object');
 var isArray = require('./_is-array');
 var SPECIES = require('./_wks')('species');
@@ -4559,7 +4545,7 @@ module.exports = function (original) {
   } return C === undefined ? Array : C;
 };
 
-},{"./_is-array":58,"./_is-object":59,"./_wks":100}],37:[function(require,module,exports){
+},{"./_is-array":57,"./_is-object":58,"./_wks":99}],36:[function(require,module,exports){
 // 9.4.2.3 ArraySpeciesCreate(originalArray, length)
 var speciesConstructor = require('./_array-species-constructor');
 
@@ -4567,7 +4553,7 @@ module.exports = function (original, length) {
   return new (speciesConstructor(original))(length);
 };
 
-},{"./_array-species-constructor":36}],38:[function(require,module,exports){
+},{"./_array-species-constructor":35}],37:[function(require,module,exports){
 'use strict';
 var aFunction = require('./_a-function');
 var isObject = require('./_is-object');
@@ -4594,7 +4580,7 @@ module.exports = Function.bind || function bind(that /* , ...args */) {
   return bound;
 };
 
-},{"./_a-function":30,"./_invoke":55,"./_is-object":59}],39:[function(require,module,exports){
+},{"./_a-function":29,"./_invoke":54,"./_is-object":58}],38:[function(require,module,exports){
 // getting tag from 19.1.3.6 Object.prototype.toString()
 var cof = require('./_cof');
 var TAG = require('./_wks')('toStringTag');
@@ -4619,18 +4605,18 @@ module.exports = function (it) {
     : (B = cof(O)) == 'Object' && typeof O.callee == 'function' ? 'Arguments' : B;
 };
 
-},{"./_cof":40,"./_wks":100}],40:[function(require,module,exports){
+},{"./_cof":39,"./_wks":99}],39:[function(require,module,exports){
 var toString = {}.toString;
 
 module.exports = function (it) {
   return toString.call(it).slice(8, -1);
 };
 
-},{}],41:[function(require,module,exports){
+},{}],40:[function(require,module,exports){
 var core = module.exports = { version: '2.5.3' };
 if (typeof __e == 'number') __e = core; // eslint-disable-line no-undef
 
-},{}],42:[function(require,module,exports){
+},{}],41:[function(require,module,exports){
 // optional / simple context binding
 var aFunction = require('./_a-function');
 module.exports = function (fn, that, length) {
@@ -4652,20 +4638,20 @@ module.exports = function (fn, that, length) {
   };
 };
 
-},{"./_a-function":30}],43:[function(require,module,exports){
+},{"./_a-function":29}],42:[function(require,module,exports){
 // 7.2.1 RequireObjectCoercible(argument)
 module.exports = function (it) {
   if (it == undefined) throw TypeError("Can't call method on  " + it);
   return it;
 };
 
-},{}],44:[function(require,module,exports){
+},{}],43:[function(require,module,exports){
 // Thank's IE8 for his funny defineProperty
 module.exports = !require('./_fails')(function () {
   return Object.defineProperty({}, 'a', { get: function () { return 7; } }).a != 7;
 });
 
-},{"./_fails":48}],45:[function(require,module,exports){
+},{"./_fails":47}],44:[function(require,module,exports){
 var isObject = require('./_is-object');
 var document = require('./_global').document;
 // typeof document.createElement is 'object' in old IE
@@ -4674,13 +4660,13 @@ module.exports = function (it) {
   return is ? document.createElement(it) : {};
 };
 
-},{"./_global":50,"./_is-object":59}],46:[function(require,module,exports){
+},{"./_global":49,"./_is-object":58}],45:[function(require,module,exports){
 // IE 8- don't enum bug keys
 module.exports = (
   'constructor,hasOwnProperty,isPrototypeOf,propertyIsEnumerable,toLocaleString,toString,valueOf'
 ).split(',');
 
-},{}],47:[function(require,module,exports){
+},{}],46:[function(require,module,exports){
 var global = require('./_global');
 var core = require('./_core');
 var hide = require('./_hide');
@@ -4725,7 +4711,7 @@ $export.U = 64;  // safe
 $export.R = 128; // real proto method for `library`
 module.exports = $export;
 
-},{"./_core":41,"./_ctx":42,"./_global":50,"./_hide":52,"./_redefine":82}],48:[function(require,module,exports){
+},{"./_core":40,"./_ctx":41,"./_global":49,"./_hide":51,"./_redefine":81}],47:[function(require,module,exports){
 module.exports = function (exec) {
   try {
     return !!exec();
@@ -4734,7 +4720,7 @@ module.exports = function (exec) {
   }
 };
 
-},{}],49:[function(require,module,exports){
+},{}],48:[function(require,module,exports){
 var ctx = require('./_ctx');
 var call = require('./_iter-call');
 var isArrayIter = require('./_is-array-iter');
@@ -4761,7 +4747,7 @@ var exports = module.exports = function (iterable, entries, fn, that, ITERATOR) 
 exports.BREAK = BREAK;
 exports.RETURN = RETURN;
 
-},{"./_an-object":33,"./_ctx":42,"./_is-array-iter":57,"./_iter-call":60,"./_to-length":96,"./core.get-iterator-method":101}],50:[function(require,module,exports){
+},{"./_an-object":32,"./_ctx":41,"./_is-array-iter":56,"./_iter-call":59,"./_to-length":95,"./core.get-iterator-method":100}],49:[function(require,module,exports){
 // https://github.com/zloirock/core-js/issues/86#issuecomment-115759028
 var global = module.exports = typeof window != 'undefined' && window.Math == Math
   ? window : typeof self != 'undefined' && self.Math == Math ? self
@@ -4769,13 +4755,13 @@ var global = module.exports = typeof window != 'undefined' && window.Math == Mat
   : Function('return this')();
 if (typeof __g == 'number') __g = global; // eslint-disable-line no-undef
 
-},{}],51:[function(require,module,exports){
+},{}],50:[function(require,module,exports){
 var hasOwnProperty = {}.hasOwnProperty;
 module.exports = function (it, key) {
   return hasOwnProperty.call(it, key);
 };
 
-},{}],52:[function(require,module,exports){
+},{}],51:[function(require,module,exports){
 var dP = require('./_object-dp');
 var createDesc = require('./_property-desc');
 module.exports = require('./_descriptors') ? function (object, key, value) {
@@ -4785,16 +4771,16 @@ module.exports = require('./_descriptors') ? function (object, key, value) {
   return object;
 };
 
-},{"./_descriptors":44,"./_object-dp":70,"./_property-desc":80}],53:[function(require,module,exports){
+},{"./_descriptors":43,"./_object-dp":69,"./_property-desc":79}],52:[function(require,module,exports){
 var document = require('./_global').document;
 module.exports = document && document.documentElement;
 
-},{"./_global":50}],54:[function(require,module,exports){
+},{"./_global":49}],53:[function(require,module,exports){
 module.exports = !require('./_descriptors') && !require('./_fails')(function () {
   return Object.defineProperty(require('./_dom-create')('div'), 'a', { get: function () { return 7; } }).a != 7;
 });
 
-},{"./_descriptors":44,"./_dom-create":45,"./_fails":48}],55:[function(require,module,exports){
+},{"./_descriptors":43,"./_dom-create":44,"./_fails":47}],54:[function(require,module,exports){
 // fast apply, http://jsperf.lnkit.com/fast-apply/5
 module.exports = function (fn, args, that) {
   var un = that === undefined;
@@ -4812,7 +4798,7 @@ module.exports = function (fn, args, that) {
   } return fn.apply(that, args);
 };
 
-},{}],56:[function(require,module,exports){
+},{}],55:[function(require,module,exports){
 // fallback for non-array-like ES3 and non-enumerable old V8 strings
 var cof = require('./_cof');
 // eslint-disable-next-line no-prototype-builtins
@@ -4820,7 +4806,7 @@ module.exports = Object('z').propertyIsEnumerable(0) ? Object : function (it) {
   return cof(it) == 'String' ? it.split('') : Object(it);
 };
 
-},{"./_cof":40}],57:[function(require,module,exports){
+},{"./_cof":39}],56:[function(require,module,exports){
 // check on default Array iterator
 var Iterators = require('./_iterators');
 var ITERATOR = require('./_wks')('iterator');
@@ -4830,19 +4816,19 @@ module.exports = function (it) {
   return it !== undefined && (Iterators.Array === it || ArrayProto[ITERATOR] === it);
 };
 
-},{"./_iterators":65,"./_wks":100}],58:[function(require,module,exports){
+},{"./_iterators":64,"./_wks":99}],57:[function(require,module,exports){
 // 7.2.2 IsArray(argument)
 var cof = require('./_cof');
 module.exports = Array.isArray || function isArray(arg) {
   return cof(arg) == 'Array';
 };
 
-},{"./_cof":40}],59:[function(require,module,exports){
+},{"./_cof":39}],58:[function(require,module,exports){
 module.exports = function (it) {
   return typeof it === 'object' ? it !== null : typeof it === 'function';
 };
 
-},{}],60:[function(require,module,exports){
+},{}],59:[function(require,module,exports){
 // call something on iterator step with safe closing on error
 var anObject = require('./_an-object');
 module.exports = function (iterator, fn, value, entries) {
@@ -4856,7 +4842,7 @@ module.exports = function (iterator, fn, value, entries) {
   }
 };
 
-},{"./_an-object":33}],61:[function(require,module,exports){
+},{"./_an-object":32}],60:[function(require,module,exports){
 'use strict';
 var create = require('./_object-create');
 var descriptor = require('./_property-desc');
@@ -4871,7 +4857,7 @@ module.exports = function (Constructor, NAME, next) {
   setToStringTag(Constructor, NAME + ' Iterator');
 };
 
-},{"./_hide":52,"./_object-create":69,"./_property-desc":80,"./_set-to-string-tag":84,"./_wks":100}],62:[function(require,module,exports){
+},{"./_hide":51,"./_object-create":68,"./_property-desc":79,"./_set-to-string-tag":83,"./_wks":99}],61:[function(require,module,exports){
 'use strict';
 var LIBRARY = require('./_library');
 var $export = require('./_export');
@@ -4943,7 +4929,7 @@ module.exports = function (Base, NAME, Constructor, next, DEFAULT, IS_SET, FORCE
   return methods;
 };
 
-},{"./_export":47,"./_has":51,"./_hide":52,"./_iter-create":61,"./_iterators":65,"./_library":66,"./_object-gpo":72,"./_redefine":82,"./_set-to-string-tag":84,"./_wks":100}],63:[function(require,module,exports){
+},{"./_export":46,"./_has":50,"./_hide":51,"./_iter-create":60,"./_iterators":64,"./_library":65,"./_object-gpo":71,"./_redefine":81,"./_set-to-string-tag":83,"./_wks":99}],62:[function(require,module,exports){
 var ITERATOR = require('./_wks')('iterator');
 var SAFE_CLOSING = false;
 
@@ -4967,18 +4953,18 @@ module.exports = function (exec, skipClosing) {
   return safe;
 };
 
-},{"./_wks":100}],64:[function(require,module,exports){
+},{"./_wks":99}],63:[function(require,module,exports){
 module.exports = function (done, value) {
   return { value: value, done: !!done };
 };
 
-},{}],65:[function(require,module,exports){
+},{}],64:[function(require,module,exports){
 module.exports = {};
 
-},{}],66:[function(require,module,exports){
+},{}],65:[function(require,module,exports){
 module.exports = false;
 
-},{}],67:[function(require,module,exports){
+},{}],66:[function(require,module,exports){
 var global = require('./_global');
 var macrotask = require('./_task').set;
 var Observer = global.MutationObserver || global.WebKitMutationObserver;
@@ -5048,7 +5034,7 @@ module.exports = function () {
   };
 };
 
-},{"./_cof":40,"./_global":50,"./_task":92}],68:[function(require,module,exports){
+},{"./_cof":39,"./_global":49,"./_task":91}],67:[function(require,module,exports){
 'use strict';
 // 25.4.1.5 NewPromiseCapability(C)
 var aFunction = require('./_a-function');
@@ -5068,7 +5054,7 @@ module.exports.f = function (C) {
   return new PromiseCapability(C);
 };
 
-},{"./_a-function":30}],69:[function(require,module,exports){
+},{"./_a-function":29}],68:[function(require,module,exports){
 // 19.1.2.2 / 15.2.3.5 Object.create(O [, Properties])
 var anObject = require('./_an-object');
 var dPs = require('./_object-dps');
@@ -5111,7 +5097,7 @@ module.exports = Object.create || function create(O, Properties) {
   return Properties === undefined ? result : dPs(result, Properties);
 };
 
-},{"./_an-object":33,"./_dom-create":45,"./_enum-bug-keys":46,"./_html":53,"./_object-dps":71,"./_shared-key":85}],70:[function(require,module,exports){
+},{"./_an-object":32,"./_dom-create":44,"./_enum-bug-keys":45,"./_html":52,"./_object-dps":70,"./_shared-key":84}],69:[function(require,module,exports){
 var anObject = require('./_an-object');
 var IE8_DOM_DEFINE = require('./_ie8-dom-define');
 var toPrimitive = require('./_to-primitive');
@@ -5129,7 +5115,7 @@ exports.f = require('./_descriptors') ? Object.defineProperty : function defineP
   return O;
 };
 
-},{"./_an-object":33,"./_descriptors":44,"./_ie8-dom-define":54,"./_to-primitive":98}],71:[function(require,module,exports){
+},{"./_an-object":32,"./_descriptors":43,"./_ie8-dom-define":53,"./_to-primitive":97}],70:[function(require,module,exports){
 var dP = require('./_object-dp');
 var anObject = require('./_an-object');
 var getKeys = require('./_object-keys');
@@ -5144,7 +5130,7 @@ module.exports = require('./_descriptors') ? Object.defineProperties : function 
   return O;
 };
 
-},{"./_an-object":33,"./_descriptors":44,"./_object-dp":70,"./_object-keys":74}],72:[function(require,module,exports){
+},{"./_an-object":32,"./_descriptors":43,"./_object-dp":69,"./_object-keys":73}],71:[function(require,module,exports){
 // 19.1.2.9 / 15.2.3.2 Object.getPrototypeOf(O)
 var has = require('./_has');
 var toObject = require('./_to-object');
@@ -5159,7 +5145,7 @@ module.exports = Object.getPrototypeOf || function (O) {
   } return O instanceof Object ? ObjectProto : null;
 };
 
-},{"./_has":51,"./_shared-key":85,"./_to-object":97}],73:[function(require,module,exports){
+},{"./_has":50,"./_shared-key":84,"./_to-object":96}],72:[function(require,module,exports){
 var has = require('./_has');
 var toIObject = require('./_to-iobject');
 var arrayIndexOf = require('./_array-includes')(false);
@@ -5178,7 +5164,7 @@ module.exports = function (object, names) {
   return result;
 };
 
-},{"./_array-includes":34,"./_has":51,"./_shared-key":85,"./_to-iobject":95}],74:[function(require,module,exports){
+},{"./_array-includes":33,"./_has":50,"./_shared-key":84,"./_to-iobject":94}],73:[function(require,module,exports){
 // 19.1.2.14 / 15.2.3.14 Object.keys(O)
 var $keys = require('./_object-keys-internal');
 var enumBugKeys = require('./_enum-bug-keys');
@@ -5187,7 +5173,7 @@ module.exports = Object.keys || function keys(O) {
   return $keys(O, enumBugKeys);
 };
 
-},{"./_enum-bug-keys":46,"./_object-keys-internal":73}],75:[function(require,module,exports){
+},{"./_enum-bug-keys":45,"./_object-keys-internal":72}],74:[function(require,module,exports){
 // most Object methods by ES6 should accept primitives
 var $export = require('./_export');
 var core = require('./_core');
@@ -5199,7 +5185,7 @@ module.exports = function (KEY, exec) {
   $export($export.S + $export.F * fails(function () { fn(1); }), 'Object', exp);
 };
 
-},{"./_core":41,"./_export":47,"./_fails":48}],76:[function(require,module,exports){
+},{"./_core":40,"./_export":46,"./_fails":47}],75:[function(require,module,exports){
 var $parseFloat = require('./_global').parseFloat;
 var $trim = require('./_string-trim').trim;
 
@@ -5209,7 +5195,7 @@ module.exports = 1 / $parseFloat(require('./_string-ws') + '-0') !== -Infinity ?
   return result === 0 && string.charAt(0) == '-' ? -0 : result;
 } : $parseFloat;
 
-},{"./_global":50,"./_string-trim":90,"./_string-ws":91}],77:[function(require,module,exports){
+},{"./_global":49,"./_string-trim":89,"./_string-ws":90}],76:[function(require,module,exports){
 var $parseInt = require('./_global').parseInt;
 var $trim = require('./_string-trim').trim;
 var ws = require('./_string-ws');
@@ -5220,7 +5206,7 @@ module.exports = $parseInt(ws + '08') !== 8 || $parseInt(ws + '0x16') !== 22 ? f
   return $parseInt(string, (radix >>> 0) || (hex.test(string) ? 16 : 10));
 } : $parseInt;
 
-},{"./_global":50,"./_string-trim":90,"./_string-ws":91}],78:[function(require,module,exports){
+},{"./_global":49,"./_string-trim":89,"./_string-ws":90}],77:[function(require,module,exports){
 module.exports = function (exec) {
   try {
     return { e: false, v: exec() };
@@ -5229,7 +5215,7 @@ module.exports = function (exec) {
   }
 };
 
-},{}],79:[function(require,module,exports){
+},{}],78:[function(require,module,exports){
 var anObject = require('./_an-object');
 var isObject = require('./_is-object');
 var newPromiseCapability = require('./_new-promise-capability');
@@ -5243,7 +5229,7 @@ module.exports = function (C, x) {
   return promiseCapability.promise;
 };
 
-},{"./_an-object":33,"./_is-object":59,"./_new-promise-capability":68}],80:[function(require,module,exports){
+},{"./_an-object":32,"./_is-object":58,"./_new-promise-capability":67}],79:[function(require,module,exports){
 module.exports = function (bitmap, value) {
   return {
     enumerable: !(bitmap & 1),
@@ -5253,14 +5239,14 @@ module.exports = function (bitmap, value) {
   };
 };
 
-},{}],81:[function(require,module,exports){
+},{}],80:[function(require,module,exports){
 var redefine = require('./_redefine');
 module.exports = function (target, src, safe) {
   for (var key in src) redefine(target, key, src[key], safe);
   return target;
 };
 
-},{"./_redefine":82}],82:[function(require,module,exports){
+},{"./_redefine":81}],81:[function(require,module,exports){
 var global = require('./_global');
 var hide = require('./_hide');
 var has = require('./_has');
@@ -5293,7 +5279,7 @@ require('./_core').inspectSource = function (it) {
   return typeof this == 'function' && this[SRC] || $toString.call(this);
 });
 
-},{"./_core":41,"./_global":50,"./_has":51,"./_hide":52,"./_uid":99}],83:[function(require,module,exports){
+},{"./_core":40,"./_global":49,"./_has":50,"./_hide":51,"./_uid":98}],82:[function(require,module,exports){
 'use strict';
 var global = require('./_global');
 var dP = require('./_object-dp');
@@ -5308,7 +5294,7 @@ module.exports = function (KEY) {
   });
 };
 
-},{"./_descriptors":44,"./_global":50,"./_object-dp":70,"./_wks":100}],84:[function(require,module,exports){
+},{"./_descriptors":43,"./_global":49,"./_object-dp":69,"./_wks":99}],83:[function(require,module,exports){
 var def = require('./_object-dp').f;
 var has = require('./_has');
 var TAG = require('./_wks')('toStringTag');
@@ -5317,14 +5303,14 @@ module.exports = function (it, tag, stat) {
   if (it && !has(it = stat ? it : it.prototype, TAG)) def(it, TAG, { configurable: true, value: tag });
 };
 
-},{"./_has":51,"./_object-dp":70,"./_wks":100}],85:[function(require,module,exports){
+},{"./_has":50,"./_object-dp":69,"./_wks":99}],84:[function(require,module,exports){
 var shared = require('./_shared')('keys');
 var uid = require('./_uid');
 module.exports = function (key) {
   return shared[key] || (shared[key] = uid(key));
 };
 
-},{"./_shared":86,"./_uid":99}],86:[function(require,module,exports){
+},{"./_shared":85,"./_uid":98}],85:[function(require,module,exports){
 var global = require('./_global');
 var SHARED = '__core-js_shared__';
 var store = global[SHARED] || (global[SHARED] = {});
@@ -5332,7 +5318,7 @@ module.exports = function (key) {
   return store[key] || (store[key] = {});
 };
 
-},{"./_global":50}],87:[function(require,module,exports){
+},{"./_global":49}],86:[function(require,module,exports){
 // 7.3.20 SpeciesConstructor(O, defaultConstructor)
 var anObject = require('./_an-object');
 var aFunction = require('./_a-function');
@@ -5343,7 +5329,7 @@ module.exports = function (O, D) {
   return C === undefined || (S = anObject(C)[SPECIES]) == undefined ? D : aFunction(S);
 };
 
-},{"./_a-function":30,"./_an-object":33,"./_wks":100}],88:[function(require,module,exports){
+},{"./_a-function":29,"./_an-object":32,"./_wks":99}],87:[function(require,module,exports){
 'use strict';
 var fails = require('./_fails');
 
@@ -5354,7 +5340,7 @@ module.exports = function (method, arg) {
   });
 };
 
-},{"./_fails":48}],89:[function(require,module,exports){
+},{"./_fails":47}],88:[function(require,module,exports){
 var toInteger = require('./_to-integer');
 var defined = require('./_defined');
 // true  -> String#at
@@ -5373,7 +5359,7 @@ module.exports = function (TO_STRING) {
   };
 };
 
-},{"./_defined":43,"./_to-integer":94}],90:[function(require,module,exports){
+},{"./_defined":42,"./_to-integer":93}],89:[function(require,module,exports){
 var $export = require('./_export');
 var defined = require('./_defined');
 var fails = require('./_fails');
@@ -5405,11 +5391,11 @@ var trim = exporter.trim = function (string, TYPE) {
 
 module.exports = exporter;
 
-},{"./_defined":43,"./_export":47,"./_fails":48,"./_string-ws":91}],91:[function(require,module,exports){
+},{"./_defined":42,"./_export":46,"./_fails":47,"./_string-ws":90}],90:[function(require,module,exports){
 module.exports = '\x09\x0A\x0B\x0C\x0D\x20\xA0\u1680\u180E\u2000\u2001\u2002\u2003' +
   '\u2004\u2005\u2006\u2007\u2008\u2009\u200A\u202F\u205F\u3000\u2028\u2029\uFEFF';
 
-},{}],92:[function(require,module,exports){
+},{}],91:[function(require,module,exports){
 var ctx = require('./_ctx');
 var invoke = require('./_invoke');
 var html = require('./_html');
@@ -5495,7 +5481,7 @@ module.exports = {
   clear: clearTask
 };
 
-},{"./_cof":40,"./_ctx":42,"./_dom-create":45,"./_global":50,"./_html":53,"./_invoke":55}],93:[function(require,module,exports){
+},{"./_cof":39,"./_ctx":41,"./_dom-create":44,"./_global":49,"./_html":52,"./_invoke":54}],92:[function(require,module,exports){
 var toInteger = require('./_to-integer');
 var max = Math.max;
 var min = Math.min;
@@ -5504,7 +5490,7 @@ module.exports = function (index, length) {
   return index < 0 ? max(index + length, 0) : min(index, length);
 };
 
-},{"./_to-integer":94}],94:[function(require,module,exports){
+},{"./_to-integer":93}],93:[function(require,module,exports){
 // 7.1.4 ToInteger
 var ceil = Math.ceil;
 var floor = Math.floor;
@@ -5512,7 +5498,7 @@ module.exports = function (it) {
   return isNaN(it = +it) ? 0 : (it > 0 ? floor : ceil)(it);
 };
 
-},{}],95:[function(require,module,exports){
+},{}],94:[function(require,module,exports){
 // to indexed object, toObject with fallback for non-array-like ES3 strings
 var IObject = require('./_iobject');
 var defined = require('./_defined');
@@ -5520,7 +5506,7 @@ module.exports = function (it) {
   return IObject(defined(it));
 };
 
-},{"./_defined":43,"./_iobject":56}],96:[function(require,module,exports){
+},{"./_defined":42,"./_iobject":55}],95:[function(require,module,exports){
 // 7.1.15 ToLength
 var toInteger = require('./_to-integer');
 var min = Math.min;
@@ -5528,14 +5514,14 @@ module.exports = function (it) {
   return it > 0 ? min(toInteger(it), 0x1fffffffffffff) : 0; // pow(2, 53) - 1 == 9007199254740991
 };
 
-},{"./_to-integer":94}],97:[function(require,module,exports){
+},{"./_to-integer":93}],96:[function(require,module,exports){
 // 7.1.13 ToObject(argument)
 var defined = require('./_defined');
 module.exports = function (it) {
   return Object(defined(it));
 };
 
-},{"./_defined":43}],98:[function(require,module,exports){
+},{"./_defined":42}],97:[function(require,module,exports){
 // 7.1.1 ToPrimitive(input [, PreferredType])
 var isObject = require('./_is-object');
 // instead of the ES6 spec version, we didn't implement @@toPrimitive case
@@ -5549,14 +5535,14 @@ module.exports = function (it, S) {
   throw TypeError("Can't convert object to primitive value");
 };
 
-},{"./_is-object":59}],99:[function(require,module,exports){
+},{"./_is-object":58}],98:[function(require,module,exports){
 var id = 0;
 var px = Math.random();
 module.exports = function (key) {
   return 'Symbol('.concat(key === undefined ? '' : key, ')_', (++id + px).toString(36));
 };
 
-},{}],100:[function(require,module,exports){
+},{}],99:[function(require,module,exports){
 var store = require('./_shared')('wks');
 var uid = require('./_uid');
 var Symbol = require('./_global').Symbol;
@@ -5569,7 +5555,7 @@ var $exports = module.exports = function (name) {
 
 $exports.store = store;
 
-},{"./_global":50,"./_shared":86,"./_uid":99}],101:[function(require,module,exports){
+},{"./_global":49,"./_shared":85,"./_uid":98}],100:[function(require,module,exports){
 var classof = require('./_classof');
 var ITERATOR = require('./_wks')('iterator');
 var Iterators = require('./_iterators');
@@ -5579,7 +5565,7 @@ module.exports = require('./_core').getIteratorMethod = function (it) {
     || Iterators[classof(it)];
 };
 
-},{"./_classof":39,"./_core":41,"./_iterators":65,"./_wks":100}],102:[function(require,module,exports){
+},{"./_classof":38,"./_core":40,"./_iterators":64,"./_wks":99}],101:[function(require,module,exports){
 'use strict';
 var $export = require('./_export');
 var $filter = require('./_array-methods')(2);
@@ -5591,7 +5577,7 @@ $export($export.P + $export.F * !require('./_strict-method')([].filter, true), '
   }
 });
 
-},{"./_array-methods":35,"./_export":47,"./_strict-method":88}],103:[function(require,module,exports){
+},{"./_array-methods":34,"./_export":46,"./_strict-method":87}],102:[function(require,module,exports){
 'use strict';
 var $export = require('./_export');
 var $forEach = require('./_array-methods')(0);
@@ -5604,7 +5590,7 @@ $export($export.P + $export.F * !STRICT, 'Array', {
   }
 });
 
-},{"./_array-methods":35,"./_export":47,"./_strict-method":88}],104:[function(require,module,exports){
+},{"./_array-methods":34,"./_export":46,"./_strict-method":87}],103:[function(require,module,exports){
 'use strict';
 var $export = require('./_export');
 var $indexOf = require('./_array-includes')(false);
@@ -5621,13 +5607,13 @@ $export($export.P + $export.F * (NEGATIVE_ZERO || !require('./_strict-method')($
   }
 });
 
-},{"./_array-includes":34,"./_export":47,"./_strict-method":88}],105:[function(require,module,exports){
+},{"./_array-includes":33,"./_export":46,"./_strict-method":87}],104:[function(require,module,exports){
 // 22.1.2.2 / 15.4.3.2 Array.isArray(arg)
 var $export = require('./_export');
 
 $export($export.S, 'Array', { isArray: require('./_is-array') });
 
-},{"./_export":47,"./_is-array":58}],106:[function(require,module,exports){
+},{"./_export":46,"./_is-array":57}],105:[function(require,module,exports){
 'use strict';
 var addToUnscopables = require('./_add-to-unscopables');
 var step = require('./_iter-step');
@@ -5663,7 +5649,7 @@ addToUnscopables('keys');
 addToUnscopables('values');
 addToUnscopables('entries');
 
-},{"./_add-to-unscopables":31,"./_iter-define":62,"./_iter-step":64,"./_iterators":65,"./_to-iobject":95}],107:[function(require,module,exports){
+},{"./_add-to-unscopables":30,"./_iter-define":61,"./_iter-step":63,"./_iterators":64,"./_to-iobject":94}],106:[function(require,module,exports){
 'use strict';
 var $export = require('./_export');
 var aFunction = require('./_a-function');
@@ -5688,13 +5674,13 @@ $export($export.P + $export.F * (fails(function () {
   }
 });
 
-},{"./_a-function":30,"./_export":47,"./_fails":48,"./_strict-method":88,"./_to-object":97}],108:[function(require,module,exports){
+},{"./_a-function":29,"./_export":46,"./_fails":47,"./_strict-method":87,"./_to-object":96}],107:[function(require,module,exports){
 // 19.2.3.2 / 15.3.4.5 Function.prototype.bind(thisArg, args...)
 var $export = require('./_export');
 
 $export($export.P, 'Function', { bind: require('./_bind') });
 
-},{"./_bind":38,"./_export":47}],109:[function(require,module,exports){
+},{"./_bind":37,"./_export":46}],108:[function(require,module,exports){
 // 20.1.2.2 Number.isFinite(number)
 var $export = require('./_export');
 var _isFinite = require('./_global').isFinite;
@@ -5705,7 +5691,7 @@ $export($export.S, 'Number', {
   }
 });
 
-},{"./_export":47,"./_global":50}],110:[function(require,module,exports){
+},{"./_export":46,"./_global":49}],109:[function(require,module,exports){
 // 19.1.2.14 Object.keys(O)
 var toObject = require('./_to-object');
 var $keys = require('./_object-keys');
@@ -5716,7 +5702,7 @@ require('./_object-sap')('keys', function () {
   };
 });
 
-},{"./_object-keys":74,"./_object-sap":75,"./_to-object":97}],111:[function(require,module,exports){
+},{"./_object-keys":73,"./_object-sap":74,"./_to-object":96}],110:[function(require,module,exports){
 'use strict';
 // 19.1.3.6 Object.prototype.toString()
 var classof = require('./_classof');
@@ -5728,19 +5714,19 @@ if (test + '' != '[object z]') {
   }, true);
 }
 
-},{"./_classof":39,"./_redefine":82,"./_wks":100}],112:[function(require,module,exports){
+},{"./_classof":38,"./_redefine":81,"./_wks":99}],111:[function(require,module,exports){
 var $export = require('./_export');
 var $parseFloat = require('./_parse-float');
 // 18.2.4 parseFloat(string)
 $export($export.G + $export.F * (parseFloat != $parseFloat), { parseFloat: $parseFloat });
 
-},{"./_export":47,"./_parse-float":76}],113:[function(require,module,exports){
+},{"./_export":46,"./_parse-float":75}],112:[function(require,module,exports){
 var $export = require('./_export');
 var $parseInt = require('./_parse-int');
 // 18.2.5 parseInt(string, radix)
 $export($export.G + $export.F * (parseInt != $parseInt), { parseInt: $parseInt });
 
-},{"./_export":47,"./_parse-int":77}],114:[function(require,module,exports){
+},{"./_export":46,"./_parse-int":76}],113:[function(require,module,exports){
 'use strict';
 var LIBRARY = require('./_library');
 var global = require('./_global');
@@ -6015,7 +6001,7 @@ $export($export.S + $export.F * !(USE_NATIVE && require('./_iter-detect')(functi
   }
 });
 
-},{"./_a-function":30,"./_an-instance":32,"./_classof":39,"./_core":41,"./_ctx":42,"./_export":47,"./_for-of":49,"./_global":50,"./_is-object":59,"./_iter-detect":63,"./_library":66,"./_microtask":67,"./_new-promise-capability":68,"./_perform":78,"./_promise-resolve":79,"./_redefine-all":81,"./_set-species":83,"./_set-to-string-tag":84,"./_species-constructor":87,"./_task":92,"./_wks":100}],115:[function(require,module,exports){
+},{"./_a-function":29,"./_an-instance":31,"./_classof":38,"./_core":40,"./_ctx":41,"./_export":46,"./_for-of":48,"./_global":49,"./_is-object":58,"./_iter-detect":62,"./_library":65,"./_microtask":66,"./_new-promise-capability":67,"./_perform":77,"./_promise-resolve":78,"./_redefine-all":80,"./_set-species":82,"./_set-to-string-tag":83,"./_species-constructor":86,"./_task":91,"./_wks":99}],114:[function(require,module,exports){
 'use strict';
 var $at = require('./_string-at')(true);
 
@@ -6034,7 +6020,7 @@ require('./_iter-define')(String, 'String', function (iterated) {
   return { value: point, done: false };
 });
 
-},{"./_iter-define":62,"./_string-at":89}],116:[function(require,module,exports){
+},{"./_iter-define":61,"./_string-at":88}],115:[function(require,module,exports){
 'use strict';
 // 21.1.3.25 String.prototype.trim()
 require('./_string-trim')('trim', function ($trim) {
@@ -6043,7 +6029,7 @@ require('./_string-trim')('trim', function ($trim) {
   };
 });
 
-},{"./_string-trim":90}],117:[function(require,module,exports){
+},{"./_string-trim":89}],116:[function(require,module,exports){
 var $iterators = require('./es6.array.iterator');
 var getKeys = require('./_object-keys');
 var redefine = require('./_redefine');
@@ -6103,4 +6089,4 @@ for (var collections = getKeys(DOMIterables), i = 0; i < collections.length; i++
   }
 }
 
-},{"./_global":50,"./_hide":52,"./_iterators":65,"./_object-keys":74,"./_redefine":82,"./_wks":100,"./es6.array.iterator":106}]},{},[9]);
+},{"./_global":49,"./_hide":51,"./_iterators":64,"./_object-keys":73,"./_redefine":81,"./_wks":99,"./es6.array.iterator":105}]},{},[8]);

@@ -1,5 +1,4 @@
 import { FW } from '../fw/fw';
-import { FWVAST } from '../fw/fw-vast';
 import { ENV } from '../fw/env';
 import { VASTPLAYER } from '../players/vast-player';
 import { CONTENTPLAYER } from '../players/content-player';
@@ -31,7 +30,7 @@ API.pause = function () {
   }
 };
 
-API.getAdPaused = function () { 
+API.getAdPaused = function () {
   if (this.adOnStage && this.adIsLinear) {
     if (this.isVPAID) {
       return VPAID.getAdPaused.call(this);
@@ -56,10 +55,9 @@ API.setVolume = function (level) {
   }
   if (this.adOnStage && this.adIsLinear) {
     if (this.isVPAID) {
-      VPAID.setAdVolume.call(this,level);
-    } else {
-      VASTPLAYER.setVolume.call(this, level);
+      VPAID.setAdVolume.call(this, level);
     }
+    VASTPLAYER.setVolume.call(this, level);
   }
   CONTENTPLAYER.setVolume.call(this, level);
 };
@@ -73,7 +71,6 @@ API.getVolume = function () {
     }
   }
   return CONTENTPLAYER.getVolume.call(this);
-
 };
 
 API.setMute = function (muted) {
@@ -83,9 +80,9 @@ API.setMute = function (muted) {
   if (this.adOnStage && this.adIsLinear) {
     if (this.isVPAID) {
       if (muted) {
-        VPAID.setAdVolume.call(this,0);
+        VPAID.setAdVolume.call(this, 0);
       } else {
-        VPAID.setAdVolume.call(this,1);
+        VPAID.setAdVolume.call(this, 1);
       }
     } else {
       VASTPLAYER.setMute.call(this, muted);
@@ -222,7 +219,7 @@ API.getAdMediaWidth = function () {
       return this.nonLinearCreativeWidth;
     }
   }
-  return null;
+  return -1;
 };
 
 API.getAdMediaHeight = function () {
@@ -235,10 +232,10 @@ API.getAdMediaHeight = function () {
       return this.nonLinearCreativeHeight;
     }
   }
-  return null;
+  return -1;
 };
 
-API.getClickThroughUrl = function () { 
+API.getClickThroughUrl = function () {
   return this.clickThroughUrl;
 };
 
@@ -246,11 +243,11 @@ API.getIsSkippableAd = function () {
   return this.isSkippableAd;
 };
 
-API.getContentPlayerCompleted = function() {
+API.getContentPlayerCompleted = function () {
   return this.contentPlayerCompleted;
 };
 
-API.setContentPlayerCompleted = function(value) {
+API.setContentPlayerCompleted = function (value) {
   if (typeof value === 'boolean') {
     this.contentPlayerCompleted = value;
   }
@@ -316,7 +313,7 @@ API.initialize = function () {
     }
   } else {
     if (DEBUG) {
-      FWVAST.logPerformance('RMP-VAST: on user interaction - player needs to be initialized');
+      FW.logPerformance('RMP-VAST: on user interaction - player needs to be initialized');
     }
     VASTPLAYER.init.call(this);
   }

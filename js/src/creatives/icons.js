@@ -1,5 +1,4 @@
 import { FW } from '../fw/fw';
-import { FWVAST } from '../fw/fw-vast';
 import { PING } from '../tracking/ping';
 
 const ICONS = {};
@@ -73,7 +72,7 @@ ICONS.parse = function (icons) {
     if (creativeType === null || creativeType === '' || !imagePattern.test(creativeType)) {
       continue;
     }
-    let staticResourceUrl = FWVAST.getNodeValue(staticResource[0], true);
+    let staticResourceUrl = FW.getNodeValue(staticResource[0], true);
     if (staticResourceUrl === null) {
       continue;
     }
@@ -90,7 +89,7 @@ ICONS.parse = function (icons) {
     };
     // optional IconViewTracking
     let iconViewTracking = currentIcon.getElementsByTagName('IconViewTracking');
-    let iconViewTrackingUrl = FWVAST.getNodeValue(iconViewTracking[0], true);
+    let iconViewTrackingUrl = FW.getNodeValue(iconViewTracking[0], true);
     if (iconViewTrackingUrl !== null) {
       iconData.iconViewTrackingUrl = iconViewTrackingUrl;
     }
@@ -98,14 +97,14 @@ ICONS.parse = function (icons) {
     let iconClicks = currentIcon.getElementsByTagName('IconClicks');
     if (iconClicks.length > 0) {
       let iconClickThrough = iconClicks[0].getElementsByTagName('IconClickThrough');
-      let iconClickThroughUrl = FWVAST.getNodeValue(iconClickThrough[0], true);
+      let iconClickThroughUrl = FW.getNodeValue(iconClickThrough[0], true);
       if (iconClickThroughUrl !== null) {
         iconData.iconClickThroughUrl = iconClickThroughUrl;
         let iconClickTracking = iconClicks[0].getElementsByTagName('IconClickTracking');
         if (iconClickTracking.length > 0) {
           iconData.iconClickTrackingUrl = [];
           for (let i = 0, len = iconClickTracking.length; i < len; i++) {
-            let iconClickTrackingUrl = FWVAST.getNodeValue(iconClickTracking[i], true);
+            let iconClickTrackingUrl = FW.getNodeValue(iconClickTracking[i], true);
             if (iconClickTrackingUrl !== null) {
               iconData.iconClickTrackingUrl.push(iconClickTrackingUrl);
             }
@@ -121,24 +120,25 @@ ICONS.parse = function (icons) {
   }
 };
 
-var _onIconClickThrough = function (index) {
+var _onIconClickThrough = function (index, event) {
   if (DEBUG) {
     FW.log('RMP-VAST: click on icon with index ' + index);
   }
-  try {
-    // open ClickThrough link for icon
-    window.open(this.icons[index].iconClickThroughUrl, '_blank ');
-    // send trackers if any for IconClickTracking
-    if (typeof this.icons[index].iconClickTrackingUrl !== 'undefined') {
-      let iconClickTrackingUrl = this.icons[index].iconClickTrackingUrl;
-      if (iconClickTrackingUrl.length > 0) {
-        iconClickTrackingUrl.forEach((element) => {
-          PING.tracking.call(this, element, null);
-        });
-      }
+  if (event) {
+    event.stopPropagation();
+    if (event.type === 'touchend') {
+      event.preventDefault();
     }
-  } catch (e) {
-    FW.trace(e);
+  }
+  FW.openWindow(this.icons[index].iconClickThroughUrl);
+  // send trackers if any for IconClickTracking
+  if (typeof this.icons[index].iconClickTrackingUrl !== 'undefined') {
+    let iconClickTrackingUrl = this.icons[index].iconClickTrackingUrl;
+    if (iconClickTrackingUrl.length > 0) {
+      iconClickTrackingUrl.forEach((element) => {
+        PING.tracking.call(this, element, null);
+      });
+    }
   }
 };
 
@@ -189,6 +189,7 @@ var _onPlayingAppendIcons = function () {
     }
 
     if (typeof this.icons[i].iconClickThroughUrl !== 'undefined') {
+      icon.addEventListener('touchend', _onIconClickThrough.bind(this, i));
       icon.addEventListener('click', _onIconClickThrough.bind(this, i));
     }
 

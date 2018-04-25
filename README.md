@@ -226,8 +226,8 @@ The following methods should be queried after the `adstarted` event has fired fo
 - `getAdDuration()`: return (number|-1) in ms representing the duration of the selected linear creative
 - `getAdCurrentTime()`: return (number|-1) in ms representing the current timestamp in the selected linear creative
 - `getAdRemainingTime()`: return (number|-1) in ms representing the current time remaining in the selected linear creative
-- `getAdMediaWidth()`: return (number|null) representing the width of the selected creative
-- `getAdMediaHeight()`: return (number|null) representing the height of the selected creative
+- `getAdMediaWidth()`: return (number|-1) representing the width of the selected creative
+- `getAdMediaHeight()`: return (number|-1) representing the height of the selected creative
 - `getClickThroughUrl()`: return (string|null) representing the click-through (e.g. destination) URL for the selected creative
 - `getIsSkippableAd()`: return (boolean) stating if the loaded linear ad is a VAST skippable ad - can be querried when adloaded event fires
 - `getContentPlayerCompleted()`: return (boolean) stating if content player has reached end of content

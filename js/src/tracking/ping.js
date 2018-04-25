@@ -1,5 +1,4 @@
 import { FW } from '../fw/fw';
-import { FWVAST } from '../fw/fw-vast';
 import { CONTENTPLAYER } from '../players/content-player';
 
 const PING = {};
@@ -30,7 +29,7 @@ var _replaceMacros = function (url, errorCode, assetUri) {
   let pattern1 = /\[CACHEBUSTING\]/gi;
   let finalString = url;
   if (pattern1.test(finalString)) {
-    finalString = finalString.replace(pattern1, FWVAST.generateCacheBusting());
+    finalString = finalString.replace(pattern1, FW.generateCacheBusting());
   }
   let pattern2 = /\[ERRORCODE\]/gi;
   if (pattern2.test(finalString) && typeof errorCode === 'number' && errorCode > 0 && errorCode < 1000) {
@@ -39,12 +38,12 @@ var _replaceMacros = function (url, errorCode, assetUri) {
   let pattern3 = /\[CONTENTPLAYHEAD\]/gi;
   let currentTime = CONTENTPLAYER.getCurrentTime.call(this);
   if (pattern3.test(finalString) && currentTime > -1) {
-    currentTime = FWVAST.vastReadableTime(currentTime);
-    finalString = finalString.replace(pattern3, FWVAST.RFC3986EncodeURIComponent(currentTime));
+    currentTime = FW.vastReadableTime(currentTime);
+    finalString = finalString.replace(pattern3, FW.RFC3986EncodeURIComponent(currentTime));
   }
   let pattern4 = /\[ASSETURI\]/gi;
   if (pattern4.test(finalString) && typeof assetUri === 'string' && assetUri !== '') {
-    finalString = finalString.replace(pattern4, FWVAST.RFC3986EncodeURIComponent(assetUri));
+    finalString = finalString.replace(pattern4, FW.RFC3986EncodeURIComponent(assetUri));
   }
   return finalString;
 };

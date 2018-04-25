@@ -15,13 +15,16 @@
   box-sizing: @string;
 }
 
-.transition(@property: background; @duration: 0.4s) {
+.transition(@property: background; @duration: 0.4s; @timing: ease-in) {
   -webkit-transition-property: @property;
   -moz-transition-property: @property;
   transition-property: @property;
   -webkit-transition-duration: @duration;
   -moz-transition-duration: @duration;
   transition-duration: @duration;
+  -webkit-transition-timing-function: @timing;
+  -moz-transition-timing-function: @timing;
+  transition-timing-function: @timing;
 }
 
 .text-ellipsis() {

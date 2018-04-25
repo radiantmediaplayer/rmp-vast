@@ -119,7 +119,9 @@ RESET.unwireVastPlayerEvents = function () {
     this.nonLinearImg.removeEventListener('load', this.onNonLinearLoadSuccess);
     this.nonLinearImg.removeEventListener('error', this.onNonLinearLoadError);
     this.nonLinearATag.removeEventListener('click', this.onNonLinearClickThrough);
+    this.nonLinearATag.removeEventListener('touchend', this.onNonLinearClickThrough);
     this.nonLinearClose.removeEventListener('click', this.onClickCloseNonLinear);
+    this.nonLinearClose.removeEventListener('touchend', this.onClickCloseNonLinear);
     for (let i = 0, len = this.trackingTags.length; i < len; i++) {
       this.nonLinearContainer.removeEventListener(this.trackingTags[i].event, this.onEventPingTracking);
     }
@@ -161,7 +163,7 @@ RESET.unwireVastPlayerEvents = function () {
     }
     // click UI on mobile
     if (this.clickUIOnMobile && this.onClickThrough !== null) {
-      this.clickUIOnMobile.removeEventListener('click', this.onClickThrough);
+      this.clickUIOnMobile.removeEventListener('touchend', this.onClickThrough);
     }
   }
   if (this.contentPlayer) {

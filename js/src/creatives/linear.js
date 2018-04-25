@@ -1,5 +1,4 @@
 import { FW } from '../fw/fw';
-import { FWVAST } from '../fw/fw-vast';
 import { ENV } from '../fw/env';
 import { PING } from '../tracking/ping';
 import { CONTENTPLAYER } from '../players/content-player';
@@ -59,24 +58,20 @@ var _onEndedResumeContent = function () {
 };
 
 var _onClickThrough = function (event) {
-  try {
-    if (event) {
-      event.stopPropagation();
-    }
-    if (DEBUG) {
-      FW.log('RMP-VAST: onClickThrough');
-    }
-    if (!ENV.isMobile) {
-      window.open(this.clickThroughUrl, '_blank');
-    }
-    if (this.params.pauseOnClick) {
-      this.pause();
-    }
-    API.createEvent.call(this, 'adclick');
-    FWVAST.dispatchPingEvent.call(this, 'clickthrough');
-  } catch (e) {
-    FW.trace(e);
+  if (event) {
+    event.stopPropagation();
   }
+  if (DEBUG) {
+    FW.log('RMP-VAST: onClickThrough');
+  }
+  if (!ENV.isMobile) {
+    FW.openWindow(this.clickThroughUrl);
+  }
+  if (this.params.pauseOnClick) {
+    this.pause();
+  }
+  API.createEvent.call(this, 'adclick');
+  FW.dispatchPingEvent.call(this, 'clickthrough');
 };
 
 var _errorTypes = [
@@ -122,7 +117,7 @@ var _appendClickUIOnMobile = function () {
   this.clickUIOnMobile = document.createElement('a');
   this.clickUIOnMobile.className = 'rmp-ad-click-ui-mobile';
   this.clickUIOnMobile.textContent = this.params.textForClickUIOnMobile;
-  this.clickUIOnMobile.addEventListener('click', this.onClickThrough);
+  this.clickUIOnMobile.addEventListener('touchend', this.onClickThrough);
   this.clickUIOnMobile.href = this.clickThroughUrl;
   this.clickUIOnMobile.target = '_blank';
   this.adContainer.appendChild(this.clickUIOnMobile);
@@ -171,8 +166,8 @@ LINEAR.update = function (url, type) {
   }
 
   // clickthrough interaction
+  this.onClickThrough = _onClickThrough.bind(this);
   if (this.clickThroughUrl) {
-    this.onClickThrough = _onClickThrough.bind(this);
     if (ENV.isMobile) {
       _appendClickUIOnMobile.call(this);
     } else {
@@ -212,7 +207,7 @@ LINEAR.parse = function (linear) {
   let adParameters = linear[0].getElementsByTagName('AdParameters');
   this.adParametersData = '';
   if (adParameters.length > 0) {
-    this.adParametersData = FWVAST.getNodeValue(adParameters[0], false);
+    this.adParametersData = FW.getNodeValue(adParameters[0], false);
   }
   let mediaFile = mediaFiles[0].getElementsByTagName('MediaFile');
   if (mediaFile.length === 0) {
@@ -227,7 +222,7 @@ LINEAR.parse = function (linear) {
     mediaFileItems[i] = {};
     // required per VAST3 spec CDATA URL location to media, delivery, type, width, height
     let currentMediaFile = mediaFile[i];
-    let mediaFileValue = FWVAST.getNodeValue(currentMediaFile, true);
+    let mediaFileValue = FW.getNodeValue(currentMediaFile, true);
     if (mediaFileValue === null) {
       mediaFileToRemove.push(i);
       continue;

@@ -19,11 +19,9 @@ HELPERS.playPromise = function (whichPlayer, firstPlayerPlayRequest) {
   }
   if (targetPlayer) {
     let playPromise = targetPlayer.play();
-    // on Chrome 50+ play() returns a promise
+    // most modern browsers support play as a Promise
+    // this lets us handle autoplay rejection 
     // https://developers.google.com/web/updates/2016/03/play-returns-promise
-    // but not all browsers support this - so we just catch the potential Chrome error that 
-    // may result if pause() is called in between - pause should overwrite play 
-    // and in this case causes a promise rejection
     if (playPromise !== undefined) { 
       playPromise.then(() => {
         if (DEBUG) {
