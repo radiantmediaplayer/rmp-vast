@@ -377,9 +377,11 @@ var _onXmlAvailable = function (xml) {
     this.adSystem = FW.getNodeValue(adSystem[0], false);
   }
   if (impression.length > 0) {
-    let impressionUrl = FW.getNodeValue(impression[0], true);
-    if (impressionUrl !== null) {
-      this.trackingTags.push({ event: 'impression', url: impressionUrl });
+    for (let i = 0, len = impression.length; i < len; i++) {
+      let impressionUrl = FW.getNodeValue(impression[i], true);
+      if (impressionUrl !== null) {
+        this.trackingTags.push({ event: 'impression', url: impressionUrl });
+      }
     }
   }
   if (!this.isWrapper) {

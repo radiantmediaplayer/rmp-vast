@@ -1,6 +1,6 @@
 /**
  * @license Copyright (c) 2017-2018 Radiant Media Player | https://www.radiantmediaplayer.com
- * rmp-vast 1.3.11
+ * rmp-vast 1.3.12
  * GitHub: https://github.com/radiantmediaplayer/rmp-vast
  * MIT License: https://github.com/radiantmediaplayer/rmp-vast/blob/master/LICENSE
  */
@@ -1247,8 +1247,6 @@ var _fw = require('../fw/fw');
 
 var _vastPlayer = require('../players/vast-player');
 
-var _trackingEvents = require('../tracking/tracking-events');
-
 var _api = require('../api/api');
 
 var SKIP = {};
@@ -1291,13 +1289,11 @@ var _onClickSkip = function (event) {
     }
   }
   if (this.skippableAdCanBeSkipped) {
-    // create API event
+    // create API event 
     _api.API.createEvent.call(this, 'adskipped');
     // request ping for skip event
     if (this.hasSkipEvent) {
       _fw.FW.dispatchPingEvent.call(this, 'skip');
-    } else {
-      _trackingEvents.TRACKINGEVENTS.updateResetStatus.call(this);
     }
     // resume content
     _vastPlayer.VASTPLAYER.resumeContent.call(this);
@@ -1336,7 +1332,7 @@ SKIP.append = function () {
 
 exports.SKIP = SKIP;
 
-},{"../api/api":1,"../fw/fw":7,"../players/vast-player":10,"../tracking/tracking-events":13}],6:[function(require,module,exports){
+},{"../api/api":1,"../fw/fw":7,"../players/vast-player":10}],6:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2335,9 +2331,11 @@ var _onXmlAvailable = function (xml) {
     this.adSystem = _fw.FW.getNodeValue(adSystem[0], false);
   }
   if (impression.length > 0) {
-    var impressionUrl = _fw.FW.getNodeValue(impression[0], true);
-    if (impressionUrl !== null) {
-      this.trackingTags.push({ event: 'impression', url: impressionUrl });
+    for (var _i4 = 0, _len4 = impression.length; _i4 < _len4; _i4++) {
+      var impressionUrl = _fw.FW.getNodeValue(impression[_i4], true);
+      if (impressionUrl !== null) {
+        this.trackingTags.push({ event: 'impression', url: impressionUrl });
+      }
     }
   }
   if (!this.isWrapper) {

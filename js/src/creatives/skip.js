@@ -1,6 +1,5 @@
 import { FW } from '../fw/fw';
 import { VASTPLAYER } from '../players/vast-player';
-import { TRACKINGEVENTS } from '../tracking/tracking-events';
 import { API } from '../api/api';
 
 const SKIP = {};
@@ -43,13 +42,11 @@ var _onClickSkip = function (event) {
     }
   }
   if (this.skippableAdCanBeSkipped) {
-    // create API event
+    // create API event 
     API.createEvent.call(this, 'adskipped');
     // request ping for skip event
     if (this.hasSkipEvent) {
       FW.dispatchPingEvent.call(this, 'skip');
-    } else {
-      TRACKINGEVENTS.updateResetStatus.call(this);
     }
     // resume content
     VASTPLAYER.resumeContent.call(this);
