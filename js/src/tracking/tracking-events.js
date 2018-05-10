@@ -115,6 +115,7 @@ var _onEnded = function () {
   this.vastPlayer.removeEventListener('ended', this.onEnded);
   API.createEvent.call(this, 'adcomplete');
   FW.dispatchPingEvent.call(this, 'complete');
+  VASTPLAYER.resumeContent.call(this);
 };
 
 TRACKINGEVENTS.wire = function () {

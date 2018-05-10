@@ -286,18 +286,15 @@ VASTPLAYER.resumeContent = function () {
   if (DEBUG) {
     FW.log('RMP-VAST: resumeContent');
   }
-  // tick to let last ping events (complete/skip) to be sent
-  setTimeout(() => {
-    _destroyVastPlayer.call(this);
-    // if this.contentPlayerCompleted = true - we are in a post-roll situation
-    // in that case we must not resume content once the post-roll has completed
-    // you can use setContentPlayerCompleted/getContentPlayerCompleted to support 
-    // custom use-cases when dynamically changing source for content
-    if (!this.contentPlayerCompleted) {
-      CONTENTPLAYER.play.call(this);
-    }
-    this.contentPlayerCompleted = false;
-  }, 100);
+  _destroyVastPlayer.call(this);
+  // if this.contentPlayerCompleted = true - we are in a post-roll situation
+  // in that case we must not resume content once the post-roll has completed
+  // you can use setContentPlayerCompleted/getContentPlayerCompleted to support 
+  // custom use-cases when dynamically changing source for content
+  if (!this.contentPlayerCompleted) {
+    CONTENTPLAYER.play.call(this);
+  }
+  this.contentPlayerCompleted = false;
 };
 
 export { VASTPLAYER };

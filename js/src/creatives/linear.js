@@ -49,14 +49,6 @@ var _onLoadedmetadataPlay = function () {
   }
 };
 
-var _onEndedResumeContent = function () {
-  if (DEBUG) {
-    FW.log('RMP-VAST: creative ended in VAST player - resume content');
-  }
-  this.vastPlayer.removeEventListener('ended', this.onEndedResumeContent);
-  VASTPLAYER.resumeContent.call(this);
-};
-
 var _onClickThrough = function (event) {
   if (event) {
     event.stopPropagation();
@@ -140,10 +132,6 @@ LINEAR.update = function (url, type) {
   // when creative is loaded play it 
   this.onLoadedmetadataPlay = _onLoadedmetadataPlay.bind(this);
   this.vastPlayer.addEventListener('loadedmetadata', this.onLoadedmetadataPlay);
-
-  // when creative ends resume content
-  this.onEndedResumeContent = _onEndedResumeContent.bind(this);
-  this.vastPlayer.addEventListener('ended', this.onEndedResumeContent);
 
   // prevent built in menu to show on right click
   this.onContextMenu = _onContextMenu.bind(this);

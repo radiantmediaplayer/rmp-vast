@@ -1,6 +1,6 @@
 /**
  * @license Copyright (c) 2017-2018 Radiant Media Player | https://www.radiantmediaplayer.com
- * rmp-vast 1.3.12
+ * rmp-vast 1.3.14
  * GitHub: https://github.com/radiantmediaplayer/rmp-vast
  * MIT License: https://github.com/radiantmediaplayer/rmp-vast/blob/master/LICENSE
  */
@@ -679,14 +679,6 @@ var _onLoadedmetadataPlay = function () {
   }
 };
 
-var _onEndedResumeContent = function () {
-  if (DEBUG) {
-    _fw.FW.log('RMP-VAST: creative ended in VAST player - resume content');
-  }
-  this.vastPlayer.removeEventListener('ended', this.onEndedResumeContent);
-  _vastPlayer.VASTPLAYER.resumeContent.call(this);
-};
-
 var _onClickThrough = function (event) {
   if (event) {
     event.stopPropagation();
@@ -765,10 +757,6 @@ LINEAR.update = function (url, type) {
   // when creative is loaded play it 
   this.onLoadedmetadataPlay = _onLoadedmetadataPlay.bind(this);
   this.vastPlayer.addEventListener('loadedmetadata', this.onLoadedmetadataPlay);
-
-  // when creative ends resume content
-  this.onEndedResumeContent = _onEndedResumeContent.bind(this);
-  this.vastPlayer.addEventListener('ended', this.onEndedResumeContent);
 
   // prevent built in menu to show on right click
   this.onContextMenu = _onContextMenu.bind(this);
@@ -2857,23 +2845,18 @@ VASTPLAYER.getCurrentTime = function () {
 };
 
 VASTPLAYER.resumeContent = function () {
-  var _this3 = this;
-
   if (DEBUG) {
     _fw.FW.log('RMP-VAST: resumeContent');
   }
-  // tick to let last ping events (complete/skip) to be sent
-  setTimeout(function () {
-    _destroyVastPlayer.call(_this3);
-    // if this.contentPlayerCompleted = true - we are in a post-roll situation
-    // in that case we must not resume content once the post-roll has completed
-    // you can use setContentPlayerCompleted/getContentPlayerCompleted to support 
-    // custom use-cases when dynamically changing source for content
-    if (!_this3.contentPlayerCompleted) {
-      _contentPlayer.CONTENTPLAYER.play.call(_this3);
-    }
-    _this3.contentPlayerCompleted = false;
-  }, 100);
+  _destroyVastPlayer.call(this);
+  // if this.contentPlayerCompleted = true - we are in a post-roll situation
+  // in that case we must not resume content once the post-roll has completed
+  // you can use setContentPlayerCompleted/getContentPlayerCompleted to support 
+  // custom use-cases when dynamically changing source for content
+  if (!this.contentPlayerCompleted) {
+    _contentPlayer.CONTENTPLAYER.play.call(this);
+  }
+  this.contentPlayerCompleted = false;
 };
 
 exports.VASTPLAYER = VASTPLAYER;
@@ -3893,6 +3876,7 @@ var _onEnded = function () {
   this.vastPlayer.removeEventListener('ended', this.onEnded);
   _api.API.createEvent.call(this, 'adcomplete');
   _fw.FW.dispatchPingEvent.call(this, 'complete');
+  _vastPlayer.VASTPLAYER.resumeContent.call(this);
 };
 
 TRACKINGEVENTS.wire = function () {
@@ -4054,7 +4038,6 @@ RESET.internalVariables = function () {
   }
   // init internal methods 
   this.onLoadedmetadataPlay = null;
-  this.onEndedResumeContent = null;
   this.onPlaybackError = null;
   // init internal tracking events methods
   this.onPause = null;
@@ -4177,7 +4160,6 @@ RESET.unwireVastPlayerEvents = function () {
     // vastPlayer content pause/resume events
     this.vastPlayer.removeEventListener('durationchange', this.onDurationChange);
     this.vastPlayer.removeEventListener('loadedmetadata', this.onLoadedmetadataPlay);
-    this.vastPlayer.removeEventListener('ended', this.onEndedResumeContent);
     this.vastPlayer.removeEventListener('contextmenu', this.onContextMenu);
     // unwire HTML5 video events
     this.vastPlayer.removeEventListener('pause', this.onPause);
