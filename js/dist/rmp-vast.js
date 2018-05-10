@@ -1,6 +1,6 @@
 /**
  * @license Copyright (c) 2017-2018 Radiant Media Player | https://www.radiantmediaplayer.com
- * rmp-vast 1.3.14
+ * rmp-vast 1.3.15
  * GitHub: https://github.com/radiantmediaplayer/rmp-vast
  * MIT License: https://github.com/radiantmediaplayer/rmp-vast/blob/master/LICENSE
  */
@@ -2664,12 +2664,8 @@ var _destroyVastPlayer = function () {
       _fw.FW.trace(e);
     }
   }
-  // reset internal variables for next ad if any
-  // we tick to let buffer empty
-  setTimeout(function () {
-    _reset.RESET.internalVariables.call(_this);
-    _api.API.createEvent.call(_this, 'addestroyed');
-  }, 100);
+  _reset.RESET.internalVariables.call(this);
+  _api.API.createEvent.call(this, 'addestroyed');
 };
 
 VASTPLAYER.init = function () {

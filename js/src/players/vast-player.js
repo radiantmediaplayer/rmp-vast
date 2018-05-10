@@ -104,12 +104,8 @@ var _destroyVastPlayer = function () {
       FW.trace(e);
     }
   }
-  // reset internal variables for next ad if any
-  // we tick to let buffer empty
-  setTimeout(() => {
-    RESET.internalVariables.call(this);
-    API.createEvent.call(this, 'addestroyed');
-  }, 100);
+  RESET.internalVariables.call(this);
+  API.createEvent.call(this, 'addestroyed');
 };
 
 VASTPLAYER.init = function () {
