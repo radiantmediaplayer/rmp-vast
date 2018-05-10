@@ -182,8 +182,9 @@ Available events are:
 - `aderror`
 - `addestroyed`
 - `adinitialplayrequestfailed`
+- `adinitialplayrequestsucceeded`
 
-The `adinitialplayrequestfailed` event tells if the vast (or content in case of non-linear creatives) player was able to play on first attempt. Typically this event will fire when autoplay is requested but blocked by an interference engine (macOS Safari 11+, Chrome 66+, Firefox w/ media.autoplay.enabled set to false, browser extensions ...). 
+The `adinitialplayrequestfailed` event tells if the vast (or content in case of non-linear creatives) player was able to play on first attempt. Typically this event will fire when autoplay is requested but blocked by an interference engine (macOS Safari 11+, Chrome 66+, Firefox w/ media.autoplay.enabled set to false, browser extensions ...). If the initial play request was a success, the `adinitialplayrequestsucceeded` event will fire.
 
 VPAID-related events:
 - `adlinearchange`

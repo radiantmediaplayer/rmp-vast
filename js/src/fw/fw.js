@@ -1,6 +1,10 @@
 const FW = {};
 
-/* FW from Radiant Media Player core */ 
+import { API } from '../api/api';
+import { VASTERRORS } from '../utils/vast-errors';
+import { PING } from '../tracking/ping';
+
+/* FW from Radiant Media Player core */
 
 FW.nullFn = function () {
   return null;
@@ -147,7 +151,7 @@ FW.trace = function (data) {
 };
 
 
-/* FW specific to rmp-vast */ 
+/* FW specific to rmp-vast */
 FW.hasDOMParser = function () {
   if (typeof window.DOMParser !== 'undefined') {
     return true;
@@ -336,8 +340,8 @@ FW.logPerformance = function (data) {
 };
 
 FW.logVideoEvents = function (video) {
-  let events = ['loadstart', 'durationchange', 
-  'loadedmetadata', 'loadeddata', 'canplay', 'canplaythrough'];
+  let events = ['loadstart', 'durationchange',
+    'loadedmetadata', 'loadeddata', 'canplay', 'canplaythrough'];
   events.forEach((value) => {
     video.addEventListener(value, (e) => {
       if (e && e.type) {
@@ -411,7 +415,7 @@ FW.filterParams = function (params) {
   }
 };
 
-FW.openWindow = function(link) {
+FW.openWindow = function (link) {
   try {
     // I would like to use named window here to have better performance like 
     // window.open(link, 'rmpVastAdPageArea'); but focus is not set on updated window with such approach
@@ -421,5 +425,57 @@ FW.openWindow = function(link) {
     FW.trace(e);
   }
 };
+
+FW.playPromise = function (whichPlayer, firstPlayerPlayRequest) {
+  let targetPlayer;
+  switch (whichPlayer) {
+    case 'content':
+      targetPlayer = this.contentPlayer;
+      break;
+    case 'vast':
+      targetPlayer = this.vastPlayer;
+      break;
+    default:
+      break;
+  }
+  if (targetPlayer) {
+    let playPromise = targetPlayer.play();
+    // most modern browsers support play as a Promise
+    // this lets us handle autoplay rejection 
+    // https://developers.google.com/web/updates/2016/03/play-returns-promise
+    if (playPromise !== undefined) {
+      playPromise.then(() => {
+        if (firstPlayerPlayRequest) {
+          if (DEBUG) {
+            FW.log('RMP-VAST: initial play promise on ' + whichPlayer + ' player has succeeded');
+          }
+          API.createEvent.call(this, 'adinitialplayrequestsucceeded');
+        }
+      }).catch((e) => {
+        if (firstPlayerPlayRequest && whichPlayer === 'vast' && this.adIsLinear) {
+          if (DEBUG) {
+            FW.log(e);
+            FW.log('RMP-VAST: initial play promise on VAST player has been rejected for linear asset - likely autoplay is being blocked');
+          }
+          PING.error.call(this, 400, this.inlineOrWrapperErrorTags);
+          VASTERRORS.process.call(this, 400);
+          API.createEvent.call(this, 'adinitialplayrequestfailed');
+        } else if (firstPlayerPlayRequest && whichPlayer === 'content' && !this.adIsLinear) {
+          if (DEBUG) {
+            FW.log(e);
+            FW.log('RMP-VAST: initial play promise on content player has been rejected for non-linear asset - likely autoplay is being blocked');
+          }
+          API.createEvent.call(this, 'adinitialplayrequestfailed');
+        } else {
+          if (DEBUG) {
+            FW.log(e);
+            FW.log('RMP-VAST: playPromise on ' + whichPlayer + ' player has been rejected');
+          }
+        }
+      });
+    }
+  }
+};
+
 
 export { FW };

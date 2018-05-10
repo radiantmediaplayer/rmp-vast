@@ -9,7 +9,6 @@ import { NONLINEAR } from '../creatives/non-linear';
 import { LINEAR } from '../creatives/linear';
 import { API } from '../api/api';
 import { VASTERRORS } from '../utils/vast-errors';
-import { HELPERS } from '../utils/helpers';
 
 const VASTPLAYER = {};
 
@@ -248,7 +247,7 @@ VASTPLAYER.getMute = function () {
 
 VASTPLAYER.play = function (firstVastPlayerPlayRequest) {
   if (this.vastPlayer && this.vastPlayer.paused) {
-    HELPERS.playPromise.call(this, 'vast', firstVastPlayerPlayRequest);
+    FW.playPromise.call(this, 'vast', firstVastPlayerPlayRequest);
   }
 };
 
