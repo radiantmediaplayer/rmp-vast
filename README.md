@@ -29,7 +29,7 @@ enough coverage to support current industry requirements and best practices.
 
 ## Additional supported features
 - Mobile compatible (Android + iOS)
-- Autoplay support (muted autoplay on mobile)
+- Autoplay support (muted autoplay on iOS, Android, Desktop Chrome 66+ and Desktop Safari 11+)
 - API to build a fully fledged player on top of rmp-vast
 
 ## Currently unsupported VAST features
