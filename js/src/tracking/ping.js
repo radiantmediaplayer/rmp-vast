@@ -76,9 +76,15 @@ PING.tracking = function (url, assetUri) {
   }
 };
 
-PING.error = function (errorCode, errorTags) {
+PING.error = function (errorCode) {
   // for each Error tag within an InLine or chain of Wrapper ping error URL
-  if (errorTags && errorTags.length > 0) {
+  let errorTags = this.inlineOrWrapperErrorTags;
+  if (errorCode === 303 && this.vastErrorTags.length > 0) {
+    // here we ping vastErrorTags with error code 303 according to spec
+    // concat array thus
+    errorTags = [...errorTags, ...this.vastErrorTags];
+  }
+  if (errorTags.length > 0) {
     for (let i = 0, len = errorTags.length; i < len; i++) {
       let errorUrl = _replaceMacros.call(this, errorTags[i].url, errorCode, null);
       _ping(errorUrl);

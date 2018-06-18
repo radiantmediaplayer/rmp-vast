@@ -161,8 +161,12 @@ TRACKINGEVENTS.wire = function () {
 
 };
 
-TRACKINGEVENTS.filter = function (trackingEvents) {
+TRACKINGEVENTS.filterPush = function (trackingEvents) {
   let trackingTags = trackingEvents[0].getElementsByTagName('Tracking');
+  // in case we are in a pod
+  if (this.adPodWrapperTrackings.length > 0) {
+    this.trackingTags = this.adPodWrapperTrackings;
+  }
   // collect supported tracking events with valid event names and tracking urls
   for (let i = 0, len = trackingTags.length; i < len; i++) {
     let event = trackingTags[i].getAttribute('event');

@@ -11,12 +11,14 @@ describe("Test for EmptySpec", function () {
   var rmpVast = new RmpVast(id);
   var fw = rmpVast.getFW();
   var env = rmpVast.getEnv();
+  var ua = window.navigator.userAgent;
+  var regExp = /(edge\/|firefox\/)/i;
+  if (!regExp.test(ua)) {
+    video.muted = true;
+  }
   if (env.isAndroid[0]) {
     container.style.width = '320px';
     container.style.height = '180px';
-    video.setAttribute('muted', 'muted');
-  } else if (env.isMacOSX && env.isSafari[0]) {
-    video.muted = true;
   }
   var title = document.getElementsByTagName('title')[0];
 
@@ -47,7 +49,7 @@ describe("Test for EmptySpec", function () {
       }
       setTimeout(function () {
         done();
-      }, 500);
+      }, 400);
     });
 
     rmpVast.loadAds(ADTAG);

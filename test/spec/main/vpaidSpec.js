@@ -17,9 +17,7 @@ if (args[2] === 'android') {
 
 var testUrls = [
 	TEST.pathToTest + 'vpaidSpec/vpaid-fails-loading-js.html',
-	TEST.pathToTest + 'vpaidSpec/vpaid-flash.html',
 	TEST.pathToTest + 'vpaidSpec/vpaid-js-linear-1-interaction.html',
-	TEST.pathToTest + 'vpaidSpec/vpaid-js-linear-1.html',
 	TEST.pathToTest + 'vpaidSpec/vpaid-js-linear-2.html',
 	TEST.pathToTest + 'vpaidSpec/vpaid-js-linear-3-api.html',
 	TEST.pathToTest + 'vpaidSpec/vpaid-js-redirect.html'

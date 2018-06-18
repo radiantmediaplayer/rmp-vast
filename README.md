@@ -11,14 +11,16 @@ rmp-vast is an open-source project released under [MIT license](https://github.c
 
 ## Supported VAST 3 features
 - Inline and Wrapper Ads
-- Linear Ads (MP4/WebM or HLS where natively supported)
-- Skippable Linear Ads (MP4/WebM or HLS where natively supported)
+- Linear Ads (MP4/WebM or HLS, DASH where natively supported)
+- Skippable Linear Ads (MP4/WebM or HLS, DASH where natively supported)
 - Non Linear Ads (Images)
 - Tracking Events (tracking URLs must return an image - typically a 1px GIF/PNG/JPG)
 - Error Reporting
 - Industry Icons
 - VAST 3 Macros
 - VPAID 1 and 2 JavaScript
+- Ad Pods
+- Audio Ads (MP3/M4A/HLS where natively supported) in HTML5 video
 
 VAST 2 resources should also be compatible with rmp-vast.
 
@@ -31,7 +33,6 @@ enough coverage to support current industry requirements and best practices.
 - API to build a fully fledged player on top of rmp-vast
 
 ## Currently unsupported VAST features
-- Ad Pods
 - Companion Ads
 - VMAP
 
@@ -115,7 +116,9 @@ Once rmp-vast library is loaded on your page you can create a new rmp-vast insta
 
 `params.ajaxWithCredentials: Boolean` AJAX request to load VAST tag from ad server should or should not be made with credentials. Default: false.
 
-`params.maxNumRedirects: Number` the number of VAST wrappers the player should follow before triggering an error. Default: 4.
+`params.maxNumRedirects: Number` the number of VAST wrappers the player should follow before triggering an error. Default: 4. Capped at 30 to avoid infinite wrapper loops.
+
+`params.maxNumItemsInAdPod: Number` maximum number of Ad an AdPod can play. Default: 10.
 
 `params.pauseOnClick: Boolean` when an ad is clicked - pause or not VAST player (linear) or content player (non-linear). Default: true.
 
@@ -183,6 +186,7 @@ Available events are:
 - `addestroyed`
 - `adinitialplayrequestfailed`
 - `adinitialplayrequestsucceeded`
+- `adpodcompleted`: the current ad pod has finished playing all its Ad
 
 The `adinitialplayrequestfailed` event tells if the vast (or content in case of non-linear creatives) player was able to play on first attempt. Typically this event will fire when autoplay is requested but blocked by an interference engine (macOS Safari 11+, Chrome 66+, Firefox w/ media.autoplay.enabled set to false, browser extensions ...). If the initial play request was a success, the `adinitialplayrequestsucceeded` event will fire.
 
@@ -233,6 +237,10 @@ The following methods should be queried after the `adstarted` event has fired fo
 - `getIsSkippableAd()`: return (boolean) stating if the loaded linear ad is a VAST skippable ad - can be querried when adloaded event fires
 - `getContentPlayerCompleted()`: return (boolean) stating if content player has reached end of content
 - `setContentPlayerCompleted(value)`: input value must be a (boolean) - sets the contentPlayerCompleted state of the player, this is used when source on content player changes and we need to explicitly reset contentPlayerCompleted internal value so that content can resume as expected on next ad load
+
+Additional AdPod-related methods
+- `getAdPodInfo()`: return (object|null) as {adPodCurrentIndex: Number, adPodLength: Number} giving information about the currently playing pod
+
 
 Additional VPAID-related methods
 - `resizeAd(width, height, viewMode)`: resizes the VPAID creative based on width (number), height (number) and viewMode (string). viewMode should be either 'normal' or 'fullscreen' 

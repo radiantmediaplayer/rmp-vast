@@ -1,6 +1,6 @@
 /**
  * @license Copyright (c) 2017-2018 Radiant Media Player | https://www.radiantmediaplayer.com
- * rmp-vast 1.3.16
+ * rmp-vast 1.4.0
  * GitHub: https://github.com/radiantmediaplayer/rmp-vast
  * MIT License: https://github.com/radiantmediaplayer/rmp-vast/blob/master/LICENSE
  */
@@ -341,6 +341,17 @@ API.getInitialized = function () {
   return this.rmpVastInitialized;
 };
 
+// adpod 
+API.getAdPodInfo = function () {
+  if (this.adPodApiInfo.length > 0) {
+    var result = {};
+    result.adPodCurrentIndex = this.adPodCurrentIndex;
+    result.adPodLength = this.adPodApiInfo.length;
+    return result;
+  }
+  return null;
+};
+
 // VPAID methods
 API.resizeAd = function (width, height, viewMode) {
   if (this.adOnStage && this.isVPAID) {
@@ -404,23 +415,22 @@ var _ping = require('../tracking/ping');
 var ICONS = {};
 
 ICONS.destroy = function () {
-  var _this = this;
-
   if (DEBUG) {
     _fw.FW.log('RMP-VAST: start destroying icons');
   }
-  var icons = this.adContainer.getElementsByClassName('rmp-ad-container-icons');
-  var arrayIcons = [];
-  for (var i = 0, len = icons.length; i < len; i++) {
-    arrayIcons.push(icons[i]);
-  }
-  arrayIcons.forEach(function (element) {
-    try {
-      _this.adContainer.removeChild(element);
-    } catch (e) {
-      _fw.FW.trace(e);
+  var icons = this.adContainer.querySelectorAll('.rmp-ad-container-icons');
+  if (icons.length > 0) {
+    for (var i = 0, len = icons.length; i < len; i++) {
+      try {
+        var parent = icons[i].parentNode;
+        if (parent) {
+          parent.removeChild(icons[i]);
+        }
+      } catch (e) {
+        _fw.FW.trace(e);
+      }
     }
-  });
+  }
 };
 
 var _programAlreadyPresent = function (program) {
@@ -523,7 +533,7 @@ ICONS.parse = function (icons) {
 };
 
 var _onIconClickThrough = function (index, event) {
-  var _this2 = this;
+  var _this = this;
 
   if (DEBUG) {
     _fw.FW.log('RMP-VAST: click on icon with index ' + index);
@@ -540,7 +550,7 @@ var _onIconClickThrough = function (index, event) {
     var iconClickTrackingUrl = this.icons[index].iconClickTrackingUrl;
     if (iconClickTrackingUrl.length > 0) {
       iconClickTrackingUrl.forEach(function (element) {
-        _ping.PING.tracking.call(_this2, element, null);
+        _ping.PING.tracking.call(_this, element, null);
       });
     }
   }
@@ -644,6 +654,7 @@ var LINEAR = {};
 var patternVPAID = /vpaid/i;
 var patternJavaScript = /\/javascript/i;
 var hlsPattern = /(application\/vnd\.apple\.mpegurl|x-mpegurl)/i;
+var dashPattern = /application\/dash\+xml/i;
 
 var _onDurationChange = function () {
   if (DEBUG) {
@@ -776,6 +787,8 @@ LINEAR.update = function (url, type) {
   } else {
     this.vastPlayer.addEventListener('error', this.onPlaybackError);
     this.vastPlayer.src = url;
+    // we need this extra load for Chrome data saver mode in mobile or desktop
+    this.vastPlayer.load();
   }
 
   // clickthrough interaction
@@ -807,7 +820,7 @@ LINEAR.parse = function (linear) {
   var mediaFiles = linear[0].getElementsByTagName('MediaFiles');
   if (mediaFiles.length === 0) {
     // 1 MediaFiles element must be present otherwise VAST document is not spec compliant 
-    _ping.PING.error.call(this, 101, this.inlineOrWrapperErrorTags);
+    _ping.PING.error.call(this, 101);
     _vastErrors.VASTERRORS.process.call(this, 101);
     return;
   }
@@ -825,7 +838,7 @@ LINEAR.parse = function (linear) {
   var mediaFile = mediaFiles[0].getElementsByTagName('MediaFile');
   if (mediaFile.length === 0) {
     // at least 1 MediaFile element must be present otherwise VAST document is not spec compliant 
-    _ping.PING.error.call(this, 101, this.inlineOrWrapperErrorTags);
+    _ping.PING.error.call(this, 101);
     _vastErrors.VASTERRORS.process.call(this, 101);
     return;
   }
@@ -847,6 +860,10 @@ LINEAR.parse = function (linear) {
     }
     mediaFileItems[i].url = mediaFileValue;
     mediaFileItems[i].type = type;
+    var codec = currentMediaFile.getAttribute('codec');
+    if (codec !== null && codec !== '') {
+      mediaFileItems[i].codec = codec;
+    }
     // check for potential VPAID
     var apiFramework = mediaFileItems[i].apiFramework = currentMediaFile.getAttribute('apiFramework');
     // we have a VPAID JS - we break
@@ -862,13 +879,14 @@ LINEAR.parse = function (linear) {
       this.isVPAID = true;
       break;
     }
-    var delivery = currentMediaFile.getAttribute('delivery');
+    /* delivery attribute is required but sometimes missing in real world and not really necessary to move forward */
+    /*let delivery = currentMediaFile.getAttribute('delivery');
     if (delivery !== 'progressive' && delivery !== 'streaming') {
       delivery = 'progressive';
       if (DEBUG) {
-        _fw.FW.log('RMP-VAST: missing required delivery attribute on MediaFile tag - this is not a VAST 3 spec compliant adTag - continuing anyway (same as IMA)');
+        FW.log('RMP-VAST: missing required delivery attribute on MediaFile tag - this is not a VAST 3 spec compliant adTag - continuing anyway (same as IMA)');
       }
-    }
+    }*/
     var width = currentMediaFile.getAttribute('width');
     if (width === null || width === '') {
       if (DEBUG) {
@@ -885,12 +903,6 @@ LINEAR.parse = function (linear) {
     }
     mediaFileItems[i].width = parseInt(width);
     mediaFileItems[i].height = parseInt(height);
-    // optional as per VAST 3 
-    /*mediaFileItems[i].codec = mediaFileValue.getAttribute('codec');
-    mediaFileItems[i].id = mediaFileValue.getAttribute('id');
-    mediaFileItems[i].bitrate = mediaFileValue.getAttribute('bitrate');
-    mediaFileItems[i].scalable = mediaFileValue.getAttribute('scalable');
-    mediaFileItems[i].maintainAspectRatio = mediaFileValue.getAttribute('maintainAspectRatio');*/
   }
   // remove MediaFile items that do not hold VAST spec-compliant attributes or data
   if (mediaFileToRemove.length > 0) {
@@ -899,8 +911,7 @@ LINEAR.parse = function (linear) {
     }
   }
   // we support HLS; MP4; WebM: VPAID so let us fecth for those
-  var mp4 = [];
-  var webm = [];
+  var creatives = [];
   for (var _i2 = 0, _len = mediaFileItems.length; _i2 < _len; _i2++) {
     var _currentMediaFileItem = mediaFileItems[_i2];
     var _type = _currentMediaFileItem.type;
@@ -910,68 +921,95 @@ LINEAR.parse = function (linear) {
       this.adContentType = _type;
       return;
     }
-    // we have HLS and it is supported - display ad with HLS in priority
+    // we have HLS or DASH and it is natively supported - display ad with HLS in priority
     if (hlsPattern.test(_type) && _env.ENV.okHls) {
       _vastPlayer.VASTPLAYER.append.call(this, url, _type);
       this.adContentType = _type;
       return;
     }
-    // we gather MP4 and WebM files
-    if (_type === 'video/mp4' && _env.ENV.okMp4) {
-      mp4.push(_currentMediaFileItem);
-    } else if (_type === 'video/webm' && _env.ENV.okWebM) {
-      webm.push(_currentMediaFileItem);
+    if (dashPattern.test(_type) && _env.ENV.okDash) {
+      _vastPlayer.VASTPLAYER.append.call(this, url, _type);
+      this.adContentType = _type;
+      return;
+    }
+    // we gather MP4, WebM, OGG and remaining files
+    creatives.push(_currentMediaFileItem);
+  }
+  var retainedCreatives = [];
+  // first we check for the common formats below ... 
+  var testFormat = ['video/webm', 'video/mp4', 'video/ogg', 'video/3gpp'];
+  var __filterCreatives = function (i, creative) {
+    if (creative.codec && creative.type === testFormat[i]) {
+      return _env.ENV.canPlayType(creative.type, creative.codec);
+    } else if (creative.type === testFormat[i]) {
+      return _env.ENV.canPlayType(creative.type);
+    }
+    return false;
+  };
+  for (var _i3 = 0, _len2 = testFormat.length; _i3 < _len2; _i3++) {
+    retainedCreatives = creatives.filter(__filterCreatives.bind(null, _i3));
+    if (retainedCreatives.length > 0) {
+      break;
+    }
+  }
+  // ... if none of the common format work, then we check for exotic format
+  // first we check for those with codec information as it provides more accurate support indication ...
+  if (retainedCreatives.length === 0) {
+    var _filterCreatives = function (codec, type, creative) {
+      return creative.codec === codec && creative.type === type;
+    };
+    for (var _i4 = 0, _len3 = creatives.length; _i4 < _len3; _i4++) {
+      var thisCreative = creatives[_i4];
+      if (thisCreative.codec && thisCreative.type && _env.ENV.canPlayType(thisCreative.type, thisCreative.codec)) {
+        retainedCreatives = creatives.filter(_filterCreatives.bind(null, thisCreative.codec, thisCreative.type));
+      }
+    }
+  }
+  // ... if codec information are not available then we go first type matching
+  if (retainedCreatives.length === 0) {
+    var _filterCreatives2 = function (type, creative) {
+      return creative.type === type;
+    };
+    for (var _i5 = 0, _len4 = creatives.length; _i5 < _len4; _i5++) {
+      var _thisCreative = creatives[_i5];
+      if (_thisCreative.type && _env.ENV.canPlayType(_thisCreative.type)) {
+        retainedCreatives = creatives.filter(_filterCreatives2.bind(null, _thisCreative.type));
+      }
     }
   }
 
-  var format = [];
-  // if we have WebM and WebM is supported - filter it by width
-  // otherwise do the same for MP4
-  if (_env.ENV.okWebM && webm.length > 0) {
-    webm.sort(function (a, b) {
-      return a.width - b.width;
-    });
-    format = webm;
-  } else if (_env.ENV.okMp4 && mp4.length > 0) {
-    mp4.sort(function (a, b) {
-      return a.width - b.width;
-    });
-    format = mp4;
-  }
-
-  if (format.length === 0) {
+  // still no match for supported format - we exit
+  if (retainedCreatives.length === 0) {
     // None of the MediaFile provided are supported by the player
-    _ping.PING.error.call(this, 403, this.inlineOrWrapperErrorTags);
+    _ping.PING.error.call(this, 403);
     _vastErrors.VASTERRORS.process.call(this, 403);
     return;
   }
 
+  // sort supported creatives by width
+  retainedCreatives.sort(function (a, b) {
+    return a.width - b.width;
+  });
+
   // we have files matching device capabilities
   // select the best one based on player current width
-  var retainedFormat = format[0];
   var containerWidth = _fw.FW.getWidth(this.container);
-  var formatLength = format.length;
-  if (format[formatLength - 1].width < containerWidth) {
-    retainedFormat = format[formatLength - 1];
-  } else if (format[0].width > containerWidth) {
-    retainedFormat = format[0];
-  } else {
-    for (var _i3 = 0, _len2 = formatLength; _i3 < _len2; _i3++) {
-      if (format[_i3].width >= containerWidth) {
-        retainedFormat = format[_i3];
-        break;
-      }
+  var finalCreative = retainedCreatives[0];
+  for (var _i6 = 0, _len5 = retainedCreatives.length; _i6 < _len5; _i6++) {
+    if (retainedCreatives[_i6].width >= containerWidth) {
+      finalCreative = retainedCreatives[_i6];
+      break;
     }
   }
   if (DEBUG) {
     _fw.FW.log('RMP-VAST: selected linear creative follows');
-    _fw.FW.log(retainedFormat);
+    _fw.FW.log(finalCreative);
   }
-  this.adMediaUrl = retainedFormat.url;
-  this.adMediaHeight = retainedFormat.height;
-  this.adMediaWidth = retainedFormat.width;
-  this.adContentType = retainedFormat.type;
-  _vastPlayer.VASTPLAYER.append.call(this, retainedFormat.url, retainedFormat.type);
+  this.adMediaUrl = finalCreative.url;
+  this.adMediaHeight = finalCreative.height;
+  this.adMediaWidth = finalCreative.width;
+  this.adContentType = finalCreative.type;
+  _vastPlayer.VASTPLAYER.append.call(this, finalCreative.url, finalCreative.type);
 };
 
 exports.LINEAR = LINEAR;
@@ -1137,14 +1175,14 @@ NONLINEAR.parse = function (nonLinearAds) {
     var width = currentNonLinear.getAttribute('width');
     // width attribute is required
     if (width === null || width === '') {
-      _ping.PING.error.call(this, 101, this.inlineOrWrapperErrorTags);
+      _ping.PING.error.call(this, 101);
       _vastErrors.VASTERRORS.process.call(this, 101);
       continue;
     }
     var height = currentNonLinear.getAttribute('height');
     // height attribute is also required
     if (height === null || height === '') {
-      _ping.PING.error.call(this, 101, this.inlineOrWrapperErrorTags);
+      _ping.PING.error.call(this, 101);
       _vastErrors.VASTERRORS.process.call(this, 101);
       continue;
     }
@@ -1200,7 +1238,7 @@ NONLINEAR.parse = function (nonLinearAds) {
     if (isDimensionError) {
       vastErrorCode = 501;
     }
-    _ping.PING.error.call(this, vastErrorCode, this.inlineOrWrapperErrorTags);
+    _ping.PING.error.call(this, vastErrorCode);
     _vastErrors.VASTERRORS.process.call(this, vastErrorCode);
     return;
   }
@@ -1447,16 +1485,22 @@ var _okMp4 = function () {
 };
 ENV.okMp4 = _okMp4();
 
-var _okWebM = function () {
+ENV.canPlayType = function (type, codec) {
   if (html5VideoSupport) {
-    var canPlayType = testVideo.canPlayType('video/webm; codecs="vp8,vorbis"');
-    if (canPlayType !== '') {
-      return true;
+    if (type && codec) {
+      var canPlayType = testVideo.canPlayType(type + '; codecs="' + codec + '"');
+      if (canPlayType !== '') {
+        return true;
+      }
+    } else if (type && !codec) {
+      var _canPlayType = testVideo.canPlayType(type);
+      if (_canPlayType !== '') {
+        return true;
+      }
     }
   }
   return false;
 };
-ENV.okWebM = _okWebM();
 
 var _okHls = function (okMp4) {
   if (html5VideoSupport && okMp4) {
@@ -1469,6 +1513,17 @@ var _okHls = function (okMp4) {
   return false;
 };
 ENV.okHls = _okHls(ENV.okMp4);
+
+var _okDash = function () {
+  if (html5VideoSupport) {
+    var dashSupport = testVideo.canPlayType('application/dash+xml');
+    if (dashSupport !== '') {
+      return true;
+    }
+  }
+  return false;
+};
+ENV.okDash = _okDash();
 
 var _hasNativeFullscreenSupport = function () {
   var doc = document.documentElement;
@@ -1843,12 +1898,12 @@ FW.logPerformance = function (data) {
   }
 };
 
-FW.logVideoEvents = function (video) {
+FW.logVideoEvents = function (video, type) {
   var events = ['loadstart', 'durationchange', 'loadedmetadata', 'loadeddata', 'canplay', 'canplaythrough'];
   events.forEach(function (value) {
     video.addEventListener(value, function (e) {
       if (e && e.type) {
-        FW.log('RMP-VAST: content player event - ' + e.type);
+        FW.log('RMP-VAST: ' + type + ' player event - ' + e.type);
       }
     });
   });
@@ -1860,6 +1915,7 @@ FW.filterParams = function (params) {
     creativeLoadTimeout: 10000,
     ajaxWithCredentials: false,
     maxNumRedirects: 4,
+    maxNumItemsInAdPod: 10,
     pauseOnClick: true,
     skipMessage: 'Skip ad',
     skipWaitingMessage: 'Skip ad in',
@@ -1885,6 +1941,14 @@ FW.filterParams = function (params) {
     }
     if (typeof params.maxNumRedirects === 'number' && params.maxNumRedirects > 0 && params.maxNumRedirects !== 4) {
       this.params.maxNumRedirects = params.maxNumRedirects;
+      // we need to avoid infinite wrapper loops scenario 
+      // so we cap maxNumRedirects to 30 
+      if (this.params.maxNumRedirects > 30) {
+        this.params.maxNumRedirects = 30;
+      }
+    }
+    if (typeof params.maxNumItemsInAdPod === 'number' && params.maxNumItemsInAdPod > 0 && params.maxNumItemsInAdPod !== 10) {
+      this.params.maxNumItemsInAdPod = params.maxNumItemsInAdPod;
     }
     if (typeof params.pauseOnClick === 'boolean') {
       this.params.pauseOnClick = params.pauseOnClick;
@@ -1962,7 +2026,7 @@ FW.playPromise = function (whichPlayer, firstPlayerPlayRequest) {
             FW.log(e);
             FW.log('RMP-VAST: initial play promise on VAST player has been rejected for linear asset - likely autoplay is being blocked');
           }
-          _ping.PING.error.call(_this, 400, _this.inlineOrWrapperErrorTags);
+          _ping.PING.error.call(_this, 400);
           _vastErrors.VASTERRORS.process.call(_this, 400);
           _api.API.createEvent.call(_this, 'adinitialplayrequestfailed');
         } else if (firstPlayerPlayRequest && whichPlayer === 'content' && !_this.adIsLinear) {
@@ -2033,6 +2097,8 @@ var _vastErrors = require('./utils/vast-errors');
 
 var _icons = require('./creatives/icons');
 
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
 window.DEBUG = true;
 
 window.RmpVast = function (id, params) {
@@ -2045,7 +2111,7 @@ window.RmpVast = function (id, params) {
   this.content = this.container.getElementsByClassName('rmp-content')[0];
   this.contentPlayer = this.container.getElementsByClassName('rmp-video')[0];
   if (DEBUG) {
-    _fw.FW.logVideoEvents(this.contentPlayer);
+    _fw.FW.logVideoEvents(this.contentPlayer, 'content');
   }
   this.adContainer = null;
   this.rmpVastInitialized = false;
@@ -2057,6 +2123,16 @@ window.RmpVast = function (id, params) {
   this.onDestroyLoadAds = null;
   this.firstVastPlayerPlayRequest = true;
   this.firstContentPlayerPlayRequest = true;
+  // adpod 
+  this.adPod = [];
+  this.standaloneAdsInPod = [];
+  this.onAdDestroyLoadNextAdInPod = _fw.FW.nullFn;
+  this.runningAdPod = false;
+  this.adPodItemWrapper = false;
+  this.adPodCurrentIndex = 0;
+  this.adPodApiInfo = [];
+  this.adPodWrapperTrackings = [];
+
   if (_env.ENV.isIos[0] || _env.ENV.isMacOSX && _env.ENV.isSafari[0]) {
     // on iOS and macOS Safari we use content player to play ads
     // to avoid issues related to fullscreen management and autoplay
@@ -2127,6 +2203,9 @@ for (var i = 0, len = apiKeys.length; i < len; i++) {
 }
 
 var _execRedirect = function () {
+  if (DEBUG) {
+    _fw.FW.log('RMP-VAST: adfollowingredirect');
+  }
   _api.API.createEvent.call(this, 'adfollowingredirect');
   var redirectUrl = _fw.FW.getNodeValue(this.vastAdTagURI[0], true);
   if (DEBUG) {
@@ -2135,15 +2214,18 @@ var _execRedirect = function () {
   if (redirectUrl !== null) {
     if (this.params.maxNumRedirects > this.redirectsFollowed) {
       this.redirectsFollowed++;
+      if (this.runningAdPod) {
+        this.adPodItemWrapper = true;
+      }
       this.loadAds(redirectUrl);
     } else {
       // Wrapper limit reached, as defined by maxNumRedirects
-      _ping.PING.error.call(this, 302, this.inlineOrWrapperErrorTags);
+      _ping.PING.error.call(this, 302);
       _vastErrors.VASTERRORS.process.call(this, 302);
     }
   } else {
     // not a valid redirect URI - ping for error
-    _ping.PING.error.call(this, 300, this.inlineOrWrapperErrorTags);
+    _ping.PING.error.call(this, 300);
     _vastErrors.VASTERRORS.process.call(this, 300);
   }
 };
@@ -2155,10 +2237,6 @@ var _parseCreatives = function (creative) {
   }
   for (var _i = 0, _len = creative.length; _i < _len; _i++) {
     var currentCreative = creative[_i];
-    //let creativeID = currentCreative[0].getAttribute('id');
-    //let creativeSequence = currentCreative[0].getAttribute('sequence');
-    //let creativeAdId = currentCreative[0].getAttribute('adId');
-    //let creativeApiFramework = currentCreative[0].getAttribute('apiFramework');
     // we only pick the first creative that is either Linear or NonLinearAds
     var nonLinearAds = currentCreative.getElementsByTagName('NonLinearAds');
     var linear = currentCreative.getElementsByTagName('Linear');
@@ -2170,7 +2248,7 @@ var _parseCreatives = function (creative) {
     }
     // we expect 1 Linear or NonLinearAds tag 
     if (nonLinearAds.length === 0 && linear.length === 0) {
-      _ping.PING.error.call(this, 101, this.inlineOrWrapperErrorTags);
+      _ping.PING.error.call(this, 101);
       _vastErrors.VASTERRORS.process.call(this, 101);
       return;
     }
@@ -2178,7 +2256,7 @@ var _parseCreatives = function (creative) {
       var trackingEvents = nonLinearAds[0].getElementsByTagName('TrackingEvents');
       // if TrackingEvents tag
       if (trackingEvents.length > 0) {
-        _trackingEvents2.TRACKINGEVENTS.filter.call(this, trackingEvents);
+        _trackingEvents2.TRACKINGEVENTS.filterPush.call(this, trackingEvents);
       }
       if (this.isWrapper) {
         _execRedirect.call(this);
@@ -2198,7 +2276,7 @@ var _parseCreatives = function (creative) {
         this.skipoffset = skipoffset;
         // we  do not display skippable ads when on is iOS < 10
         if (_env.ENV.isIos[0] && _env.ENV.isIos[1] < 10) {
-          _ping.PING.error.call(this, 200, this.inlineOrWrapperErrorTags);
+          _ping.PING.error.call(this, 200);
           _vastErrors.VASTERRORS.process.call(this, 200);
           return;
         }
@@ -2208,7 +2286,7 @@ var _parseCreatives = function (creative) {
       var _trackingEvents = linear[0].getElementsByTagName('TrackingEvents');
       // if present TrackingEvents
       if (_trackingEvents.length > 0) {
-        _trackingEvents2.TRACKINGEVENTS.filter.call(this, _trackingEvents);
+        _trackingEvents2.TRACKINGEVENTS.filterPush.call(this, _trackingEvents);
       }
 
       // VideoClicks for linear
@@ -2231,7 +2309,7 @@ var _parseCreatives = function (creative) {
 
       // return on wrapper
       if (this.isWrapper) {
-        // if icons are presents then we push valid icons to this.icons
+        // if icons are presents then we push valid icons
         var icons = linear[0].getElementsByTagName('Icons');
         if (icons.length > 0) {
           _icons.ICONS.parse.call(this, icons);
@@ -2250,76 +2328,113 @@ var _parseCreatives = function (creative) {
   }
 };
 
-var _onXmlAvailable = function (xml) {
-  // if VMAP we abort
-  var vmap = xml.getElementsByTagName('vmap:VMAP');
-  if (vmap.length > 0) {
-    _vastErrors.VASTERRORS.process.call(this, 200);
-    return;
-  }
-  // check for VAST node
-  this.vastDocument = xml.getElementsByTagName('VAST');
-  if (this.vastDocument.length === 0) {
-    // in case this is a wrapper we need to ping for errors on originating tags
-    _ping.PING.error.call(this, 100, this.inlineOrWrapperErrorTags);
-    _vastErrors.VASTERRORS.process.call(this, 100);
-    return;
-  }
-  // VAST/Error node
-  var errorNode = this.vastDocument[0].getElementsByTagName('Error');
-  if (errorNode.length > 0) {
-    var errorUrl = _fw.FW.getNodeValue(errorNode[0], true);
-    if (errorUrl !== null) {
-      // we use an array here for vastErrorTags but we only have item in it
-      // this is to be able to use PING.error for both vastErrorTags and inlineOrWrapperErrorTags
-      this.vastErrorTags.push({ event: 'error', url: errorUrl });
-    }
-  }
-  //check for VAST version 2, 3 or 4 (we support VAST 4 in the limit of what is supported in VAST 3)
-  var pattern = /^(2|3|4)\./i;
-  var version = this.vastDocument[0].getAttribute('version');
-  if (!pattern.test(version)) {
-    // in case this is a wrapper we need to ping for errors on originating tags
-    _ping.PING.error.call(this, 102, this.inlineOrWrapperErrorTags);
-    _vastErrors.VASTERRORS.process.call(this, 102);
-    return;
-  }
-  // if empty VAST return
-  var ad = this.vastDocument[0].getElementsByTagName('Ad');
-  if (ad.length === 0) {
-    // here we ping vastErrorTags with error code 303 according to spec
-    _ping.PING.error.call(this, 303, this.vastErrorTags);
-    // in case this is a wrapper we also need to ping for errors on originating tags
-    _ping.PING.error.call(this, 303, this.inlineOrWrapperErrorTags);
-    _vastErrors.VASTERRORS.process.call(this, 303);
-    return;
+var _filterAdPod = function (ad) {
+  if (DEBUG) {
+    _fw.FW.log('RMP-VAST: _filterAdPod');
   }
   // filter Ad and AdPod
   var retainedAd = void 0;
-  var adPod = [];
-  for (var _i3 = 0, _len3 = ad.length; _i3 < _len3; _i3++) {
-    var sequence = ad[_i3].getAttribute('sequence');
-    if ((sequence === '' || sequence === null) && !retainedAd) {
-      // the first standalone ad (without sequence attribute) is the good one
-      retainedAd = ad[_i3];
-    } else {
-      // if it has sequence attribute then push to adPod array (ad pod will be skipped)
-      adPod.push(ad[_i3]);
+  // a pod already exists and is being processed - the current Ad item is InLine
+  if (this.adPod.length > 0 && !this.adPodItemWrapper) {
+    if (DEBUG) {
+      _fw.FW.log('RMP-VAST: loading next ad in pod');
+    }
+    retainedAd = ad[0];
+    this.adPodCurrentIndex++;
+    this.adPod.shift();
+  } else if (this.adPod.length > 0 && this.adPodItemWrapper) {
+    if (DEBUG) {
+      _fw.FW.log('RMP-VAST: running ad pod Ad is a wrapper');
+    }
+    // we are in a pod but the running Ad item is a wrapper
+    this.adPodItemWrapper = false;
+    for (var _i3 = 0, _len3 = ad.length; _i3 < _len3; _i3++) {
+      var sequence = ad[_i3].getAttribute('sequence');
+      if (sequence === '' || sequence === null) {
+        retainedAd = ad[_i3];
+        break;
+      }
+    }
+  } else {
+    // we are not in a pod yet ... see if one exists or not
+    var standaloneAds = [];
+    for (var _i4 = 0, _len4 = ad.length; _i4 < _len4; _i4++) {
+      var _sequence = ad[_i4].getAttribute('sequence');
+      if (_sequence === '' || _sequence === null) {
+        // standalone ads
+        standaloneAds.push(ad[_i4]);
+      } else {
+        // if it has sequence attribute then push to adPod array
+        this.adPod.push(ad[_i4]);
+      }
+    }
+    if (this.adPod.length === 0 && standaloneAds.length > 0) {
+      // we are not in an ad pod - we only load the first standalone ad
+      retainedAd = standaloneAds[0];
+    } else if (this.adPod.length > 0) {
+      if (DEBUG) {
+        _fw.FW.log('RMP-VAST: ad pod detected');
+      }
+      this.runningAdPod = true;
+      // clone array for purpose of API exposure
+      this.adPodApiInfo = [].concat(_toConsumableArray(this.adPod));
+      // so we are in a pod but it may come from a wrapper so we need to ping 
+      // wrapper trackings for each Ad of the pod
+      this.adPodWrapperTrackings = [].concat(_toConsumableArray(this.trackingTags));
+      // reduced adPod length to maxNumItemsInAdPod
+      if (this.adPod.length > this.params.maxNumItemsInAdPod) {
+        this.adPod.length = this.params.maxNumItemsInAdPod;
+      }
+      this.standaloneAdsInPod = standaloneAds;
+      // sort adPod in case sequence attr are unordered
+      this.adPod.sort(function (a, b) {
+        var sequence1 = parseInt(a.getAttribute('sequence'));
+        var sequence2 = parseInt(b.getAttribute('sequence'));
+        return sequence1 - sequence2;
+      });
+      retainedAd = this.adPod[0];
+      this.adPod.shift();
+      var __onAdDestroyLoadNextAdInPod = function () {
+        if (DEBUG) {
+          _fw.FW.log('RMP-VAST: addestroyed - checking for ads left in pod');
+          if (this.adPod.length > 0) {
+            _fw.FW.log(this.adPod);
+          } else {
+            _fw.FW.log('RMP-VAST: no ad left in pod');
+          }
+        }
+        this.adPodItemWrapper = false;
+        if (this.adPod.length > 0) {
+          _filterAdPod.call(this, this.adPod);
+        } else {
+          this.container.removeEventListener('addestroyed', this.onAdDestroyLoadNextAdInPod);
+          this.adPod = [];
+          this.standaloneAdsInPod = [];
+          this.runningAdPod = false;
+          this.adPodCurrentIndex = 0;
+          this.adPodApiInfo = [];
+          this.adPodWrapperTrackings = [];
+          _api.API.createEvent.call(this, 'adpodcompleted');
+        }
+      };
+      this.onAdDestroyLoadNextAdInPod = __onAdDestroyLoadNextAdInPod.bind(this);
+      this.container.addEventListener('addestroyed', this.onAdDestroyLoadNextAdInPod);
     }
   }
+
   if (!retainedAd) {
     // in case this is a wrapper we need to ping for errors on originating tags
-    _ping.PING.error.call(this, 200, this.inlineOrWrapperErrorTags);
+    _ping.PING.error.call(this, 200);
     _vastErrors.VASTERRORS.process.call(this, 200);
     return;
   }
-  //let adId = retainedAd[0].getAttribute('id');
+
   var inline = retainedAd.getElementsByTagName('InLine');
   var wrapper = retainedAd.getElementsByTagName('Wrapper');
   // 1 InLine or Wrapper element must be present 
   if (inline.length === 0 && wrapper.length === 0) {
     // in case this is a wrapper we need to ping for errors on originating tags
-    _ping.PING.error.call(this, 101, this.inlineOrWrapperErrorTags);
+    _ping.PING.error.call(this, 101);
     _vastErrors.VASTERRORS.process.call(this, 101);
     return;
   }
@@ -2334,17 +2449,16 @@ var _onXmlAvailable = function (xml) {
   var adSystem = inlineOrWrapper[0].getElementsByTagName('AdSystem');
   var impression = inlineOrWrapper[0].getElementsByTagName('Impression');
   // VAST/Ad/InLine/Error node
-  errorNode = inlineOrWrapper[0].getElementsByTagName('Error');
+  var errorNode = inlineOrWrapper[0].getElementsByTagName('Error');
   if (errorNode.length > 0) {
-    var _errorUrl = _fw.FW.getNodeValue(errorNode[0], true);
-    if (_errorUrl !== null) {
-      this.inlineOrWrapperErrorTags.push({ event: 'error', url: _errorUrl });
+    var errorUrl = _fw.FW.getNodeValue(errorNode[0], true);
+    if (errorUrl !== null) {
+      this.inlineOrWrapperErrorTags.push({ event: 'error', url: errorUrl });
     }
   }
   var adTitle = inlineOrWrapper[0].getElementsByTagName('AdTitle');
   var adDescription = inlineOrWrapper[0].getElementsByTagName('Description');
   var creatives = inlineOrWrapper[0].getElementsByTagName('Creatives');
-  //let extensions = inline[0].getElementsByTagName('Extensions');
 
   // Required InLine Elements are AdSystem, AdTitle, Impression, Creatives
   // Required Wrapper Elements are AdSystem, vastAdTagURI, Impression
@@ -2354,13 +2468,13 @@ var _onXmlAvailable = function (xml) {
   // so we only check and exit if missing required information to display ads 
   if (this.isWrapper) {
     if (this.vastAdTagURI.length === 0) {
-      _ping.PING.error.call(this, 101, this.inlineOrWrapperErrorTags);
+      _ping.PING.error.call(this, 101);
       _vastErrors.VASTERRORS.process.call(this, 101);
       return;
     }
   } else {
     if (creatives.length === 0) {
-      _ping.PING.error.call(this, 101, this.inlineOrWrapperErrorTags);
+      _ping.PING.error.call(this, 101);
       _vastErrors.VASTERRORS.process.call(this, 101);
       return;
     }
@@ -2371,7 +2485,7 @@ var _onXmlAvailable = function (xml) {
     creative = creatives[0].getElementsByTagName('Creative');
     // at least one creative tag is expected for InLine
     if (!this.isWrapper && creative.length === 0) {
-      _ping.PING.error.call(this, 101, this.inlineOrWrapperErrorTags);
+      _ping.PING.error.call(this, 101);
       _vastErrors.VASTERRORS.process.call(this, 101);
       return;
     }
@@ -2380,8 +2494,8 @@ var _onXmlAvailable = function (xml) {
     this.adSystem = _fw.FW.getNodeValue(adSystem[0], false);
   }
   if (impression.length > 0) {
-    for (var _i4 = 0, _len4 = impression.length; _i4 < _len4; _i4++) {
-      var impressionUrl = _fw.FW.getNodeValue(impression[_i4], true);
+    for (var _i5 = 0, _len5 = impression.length; _i5 < _len5; _i5++) {
+      var impressionUrl = _fw.FW.getNodeValue(impression[_i5], true);
       if (impressionUrl !== null) {
         this.trackingTags.push({ event: 'impression', url: impressionUrl });
       }
@@ -2401,6 +2515,56 @@ var _onXmlAvailable = function (xml) {
     return;
   }
   _parseCreatives.call(this, creative);
+};
+
+var _onXmlAvailable = function (xml) {
+  // if VMAP we abort
+  var vmap = xml.getElementsByTagName('vmap:VMAP');
+  if (vmap.length > 0) {
+    _vastErrors.VASTERRORS.process.call(this, 200);
+    return;
+  }
+  // check for VAST node
+  var vastTag = xml.getElementsByTagName('VAST');
+  if (vastTag.length === 0) {
+    // in case this is a wrapper we need to ping for errors on originating tags
+    _ping.PING.error.call(this, 100);
+    _vastErrors.VASTERRORS.process.call(this, 100);
+    return;
+  }
+  var vastDocument = vastTag[0];
+  // VAST/Error node
+  var errorNode = vastDocument.getElementsByTagName('Error');
+  if (errorNode.length > 0) {
+    for (var _i6 = 0, _len6 = errorNode.length; _i6 < _len6; _i6++) {
+      // we need to make sure those Error tags are directly beneath VAST tag. See 2.2.5.1 VAST 3 spec
+      if (errorNode[_i6].parentNode === vastDocument) {
+        var errorUrl = _fw.FW.getNodeValue(errorNode[_i6], true);
+        if (errorUrl !== null) {
+          // we use an array here for vastErrorTags but we only have item in it
+          // this is to be able to use PING.error for both vastErrorTags and inlineOrWrapperErrorTags
+          this.vastErrorTags.push({ event: 'error', url: errorUrl });
+        }
+      }
+    }
+  }
+  //check for VAST version 2, 3 or 4 (we support VAST 4 in the limit of what is supported in VAST 3)
+  var pattern = /^(2|3|4)\./i;
+  var version = vastDocument.getAttribute('version');
+  if (!pattern.test(version)) {
+    // in case this is a wrapper we need to ping for errors on originating tags
+    _ping.PING.error.call(this, 102);
+    _vastErrors.VASTERRORS.process.call(this, 102);
+    return;
+  }
+  // if empty VAST return
+  var ad = vastDocument.getElementsByTagName('Ad');
+  if (ad.length === 0) {
+    _ping.PING.error.call(this, 303);
+    _vastErrors.VASTERRORS.process.call(this, 303);
+    return;
+  }
+  _filterAdPod.call(this, ad);
 };
 
 var _makeAjaxRequest = function (vastUrl) {
@@ -2444,7 +2608,7 @@ var _makeAjaxRequest = function (vastUrl) {
     } catch (e) {
       _fw.FW.trace(e);
       // in case this is a wrapper we need to ping for errors on originating tags
-      _ping.PING.error.call(_this, 100, _this.inlineOrWrapperErrorTags);
+      _ping.PING.error.call(_this, 100);
       _vastErrors.VASTERRORS.process.call(_this, 100);
       return;
     }
@@ -2452,7 +2616,7 @@ var _makeAjaxRequest = function (vastUrl) {
   }).catch(function (e) {
     _fw.FW.trace(e);
     // in case this is a wrapper we need to ping for errors on originating tags
-    _ping.PING.error.call(_this, 1000, _this.inlineOrWrapperErrorTags);
+    _ping.PING.error.call(_this, 1000);
     _vastErrors.VASTERRORS.process.call(_this, 1000);
   });
 };
@@ -2739,6 +2903,9 @@ VASTPLAYER.init = function () {
   _fw.FW.hide(this.adContainer);
   if (!this.useContentPlayerForAds) {
     this.vastPlayer = document.createElement('video');
+    if (DEBUG) {
+      _fw.FW.logVideoEvents(this.vastPlayer, 'vast');
+    }
     // disable casting of video ads for Android
     if (_env.ENV.isAndroid[0] && typeof this.vastPlayer.disableRemotePlayback !== 'undefined') {
       this.vastPlayer.disableRemotePlayback = true;
@@ -2754,6 +2921,7 @@ VASTPLAYER.init = function () {
     }
     // black poster based 64 png
     this.vastPlayer.poster = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=';
+    // note to myself: we use setAttribute for non-standard attribute (instead of . notation)
     this.vastPlayer.setAttribute('x-webkit-airplay', 'allow');
     if (typeof this.contentPlayer.playsInline === 'boolean' && this.contentPlayer.playsInline) {
       this.vastPlayer.playsInline = true;
@@ -3730,6 +3898,8 @@ var _fw = require('../fw/fw');
 
 var _contentPlayer = require('../players/content-player');
 
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
 var PING = {};
 
 PING.events = ['impression', 'creativeView', 'start', 'firstQuartile', 'midpoint', 'thirdQuartile', 'complete', 'mute', 'unmute', 'pause', 'resume', 'fullscreen', 'exitFullscreen', 'skip', 'progress', 'clickthrough', 'close', 'collapse', 'acceptInvitation'];
@@ -3785,9 +3955,15 @@ PING.tracking = function (url, assetUri) {
   }
 };
 
-PING.error = function (errorCode, errorTags) {
+PING.error = function (errorCode) {
   // for each Error tag within an InLine or chain of Wrapper ping error URL
-  if (errorTags && errorTags.length > 0) {
+  var errorTags = this.inlineOrWrapperErrorTags;
+  if (errorCode === 303 && this.vastErrorTags.length > 0) {
+    // here we ping vastErrorTags with error code 303 according to spec
+    // concat array thus
+    errorTags = [].concat(_toConsumableArray(errorTags), _toConsumableArray(this.vastErrorTags));
+  }
+  if (errorTags.length > 0) {
     for (var i = 0, len = errorTags.length; i < len; i++) {
       var errorUrl = _replaceMacros.call(this, errorTags[i].url, errorCode, null);
       _ping(errorUrl);
@@ -3976,8 +4152,12 @@ TRACKINGEVENTS.wire = function () {
   }
 };
 
-TRACKINGEVENTS.filter = function (trackingEvents) {
+TRACKINGEVENTS.filterPush = function (trackingEvents) {
   var trackingTags = trackingEvents[0].getElementsByTagName('Tracking');
+  // in case we are in a pod
+  if (this.adPodWrapperTrackings.length > 0) {
+    this.trackingTags = this.adPodWrapperTrackings;
+  }
   // collect supported tracking events with valid event names and tracking urls
   for (var i = 0, len = trackingTags.length; i < len; i++) {
     var event = trackingTags[i].getAttribute('event');
@@ -4041,7 +4221,6 @@ RESET.internalVariables = function () {
   this.onNonLinearClickThrough = null;
   this.onContextMenu = null;
   // init internal variables
-  this.vastDocument = null;
   this.adTagUrl = null;
   this.vastPlayer = null;
   this.vpaidSlot = null;

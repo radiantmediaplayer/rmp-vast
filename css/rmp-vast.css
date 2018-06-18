@@ -8,7 +8,7 @@
   padding: 0;
   border: none;
   display: block;
-  font-size: 12px;
+  font-size: 14px;
   max-width: none;
   max-height: none;
   overflow: hidden;
@@ -89,13 +89,12 @@
 .rmp-ad-container-skip {
   position: absolute;
   right: 0;
-  bottom: 42px;
-  width: 144px;
+  bottom: 44px;
+  width: 138px;
   height: 40px;
   line-height: 38px;
   text-align: center;
   cursor: pointer;
-  font-size: 12px;
   background-color: #333;
   border: 1px solid #333;
   -webkit-transition-property: border-color;
@@ -205,6 +204,9 @@
   text-decoration: none;
   text-align: center;
   line-height: 30px;
+  -webkit-box-shadow: 0 0 2px rgba(0, 0, 0, 0.6);
+  -moz-box-shadow: 0 0 2px rgba(0, 0, 0, 0.6);
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.6);
 }
 .rmp-ad-click-ui-mobile:visited {
   color: #fff;

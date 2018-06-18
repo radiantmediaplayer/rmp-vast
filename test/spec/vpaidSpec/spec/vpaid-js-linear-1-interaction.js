@@ -10,8 +10,8 @@ describe("Test for vpaid-js-linear-1-interaction", function () {
   var params = {
     enableVpaid: true,
     vpaidSettings: {
-      width: 640,
-      height: 360,
+      width: 960,
+      height: 540,
       viewMode: 'normal',
       desiredBitrate: 500
     }
@@ -19,12 +19,14 @@ describe("Test for vpaid-js-linear-1-interaction", function () {
   var rmpVast = new RmpVast(id, params);
   var fw = rmpVast.getFW();
   var env = rmpVast.getEnv();
+  var ua = window.navigator.userAgent;
+  var regExp = /(edge\/|firefox\/)/i;
+  if (!regExp.test(ua)) {
+    video.muted = true;
+  }
   if (env.isAndroid[0]) {
     container.style.width = '320px';
     container.style.height = '180px';
-    video.setAttribute('muted', 'muted');
-  } else if (env.isMacOSX && env.isSafari[0]) {
-    video.muted = true;
   }
   var title = document.getElementsByTagName('title')[0];
 
@@ -48,13 +50,13 @@ describe("Test for vpaid-js-linear-1-interaction", function () {
       _incrementAndLog(e);
       setTimeout(() => {
         rmpVast.pause();
-      }, 500);
+      }, 400);
     });
     container.addEventListener('adskippablestatechanged', function (e) {
       _incrementAndLog(e);
       setTimeout(() => {
         rmpVast.skipAd();
-      }, 500);
+      }, 400);
     });
     container.addEventListener('adpaused', function (e) {
       _incrementAndLog(e);
@@ -62,7 +64,7 @@ describe("Test for vpaid-js-linear-1-interaction", function () {
         if (rmpVast.getAdPaused()) {
           rmpVast.play();
         }
-      }, 500);
+      }, 400);
     });
     container.addEventListener('adresumed', function (e) {
       _incrementAndLog(e);

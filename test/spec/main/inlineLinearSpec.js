@@ -16,11 +16,9 @@ if (args[2] === 'android') {
 } 
 
 var testUrls = [
-	TEST.pathToTest + 'inlineLinearSpec/AdPodWithStandaloneSpec.html',
 	TEST.pathToTest + 'inlineLinearSpec/IABVAST2Spec.html',
 	TEST.pathToTest + 'inlineLinearSpec/IABVAST3Spec.html',
 	TEST.pathToTest + 'inlineLinearSpec/ImaInlineLinearSpec.html',
-	TEST.pathToTest + 'inlineLinearSpec/LinearMutedAutoplaySpec.html',
 	TEST.pathToTest + 'inlineLinearSpec/SkippableSpec.html',
 	TEST.pathToTest + 'inlineLinearSpec/SmartAdServerSpec.html'
 ];

@@ -6,17 +6,28 @@ describe("Test for vpaid-fails-loading-js", function () {
 
   var id = 'rmpPlayer';
   var container = document.getElementById(id);
+  var video = document.querySelector('.rmp-video');
   var params = {
     enableVpaid: true,
     vpaidSettings: {
-      width: 640,
-      height: 360,
+      width: 960,
+      height: 540,
       viewMode: 'normal',
       desiredBitrate: 500
     }
   };
   var rmpVast = new RmpVast(id, params);
   var fw = rmpVast.getFW();
+  var env = rmpVast.getEnv();
+  var ua = window.navigator.userAgent;
+  var regExp = /(edge\/|firefox\/)/i;
+  if (!regExp.test(ua)) {
+    video.muted = true;
+  }
+  if (env.isAndroid[0]) {
+    container.style.width = '320px';
+    container.style.height = '180px';
+  }
   var title = document.getElementsByTagName('title')[0];
 
   it("should load and play vpaid-flash", function (done) {

@@ -26,7 +26,6 @@ RESET.internalVariables = function () {
   this.onNonLinearClickThrough = null;
   this.onContextMenu = null;
   // init internal variables
-  this.vastDocument = null;
   this.adTagUrl = null;
   this.vastPlayer = null;
   this.vpaidSlot = null;

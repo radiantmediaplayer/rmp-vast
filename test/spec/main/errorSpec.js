@@ -16,7 +16,6 @@ if (args[2] === 'android') {
 } 
 
 var testUrls = [
-	TEST.pathToTest + 'errorSpec/AdPodNoStandaloneSpec.html',
 	TEST.pathToTest + 'errorSpec/EmptySpec.html',
 	TEST.pathToTest + 'errorSpec/ErrorMediaSpec.html',
 	TEST.pathToTest + 'errorSpec/MalformedSpec.html',

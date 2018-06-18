@@ -14,6 +14,7 @@ const LINEAR = {};
 var patternVPAID = /vpaid/i;
 var patternJavaScript = /\/javascript/i;
 var hlsPattern = /(application\/vnd\.apple\.mpegurl|x-mpegurl)/i;
+var dashPattern = /application\/dash\+xml/i;
 
 var _onDurationChange = function () {
   if (DEBUG) {
@@ -151,6 +152,8 @@ LINEAR.update = function (url, type) {
   } else {
     this.vastPlayer.addEventListener('error', this.onPlaybackError);
     this.vastPlayer.src = url;
+    // we need this extra load for Chrome data saver mode in mobile or desktop
+    this.vastPlayer.load();
   }
 
   // clickthrough interaction
@@ -182,7 +185,7 @@ LINEAR.parse = function (linear) {
   let mediaFiles = linear[0].getElementsByTagName('MediaFiles');
   if (mediaFiles.length === 0) {
     // 1 MediaFiles element must be present otherwise VAST document is not spec compliant 
-    PING.error.call(this, 101, this.inlineOrWrapperErrorTags);
+    PING.error.call(this, 101);
     VASTERRORS.process.call(this, 101);
     return;
   }
@@ -200,7 +203,7 @@ LINEAR.parse = function (linear) {
   let mediaFile = mediaFiles[0].getElementsByTagName('MediaFile');
   if (mediaFile.length === 0) {
     // at least 1 MediaFile element must be present otherwise VAST document is not spec compliant 
-    PING.error.call(this, 101, this.inlineOrWrapperErrorTags);
+    PING.error.call(this, 101);
     VASTERRORS.process.call(this, 101);
     return;
   }
@@ -222,6 +225,10 @@ LINEAR.parse = function (linear) {
     }
     mediaFileItems[i].url = mediaFileValue;
     mediaFileItems[i].type = type;
+    let codec = currentMediaFile.getAttribute('codec');
+    if (codec !== null && codec !== '') {
+      mediaFileItems[i].codec = codec;
+    }
     // check for potential VPAID
     let apiFramework = mediaFileItems[i].apiFramework = currentMediaFile.getAttribute('apiFramework');
     // we have a VPAID JS - we break
@@ -238,13 +245,14 @@ LINEAR.parse = function (linear) {
       this.isVPAID = true;
       break;
     }
-    let delivery = currentMediaFile.getAttribute('delivery');
+    /* delivery attribute is required but sometimes missing in real world and not really necessary to move forward */
+    /*let delivery = currentMediaFile.getAttribute('delivery');
     if (delivery !== 'progressive' && delivery !== 'streaming') {
       delivery = 'progressive';
       if (DEBUG) {
         FW.log('RMP-VAST: missing required delivery attribute on MediaFile tag - this is not a VAST 3 spec compliant adTag - continuing anyway (same as IMA)');
       }
-    }
+    }*/
     let width = currentMediaFile.getAttribute('width');
     if (width === null || width === '') {
       if (DEBUG) {
@@ -261,12 +269,6 @@ LINEAR.parse = function (linear) {
     }
     mediaFileItems[i].width = parseInt(width);
     mediaFileItems[i].height = parseInt(height);
-    // optional as per VAST 3 
-    /*mediaFileItems[i].codec = mediaFileValue.getAttribute('codec');
-    mediaFileItems[i].id = mediaFileValue.getAttribute('id');
-    mediaFileItems[i].bitrate = mediaFileValue.getAttribute('bitrate');
-    mediaFileItems[i].scalable = mediaFileValue.getAttribute('scalable');
-    mediaFileItems[i].maintainAspectRatio = mediaFileValue.getAttribute('maintainAspectRatio');*/
 
   }
   // remove MediaFile items that do not hold VAST spec-compliant attributes or data
@@ -276,8 +278,7 @@ LINEAR.parse = function (linear) {
     }
   }
   // we support HLS; MP4; WebM: VPAID so let us fecth for those
-  let mp4 = [];
-  let webm = [];
+  let creatives = [];
   for (let i = 0, len = mediaFileItems.length; i < len; i++) {
     let currentMediaFileItem = mediaFileItems[i];
     let type = currentMediaFileItem.type;
@@ -287,68 +288,95 @@ LINEAR.parse = function (linear) {
       this.adContentType = type;
       return;
     }
-    // we have HLS and it is supported - display ad with HLS in priority
+    // we have HLS or DASH and it is natively supported - display ad with HLS in priority
     if (hlsPattern.test(type) && ENV.okHls) {
       VASTPLAYER.append.call(this, url, type);
       this.adContentType = type;
       return;
     }
-    // we gather MP4 and WebM files
-    if (type === 'video/mp4' && ENV.okMp4) {
-      mp4.push(currentMediaFileItem);
-    } else if (type === 'video/webm' && ENV.okWebM) {
-      webm.push(currentMediaFileItem);
+    if (dashPattern.test(type) && ENV.okDash) {
+      VASTPLAYER.append.call(this, url, type);
+      this.adContentType = type;
+      return;
+    }
+    // we gather MP4, WebM, OGG and remaining files
+    creatives.push(currentMediaFileItem);
+  }
+  let retainedCreatives = [];
+  // first we check for the common formats below ... 
+  let testFormat = ['video/webm', 'video/mp4', 'video/ogg', 'video/3gpp'];
+  let __filterCreatives = function(i, creative) {
+    if (creative.codec && creative.type === testFormat[i]) {
+      return ENV.canPlayType(creative.type, creative.codec);
+    } else if (creative.type === testFormat[i]) {
+      return ENV.canPlayType(creative.type);
+    }
+    return false;
+  };
+  for (let i = 0, len = testFormat.length; i < len; i++) {
+    retainedCreatives = creatives.filter(__filterCreatives.bind(null, i));
+    if (retainedCreatives.length > 0) {
+      break;
+    }
+  }
+  // ... if none of the common format work, then we check for exotic format
+  // first we check for those with codec information as it provides more accurate support indication ...
+  if (retainedCreatives.length === 0) {
+    let __filterCreatives = function(codec, type, creative) {
+      return creative.codec === codec && creative.type === type;
+    };
+    for (let i = 0, len = creatives.length; i < len; i++) {
+      let thisCreative = creatives[i];
+      if (thisCreative.codec && thisCreative.type && ENV.canPlayType(thisCreative.type, thisCreative.codec)) {
+        retainedCreatives = creatives.filter(__filterCreatives.bind(null, thisCreative.codec, thisCreative.type));
+      }
+    }
+  }
+  // ... if codec information are not available then we go first type matching
+  if (retainedCreatives.length === 0) {
+    let __filterCreatives = function(type, creative) {
+      return creative.type === type;
+    };
+    for (let i = 0, len = creatives.length; i < len; i++) {
+      let thisCreative = creatives[i];
+      if (thisCreative.type && ENV.canPlayType(thisCreative.type)) {
+        retainedCreatives = creatives.filter(__filterCreatives.bind(null, thisCreative.type));
+      }
     }
   }
 
-  let format = [];
-  // if we have WebM and WebM is supported - filter it by width
-  // otherwise do the same for MP4
-  if (ENV.okWebM && webm.length > 0) {
-    webm.sort((a, b) => {
-      return a.width - b.width;
-    });
-    format = webm;
-  } else if (ENV.okMp4 && mp4.length > 0) {
-    mp4.sort((a, b) => {
-      return a.width - b.width;
-    });
-    format = mp4;
-  }
-
-  if (format.length === 0) {
+  // still no match for supported format - we exit
+  if (retainedCreatives.length === 0) {
     // None of the MediaFile provided are supported by the player
-    PING.error.call(this, 403, this.inlineOrWrapperErrorTags);
+    PING.error.call(this, 403);
     VASTERRORS.process.call(this, 403);
     return;
   }
 
+  // sort supported creatives by width
+  retainedCreatives.sort((a, b) => {
+    return a.width - b.width;
+  });
+
   // we have files matching device capabilities
   // select the best one based on player current width
-  let retainedFormat = format[0];
   let containerWidth = FW.getWidth(this.container);
-  let formatLength = format.length;
-  if (format[formatLength - 1].width < containerWidth) {
-    retainedFormat = format[formatLength - 1];
-  } else if (format[0].width > containerWidth) {
-    retainedFormat = format[0];
-  } else {
-    for (let i = 0, len = formatLength; i < len; i++) {
-      if (format[i].width >= containerWidth) {
-        retainedFormat = format[i];
-        break;
-      }
+  let finalCreative = retainedCreatives[0];
+  for (let i = 0, len = retainedCreatives.length; i < len; i++) {
+    if (retainedCreatives[i].width >= containerWidth) {
+      finalCreative = retainedCreatives[i];
+      break;
     }
   }
   if (DEBUG) {
     FW.log('RMP-VAST: selected linear creative follows');
-    FW.log(retainedFormat);
+    FW.log(finalCreative);
   }
-  this.adMediaUrl = retainedFormat.url;
-  this.adMediaHeight = retainedFormat.height;
-  this.adMediaWidth = retainedFormat.width;
-  this.adContentType = retainedFormat.type;
-  VASTPLAYER.append.call(this, retainedFormat.url, retainedFormat.type);
+  this.adMediaUrl = finalCreative.url;
+  this.adMediaHeight = finalCreative.height;
+  this.adMediaWidth = finalCreative.width;
+  this.adContentType = finalCreative.type;
+  VASTPLAYER.append.call(this, finalCreative.url, finalCreative.type);
 };
 
 export { LINEAR };

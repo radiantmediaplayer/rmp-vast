@@ -121,16 +121,22 @@ var _okMp4 = function () {
 };
 ENV.okMp4 = _okMp4();
 
-var _okWebM = function () {
+ENV.canPlayType = function (type, codec) {
   if (html5VideoSupport) {
-    let canPlayType = testVideo.canPlayType('video/webm; codecs="vp8,vorbis"');
-    if (canPlayType !== '') {
-      return true;
+    if (type && codec) {
+      let canPlayType = testVideo.canPlayType(type + '; codecs="' + codec + '"');
+      if (canPlayType !== '') {
+        return true;
+      }
+    } else if (type && !codec) {
+      let canPlayType = testVideo.canPlayType(type);
+      if (canPlayType !== '') {
+        return true;
+      }
     }
   }
   return false;
 };
-ENV.okWebM = _okWebM();
 
 var _okHls = function (okMp4) {
   if (html5VideoSupport && okMp4) {
@@ -143,6 +149,17 @@ var _okHls = function (okMp4) {
   return false;
 };
 ENV.okHls = _okHls(ENV.okMp4);
+
+var _okDash = function () {
+  if (html5VideoSupport) {
+    let dashSupport = testVideo.canPlayType('application/dash+xml');
+    if (dashSupport !== '') {
+      return true;
+    }
+  }
+  return false;
+};
+ENV.okDash = _okDash();
 
 var _hasNativeFullscreenSupport = function () {
   let doc = document.documentElement;

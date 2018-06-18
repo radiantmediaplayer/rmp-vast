@@ -143,14 +143,14 @@ NONLINEAR.parse = function (nonLinearAds) {
     let width = currentNonLinear.getAttribute('width');
     // width attribute is required
     if (width === null || width === '') {
-      PING.error.call(this, 101, this.inlineOrWrapperErrorTags);
+      PING.error.call(this, 101);
       VASTERRORS.process.call(this, 101);
       continue;
     }
     let height = currentNonLinear.getAttribute('height');
     // height attribute is also required
     if (height === null || height === '') {
-      PING.error.call(this, 101, this.inlineOrWrapperErrorTags);
+      PING.error.call(this, 101);
       VASTERRORS.process.call(this, 101);
       continue;
     }
@@ -206,7 +206,7 @@ NONLINEAR.parse = function (nonLinearAds) {
     if (isDimensionError) {
       vastErrorCode = 501;
     }
-    PING.error.call(this, vastErrorCode, this.inlineOrWrapperErrorTags);
+    PING.error.call(this, vastErrorCode);
     VASTERRORS.process.call(this, vastErrorCode);
     return;
   }

@@ -117,6 +117,9 @@ VASTPLAYER.init = function () {
   FW.hide(this.adContainer);
   if (!this.useContentPlayerForAds) {
     this.vastPlayer = document.createElement('video');
+    if (DEBUG) {
+      FW.logVideoEvents(this.vastPlayer, 'vast');
+    }
     // disable casting of video ads for Android
     if (ENV.isAndroid[0] && typeof this.vastPlayer.disableRemotePlayback !== 'undefined') {
       this.vastPlayer.disableRemotePlayback = true;
@@ -132,6 +135,7 @@ VASTPLAYER.init = function () {
     }
     // black poster based 64 png
     this.vastPlayer.poster = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=';
+    // note to myself: we use setAttribute for non-standard attribute (instead of . notation)
     this.vastPlayer.setAttribute('x-webkit-airplay', 'allow');
     if (typeof this.contentPlayer.playsInline === 'boolean' && this.contentPlayer.playsInline) {
       this.vastPlayer.playsInline = true;

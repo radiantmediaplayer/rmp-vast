@@ -7,18 +7,19 @@ ICONS.destroy = function () {
   if (DEBUG) {
     FW.log('RMP-VAST: start destroying icons');
   }
-  let icons = this.adContainer.getElementsByClassName('rmp-ad-container-icons');
-  let arrayIcons = [];
-  for (let i = 0, len = icons.length; i < len; i++) {
-    arrayIcons.push(icons[i]);
-  }
-  arrayIcons.forEach((element) => {
-    try {
-      this.adContainer.removeChild(element);
-    } catch (e) {
-      FW.trace(e);
+  let icons = this.adContainer.querySelectorAll('.rmp-ad-container-icons');
+  if (icons.length > 0) {
+    for (let i = 0, len = icons.length; i < len; i++) {
+      try {
+        let parent = icons[i].parentNode;
+        if (parent) {
+          parent.removeChild(icons[i]);
+        }
+      } catch (e) {
+        FW.trace(e);
+      }
     }
-  });
+  }
 };
 
 var _programAlreadyPresent = function (program) {

@@ -339,13 +339,13 @@ FW.logPerformance = function (data) {
   }
 };
 
-FW.logVideoEvents = function (video) {
+FW.logVideoEvents = function (video, type) {
   let events = ['loadstart', 'durationchange',
     'loadedmetadata', 'loadeddata', 'canplay', 'canplaythrough'];
   events.forEach((value) => {
     video.addEventListener(value, (e) => {
       if (e && e.type) {
-        FW.log('RMP-VAST: content player event - ' + e.type);
+        FW.log('RMP-VAST: ' + type + ' player event - ' + e.type);
       }
     });
   });
@@ -357,6 +357,7 @@ FW.filterParams = function (params) {
     creativeLoadTimeout: 10000,
     ajaxWithCredentials: false,
     maxNumRedirects: 4,
+    maxNumItemsInAdPod: 10,
     pauseOnClick: true,
     skipMessage: 'Skip ad',
     skipWaitingMessage: 'Skip ad in',
@@ -382,6 +383,14 @@ FW.filterParams = function (params) {
     }
     if (typeof params.maxNumRedirects === 'number' && params.maxNumRedirects > 0 && params.maxNumRedirects !== 4) {
       this.params.maxNumRedirects = params.maxNumRedirects;
+      // we need to avoid infinite wrapper loops scenario 
+      // so we cap maxNumRedirects to 30 
+      if (this.params.maxNumRedirects > 30) {
+        this.params.maxNumRedirects = 30;
+      }
+    }
+    if (typeof params.maxNumItemsInAdPod === 'number' && params.maxNumItemsInAdPod > 0 && params.maxNumItemsInAdPod !== 10) {
+      this.params.maxNumItemsInAdPod = params.maxNumItemsInAdPod;
     }
     if (typeof params.pauseOnClick === 'boolean') {
       this.params.pauseOnClick = params.pauseOnClick;
@@ -457,7 +466,7 @@ FW.playPromise = function (whichPlayer, firstPlayerPlayRequest) {
             FW.log(e);
             FW.log('RMP-VAST: initial play promise on VAST player has been rejected for linear asset - likely autoplay is being blocked');
           }
-          PING.error.call(this, 400, this.inlineOrWrapperErrorTags);
+          PING.error.call(this, 400);
           VASTERRORS.process.call(this, 400);
           API.createEvent.call(this, 'adinitialplayrequestfailed');
         } else if (firstPlayerPlayRequest && whichPlayer === 'content' && !this.adIsLinear) {

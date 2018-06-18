@@ -310,7 +310,7 @@ API.initialize = function () {
   if (this.rmpVastInitialized) {
     if (DEBUG) {
       FW.log('RMP-VAST: rmp-vast already initialized');
-    }
+    } 
   } else {
     if (DEBUG) {
       FW.logPerformance('RMP-VAST: on user interaction - player needs to be initialized');
@@ -321,6 +321,17 @@ API.initialize = function () {
 
 API.getInitialized = function () {
   return this.rmpVastInitialized;
+};
+
+// adpod 
+API.getAdPodInfo = function () {
+  if (this.adPodApiInfo.length > 0) {
+    let result = {};
+    result.adPodCurrentIndex = this.adPodCurrentIndex;
+    result.adPodLength = this.adPodApiInfo.length;
+    return result;
+  }
+  return null;
 };
 
 // VPAID methods

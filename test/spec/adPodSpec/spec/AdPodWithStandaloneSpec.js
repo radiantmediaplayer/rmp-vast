@@ -1,8 +1,9 @@
 'use strict';
 
-var ADTAG = 'https://www.radiantmediaplayer.com/vast/tags/ad-pod-no-standalone.xml';
+var ADTAG = 'https://www.radiantmediaplayer.com/vast/tags/ad-pod-with-standalone.xml';
 
-describe("Test for AdPodNoStandaloneSpec", function () {
+
+describe("Test for AdPodWithStandaloneSpec", function () {
 
   var id = 'rmpPlayer';
   var container = document.getElementById(id);
@@ -10,16 +11,18 @@ describe("Test for AdPodNoStandaloneSpec", function () {
   var rmpVast = new RmpVast(id);
   var fw = rmpVast.getFW();
   var env = rmpVast.getEnv();
+  var ua = window.navigator.userAgent;
+  var regExp = /(edge\/|firefox\/)/i;
+  if (!regExp.test(ua)) {
+    video.muted = true;
+  }
   if (env.isAndroid[0]) {
     container.style.width = '320px';
     container.style.height = '180px';
-    video.setAttribute('muted', 'muted');
-  } else if (env.isMacOSX && env.isSafari[0]) {
-    video.muted = true;
   }
   var title = document.getElementsByTagName('title')[0];
 
-  it("should load adTag and trigger an error", function (done) {
+  it("should load adTag and play it", function (done) {
     var validSteps = 0;
 
     var _incrementAndLog = function (event) {
@@ -29,24 +32,23 @@ describe("Test for AdPodNoStandaloneSpec", function () {
       }
     };
 
-    container.addEventListener('adtagloaded', function (e) {
+    container.addEventListener('adstarted', function (e) {
       _incrementAndLog(e);
     });
-
-    container.addEventListener('aderror', function (e) {
-      _incrementAndLog(e);
-      expect(rmpVast.getAdVastErrorCode()).toBe(200);
-    });
-
+    
     container.addEventListener('addestroyed', function (e) {
       _incrementAndLog(e);
-      expect(validSteps).toBe(3);
-      if (validSteps === 3) {
+    });
+
+    container.addEventListener('adpodcompleted', function (e) {
+      _incrementAndLog(e);
+      if (validSteps === 5) {
+        expect(validSteps).toBe(5);
         title.textContent = 'Test completed';
+        setTimeout(function () {
+          done();
+        }, 400);
       }
-      setTimeout(function () {
-        done();
-      }, 500);
     });
 
     rmpVast.loadAds(ADTAG);
