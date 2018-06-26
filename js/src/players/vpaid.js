@@ -16,14 +16,14 @@ VPAID.getAdWidth = function () {
   if (this.vpaidCreative && typeof this.vpaidCreative.getAdWidth === 'function') {
     return this.vpaidCreative.getAdWidth();
   }
-  return null;
+  return -1;
 };
 
 VPAID.getAdHeight = function () {
   if (this.vpaidCreative && typeof this.vpaidCreative.getAdHeight === 'function') {
     return this.vpaidCreative.getAdHeight();
   }
-  return null;
+  return -1;
 };
 
 VPAID.getAdDuration = function () {
@@ -48,7 +48,7 @@ VPAID.getCreativeUrl = function () {
   if (this.vpaidCreativeUrl) {
     return this.vpaidCreativeUrl;
   }
-  return null;
+  return '';
 };
 
 VPAID.getVpaidCreative = function () {
@@ -70,14 +70,14 @@ VPAID.getAdExpanded = function () {
   if (this.vpaidCreative && typeof this.vpaidCreative.getAdExpanded === 'function') {
     return this.vpaidCreative.getAdExpanded();
   }
-  return null;
+  return false;
 };
 
 VPAID.getAdSkippableState = function () {
   if (this.vpaidCreative && typeof this.vpaidCreative.getAdSkippableState === 'function') {
     return this.vpaidCreative.getAdSkippableState();
   }
-  return null;
+  return false;
 };
 
 VPAID.getAdIcons = function () {
@@ -91,7 +91,7 @@ VPAID.getAdCompanions = function () {
   if (this.vpaidCreative && typeof this.vpaidCreative.getAdCompanions === 'function') {
     return this.vpaidCreative.getAdCompanions();
   }
-  return null;
+  return '';
 };
 
 

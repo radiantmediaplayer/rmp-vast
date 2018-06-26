@@ -227,7 +227,7 @@ VASTPLAYER.getVolume = function () {
   if (this.vastPlayer) {
     return this.vastPlayer.volume;
   }
-  return null;
+  return -1;
 };
 
 VASTPLAYER.setMute = function (muted) {
@@ -246,7 +246,7 @@ VASTPLAYER.getMute = function () {
   if (this.vastPlayer) {
     return this.vastPlayer.muted;
   }
-  return null;
+  return false;
 };
 
 VASTPLAYER.play = function (firstVastPlayerPlayRequest) {

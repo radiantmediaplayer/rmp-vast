@@ -24,14 +24,14 @@ CONTENTPLAYER.getVolume = function () {
   if (this.contentPlayer) {
     return this.contentPlayer.volume;
   }
-  return null;
+  return -1;
 };
 
 CONTENTPLAYER.getMute = function () {
   if (this.contentPlayer) {
     return this.contentPlayer.muted;
   }
-  return null;
+  return false;
 };
 
 CONTENTPLAYER.setMute = function (muted) {

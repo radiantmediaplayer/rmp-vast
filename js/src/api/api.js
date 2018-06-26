@@ -38,7 +38,7 @@ API.getAdPaused = function () {
       return this.vastPlayerPaused;
     }
   }
-  return null;
+  return false;
 };
 
 API.setVolume = function (level) {
@@ -147,7 +147,7 @@ API.getAdContentType = function () {
       return this.nonLinearContentType;
     }
   }
-  return null;
+  return '';
 };
 
 API.getAdTitle = function () {
@@ -363,21 +363,21 @@ API.getAdExpanded = function () {
   if (this.adOnStage && this.isVPAID) {
     VPAID.getAdExpanded.call(this);
   }
-  return null;
+  return false;
 };
 
 API.getAdSkippableState = function () {
   if (this.adOnStage && this.isVPAID) {
     VPAID.getAdSkippableState.call(this);
   }
-  return null;
+  return false;
 };
 
 API.getAdCompanions = function () {
   if (this.adOnStage && this.isVPAID) {
     VPAID.getAdCompanions.call(this);
   }
-  return null;
+  return '';
 };
 
 export { API };

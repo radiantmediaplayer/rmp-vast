@@ -353,8 +353,8 @@ FW.logVideoEvents = function (video, type) {
 
 FW.filterParams = function (params) {
   let defaultParams = {
-    ajaxTimeout: 8000,
-    creativeLoadTimeout: 10000,
+    ajaxTimeout: 5000,
+    creativeLoadTimeout: 8000,
     ajaxWithCredentials: false,
     maxNumRedirects: 4,
     maxNumItemsInAdPod: 10,

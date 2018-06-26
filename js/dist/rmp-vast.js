@@ -1,6 +1,6 @@
 /**
  * @license Copyright (c) 2017-2018 Radiant Media Player | https://www.radiantmediaplayer.com
- * rmp-vast 1.4.0
+ * rmp-vast 1.4.1
  * GitHub: https://github.com/radiantmediaplayer/rmp-vast
  * MIT License: https://github.com/radiantmediaplayer/rmp-vast/blob/master/LICENSE
  */
@@ -56,7 +56,7 @@ API.getAdPaused = function () {
       return this.vastPlayerPaused;
     }
   }
-  return null;
+  return false;
 };
 
 API.setVolume = function (level) {
@@ -165,7 +165,7 @@ API.getAdContentType = function () {
       return this.nonLinearContentType;
     }
   }
-  return null;
+  return '';
 };
 
 API.getAdTitle = function () {
@@ -381,21 +381,21 @@ API.getAdExpanded = function () {
   if (this.adOnStage && this.isVPAID) {
     _vpaid.VPAID.getAdExpanded.call(this);
   }
-  return null;
+  return false;
 };
 
 API.getAdSkippableState = function () {
   if (this.adOnStage && this.isVPAID) {
     _vpaid.VPAID.getAdSkippableState.call(this);
   }
-  return null;
+  return false;
 };
 
 API.getAdCompanions = function () {
   if (this.adOnStage && this.isVPAID) {
     _vpaid.VPAID.getAdCompanions.call(this);
   }
-  return null;
+  return '';
 };
 
 exports.API = API;
@@ -1911,8 +1911,8 @@ FW.logVideoEvents = function (video, type) {
 
 FW.filterParams = function (params) {
   var defaultParams = {
-    ajaxTimeout: 8000,
-    creativeLoadTimeout: 10000,
+    ajaxTimeout: 5000,
+    creativeLoadTimeout: 8000,
     ajaxWithCredentials: false,
     maxNumRedirects: 4,
     maxNumItemsInAdPod: 10,
@@ -2099,565 +2099,580 @@ var _icons = require('./creatives/icons');
 
 function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 
-window.DEBUG = true;
+(function () {
 
-window.RmpVast = function (id, params) {
-  if (typeof id !== 'string' || id === '') {
-    _fw.FW.log('RMP-VAST: invalid id to create new instance - exit');
+  'use strict';
+
+  if (typeof window === 'undefined' || typeof window.document === 'undefined') {
+    _fw.FW.log('RMP-VAST: cannot use rmp-vast in this environment - missing window or document object');
     return;
   }
-  this.id = id;
-  this.container = document.getElementById(this.id);
-  this.content = this.container.getElementsByClassName('rmp-content')[0];
-  this.contentPlayer = this.container.getElementsByClassName('rmp-video')[0];
-  if (DEBUG) {
-    _fw.FW.logVideoEvents(this.contentPlayer, 'content');
-  }
-  this.adContainer = null;
-  this.rmpVastInitialized = false;
-  this.useContentPlayerForAds = false;
-  this.contentPlayerCompleted = false;
-  this.currentContentCurrentTime = -1;
-  this.needsSeekAdjust = false;
-  this.seekAdjustAttached = false;
-  this.onDestroyLoadAds = null;
-  this.firstVastPlayerPlayRequest = true;
-  this.firstContentPlayerPlayRequest = true;
-  // adpod 
-  this.adPod = [];
-  this.standaloneAdsInPod = [];
-  this.onAdDestroyLoadNextAdInPod = _fw.FW.nullFn;
-  this.runningAdPod = false;
-  this.adPodItemWrapper = false;
-  this.adPodCurrentIndex = 0;
-  this.adPodApiInfo = [];
-  this.adPodWrapperTrackings = [];
 
-  if (_env.ENV.isIos[0] || _env.ENV.isMacOSX && _env.ENV.isSafari[0]) {
-    // on iOS and macOS Safari we use content player to play ads
-    // to avoid issues related to fullscreen management and autoplay
-    // as fullscreen on iOS is handled by the default OS player
-    this.useContentPlayerForAds = true;
-    if (DEBUG) {
-      _fw.FW.log('RMP-VAST: vast player will be content player');
-    }
+  if (typeof window.RmpVast !== 'undefined') {
+    _fw.FW.log('RMP-VAST: RmpVast constructor already exists - no need to load it twice - exiting');
+    return;
   }
-  // filter input params
-  _fw.FW.filterParams.call(this, params);
-  // reset internal variables
-  _reset.RESET.internalVariables.call(this);
-  // attach fullscreen states
-  // this assumes we have a polyfill for fullscreenchange event 
-  // see app/js/app.js
-  // we need this to handle VAST fullscreen events
-  var isInFullscreen = false;
-  var onFullscreenchange = null;
-  var _onFullscreenchange = function (event) {
-    if (event && event.type) {
+
+  window.DEBUG = true;
+
+  window.RmpVast = function (id, params) {
+    if (typeof id !== 'string' || id === '') {
+      _fw.FW.log('RMP-VAST: invalid id to create new instance - exit');
+      return;
+    }
+    this.id = id;
+    this.container = document.getElementById(this.id);
+    this.content = this.container.getElementsByClassName('rmp-content')[0];
+    this.contentPlayer = this.container.getElementsByClassName('rmp-video')[0];
+    if (DEBUG) {
+      _fw.FW.logVideoEvents(this.contentPlayer, 'content');
+    }
+    this.adContainer = null;
+    this.rmpVastInitialized = false;
+    this.useContentPlayerForAds = false;
+    this.contentPlayerCompleted = false;
+    this.currentContentCurrentTime = -1;
+    this.needsSeekAdjust = false;
+    this.seekAdjustAttached = false;
+    this.onDestroyLoadAds = null;
+    this.firstVastPlayerPlayRequest = true;
+    this.firstContentPlayerPlayRequest = true;
+    // adpod 
+    this.adPod = [];
+    this.standaloneAdsInPod = [];
+    this.onAdDestroyLoadNextAdInPod = _fw.FW.nullFn;
+    this.runningAdPod = false;
+    this.adPodItemWrapper = false;
+    this.adPodCurrentIndex = 0;
+    this.adPodApiInfo = [];
+    this.adPodWrapperTrackings = [];
+
+    if (_env.ENV.isIos[0] || _env.ENV.isMacOSX && _env.ENV.isSafari[0]) {
+      // on iOS and macOS Safari we use content player to play ads
+      // to avoid issues related to fullscreen management and autoplay
+      // as fullscreen on iOS is handled by the default OS player
+      this.useContentPlayerForAds = true;
       if (DEBUG) {
-        _fw.FW.log('RMP-VAST: event is ' + event.type);
+        _fw.FW.log('RMP-VAST: vast player will be content player');
       }
-      if (event.type === 'fullscreenchange') {
-        if (isInFullscreen) {
-          isInFullscreen = false;
-          if (this.adOnStage && this.adIsLinear) {
-            _fw.FW.dispatchPingEvent.call(this, 'exitFullscreen');
+    }
+    // filter input params
+    _fw.FW.filterParams.call(this, params);
+    // reset internal variables
+    _reset.RESET.internalVariables.call(this);
+    // attach fullscreen states
+    // this assumes we have a polyfill for fullscreenchange event 
+    // see app/js/app.js
+    // we need this to handle VAST fullscreen events
+    var isInFullscreen = false;
+    var onFullscreenchange = null;
+    var _onFullscreenchange = function (event) {
+      if (event && event.type) {
+        if (DEBUG) {
+          _fw.FW.log('RMP-VAST: event is ' + event.type);
+        }
+        if (event.type === 'fullscreenchange') {
+          if (isInFullscreen) {
+            isInFullscreen = false;
+            if (this.adOnStage && this.adIsLinear) {
+              _fw.FW.dispatchPingEvent.call(this, 'exitFullscreen');
+            }
+          } else {
+            isInFullscreen = true;
+            if (this.adOnStage && this.adIsLinear) {
+              _fw.FW.dispatchPingEvent.call(this, 'fullscreen');
+            }
           }
-        } else {
-          isInFullscreen = true;
+        } else if (event.type === 'webkitbeginfullscreen') {
+          // iOS uses webkitbeginfullscreen
           if (this.adOnStage && this.adIsLinear) {
             _fw.FW.dispatchPingEvent.call(this, 'fullscreen');
           }
+        } else if (event.type === 'webkitendfullscreen') {
+          // iOS uses webkitendfullscreen
+          if (this.adOnStage && this.adIsLinear) {
+            _fw.FW.dispatchPingEvent.call(this, 'exitFullscreen');
+          }
         }
-      } else if (event.type === 'webkitbeginfullscreen') {
-        // iOS uses webkitbeginfullscreen
-        if (this.adOnStage && this.adIsLinear) {
-          _fw.FW.dispatchPingEvent.call(this, 'fullscreen');
-        }
-      } else if (event.type === 'webkitendfullscreen') {
-        // iOS uses webkitendfullscreen
-        if (this.adOnStage && this.adIsLinear) {
-          _fw.FW.dispatchPingEvent.call(this, 'exitFullscreen');
-        }
+      }
+    };
+    // if we have native fullscreen support we handle fullscreen events
+    if (_env.ENV.hasNativeFullscreenSupport) {
+      onFullscreenchange = _onFullscreenchange.bind(this);
+      // for our beloved iOS 
+      if (_env.ENV.isIos[0]) {
+        this.contentPlayer.addEventListener('webkitbeginfullscreen', onFullscreenchange);
+        this.contentPlayer.addEventListener('webkitendfullscreen', onFullscreenchange);
+      } else {
+        document.addEventListener('fullscreenchange', onFullscreenchange);
       }
     }
   };
-  // if we have native fullscreen support we handle fullscreen events
-  if (_env.ENV.hasNativeFullscreenSupport) {
-    onFullscreenchange = _onFullscreenchange.bind(this);
-    // for our beloved iOS 
-    if (_env.ENV.isIos[0]) {
-      this.contentPlayer.addEventListener('webkitbeginfullscreen', onFullscreenchange);
-      this.contentPlayer.addEventListener('webkitendfullscreen', onFullscreenchange);
-    } else {
-      document.addEventListener('fullscreenchange', onFullscreenchange);
+
+  // enrich RmpVast prototype with API methods
+  var apiKeys = Object.keys(_api.API);
+  for (var i = 0, len = apiKeys.length; i < len; i++) {
+    var currentKey = apiKeys[i];
+    window.RmpVast.prototype[currentKey] = _api.API[currentKey];
+  }
+
+  var _execRedirect = function () {
+    if (DEBUG) {
+      _fw.FW.log('RMP-VAST: adfollowingredirect');
     }
-  }
-};
-
-// enrich RmpVast prototype with API methods
-var apiKeys = Object.keys(_api.API);
-for (var i = 0, len = apiKeys.length; i < len; i++) {
-  var currentKey = apiKeys[i];
-  window.RmpVast.prototype[currentKey] = _api.API[currentKey];
-}
-
-var _execRedirect = function () {
-  if (DEBUG) {
-    _fw.FW.log('RMP-VAST: adfollowingredirect');
-  }
-  _api.API.createEvent.call(this, 'adfollowingredirect');
-  var redirectUrl = _fw.FW.getNodeValue(this.vastAdTagURI[0], true);
-  if (DEBUG) {
-    _fw.FW.log('RMP-VAST: redirect URL is ' + redirectUrl);
-  }
-  if (redirectUrl !== null) {
-    if (this.params.maxNumRedirects > this.redirectsFollowed) {
-      this.redirectsFollowed++;
-      if (this.runningAdPod) {
-        this.adPodItemWrapper = true;
+    _api.API.createEvent.call(this, 'adfollowingredirect');
+    var redirectUrl = _fw.FW.getNodeValue(this.vastAdTagURI[0], true);
+    if (DEBUG) {
+      _fw.FW.log('RMP-VAST: redirect URL is ' + redirectUrl);
+    }
+    if (redirectUrl !== null) {
+      if (this.params.maxNumRedirects > this.redirectsFollowed) {
+        this.redirectsFollowed++;
+        if (this.runningAdPod) {
+          this.adPodItemWrapper = true;
+        }
+        this.loadAds(redirectUrl);
+      } else {
+        // Wrapper limit reached, as defined by maxNumRedirects
+        _ping.PING.error.call(this, 302);
+        _vastErrors.VASTERRORS.process.call(this, 302);
       }
-      this.loadAds(redirectUrl);
     } else {
-      // Wrapper limit reached, as defined by maxNumRedirects
-      _ping.PING.error.call(this, 302);
-      _vastErrors.VASTERRORS.process.call(this, 302);
+      // not a valid redirect URI - ping for error
+      _ping.PING.error.call(this, 300);
+      _vastErrors.VASTERRORS.process.call(this, 300);
     }
-  } else {
-    // not a valid redirect URI - ping for error
-    _ping.PING.error.call(this, 300);
-    _vastErrors.VASTERRORS.process.call(this, 300);
-  }
-};
+  };
 
-var _parseCreatives = function (creative) {
-  if (DEBUG) {
-    _fw.FW.log('RMP-VAST: _parseCreatives');
-    _fw.FW.log(creative);
-  }
-  for (var _i = 0, _len = creative.length; _i < _len; _i++) {
-    var currentCreative = creative[_i];
-    // we only pick the first creative that is either Linear or NonLinearAds
-    var nonLinearAds = currentCreative.getElementsByTagName('NonLinearAds');
-    var linear = currentCreative.getElementsByTagName('Linear');
-    // for now we ignore CreativeExtensions tag
-    //let creativeExtensions = currentCreative.getElementsByTagName('CreativeExtensions');
-    var companionAds = currentCreative.getElementsByTagName('CompanionAds');
-    if (companionAds.length > 0) {
-      continue;
+  var _parseCreatives = function (creative) {
+    if (DEBUG) {
+      _fw.FW.log('RMP-VAST: _parseCreatives');
+      _fw.FW.log(creative);
     }
-    // we expect 1 Linear or NonLinearAds tag 
-    if (nonLinearAds.length === 0 && linear.length === 0) {
-      _ping.PING.error.call(this, 101);
-      _vastErrors.VASTERRORS.process.call(this, 101);
-      return;
-    }
-    if (nonLinearAds.length > 0) {
-      var trackingEvents = nonLinearAds[0].getElementsByTagName('TrackingEvents');
-      // if TrackingEvents tag
-      if (trackingEvents.length > 0) {
-        _trackingEvents2.TRACKINGEVENTS.filterPush.call(this, trackingEvents);
+    for (var _i = 0, _len = creative.length; _i < _len; _i++) {
+      var currentCreative = creative[_i];
+      // we only pick the first creative that is either Linear or NonLinearAds
+      var nonLinearAds = currentCreative.getElementsByTagName('NonLinearAds');
+      var linear = currentCreative.getElementsByTagName('Linear');
+      // for now we ignore CreativeExtensions tag
+      //let creativeExtensions = currentCreative.getElementsByTagName('CreativeExtensions');
+      var companionAds = currentCreative.getElementsByTagName('CompanionAds');
+      if (companionAds.length > 0) {
+        continue;
       }
-      if (this.isWrapper) {
-        _execRedirect.call(this);
+      // we expect 1 Linear or NonLinearAds tag 
+      if (nonLinearAds.length === 0 && linear.length === 0) {
+        _ping.PING.error.call(this, 101);
+        _vastErrors.VASTERRORS.process.call(this, 101);
         return;
       }
-      _nonLinear.NONLINEAR.parse.call(this, nonLinearAds);
-      return;
-    } else if (linear.length > 0) {
-      // check for skippable ads (Linear skipoffset)
-      var skipoffset = linear[0].getAttribute('skipoffset');
-      // if we have a wrapper we ignore skipoffset in case it is present
-      if (!this.isWrapper && this.params.skipMessage !== '' && skipoffset !== null && skipoffset !== '' && _fw.FW.isValidOffset(skipoffset)) {
-        if (DEBUG) {
-          _fw.FW.log('RMP-VAST: skippable ad detected with offset ' + skipoffset);
+      if (nonLinearAds.length > 0) {
+        var trackingEvents = nonLinearAds[0].getElementsByTagName('TrackingEvents');
+        // if TrackingEvents tag
+        if (trackingEvents.length > 0) {
+          _trackingEvents2.TRACKINGEVENTS.filterPush.call(this, trackingEvents);
         }
-        this.isSkippableAd = true;
-        this.skipoffset = skipoffset;
-        // we  do not display skippable ads when on is iOS < 10
-        if (_env.ENV.isIos[0] && _env.ENV.isIos[1] < 10) {
-          _ping.PING.error.call(this, 200);
-          _vastErrors.VASTERRORS.process.call(this, 200);
+        if (this.isWrapper) {
+          _execRedirect.call(this);
           return;
         }
-      }
-
-      // TrackingEvents
-      var _trackingEvents = linear[0].getElementsByTagName('TrackingEvents');
-      // if present TrackingEvents
-      if (_trackingEvents.length > 0) {
-        _trackingEvents2.TRACKINGEVENTS.filterPush.call(this, _trackingEvents);
-      }
-
-      // VideoClicks for linear
-      var videoClicks = linear[0].getElementsByTagName('VideoClicks');
-      if (videoClicks.length > 0) {
-        var clickThrough = videoClicks[0].getElementsByTagName('ClickThrough');
-        var clickTracking = videoClicks[0].getElementsByTagName('ClickTracking');
-        if (clickThrough.length > 0) {
-          this.clickThroughUrl = _fw.FW.getNodeValue(clickThrough[0], true);
+        _nonLinear.NONLINEAR.parse.call(this, nonLinearAds);
+        return;
+      } else if (linear.length > 0) {
+        // check for skippable ads (Linear skipoffset)
+        var skipoffset = linear[0].getAttribute('skipoffset');
+        // if we have a wrapper we ignore skipoffset in case it is present
+        if (!this.isWrapper && this.params.skipMessage !== '' && skipoffset !== null && skipoffset !== '' && _fw.FW.isValidOffset(skipoffset)) {
+          if (DEBUG) {
+            _fw.FW.log('RMP-VAST: skippable ad detected with offset ' + skipoffset);
+          }
+          this.isSkippableAd = true;
+          this.skipoffset = skipoffset;
+          // we  do not display skippable ads when on is iOS < 10
+          if (_env.ENV.isIos[0] && _env.ENV.isIos[1] < 10) {
+            _ping.PING.error.call(this, 200);
+            _vastErrors.VASTERRORS.process.call(this, 200);
+            return;
+          }
         }
-        if (clickTracking.length > 0) {
-          for (var _i2 = 0, _len2 = clickTracking.length; _i2 < _len2; _i2++) {
-            var clickTrackingUrl = _fw.FW.getNodeValue(clickTracking[_i2], true);
-            if (clickTrackingUrl !== null) {
-              this.trackingTags.push({ event: 'clickthrough', url: clickTrackingUrl });
+
+        // TrackingEvents
+        var _trackingEvents = linear[0].getElementsByTagName('TrackingEvents');
+        // if present TrackingEvents
+        if (_trackingEvents.length > 0) {
+          _trackingEvents2.TRACKINGEVENTS.filterPush.call(this, _trackingEvents);
+        }
+
+        // VideoClicks for linear
+        var videoClicks = linear[0].getElementsByTagName('VideoClicks');
+        if (videoClicks.length > 0) {
+          var clickThrough = videoClicks[0].getElementsByTagName('ClickThrough');
+          var clickTracking = videoClicks[0].getElementsByTagName('ClickTracking');
+          if (clickThrough.length > 0) {
+            this.clickThroughUrl = _fw.FW.getNodeValue(clickThrough[0], true);
+          }
+          if (clickTracking.length > 0) {
+            for (var _i2 = 0, _len2 = clickTracking.length; _i2 < _len2; _i2++) {
+              var clickTrackingUrl = _fw.FW.getNodeValue(clickTracking[_i2], true);
+              if (clickTrackingUrl !== null) {
+                this.trackingTags.push({ event: 'clickthrough', url: clickTrackingUrl });
+              }
             }
           }
         }
-      }
 
-      // return on wrapper
-      if (this.isWrapper) {
-        // if icons are presents then we push valid icons
-        var icons = linear[0].getElementsByTagName('Icons');
-        if (icons.length > 0) {
-          _icons.ICONS.parse.call(this, icons);
+        // return on wrapper
+        if (this.isWrapper) {
+          // if icons are presents then we push valid icons
+          var icons = linear[0].getElementsByTagName('Icons');
+          if (icons.length > 0) {
+            _icons.ICONS.parse.call(this, icons);
+          }
+          _execRedirect.call(this);
+          return;
         }
-        _execRedirect.call(this);
+        _linear.LINEAR.parse.call(this, linear);
         return;
       }
-      _linear.LINEAR.parse.call(this, linear);
+    }
+    // in case wrapper with creative CompanionAds we still need to _execRedirect
+    if (this.isWrapper) {
+      _execRedirect.call(this);
       return;
     }
-  }
-  // in case wrapper with creative CompanionAds we still need to _execRedirect
-  if (this.isWrapper) {
-    _execRedirect.call(this);
-    return;
-  }
-};
+  };
 
-var _filterAdPod = function (ad) {
-  if (DEBUG) {
-    _fw.FW.log('RMP-VAST: _filterAdPod');
-  }
-  // filter Ad and AdPod
-  var retainedAd = void 0;
-  // a pod already exists and is being processed - the current Ad item is InLine
-  if (this.adPod.length > 0 && !this.adPodItemWrapper) {
+  var _filterAdPod = function (ad) {
     if (DEBUG) {
-      _fw.FW.log('RMP-VAST: loading next ad in pod');
+      _fw.FW.log('RMP-VAST: _filterAdPod');
     }
-    retainedAd = ad[0];
-    this.adPodCurrentIndex++;
-    this.adPod.shift();
-  } else if (this.adPod.length > 0 && this.adPodItemWrapper) {
-    if (DEBUG) {
-      _fw.FW.log('RMP-VAST: running ad pod Ad is a wrapper');
-    }
-    // we are in a pod but the running Ad item is a wrapper
-    this.adPodItemWrapper = false;
-    for (var _i3 = 0, _len3 = ad.length; _i3 < _len3; _i3++) {
-      var sequence = ad[_i3].getAttribute('sequence');
-      if (sequence === '' || sequence === null) {
-        retainedAd = ad[_i3];
-        break;
-      }
-    }
-  } else {
-    // we are not in a pod yet ... see if one exists or not
-    var standaloneAds = [];
-    for (var _i4 = 0, _len4 = ad.length; _i4 < _len4; _i4++) {
-      var _sequence = ad[_i4].getAttribute('sequence');
-      if (_sequence === '' || _sequence === null) {
-        // standalone ads
-        standaloneAds.push(ad[_i4]);
-      } else {
-        // if it has sequence attribute then push to adPod array
-        this.adPod.push(ad[_i4]);
-      }
-    }
-    if (this.adPod.length === 0 && standaloneAds.length > 0) {
-      // we are not in an ad pod - we only load the first standalone ad
-      retainedAd = standaloneAds[0];
-    } else if (this.adPod.length > 0) {
+    // filter Ad and AdPod
+    var retainedAd = void 0;
+    // a pod already exists and is being processed - the current Ad item is InLine
+    if (this.adPod.length > 0 && !this.adPodItemWrapper) {
       if (DEBUG) {
-        _fw.FW.log('RMP-VAST: ad pod detected');
+        _fw.FW.log('RMP-VAST: loading next ad in pod');
       }
-      this.runningAdPod = true;
-      // clone array for purpose of API exposure
-      this.adPodApiInfo = [].concat(_toConsumableArray(this.adPod));
-      // so we are in a pod but it may come from a wrapper so we need to ping 
-      // wrapper trackings for each Ad of the pod
-      this.adPodWrapperTrackings = [].concat(_toConsumableArray(this.trackingTags));
-      // reduced adPod length to maxNumItemsInAdPod
-      if (this.adPod.length > this.params.maxNumItemsInAdPod) {
-        this.adPod.length = this.params.maxNumItemsInAdPod;
-      }
-      this.standaloneAdsInPod = standaloneAds;
-      // sort adPod in case sequence attr are unordered
-      this.adPod.sort(function (a, b) {
-        var sequence1 = parseInt(a.getAttribute('sequence'));
-        var sequence2 = parseInt(b.getAttribute('sequence'));
-        return sequence1 - sequence2;
-      });
-      retainedAd = this.adPod[0];
+      retainedAd = ad[0];
+      this.adPodCurrentIndex++;
       this.adPod.shift();
-      var __onAdDestroyLoadNextAdInPod = function () {
+    } else if (this.adPod.length > 0 && this.adPodItemWrapper) {
+      if (DEBUG) {
+        _fw.FW.log('RMP-VAST: running ad pod Ad is a wrapper');
+      }
+      // we are in a pod but the running Ad item is a wrapper
+      this.adPodItemWrapper = false;
+      for (var _i3 = 0, _len3 = ad.length; _i3 < _len3; _i3++) {
+        var sequence = ad[_i3].getAttribute('sequence');
+        if (sequence === '' || sequence === null) {
+          retainedAd = ad[_i3];
+          break;
+        }
+      }
+    } else {
+      // we are not in a pod yet ... see if one exists or not
+      var standaloneAds = [];
+      for (var _i4 = 0, _len4 = ad.length; _i4 < _len4; _i4++) {
+        var _sequence = ad[_i4].getAttribute('sequence');
+        if (_sequence === '' || _sequence === null) {
+          // standalone ads
+          standaloneAds.push(ad[_i4]);
+        } else {
+          // if it has sequence attribute then push to adPod array
+          this.adPod.push(ad[_i4]);
+        }
+      }
+      if (this.adPod.length === 0 && standaloneAds.length > 0) {
+        // we are not in an ad pod - we only load the first standalone ad
+        retainedAd = standaloneAds[0];
+      } else if (this.adPod.length > 0) {
         if (DEBUG) {
-          _fw.FW.log('RMP-VAST: addestroyed - checking for ads left in pod');
+          _fw.FW.log('RMP-VAST: ad pod detected');
+        }
+        this.runningAdPod = true;
+        // clone array for purpose of API exposure
+        this.adPodApiInfo = [].concat(_toConsumableArray(this.adPod));
+        // so we are in a pod but it may come from a wrapper so we need to ping 
+        // wrapper trackings for each Ad of the pod
+        this.adPodWrapperTrackings = [].concat(_toConsumableArray(this.trackingTags));
+        // reduced adPod length to maxNumItemsInAdPod
+        if (this.adPod.length > this.params.maxNumItemsInAdPod) {
+          this.adPod.length = this.params.maxNumItemsInAdPod;
+        }
+        this.standaloneAdsInPod = standaloneAds;
+        // sort adPod in case sequence attr are unordered
+        this.adPod.sort(function (a, b) {
+          var sequence1 = parseInt(a.getAttribute('sequence'));
+          var sequence2 = parseInt(b.getAttribute('sequence'));
+          return sequence1 - sequence2;
+        });
+        retainedAd = this.adPod[0];
+        this.adPod.shift();
+        var __onAdDestroyLoadNextAdInPod = function () {
+          if (DEBUG) {
+            _fw.FW.log('RMP-VAST: addestroyed - checking for ads left in pod');
+            if (this.adPod.length > 0) {
+              _fw.FW.log(this.adPod);
+            } else {
+              _fw.FW.log('RMP-VAST: no ad left in pod');
+            }
+          }
+          this.adPodItemWrapper = false;
           if (this.adPod.length > 0) {
-            _fw.FW.log(this.adPod);
+            _filterAdPod.call(this, this.adPod);
           } else {
-            _fw.FW.log('RMP-VAST: no ad left in pod');
+            this.container.removeEventListener('addestroyed', this.onAdDestroyLoadNextAdInPod);
+            this.adPod = [];
+            this.standaloneAdsInPod = [];
+            this.runningAdPod = false;
+            this.adPodCurrentIndex = 0;
+            this.adPodApiInfo = [];
+            this.adPodWrapperTrackings = [];
+            _api.API.createEvent.call(this, 'adpodcompleted');
+          }
+        };
+        this.onAdDestroyLoadNextAdInPod = __onAdDestroyLoadNextAdInPod.bind(this);
+        this.container.addEventListener('addestroyed', this.onAdDestroyLoadNextAdInPod);
+      }
+    }
+
+    if (!retainedAd) {
+      // in case this is a wrapper we need to ping for errors on originating tags
+      _ping.PING.error.call(this, 200);
+      _vastErrors.VASTERRORS.process.call(this, 200);
+      return;
+    }
+
+    var inline = retainedAd.getElementsByTagName('InLine');
+    var wrapper = retainedAd.getElementsByTagName('Wrapper');
+    // 1 InLine or Wrapper element must be present 
+    if (inline.length === 0 && wrapper.length === 0) {
+      // in case this is a wrapper we need to ping for errors on originating tags
+      _ping.PING.error.call(this, 101);
+      _vastErrors.VASTERRORS.process.call(this, 101);
+      return;
+    }
+    var inlineOrWrapper = void 0;
+    if (wrapper.length > 0) {
+      this.isWrapper = true;
+      inlineOrWrapper = wrapper;
+      this.vastAdTagURI = inlineOrWrapper[0].getElementsByTagName('VASTAdTagURI');
+    } else {
+      inlineOrWrapper = inline;
+    }
+    var adSystem = inlineOrWrapper[0].getElementsByTagName('AdSystem');
+    var impression = inlineOrWrapper[0].getElementsByTagName('Impression');
+    // VAST/Ad/InLine/Error node
+    var errorNode = inlineOrWrapper[0].getElementsByTagName('Error');
+    if (errorNode.length > 0) {
+      var errorUrl = _fw.FW.getNodeValue(errorNode[0], true);
+      if (errorUrl !== null) {
+        this.inlineOrWrapperErrorTags.push({ event: 'error', url: errorUrl });
+      }
+    }
+    var adTitle = inlineOrWrapper[0].getElementsByTagName('AdTitle');
+    var adDescription = inlineOrWrapper[0].getElementsByTagName('Description');
+    var creatives = inlineOrWrapper[0].getElementsByTagName('Creatives');
+
+    // Required InLine Elements are AdSystem, AdTitle, Impression, Creatives
+    // Required Wrapper Elements are AdSystem, vastAdTagURI, Impression
+    // however in real word some adTag do not have impression or adSystem/adTitle tags 
+    // especially in the context of multiple redirects - since the IMA SDK allows those tags 
+    // to render we should do the same even if those adTags are not VAST-compliant
+    // so we only check and exit if missing required information to display ads 
+    if (this.isWrapper) {
+      if (this.vastAdTagURI.length === 0) {
+        _ping.PING.error.call(this, 101);
+        _vastErrors.VASTERRORS.process.call(this, 101);
+        return;
+      }
+    } else {
+      if (creatives.length === 0) {
+        _ping.PING.error.call(this, 101);
+        _vastErrors.VASTERRORS.process.call(this, 101);
+        return;
+      }
+    }
+
+    var creative = void 0;
+    if (creatives.length > 0) {
+      creative = creatives[0].getElementsByTagName('Creative');
+      // at least one creative tag is expected for InLine
+      if (!this.isWrapper && creative.length === 0) {
+        _ping.PING.error.call(this, 101);
+        _vastErrors.VASTERRORS.process.call(this, 101);
+        return;
+      }
+    }
+    if (adTitle.length > 0) {
+      this.adSystem = _fw.FW.getNodeValue(adSystem[0], false);
+    }
+    if (impression.length > 0) {
+      for (var _i5 = 0, _len5 = impression.length; _i5 < _len5; _i5++) {
+        var impressionUrl = _fw.FW.getNodeValue(impression[_i5], true);
+        if (impressionUrl !== null) {
+          this.trackingTags.push({ event: 'impression', url: impressionUrl });
+        }
+      }
+    }
+    if (!this.isWrapper) {
+      if (adTitle.length > 0) {
+        this.adTitle = _fw.FW.getNodeValue(adTitle[0], false);
+      }
+      if (adDescription.length > 0) {
+        this.adDescription = _fw.FW.getNodeValue(adDescription[0], false);
+      }
+    }
+    // in case no Creative with Wrapper we make our redirect call here
+    if (this.isWrapper && !creative) {
+      _execRedirect.call(this);
+      return;
+    }
+    _parseCreatives.call(this, creative);
+  };
+
+  var _onXmlAvailable = function (xml) {
+    // if VMAP we abort
+    var vmap = xml.getElementsByTagName('vmap:VMAP');
+    if (vmap.length > 0) {
+      _vastErrors.VASTERRORS.process.call(this, 200);
+      return;
+    }
+    // check for VAST node
+    var vastTag = xml.getElementsByTagName('VAST');
+    if (vastTag.length === 0) {
+      // in case this is a wrapper we need to ping for errors on originating tags
+      _ping.PING.error.call(this, 100);
+      _vastErrors.VASTERRORS.process.call(this, 100);
+      return;
+    }
+    var vastDocument = vastTag[0];
+    // VAST/Error node
+    var errorNode = vastDocument.getElementsByTagName('Error');
+    if (errorNode.length > 0) {
+      for (var _i6 = 0, _len6 = errorNode.length; _i6 < _len6; _i6++) {
+        // we need to make sure those Error tags are directly beneath VAST tag. See 2.2.5.1 VAST 3 spec
+        if (errorNode[_i6].parentNode === vastDocument) {
+          var errorUrl = _fw.FW.getNodeValue(errorNode[_i6], true);
+          if (errorUrl !== null) {
+            // we use an array here for vastErrorTags but we only have item in it
+            // this is to be able to use PING.error for both vastErrorTags and inlineOrWrapperErrorTags
+            this.vastErrorTags.push({ event: 'error', url: errorUrl });
           }
         }
-        this.adPodItemWrapper = false;
-        if (this.adPod.length > 0) {
-          _filterAdPod.call(this, this.adPod);
-        } else {
-          this.container.removeEventListener('addestroyed', this.onAdDestroyLoadNextAdInPod);
-          this.adPod = [];
-          this.standaloneAdsInPod = [];
-          this.runningAdPod = false;
-          this.adPodCurrentIndex = 0;
-          this.adPodApiInfo = [];
-          this.adPodWrapperTrackings = [];
-          _api.API.createEvent.call(this, 'adpodcompleted');
-        }
-      };
-      this.onAdDestroyLoadNextAdInPod = __onAdDestroyLoadNextAdInPod.bind(this);
-      this.container.addEventListener('addestroyed', this.onAdDestroyLoadNextAdInPod);
-    }
-  }
-
-  if (!retainedAd) {
-    // in case this is a wrapper we need to ping for errors on originating tags
-    _ping.PING.error.call(this, 200);
-    _vastErrors.VASTERRORS.process.call(this, 200);
-    return;
-  }
-
-  var inline = retainedAd.getElementsByTagName('InLine');
-  var wrapper = retainedAd.getElementsByTagName('Wrapper');
-  // 1 InLine or Wrapper element must be present 
-  if (inline.length === 0 && wrapper.length === 0) {
-    // in case this is a wrapper we need to ping for errors on originating tags
-    _ping.PING.error.call(this, 101);
-    _vastErrors.VASTERRORS.process.call(this, 101);
-    return;
-  }
-  var inlineOrWrapper = void 0;
-  if (wrapper.length > 0) {
-    this.isWrapper = true;
-    inlineOrWrapper = wrapper;
-    this.vastAdTagURI = inlineOrWrapper[0].getElementsByTagName('VASTAdTagURI');
-  } else {
-    inlineOrWrapper = inline;
-  }
-  var adSystem = inlineOrWrapper[0].getElementsByTagName('AdSystem');
-  var impression = inlineOrWrapper[0].getElementsByTagName('Impression');
-  // VAST/Ad/InLine/Error node
-  var errorNode = inlineOrWrapper[0].getElementsByTagName('Error');
-  if (errorNode.length > 0) {
-    var errorUrl = _fw.FW.getNodeValue(errorNode[0], true);
-    if (errorUrl !== null) {
-      this.inlineOrWrapperErrorTags.push({ event: 'error', url: errorUrl });
-    }
-  }
-  var adTitle = inlineOrWrapper[0].getElementsByTagName('AdTitle');
-  var adDescription = inlineOrWrapper[0].getElementsByTagName('Description');
-  var creatives = inlineOrWrapper[0].getElementsByTagName('Creatives');
-
-  // Required InLine Elements are AdSystem, AdTitle, Impression, Creatives
-  // Required Wrapper Elements are AdSystem, vastAdTagURI, Impression
-  // however in real word some adTag do not have impression or adSystem/adTitle tags 
-  // especially in the context of multiple redirects - since the IMA SDK allows those tags 
-  // to render we should do the same even if those adTags are not VAST-compliant
-  // so we only check and exit if missing required information to display ads 
-  if (this.isWrapper) {
-    if (this.vastAdTagURI.length === 0) {
-      _ping.PING.error.call(this, 101);
-      _vastErrors.VASTERRORS.process.call(this, 101);
-      return;
-    }
-  } else {
-    if (creatives.length === 0) {
-      _ping.PING.error.call(this, 101);
-      _vastErrors.VASTERRORS.process.call(this, 101);
-      return;
-    }
-  }
-
-  var creative = void 0;
-  if (creatives.length > 0) {
-    creative = creatives[0].getElementsByTagName('Creative');
-    // at least one creative tag is expected for InLine
-    if (!this.isWrapper && creative.length === 0) {
-      _ping.PING.error.call(this, 101);
-      _vastErrors.VASTERRORS.process.call(this, 101);
-      return;
-    }
-  }
-  if (adTitle.length > 0) {
-    this.adSystem = _fw.FW.getNodeValue(adSystem[0], false);
-  }
-  if (impression.length > 0) {
-    for (var _i5 = 0, _len5 = impression.length; _i5 < _len5; _i5++) {
-      var impressionUrl = _fw.FW.getNodeValue(impression[_i5], true);
-      if (impressionUrl !== null) {
-        this.trackingTags.push({ event: 'impression', url: impressionUrl });
       }
     }
-  }
-  if (!this.isWrapper) {
-    if (adTitle.length > 0) {
-      this.adTitle = _fw.FW.getNodeValue(adTitle[0], false);
+    //check for VAST version 2, 3 or 4 (we support VAST 4 in the limit of what is supported in VAST 3)
+    var pattern = /^(2|3|4)\./i;
+    var version = vastDocument.getAttribute('version');
+    if (!pattern.test(version)) {
+      // in case this is a wrapper we need to ping for errors on originating tags
+      _ping.PING.error.call(this, 102);
+      _vastErrors.VASTERRORS.process.call(this, 102);
+      return;
     }
-    if (adDescription.length > 0) {
-      this.adDescription = _fw.FW.getNodeValue(adDescription[0], false);
+    // if empty VAST return
+    var ad = vastDocument.getElementsByTagName('Ad');
+    if (ad.length === 0) {
+      _ping.PING.error.call(this, 303);
+      _vastErrors.VASTERRORS.process.call(this, 303);
+      return;
     }
-  }
-  // in case no Creative with Wrapper we make our redirect call here
-  if (this.isWrapper && !creative) {
-    _execRedirect.call(this);
-    return;
-  }
-  _parseCreatives.call(this, creative);
-};
+    _filterAdPod.call(this, ad);
+  };
 
-var _onXmlAvailable = function (xml) {
-  // if VMAP we abort
-  var vmap = xml.getElementsByTagName('vmap:VMAP');
-  if (vmap.length > 0) {
-    _vastErrors.VASTERRORS.process.call(this, 200);
-    return;
-  }
-  // check for VAST node
-  var vastTag = xml.getElementsByTagName('VAST');
-  if (vastTag.length === 0) {
-    // in case this is a wrapper we need to ping for errors on originating tags
-    _ping.PING.error.call(this, 100);
-    _vastErrors.VASTERRORS.process.call(this, 100);
-    return;
-  }
-  var vastDocument = vastTag[0];
-  // VAST/Error node
-  var errorNode = vastDocument.getElementsByTagName('Error');
-  if (errorNode.length > 0) {
-    for (var _i6 = 0, _len6 = errorNode.length; _i6 < _len6; _i6++) {
-      // we need to make sure those Error tags are directly beneath VAST tag. See 2.2.5.1 VAST 3 spec
-      if (errorNode[_i6].parentNode === vastDocument) {
-        var errorUrl = _fw.FW.getNodeValue(errorNode[_i6], true);
-        if (errorUrl !== null) {
-          // we use an array here for vastErrorTags but we only have item in it
-          // this is to be able to use PING.error for both vastErrorTags and inlineOrWrapperErrorTags
-          this.vastErrorTags.push({ event: 'error', url: errorUrl });
-        }
-      }
+  var _makeAjaxRequest = function (vastUrl) {
+    var _this = this;
+
+    // we check for required VAST URL and API here
+    // as we need to have this.currentContentSrc available for iOS
+    if (typeof vastUrl !== 'string' || vastUrl === '') {
+      _vastErrors.VASTERRORS.process.call(this, 1001);
+      return;
     }
-  }
-  //check for VAST version 2, 3 or 4 (we support VAST 4 in the limit of what is supported in VAST 3)
-  var pattern = /^(2|3|4)\./i;
-  var version = vastDocument.getAttribute('version');
-  if (!pattern.test(version)) {
-    // in case this is a wrapper we need to ping for errors on originating tags
-    _ping.PING.error.call(this, 102);
-    _vastErrors.VASTERRORS.process.call(this, 102);
-    return;
-  }
-  // if empty VAST return
-  var ad = vastDocument.getElementsByTagName('Ad');
-  if (ad.length === 0) {
-    _ping.PING.error.call(this, 303);
-    _vastErrors.VASTERRORS.process.call(this, 303);
-    return;
-  }
-  _filterAdPod.call(this, ad);
-};
-
-var _makeAjaxRequest = function (vastUrl) {
-  var _this = this;
-
-  // we check for required VAST URL and API here
-  // as we need to have this.currentContentSrc available for iOS
-  if (typeof vastUrl !== 'string' || vastUrl === '') {
-    _vastErrors.VASTERRORS.process.call(this, 1001);
-    return;
-  }
-  if (!_fw.FW.hasDOMParser()) {
-    _vastErrors.VASTERRORS.process.call(this, 1002);
-    return;
-  }
-  // if we already have an ad on stage - we need to destroy it first 
-  if (this.adOnStage) {
-    _api.API.stopAds.call(this);
-  }
-  _api.API.createEvent.call(this, 'adtagstartloading');
-  this.isWrapper = false;
-  this.vastAdTagURI = null;
-  this.adTagUrl = vastUrl;
-  if (DEBUG) {
-    _fw.FW.log('RMP-VAST: try to load VAST tag at ' + this.adTagUrl);
-  }
-  _fw.FW.ajax(this.adTagUrl, this.params.ajaxTimeout, true, this.params.ajaxWithCredentials).then(function (data) {
+    if (!_fw.FW.hasDOMParser()) {
+      _vastErrors.VASTERRORS.process.call(this, 1002);
+      return;
+    }
+    // if we already have an ad on stage - we need to destroy it first 
+    if (this.adOnStage) {
+      _api.API.stopAds.call(this);
+    }
+    _api.API.createEvent.call(this, 'adtagstartloading');
+    this.isWrapper = false;
+    this.vastAdTagURI = null;
+    this.adTagUrl = vastUrl;
     if (DEBUG) {
-      _fw.FW.log('RMP-VAST: VAST loaded from ' + _this.adTagUrl);
+      _fw.FW.log('RMP-VAST: try to load VAST tag at ' + this.adTagUrl);
     }
-    _api.API.createEvent.call(_this, 'adtagloaded');
-    var xml = void 0;
-    try {
-      // Parse XML
-      var parser = new DOMParser();
-      xml = parser.parseFromString(data, 'text/xml');
+    _fw.FW.ajax(this.adTagUrl, this.params.ajaxTimeout, true, this.params.ajaxWithCredentials).then(function (data) {
       if (DEBUG) {
-        _fw.FW.log('RMP-VAST: parsed XML document follows');
-        _fw.FW.log(xml);
+        _fw.FW.log('RMP-VAST: VAST loaded from ' + _this.adTagUrl);
       }
-    } catch (e) {
+      _api.API.createEvent.call(_this, 'adtagloaded');
+      var xml = void 0;
+      try {
+        // Parse XML
+        var parser = new DOMParser();
+        xml = parser.parseFromString(data, 'text/xml');
+        if (DEBUG) {
+          _fw.FW.log('RMP-VAST: parsed XML document follows');
+          _fw.FW.log(xml);
+        }
+      } catch (e) {
+        _fw.FW.trace(e);
+        // in case this is a wrapper we need to ping for errors on originating tags
+        _ping.PING.error.call(_this, 100);
+        _vastErrors.VASTERRORS.process.call(_this, 100);
+        return;
+      }
+      _onXmlAvailable.call(_this, xml);
+    }).catch(function (e) {
       _fw.FW.trace(e);
       // in case this is a wrapper we need to ping for errors on originating tags
-      _ping.PING.error.call(_this, 100);
-      _vastErrors.VASTERRORS.process.call(_this, 100);
+      _ping.PING.error.call(_this, 1000);
+      _vastErrors.VASTERRORS.process.call(_this, 1000);
+    });
+  };
+
+  var _onDestroyLoadAds = function (vastUrl) {
+    this.container.removeEventListener('addestroyed', this.onDestroyLoadAds);
+    this.loadAds(vastUrl);
+  };
+
+  RmpVast.prototype.loadAds = function (vastUrl) {
+    if (DEBUG) {
+      _fw.FW.log('RMP-VAST: loadAds starts');
+    }
+    // if player is not initialized - this must be done now
+    if (!this.rmpVastInitialized) {
+      this.initialize();
+    }
+    // if an ad is already on stage we need to clear it first before we can accept another ad request
+    if (this.getAdOnStage()) {
+      this.onDestroyLoadAds = _onDestroyLoadAds.bind(this, vastUrl);
+      this.container.addEventListener('addestroyed', this.onDestroyLoadAds);
+      this.stopAds();
       return;
     }
-    _onXmlAvailable.call(_this, xml);
-  }).catch(function (e) {
-    _fw.FW.trace(e);
-    // in case this is a wrapper we need to ping for errors on originating tags
-    _ping.PING.error.call(_this, 1000);
-    _vastErrors.VASTERRORS.process.call(_this, 1000);
-  });
-};
-
-var _onDestroyLoadAds = function (vastUrl) {
-  this.container.removeEventListener('addestroyed', this.onDestroyLoadAds);
-  this.loadAds(vastUrl);
-};
-
-RmpVast.prototype.loadAds = function (vastUrl) {
-  if (DEBUG) {
-    _fw.FW.log('RMP-VAST: loadAds starts');
-  }
-  // if player is not initialized - this must be done now
-  if (!this.rmpVastInitialized) {
-    this.initialize();
-  }
-  // if an ad is already on stage we need to clear it first before we can accept another ad request
-  if (this.getAdOnStage()) {
-    this.onDestroyLoadAds = _onDestroyLoadAds.bind(this, vastUrl);
-    this.container.addEventListener('addestroyed', this.onDestroyLoadAds);
-    this.stopAds();
-    return;
-  }
-  // if we try to load ads when currentTime < 200 ms - be it linear or non-linear - we pause CONTENTPLAYER
-  // CONTENTPLAYER (non-linear) or VASTPLAYER (linear) will resume later when VAST has finished loading/parsing
-  // this is to avoid bad user experience where content may start for a few ms before ad starts
-  var contentCurrentTime = _contentPlayer.CONTENTPLAYER.getCurrentTime.call(this);
-  // for useContentPlayerForAds we need to know early what is the content src
-  // so that we can resume content when ad finishes or on aderror
-  if (this.useContentPlayerForAds) {
-    this.currentContentSrc = this.contentPlayer.src;
-    this.currentContentCurrentTime = contentCurrentTime;
-    if (DEBUG) {
-      _fw.FW.log('RMP-VAST: currentContentCurrentTime ' + contentCurrentTime);
+    // if we try to load ads when currentTime < 200 ms - be it linear or non-linear - we pause CONTENTPLAYER
+    // CONTENTPLAYER (non-linear) or VASTPLAYER (linear) will resume later when VAST has finished loading/parsing
+    // this is to avoid bad user experience where content may start for a few ms before ad starts
+    var contentCurrentTime = _contentPlayer.CONTENTPLAYER.getCurrentTime.call(this);
+    // for useContentPlayerForAds we need to know early what is the content src
+    // so that we can resume content when ad finishes or on aderror
+    if (this.useContentPlayerForAds) {
+      this.currentContentSrc = this.contentPlayer.src;
+      this.currentContentCurrentTime = contentCurrentTime;
+      if (DEBUG) {
+        _fw.FW.log('RMP-VAST: currentContentCurrentTime ' + contentCurrentTime);
+      }
+      // on iOS we need to prevent seeking when linear ad is on stage
+      _contentPlayer.CONTENTPLAYER.preventSeekingForCustomPlayback.call(this);
     }
-    // on iOS we need to prevent seeking when linear ad is on stage
-    _contentPlayer.CONTENTPLAYER.preventSeekingForCustomPlayback.call(this);
-  }
-  _makeAjaxRequest.call(this, vastUrl);
-};
+    _makeAjaxRequest.call(this, vastUrl);
+  };
+})();
 
 },{"./api/api":1,"./creatives/icons":2,"./creatives/linear":3,"./creatives/non-linear":4,"./fw/env":6,"./fw/fw":7,"./players/content-player":9,"./tracking/ping":12,"./tracking/tracking-events":13,"./utils/reset":14,"./utils/vast-errors":15,"core-js/es6/promise":16,"core-js/fn/array/filter":17,"core-js/fn/array/for-each":18,"core-js/fn/array/index-of":19,"core-js/fn/array/is-array":20,"core-js/fn/array/sort":21,"core-js/fn/function/bind":22,"core-js/fn/number/is-finite":23,"core-js/fn/object/keys":24,"core-js/fn/parse-float":25,"core-js/fn/parse-int":26,"core-js/fn/string/trim":27}],9:[function(require,module,exports){
 'use strict';
@@ -2693,14 +2708,14 @@ CONTENTPLAYER.getVolume = function () {
   if (this.contentPlayer) {
     return this.contentPlayer.volume;
   }
-  return null;
+  return -1;
 };
 
 CONTENTPLAYER.getMute = function () {
   if (this.contentPlayer) {
     return this.contentPlayer.muted;
   }
-  return null;
+  return false;
 };
 
 CONTENTPLAYER.setMute = function (muted) {
@@ -3013,7 +3028,7 @@ VASTPLAYER.getVolume = function () {
   if (this.vastPlayer) {
     return this.vastPlayer.volume;
   }
-  return null;
+  return -1;
 };
 
 VASTPLAYER.setMute = function (muted) {
@@ -3032,7 +3047,7 @@ VASTPLAYER.getMute = function () {
   if (this.vastPlayer) {
     return this.vastPlayer.muted;
   }
-  return null;
+  return false;
 };
 
 VASTPLAYER.play = function (firstVastPlayerPlayRequest) {
@@ -3118,14 +3133,14 @@ VPAID.getAdWidth = function () {
   if (this.vpaidCreative && typeof this.vpaidCreative.getAdWidth === 'function') {
     return this.vpaidCreative.getAdWidth();
   }
-  return null;
+  return -1;
 };
 
 VPAID.getAdHeight = function () {
   if (this.vpaidCreative && typeof this.vpaidCreative.getAdHeight === 'function') {
     return this.vpaidCreative.getAdHeight();
   }
-  return null;
+  return -1;
 };
 
 VPAID.getAdDuration = function () {
@@ -3150,7 +3165,7 @@ VPAID.getCreativeUrl = function () {
   if (this.vpaidCreativeUrl) {
     return this.vpaidCreativeUrl;
   }
-  return null;
+  return '';
 };
 
 VPAID.getVpaidCreative = function () {
@@ -3172,14 +3187,14 @@ VPAID.getAdExpanded = function () {
   if (this.vpaidCreative && typeof this.vpaidCreative.getAdExpanded === 'function') {
     return this.vpaidCreative.getAdExpanded();
   }
-  return null;
+  return false;
 };
 
 VPAID.getAdSkippableState = function () {
   if (this.vpaidCreative && typeof this.vpaidCreative.getAdSkippableState === 'function') {
     return this.vpaidCreative.getAdSkippableState();
   }
-  return null;
+  return false;
 };
 
 VPAID.getAdIcons = function () {
@@ -3193,7 +3208,7 @@ VPAID.getAdCompanions = function () {
   if (this.vpaidCreative && typeof this.vpaidCreative.getAdCompanions === 'function') {
     return this.vpaidCreative.getAdCompanions();
   }
-  return null;
+  return '';
 };
 
 // VPAID creative events
@@ -4221,13 +4236,13 @@ RESET.internalVariables = function () {
   this.onNonLinearClickThrough = null;
   this.onContextMenu = null;
   // init internal variables
-  this.adTagUrl = null;
+  this.adTagUrl = '';
   this.vastPlayer = null;
   this.vpaidSlot = null;
   this.trackingTags = [];
   this.vastErrorTags = [];
   this.inlineOrWrapperErrorTags = [];
-  this.adMediaUrl = null;
+  this.adMediaUrl = '';
   this.adMediaHeight = null;
   this.adMediaWidth = null;
   this.vastPlayerMuted = false;
@@ -4239,14 +4254,14 @@ RESET.internalVariables = function () {
   this.vastPlayerPaused = false;
   this.vastErrorCode = -1;
   this.adErrorType = '';
-  this.vastErrorMessage = 'Error getting VAST error';
-  this.adSystem = null;
-  this.adIsLinear = null;
-  this.adContentType = null;
-  this.adTitle = null;
-  this.adDescription = null;
+  this.vastErrorMessage = '';
+  this.adSystem = '';
+  this.adIsLinear = false;
+  this.adContentType = '';
+  this.adTitle = '';
+  this.adDescription = '';
   this.adOnStage = false;
-  this.clickThroughUrl = null;
+  this.clickThroughUrl = '';
   this.isWrapper = false;
   this.vastAdTagURI = null;
   this.redirectsFollowed = 0;
@@ -4274,6 +4289,7 @@ RESET.internalVariables = function () {
   this.onClickCloseNonLinear = null;
   this.nonLinearCreativeHeight = 0;
   this.nonLinearCreativeWidth = 0;
+  this.nonLinearContentType = '';
   this.nonLinearMinSuggestedDuration = 0;
   // VPAID
   this.isVPAID = false;
