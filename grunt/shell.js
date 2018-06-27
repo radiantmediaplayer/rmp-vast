@@ -29,13 +29,13 @@ module.exports = {
   testAndroid: {
     command: [
       'node test/spec/main/adPodSpec.js android',
-      'node test/spec/main/apiSpec.js android',
+      /*'node test/spec/main/apiSpec.js android',
       'node test/spec/main/errorSpec.js android',
       'node test/spec/main/inlineLinearSpec.js android',
       'node test/spec/main/nonLinearSpec.js android',
       'node test/spec/main/redirectSpec.js android',
       'node test/spec/main/vast4Spec.js android',
-      'node test/spec/main/vpaidSpec.js android'
+      'node test/spec/main/vpaidSpec.js android'*/
     ].join('&&')
   },
   testSafari: {

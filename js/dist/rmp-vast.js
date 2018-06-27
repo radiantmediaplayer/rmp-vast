@@ -1,6 +1,6 @@
 /**
  * @license Copyright (c) 2017-2018 Radiant Media Player | https://www.radiantmediaplayer.com
- * rmp-vast 1.4.2
+ * rmp-vast 1.4.3
  * GitHub: https://github.com/radiantmediaplayer/rmp-vast
  * MIT License: https://github.com/radiantmediaplayer/rmp-vast/blob/master/LICENSE
  */
@@ -2133,6 +2133,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
     this.rmpVastInitialized = false;
     this.useContentPlayerForAds = false;
     this.contentPlayerCompleted = false;
+    this.currentContentSrc = '';
     this.currentContentCurrentTime = -1;
     this.needsSeekAdjust = false;
     this.seekAdjustAttached = false;
@@ -2665,9 +2666,12 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
     // so that we can resume content when ad finishes or on aderror
     if (this.useContentPlayerForAds) {
       this.currentContentSrc = this.contentPlayer.src;
+      if (DEBUG) {
+        _fw.FW.log('currentContentSrc is ' + this.currentContentSrc);
+      }
       this.currentContentCurrentTime = contentCurrentTime;
       if (DEBUG) {
-        _fw.FW.log('currentContentCurrentTime ' + contentCurrentTime);
+        _fw.FW.log('currentContentCurrentTime is ' + this.currentContentCurrentTime);
       }
       // on iOS we need to prevent seeking when linear ad is on stage
       _contentPlayer.CONTENTPLAYER.preventSeekingForCustomPlayback.call(this);
@@ -4269,7 +4273,6 @@ RESET.internalVariables = function () {
   this.redirectsFollowed = 0;
   this.icons = [];
   this.clickUIOnMobile = null;
-  this.currentContentSrc = null;
   this.customPlaybackCurrentTime = 0;
   this.antiSeekLogicInterval = null;
   this.creativeLoadTimeoutCallback = null;

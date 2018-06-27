@@ -26,7 +26,7 @@ describe("Test for AdPodThreeWrappersWithErrors", function () {
     var _incrementAndLog = function (event) {
       validSteps++;
       if (event && event.type) {
-        fw.log('RMP-VAST-TEST: ' + event.type);
+        fw.log(event.type);
       }
     };
 
@@ -48,13 +48,18 @@ describe("Test for AdPodThreeWrappersWithErrors", function () {
 
     container.addEventListener('adpodcompleted', function (e) {
       _incrementAndLog(e);
-      if (validSteps === 12) {
-        expect(validSteps).toBe(12);
-        title.textContent = 'Test completed';
-        setTimeout(function () {
-          done();
-        }, 400);
-      }
+      var timeupdateCount = 0;
+      video.addEventListener('timeupdate', function (e) {
+        timeupdateCount++;
+        if (timeupdateCount === 6) {
+          _incrementAndLog(e);
+          if (validSteps === 13) {
+            expect(validSteps).toBe(13);
+            title.textContent = 'Test completed';
+            done();
+          }
+        }
+      });
     });
 
     rmpVast.loadAds(ADTAG);

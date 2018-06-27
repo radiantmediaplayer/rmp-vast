@@ -27,7 +27,7 @@ describe("Test for Smart Ad Server ad", function () {
     var _incrementAndLog = function (event) {
       validSteps++;
       if (event && event.type) {
-        fw.log('RMP-VAST-TEST: ' + event.type);
+        fw.log(event.type);
       }
     };
 

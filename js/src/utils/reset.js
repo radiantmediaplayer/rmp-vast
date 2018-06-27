@@ -57,7 +57,6 @@ RESET.internalVariables = function () {
   this.redirectsFollowed = 0;
   this.icons = [];
   this.clickUIOnMobile = null;
-  this.currentContentSrc = null;
   this.customPlaybackCurrentTime = 0;
   this.antiSeekLogicInterval = null;
   this.creativeLoadTimeoutCallback = null;

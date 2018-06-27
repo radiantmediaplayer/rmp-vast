@@ -67,6 +67,7 @@ import { ICONS } from './creatives/icons';
     this.rmpVastInitialized = false;
     this.useContentPlayerForAds = false;
     this.contentPlayerCompleted = false;
+    this.currentContentSrc = '';
     this.currentContentCurrentTime = -1;
     this.needsSeekAdjust = false;
     this.seekAdjustAttached = false;
@@ -598,9 +599,12 @@ import { ICONS } from './creatives/icons';
     // so that we can resume content when ad finishes or on aderror
     if (this.useContentPlayerForAds) {
       this.currentContentSrc = this.contentPlayer.src;
+      if (DEBUG) {
+        FW.log('currentContentSrc is ' + this.currentContentSrc);
+      }
       this.currentContentCurrentTime = contentCurrentTime;
       if (DEBUG) {
-        FW.log('currentContentCurrentTime ' + contentCurrentTime);
+        FW.log('currentContentCurrentTime is ' + this.currentContentCurrentTime);
       }
       // on iOS we need to prevent seeking when linear ad is on stage
       CONTENTPLAYER.preventSeekingForCustomPlayback.call(this);

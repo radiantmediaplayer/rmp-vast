@@ -28,7 +28,7 @@ describe("Test for AdPodWithStandaloneSpec", function () {
     var _incrementAndLog = function (event) {
       validSteps++;
       if (event && event.type) {
-        fw.log('RMP-VAST-TEST: ' + event.type);
+        fw.log(event.type);
       }
     };
 
@@ -42,13 +42,18 @@ describe("Test for AdPodWithStandaloneSpec", function () {
 
     container.addEventListener('adpodcompleted', function (e) {
       _incrementAndLog(e);
-      if (validSteps === 5) {
-        expect(validSteps).toBe(5);
-        title.textContent = 'Test completed';
-        setTimeout(function () {
-          done();
-        }, 400);
-      }
+      var timeupdateCount = 0;
+      video.addEventListener('timeupdate', function (e) {
+        timeupdateCount++;
+        if (timeupdateCount === 6) {
+          _incrementAndLog(e);
+          if (validSteps === 6) {
+            expect(validSteps).toBe(6);
+            title.textContent = 'Test completed';
+            done();
+          }
+        }
+      });
     });
 
     rmpVast.loadAds(ADTAG);
