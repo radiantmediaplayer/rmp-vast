@@ -15,7 +15,7 @@ var _onNonLinearLoadError = function () {
 
 var _onNonLinearLoadSuccess = function () {
   if (DEBUG) {
-    FW.log('RMP-VAST: success loading non-linear creative at ' + this.adMediaUrl);
+    FW.log('success loading non-linear creative at ' + this.adMediaUrl);
   }
   this.adOnStage = true;
   API.createEvent.call(this, 'adloaded');
@@ -72,7 +72,7 @@ var _appendCloseButton = function () {
 
 NONLINEAR.update = function () {
   if (DEBUG) {
-    FW.log('RMP-VAST: appending non-linear creative to .rmp-ad-container element');
+    FW.log('appending non-linear creative to .rmp-ad-container element');
   }
 
   // non-linear ad container
@@ -121,7 +121,7 @@ NONLINEAR.update = function () {
 
 NONLINEAR.parse = function (nonLinearAds) {
   if (DEBUG) {
-    FW.log('RMP-VAST: start parsing NonLinearAds');
+    FW.log('start parsing NonLinearAds');
   }
   this.adIsLinear = false;
 

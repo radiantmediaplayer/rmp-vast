@@ -4,7 +4,7 @@ const RESET = {};
 
 RESET.internalVariables = function () {
   if (DEBUG) {
-    FW.log('RMP-VAST: RESET internalVariables');
+    FW.log('reset - internalVariables');
   }
   // init internal methods 
   this.onLoadedmetadataPlay = null;
@@ -112,7 +112,7 @@ RESET.internalVariables = function () {
 
 RESET.unwireVastPlayerEvents = function () {
   if (DEBUG) {
-    FW.log('RMP-VAST: RESET unwireVastPlayerEvents');
+    FW.log('reset - unwireVastPlayerEvents');
   }
   if (this.nonLinearContainer) {
     this.nonLinearImg.removeEventListener('load', this.onNonLinearLoadSuccess);

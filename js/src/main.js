@@ -33,21 +33,27 @@ import { ICONS } from './creatives/icons';
 
   'use strict';
 
+  window.DEBUG = true;
+
   if (typeof window === 'undefined' || typeof window.document === 'undefined') {
-    FW.log('RMP-VAST: cannot use rmp-vast in this environment - missing window or document object');
-    return;
-  }
-  
-  if (typeof window.RmpVast !== 'undefined') {
-    FW.log('RMP-VAST: RmpVast constructor already exists - no need to load it twice - exiting');
+    if (DEBUG) {
+      FW.log('cannot use rmp-vast in this environment - missing window or document object');
+    }
     return;
   }
 
-  window.DEBUG = true;
+  if (typeof window.RmpVast !== 'undefined') {
+    if (DEBUG) {
+      FW.log('RmpVast constructor already exists - no need to load it twice - exiting');
+    }
+    return;
+  }
 
   window.RmpVast = function (id, params) {
     if (typeof id !== 'string' || id === '') {
-      FW.log('RMP-VAST: invalid id to create new instance - exit');
+      if (DEBUG) {
+        FW.log('invalid id to create new instance - exit');
+      }
       return;
     }
     this.id = id;
@@ -83,7 +89,7 @@ import { ICONS } from './creatives/icons';
       // as fullscreen on iOS is handled by the default OS player
       this.useContentPlayerForAds = true;
       if (DEBUG) {
-        FW.log('RMP-VAST: vast player will be content player');
+        FW.log('vast player will be content player');
       }
     }
     // filter input params
@@ -99,7 +105,7 @@ import { ICONS } from './creatives/icons';
     let _onFullscreenchange = function (event) {
       if (event && event.type) {
         if (DEBUG) {
-          FW.log('RMP-VAST: event is ' + event.type);
+          FW.log('event is ' + event.type);
         }
         if (event.type === 'fullscreenchange') {
           if (isInFullscreen) {
@@ -148,12 +154,12 @@ import { ICONS } from './creatives/icons';
 
   var _execRedirect = function () {
     if (DEBUG) {
-      FW.log('RMP-VAST: adfollowingredirect');
+      FW.log('adfollowingredirect');
     }
     API.createEvent.call(this, 'adfollowingredirect');
     let redirectUrl = FW.getNodeValue(this.vastAdTagURI[0], true);
     if (DEBUG) {
-      FW.log('RMP-VAST: redirect URL is ' + redirectUrl);
+      FW.log('redirect URL is ' + redirectUrl);
     }
     if (redirectUrl !== null) {
       if (this.params.maxNumRedirects > this.redirectsFollowed) {
@@ -176,7 +182,7 @@ import { ICONS } from './creatives/icons';
 
   var _parseCreatives = function (creative) {
     if (DEBUG) {
-      FW.log('RMP-VAST: _parseCreatives');
+      FW.log('_parseCreatives');
       FW.log(creative);
     }
     for (let i = 0, len = creative.length; i < len; i++) {
@@ -215,7 +221,7 @@ import { ICONS } from './creatives/icons';
         if (!this.isWrapper && this.params.skipMessage !== '' && skipoffset !== null && skipoffset !== '' &&
           FW.isValidOffset(skipoffset)) {
           if (DEBUG) {
-            FW.log('RMP-VAST: skippable ad detected with offset ' + skipoffset);
+            FW.log('skippable ad detected with offset ' + skipoffset);
           }
           this.isSkippableAd = true;
           this.skipoffset = skipoffset;
@@ -275,21 +281,21 @@ import { ICONS } from './creatives/icons';
 
   var _filterAdPod = function (ad) {
     if (DEBUG) {
-      FW.log('RMP-VAST: _filterAdPod');
+      FW.log('_filterAdPod');
     }
     // filter Ad and AdPod
     let retainedAd;
     // a pod already exists and is being processed - the current Ad item is InLine
     if (this.adPod.length > 0 && !this.adPodItemWrapper) {
       if (DEBUG) {
-        FW.log('RMP-VAST: loading next ad in pod');
+        FW.log('loading next ad in pod');
       }
       retainedAd = ad[0];
       this.adPodCurrentIndex++;
       this.adPod.shift();
     } else if (this.adPod.length > 0 && this.adPodItemWrapper) {
       if (DEBUG) {
-        FW.log('RMP-VAST: running ad pod Ad is a wrapper');
+        FW.log('running ad pod Ad is a wrapper');
       }
       // we are in a pod but the running Ad item is a wrapper
       this.adPodItemWrapper = false;
@@ -318,7 +324,7 @@ import { ICONS } from './creatives/icons';
         retainedAd = standaloneAds[0];
       } else if (this.adPod.length > 0) {
         if (DEBUG) {
-          FW.log('RMP-VAST: ad pod detected');
+          FW.log('ad pod detected');
         }
         this.runningAdPod = true;
         // clone array for purpose of API exposure
@@ -341,11 +347,11 @@ import { ICONS } from './creatives/icons';
         this.adPod.shift();
         let __onAdDestroyLoadNextAdInPod = function () {
           if (DEBUG) {
-            FW.log('RMP-VAST: addestroyed - checking for ads left in pod');
+            FW.log('addestroyed - checking for ads left in pod');
             if (this.adPod.length > 0) {
               FW.log(this.adPod);
             } else {
-              FW.log('RMP-VAST: no ad left in pod');
+              FW.log('no ad left in pod');
             }
           }
           this.adPodItemWrapper = false;
@@ -532,11 +538,11 @@ import { ICONS } from './creatives/icons';
     this.vastAdTagURI = null;
     this.adTagUrl = vastUrl;
     if (DEBUG) {
-      FW.log('RMP-VAST: try to load VAST tag at ' + this.adTagUrl);
+      FW.log('try to load VAST tag at ' + this.adTagUrl);
     }
     FW.ajax(this.adTagUrl, this.params.ajaxTimeout, true, this.params.ajaxWithCredentials).then((data) => {
       if (DEBUG) {
-        FW.log('RMP-VAST: VAST loaded from ' + this.adTagUrl);
+        FW.log('VAST loaded from ' + this.adTagUrl);
       }
       API.createEvent.call(this, 'adtagloaded');
       let xml;
@@ -545,7 +551,7 @@ import { ICONS } from './creatives/icons';
         let parser = new DOMParser();
         xml = parser.parseFromString(data, 'text/xml');
         if (DEBUG) {
-          FW.log('RMP-VAST: parsed XML document follows');
+          FW.log('parsed XML document follows');
           FW.log(xml);
         }
       } catch (e) {
@@ -571,7 +577,7 @@ import { ICONS } from './creatives/icons';
 
   RmpVast.prototype.loadAds = function (vastUrl) {
     if (DEBUG) {
-      FW.log('RMP-VAST: loadAds starts');
+      FW.log('loadAds starts');
     }
     // if player is not initialized - this must be done now
     if (!this.rmpVastInitialized) {
@@ -594,7 +600,7 @@ import { ICONS } from './creatives/icons';
       this.currentContentSrc = this.contentPlayer.src;
       this.currentContentCurrentTime = contentCurrentTime;
       if (DEBUG) {
-        FW.log('RMP-VAST: currentContentCurrentTime ' + contentCurrentTime);
+        FW.log('currentContentCurrentTime ' + contentCurrentTime);
       }
       // on iOS we need to prevent seeking when linear ad is on stage
       CONTENTPLAYER.preventSeekingForCustomPlayback.call(this);

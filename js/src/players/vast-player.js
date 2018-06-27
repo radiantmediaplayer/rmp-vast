@@ -14,7 +14,7 @@ const VASTPLAYER = {};
 
 var _destroyVastPlayer = function () {
   if (DEBUG) {
-    FW.log('RMP-VAST: start destroying vast player');
+    FW.log('start destroying vast player');
   }
   // destroy icons if any 
   if (this.icons.length > 0) {
@@ -74,7 +74,7 @@ var _destroyVastPlayer = function () {
         }
       }
       if (DEBUG) {
-        FW.log('RMP-VAST: recovering content with src ' + this.currentContentSrc +
+        FW.log('recovering content with src ' + this.currentContentSrc +
           ' - at time: ' + this.currentContentCurrentTime);
       }
       this.contentPlayer.src = this.currentContentSrc;
@@ -89,7 +89,7 @@ var _destroyVastPlayer = function () {
         this.vastPlayer.load();
         FW.hide(this.vastPlayer);
         if (DEBUG) {
-          FW.log('RMP-VAST: vastPlayer flushed');
+          FW.log('vastPlayer flushed');
         }
       }
       if (this.nonLinearContainer) {
@@ -109,7 +109,7 @@ var _destroyVastPlayer = function () {
 
 VASTPLAYER.init = function () {
   if (DEBUG) {
-    FW.log('RMP-VAST: init called');
+    FW.log('init called');
   }
   this.adContainer = document.createElement('div');
   this.adContainer.className = 'rmp-ad-container';
@@ -283,7 +283,7 @@ VASTPLAYER.getCurrentTime = function () {
 
 VASTPLAYER.resumeContent = function () {
   if (DEBUG) {
-    FW.log('RMP-VAST: resumeContent');
+    FW.log('resumeContent');
   }
   _destroyVastPlayer.call(this);
   // if this.contentPlayerCompleted = true - we are in a post-roll situation

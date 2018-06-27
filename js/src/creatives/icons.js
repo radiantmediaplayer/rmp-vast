@@ -5,7 +5,7 @@ const ICONS = {};
 
 ICONS.destroy = function () {
   if (DEBUG) {
-    FW.log('RMP-VAST: start destroying icons');
+    FW.log('start destroying icons');
   }
   let icons = this.adContainer.querySelectorAll('.rmp-ad-container-icons');
   if (icons.length > 0) {
@@ -34,7 +34,7 @@ var _programAlreadyPresent = function (program) {
 
 ICONS.parse = function (icons) {
   if (DEBUG) {
-    FW.log('RMP-VAST: start parsing for icons');
+    FW.log('start parsing for icons');
   }
   let icon = icons[0].getElementsByTagName('Icon');
   for (let i = 0, len = icon.length; i < len; i++) {
@@ -116,14 +116,14 @@ ICONS.parse = function (icons) {
     this.icons.push(iconData);
   }
   if (DEBUG) {
-    FW.log('RMP-VAST: validated parsed icons follows');
+    FW.log('validated parsed icons follows');
     FW.log(this.icons);
   }
 };
 
 var _onIconClickThrough = function (index, event) {
   if (DEBUG) {
-    FW.log('RMP-VAST: click on icon with index ' + index);
+    FW.log('click on icon with index ' + index);
   }
   if (event) {
     event.stopPropagation();
@@ -145,14 +145,14 @@ var _onIconClickThrough = function (index, event) {
 
 var _onIconLoadPingTracking = function (index) {
   if (DEBUG) {
-    FW.log('RMP-VAST: IconViewTracking for icon at index ' + index);
+    FW.log('IconViewTracking for icon at index ' + index);
   }
   PING.tracking.call(this, this.icons[index].iconViewTrackingUrl, null);
 };
 
 var _onPlayingAppendIcons = function () {
   if (DEBUG) {
-    FW.log('RMP-VAST: playing states has been reached - append icons');
+    FW.log('playing states has been reached - append icons');
   }
   this.vastPlayer.removeEventListener('playing', this.onPlayingAppendIcons);
   for (let i = 0, len = this.icons.length; i < len; i++) {

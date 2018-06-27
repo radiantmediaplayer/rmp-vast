@@ -14,7 +14,7 @@ var _pingTrackers = function (trackers) {
 var _onEventPingTracking = function (event) {
   if (event && event.type) {
     if (DEBUG) {
-      FW.log('RMP-VAST: ping tracking for ' + event.type + ' VAST event');
+      FW.log('ping tracking for ' + event.type + ' VAST event');
     }
     // filter trackers - may return multiple urls for same event as allowed by VAST spec
     let trackers = this.trackingTags.filter((value) => {
@@ -120,7 +120,7 @@ var _onEnded = function () {
 
 TRACKINGEVENTS.wire = function () {
   if (DEBUG) {
-    FW.log('RMP-VAST: wire tracking events');
+    FW.log('wire tracking events');
   }
 
   // we filter through all HTML5 video events and create new VAST events 
@@ -147,7 +147,7 @@ TRACKINGEVENTS.wire = function () {
   // wire for VAST tracking events
   this.onEventPingTracking = _onEventPingTracking.bind(this);
   if (DEBUG) {
-    FW.log('RMP-VAST: detected VAST events follow');
+    FW.log('detected VAST events follow');
     FW.log(this.trackingTags);
   }
   for (let i = 0, len = this.trackingTags.length; i < len; i++) {

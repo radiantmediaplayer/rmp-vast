@@ -141,9 +141,9 @@ var _updateVastError = function (errorCode) {
     }
   }
   if (DEBUG) {
-    FW.log('RMP-VAST: VAST error code is ' + this.vastErrorCode);
-    FW.log('RMP-VAST: VAST error message is ' + this.vastErrorMessage);
-    FW.log('RMP-VAST: Ad error type is ' + this.adErrorType);
+    FW.log('VAST error code is ' + this.vastErrorCode);
+    FW.log('VAST error message is ' + this.vastErrorMessage);
+    FW.log('Ad error type is ' + this.adErrorType);
   }
 };
 

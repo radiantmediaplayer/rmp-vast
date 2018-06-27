@@ -128,7 +128,7 @@ FW.ajax = function (url, timeout, returnData, withCredentials) {
         }
       };
       xhr.ontimeout = function () {
-        FW.log('RMP: XMLHttpRequest timeout');
+        FW.log('XMLHttpRequest timeout');
         reject();
       };
       xhr.send(null);
@@ -139,17 +139,20 @@ FW.ajax = function (url, timeout, returnData, withCredentials) {
 };
 
 FW.log = function (data) {
-  if (data && window.console && typeof window.console.log === 'function') {
-    window.console.log(data);
+  if (window.console && window.console.log) {
+    if (typeof data === 'string') {
+      window.console.log('rmp-vast: ' + data);
+    } else {
+      window.console.log(data);
+    }
   }
 };
 
 FW.trace = function (data) {
-  if (data && window.console && typeof window.console.trace === 'function') {
+  if (data && window.console && window.console.trace) {
     window.console.trace(data);
   }
 };
-
 
 /* FW specific to rmp-vast */
 FW.hasDOMParser = function () {
@@ -329,23 +332,13 @@ FW.dispatchPingEvent = function (event) {
   }
 };
 
-FW.logPerformance = function (data) {
-  if (window.performance && typeof window.performance.now === 'function') {
-    let output = '';
-    if (data) {
-      output += data;
-    }
-    FW.log(output + ' - ' + Math.round(window.performance.now()) + ' ms');
-  }
-};
-
 FW.logVideoEvents = function (video, type) {
   let events = ['loadstart', 'durationchange',
     'loadedmetadata', 'loadeddata', 'canplay', 'canplaythrough'];
   events.forEach((value) => {
     video.addEventListener(value, (e) => {
       if (e && e.type) {
-        FW.log('RMP-VAST: ' + type + ' player event - ' + e.type);
+        FW.log(type + ' player event - ' + e.type);
       }
     });
   });
@@ -456,7 +449,7 @@ FW.playPromise = function (whichPlayer, firstPlayerPlayRequest) {
       playPromise.then(() => {
         if (firstPlayerPlayRequest) {
           if (DEBUG) {
-            FW.log('RMP-VAST: initial play promise on ' + whichPlayer + ' player has succeeded');
+            FW.log('initial play promise on ' + whichPlayer + ' player has succeeded');
           }
           API.createEvent.call(this, 'adinitialplayrequestsucceeded');
         }
@@ -464,7 +457,7 @@ FW.playPromise = function (whichPlayer, firstPlayerPlayRequest) {
         if (firstPlayerPlayRequest && whichPlayer === 'vast' && this.adIsLinear) {
           if (DEBUG) {
             FW.log(e);
-            FW.log('RMP-VAST: initial play promise on VAST player has been rejected for linear asset - likely autoplay is being blocked');
+            FW.log('initial play promise on VAST player has been rejected for linear asset - likely autoplay is being blocked');
           }
           PING.error.call(this, 400);
           VASTERRORS.process.call(this, 400);
@@ -472,13 +465,13 @@ FW.playPromise = function (whichPlayer, firstPlayerPlayRequest) {
         } else if (firstPlayerPlayRequest && whichPlayer === 'content' && !this.adIsLinear) {
           if (DEBUG) {
             FW.log(e);
-            FW.log('RMP-VAST: initial play promise on content player has been rejected for non-linear asset - likely autoplay is being blocked');
+            FW.log('initial play promise on content player has been rejected for non-linear asset - likely autoplay is being blocked');
           }
           API.createEvent.call(this, 'adinitialplayrequestfailed');
         } else {
           if (DEBUG) {
             FW.log(e);
-            FW.log('RMP-VAST: playPromise on ' + whichPlayer + ' player has been rejected');
+            FW.log('playPromise on ' + whichPlayer + ' player has been rejected');
           }
         }
       });

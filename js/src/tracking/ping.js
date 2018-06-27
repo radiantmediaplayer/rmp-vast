@@ -55,13 +55,13 @@ var _ping = function (url) {
   let img = new Image();
   img.addEventListener('load', () => {
     if (DEBUG) {
-      FW.log('RMP-VAST: VAST tracker successfully loaded ' + url);
+      FW.log('VAST tracker successfully loaded ' + url);
     }
     img = null;
   });
   img.addEventListener('error', () => {
     if (DEBUG) {
-      FW.log('RMP-VAST: VAST tracker failed loading ' + url);
+      FW.log('VAST tracker failed loading ' + url);
     }
     img = null;
   });
@@ -72,7 +72,7 @@ PING.tracking = function (url, assetUri) {
   let trackingUrl = _replaceMacros.call(this, url, null, assetUri);
   _ping(trackingUrl);
   if (DEBUG) {
-    FW.log('RMP-VAST: VAST tracking requesting ping at URL ' + trackingUrl);
+    FW.log('VAST tracking requesting ping at URL ' + trackingUrl);
   }
 };
 
@@ -89,7 +89,7 @@ PING.error = function (errorCode) {
       let errorUrl = _replaceMacros.call(this, errorTags[i].url, errorCode, null);
       _ping(errorUrl);
       if (DEBUG) {
-        FW.log('RMP-VAST: VAST tracking requesting error at URL ' + errorUrl);
+        FW.log('VAST tracking requesting error at URL ' + errorUrl);
       }
     }
   }

@@ -18,7 +18,7 @@ var dashPattern = /application\/dash\+xml/i;
 
 var _onDurationChange = function () {
   if (DEBUG) {
-    FW.log('RMP-VAST: durationchange for VAST player reached');
+    FW.log('durationchange for VAST player reached');
   }
   this.vastPlayer.removeEventListener('durationchange', this.onDurationChange);
   this.vastPlayerDuration = VASTPLAYER.getDuration.call(this);
@@ -27,13 +27,13 @@ var _onDurationChange = function () {
 
 var _onLoadedmetadataPlay = function () {
   if (DEBUG) {
-    FW.log('RMP-VAST: loadedmetadata for VAST player reached');
+    FW.log('loadedmetadata for VAST player reached');
   }
   this.vastPlayer.removeEventListener('loadedmetadata', this.onLoadedmetadataPlay);
   clearTimeout(this.creativeLoadTimeoutCallback);
   API.createEvent.call(this, 'adloaded');
   if (DEBUG) {
-    FW.log('RMP-VAST: pause content player');
+    FW.log('pause content player');
   }
   CONTENTPLAYER.pause.call(this);
   // show ad container holding vast player
@@ -42,7 +42,7 @@ var _onLoadedmetadataPlay = function () {
   this.adOnStage = true;
   // play VAST player
   if (DEBUG) {
-    FW.log('RMP-VAST: play VAST player');
+    FW.log('play VAST player');
   }
   VASTPLAYER.play.call(this, this.firstVastPlayerPlayRequest);
   if (this.firstVastPlayerPlayRequest) {
@@ -55,7 +55,7 @@ var _onClickThrough = function (event) {
     event.stopPropagation();
   }
   if (DEBUG) {
-    FW.log('RMP-VAST: onClickThrough');
+    FW.log('onClickThrough');
   }
   if (!ENV.isMobile) {
     FW.openWindow(this.clickThroughUrl);
@@ -90,9 +90,9 @@ var _onPlaybackError = function (event) {
         errorMessage = videoElement.error.message;
       }
       if (DEBUG) {
-        FW.log('RMP-VAST: error on video element with code ' + errorCode.toString() + ' and message ' + errorMessage);
+        FW.log('error on video element with code ' + errorCode.toString() + ' and message ' + errorMessage);
         if (_errorTypes[errorCode]) {
-          FW.log('RMP-VAST: error type is ' + _errorTypes[errorCode]);
+          FW.log('error type is ' + _errorTypes[errorCode]);
         }
       }
       // EDIA_ERR_SRC_NOT_SUPPORTED (numeric value 4)
@@ -125,7 +125,7 @@ var _onContextMenu = function (event) {
 
 LINEAR.update = function (url, type) {
   if (DEBUG) {
-    FW.log('RMP-VAST: update vast player for linear creative of type ' + type + ' located at ' + url);
+    FW.log('update vast player for linear creative of type ' + type + ' located at ' + url);
   }
   this.onDurationChange = _onDurationChange.bind(this);
   this.vastPlayer.addEventListener('durationchange', this.onDurationChange);
@@ -179,7 +179,9 @@ LINEAR.parse = function (linear) {
   if (DEBUG) {
     let duration = linear[0].getElementsByTagName('Duration');
     if (duration.length === 0) {
-      FW.log('RMP-VAST: missing Duration tag child of Linear tag - this is not a VAST 3 spec compliant adTag - continuing anyway (same as IMA)');
+      if (DEBUG) {
+        FW.log('missing Duration tag child of Linear tag - this is not a VAST 3 spec compliant adTag - continuing anyway (same as IMA)');
+      }
     }
   }
   let mediaFiles = linear[0].getElementsByTagName('MediaFiles');
@@ -236,7 +238,7 @@ LINEAR.parse = function (linear) {
     if (this.params.enableVpaid && apiFramework &&
       patternVPAID.test(apiFramework) && patternJavaScript.test(type)) {
       if (DEBUG) {
-        FW.log('RMP-VAST: VPAID creative detected');
+        FW.log('VPAID creative detected');
       }
       let currentMediaFileItem = mediaFileItems[i];
       mediaFileItems = [];
@@ -250,20 +252,20 @@ LINEAR.parse = function (linear) {
     if (delivery !== 'progressive' && delivery !== 'streaming') {
       delivery = 'progressive';
       if (DEBUG) {
-        FW.log('RMP-VAST: missing required delivery attribute on MediaFile tag - this is not a VAST 3 spec compliant adTag - continuing anyway (same as IMA)');
+        FW.log('missing required delivery attribute on MediaFile tag - this is not a VAST 3 spec compliant adTag - continuing anyway (same as IMA)');
       }
     }*/
     let width = currentMediaFile.getAttribute('width');
     if (width === null || width === '') {
       if (DEBUG) {
-        FW.log('RMP-VAST: missing required width attribute on MediaFile tag - this is not a VAST 3 spec compliant adTag - continuing anyway (same as IMA)');
+        FW.log('missing required width attribute on MediaFile tag - this is not a VAST 3 spec compliant adTag - continuing anyway (same as IMA)');
       }
       width = 480;
     }
     let height = currentMediaFile.getAttribute('height');
     if (height === null || height === '') {
       if (DEBUG) {
-        FW.log('RMP-VAST: missing required height attribute on MediaFile tag - this is not a VAST 3 spec compliant adTag - continuing anyway (same as IMA)');
+        FW.log('missing required height attribute on MediaFile tag - this is not a VAST 3 spec compliant adTag - continuing anyway (same as IMA)');
       }
       height = 270;
     }
@@ -305,7 +307,7 @@ LINEAR.parse = function (linear) {
   let retainedCreatives = [];
   // first we check for the common formats below ... 
   let testFormat = ['video/webm', 'video/mp4', 'video/ogg', 'video/3gpp'];
-  let __filterCreatives = function(i, creative) {
+  let __filterCreatives = function (i, creative) {
     if (creative.codec && creative.type === testFormat[i]) {
       return ENV.canPlayType(creative.type, creative.codec);
     } else if (creative.type === testFormat[i]) {
@@ -322,7 +324,7 @@ LINEAR.parse = function (linear) {
   // ... if none of the common format work, then we check for exotic format
   // first we check for those with codec information as it provides more accurate support indication ...
   if (retainedCreatives.length === 0) {
-    let __filterCreatives = function(codec, type, creative) {
+    let __filterCreatives = function (codec, type, creative) {
       return creative.codec === codec && creative.type === type;
     };
     for (let i = 0, len = creatives.length; i < len; i++) {
@@ -334,7 +336,7 @@ LINEAR.parse = function (linear) {
   }
   // ... if codec information are not available then we go first type matching
   if (retainedCreatives.length === 0) {
-    let __filterCreatives = function(type, creative) {
+    let __filterCreatives = function (type, creative) {
       return creative.type === type;
     };
     for (let i = 0, len = creatives.length; i < len; i++) {
@@ -369,7 +371,7 @@ LINEAR.parse = function (linear) {
     }
   }
   if (DEBUG) {
-    FW.log('RMP-VAST: selected linear creative follows');
+    FW.log('selected linear creative follows');
     FW.log(finalCreative);
   }
   this.adMediaUrl = finalCreative.url;

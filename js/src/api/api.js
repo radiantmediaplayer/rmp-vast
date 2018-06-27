@@ -309,11 +309,11 @@ API.getIsUsingContentPlayerForAds = function () {
 API.initialize = function () {
   if (this.rmpVastInitialized) {
     if (DEBUG) {
-      FW.log('RMP-VAST: rmp-vast already initialized');
+      FW.log('rmp-vast already initialized');
     } 
   } else {
     if (DEBUG) {
-      FW.logPerformance('RMP-VAST: on user interaction - player needs to be initialized');
+      FW.log('on user interaction - player needs to be initialized');
     }
     VASTPLAYER.init.call(this);
   }
