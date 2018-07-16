@@ -2,7 +2,7 @@
 
 var ADTAG = 'https://www.radiantmediaplayer.com/vast/tags/ad-pod-one-wrapper.xml';
 
-describe("Test for AdPodOneWrapper", function () {
+describe('Test for AdPodOneWrapper', function () {
 
   var id = 'rmpPlayer';
   var container = document.getElementById(id);
@@ -21,7 +21,7 @@ describe("Test for AdPodOneWrapper", function () {
   }
   var title = document.getElementsByTagName('title')[0];
 
-  it("should load adTag play adpod of 2 InLine and 1 Wrapper items", function (done) {
+  it('should load adTag play adpod of 2 InLine and 1 Wrapper items', function (done) {
     var validSteps = 0;
 
     var _incrementAndLog = function (event) {
@@ -48,7 +48,7 @@ describe("Test for AdPodOneWrapper", function () {
       var timeupdateCount = 0;
       video.addEventListener('timeupdate', function (e) {
         timeupdateCount++;
-        if (timeupdateCount === 6) {
+        if (timeupdateCount === 5) {
           _incrementAndLog(e);
           if (validSteps === 9) {
             expect(validSteps).toBe(9);

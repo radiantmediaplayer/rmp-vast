@@ -1,28 +1,29 @@
-import { FW } from '../fw/fw';
-import { VASTPLAYER } from '../players/vast-player';
-import { API } from '../api/api';
+import FW from '../fw/fw';
+import HELPERS from '../utils/helpers';
+import VASTPLAYER from '../players/vast-player';
+import API from '../api/api';
 
 const SKIP = {};
 
-var _setCanBeSkippedUI = function () {
+const _setCanBeSkippedUI = function () {
   this.skipWaiting.style.display = 'none';
   this.skipMessage.style.display = 'block';
   this.skipIcon.style.display = 'block';
 };
 
-var _updateWaitingForCanBeSkippedUI = function (delta) {
+const _updateWaitingForCanBeSkippedUI = function (delta) {
   if (Math.round(delta) > 0) {
     this.skipWaiting.textContent = this.params.skipWaitingMessage + ' ' + Math.round(delta) + 's';
   }
 };
 
-var _onTimeupdateCheckSkip = function () {
+const _onTimeupdateCheckSkip = function () {
   if (this.skipButton.style.display === 'none') {
     this.skipButton.style.display = 'block';
   }
   this.vastPlayerCurrentTime = this.vastPlayer.currentTime;
-  if (typeof this.vastPlayerCurrentTime === 'number' && this.vastPlayerCurrentTime > 0) {
-    let skipoffsetSeconds = FW.convertOffsetToSeconds(this.skipoffset, this.vastPlayerDuration);
+  if (FW.isNumber(this.vastPlayerCurrentTime) && this.vastPlayerCurrentTime > 0) {
+    const skipoffsetSeconds = FW.convertOffsetToSeconds(this.skipoffset, this.vastPlayerDuration);
     if (this.vastPlayerCurrentTime >= skipoffsetSeconds) {
       this.vastPlayer.removeEventListener('timeupdate', this.onTimeupdateCheckSkip);
       _setCanBeSkippedUI.call(this);
@@ -34,7 +35,7 @@ var _onTimeupdateCheckSkip = function () {
   }
 };
 
-var _onClickSkip = function (event) {
+const _onClickSkip = function (event) {
   if (event) {
     event.stopPropagation();
     if (event.type === 'touchend') {
@@ -46,7 +47,7 @@ var _onClickSkip = function (event) {
     API.createEvent.call(this, 'adskipped');
     // request ping for skip event
     if (this.hasSkipEvent) {
-      FW.dispatchPingEvent.call(this, 'skip');
+      HELPERS.dispatchPingEvent.call(this, 'skip');
     }
     // resume content
     VASTPLAYER.resumeContent.call(this);
@@ -84,4 +85,4 @@ SKIP.append = function () {
 };
 
 
-export { SKIP };
+export default SKIP;

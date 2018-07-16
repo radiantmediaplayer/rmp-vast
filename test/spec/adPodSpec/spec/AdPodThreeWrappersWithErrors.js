@@ -2,7 +2,7 @@
 
 var ADTAG = 'https://www.radiantmediaplayer.com/vast/tags/ad-pod-three-wrappers-with-errors.xml';
 
-describe("Test for AdPodThreeWrappersWithErrors", function () {
+describe('Test for AdPodThreeWrappersWithErrors', function () {
   var id = 'rmpPlayer';
   var container = document.getElementById(id);
   var video = document.querySelector('.rmp-video');
@@ -20,7 +20,7 @@ describe("Test for AdPodThreeWrappersWithErrors", function () {
   }
   var title = document.getElementsByTagName('title')[0];
 
-  it("should load adTag play adpod of 1 InLine and 3 Wrappers in error items", function (done) {
+  it('should load adTag play adpod of 1 InLine and 3 Wrappers in error items', function (done) {
     var validSteps = 0;
 
     var _incrementAndLog = function (event) {
@@ -51,7 +51,7 @@ describe("Test for AdPodThreeWrappersWithErrors", function () {
       var timeupdateCount = 0;
       video.addEventListener('timeupdate', function (e) {
         timeupdateCount++;
-        if (timeupdateCount === 6) {
+        if (timeupdateCount === 5) {
           _incrementAndLog(e);
           if (validSteps === 13) {
             expect(validSteps).toBe(13);

@@ -15,7 +15,7 @@
 <body>
   <div class="rmp-container" id="rmpPlayer">
     <div class="rmp-content">
-      <video class="rmp-video" src="https://www.rmp-streaming.com/media/bbb-360p.mp4" playsinline controls>
+      <video class="rmp-video" src="https://www.rmp-streaming.com/media/bbb-360p.mp4" playsinline muted>
       </video>
     </div>
   </div>
@@ -23,8 +23,13 @@
     var id = 'rmpPlayer';
     var container = document.getElementById(id);
     var video = container.getElementsByClassName('rmp-video')[0];
-    var ADTAG2 = 'https://www.radiantmediaplayer.com/vast/tags/redirect-error.xml';
-    var rmpVast = new RmpVast(id);
+    var ADTAG2 = 'https://www.radiantmediaplayer.com/vast/tags/non-linear.xml';
+    //var ADTAG2 = 'https://www.radiantmediaplayer.com/vast/tags/inline-linear-1.xml';
+    var params = {
+      outstream: true,
+      ajaxTimeout: 10000,
+    };
+    var rmpVast = new RmpVast(id, params);
     rmpVast.loadAds(ADTAG2);
   </script>
 </body>

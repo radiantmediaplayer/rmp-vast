@@ -8,6 +8,7 @@ module.exports = {
       src: [
         'app/**',
         'css/**',
+        'externals/**',
         'grunt/**',
         'js/**',
         'test/**',

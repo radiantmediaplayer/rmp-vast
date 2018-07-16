@@ -1,19 +1,20 @@
-import { FW } from '../fw/fw';
-import { ENV } from '../fw/env';
-import { PING } from '../tracking/ping';
-import { VASTPLAYER } from '../players/vast-player';
-import { CONTENTPLAYER } from '../players/content-player';
-import { API } from '../api/api';
-import { VASTERRORS } from '../utils/vast-errors';
+import FW from '../fw/fw';
+import ENV from '../fw/env';
+import HELPERS from '../utils/helpers';
+import PING from '../tracking/ping';
+import VASTPLAYER from '../players/vast-player';
+import CONTENTPLAYER from '../players/content-player';
+import API from '../api/api';
+import VASTERRORS from '../utils/vast-errors';
 
 const NONLINEAR = {};
 
-var _onNonLinearLoadError = function () {
+const _onNonLinearLoadError = function () {
   PING.error.call(this, 502);
   VASTERRORS.process.call(this, 502);
 };
 
-var _onNonLinearLoadSuccess = function () {
+const _onNonLinearLoadSuccess = function () {
   if (DEBUG) {
     FW.log('success loading non-linear creative at ' + this.adMediaUrl);
   }
@@ -21,10 +22,10 @@ var _onNonLinearLoadSuccess = function () {
   API.createEvent.call(this, 'adloaded');
   API.createEvent.call(this, 'adimpression');
   API.createEvent.call(this, 'adstarted');
-  FW.dispatchPingEvent.call(this, ['impression', 'creativeView', 'start']);
+  HELPERS.dispatchPingEvent.call(this, ['impression', 'creativeView', 'start']);
 };
 
-var _onNonLinearClickThrough = function (event) {
+const _onNonLinearClickThrough = function (event) {
   try {
     if (event) {
       event.stopPropagation();
@@ -33,13 +34,13 @@ var _onNonLinearClickThrough = function (event) {
       this.pause();
     }
     API.createEvent.call(this, 'adclick');
-    FW.dispatchPingEvent.call(this, 'clickthrough');
+    HELPERS.dispatchPingEvent.call(this, 'clickthrough');
   } catch (e) {
     FW.trace(e);
   }
 };
 
-var _onClickCloseNonLinear = function (event) {
+const _onClickCloseNonLinear = function (event) {
   if (event) {
     event.stopPropagation();
     if (event.type === 'touchend') {
@@ -48,10 +49,10 @@ var _onClickCloseNonLinear = function (event) {
   }
   this.nonLinearContainer.style.display = 'none';
   API.createEvent.call(this, 'adclosed');
-  FW.dispatchPingEvent.call(this, 'close');
+  HELPERS.dispatchPingEvent.call(this, 'close');
 };
 
-var _appendCloseButton = function () {
+const _appendCloseButton = function () {
   this.nonLinearClose = document.createElement('div');
   this.nonLinearClose.className = 'rmp-ad-non-linear-close';
   if (this.nonLinearMinSuggestedDuration > 0) {
@@ -125,7 +126,7 @@ NONLINEAR.parse = function (nonLinearAds) {
   }
   this.adIsLinear = false;
 
-  let nonLinear = nonLinearAds[0].getElementsByTagName('NonLinear');
+  const nonLinear = nonLinearAds[0].getElementsByTagName('NonLinear');
   // at least 1 NonLinear is expected to continue
   // but according to spec this should not trigger an error
   // 2.3.4 One or more <NonLinear> ads may be included within a <NonLinearAds> element.
@@ -160,11 +161,11 @@ NONLINEAR.parse = function (nonLinearAds) {
       continue;
     }
     // get minSuggestedDuration (optional)
-    let minSuggestedDuration = currentNonLinear.getAttribute('minSuggestedDuration');
+    const minSuggestedDuration = currentNonLinear.getAttribute('minSuggestedDuration');
     if (minSuggestedDuration !== null && minSuggestedDuration !== '' && FW.isValidDuration(minSuggestedDuration)) {
       this.nonLinearMinSuggestedDuration = FW.convertDurationToSeconds(minSuggestedDuration);
     }
-    let staticResource = currentNonLinear.getElementsByTagName('StaticResource');
+    const staticResource = currentNonLinear.getElementsByTagName('StaticResource');
     // we expect at least one StaticResource tag
     // we do not support IFrameResource or HTMLResource
     if (staticResource.length === 0) {
@@ -172,13 +173,13 @@ NONLINEAR.parse = function (nonLinearAds) {
     }
     let creativeType;
     for (let i = 0, len = staticResource.length; i < len; i++) {
-      let currentStaticResource = staticResource[i];
+      const currentStaticResource = staticResource[i];
       creativeType = currentStaticResource.getAttribute('creativeType');
       if (creativeType === null || creativeType === '') {
         continue;
       }
       // we only support images for StaticResource
-      let imagePattern = /^image\/(png|jpeg|jpg|gif)$/i;
+      const imagePattern = /^image\/(png|jpeg|jpg|gif)$/i;
       if (!imagePattern.test(creativeType)) {
         continue;
       }
@@ -210,14 +211,14 @@ NONLINEAR.parse = function (nonLinearAds) {
     VASTERRORS.process.call(this, vastErrorCode);
     return;
   }
-  let nonLinearClickThrough = currentNonLinear.getElementsByTagName('NonLinearClickThrough');
+  const nonLinearClickThrough = currentNonLinear.getElementsByTagName('NonLinearClickThrough');
   // if NonLinearClickThrough is present we expect one tag
   if (nonLinearClickThrough.length > 0) {
     this.clickThroughUrl = FW.getNodeValue(nonLinearClickThrough[0], true);
-    let nonLinearClickTracking = nonLinear[0].getElementsByTagName('NonLinearClickTracking');
+    const nonLinearClickTracking = nonLinear[0].getElementsByTagName('NonLinearClickTracking');
     if (nonLinearClickTracking.length > 0) {
       for (let i = 0, len = nonLinearClickTracking.length; i < len; i++) {
-        let nonLinearClickTrackingUrl = FW.getNodeValue(nonLinearClickTracking[i], true);
+        const nonLinearClickTrackingUrl = FW.getNodeValue(nonLinearClickTracking[i], true);
         if (nonLinearClickTrackingUrl !== null) {
           this.trackingTags.push({ event: 'clickthrough', url: nonLinearClickTrackingUrl });
         }
@@ -228,4 +229,4 @@ NONLINEAR.parse = function (nonLinearAds) {
 
 };
 
-export { NONLINEAR };
+export default NONLINEAR;

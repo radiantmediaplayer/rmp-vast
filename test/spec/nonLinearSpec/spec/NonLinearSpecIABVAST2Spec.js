@@ -2,7 +2,7 @@
 
 var ADTAG = 'https://www.radiantmediaplayer.com/vast/tags/iab/vast2/Inline_NonLinear_VAST2.0.xml';
 
-describe("Test for NonLinearSpecIABVAST2", function () {
+describe('Test for NonLinearSpecIABVAST2', function () {
 
   var id = 'rmpPlayer';
   var container = document.getElementById(id);
@@ -21,7 +21,7 @@ describe("Test for NonLinearSpecIABVAST2", function () {
   }
   var title = document.getElementsByTagName('title')[0];
 
-  it("should load adTag and play it", function (done) {
+  it('should load adTag and play it', function (done) {
     var validSteps = 0;
 
     var _incrementAndLog = function (event) {
@@ -72,13 +72,18 @@ describe("Test for NonLinearSpecIABVAST2", function () {
 
     container.addEventListener('adclosed', function (e) {
       _incrementAndLog(e);
-      expect(validSteps).toBe(6);
-      if (validSteps === 6) {
-        title.textContent = 'Test completed';
-      }
-      setTimeout(function () {
-        done();
-      }, 200);
+      var timeupdateCount = 0;
+      video.addEventListener('timeupdate', function (e) {
+        timeupdateCount++;
+        if (timeupdateCount === 5) {
+          _incrementAndLog(e);
+          if (validSteps === 7) {
+            expect(validSteps).toBe(7);
+            title.textContent = 'Test completed';
+            done();
+          }
+        }
+      });
     });
 
     rmpVast.loadAds(ADTAG);

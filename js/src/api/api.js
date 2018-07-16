@@ -1,8 +1,8 @@
-import { FW } from '../fw/fw';
-import { ENV } from '../fw/env';
-import { VASTPLAYER } from '../players/vast-player';
-import { CONTENTPLAYER } from '../players/content-player';
-import { VPAID } from '../players/vpaid';
+import FW from '../fw/fw';
+import ENV from '../fw/env';
+import VASTPLAYER from '../players/vast-player';
+import CONTENTPLAYER from '../players/content-player';
+import VPAID from '../players/vpaid';
 
 const API = {};
 
@@ -28,7 +28,7 @@ API.pause = function () {
   } else {
     CONTENTPLAYER.pause.call(this);
   }
-};
+}; 
 
 API.getAdPaused = function () {
   if (this.adOnStage && this.adIsLinear) {
@@ -39,10 +39,10 @@ API.getAdPaused = function () {
     }
   }
   return false;
-};
+}; 
 
 API.setVolume = function (level) {
-  if (typeof level !== 'number') {
+  if (!FW.isNumber(level)) {
     return;
   }
   let validatedLevel = 0;
@@ -55,11 +55,11 @@ API.setVolume = function (level) {
   }
   if (this.adOnStage && this.adIsLinear) {
     if (this.isVPAID) {
-      VPAID.setAdVolume.call(this, level);
+      VPAID.setAdVolume.call(this, validatedLevel);
     }
-    VASTPLAYER.setVolume.call(this, level);
+    VASTPLAYER.setVolume.call(this, validatedLevel);
   }
-  CONTENTPLAYER.setVolume.call(this, level);
+  CONTENTPLAYER.setVolume.call(this, validatedLevel);
 };
 
 API.getVolume = function () {
@@ -176,8 +176,8 @@ API.getAdDuration = function () {
 API.getAdCurrentTime = function () {
   if (this.adOnStage && this.adIsLinear) {
     if (this.isVPAID) {
-      let remainingTime = VPAID.getAdRemainingTime.call(this);
-      let duration = VPAID.getAdDuration.call(this);
+      const remainingTime = VPAID.getAdRemainingTime.call(this);
+      const duration = VPAID.getAdDuration.call(this);
       if (remainingTime === -1 || duration === -1 || remainingTime > duration) {
         return -1;
       }
@@ -194,8 +194,8 @@ API.getAdRemainingTime = function () {
     if (this.isVPAID) {
       return VPAID.getAdRemainingTime.call(this);
     } else {
-      let currentTime = VASTPLAYER.getCurrentTime.call(this);
-      let duration = VASTPLAYER.getDuration.call(this);
+      const currentTime = VASTPLAYER.getCurrentTime.call(this);
+      const duration = VASTPLAYER.getDuration.call(this);
       if (currentTime === -1 || duration === -1 || currentTime > duration) {
         return -1;
       }
@@ -326,7 +326,7 @@ API.getInitialized = function () {
 // adpod 
 API.getAdPodInfo = function () {
   if (this.adPodApiInfo.length > 0) {
-    let result = {};
+    const result = {};
     result.adPodCurrentIndex = this.adPodCurrentIndex;
     result.adPodLength = this.adPodApiInfo.length;
     return result;
@@ -380,4 +380,4 @@ API.getAdCompanions = function () {
   return '';
 };
 
-export { API };
+export default API;

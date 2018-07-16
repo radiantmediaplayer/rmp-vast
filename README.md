@@ -19,6 +19,7 @@ rmp-vast is an open-source project released under [MIT license](https://github.c
 - Industry Icons
 - VAST 3 Macros
 - VPAID 1 and 2 JavaScript
+- Outstream ads
 - Ad Pods
 - Audio Ads (MP3/M4A/HLS where natively supported) in HTML5 video
 
@@ -127,6 +128,8 @@ Once rmp-vast library is loaded on your page you can create a new rmp-vast insta
 `params.skipWaitingMessage: String` the skip message to show on player when a skippable ad is detected and the ad is in a state where it cannot be skipped. Default: 'Skip ad in'. This will be completed by the number of seconds remaining before the ad state changes to a state where it can be skipped.
 
 `params.textForClickUIOnMobile: String` on mobile devices the click-through URL for a linear ad is provided in a box located at the top right corner of the player. This setting set the text for this box. Default: 'Learn more'.
+
+`params.outstream: Boolean` Enables outstream ad mode. Default: false.
 
 `params.enableVpaid: Boolean` Enables VPAID support or not. Default: true.
 
@@ -281,6 +284,9 @@ rmp-vast supports fullscreen for the global player (e.g. content + vast players)
 ### pre/mid/post rolls
 rmp-vast can handle pre/mid/post rolls ad breaks through the loadAds API method. See app/pre-mid-post-roll.html for an example.
 
+### Outstream ads
+rmp-vast supports displaying outstream ads when parameter `outstream` is set to true. For an implementation example see test/spec/outstreamSpec/Simple.html.
+
 ## Contributing
 Contributions are welcome. Please review general code structure and stick to existing patterns.
 Provide test where appropriate (see test/ folder). Tests are written with Jasmine and automated with [node.js 6.11+ and selenium web driver 3.6+](https://www.npmjs.com/package/selenium-webdriver) and are validated in latest webdriver for Chrome, Firefox and MS Edge for Windows 10. Additionally we test on latest Chrome for Android 8 and macOS Safari 11.
@@ -291,7 +297,7 @@ To develop rmp-vast do install it:
 
 `npm install`
 
-Please review grunt/shell.js - you need to have jshint, browserify, watchify, uglifyjs, node and stylelint installed globally to move forward.
+Please review grunt/shell.js - you need to have eslint, browserify, watchify, uglifyjs, node and stylelint installed globally to move forward.
 
 Make changes to code and then run:
 

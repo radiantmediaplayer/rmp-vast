@@ -1,33 +1,16 @@
-import 'core-js/fn/object/keys';
-
-import 'core-js/fn/function/bind';
-
-import 'core-js/fn/array/is-array';
-import 'core-js/fn/array/index-of';
-import 'core-js/fn/array/for-each';
-import 'core-js/fn/array/filter';
-import 'core-js/fn/array/sort';
-
-import 'core-js/fn/string/trim';
-
-import 'core-js/fn/number/is-finite';
-
-import 'core-js/es6/promise';
-
-import 'core-js/fn/parse-float';
-import 'core-js/fn/parse-int';
-
-import { FW } from './fw/fw';
-import { ENV } from './fw/env';
-import { PING } from './tracking/ping';
-import { LINEAR } from './creatives/linear';
-import { NONLINEAR } from './creatives/non-linear';
-import { TRACKINGEVENTS } from './tracking/tracking-events';
-import { API } from './api/api';
-import { CONTENTPLAYER } from './players/content-player';
-import { RESET } from './utils/reset';
-import { VASTERRORS } from './utils/vast-errors';
-import { ICONS } from './creatives/icons';
+import 'core-js';
+import FW from './fw/fw';
+import ENV from './fw/env';
+import HELPERS from './utils/helpers';
+import PING from './tracking/ping';
+import LINEAR from './creatives/linear';
+import NONLINEAR from './creatives/non-linear';
+import TRACKINGEVENTS from './tracking/tracking-events';
+import API from './api/api';
+import CONTENTPLAYER from './players/content-player';
+import RESET from './utils/reset';
+import VASTERRORS from './utils/vast-errors';
+import ICONS from './creatives/icons';
 
 (() => {
 
@@ -58,9 +41,16 @@ import { ICONS } from './creatives/icons';
     }
     this.id = id;
     this.container = document.getElementById(this.id);
-    this.content = this.container.getElementsByClassName('rmp-content')[0];
-    this.contentPlayer = this.container.getElementsByClassName('rmp-video')[0];
+    this.content = this.container.querySelector('.rmp-content');
+    this.contentPlayer = this.container.querySelector('.rmp-video');
+    if (this.container === null || this.content === null || this.contentPlayer === null) {
+      if (DEBUG) {
+        FW.log('invalid DOM layout - exit');
+      }
+      return;
+    }
     if (DEBUG) {
+      FW.log('creating new RmpVast instance');
       FW.logVideoEvents(this.contentPlayer, 'content');
     }
     this.adContainer = null;
@@ -74,6 +64,7 @@ import { ICONS } from './creatives/icons';
     this.onDestroyLoadAds = null;
     this.firstVastPlayerPlayRequest = true;
     this.firstContentPlayerPlayRequest = true;
+    this.params = {};
     // adpod 
     this.adPod = [];
     this.standaloneAdsInPod = [];
@@ -83,7 +74,6 @@ import { ICONS } from './creatives/icons';
     this.adPodCurrentIndex = 0;
     this.adPodApiInfo = [];
     this.adPodWrapperTrackings = [];
-
     if (ENV.isIos[0] || (ENV.isMacOSX && ENV.isSafari[0])) {
       // on iOS and macOS Safari we use content player to play ads
       // to avoid issues related to fullscreen management and autoplay
@@ -94,7 +84,21 @@ import { ICONS } from './creatives/icons';
       }
     }
     // filter input params
-    FW.filterParams.call(this, params);
+    HELPERS.filterParams.call(this, params);
+    if (DEBUG) {
+      FW.log('filtered params follow');
+      FW.log(this.params);
+      FW.log('detected environment follows');
+      const keys = Object.keys(ENV);
+      const filteredEnv = {};
+      for (let i = 0, len = keys.length; i < len; i++) {
+        const currentEnvItem = ENV[keys[i]];
+        if (typeof currentEnvItem !== 'undefined' && typeof currentEnvItem !== 'function' && currentEnvItem !== null) {
+          filteredEnv[keys[i]] = currentEnvItem;
+        }
+      }
+      FW.log(filteredEnv);
+    }
     // reset internal variables
     RESET.internalVariables.call(this);
     // attach fullscreen states
@@ -103,7 +107,7 @@ import { ICONS } from './creatives/icons';
     // we need this to handle VAST fullscreen events
     let isInFullscreen = false;
     let onFullscreenchange = null;
-    let _onFullscreenchange = function (event) {
+    const _onFullscreenchange = function (event) {
       if (event && event.type) {
         if (DEBUG) {
           FW.log('event is ' + event.type);
@@ -112,23 +116,23 @@ import { ICONS } from './creatives/icons';
           if (isInFullscreen) {
             isInFullscreen = false;
             if (this.adOnStage && this.adIsLinear) {
-              FW.dispatchPingEvent.call(this, 'exitFullscreen');
+              HELPERS.dispatchPingEvent.call(this, 'exitFullscreen');
             }
           } else {
             isInFullscreen = true;
             if (this.adOnStage && this.adIsLinear) {
-              FW.dispatchPingEvent.call(this, 'fullscreen');
+              HELPERS.dispatchPingEvent.call(this, 'fullscreen');
             }
           }
         } else if (event.type === 'webkitbeginfullscreen') {
           // iOS uses webkitbeginfullscreen
           if (this.adOnStage && this.adIsLinear) {
-            FW.dispatchPingEvent.call(this, 'fullscreen');
+            HELPERS.dispatchPingEvent.call(this, 'fullscreen');
           }
         } else if (event.type === 'webkitendfullscreen') {
           // iOS uses webkitendfullscreen
           if (this.adOnStage && this.adIsLinear) {
-            FW.dispatchPingEvent.call(this, 'exitFullscreen');
+            HELPERS.dispatchPingEvent.call(this, 'exitFullscreen');
           }
         }
       }
@@ -147,18 +151,18 @@ import { ICONS } from './creatives/icons';
   };
 
   // enrich RmpVast prototype with API methods
-  var apiKeys = Object.keys(API);
+  const apiKeys = Object.keys(API);
   for (let i = 0, len = apiKeys.length; i < len; i++) {
-    let currentKey = apiKeys[i];
+    const currentKey = apiKeys[i];
     window.RmpVast.prototype[currentKey] = API[currentKey];
   }
 
-  var _execRedirect = function () {
+  const _execRedirect = function () {
     if (DEBUG) {
       FW.log('adfollowingredirect');
     }
     API.createEvent.call(this, 'adfollowingredirect');
-    let redirectUrl = FW.getNodeValue(this.vastAdTagURI[0], true);
+    const redirectUrl = FW.getNodeValue(this.vastAdTagURI[0], true);
     if (DEBUG) {
       FW.log('redirect URL is ' + redirectUrl);
     }
@@ -181,19 +185,19 @@ import { ICONS } from './creatives/icons';
     }
   };
 
-  var _parseCreatives = function (creative) {
+  const _parseCreatives = function (creative) {
     if (DEBUG) {
       FW.log('_parseCreatives');
       FW.log(creative);
     }
     for (let i = 0, len = creative.length; i < len; i++) {
-      let currentCreative = creative[i];
+      const currentCreative = creative[i];
       // we only pick the first creative that is either Linear or NonLinearAds
-      let nonLinearAds = currentCreative.getElementsByTagName('NonLinearAds');
-      let linear = currentCreative.getElementsByTagName('Linear');
+      const nonLinearAds = currentCreative.getElementsByTagName('NonLinearAds');
+      const linear = currentCreative.getElementsByTagName('Linear');
       // for now we ignore CreativeExtensions tag
       //let creativeExtensions = currentCreative.getElementsByTagName('CreativeExtensions');
-      let companionAds = currentCreative.getElementsByTagName('CompanionAds');
+      const companionAds = currentCreative.getElementsByTagName('CompanionAds');
       if (companionAds.length > 0) {
         continue;
       }
@@ -204,7 +208,7 @@ import { ICONS } from './creatives/icons';
         return;
       }
       if (nonLinearAds.length > 0) {
-        let trackingEvents = nonLinearAds[0].getElementsByTagName('TrackingEvents');
+        const trackingEvents = nonLinearAds[0].getElementsByTagName('TrackingEvents');
         // if TrackingEvents tag
         if (trackingEvents.length > 0) {
           TRACKINGEVENTS.filterPush.call(this, trackingEvents);
@@ -217,7 +221,7 @@ import { ICONS } from './creatives/icons';
         return;
       } else if (linear.length > 0) {
         // check for skippable ads (Linear skipoffset)
-        let skipoffset = linear[0].getAttribute('skipoffset');
+        const skipoffset = linear[0].getAttribute('skipoffset');
         // if we have a wrapper we ignore skipoffset in case it is present
         if (!this.isWrapper && this.params.skipMessage !== '' && skipoffset !== null && skipoffset !== '' &&
           FW.isValidOffset(skipoffset)) {
@@ -235,23 +239,23 @@ import { ICONS } from './creatives/icons';
         }
 
         // TrackingEvents
-        let trackingEvents = linear[0].getElementsByTagName('TrackingEvents');
+        const trackingEvents = linear[0].getElementsByTagName('TrackingEvents');
         // if present TrackingEvents
         if (trackingEvents.length > 0) {
           TRACKINGEVENTS.filterPush.call(this, trackingEvents);
         }
 
         // VideoClicks for linear
-        let videoClicks = linear[0].getElementsByTagName('VideoClicks');
+        const videoClicks = linear[0].getElementsByTagName('VideoClicks');
         if (videoClicks.length > 0) {
-          let clickThrough = videoClicks[0].getElementsByTagName('ClickThrough');
-          let clickTracking = videoClicks[0].getElementsByTagName('ClickTracking');
+          const clickThrough = videoClicks[0].getElementsByTagName('ClickThrough');
+          const clickTracking = videoClicks[0].getElementsByTagName('ClickTracking');
           if (clickThrough.length > 0) {
             this.clickThroughUrl = FW.getNodeValue(clickThrough[0], true);
           }
           if (clickTracking.length > 0) {
             for (let i = 0, len = clickTracking.length; i < len; i++) {
-              let clickTrackingUrl = FW.getNodeValue(clickTracking[i], true);
+              const clickTrackingUrl = FW.getNodeValue(clickTracking[i], true);
               if (clickTrackingUrl !== null) {
                 this.trackingTags.push({ event: 'clickthrough', url: clickTrackingUrl });
               }
@@ -262,7 +266,7 @@ import { ICONS } from './creatives/icons';
         // return on wrapper
         if (this.isWrapper) {
           // if icons are presents then we push valid icons
-          let icons = linear[0].getElementsByTagName('Icons');
+          const icons = linear[0].getElementsByTagName('Icons');
           if (icons.length > 0) {
             ICONS.parse.call(this, icons);
           }
@@ -280,7 +284,7 @@ import { ICONS } from './creatives/icons';
     }
   };
 
-  var _filterAdPod = function (ad) {
+  const _filterAdPod = function (ad) {
     if (DEBUG) {
       FW.log('_filterAdPod');
     }
@@ -301,7 +305,7 @@ import { ICONS } from './creatives/icons';
       // we are in a pod but the running Ad item is a wrapper
       this.adPodItemWrapper = false;
       for (let i = 0, len = ad.length; i < len; i++) {
-        let sequence = ad[i].getAttribute('sequence');
+        const sequence = ad[i].getAttribute('sequence');
         if (sequence === '' || sequence === null) {
           retainedAd = ad[i];
           break;
@@ -309,9 +313,9 @@ import { ICONS } from './creatives/icons';
       }
     } else {
       // we are not in a pod yet ... see if one exists or not
-      let standaloneAds = [];
+      const standaloneAds = [];
       for (let i = 0, len = ad.length; i < len; i++) {
-        let sequence = ad[i].getAttribute('sequence');
+        const sequence = ad[i].getAttribute('sequence');
         if (sequence === '' || sequence === null) {
           // standalone ads
           standaloneAds.push(ad[i]);
@@ -340,13 +344,13 @@ import { ICONS } from './creatives/icons';
         this.standaloneAdsInPod = standaloneAds;
         // sort adPod in case sequence attr are unordered
         this.adPod.sort((a, b) => {
-          let sequence1 = parseInt(a.getAttribute('sequence'));
-          let sequence2 = parseInt(b.getAttribute('sequence'));
+          const sequence1 = parseInt(a.getAttribute('sequence'));
+          const sequence2 = parseInt(b.getAttribute('sequence'));
           return sequence1 - sequence2;
         });
         retainedAd = this.adPod[0];
         this.adPod.shift();
-        let __onAdDestroyLoadNextAdInPod = function () {
+        const __onAdDestroyLoadNextAdInPod = function () {
           if (DEBUG) {
             FW.log('addestroyed - checking for ads left in pod');
             if (this.adPod.length > 0) {
@@ -381,8 +385,8 @@ import { ICONS } from './creatives/icons';
       return;
     }
 
-    let inline = retainedAd.getElementsByTagName('InLine');
-    let wrapper = retainedAd.getElementsByTagName('Wrapper');
+    const inline = retainedAd.getElementsByTagName('InLine');
+    const wrapper = retainedAd.getElementsByTagName('Wrapper');
     // 1 InLine or Wrapper element must be present 
     if (inline.length === 0 && wrapper.length === 0) {
       // in case this is a wrapper we need to ping for errors on originating tags
@@ -398,19 +402,19 @@ import { ICONS } from './creatives/icons';
     } else {
       inlineOrWrapper = inline;
     }
-    let adSystem = inlineOrWrapper[0].getElementsByTagName('AdSystem');
-    let impression = inlineOrWrapper[0].getElementsByTagName('Impression');
+    const adSystem = inlineOrWrapper[0].getElementsByTagName('AdSystem');
+    const impression = inlineOrWrapper[0].getElementsByTagName('Impression');
     // VAST/Ad/InLine/Error node
-    let errorNode = inlineOrWrapper[0].getElementsByTagName('Error');
+    const errorNode = inlineOrWrapper[0].getElementsByTagName('Error');
     if (errorNode.length > 0) {
-      let errorUrl = FW.getNodeValue(errorNode[0], true);
+      const errorUrl = FW.getNodeValue(errorNode[0], true);
       if (errorUrl !== null) {
         this.inlineOrWrapperErrorTags.push({ event: 'error', url: errorUrl });
       }
     }
-    let adTitle = inlineOrWrapper[0].getElementsByTagName('AdTitle');
-    let adDescription = inlineOrWrapper[0].getElementsByTagName('Description');
-    let creatives = inlineOrWrapper[0].getElementsByTagName('Creatives');
+    const adTitle = inlineOrWrapper[0].getElementsByTagName('AdTitle');
+    const adDescription = inlineOrWrapper[0].getElementsByTagName('Description');
+    const creatives = inlineOrWrapper[0].getElementsByTagName('Creatives');
 
     // Required InLine Elements are AdSystem, AdTitle, Impression, Creatives
     // Required Wrapper Elements are AdSystem, vastAdTagURI, Impression
@@ -447,7 +451,7 @@ import { ICONS } from './creatives/icons';
     }
     if (impression.length > 0) {
       for (let i = 0, len = impression.length; i < len; i++) {
-        let impressionUrl = FW.getNodeValue(impression[i], true);
+        const impressionUrl = FW.getNodeValue(impression[i], true);
         if (impressionUrl !== null) {
           this.trackingTags.push({ event: 'impression', url: impressionUrl });
         }
@@ -469,29 +473,29 @@ import { ICONS } from './creatives/icons';
     _parseCreatives.call(this, creative);
   };
 
-  var _onXmlAvailable = function (xml) {
+  const _onXmlAvailable = function (xml) {
     // if VMAP we abort
-    let vmap = xml.getElementsByTagName('vmap:VMAP');
+    const vmap = xml.getElementsByTagName('vmap:VMAP');
     if (vmap.length > 0) {
       VASTERRORS.process.call(this, 200);
       return;
     }
     // check for VAST node
-    let vastTag = xml.getElementsByTagName('VAST');
+    const vastTag = xml.getElementsByTagName('VAST');
     if (vastTag.length === 0) {
       // in case this is a wrapper we need to ping for errors on originating tags
       PING.error.call(this, 100);
       VASTERRORS.process.call(this, 100);
       return;
     }
-    let vastDocument = vastTag[0];
+    const vastDocument = vastTag[0];
     // VAST/Error node
-    let errorNode = vastDocument.getElementsByTagName('Error');
+    const errorNode = vastDocument.getElementsByTagName('Error');
     if (errorNode.length > 0) {
       for (let i = 0, len = errorNode.length; i < len; i++) {
         // we need to make sure those Error tags are directly beneath VAST tag. See 2.2.5.1 VAST 3 spec
         if (errorNode[i].parentNode === vastDocument) {
-          let errorUrl = FW.getNodeValue(errorNode[i], true);
+          const errorUrl = FW.getNodeValue(errorNode[i], true);
           if (errorUrl !== null) {
             // we use an array here for vastErrorTags but we only have item in it
             // this is to be able to use PING.error for both vastErrorTags and inlineOrWrapperErrorTags
@@ -501,8 +505,8 @@ import { ICONS } from './creatives/icons';
       }
     }
     //check for VAST version 2, 3 or 4 (we support VAST 4 in the limit of what is supported in VAST 3)
-    let pattern = /^(2|3|4)\./i;
-    let version = vastDocument.getAttribute('version');
+    const pattern = /^(2|3|4)\./i;
+    const version = vastDocument.getAttribute('version');
     if (!pattern.test(version)) {
       // in case this is a wrapper we need to ping for errors on originating tags
       PING.error.call(this, 102);
@@ -510,7 +514,7 @@ import { ICONS } from './creatives/icons';
       return;
     }
     // if empty VAST return
-    let ad = vastDocument.getElementsByTagName('Ad');
+    const ad = vastDocument.getElementsByTagName('Ad');
     if (ad.length === 0) {
       PING.error.call(this, 303);
       VASTERRORS.process.call(this, 303);
@@ -519,7 +523,7 @@ import { ICONS } from './creatives/icons';
     _filterAdPod.call(this, ad);
   };
 
-  var _makeAjaxRequest = function (vastUrl) {
+  const _makeAjaxRequest = function (vastUrl) {
     // we check for required VAST URL and API here
     // as we need to have this.currentContentSrc available for iOS
     if (typeof vastUrl !== 'string' || vastUrl === '') {
@@ -549,7 +553,7 @@ import { ICONS } from './creatives/icons';
       let xml;
       try {
         // Parse XML
-        let parser = new DOMParser();
+        const parser = new DOMParser();
         xml = parser.parseFromString(data, 'text/xml');
         if (DEBUG) {
           FW.log('parsed XML document follows');
@@ -571,12 +575,12 @@ import { ICONS } from './creatives/icons';
     });
   };
 
-  var _onDestroyLoadAds = function (vastUrl) {
+  const _onDestroyLoadAds = function (vastUrl) {
     this.container.removeEventListener('addestroyed', this.onDestroyLoadAds);
     this.loadAds(vastUrl);
   };
 
-  RmpVast.prototype.loadAds = function (vastUrl) {
+  window.RmpVast.prototype.loadAds = function (vastUrl) {
     if (DEBUG) {
       FW.log('loadAds starts');
     }
@@ -594,7 +598,7 @@ import { ICONS } from './creatives/icons';
     // if we try to load ads when currentTime < 200 ms - be it linear or non-linear - we pause CONTENTPLAYER
     // CONTENTPLAYER (non-linear) or VASTPLAYER (linear) will resume later when VAST has finished loading/parsing
     // this is to avoid bad user experience where content may start for a few ms before ad starts
-    let contentCurrentTime = CONTENTPLAYER.getCurrentTime.call(this);
+    const contentCurrentTime = CONTENTPLAYER.getCurrentTime.call(this);
     // for useContentPlayerForAds we need to know early what is the content src
     // so that we can resume content when ad finishes or on aderror
     if (this.useContentPlayerForAds) {

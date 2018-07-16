@@ -2,7 +2,7 @@
 
 var ADTAG = 'https://www.radiantmediaplayer.com/vast/tags/vpaid/vpaid-1.xml';
 
-describe("Test for vpaid-js-redirect", function () {
+describe('Test for vpaid-js-redirect', function () {
 
   var id = 'rmpPlayer';
   var container = document.getElementById(id);
@@ -11,8 +11,8 @@ describe("Test for vpaid-js-redirect", function () {
   var params = {
     enableVpaid: true,
     vpaidSettings: {
-      width: 960,
-      height: 540,
+      width: 640,
+      height: 360,
       viewMode: 'normal',
       desiredBitrate: 500
     }
@@ -31,14 +31,15 @@ describe("Test for vpaid-js-redirect", function () {
   }
 
   if (video.muted) {
-    it("should load and play vpaid-js-redirect", function (done) {
+    it('should load and play vpaid-js-redirect', function (done) {
       title.textContent = 'Test completed';
+      expect(true).toBe(true);
       done();
     });
     return;
   }
 
-  it("should load and play vpaid-js-redirect", function (done) {
+  it('should load and play vpaid-js-redirect', function (done) {
     var validSteps = 0;
 
     var _incrementAndLog = function (event) {
@@ -101,13 +102,18 @@ describe("Test for vpaid-js-redirect", function () {
     });
     container.addEventListener('addestroyed', function (e) {
       _incrementAndLog(e);
-      expect(validSteps).toBe(16);
-      if (validSteps === 16) {
-        title.textContent = 'Test completed';
-      }
-      setTimeout(function () {
-        done();
-      }, 100);
+      var timeupdateCount = 0;
+      video.addEventListener('timeupdate', function (e) {
+        timeupdateCount++;
+        if (timeupdateCount === 5) {
+          _incrementAndLog(e);
+          if (validSteps === 17) {
+            expect(validSteps).toBe(17);
+            title.textContent = 'Test completed';
+            done();
+          }
+        }
+      });
     });
 
     rmpVast.loadAds(ADTAG);

@@ -2,7 +2,7 @@
 
 var ADTAG = 'https://www.radiantmediaplayer.com/vast/tags/ad-pod-one-ad.xml';
 
-describe("Test for AdPodOneAd", function () {
+describe('Test for AdPodOneAd', function () {
 
   var id = 'rmpPlayer';
   var container = document.getElementById(id);
@@ -21,7 +21,7 @@ describe("Test for AdPodOneAd", function () {
   }
   var title = document.getElementsByTagName('title')[0];
 
-  it("should load adTag play adpod with one Ad", function (done) {
+  it('should load adTag play adpod with one Ad', function (done) {
     var validSteps = 0;
 
     var _incrementAndLog = function (event) {
@@ -44,7 +44,7 @@ describe("Test for AdPodOneAd", function () {
       var timeupdateCount = 0;
       video.addEventListener('timeupdate', function (e) {
         timeupdateCount++;
-        if (timeupdateCount === 6) {
+        if (timeupdateCount === 5) {
           _incrementAndLog(e);
           if (validSteps === 4) {
             expect(validSteps).toBe(4);

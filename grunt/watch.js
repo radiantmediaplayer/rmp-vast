@@ -12,7 +12,7 @@ module.exports = {
       'js/src/**/*.js'
     ],
     tasks: [
-      'shell:jshint',
+      'shell:eslintSrc',
       'less'
     ]
   }

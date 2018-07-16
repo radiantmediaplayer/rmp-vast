@@ -2,7 +2,7 @@
 
 var ADTAG = 'https://www.radiantmediaplayer.com/vast/tags/vpaid-3-js-linear.xml';
 
-describe("Test for vpaid-js-linear-3", function () {
+describe('Test for vpaid-js-linear-3', function () {
 
   var id = 'rmpPlayer';
   var container = document.getElementById(id);
@@ -10,8 +10,8 @@ describe("Test for vpaid-js-linear-3", function () {
   var params = {
     enableVpaid: true,
     vpaidSettings: {
-      width: 960,
-      height: 540,
+      width: 640,
+      height: 360,
       viewMode: 'normal',
       desiredBitrate: 500
     }
@@ -21,7 +21,9 @@ describe("Test for vpaid-js-linear-3", function () {
   var env = rmpVast.getEnv();
   var ua = window.navigator.userAgent;
   var regExp = /(edge\/|firefox\/)/i;
-  if (!regExp.test(ua)) {
+  var mutedAutoplay = false;
+  if (!regExp.test(ua) || env.isAndroid[0] || (env.isMacOSX && env.isSafari[0])) {
+    mutedAutoplay = true;
     video.muted = true;
   }
   if (env.isAndroid[0]) {
@@ -30,7 +32,9 @@ describe("Test for vpaid-js-linear-3", function () {
   }
   var title = document.getElementsByTagName('title')[0];
 
-  it("should load and play vpaid-js-linear-3", function (done) {
+  var timeupdateCount = 0;
+
+  it('should load and play vpaid-js-linear-3', function (done) {
     var validSteps = 0;
 
     var _incrementAndLog = function (event) {
@@ -49,18 +53,15 @@ describe("Test for vpaid-js-linear-3", function () {
       }
       _incrementAndLog(e);
       setTimeout(() => {
-        if (!env.isAndroid[0] && !(env.isMacOSX && env.isSafari[0])) {
+        if (!mutedAutoplay) {
           rmpVast.setMute(true);
         }
-      }, 400);
+      }, 1500);
     });
     container.addEventListener('advolumechanged', function (e) {
       if (rmpVast.getMute()) {
-        _incrementAndLog(e);
-        setTimeout(() => {
-          if (!env.isAndroid[0] && !(env.isMacOSX && env.isSafari[0])) {
-            rmpVast.setMute(false);
-          }
+        setTimeout(function () {
+          _incrementAndLog(e);
           if (rmpVast.getAdTagUrl() !== ADTAG) {
             return;
           }
@@ -99,20 +100,31 @@ describe("Test for vpaid-js-linear-3", function () {
     });
     container.addEventListener('addestroyed', function (e) {
       _incrementAndLog(e);
-      if (!env.isAndroid[0] && !(env.isMacOSX && env.isSafari[0])) {
-        expect(validSteps).toBe(6);
-        if (validSteps === 6) {
-          title.textContent = 'Test completed';
-        }
+      if (mutedAutoplay) {
+        video.addEventListener('timeupdate', function (e) {
+          timeupdateCount++;
+          if (timeupdateCount === 5) {
+            _incrementAndLog(e);
+            if (validSteps === 6) {
+              expect(validSteps).toBe(6);
+              title.textContent = 'Test completed';
+              done();
+            }
+          }
+        });
       } else {
-        expect(validSteps).toBe(5);
-        if (validSteps === 5) {
-          title.textContent = 'Test completed';
-        }
+        video.addEventListener('timeupdate', function (e) {
+          timeupdateCount++;
+          if (timeupdateCount === 5) {
+            _incrementAndLog(e);
+            if (validSteps === 7) {
+              expect(validSteps).toBe(7);
+              title.textContent = 'Test completed';
+              done();
+            }
+          }
+        });
       }
-      setTimeout(() => {
-        done();
-      }, 100);
     });
 
     rmpVast.loadAds(ADTAG);

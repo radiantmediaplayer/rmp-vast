@@ -1,10 +1,11 @@
-import { FW } from '../fw/fw';
+import FW from '../fw/fw';
+import HELPERS from '../utils/helpers';
 
 const CONTENTPLAYER = {};
 
 CONTENTPLAYER.play = function (firstContentPlayerPlayRequest) {
   if (this.contentPlayer && this.contentPlayer.paused) {
-    FW.playPromise.call(this, 'content', firstContentPlayerPlayRequest);
+    HELPERS.playPromise.call(this, 'content', firstContentPlayerPlayRequest);
   }
 };
 
@@ -46,8 +47,8 @@ CONTENTPLAYER.setMute = function (muted) {
 
 CONTENTPLAYER.getDuration = function () {
   if (this.contentPlayer) {
-    let duration = this.contentPlayer.duration;
-    if (typeof duration === 'number' && Number.isFinite(duration)) {
+    const duration = this.contentPlayer.duration;
+    if (FW.isNumber(duration)) {
       return Math.round(duration * 1000);
     }
   }
@@ -56,8 +57,8 @@ CONTENTPLAYER.getDuration = function () {
 
 CONTENTPLAYER.getCurrentTime = function () {
   if (this.contentPlayer) {
-    let currentTime = this.contentPlayer.currentTime;
-    if (typeof currentTime === 'number' && Number.isFinite(currentTime)) {
+    const currentTime = this.contentPlayer.currentTime;
+    if (FW.isNumber(currentTime)) {
       return Math.round(currentTime * 1000);
     }
   }
@@ -65,11 +66,11 @@ CONTENTPLAYER.getCurrentTime = function () {
 };
 
 CONTENTPLAYER.seekTo = function (msSeek) {
-  if (typeof msSeek !== 'number') {
+  if (!FW.isNumber(msSeek)) {
     return;
   }
   if (msSeek >= 0 && this.contentPlayer) {
-    let seekValue = Math.round((msSeek / 1000) * 100) / 100;
+    const seekValue = Math.round((msSeek / 1000) * 100) / 100;
     this.contentPlayer.currentTime = seekValue;
   }
 };
@@ -80,7 +81,7 @@ CONTENTPLAYER.preventSeekingForCustomPlayback = function () {
   if (this.contentPlayer) {
     this.antiSeekLogicInterval = setInterval(() => {
       if (this.adIsLinear && this.adOnStage) {
-        let diff = Math.abs(this.customPlaybackCurrentTime - this.contentPlayer.currentTime);
+        const diff = Math.abs(this.customPlaybackCurrentTime - this.contentPlayer.currentTime);
         if (diff > 1) {
           this.contentPlayer.currentTime = this.customPlaybackCurrentTime;
         }
@@ -91,4 +92,4 @@ CONTENTPLAYER.preventSeekingForCustomPlayback = function () {
 };
 
 
-export { CONTENTPLAYER };
+export default CONTENTPLAYER;

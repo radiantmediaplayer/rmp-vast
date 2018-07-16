@@ -2,7 +2,7 @@
 
 var ADTAG = 'https://www.radiantmediaplayer.com/vast/tags/vpaid-2-js-linear.xml';
 
-describe("Test for vpaid-js-linear-2", function () {
+describe('Test for vpaid-js-linear-2', function () {
 
   var id = 'rmpPlayer';
   var container = document.getElementById(id);
@@ -10,8 +10,8 @@ describe("Test for vpaid-js-linear-2", function () {
   var params = {
     enableVpaid: true,
     vpaidSettings: {
-      width: 960,
-      height: 540,
+      width: 640,
+      height: 360,
       viewMode: 'normal',
       desiredBitrate: 500
     }
@@ -30,7 +30,7 @@ describe("Test for vpaid-js-linear-2", function () {
   }
   var title = document.getElementsByTagName('title')[0];
 
-  it("should load and play vpaid-js-linear-2", function (done) {
+  it('should load and play vpaid-js-linear-2', function (done) {
     var validSteps = 0;
 
     var _incrementAndLog = function (event) {
@@ -71,13 +71,18 @@ describe("Test for vpaid-js-linear-2", function () {
     });
     container.addEventListener('addestroyed', function (e) {
       _incrementAndLog(e);
-      expect(validSteps).toBe(7);
-      if (validSteps === 7) {
-        title.textContent = 'Test completed';
-      }
-      setTimeout(() => {
-        done();
-      }, 100);
+      var timeupdateCount = 0;
+      video.addEventListener('timeupdate', function (e) {
+        timeupdateCount++;
+        if (timeupdateCount === 5) {
+          _incrementAndLog(e);
+          if (validSteps === 8) {
+            expect(validSteps).toBe(8);
+            title.textContent = 'Test completed';
+            done();
+          }
+        }
+      });
     });
 
     rmpVast.loadAds(ADTAG);

@@ -1,168 +1,134 @@
+import FW from './fw';
+
 const ENV = {};
 
-var testVideo = document.createElement('video');
+const testVideo = document.createElement('video');
 
-var _filterVersion = function (pattern, ua) {
-  if (ua === null) {
-    return -1;
+const _hasTouchEvents = function () {
+  if (typeof window.ontouchstart !== 'undefined' ||
+    (window.DocumentTouch && document instanceof window.DocumentTouch)) {
+    return true;
   }
-  let versionArray = ua.match(pattern);
-  if (Array.isArray(versionArray) && typeof versionArray[1] !== 'undefined') {
-    return parseInt(versionArray[1], 10);
+  return false;
+};
+const hasTouchEvents = _hasTouchEvents();
+
+const _getUserAgent = function () {
+  if (window.navigator && window.navigator.userAgent) {
+    return window.navigator.userAgent;
+  }
+  return null;
+};
+const userAgent = _getUserAgent();
+
+const _filterVersion = function (pattern) {
+  if (userAgent !== null) {
+    const versionArray = userAgent.match(pattern);
+    if (Array.isArray(versionArray) && typeof versionArray[1] !== 'undefined') {
+      return parseInt(versionArray[1], 10);
+    }
   }
   return -1;
 };
 
-var _hasTouchEvents = function () {
-  if (typeof window.ontouchstart !== 'undefined' ||
-    (window.DocumentTouch && document instanceof DocumentTouch)) {
-    return true;
-  }
-  return false;
-};
-
-var _getUserAgent = function () {
-  if (window.navigator && window.navigator.userAgent) {
-    return window.navigator.userAgent;
-  } else {
-    return null;
-  }
-};
-
-var _isIos = function (ua, hasTouchEvents) {
-  let isIOS = false;
-  let iOSVersion = -1;
-  let support = [isIOS, iOSVersion];
+const IOS_PATTERN = /(ipad|iphone|ipod)/i;
+const IOS_VERSION_PATTERN = /os\s+(\d+)_/i;
+const _isIos = function () {
+  let support = [false, -1];
   if (!hasTouchEvents) {
     return support;
   }
-  let pattern = /(ipad|iphone|ipod)/i;
-  if (pattern.test(ua)) {
-    isIOS = true;
-    let pattern2 = /os\s+(\d+)_/i;
-    support = [isIOS, _filterVersion(pattern2, ua)];
+  if (IOS_PATTERN.test(userAgent)) {
+    support = [true, _filterVersion(IOS_VERSION_PATTERN)];
   }
   return support;
 };
+const isIos = _isIos();
 
-var _isMacOSX = function (ua, isIos) {
-  let pattern = /(macintosh|mac\s+os)/i;
-  if (pattern.test(ua) && !isIos[0]) {
+const MACOS_PATTERN = /(macintosh|mac\s+os)/i;
+const _isMacOSX = function () {
+  if (!isIos[0] && MACOS_PATTERN.test(userAgent)) {
     return true;
   }
   return false;
 };
 
-var _isSafari = function (ua) {
+const SAFARI_PATTERN = /safari\/[.0-9]*/i;
+const SAFARI_VERSION_PATTERN = /version\/(\d+)\./i;
+const NO_SAFARI_PATTERN = /(chrome|chromium|android|crios|fxios)/i;
+const _isSafari = function () {
   let isSafari = false;
   let safariVersion = -1;
-  let pattern1 = /safari\/\d+\.\d+/i;
-  let pattern2 = /chrome/i;
-  let pattern3 = /chromium/i;
-  let pattern4 = /android/i;
-  if (pattern1.test(ua) && !pattern2.test(ua) && !pattern3.test(ua) &&
-    !pattern4.test(ua)) {
+  if (SAFARI_PATTERN.test(userAgent) && !NO_SAFARI_PATTERN.test(userAgent)) {
     isSafari = true;
-  }
-  if (isSafari) {
-    let versionPattern = /version\/(\d+)\./i;
-    safariVersion = _filterVersion(versionPattern, ua);
+    safariVersion = _filterVersion(SAFARI_VERSION_PATTERN);
   }
   return [isSafari, safariVersion];
 };
 
-var _isAndroid = function (ua, isIos, hasTouchEvents) {
-  let isAndroid = false;
-  let androidVersion = -1;
-  let support = [isAndroid, androidVersion];
+const ANDROID_PATTERN = /android/i;
+const ANDROID_VERSION_PATTERN = /android\s*(\d+)\./i;
+const _isAndroid = function () {
+  let support = [false, -1];
   if (isIos[0] || !hasTouchEvents) {
     return support;
   }
-  let pattern = /android/i;
-  if (pattern.test(ua)) {
-    isAndroid = true;
-    let pattern2 = /android\s*(\d+)\./i;
-    androidVersion = _filterVersion(pattern2, ua);
-    support = [isAndroid, androidVersion];
+  if (ANDROID_PATTERN.test(userAgent)) {
+    support = [true, _filterVersion(ANDROID_VERSION_PATTERN)];
   }
   return support;
 };
 
-var _isFirefox = function (ua) {
-  // from https://developer.mozilla.org/en-US/docs/Web/HTTP/Browser_detection_using_the_user_agent
-  let firefoxPattern = /firefox\//i;
-  let seamonkeyPattern = /seamonkey\//i;
-  if (firefoxPattern.test(ua) && !seamonkeyPattern.test(ua)) {
+// from https://developer.mozilla.org/en-US/docs/Web/HTTP/Browser_detection_using_the_user_agent
+const FIREFOX_PATTERN = /firefox\//i;
+const SEAMONKEY_PATTERN = /seamonkey\//i;
+const _isFirefox = function () {
+  if (FIREFOX_PATTERN.test(userAgent) && !SEAMONKEY_PATTERN.test(userAgent)) {
     return true;
   }
   return false;
 };
 
-var _video5 = function () {
-  try {
-    if (typeof testVideo.canPlayType !== 'undefined') {
-      return true;
-    }
-    return false;
-  } catch (e) {
-    return false;
-  }
+const _video5 = function () {
+  return typeof testVideo.canPlayType !== 'undefined';
 };
-var html5VideoSupport = _video5();
+const html5VideoSupport = _video5();
 
-var _okMp4 = function () {
+const MP4_H264_AAC_BASELINE_MIME_PATTERN = 'video/mp4; codecs="avc1.42E01E,mp4a.40.2"';
+const _okMp4 = function () {
   if (html5VideoSupport) {
-    let canPlayType = testVideo.canPlayType('video/mp4; codecs="avc1.42E01E,mp4a.40.2"');
+    const canPlayType = testVideo.canPlayType(MP4_H264_AAC_BASELINE_MIME_PATTERN);
     if (canPlayType !== '') {
       return true;
     }
   }
   return false;
 };
-ENV.okMp4 = _okMp4();
+const okMp4 = _okMp4();
 
-ENV.canPlayType = function (type, codec) {
-  if (html5VideoSupport) {
-    if (type && codec) {
-      let canPlayType = testVideo.canPlayType(type + '; codecs="' + codec + '"');
-      if (canPlayType !== '') {
-        return true;
-      }
-    } else if (type && !codec) {
-      let canPlayType = testVideo.canPlayType(type);
-      if (canPlayType !== '') {
-        return true;
-      }
-    }
-  }
-  return false;
-};
-
-var _okHls = function (okMp4) {
+const _okHls = function () {
   if (html5VideoSupport && okMp4) {
-    let isSupp1 = testVideo.canPlayType('application/vnd.apple.mpegurl');
-    let isSupp2 = testVideo.canPlayType('application/x-mpegurl');
+    const isSupp1 = testVideo.canPlayType('application/vnd.apple.mpegurl');
+    const isSupp2 = testVideo.canPlayType('application/x-mpegurl');
     if (isSupp1 !== '' || isSupp2 !== '') {
       return true;
     }
   }
   return false;
 };
-ENV.okHls = _okHls(ENV.okMp4);
 
-var _okDash = function () {
+const _okDash = function () {
   if (html5VideoSupport) {
-    let dashSupport = testVideo.canPlayType('application/dash+xml');
+    const dashSupport = testVideo.canPlayType('application/dash+xml');
     if (dashSupport !== '') {
       return true;
     }
   }
   return false;
 };
-ENV.okDash = _okDash();
 
-var _hasNativeFullscreenSupport = function () {
-  let doc = document.documentElement;
+const _hasNativeFullscreenSupport = function () {
+  const doc = document.documentElement;
   if (doc) {
     if (typeof doc.requestFullscreen !== 'undefined' ||
       typeof doc.webkitRequestFullscreen !== 'undefined' ||
@@ -174,18 +140,47 @@ var _hasNativeFullscreenSupport = function () {
   }
   return false;
 };
-ENV.hasNativeFullscreenSupport = _hasNativeFullscreenSupport();
 
-var userAgent = _getUserAgent();
-var hasTouchEvents = _hasTouchEvents();
-ENV.isIos = _isIos(userAgent, hasTouchEvents);
-ENV.isAndroid = _isAndroid(userAgent, ENV.isIos, hasTouchEvents);
-ENV.isMacOSX = _isMacOSX(userAgent, ENV.isIos);
-ENV.isSafari = _isSafari(userAgent);
-ENV.isFirefox = _isFirefox(userAgent);
+
+const _getDevicePixelRatio = function () {
+  let pixelRatio = 1;
+  if (FW.isNumber(window.devicePixelRatio) && window.devicePixelRatio > 1) {
+    pixelRatio = window.devicePixelRatio;
+  }
+  return pixelRatio;
+};
+
+ENV.isIos = isIos;
+ENV.isAndroid = _isAndroid();
+ENV.isMacOSX = _isMacOSX();
+ENV.isSafari = _isSafari();
+ENV.isFirefox = _isFirefox();
 ENV.isMobile = false;
 if (ENV.isIos[0] || ENV.isAndroid[0]) {
   ENV.isMobile = true;
 }
 
-export { ENV };
+ENV.okMp4 = okMp4;
+ENV.okHls = _okHls();
+ENV.okDash = _okDash();
+ENV.canPlayType = function (type, codec) {
+  if (html5VideoSupport) {
+    if (type && codec) {
+      const canPlayType = testVideo.canPlayType(type + '; codecs="' + codec + '"');
+      if (canPlayType !== '') {
+        return true;
+      }
+    } else if (type && !codec) {
+      const canPlayType = testVideo.canPlayType(type);
+      if (canPlayType !== '') {
+        return true;
+      }
+    }
+  }
+  return false;
+};
+
+ENV.hasNativeFullscreenSupport = _hasNativeFullscreenSupport();
+ENV.devicePixelRatio = _getDevicePixelRatio();
+
+export default ENV;

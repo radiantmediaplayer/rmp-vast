@@ -3,7 +3,7 @@
 var ADTAG1 = 'https://www.radiantmediaplayer.com/vast/tags/vpaid-4-js-linear.xml';
 var ADTAG2 = 'https://www.radiantmediaplayer.com/vast/tags/inline-linear-1.xml';
 
-describe("Test for TwoConsecutiveLinearSpec", function () {
+describe('Test for TwoConsecutiveLinearSpec', function () {
 
   var id = 'rmpPlayer';
   var container = document.getElementById(id);
@@ -33,7 +33,7 @@ describe("Test for TwoConsecutiveLinearSpec", function () {
   var title = document.getElementsByTagName('title')[0];
 
 
-  it("should load 2 consecutive adTag and play them", function (done) {
+  it('should load 2 consecutive adTag and play them', function (done) {
     var validSteps = 0;
 
     var _incrementAndLog = function (event) {
@@ -82,13 +82,18 @@ describe("Test for TwoConsecutiveLinearSpec", function () {
         rmpVast.loadAds(ADTAG2);
       }
       if (addestroyedCount === 2) {
-        expect(validSteps).toBe(20);
-        if (validSteps === 20) {
-          title.textContent = 'Test completed';
-        }
-        setTimeout(function () {
-          done();
-        }, 100);
+        var timeupdateCount = 0;
+        video.addEventListener('timeupdate', function (e) {
+          timeupdateCount++;
+          if (timeupdateCount === 5) {
+            _incrementAndLog(e);
+            if (validSteps === 21) {
+              expect(validSteps).toBe(21);
+              title.textContent = 'Test completed';
+              done();
+            }
+          }
+        });
       }
     });
 

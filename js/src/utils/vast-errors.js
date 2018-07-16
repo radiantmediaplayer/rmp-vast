@@ -1,8 +1,8 @@
-import { FW } from '../fw/fw';
-import { API } from '../api/api';
-import { VASTPLAYER } from '../players/vast-player';
+import FW from '../fw/fw';
+import API from '../api/api';
+import VASTPLAYER from '../players/vast-player';
 
-const VASTERRORS = {};
+const VASTERRORS = {}; 
 
 // Indicates that the error was encountered when the ad was being loaded. 
 // Possible causes: there was no response from the ad server, malformed ad response was returned ...
@@ -122,8 +122,8 @@ const vastErrorsList = [{
   description: 'Could not find vast player in DOM'
 }];
 
-var _updateVastError = function (errorCode) {
-  let error = vastErrorsList.filter((value) => {
+const _updateVastError = function (errorCode) {
+  const error = vastErrorsList.filter((value) => {
     return value.code === errorCode;
   });
   if (error.length > 0) {
@@ -153,4 +153,4 @@ VASTERRORS.process = function (errorCode) {
   VASTPLAYER.resumeContent.call(this);
 };
 
-export { VASTERRORS };
+export default VASTERRORS;

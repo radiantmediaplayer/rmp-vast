@@ -2,7 +2,7 @@
 
 var ADTAG = 'https://www.radiantmediaplayer.com/vast/tags/inline-linear-7.xml';
 
-describe("Test for no-impression-tag", function () {
+describe('Test for no-impression-tag', function () {
 
   var id = 'rmpPlayer';
   var container = document.getElementById(id);
@@ -21,7 +21,7 @@ describe("Test for no-impression-tag", function () {
   }
   var title = document.getElementsByTagName('title')[0];
 
-  it("should load adTag and play it even if it is not VAST compliant", function (done) {
+  it('should load adTag and play it even if it is not VAST compliant', function (done) {
     var validSteps = 0;
 
     var _incrementAndLog = function (event) {
@@ -44,13 +44,18 @@ describe("Test for no-impression-tag", function () {
 
     container.addEventListener('addestroyed', function (e) {
       _incrementAndLog(e);
-      expect(validSteps).toBe(3);
-      if (validSteps === 3) {
-        title.textContent = 'Test completed';
-      }
-      setTimeout(function () {
-        done();
-      }, 400);
+      var timeupdateCount = 0;
+      video.addEventListener('timeupdate', function (e) {
+        timeupdateCount++;
+        if (timeupdateCount === 5) {
+          _incrementAndLog(e);
+          if (validSteps === 4) {
+            expect(validSteps).toBe(4);
+            title.textContent = 'Test completed';
+            done();
+          }
+        }
+      });
     });
 
     rmpVast.loadAds(ADTAG);

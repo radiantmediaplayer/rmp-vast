@@ -2,7 +2,7 @@
 
 var ADTAG = 'https://www.radiantmediaplayer.com/vast/tags/ad-pod-wrapper-to-wrapper-to-ad-pod.xml';
 
-describe("Test for AdPodWrapperToWrapperToAdPod", function () {
+describe('Test for AdPodWrapperToWrapperToAdPod', function () {
 
   var id = 'rmpPlayer';
   var container = document.getElementById(id);
@@ -21,7 +21,7 @@ describe("Test for AdPodWrapperToWrapperToAdPod", function () {
   }
   var title = document.getElementsByTagName('title')[0];
 
-  it("should load wrapper directing to wrapper to an adpod", function (done) {
+  it('should load wrapper directing to wrapper to an adpod', function (done) {
     var validSteps = 0;
 
     var _incrementAndLog = function (event) {
@@ -48,7 +48,7 @@ describe("Test for AdPodWrapperToWrapperToAdPod", function () {
       var timeupdateCount = 0;
       video.addEventListener('timeupdate', function (e) {
         timeupdateCount++;
-        if (timeupdateCount === 6) {
+        if (timeupdateCount === 5) {
           _incrementAndLog(e);
           if (validSteps === 8) {
             expect(validSteps).toBe(8);

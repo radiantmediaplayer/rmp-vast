@@ -4,7 +4,7 @@ const { Builder, until } = require('../../../node_modules/selenium-webdriver/');
 const { Options } = require('../../../node_modules/selenium-webdriver/chrome');
 const TEST = {};
 
-TEST.driverCount = 3;
+TEST.driverCount = 2;
 
 TEST.pathToTest = 'http://192.168.1.98/rmp-vast/test/spec/';
 

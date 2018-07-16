@@ -1,12 +1,13 @@
-import { FW } from '../fw/fw';
-import { ENV } from '../fw/env';
-import { VASTERRORS } from '../utils/vast-errors';
-import { API } from '../api/api';
-import { PING } from '../tracking/ping';
-import { VASTPLAYER } from '../players/vast-player';
-import { ICONS } from '../creatives/icons';
-import { TRACKINGEVENTS } from '../tracking/tracking-events';
-import { CONTENTPLAYER } from '../players/content-player';
+import FW from '../fw/fw';
+import ENV from '../fw/env';
+import HELPERS from '../utils/helpers';
+import VASTERRORS from '../utils/vast-errors';
+import API from '../api/api';
+import PING from '../tracking/ping';
+import VASTPLAYER from '../players/vast-player';
+import ICONS from '../creatives/icons';
+import TRACKINGEVENTS from '../tracking/tracking-events';
+import CONTENTPLAYER from '../players/content-player';
 
 const VPAID = {};
 
@@ -96,7 +97,7 @@ VPAID.getAdCompanions = function () {
 
 
 // VPAID creative events
-var _onAdLoaded = function () {
+const _onAdLoaded = function () {
   if (DEBUG) {
     FW.log('VPAID AdLoaded event');
   }
@@ -125,7 +126,7 @@ var _onAdLoaded = function () {
   API.createEvent.call(this, 'adloaded');
 };
 
-var _onAdStarted = function () {
+const _onAdStarted = function () {
   if (DEBUG) {
     FW.log('VPAID AdStarted event');
   }
@@ -150,10 +151,10 @@ var _onAdStarted = function () {
   if (typeof this.vpaidCreative.getAdLinear === 'function') {
     this.adIsLinear = this.vpaidCreative.getAdLinear();
   }
-  FW.dispatchPingEvent.call(this, 'creativeView');
+  HELPERS.dispatchPingEvent.call(this, 'creativeView');
 };
 
-var _onAdStopped = function () {
+const _onAdStopped = function () {
   if (DEBUG) {
     FW.log('VPAID AdStopped event');
   }
@@ -163,7 +164,7 @@ var _onAdStopped = function () {
   VASTPLAYER.resumeContent.call(this);
 };
 
-var _onAdSkipped = function () {
+const _onAdSkipped = function () {
   if (DEBUG) {
     FW.log('VPAID AdSkipped event');
   }
@@ -171,17 +172,17 @@ var _onAdSkipped = function () {
     clearTimeout(this.adSkippedTimeout);
   }
   API.createEvent.call(this, 'adskipped');
-  FW.dispatchPingEvent.call(this, 'skip');
+  HELPERS.dispatchPingEvent.call(this, 'skip');
 };
 
-var _onAdSkippableStateChange = function () {
+const _onAdSkippableStateChange = function () {
   if (DEBUG) {
     FW.log('VPAID AdSkippableStateChange event');
   }
   API.createEvent.call(this, 'adskippablestatechanged');
 };
 
-var _onAdDurationChange = function () {
+const _onAdDurationChange = function () {
   if (DEBUG) {
     FW.log('VPAID AdDurationChange event ' + VPAID.getAdDuration.call(this));
   }
@@ -189,7 +190,7 @@ var _onAdDurationChange = function () {
     return;
   }
   if (typeof this.vpaidCreative.getAdRemainingTime === 'function') {
-    let remainingTime = this.vpaidCreative.getAdRemainingTime();
+    const remainingTime = this.vpaidCreative.getAdRemainingTime();
     if (remainingTime >= 0) {
       this.vpaidRemainingTime = remainingTime;
     }
@@ -197,32 +198,32 @@ var _onAdDurationChange = function () {
   API.createEvent.call(this, 'addurationchange');
 };
 
-var _onAdVolumeChange = function () {
+const _onAdVolumeChange = function () {
   if (DEBUG) {
     FW.log('VPAID AdVolumeChange event');
   }
-  let newVolume = VPAID.getAdVolume.call(this);
+  const newVolume = VPAID.getAdVolume.call(this);
   if (newVolume === null) {
     return;
   }
   if (this.vpaidCurrentVolume > 0 && newVolume === 0) {
-    FW.dispatchPingEvent.call(this, 'mute');
+    HELPERS.dispatchPingEvent.call(this, 'mute');
   } else if (this.vpaidCurrentVolume === 0 && newVolume > 0) {
-    FW.dispatchPingEvent.call(this, 'unmute');
+    HELPERS.dispatchPingEvent.call(this, 'unmute');
   }
   this.vpaidCurrentVolume = newVolume;
   API.createEvent.call(this, 'advolumechanged');
 };
 
-var _onAdImpression = function () {
+const _onAdImpression = function () {
   if (DEBUG) {
     FW.log('VPAID AdImpression event');
   }
   API.createEvent.call(this, 'adimpression');
-  FW.dispatchPingEvent.call(this, 'impression');
+  HELPERS.dispatchPingEvent.call(this, 'impression');
 };
 
-var _onAdVideoStart = function () {
+const _onAdVideoStart = function () {
   if (DEBUG) {
     FW.log('VPAID AdVideoStart event');
   }
@@ -233,47 +234,47 @@ var _onAdVideoStart = function () {
   }
   this.vpaidCurrentVolume = newVolume;
   API.createEvent.call(this, 'adstarted');
-  FW.dispatchPingEvent.call(this, 'start');
+  HELPERS.dispatchPingEvent.call(this, 'start');
 };
 
-var _onAdVideoFirstQuartile = function () {
+const _onAdVideoFirstQuartile = function () {
   if (DEBUG) {
     FW.log('VPAID AdVideoFirstQuartile event');
   }
   API.createEvent.call(this, 'adfirstquartile');
-  FW.dispatchPingEvent.call(this, 'firstQuartile');
+  HELPERS.dispatchPingEvent.call(this, 'firstQuartile');
 };
 
-var _onAdVideoMidpoint = function () {
+const _onAdVideoMidpoint = function () {
   if (DEBUG) {
     FW.log('VPAID AdVideoMidpoint event');
   }
   API.createEvent.call(this, 'admidpoint');
-  FW.dispatchPingEvent.call(this, 'midpoint');
+  HELPERS.dispatchPingEvent.call(this, 'midpoint');
 };
 
-var _onAdVideoThirdQuartile = function () {
+const _onAdVideoThirdQuartile = function () {
   if (DEBUG) {
     FW.log('VPAID AdVideoThirdQuartile event');
   }
   API.createEvent.call(this, 'adthirdquartile');
-  FW.dispatchPingEvent.call(this, 'thirdQuartile');
+  HELPERS.dispatchPingEvent.call(this, 'thirdQuartile');
 };
 
-var _onAdVideoComplete = function () {
+const _onAdVideoComplete = function () {
   if (DEBUG) {
     FW.log('VPAID AdVideoComplete event');
   }
   API.createEvent.call(this, 'adcomplete');
-  FW.dispatchPingEvent.call(this, 'complete');
+  HELPERS.dispatchPingEvent.call(this, 'complete');
 };
 
-var _onAdClickThru = function (url, id, playerHandles) {
+const _onAdClickThru = function (url, id, playerHandles) {
   if (DEBUG) {
     FW.log('VPAID AdClickThru event');
   }
   API.createEvent.call(this, 'adclick');
-  FW.dispatchPingEvent.call(this, 'clickthrough');
+  HELPERS.dispatchPingEvent.call(this, 'clickthrough');
   if (typeof playerHandles !== 'boolean') {
     return;
   }
@@ -294,31 +295,31 @@ var _onAdClickThru = function (url, id, playerHandles) {
   }
 };
 
-var _onAdPaused = function () {
+const _onAdPaused = function () {
   if (DEBUG) {
     FW.log('VPAID AdPaused event');
   }
   this.vpaidPaused = true;
   API.createEvent.call(this, 'adpaused');
-  FW.dispatchPingEvent.call(this, 'pause');
+  HELPERS.dispatchPingEvent.call(this, 'pause');
 };
 
-var _onAdPlaying = function () {
+const _onAdPlaying = function () {
   if (DEBUG) {
     FW.log('VPAID AdPlaying event');
   }
   this.vpaidPaused = false;
   API.createEvent.call(this, 'adresumed');
-  FW.dispatchPingEvent.call(this, 'resume');
+  HELPERS.dispatchPingEvent.call(this, 'resume');
 };
 
-var _onAdLog = function (message) {
+const _onAdLog = function (message) {
   if (DEBUG) {
     FW.log('VPAID AdLog event ' + message);
   }
 };
 
-var _onAdError = function (message) {
+const _onAdError = function (message) {
   if (DEBUG) {
     FW.log('VPAID AdError event ' + message);
   }
@@ -326,45 +327,45 @@ var _onAdError = function (message) {
   VASTERRORS.process.call(this, 901);
 };
 
-var _onAdInteraction = function () {
+const _onAdInteraction = function () {
   if (DEBUG) {
     FW.log('VPAID AdInteraction event');
   }
   API.createEvent.call(this, 'adinteraction');
 };
 
-var _onAdUserAcceptInvitation = function () {
+const _onAdUserAcceptInvitation = function () {
   if (DEBUG) {
     FW.log('VPAID AdUserAcceptInvitation event');
   }
   API.createEvent.call(this, 'aduseracceptinvitation');
-  FW.dispatchPingEvent.call(this, 'acceptInvitation');
+  HELPERS.dispatchPingEvent.call(this, 'acceptInvitation');
 };
 
-var _onAdUserMinimize = function () {
+const _onAdUserMinimize = function () {
   if (DEBUG) {
     FW.log('VPAID AdUserMinimize event');
   }
   API.createEvent.call(this, 'adcollapse');
-  FW.dispatchPingEvent.call(this, 'collapse');
+  HELPERS.dispatchPingEvent.call(this, 'collapse');
 };
 
-var _onAdUserClose = function () {
+const _onAdUserClose = function () {
   if (DEBUG) {
     FW.log('VPAID AdUserClose event');
   }
   API.createEvent.call(this, 'adclose');
-  FW.dispatchPingEvent.call(this, 'close');
+  HELPERS.dispatchPingEvent.call(this, 'close');
 };
 
-var _onAdSizeChange = function () {
+const _onAdSizeChange = function () {
   if (DEBUG) {
     FW.log('VPAID AdSizeChange event');
   }
   API.createEvent.call(this, 'adsizechange');
 };
 
-var _onAdLinearChange = function () {
+const _onAdLinearChange = function () {
   if (DEBUG) {
     FW.log('VPAID AdLinearChange event');
   }
@@ -374,19 +375,19 @@ var _onAdLinearChange = function () {
   }
 };
 
-var _onAdExpandedChange = function () {
+const _onAdExpandedChange = function () {
   if (DEBUG) {
     FW.log('VPAID AdExpandedChange event');
   }
   API.createEvent.call(this, 'adexpandedchange');
 };
 
-var _onAdRemainingTimeChange = function () {
+const _onAdRemainingTimeChange = function () {
   if (DEBUG) {
     FW.log('VPAID AdRemainingTimeChange event');
   }
   if (!this.vpaidCreative && typeof this.vpaidCreative.getAdRemainingTime === 'function') {
-    let remainingTime = this.vpaidCreative.getAdRemainingTime();
+    const remainingTime = this.vpaidCreative.getAdRemainingTime();
     if (remainingTime >= 0) {
       this.vpaidRemainingTime = remainingTime;
     }
@@ -399,7 +400,7 @@ VPAID.resizeAd = function (width, height, viewMode) {
   if (!this.vpaidCreative) {
     return;
   }
-  if (typeof width !== 'number' || typeof height !== 'number' || typeof viewMode !== 'string') {
+  if (!FW.isNumber(width) || !FW.isNumber(height) || typeof viewMode !== 'string') {
     return;
   }
   if (width <= 0 || height <= 0) {
@@ -473,13 +474,13 @@ VPAID.skipAd = function () {
 };
 
 VPAID.setAdVolume = function (volume) {
-  if (this.vpaidCreative && typeof volume === 'number' && volume >= 0 && volume <= 1 &&
+  if (this.vpaidCreative && FW.isNumber(volume) && volume >= 0 && volume <= 1 &&
     typeof this.vpaidCreative.setAdVolume === 'function') {
     this.vpaidCreative.setAdVolume(volume);
   }
 };
 
-var _setCallbacksForCreative = function () {
+const _setCallbacksForCreative = function () {
   if (!this.vpaidCreative) {
     return;
   }
@@ -512,26 +513,26 @@ var _setCallbacksForCreative = function () {
     AdRemainingTimeChange: _onAdRemainingTimeChange.bind(this)
   };
   // Looping through the object and registering each of the callbacks with the creative
-  let callbacksKeys = Object.keys(this.vpaidCallbacks);
+  const callbacksKeys = Object.keys(this.vpaidCallbacks);
   for (let i = 0, len = callbacksKeys.length; i < len; i++) {
-    let currentKey = callbacksKeys[i];
+    const currentKey = callbacksKeys[i];
     this.vpaidCreative.subscribe(this.vpaidCallbacks[currentKey], currentKey);
   }
 };
 
-var _unsetCallbacksForCreative = function () {
+const _unsetCallbacksForCreative = function () {
   if (!this.vpaidCreative) {
     return;
   }
   // Looping through the object and registering each of the callbacks with the creative
-  let callbacksKeys = Object.keys(this.vpaidCallbacks);
+  const callbacksKeys = Object.keys(this.vpaidCallbacks);
   for (let i = 0, len = callbacksKeys.length; i < len; i++) {
-    let currentKey = callbacksKeys[i];
+    const currentKey = callbacksKeys[i];
     this.vpaidCreative.unsubscribe(this.vpaidCallbacks[currentKey], currentKey);
   }
 };
 
-var _isValidVPAID = function (creative) {
+const _isValidVPAID = function (creative) {
   if (typeof creative.initAd === 'function' &&
     typeof creative.startAd === 'function' &&
     typeof creative.stopAd === 'function' &&
@@ -548,7 +549,7 @@ var _isValidVPAID = function (creative) {
   return false;
 };
 
-var _onVPAIDAvailable = function () {
+const _onVPAIDAvailable = function () {
   if (this.vpaidAvailableInterval) {
     clearInterval(this.vpaidAvailableInterval);
   }
@@ -592,7 +593,7 @@ var _onVPAIDAvailable = function () {
     _setCallbacksForCreative.call(this);
     // wire tracking events for VAST pings
     TRACKINGEVENTS.wire.call(this);
-    let creativeData = {};
+    const creativeData = {};
     creativeData.AdParameters = this.adParametersData;
     if (DEBUG) {
       FW.log('VPAID AdParameters follow');
@@ -600,7 +601,7 @@ var _onVPAIDAvailable = function () {
     }
     FW.show(this.adContainer);
     FW.show(this.vastPlayer);
-    let environmentVars = {};
+    const environmentVars = {};
     // we create a new slot for VPAID creative - using adContainer can cause some VPAID to ill-render
     // from spec:
     // The 'environmentVars' object contains a reference, 'slot', to the HTML element
@@ -639,12 +640,12 @@ var _onVPAIDAvailable = function () {
   }
 };
 
-var _onJSVPAIDLoaded = function () {
+const _onJSVPAIDLoaded = function () {
   if (DEBUG) {
     FW.log('VPAID JS loaded');
   }
   this.vpaidScript.removeEventListener('load', this.onJSVPAIDLoaded);
-  let iframeWindow = this.vpaidIframe.contentWindow;
+  const iframeWindow = this.vpaidIframe.contentWindow;
   if (typeof iframeWindow.getVPAIDAd === 'function') {
     _onVPAIDAvailable.call(this);
   } else {
@@ -656,7 +657,7 @@ var _onJSVPAIDLoaded = function () {
   }
 };
 
-var _onJSVPAIDError = function () {
+const _onJSVPAIDError = function () {
   if (DEBUG) {
     FW.log('VPAID JS error loading');
   }
@@ -677,8 +678,8 @@ VPAID.loadCreative = function (creativeUrl, vpaidSettings) {
     } else {
       // we use existing rmp-ad-vast-video-player as it is already 
       // available and initialized (no need for user interaction)
-      let existingVastPlayer = this.adContainer.getElementsByClassName('rmp-ad-vast-video-player')[0];
-      if (!existingVastPlayer) {
+      const existingVastPlayer = this.adContainer.querySelector('.rmp-ad-vast-video-player');
+      if (existingVastPlayer === null) {
         VASTERRORS.process.call(this, 1004);
         return;
       }
@@ -717,9 +718,9 @@ VPAID.loadCreative = function (creativeUrl, vpaidSettings) {
       VASTERRORS.process.call(this, 901);
       return;
     }
-    let iframeWindow = this.vpaidIframe.contentWindow;
-    let iframeDocument = iframeWindow.document;
-    let iframeBody = iframeDocument.body;
+    const iframeWindow = this.vpaidIframe.contentWindow;
+    const iframeDocument = iframeWindow.document;
+    const iframeBody = iframeDocument.body;
     this.vpaidScript = iframeDocument.createElement('script');
 
     this.vpaidLoadTimeout = setTimeout(() => {
@@ -775,19 +776,11 @@ VPAID.destroy = function () {
     this.vpaidScript.removeEventListener('error', this.onJSVPAIDError);
   }
   if (this.vpaidSlot) {
-    try {
-      this.adContainer.removeChild(this.vpaidSlot);
-    } catch (e) {
-      FW.trace(e);
-    }
+    FW.removeElement(this.vpaidSlot);
   }
   if (this.vpaidIframe) {
-    try {
-      this.adContainer.removeChild(this.vpaidIframe);
-    } catch (e) {
-      FW.trace(e);
-    }
+    FW.removeElement(this.vpaidIframe);
   }
 };
 
-export { VPAID };
+export default VPAID;

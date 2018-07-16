@@ -1,6 +1,12 @@
 module.exports = {
-  jshint: {
-    command: 'jshint js/src/. Gruntfile.js app/js/. test/spec/.'
+  eslintSrc: {
+    command: 'eslint --config .eslintrc.json js/src/.'
+  },
+  eslintES5: {
+    command: 'eslint --config .eslintrc-es5.json --ignore-path .prod.eslintignore test/spec/. app/js/.'
+  },
+  eslintNode: {
+    command: 'eslint --config .eslintrc-node.json test/spec/main/. test/spec/helpers/. Gruntfile.js grunt/'
   },
   browserify: {
     command: 'browserify js/src/main.js -o js/dist/rmp-vast.js -t [ babelify ] -v'
@@ -17,25 +23,36 @@ module.exports = {
   test: {
     command: [
       'node test/spec/main/adPodSpec.js',
+      'node test/spec/main/adPodSpec.js chrome',
       'node test/spec/main/apiSpec.js',
+      'node test/spec/main/apiSpec.js chrome',
       'node test/spec/main/errorSpec.js',
+      'node test/spec/main/errorSpec.js chrome',
       'node test/spec/main/inlineLinearSpec.js',
+      'node test/spec/main/inlineLinearSpec.js chrome',
       'node test/spec/main/nonLinearSpec.js',
+      'node test/spec/main/nonLinearSpec.js chrome',
+      'node test/spec/main/outstreamSpec.js',
+      'node test/spec/main/outstreamSpec.js chrome',
       'node test/spec/main/redirectSpec.js',
+      'node test/spec/main/redirectSpec.js chrome',
       'node test/spec/main/vast4Spec.js',
-      'node test/spec/main/vpaidSpec.js'
+      'node test/spec/main/vast4Spec.js chrome',
+      'node test/spec/main/vpaidSpec.js',
+      'node test/spec/main/vpaidSpec.js chrome'
     ].join('&&')
   },
   testAndroid: {
     command: [
       'node test/spec/main/adPodSpec.js android',
-      /*'node test/spec/main/apiSpec.js android',
+      'node test/spec/main/apiSpec.js android',
       'node test/spec/main/errorSpec.js android',
       'node test/spec/main/inlineLinearSpec.js android',
       'node test/spec/main/nonLinearSpec.js android',
+      'node test/spec/main/outstreamSpec.js android',
       'node test/spec/main/redirectSpec.js android',
       'node test/spec/main/vast4Spec.js android',
-      'node test/spec/main/vpaidSpec.js android'*/
+      'node test/spec/main/vpaidSpec.js android'
     ].join('&&')
   },
   testSafari: {
@@ -45,6 +62,7 @@ module.exports = {
       'node test/spec/main/errorSpec.js safari',
       'node test/spec/main/inlineLinearSpec.js safari',
       'node test/spec/main/nonLinearSpec.js safari',
+      'node test/spec/main/outstreamSpec.js safari',
       'node test/spec/main/redirectSpec.js safari',
       'node test/spec/main/vast4Spec.js safari',
       'node test/spec/main/vpaidSpec.js safari'

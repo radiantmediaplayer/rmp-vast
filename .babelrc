@@ -1,15 +1,37 @@
 {
-  "plugins": [
-    "check-es2015-constants",
-    "transform-es2015-block-scoping",
-    "transform-es2015-arrow-functions",
-    "transform-es2015-block-scoped-functions",
-    "transform-es2015-spread",
-    "transform-es2015-computed-properties",
-    "transform-es2015-destructuring",
-    "transform-es2015-parameters",
-    "transform-es2015-shorthand-properties",
-    "transform-es2015-template-literals",
-    "transform-es2015-modules-commonjs"
+  "presets": [
+    [
+      "env",
+      {
+        "targets": {
+          "android": 31,
+          "ChromeAndroid": 31,
+          "chrome": 31,
+          "edge": 12,
+          "explorer": 11,
+          "firefox": 42,
+          "safari": 8,
+          "ios": 9,
+          "Samsung": 5
+        },
+        "debug": true,
+        "useBuiltIns": true,
+        "exclude": [
+          "transform-es2015-classes",
+          "transform-es2015-object-super",
+          "transform-es2015-template-literals",
+          "transform-regenerator",
+          "transform-exponentiation-operator",
+          "syntax-trailing-function-commas",
+          "transform-async-to-generator",
+          "es7.array.includes",
+          "es7.object.values",
+          "es7.object.entries",
+          "es7.object.get-own-property-descriptors",
+          "es7.string.pad-start",
+          "es7.string.pad-end"
+        ]
+      }
+    ]
   ]
 }

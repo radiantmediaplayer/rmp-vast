@@ -1,23 +1,24 @@
-import { FW } from '../fw/fw';
-import { PING } from './ping';
-import { API } from '../api/api';
-import { VASTPLAYER } from '../players/vast-player';
+import FW from '../fw/fw';
+import PING from './ping';
+import HELPERS from '../utils/helpers';
+import API from '../api/api';
+import VASTPLAYER from '../players/vast-player';
 
 const TRACKINGEVENTS = {};
 
-var _pingTrackers = function (trackers) {
+const _pingTrackers = function (trackers) {
   trackers.forEach((element) => {
     PING.tracking.call(this, element.url, this.getAdMediaUrl());
   });
 };
 
-var _onEventPingTracking = function (event) {
+const _onEventPingTracking = function (event) {
   if (event && event.type) {
     if (DEBUG) {
       FW.log('ping tracking for ' + event.type + ' VAST event');
     }
     // filter trackers - may return multiple urls for same event as allowed by VAST spec
-    let trackers = this.trackingTags.filter((value) => {
+    const trackers = this.trackingTags.filter((value) => {
       return event.type === value.event;
     });
     // send ping for each valid tracker
@@ -27,36 +28,36 @@ var _onEventPingTracking = function (event) {
   }
 };
 
-var _onVolumeChange = function () {
+const _onVolumeChange = function () {
   if (this.vastPlayer.muted || this.vastPlayer.volume === 0) {
     API.createEvent.call(this, 'advolumemuted');
-    FW.dispatchPingEvent.call(this, 'mute');
+    HELPERS.dispatchPingEvent.call(this, 'mute');
     this.vastPlayerMuted = true;
   } else {
     if (this.vastPlayerMuted) {
-      FW.dispatchPingEvent.call(this, 'unmute');
+      HELPERS.dispatchPingEvent.call(this, 'unmute');
       this.vastPlayerMuted = false;
     }
   }
   API.createEvent.call(this, 'advolumechanged');
 };
 
-var _onTimeupdate = function () {
+const _onTimeupdate = function () {
   this.vastPlayerCurrentTime = VASTPLAYER.getCurrentTime.call(this);
   if (this.vastPlayerCurrentTime > 0) {
     if (this.vastPlayerDuration > 0 && this.vastPlayerDuration > this.vastPlayerCurrentTime) {
       if (this.vastPlayerCurrentTime >= this.vastPlayerDuration * 0.25 && !this.firstQuartileEventFired) {
         this.firstQuartileEventFired = true;
         API.createEvent.call(this, 'adfirstquartile');
-        FW.dispatchPingEvent.call(this, 'firstQuartile');
+        HELPERS.dispatchPingEvent.call(this, 'firstQuartile');
       } else if (this.vastPlayerCurrentTime >= this.vastPlayerDuration * 0.5 && !this.midpointEventFired) {
         this.midpointEventFired = true;
         API.createEvent.call(this, 'admidpoint');
-        FW.dispatchPingEvent.call(this, 'midpoint');
+        HELPERS.dispatchPingEvent.call(this, 'midpoint');
       } else if (this.vastPlayerCurrentTime >= this.vastPlayerDuration * 0.75 && !this.thirdQuartileEventFired) {
         this.thirdQuartileEventFired = true;
         API.createEvent.call(this, 'adthirdquartile');
-        FW.dispatchPingEvent.call(this, 'thirdQuartile');
+        HELPERS.dispatchPingEvent.call(this, 'thirdQuartile');
       }
     }
     if (this.isSkippableAd) {
@@ -75,14 +76,14 @@ var _onTimeupdate = function () {
       }
       if (Array.isArray(this.progressEventOffsetsSeconds) && this.progressEventOffsetsSeconds.length > 0 &&
         this.vastPlayerCurrentTime >= this.progressEventOffsetsSeconds[0].offsetSeconds * 1000) {
-        FW.dispatchPingEvent.call(this, 'progress-' + this.progressEventOffsetsSeconds[0].offsetRaw);
+        HELPERS.dispatchPingEvent.call(this, 'progress-' + this.progressEventOffsetsSeconds[0].offsetRaw);
         this.progressEventOffsetsSeconds.shift();
       }
     }
   }
 };
 
-var _onPause = function () {
+const _onPause = function () {
   if (!this.vastPlayerPaused) {
     this.vastPlayerPaused = true;
     API.createEvent.call(this, 'adpaused');
@@ -92,29 +93,29 @@ var _onPause = function () {
         return;
       }
     }
-    FW.dispatchPingEvent.call(this, 'pause');
+    HELPERS.dispatchPingEvent.call(this, 'pause');
   }
 };
 
-var _onPlay = function () {
+const _onPlay = function () {
   if (this.vastPlayerPaused) {
     this.vastPlayerPaused = false;
     API.createEvent.call(this, 'adresumed');
-    FW.dispatchPingEvent.call(this, 'resume');
+    HELPERS.dispatchPingEvent.call(this, 'resume');
   }
 };
 
-var _onPlaying = function () {
+const _onPlaying = function () {
   this.vastPlayer.removeEventListener('playing', this.onPlaying);
   API.createEvent.call(this, 'adimpression');
   API.createEvent.call(this, 'adstarted');
-  FW.dispatchPingEvent.call(this, ['impression', 'creativeView', 'start']);
+  HELPERS.dispatchPingEvent.call(this, ['impression', 'creativeView', 'start']);
 };
 
-var _onEnded = function () {
+const _onEnded = function () {
   this.vastPlayer.removeEventListener('ended', this.onEnded);
   API.createEvent.call(this, 'adcomplete');
-  FW.dispatchPingEvent.call(this, 'complete');
+  HELPERS.dispatchPingEvent.call(this, 'complete');
   VASTPLAYER.resumeContent.call(this);
 };
 
@@ -162,7 +163,7 @@ TRACKINGEVENTS.wire = function () {
 };
 
 TRACKINGEVENTS.filterPush = function (trackingEvents) {
-  let trackingTags = trackingEvents[0].getElementsByTagName('Tracking');
+  const trackingTags = trackingEvents[0].getElementsByTagName('Tracking');
   // in case we are in a pod
   if (this.adPodWrapperTrackings.length > 0) {
     this.trackingTags = this.adPodWrapperTrackings;
@@ -170,11 +171,11 @@ TRACKINGEVENTS.filterPush = function (trackingEvents) {
   // collect supported tracking events with valid event names and tracking urls
   for (let i = 0, len = trackingTags.length; i < len; i++) {
     let event = trackingTags[i].getAttribute('event');
-    let url = FW.getNodeValue(trackingTags[i], true);
+    const url = FW.getNodeValue(trackingTags[i], true);
     if (event !== null && event !== '' && PING.events.indexOf(event) > -1 && url !== null) {
       if (this.isSkippableAd) {
         if (event === 'progress') {
-          let offset = trackingTags[i].getAttribute('offset');
+          const offset = trackingTags[i].getAttribute('offset');
           if (offset === null || offset === '' || !FW.isValidOffset(offset)) {
             // offset attribute is required on Tracking event="progress"
             continue;
@@ -192,4 +193,4 @@ TRACKINGEVENTS.filterPush = function (trackingEvents) {
   }
 };
 
-export { TRACKINGEVENTS };
+export default TRACKINGEVENTS;

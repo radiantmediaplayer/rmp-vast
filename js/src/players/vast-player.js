@@ -1,18 +1,19 @@
-import { FW } from '../fw/fw';
-import { ENV } from '../fw/env';
-import { CONTENTPLAYER } from '../players/content-player';
-import { VPAID } from '../players/vpaid';
-import { ICONS } from '../creatives/icons';
-import { RESET } from '../utils/reset';
-import { TRACKINGEVENTS } from '../tracking/tracking-events';
-import { NONLINEAR } from '../creatives/non-linear';
-import { LINEAR } from '../creatives/linear';
-import { API } from '../api/api';
-import { VASTERRORS } from '../utils/vast-errors';
+import FW from '../fw/fw';
+import ENV from '../fw/env';
+import HELPERS from '../utils/helpers';
+import CONTENTPLAYER from '../players/content-player';
+import VPAID from '../players/vpaid';
+import ICONS from '../creatives/icons';
+import RESET from '../utils/reset';
+import TRACKINGEVENTS from '../tracking/tracking-events';
+import NONLINEAR from '../creatives/non-linear';
+import LINEAR from '../creatives/linear';
+import API from '../api/api';
+import VASTERRORS from '../utils/vast-errors';
 
 const VASTPLAYER = {};
 
-var _destroyVastPlayer = function () {
+const _destroyVastPlayer = function () {
   if (DEBUG) {
     FW.log('start destroying vast player');
   }
@@ -27,18 +28,10 @@ var _destroyVastPlayer = function () {
   RESET.unwireVastPlayerEvents.call(this);
   // remove clickUI on mobile
   if (this.clickUIOnMobile) {
-    try {
-      this.adContainer.removeChild(this.clickUIOnMobile);
-    } catch (e) {
-      FW.trace(e);
-    }
+    FW.removeElement(this.clickUIOnMobile);
   }
   if (this.isSkippableAd) {
-    try {
-      this.adContainer.removeChild(this.skipButton);
-    } catch (e) {
-      FW.trace(e);
-    }
+    FW.removeElement(this.skipButton);
   }
   // hide rmp-ad-container
   FW.hide(this.adContainer);
@@ -47,37 +40,50 @@ var _destroyVastPlayer = function () {
   // reset creativeLoadTimeout
   clearTimeout(this.creativeLoadTimeoutCallback);
   if (this.useContentPlayerForAds) {
-    if (this.nonLinearContainer) {
-      try {
-        this.adContainer.removeChild(this.nonLinearContainer);
+    if (!this.params.outstream) {
+      if (this.nonLinearContainer) {
+        FW.removeElement(this.nonLinearContainer);
+      } else {
+        // when content is restored we need to seek to previously known currentTime
+        // this must happen on playing event
+        // the below is some hack I come up with because Safari is confused with 
+        // what it is asked to do when post roll come into play
+        if (this.currentContentCurrentTime > 4000) {
+          this.needsSeekAdjust = true;
+          if (this.contentPlayerCompleted) {
+            this.needsSeekAdjust = false;
+          }
+          if (!this.seekAdjustAttached) {
+            this.seekAdjustAttached = true;
+            this.contentPlayer.addEventListener('playing', () => {
+              if (this.needsSeekAdjust) {
+                this.needsSeekAdjust = false;
+                CONTENTPLAYER.seekTo.call(this, this.currentContentCurrentTime);
+              }
+            });
+          }
+        }
+        if (DEBUG) {
+          FW.log('recovering content with src ' + this.currentContentSrc +
+            ' - at time: ' + this.currentContentCurrentTime);
+        }
+        this.contentPlayer.src = this.currentContentSrc;
+      }
+    } else {
+      // specific handling for outstream ad === flush buffer and do not attempt to resume content
+      try { 
+        if (this.contentPlayer) {
+          this.contentPlayer.pause();
+          // empty buffer
+          this.contentPlayer.removeAttribute('src');
+          this.contentPlayer.load();
+          if (DEBUG) {
+            FW.log('flushing contentPlayer buffer after outstream ad');
+          }
+        }
       } catch (e) {
         FW.trace(e);
       }
-    } else {
-      // when content is restored we need to seek to previously known currentTime
-      // this must happen on playing event
-      // the below is some hack I come up with because Safari is confused with 
-      // what it is asked to do when post roll come into play
-      if (this.currentContentCurrentTime > 4000) {
-        this.needsSeekAdjust = true;
-        if (this.contentPlayerCompleted) {
-          this.needsSeekAdjust = false;
-        }
-        if (!this.seekAdjustAttached) {
-          this.seekAdjustAttached = true;
-          this.contentPlayer.addEventListener('playing', () => {
-            if (this.needsSeekAdjust) {
-              this.needsSeekAdjust = false;
-              CONTENTPLAYER.seekTo.call(this, this.currentContentCurrentTime);
-            }
-          });
-        }
-      }
-      if (DEBUG) {
-        FW.log('recovering content with src ' + this.currentContentSrc +
-          ' - at time: ' + this.currentContentCurrentTime);
-      }
-      this.contentPlayer.src = this.currentContentSrc;
     }
   } else {
     // flush vastPlayer
@@ -89,15 +95,11 @@ var _destroyVastPlayer = function () {
         this.vastPlayer.load();
         FW.hide(this.vastPlayer);
         if (DEBUG) {
-          FW.log('vastPlayer flushed');
+          FW.log('flushing vastPlayer buffer after ad');
         }
       }
       if (this.nonLinearContainer) {
-        try {
-          this.adContainer.removeChild(this.nonLinearContainer);
-        } catch (e) {
-          FW.trace(e);
-        }
+        FW.removeElement(this.nonLinearContainer);
       }
     } catch (e) {
       FW.trace(e);
@@ -192,8 +194,8 @@ VASTPLAYER.append = function (url, type) {
     } else {
       // we use existing rmp-ad-vast-video-player as it is already 
       // available and initialized (no need for user interaction)
-      let existingVastPlayer = this.adContainer.getElementsByClassName('rmp-ad-vast-video-player')[0];
-      if (!existingVastPlayer) {
+      const existingVastPlayer = this.adContainer.querySelector('.rmp-ad-vast-video-player');
+      if (existingVastPlayer === null) {
         VASTERRORS.process.call(this, 1004);
         return;
       }
@@ -201,7 +203,17 @@ VASTPLAYER.append = function (url, type) {
     }
   }
   if (!this.adIsLinear) {
-    NONLINEAR.update.call(this);
+    // we do not display non-linear ads with outstream ad 
+    // they won't fit the format
+    if (this.params.outstream) {
+      if (DEBUG) {
+        FW.log('non-linear creative detected for outstream ad mode - discarding creative');
+      }
+      VASTERRORS.process.call(this, 201);
+      return;
+    } else {
+      NONLINEAR.update.call(this);
+    }
   } else {
     if (url && type) {
       LINEAR.update.call(this, url, type);
@@ -234,10 +246,10 @@ VASTPLAYER.setMute = function (muted) {
   if (this.vastPlayer) {
     if (muted && !this.vastPlayer.muted) {
       this.vastPlayer.muted = true;
-      FW.dispatchPingEvent.call(this, 'mute');
+      HELPERS.dispatchPingEvent.call(this, 'mute');
     } else if (!muted && this.vastPlayer.muted) {
       this.vastPlayer.muted = false;
-      FW.dispatchPingEvent.call(this, 'unmute');
+      HELPERS.dispatchPingEvent.call(this, 'unmute');
     }
   }
 };
@@ -251,7 +263,7 @@ VASTPLAYER.getMute = function () {
 
 VASTPLAYER.play = function (firstVastPlayerPlayRequest) {
   if (this.vastPlayer && this.vastPlayer.paused) {
-    FW.playPromise.call(this, 'vast', firstVastPlayerPlayRequest);
+    HELPERS.playPromise.call(this, 'vast', firstVastPlayerPlayRequest);
   }
 };
 
@@ -263,8 +275,8 @@ VASTPLAYER.pause = function () {
 
 VASTPLAYER.getDuration = function () {
   if (this.vastPlayer) {
-    let duration = this.vastPlayer.duration;
-    if (typeof duration === 'number' && Number.isFinite(duration)) {
+    const duration = this.vastPlayer.duration;
+    if (FW.isNumber(duration)) {
       return Math.round(duration * 1000);
     }
   }
@@ -273,8 +285,8 @@ VASTPLAYER.getDuration = function () {
 
 VASTPLAYER.getCurrentTime = function () {
   if (this.vastPlayer) {
-    let currentTime = this.vastPlayer.currentTime;
-    if (typeof currentTime === 'number' && Number.isFinite(currentTime)) {
+    const currentTime = this.vastPlayer.currentTime;
+    if (FW.isNumber(currentTime)) {
       return Math.round(currentTime * 1000);
     }
   }
@@ -290,10 +302,11 @@ VASTPLAYER.resumeContent = function () {
   // in that case we must not resume content once the post-roll has completed
   // you can use setContentPlayerCompleted/getContentPlayerCompleted to support 
   // custom use-cases when dynamically changing source for content
-  if (!this.contentPlayerCompleted) {
+  // no need to resume content for outstream ads
+  if (!this.contentPlayerCompleted && !this.params.outstream) {
     CONTENTPLAYER.play.call(this);
   }
   this.contentPlayerCompleted = false;
 };
 
-export { VASTPLAYER };
+export default VASTPLAYER;

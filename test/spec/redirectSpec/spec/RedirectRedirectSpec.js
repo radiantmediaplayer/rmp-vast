@@ -2,7 +2,7 @@
 
 var ADTAG = 'https://www.radiantmediaplayer.com/vast/tags/redirect-redirect.xml';
 
-describe("Test for VAST wrapper to VAST wrapper", function () {
+describe('Test for VAST wrapper to VAST wrapper', function () {
 
   var id = 'rmpPlayer';
   var container = document.getElementById(id);
@@ -21,7 +21,7 @@ describe("Test for VAST wrapper to VAST wrapper", function () {
   }
   var title = document.getElementsByTagName('title')[0];
 
-  it("should load adTag and play it", function (done) {
+  it('should load adTag and play it', function (done) {
     var validSteps = 0;
 
     var _incrementAndLog = function (event) {
@@ -53,13 +53,18 @@ describe("Test for VAST wrapper to VAST wrapper", function () {
 
     container.addEventListener('addestroyed', function (e) {
       _incrementAndLog(e);
-      expect(validSteps).toBe(11);
-      if (validSteps === 11) {
-        title.textContent = 'Test completed';
-      }
-      setTimeout(function () {
-        done();
-      }, 400);
+      var timeupdateCount = 0;
+      video.addEventListener('timeupdate', function (e) {
+        timeupdateCount++;
+        if (timeupdateCount === 5) {
+          _incrementAndLog(e);
+          if (validSteps === 12) {
+            expect(validSteps).toBe(12);
+            title.textContent = 'Test completed';
+            done();
+          }
+        }
+      });
     });
 
     rmpVast.loadAds(ADTAG);

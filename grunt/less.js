@@ -6,7 +6,7 @@ module.exports = {
       ieCompat: false
     },
     files: {
-      "css/rmp-vast.css": "css/rmp-vast.less",
+      'css/rmp-vast.css': 'css/rmp-vast.less',
     }
   },
   production: {
@@ -16,7 +16,7 @@ module.exports = {
       ieCompat: false
     },
     files: {
-      "css/rmp-vast.min.css": "css/rmp-vast.less"
+      'css/rmp-vast.min.css': 'css/rmp-vast.less'
     }
   }
 };

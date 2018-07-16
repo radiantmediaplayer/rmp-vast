@@ -3,7 +3,7 @@
 var ADTAG = 'https://www.radiantmediaplayer.com/vast/tags/iab/vast3/Wrapper_Tag-test.xml';
 
 
-describe("Test for IABVAST3RedirectSpec", function () {
+describe('Test for IABVAST3RedirectSpec', function () {
 
   var id = 'rmpPlayer';
   var container = document.getElementById(id);
@@ -22,7 +22,7 @@ describe("Test for IABVAST3RedirectSpec", function () {
   }
   var title = document.getElementsByTagName('title')[0];
 
-  it("should load adTag and play it", function (done) {
+  it('should load adTag and play it', function (done) {
     var validSteps = 0;
 
     var _incrementAndLog = function (event) {
@@ -78,13 +78,18 @@ describe("Test for IABVAST3RedirectSpec", function () {
 
     container.addEventListener('addestroyed', function (e) {
       _incrementAndLog(e);
-      expect(validSteps).toBe(14);
-      if (validSteps === 14) {
-        title.textContent = 'Test completed';
-      }
-      setTimeout(function () {
-        done();
-      }, 400);
+      var timeupdateCount = 0;
+      video.addEventListener('timeupdate', function (e) {
+        timeupdateCount++;
+        if (timeupdateCount === 5) {
+          _incrementAndLog(e);
+          if (validSteps === 15) {
+            expect(validSteps).toBe(15);
+            title.textContent = 'Test completed';
+            done();
+          }
+        }
+      });
     });
 
     rmpVast.loadAds(ADTAG);

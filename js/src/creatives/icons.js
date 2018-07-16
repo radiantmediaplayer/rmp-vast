@@ -1,5 +1,5 @@
-import { FW } from '../fw/fw';
-import { PING } from '../tracking/ping';
+import FW from '../fw/fw';
+import PING from '../tracking/ping';
 
 const ICONS = {};
 
@@ -7,23 +7,16 @@ ICONS.destroy = function () {
   if (DEBUG) {
     FW.log('start destroying icons');
   }
-  let icons = this.adContainer.querySelectorAll('.rmp-ad-container-icons');
+  const icons = this.adContainer.querySelectorAll('.rmp-ad-container-icons');
   if (icons.length > 0) {
     for (let i = 0, len = icons.length; i < len; i++) {
-      try {
-        let parent = icons[i].parentNode;
-        if (parent) {
-          parent.removeChild(icons[i]);
-        }
-      } catch (e) {
-        FW.trace(e);
-      }
+      FW.removeElement(icons[i]);
     }
   }
 };
 
-var _programAlreadyPresent = function (program) {
-  let newArray = [];
+const _programAlreadyPresent = function (program) {
+  const newArray = [];
   for (let i = 0, len = this.icons.length; i < len; i++) {
     if (this.icons[i].program !== program) {
       newArray.push(this.icons[i]);
@@ -36,51 +29,51 @@ ICONS.parse = function (icons) {
   if (DEBUG) {
     FW.log('start parsing for icons');
   }
-  let icon = icons[0].getElementsByTagName('Icon');
+  const icon = icons[0].getElementsByTagName('Icon');
   for (let i = 0, len = icon.length; i < len; i++) {
-    let currentIcon = icon[i];
-    let program = currentIcon.getAttribute('program');
+    const currentIcon = icon[i];
+    const program = currentIcon.getAttribute('program');
     // program is required attribute ignore the current icon if not present
     if (program === null || program === '') {
       continue;
     }
     // width, height, xPosition, yPosition are all required attributes
     // if one is missing we ignore the current icon
-    let width = currentIcon.getAttribute('width');
+    const width = currentIcon.getAttribute('width');
     if (width === null || width === '' || parseInt(width) <= 0) {
       continue;
     }
-    let height = currentIcon.getAttribute('height');
+    const height = currentIcon.getAttribute('height');
     if (height === null || height === '' || parseInt(height) <= 0) {
       continue;
     }
-    let xPosition = currentIcon.getAttribute('xPosition');
+    const xPosition = currentIcon.getAttribute('xPosition');
     if (xPosition === null || xPosition === '') {
       continue;
     }
-    let yPosition = currentIcon.getAttribute('yPosition');
+    const yPosition = currentIcon.getAttribute('yPosition');
     if (yPosition === null || yPosition === '') {
       continue;
     }
-    let staticResource = currentIcon.getElementsByTagName('StaticResource');
+    const staticResource = currentIcon.getElementsByTagName('StaticResource');
     // we only support StaticResource (IFrameResource HTMLResource not supported)
     if (staticResource.length === 0) {
       continue;
     }
     // in StaticResource we only support images (application/x-javascript and application/x-shockwave-flash not supported)
-    let creativeType = staticResource[0].getAttribute('creativeType');
-    let imagePattern = /^image\/(gif|jpeg|jpg|png)$/i;
+    const creativeType = staticResource[0].getAttribute('creativeType');
+    const imagePattern = /^image\/(gif|jpeg|jpg|png)$/i;
     if (creativeType === null || creativeType === '' || !imagePattern.test(creativeType)) {
       continue;
     }
-    let staticResourceUrl = FW.getNodeValue(staticResource[0], true);
+    const staticResourceUrl = FW.getNodeValue(staticResource[0], true);
     if (staticResourceUrl === null) {
       continue;
     }
     // if program already present we delete it
     _programAlreadyPresent.call(this, program);
 
-    let iconData = {
+    const iconData = {
       program: program,
       width: width,
       height: height,
@@ -89,23 +82,23 @@ ICONS.parse = function (icons) {
       staticResourceUrl: staticResourceUrl
     };
     // optional IconViewTracking
-    let iconViewTracking = currentIcon.getElementsByTagName('IconViewTracking');
-    let iconViewTrackingUrl = FW.getNodeValue(iconViewTracking[0], true);
+    const iconViewTracking = currentIcon.getElementsByTagName('IconViewTracking');
+    const iconViewTrackingUrl = FW.getNodeValue(iconViewTracking[0], true);
     if (iconViewTrackingUrl !== null) {
       iconData.iconViewTrackingUrl = iconViewTrackingUrl;
     }
     //optional IconClicks
-    let iconClicks = currentIcon.getElementsByTagName('IconClicks');
+    const iconClicks = currentIcon.getElementsByTagName('IconClicks');
     if (iconClicks.length > 0) {
-      let iconClickThrough = iconClicks[0].getElementsByTagName('IconClickThrough');
-      let iconClickThroughUrl = FW.getNodeValue(iconClickThrough[0], true);
+      const iconClickThrough = iconClicks[0].getElementsByTagName('IconClickThrough');
+      const iconClickThroughUrl = FW.getNodeValue(iconClickThrough[0], true);
       if (iconClickThroughUrl !== null) {
         iconData.iconClickThroughUrl = iconClickThroughUrl;
-        let iconClickTracking = iconClicks[0].getElementsByTagName('IconClickTracking');
+        const iconClickTracking = iconClicks[0].getElementsByTagName('IconClickTracking');
         if (iconClickTracking.length > 0) {
           iconData.iconClickTrackingUrl = [];
           for (let i = 0, len = iconClickTracking.length; i < len; i++) {
-            let iconClickTrackingUrl = FW.getNodeValue(iconClickTracking[i], true);
+            const iconClickTrackingUrl = FW.getNodeValue(iconClickTracking[i], true);
             if (iconClickTrackingUrl !== null) {
               iconData.iconClickTrackingUrl.push(iconClickTrackingUrl);
             }
@@ -121,7 +114,7 @@ ICONS.parse = function (icons) {
   }
 };
 
-var _onIconClickThrough = function (index, event) {
+const _onIconClickThrough = function (index, event) {
   if (DEBUG) {
     FW.log('click on icon with index ' + index);
   }
@@ -134,7 +127,7 @@ var _onIconClickThrough = function (index, event) {
   FW.openWindow(this.icons[index].iconClickThroughUrl);
   // send trackers if any for IconClickTracking
   if (typeof this.icons[index].iconClickTrackingUrl !== 'undefined') {
-    let iconClickTrackingUrl = this.icons[index].iconClickTrackingUrl;
+    const iconClickTrackingUrl = this.icons[index].iconClickTrackingUrl;
     if (iconClickTrackingUrl.length > 0) {
       iconClickTrackingUrl.forEach((element) => {
         PING.tracking.call(this, element, null);
@@ -143,27 +136,27 @@ var _onIconClickThrough = function (index, event) {
   }
 };
 
-var _onIconLoadPingTracking = function (index) {
+const _onIconLoadPingTracking = function (index) {
   if (DEBUG) {
     FW.log('IconViewTracking for icon at index ' + index);
   }
   PING.tracking.call(this, this.icons[index].iconViewTrackingUrl, null);
 };
 
-var _onPlayingAppendIcons = function () {
+const _onPlayingAppendIcons = function () {
   if (DEBUG) {
     FW.log('playing states has been reached - append icons');
   }
   this.vastPlayer.removeEventListener('playing', this.onPlayingAppendIcons);
   for (let i = 0, len = this.icons.length; i < len; i++) {
-    let icon = document.createElement('img');
+    const icon = document.createElement('img');
     icon.className = 'rmp-ad-container-icons';
 
     icon.style.width = parseInt(this.icons[i].width) + 'px';
 
     icon.style.height = parseInt(this.icons[i].height) + 'px';
 
-    let xPosition = this.icons[i].xPosition;
+    const xPosition = this.icons[i].xPosition;
     if (xPosition === 'left') {
       icon.style.left = '0px';
     } else if (xPosition === 'right') {
@@ -174,7 +167,7 @@ var _onPlayingAppendIcons = function () {
       icon.style.left = '0px';
     }
 
-    let yPosition = this.icons[i].yPosition;
+    const yPosition = this.icons[i].yPosition;
     if (yPosition === 'top') {
       icon.style.top = '0px';
     } else if (xPosition === 'bottom') {
@@ -206,4 +199,4 @@ ICONS.append = function () {
   this.vastPlayer.addEventListener('playing', this.onPlayingAppendIcons);
 };
 
-export { ICONS };
+export default ICONS;

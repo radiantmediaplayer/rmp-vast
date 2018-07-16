@@ -3,7 +3,7 @@
 var ADTAG = 'https://www.radiantmediaplayer.com/vast/tags/iab/vast4/Universal_Ad_ID-test.xml';
 
 
-describe("Test for IABVAST4Universal_Ad_ID-test", function () {
+describe('Test for IABVAST4Universal_Ad_ID-test', function () {
 
   var id = 'rmpPlayer';
   var container = document.getElementById(id);
@@ -22,7 +22,7 @@ describe("Test for IABVAST4Universal_Ad_ID-test", function () {
   }
   var title = document.getElementsByTagName('title')[0];
 
-  it("should load adTag and play it", function (done) {
+  it('should load adTag and play it', function (done) {
     var validSteps = 0;
 
     var _incrementAndLog = function (event) {
@@ -74,13 +74,18 @@ describe("Test for IABVAST4Universal_Ad_ID-test", function () {
 
     container.addEventListener('addestroyed', function (e) {
       _incrementAndLog(e);
-      expect(validSteps).toBe(11);
-      if (validSteps === 11) {
-        title.textContent = 'Test completed';
-      }
-      setTimeout(function () {
-        done();
-      }, 400);
+      var timeupdateCount = 0;
+      video.addEventListener('timeupdate', function (e) {
+        timeupdateCount++;
+        if (timeupdateCount === 5) {
+          _incrementAndLog(e);
+          if (validSteps === 12) {
+            expect(validSteps).toBe(12);
+            title.textContent = 'Test completed';
+            done();
+          }
+        }
+      });
     });
 
     rmpVast.loadAds(ADTAG);

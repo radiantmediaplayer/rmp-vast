@@ -4,7 +4,7 @@ var ADTAG1 = 'https://www.radiantmediaplayer.com/vast/tags/inline-linear-1.xml';
 var ADTAG2 = 'https://www.radiantmediaplayer.com/vast/tags/vpaid-2-js-linear.xml';
 var ADTAG3 = 'https://www.radiantmediaplayer.com/vast/tags/inline-linear-1.xml';
 
-describe("Test for pre-mid-post", function () {
+describe('Test for pre-mid-post', function () {
 
   var id = 'rmpPlayer';
   var container = document.getElementById(id);
@@ -33,7 +33,7 @@ describe("Test for pre-mid-post", function () {
 
   var title = document.getElementsByTagName('title')[0];
 
-  it("should load pre-mid-post", function (done) {
+  it('should load pre-mid-post', function (done) {
     var validSteps = 0;
 
     var _incrementAndLog = function (event) {

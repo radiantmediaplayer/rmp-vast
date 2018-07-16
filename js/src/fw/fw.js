@@ -1,9 +1,5 @@
 const FW = {};
 
-import { API } from '../api/api';
-import { VASTERRORS } from '../utils/vast-errors';
-import { PING } from '../tracking/ping';
-
 /* FW from Radiant Media Player core */
 
 FW.nullFn = function () {
@@ -52,10 +48,10 @@ FW.createStdEvent = function (eventName, element) {
   }
 };
 
-var _getComputedStyle = function (element, style) {
+const _getComputedStyle = function (element, style) {
   let propertyValue = '';
   if (element && typeof window.getComputedStyle === 'function') {
-    let cs = window.getComputedStyle(element, null);
+    const cs = window.getComputedStyle(element, null);
     if (cs) {
       propertyValue = cs.getPropertyValue(style);
       propertyValue = propertyValue.toString().toLowerCase();
@@ -64,7 +60,7 @@ var _getComputedStyle = function (element, style) {
   return propertyValue;
 };
 
-var _getStyleAttributeData = function (element, style) {
+const _getStyleAttributeData = function (element, style) {
   let styleAttributeData = _getComputedStyle(element, style) || 0;
   styleAttributeData = styleAttributeData.toString();
   if (styleAttributeData.indexOf('px') > -1) {
@@ -75,10 +71,21 @@ var _getStyleAttributeData = function (element, style) {
 
 FW.getWidth = function (element) {
   if (element) {
-    if (typeof element.offsetWidth === 'number' && element.offsetWidth !== 0) {
+    if (FW.isNumber(element.offsetWidth) && element.offsetWidth !== 0) {
       return element.offsetWidth;
     } else {
       return _getStyleAttributeData(element, 'width');
+    }
+  }
+  return 0;
+};
+
+FW.getHeight = function (element) {
+  if (element) {
+    if (FW.isNumber(element.offsetHeight) && element.offsetHeight !== 0) {
+      return element.offsetHeight;
+    } else {
+      return _getStyleAttributeData(element, 'height');
     }
   }
   return 0;
@@ -96,24 +103,27 @@ FW.hide = function (element) {
   }
 };
 
-FW.isEmptyObject = function (obj) {
-  if (Object.keys(obj).length === 0 && obj.constructor === Object) {
-    return true;
+FW.removeElement = function (element) {
+  if (element && element.parentNode) {
+    try {
+      element.parentNode.removeChild(element);
+    } catch (e) {
+      FW.trace(e);
+    }
   }
-  return false;
 };
 
 FW.ajax = function (url, timeout, returnData, withCredentials) {
   return new Promise((resolve, reject) => {
     if (window.XMLHttpRequest) {
-      let xhr = new XMLHttpRequest();
+      const xhr = new XMLHttpRequest();
       xhr.open('GET', url, true);
       xhr.timeout = timeout;
       if (withCredentials) {
         xhr.withCredentials = true;
       }
       xhr.onloadend = function () {
-        if (typeof xhr.status === 'number' && xhr.status >= 200 && xhr.status < 300) {
+        if (FW.isNumber(xhr.status) && xhr.status >= 200 && xhr.status < 300) {
           if (typeof xhr.responseText === 'string' && xhr.responseText !== '') {
             if (returnData) {
               resolve(xhr.responseText);
@@ -149,8 +159,10 @@ FW.log = function (data) {
 };
 
 FW.trace = function (data) {
-  if (data && window.console && window.console.trace) {
-    window.console.trace(data);
+  if (DEBUG) {
+    if (data && window.console && window.console.trace) {
+      window.console.trace(data);
+    }
   }
 };
 
@@ -163,7 +175,7 @@ FW.hasDOMParser = function () {
 };
 
 FW.vastReadableTime = function (time) {
-  if (typeof time === 'number' && time >= 0) {
+  if (FW.isNumber(time) && time >= 0) {
     let seconds = 0;
     let minutes = 0;
     let hours = 0;
@@ -219,7 +231,7 @@ FW.vastReadableTime = function (time) {
 
 FW.generateCacheBusting = function () {
   let text = '';
-  let possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
   for (let i = 0; i < 8; i++) {
     text += possible.charAt(Math.floor(Math.random() * possible.length));
   }
@@ -227,7 +239,7 @@ FW.generateCacheBusting = function () {
 };
 
 FW.getNodeValue = function (element, http) {
-  let childNodes = element.childNodes;
+  const childNodes = element.childNodes;
   let value = '';
   // sometimes we have may several nodes - some of which may hold whitespaces
   for (let i = 0, len = childNodes.length; i < len; i++) {
@@ -237,12 +249,12 @@ FW.getNodeValue = function (element, http) {
   }
   if (value) {
     // in case we have some leftovers CDATA - mainly for VPAID
-    let pattern = /^<!\[CDATA\[.*\]\]>$/i;
+    const pattern = /^<!\[CDATA\[.*\]\]>$/i;
     if (pattern.test(value)) {
       value = value.replace('<![CDATA[', '').replace(']]>', '');
     }
     if (http) {
-      let httpPattern = /^(https?:)?\/\//i;
+      const httpPattern = /^(https?:)?\/\//i;
       if (httpPattern.test(value)) {
         return value;
       }
@@ -261,7 +273,7 @@ FW.RFC3986EncodeURIComponent = function (str) {
 
 FW.isValidDuration = function (duration) {
   // HH:MM:SS or HH:MM:SS.mmm
-  let skipPattern = /^\d+:\d+:\d+(\.\d+)?$/i;
+  const skipPattern = /^\d+:\d+:\d+(\.\d+)?$/i;
   if (skipPattern.test(duration)) {
     return true;
   }
@@ -273,19 +285,18 @@ FW.convertDurationToSeconds = function (duration) {
   // remove .mmm
   let splitNoMS = duration.split('.');
   splitNoMS = splitNoMS[0];
-  let splitTime = splitNoMS.split(':');
+  const splitTime = splitNoMS.split(':');
   let seconds = 0;
   seconds = (parseInt(splitTime[0]) * 60 * 60) + (parseInt(splitTime[1]) * 60) +
     parseInt(splitTime[2]);
   return seconds;
 };
 
-
+// HH:MM:SS or HH:MM:SS.mmm
+const skipPattern1 = /^\d+:\d+:\d+(\.\d+)?$/i;
+// n%
+const skipPattern2 = /^\d+%$/i;
 FW.isValidOffset = function (offset) {
-  // HH:MM:SS or HH:MM:SS.mmm
-  let skipPattern1 = /^\d+:\d+:\d+(\.\d+)?$/i;
-  // n%
-  let skipPattern2 = /^\d+%$/i;
   if (skipPattern1.test(offset) || skipPattern2.test(offset)) {
     return true;
   }
@@ -293,16 +304,12 @@ FW.isValidOffset = function (offset) {
 };
 
 FW.convertOffsetToSeconds = function (offset, duration) {
-  // HH:MM:SS or HH:MM:SS.mmm
-  let skipPattern1 = /^\d+:\d+:\d+(\.\d+)?$/i;
-  // n%
-  let skipPattern2 = /^\d+%$/i;
   let seconds = 0;
   if (skipPattern1.test(offset)) {
     // remove .mmm
     let splitNoMS = offset.split('.');
     splitNoMS = splitNoMS[0];
-    let splitTime = splitNoMS.split(':');
+    const splitTime = splitNoMS.split(':');
     seconds = (parseInt(splitTime[0]) * 60 * 60) + (parseInt(splitTime[1]) * 60) + parseInt(splitTime[2]);
   } else if (skipPattern2.test(offset) && duration > 0) {
     let percent = offset.split('%');
@@ -312,28 +319,8 @@ FW.convertOffsetToSeconds = function (offset, duration) {
   return seconds;
 };
 
-FW.dispatchPingEvent = function (event) {
-  if (event) {
-    let element;
-    if (this.adIsLinear && this.vastPlayer) {
-      element = this.vastPlayer;
-    } else if (!this.adIsLinear && this.nonLinearContainer) {
-      element = this.nonLinearContainer;
-    }
-    if (element) {
-      if (Array.isArray(event)) {
-        event.forEach((currentEvent) => {
-          FW.createStdEvent(currentEvent, element);
-        });
-      } else {
-        FW.createStdEvent(event, element);
-      }
-    }
-  }
-};
-
 FW.logVideoEvents = function (video, type) {
-  let events = ['loadstart', 'durationchange',
+  const events = ['loadstart', 'durationchange',
     'loadedmetadata', 'loadeddata', 'canplay', 'canplaythrough'];
   events.forEach((value) => {
     video.addEventListener(value, (e) => {
@@ -344,77 +331,18 @@ FW.logVideoEvents = function (video, type) {
   });
 };
 
-FW.filterParams = function (params) {
-  let defaultParams = {
-    ajaxTimeout: 5000,
-    creativeLoadTimeout: 8000,
-    ajaxWithCredentials: false,
-    maxNumRedirects: 4,
-    maxNumItemsInAdPod: 10,
-    pauseOnClick: true,
-    skipMessage: 'Skip ad',
-    skipWaitingMessage: 'Skip ad in',
-    textForClickUIOnMobile: 'Learn more',
-    enableVpaid: true,
-    vpaidSettings: {
-      width: 640,
-      height: 360,
-      viewMode: 'normal',
-      desiredBitrate: 500
-    }
-  };
-  this.params = defaultParams;
-  if (params && !FW.isEmptyObject(params)) {
-    if (typeof params.ajaxTimeout === 'number' && params.ajaxTimeout > 0) {
-      this.params.ajaxTimeout = params.ajaxTimeout;
-    }
-    if (typeof params.creativeLoadTimeout === 'number' && params.creativeLoadTimeout > 0) {
-      this.params.creativeLoadTimeout = params.creativeLoadTimeout;
-    }
-    if (typeof params.ajaxWithCredentials === 'boolean') {
-      this.params.ajaxWithCredentials = params.ajaxWithCredentials;
-    }
-    if (typeof params.maxNumRedirects === 'number' && params.maxNumRedirects > 0 && params.maxNumRedirects !== 4) {
-      this.params.maxNumRedirects = params.maxNumRedirects;
-      // we need to avoid infinite wrapper loops scenario 
-      // so we cap maxNumRedirects to 30 
-      if (this.params.maxNumRedirects > 30) {
-        this.params.maxNumRedirects = 30;
-      }
-    }
-    if (typeof params.maxNumItemsInAdPod === 'number' && params.maxNumItemsInAdPod > 0 && params.maxNumItemsInAdPod !== 10) {
-      this.params.maxNumItemsInAdPod = params.maxNumItemsInAdPod;
-    }
-    if (typeof params.pauseOnClick === 'boolean') {
-      this.params.pauseOnClick = params.pauseOnClick;
-    }
-    if (typeof params.skipMessage === 'string') {
-      this.params.skipMessage = params.skipMessage;
-    }
-    if (typeof params.skipWaitingMessage === 'string') {
-      this.params.skipWaitingMessage = params.skipWaitingMessage;
-    }
-    if (typeof params.textForClickUIOnMobile === 'string') {
-      this.params.textForClickUIOnMobile = params.textForClickUIOnMobile;
-    }
-    if (typeof params.enableVpaid === 'boolean') {
-      this.params.enableVpaid = params.enableVpaid;
-    }
-    if (typeof params.vpaidSettings === 'object') {
-      if (typeof params.vpaidSettings.width === 'number') {
-        this.params.vpaidSettings.width = params.vpaidSettings.width;
-      }
-      if (typeof params.vpaidSettings.height === 'number') {
-        this.params.vpaidSettings.height = params.vpaidSettings.height;
-      }
-      if (typeof params.vpaidSettings.viewMode === 'string') {
-        this.params.vpaidSettings.viewMode = params.vpaidSettings.viewMode;
-      }
-      if (typeof params.vpaidSettings.desiredBitrate === 'number') {
-        this.params.vpaidSettings.desiredBitrate = params.vpaidSettings.desiredBitrate;
-      }
-    }
+FW.isNumber = function (n) {
+  if (typeof n !== 'undefined' && typeof n === 'number' && Number.isFinite(n)) {
+    return true;
   }
+  return false;
+};
+
+FW.isObject = function (obj) {
+  if (typeof obj !== 'undefined' && obj !== null && typeof obj === 'object') {
+    return true;
+  }
+  return false;
 };
 
 FW.openWindow = function (link) {
@@ -428,56 +356,4 @@ FW.openWindow = function (link) {
   }
 };
 
-FW.playPromise = function (whichPlayer, firstPlayerPlayRequest) {
-  let targetPlayer;
-  switch (whichPlayer) {
-    case 'content':
-      targetPlayer = this.contentPlayer;
-      break;
-    case 'vast':
-      targetPlayer = this.vastPlayer;
-      break;
-    default:
-      break;
-  }
-  if (targetPlayer) {
-    let playPromise = targetPlayer.play();
-    // most modern browsers support play as a Promise
-    // this lets us handle autoplay rejection 
-    // https://developers.google.com/web/updates/2016/03/play-returns-promise
-    if (playPromise !== undefined) {
-      playPromise.then(() => {
-        if (firstPlayerPlayRequest) {
-          if (DEBUG) {
-            FW.log('initial play promise on ' + whichPlayer + ' player has succeeded');
-          }
-          API.createEvent.call(this, 'adinitialplayrequestsucceeded');
-        }
-      }).catch((e) => {
-        if (firstPlayerPlayRequest && whichPlayer === 'vast' && this.adIsLinear) {
-          if (DEBUG) {
-            FW.log(e);
-            FW.log('initial play promise on VAST player has been rejected for linear asset - likely autoplay is being blocked');
-          }
-          PING.error.call(this, 400);
-          VASTERRORS.process.call(this, 400);
-          API.createEvent.call(this, 'adinitialplayrequestfailed');
-        } else if (firstPlayerPlayRequest && whichPlayer === 'content' && !this.adIsLinear) {
-          if (DEBUG) {
-            FW.log(e);
-            FW.log('initial play promise on content player has been rejected for non-linear asset - likely autoplay is being blocked');
-          }
-          API.createEvent.call(this, 'adinitialplayrequestfailed');
-        } else {
-          if (DEBUG) {
-            FW.log(e);
-            FW.log('playPromise on ' + whichPlayer + ' player has been rejected');
-          }
-        }
-      });
-    }
-  }
-};
-
-
-export { FW };
+export default FW;

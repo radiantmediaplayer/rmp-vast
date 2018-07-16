@@ -1,4 +1,4 @@
-import { FW } from '../fw/fw';
+import FW from '../fw/fw';
 
 const RESET = {};
 
@@ -168,4 +168,4 @@ RESET.unwireVastPlayerEvents = function () {
   }
 };
 
-export { RESET };
+export default RESET;
