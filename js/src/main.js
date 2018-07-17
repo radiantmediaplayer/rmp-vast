@@ -1,4 +1,6 @@
+/* module:begins */
 import 'core-js';
+/* module:ends */
 import FW from './fw/fw';
 import ENV from './fw/env';
 import HELPERS from './utils/helpers';
@@ -12,6 +14,7 @@ import RESET from './utils/reset';
 import VASTERRORS from './utils/vast-errors';
 import ICONS from './creatives/icons';
 
+/* module:begins */
 (() => {
 
   'use strict';
@@ -31,6 +34,7 @@ import ICONS from './creatives/icons';
     }
     return;
   }
+  /* module:ends */
 
   window.RmpVast = function (id, params) {
     if (typeof id !== 'string' || id === '') {
@@ -257,7 +261,10 @@ import ICONS from './creatives/icons';
             for (let i = 0, len = clickTracking.length; i < len; i++) {
               const clickTrackingUrl = FW.getNodeValue(clickTracking[i], true);
               if (clickTrackingUrl !== null) {
-                this.trackingTags.push({ event: 'clickthrough', url: clickTrackingUrl });
+                this.trackingTags.push({
+                  event: 'clickthrough',
+                  url: clickTrackingUrl
+                });
               }
             }
           }
@@ -409,7 +416,10 @@ import ICONS from './creatives/icons';
     if (errorNode.length > 0) {
       const errorUrl = FW.getNodeValue(errorNode[0], true);
       if (errorUrl !== null) {
-        this.inlineOrWrapperErrorTags.push({ event: 'error', url: errorUrl });
+        this.inlineOrWrapperErrorTags.push({
+          event: 'error',
+          url: errorUrl
+        });
       }
     }
     const adTitle = inlineOrWrapper[0].getElementsByTagName('AdTitle');
@@ -453,7 +463,10 @@ import ICONS from './creatives/icons';
       for (let i = 0, len = impression.length; i < len; i++) {
         const impressionUrl = FW.getNodeValue(impression[i], true);
         if (impressionUrl !== null) {
-          this.trackingTags.push({ event: 'impression', url: impressionUrl });
+          this.trackingTags.push({
+            event: 'impression',
+            url: impressionUrl
+          });
         }
       }
     }
@@ -499,7 +512,10 @@ import ICONS from './creatives/icons';
           if (errorUrl !== null) {
             // we use an array here for vastErrorTags but we only have item in it
             // this is to be able to use PING.error for both vastErrorTags and inlineOrWrapperErrorTags
-            this.vastErrorTags.push({ event: 'error', url: errorUrl });
+            this.vastErrorTags.push({ 
+              event: 'error', 
+              url: errorUrl 
+            });
           }
         }
       }
@@ -615,5 +631,7 @@ import ICONS from './creatives/icons';
     }
     _makeAjaxRequest.call(this, vastUrl);
   };
-
+  /* module:begins */
 })();
+/* module:ends */
+/* module:export */

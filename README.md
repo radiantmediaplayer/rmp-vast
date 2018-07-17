@@ -80,11 +80,14 @@ This structure must not be altered. CSS classes on the above elements must not b
 The HTML5 video tag used for content must use the src property on the HTML5 video (e.g. do not use source tag).
 - Init rmp-vast with JavaScript:
 ```javascript
-var adTag = 'https://www.radiantmediaplayer.com/vast/tags/inline-linear-5.xml';
+var adTag = 'https://www.radiantmediaplayer.com/vast/tags/inline-linear-1.xml';
 var id = 'rmpPlayer';
+var params = {
+  ajaxTimeout: 8000
+};
 
 // create RmpVast instance
-var rmpVast = new RmpVast(id);
+var rmpVast = new RmpVast(id, ,params);
 
 // call loadAds - this will start the ad loading process, display the ad and resume content automatically in the case of linear pre-roll
 // in this case we use autoplay
@@ -98,6 +101,23 @@ rmpVast.loadAds(adTag);
 ```
 A complete implementation example is provided in app/index.html. You should look at app/js/app.js. 
 This example can be found live at https://www.radiantmediaplayer.com/rmp-vast/app/.
+
+## Importing rmp-vast as a ES2015 module
+```javascript
+import RmpVast from 'js/src/module';
+
+const adTag = 'https://www.radiantmediaplayer.com/vast/tags/inline-linear-1.xml';
+const id = 'rmpPlayer';
+const params = {
+  ajaxTimeout: 8000
+};
+
+// create RmpVast instance
+const rmpVast = new RmpVast(id, ,params);
+
+// call loadAds
+rmpVast.loadAds(adTag);
+```
 
 ## Documentation
 Source code for rmp-vast is available for review in js/src/ folder. Code comments should be available at key points to better understand rmp-vast inner workings.
@@ -297,7 +317,7 @@ To develop rmp-vast do install it:
 
 `npm install`
 
-Please review grunt/shell.js - you need to have eslint, browserify, watchify, uglifyjs, node and stylelint installed globally to move forward.
+Please review grunt/shell.js - you need to have eslint, browserify, watchify, uglifyjs, node, stylelint and js-beautify installed globally to move forward.
 
 Make changes to code and then run:
 

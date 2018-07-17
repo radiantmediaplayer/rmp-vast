@@ -11,6 +11,9 @@
     "less",
     "shell:uglify",
     "replace:debugOn",
+    "replace:module",
+    "shell:jsbeautify",
+    "shell:eslintModule",
     "compress"
   ],
   "build": [
@@ -24,7 +27,10 @@
     "shell:stylelint",
     "less",
     "shell:uglify",
-    "replace:debugOn"
+    "replace:debugOn",
+    "replace:module",
+    "shell:jsbeautify",
+    "shell:eslintModule"
   ],
   "test": [
     "shell:test"

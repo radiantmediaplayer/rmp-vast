@@ -91,5 +91,4 @@ CONTENTPLAYER.preventSeekingForCustomPlayback = function () {
   }
 };
 
-
 export default CONTENTPLAYER;

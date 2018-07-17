@@ -1,6 +1,6 @@
 /**
  * @license Copyright (c) 2017-2018 Radiant Media Player | https://www.radiantmediaplayer.com
- * rmp-vast 2.0.0
+ * rmp-vast 2.0.1
  * GitHub: https://github.com/radiantmediaplayer/rmp-vast
  * MIT License: https://github.com/radiantmediaplayer/rmp-vast/blob/master/LICENSE
  */
@@ -2374,8 +2374,12 @@ var _icons2 = _interopRequireDefault(_icons);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } } /* module:begins */
 
+/* module:ends */
+
+
+/* module:begins */
 (function () {
 
   'use strict';
@@ -2395,6 +2399,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
     }
     return;
   }
+  /* module:ends */
 
   window.RmpVast = function (id, params) {
     if (typeof id !== 'string' || id === '') {
@@ -2620,7 +2625,10 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
             for (var _i2 = 0, _len2 = clickTracking.length; _i2 < _len2; _i2++) {
               var clickTrackingUrl = _fw2.default.getNodeValue(clickTracking[_i2], true);
               if (clickTrackingUrl !== null) {
-                this.trackingTags.push({ event: 'clickthrough', url: clickTrackingUrl });
+                this.trackingTags.push({
+                  event: 'clickthrough',
+                  url: clickTrackingUrl
+                });
               }
             }
           }
@@ -2772,7 +2780,10 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
     if (errorNode.length > 0) {
       var errorUrl = _fw2.default.getNodeValue(errorNode[0], true);
       if (errorUrl !== null) {
-        this.inlineOrWrapperErrorTags.push({ event: 'error', url: errorUrl });
+        this.inlineOrWrapperErrorTags.push({
+          event: 'error',
+          url: errorUrl
+        });
       }
     }
     var adTitle = inlineOrWrapper[0].getElementsByTagName('AdTitle');
@@ -2816,7 +2827,10 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
       for (var _i5 = 0, _len5 = impression.length; _i5 < _len5; _i5++) {
         var impressionUrl = _fw2.default.getNodeValue(impression[_i5], true);
         if (impressionUrl !== null) {
-          this.trackingTags.push({ event: 'impression', url: impressionUrl });
+          this.trackingTags.push({
+            event: 'impression',
+            url: impressionUrl
+          });
         }
       }
     }
@@ -2862,7 +2876,10 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
           if (errorUrl !== null) {
             // we use an array here for vastErrorTags but we only have item in it
             // this is to be able to use PING.error for both vastErrorTags and inlineOrWrapperErrorTags
-            this.vastErrorTags.push({ event: 'error', url: errorUrl });
+            this.vastErrorTags.push({
+              event: 'error',
+              url: errorUrl
+            });
           }
         }
       }
@@ -2980,7 +2997,10 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
     }
     _makeAjaxRequest.call(this, vastUrl);
   };
+  /* module:begins */
 })();
+/* module:ends */
+/* module:export */
 
 },{"./api/api":2,"./creatives/icons":3,"./creatives/linear":4,"./creatives/non-linear":5,"./fw/env":7,"./fw/fw":8,"./players/content-player":10,"./tracking/ping":13,"./tracking/tracking-events":14,"./utils/helpers":15,"./utils/reset":16,"./utils/vast-errors":17,"core-js/modules/es6.array.copy-within":122,"core-js/modules/es6.array.fill":123,"core-js/modules/es6.array.find":125,"core-js/modules/es6.array.find-index":124,"core-js/modules/es6.array.from":126,"core-js/modules/es6.array.iterator":127,"core-js/modules/es6.array.of":128,"core-js/modules/es6.function.name":129,"core-js/modules/es6.map":130,"core-js/modules/es6.math.acosh":131,"core-js/modules/es6.math.asinh":132,"core-js/modules/es6.math.atanh":133,"core-js/modules/es6.math.cbrt":134,"core-js/modules/es6.math.clz32":135,"core-js/modules/es6.math.cosh":136,"core-js/modules/es6.math.expm1":137,"core-js/modules/es6.math.fround":138,"core-js/modules/es6.math.hypot":139,"core-js/modules/es6.math.imul":140,"core-js/modules/es6.math.log10":141,"core-js/modules/es6.math.log1p":142,"core-js/modules/es6.math.log2":143,"core-js/modules/es6.math.sign":144,"core-js/modules/es6.math.sinh":145,"core-js/modules/es6.math.tanh":146,"core-js/modules/es6.math.trunc":147,"core-js/modules/es6.number.epsilon":148,"core-js/modules/es6.number.is-finite":149,"core-js/modules/es6.number.is-integer":150,"core-js/modules/es6.number.is-nan":151,"core-js/modules/es6.number.is-safe-integer":152,"core-js/modules/es6.number.max-safe-integer":153,"core-js/modules/es6.number.min-safe-integer":154,"core-js/modules/es6.object.assign":155,"core-js/modules/es6.object.freeze":156,"core-js/modules/es6.object.get-own-property-descriptor":157,"core-js/modules/es6.object.get-own-property-names":158,"core-js/modules/es6.object.get-prototype-of":159,"core-js/modules/es6.object.is":163,"core-js/modules/es6.object.is-extensible":160,"core-js/modules/es6.object.is-frozen":161,"core-js/modules/es6.object.is-sealed":162,"core-js/modules/es6.object.keys":164,"core-js/modules/es6.object.prevent-extensions":165,"core-js/modules/es6.object.seal":166,"core-js/modules/es6.object.set-prototype-of":167,"core-js/modules/es6.promise":168,"core-js/modules/es6.reflect.apply":169,"core-js/modules/es6.reflect.construct":170,"core-js/modules/es6.reflect.define-property":171,"core-js/modules/es6.reflect.delete-property":172,"core-js/modules/es6.reflect.get":175,"core-js/modules/es6.reflect.get-own-property-descriptor":173,"core-js/modules/es6.reflect.get-prototype-of":174,"core-js/modules/es6.reflect.has":176,"core-js/modules/es6.reflect.is-extensible":177,"core-js/modules/es6.reflect.own-keys":178,"core-js/modules/es6.reflect.prevent-extensions":179,"core-js/modules/es6.reflect.set":181,"core-js/modules/es6.reflect.set-prototype-of":180,"core-js/modules/es6.regexp.flags":182,"core-js/modules/es6.regexp.match":183,"core-js/modules/es6.regexp.replace":184,"core-js/modules/es6.regexp.search":185,"core-js/modules/es6.regexp.split":186,"core-js/modules/es6.set":187,"core-js/modules/es6.string.code-point-at":188,"core-js/modules/es6.string.ends-with":189,"core-js/modules/es6.string.from-code-point":190,"core-js/modules/es6.string.includes":191,"core-js/modules/es6.string.raw":192,"core-js/modules/es6.string.repeat":193,"core-js/modules/es6.string.starts-with":194,"core-js/modules/es6.symbol":195,"core-js/modules/es6.typed.array-buffer":196,"core-js/modules/es6.typed.data-view":197,"core-js/modules/es6.typed.float32-array":198,"core-js/modules/es6.typed.float64-array":199,"core-js/modules/es6.typed.int16-array":200,"core-js/modules/es6.typed.int32-array":201,"core-js/modules/es6.typed.int8-array":202,"core-js/modules/es6.typed.uint16-array":203,"core-js/modules/es6.typed.uint32-array":204,"core-js/modules/es6.typed.uint8-array":205,"core-js/modules/es6.typed.uint8-clamped-array":206,"core-js/modules/es6.weak-map":207,"core-js/modules/es6.weak-set":208,"core-js/modules/web.dom.iterable":209,"core-js/modules/web.immediate":210,"core-js/modules/web.timers":211}],10:[function(require,module,exports){
 'use strict';

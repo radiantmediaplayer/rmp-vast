@@ -1,9 +1,12 @@
 module.exports = {
   eslintSrc: {
-    command: 'eslint --config .eslintrc.json js/src/.'
+    command: 'eslint --config .eslintrc-es2015.json --ignore-path .es2015.eslintignore js/src/.'
+  },
+  eslintModule: {
+    command: 'eslint --config .eslintrc-es2015.json js/src/module.js'
   },
   eslintES5: {
-    command: 'eslint --config .eslintrc-es5.json --ignore-path .prod.eslintignore test/spec/. app/js/.'
+    command: 'eslint --config .eslintrc-es5.json --ignore-path .es5.eslintignore test/spec/. app/js/.'
   },
   eslintNode: {
     command: 'eslint --config .eslintrc-node.json test/spec/main/. test/spec/helpers/. Gruntfile.js grunt/'
@@ -16,6 +19,9 @@ module.exports = {
   },
   uglify: {
     command: 'uglifyjs js/dist/rmp-vast.js --compress --define DEBUG=false --mangle --screw-ie8 --comments -o js/dist/rmp-vast.min.js'
+  },
+  jsbeautify: {
+    command: 'js-beautify -f js/src/module.js -o js/src/module.js'
   },
   stylelint: {
     command: 'stylelint "css/*.less" "css/import-less/*.less" "app/css/*.css"'
