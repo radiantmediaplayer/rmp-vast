@@ -118,6 +118,9 @@ const rmpVast = new RmpVast(id, params);
 // call loadAds
 rmpVast.loadAds(adTag);
 ```
+Note that 'core-js' is not provided when rmp-vast is imported as a ES2015 module, if wanted you will need to add it in your main app (and transform resulting code with Babel if needed).
+
+To enable debug logs you will need to add `window.DEBUG = true;` in module.js (just after import). The removal of the global `DEBUG` varibale should be handled with uglifyjs when building your main app (see grunt/shell.js). 
 
 ## Documentation
 Source code for rmp-vast is available for review in js/src/ folder. Code comments should be available at key points to better understand rmp-vast inner workings.
