@@ -87,7 +87,7 @@ var params = {
 };
 
 // create RmpVast instance
-var rmpVast = new RmpVast(id, ,params);
+var rmpVast = new RmpVast(id, params);
 
 // call loadAds - this will start the ad loading process, display the ad and resume content automatically in the case of linear pre-roll
 // in this case we use autoplay
@@ -113,7 +113,7 @@ const params = {
 };
 
 // create RmpVast instance
-const rmpVast = new RmpVast(id, ,params);
+const rmpVast = new RmpVast(id, params);
 
 // call loadAds
 rmpVast.loadAds(adTag);
