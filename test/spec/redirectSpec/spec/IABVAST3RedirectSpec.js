@@ -9,8 +9,8 @@ describe('Test for IABVAST3RedirectSpec', function () {
   var container = document.getElementById(id);
   var video = document.querySelector('.rmp-video');
   var rmpVast = new RmpVast(id);
-  var fw = rmpVast.getFW();
-  var env = rmpVast.getEnv();
+  var fw = rmpVast.getFramework();
+  var env = rmpVast.getEnvironment();
   var ua = window.navigator.userAgent;
   var regExp = /(edge\/|firefox\/)/i;
   if (!regExp.test(ua)) {

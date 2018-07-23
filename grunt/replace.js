@@ -31,21 +31,21 @@ module.exports = {
   },
   module: {
     src: [
-      'js/src/main.js',
+      'js/src/main.js'
     ],
     dest: 'js/src/module.js',
     replacements: [{
       from: /\/\* module:begins \*\/([\s\S]+?|.+?)\/\* module:ends \*\//g,
       to: ''
     }, {
-      from: /window.RmpVast = function/,
+      from: /\/\* module:export \*\//,
+      to: 'export default RmpVast;'
+    }, {
+      from: /window.RmpVast\s+=\s+function/,
       to: 'const RmpVast = function'
     }, {
       from: /window.RmpVast/g,
       to: 'RmpVast'
-    }, {
-      from: /\/\* module:export \*\//,
-      to: 'export default RmpVast;'
     }]
   }
 };

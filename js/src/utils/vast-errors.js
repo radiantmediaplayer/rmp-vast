@@ -1,5 +1,5 @@
 import FW from '../fw/fw';
-import API from '../api/api';
+import HELPERS from '../utils/helpers';
 import VASTPLAYER from '../players/vast-player';
 
 const VASTERRORS = {}; 
@@ -149,7 +149,7 @@ const _updateVastError = function (errorCode) {
 
 VASTERRORS.process = function (errorCode) {
   _updateVastError.call(this, errorCode);
-  API.createEvent.call(this, 'aderror');
+  HELPERS.createApiEvent.call(this, 'aderror');
   VASTPLAYER.resumeContent.call(this);
 };
 

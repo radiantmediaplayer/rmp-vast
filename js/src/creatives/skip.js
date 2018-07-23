@@ -1,7 +1,6 @@
 import FW from '../fw/fw';
 import HELPERS from '../utils/helpers';
 import VASTPLAYER from '../players/vast-player';
-import API from '../api/api';
 
 const SKIP = {};
 
@@ -28,7 +27,7 @@ const _onTimeupdateCheckSkip = function () {
       this.vastPlayer.removeEventListener('timeupdate', this.onTimeupdateCheckSkip);
       _setCanBeSkippedUI.call(this);
       this.skippableAdCanBeSkipped = true;
-      API.createEvent.call(this, 'adskippablestatechanged');
+      HELPERS.createApiEvent.call(this, 'adskippablestatechanged');
     } else if (skipoffsetSeconds - this.vastPlayerCurrentTime > 0) {
       _updateWaitingForCanBeSkippedUI.call(this, skipoffsetSeconds - this.vastPlayerCurrentTime);
     }
@@ -44,7 +43,7 @@ const _onClickSkip = function (event) {
   }
   if (this.skippableAdCanBeSkipped) {
     // create API event 
-    API.createEvent.call(this, 'adskipped');
+    HELPERS.createApiEvent.call(this, 'adskipped');
     // request ping for skip event
     if (this.hasSkipEvent) {
       HELPERS.dispatchPingEvent.call(this, 'skip');

@@ -284,8 +284,8 @@ The following methods should be queried after the `aderror` event has fired for 
 - `getAdErrorType()`: return String, representing the detected ad error type, possible values: 'adLoadError', 'adPlayError' or '' (if unknown error type).
 
 The following methods provide context information for the rmp-vast instance:
-- `getEnv()`: return Object, the rmp-vast environment object.
-- `getFW()`: return Object, the core internal rmp-vast framework.
+- `getEnvironment()`: return Object, the rmp-vast environment object.
+- `getFramework()`: return Object, the core internal rmp-vast framework.
 - `getVastPlayer()`: return HTMLVideoElement, the VAST player video tag.
 - `getContentPlayer()`: return HTMLVideoElement, the content player video tag.
 - `getIsUsingContentPlayerForAds()`: return Boolean, on iOS and macOS Safari the VAST player is the content player. This is to avoid fullscreen management and autoplay issues and to provide a consistent user experience. This method will return true for iOS and macOS Safari, false otherwise.

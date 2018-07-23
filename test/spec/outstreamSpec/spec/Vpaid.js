@@ -18,8 +18,8 @@ describe('Test for outstream/Vpaid', function () {
     }
   };
   var rmpVast = new RmpVast(id, params);
-  var fw = rmpVast.getFW();
-  var env = rmpVast.getEnv();
+  var fw = rmpVast.getFramework();
+  var env = rmpVast.getEnvironment();
   var ua = window.navigator.userAgent;
   var regExp = /(edge\/|firefox\/)/i;
   if (!regExp.test(ua)) {

@@ -2,7 +2,6 @@ import FW from '../fw/fw';
 import ENV from '../fw/env';
 import HELPERS from '../utils/helpers';
 import VASTERRORS from '../utils/vast-errors';
-import API from '../api/api';
 import PING from '../tracking/ping';
 import VASTPLAYER from '../players/vast-player';
 import ICONS from '../creatives/icons';
@@ -123,7 +122,7 @@ const _onAdLoaded = function () {
   CONTENTPLAYER.pause.call(this);
   this.adOnStage = true;
   this.vpaidCreative.startAd();
-  API.createEvent.call(this, 'adloaded');
+  HELPERS.createApiEvent.call(this, 'adloaded');
 };
 
 const _onAdStarted = function () {
@@ -171,7 +170,7 @@ const _onAdSkipped = function () {
   if (this.adSkippedTimeout) {
     clearTimeout(this.adSkippedTimeout);
   }
-  API.createEvent.call(this, 'adskipped');
+  HELPERS.createApiEvent.call(this, 'adskipped');
   HELPERS.dispatchPingEvent.call(this, 'skip');
 };
 
@@ -179,7 +178,7 @@ const _onAdSkippableStateChange = function () {
   if (DEBUG) {
     FW.log('VPAID AdSkippableStateChange event');
   }
-  API.createEvent.call(this, 'adskippablestatechanged');
+  HELPERS.createApiEvent.call(this, 'adskippablestatechanged');
 };
 
 const _onAdDurationChange = function () {
@@ -195,7 +194,7 @@ const _onAdDurationChange = function () {
       this.vpaidRemainingTime = remainingTime;
     }
   }
-  API.createEvent.call(this, 'addurationchange');
+  HELPERS.createApiEvent.call(this, 'addurationchange');
 };
 
 const _onAdVolumeChange = function () {
@@ -212,14 +211,14 @@ const _onAdVolumeChange = function () {
     HELPERS.dispatchPingEvent.call(this, 'unmute');
   }
   this.vpaidCurrentVolume = newVolume;
-  API.createEvent.call(this, 'advolumechanged');
+  HELPERS.createApiEvent.call(this, 'advolumechanged');
 };
 
 const _onAdImpression = function () {
   if (DEBUG) {
     FW.log('VPAID AdImpression event');
   }
-  API.createEvent.call(this, 'adimpression');
+  HELPERS.createApiEvent.call(this, 'adimpression');
   HELPERS.dispatchPingEvent.call(this, 'impression');
 };
 
@@ -233,7 +232,7 @@ const _onAdVideoStart = function () {
     newVolume = 1;
   }
   this.vpaidCurrentVolume = newVolume;
-  API.createEvent.call(this, 'adstarted');
+  HELPERS.createApiEvent.call(this, 'adstarted');
   HELPERS.dispatchPingEvent.call(this, 'start');
 };
 
@@ -241,7 +240,7 @@ const _onAdVideoFirstQuartile = function () {
   if (DEBUG) {
     FW.log('VPAID AdVideoFirstQuartile event');
   }
-  API.createEvent.call(this, 'adfirstquartile');
+  HELPERS.createApiEvent.call(this, 'adfirstquartile');
   HELPERS.dispatchPingEvent.call(this, 'firstQuartile');
 };
 
@@ -249,7 +248,7 @@ const _onAdVideoMidpoint = function () {
   if (DEBUG) {
     FW.log('VPAID AdVideoMidpoint event');
   }
-  API.createEvent.call(this, 'admidpoint');
+  HELPERS.createApiEvent.call(this, 'admidpoint');
   HELPERS.dispatchPingEvent.call(this, 'midpoint');
 };
 
@@ -257,7 +256,7 @@ const _onAdVideoThirdQuartile = function () {
   if (DEBUG) {
     FW.log('VPAID AdVideoThirdQuartile event');
   }
-  API.createEvent.call(this, 'adthirdquartile');
+  HELPERS.createApiEvent.call(this, 'adthirdquartile');
   HELPERS.dispatchPingEvent.call(this, 'thirdQuartile');
 };
 
@@ -265,7 +264,7 @@ const _onAdVideoComplete = function () {
   if (DEBUG) {
     FW.log('VPAID AdVideoComplete event');
   }
-  API.createEvent.call(this, 'adcomplete');
+  HELPERS.createApiEvent.call(this, 'adcomplete');
   HELPERS.dispatchPingEvent.call(this, 'complete');
 };
 
@@ -273,7 +272,7 @@ const _onAdClickThru = function (url, id, playerHandles) {
   if (DEBUG) {
     FW.log('VPAID AdClickThru event');
   }
-  API.createEvent.call(this, 'adclick');
+  HELPERS.createApiEvent.call(this, 'adclick');
   HELPERS.dispatchPingEvent.call(this, 'clickthrough');
   if (typeof playerHandles !== 'boolean') {
     return;
@@ -300,7 +299,7 @@ const _onAdPaused = function () {
     FW.log('VPAID AdPaused event');
   }
   this.vpaidPaused = true;
-  API.createEvent.call(this, 'adpaused');
+  HELPERS.createApiEvent.call(this, 'adpaused');
   HELPERS.dispatchPingEvent.call(this, 'pause');
 };
 
@@ -309,7 +308,7 @@ const _onAdPlaying = function () {
     FW.log('VPAID AdPlaying event');
   }
   this.vpaidPaused = false;
-  API.createEvent.call(this, 'adresumed');
+  HELPERS.createApiEvent.call(this, 'adresumed');
   HELPERS.dispatchPingEvent.call(this, 'resume');
 };
 
@@ -331,14 +330,14 @@ const _onAdInteraction = function () {
   if (DEBUG) {
     FW.log('VPAID AdInteraction event');
   }
-  API.createEvent.call(this, 'adinteraction');
+  HELPERS.createApiEvent.call(this, 'adinteraction');
 };
 
 const _onAdUserAcceptInvitation = function () {
   if (DEBUG) {
     FW.log('VPAID AdUserAcceptInvitation event');
   }
-  API.createEvent.call(this, 'aduseracceptinvitation');
+  HELPERS.createApiEvent.call(this, 'aduseracceptinvitation');
   HELPERS.dispatchPingEvent.call(this, 'acceptInvitation');
 };
 
@@ -346,7 +345,7 @@ const _onAdUserMinimize = function () {
   if (DEBUG) {
     FW.log('VPAID AdUserMinimize event');
   }
-  API.createEvent.call(this, 'adcollapse');
+  HELPERS.createApiEvent.call(this, 'adcollapse');
   HELPERS.dispatchPingEvent.call(this, 'collapse');
 };
 
@@ -354,7 +353,7 @@ const _onAdUserClose = function () {
   if (DEBUG) {
     FW.log('VPAID AdUserClose event');
   }
-  API.createEvent.call(this, 'adclose');
+  HELPERS.createApiEvent.call(this, 'adclose');
   HELPERS.dispatchPingEvent.call(this, 'close');
 };
 
@@ -362,7 +361,7 @@ const _onAdSizeChange = function () {
   if (DEBUG) {
     FW.log('VPAID AdSizeChange event');
   }
-  API.createEvent.call(this, 'adsizechange');
+  HELPERS.createApiEvent.call(this, 'adsizechange');
 };
 
 const _onAdLinearChange = function () {
@@ -371,7 +370,7 @@ const _onAdLinearChange = function () {
   }
   if (this.vpaidCreative && typeof this.vpaidCreative.getAdLinear === 'function') {
     this.adIsLinear = this.vpaidCreative.getAdLinear();
-    API.createEvent.call(this, 'adlinearchange');
+    HELPERS.createApiEvent.call(this, 'adlinearchange');
   }
 };
 
@@ -379,7 +378,7 @@ const _onAdExpandedChange = function () {
   if (DEBUG) {
     FW.log('VPAID AdExpandedChange event');
   }
-  API.createEvent.call(this, 'adexpandedchange');
+  HELPERS.createApiEvent.call(this, 'adexpandedchange');
 };
 
 const _onAdRemainingTimeChange = function () {
@@ -392,7 +391,7 @@ const _onAdRemainingTimeChange = function () {
       this.vpaidRemainingTime = remainingTime;
     }
   }
-  API.createEvent.call(this, 'adremainingtimechange');
+  HELPERS.createApiEvent.call(this, 'adremainingtimechange');
 };
 
 // vpaidCreative methods

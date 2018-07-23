@@ -1,11 +1,43 @@
 import FW from '../fw/fw';
+import ENV from '../fw/env';
+import HELPERS from './helpers';
 
-const RESET = {};
+const DEFAULT = {};
 
-RESET.internalVariables = function () {
-  if (DEBUG) {
-    FW.log('reset - internalVariables');
+DEFAULT.instanceVariables = function () {
+  this.adContainer = null;
+  this.rmpVastInitialized = false;
+  this.useContentPlayerForAds = false;
+  this.contentPlayerCompleted = false;
+  this.currentContentSrc = '';
+  this.currentContentCurrentTime = -1;
+  this.needsSeekAdjust = false;
+  this.seekAdjustAttached = false;
+  this.onDestroyLoadAds = null;
+  this.firstVastPlayerPlayRequest = true;
+  this.firstContentPlayerPlayRequest = true;
+  this.params = {};
+  // adpod 
+  this.adPod = [];
+  this.standaloneAdsInPod = [];
+  this.onAdDestroyLoadNextAdInPod = FW.nullFn;
+  this.runningAdPod = false;
+  this.adPodItemWrapper = false;
+  this.adPodCurrentIndex = 0;
+  this.adPodApiInfo = [];
+  this.adPodWrapperTrackings = [];
+  // on iOS and macOS Safari we use content player to play ads
+  // to avoid issues related to fullscreen management and autoplay
+  // as fullscreen on iOS is handled by the default OS player
+  if (ENV.isIos[0] || (ENV.isMacOSX && ENV.isSafari[0])) {
+    this.useContentPlayerForAds = true;
+    if (DEBUG) {
+      FW.log('vast player will be content player');
+    }
   }
+};
+
+DEFAULT.loadAdsVariables = function () {
   // init internal methods 
   this.onLoadedmetadataPlay = null;
   this.onPlaybackError = null;
@@ -109,63 +141,53 @@ RESET.internalVariables = function () {
   this.onJSVPAIDError = FW.nullFn;
 };
 
-RESET.unwireVastPlayerEvents = function () {
-  if (DEBUG) {
-    FW.log('reset - unwireVastPlayerEvents');
-  }
-  if (this.nonLinearContainer) {
-    this.nonLinearImg.removeEventListener('load', this.onNonLinearLoadSuccess);
-    this.nonLinearImg.removeEventListener('error', this.onNonLinearLoadError);
-    this.nonLinearATag.removeEventListener('click', this.onNonLinearClickThrough);
-    this.nonLinearATag.removeEventListener('touchend', this.onNonLinearClickThrough);
-    this.nonLinearClose.removeEventListener('click', this.onClickCloseNonLinear);
-    this.nonLinearClose.removeEventListener('touchend', this.onClickCloseNonLinear);
-    for (let i = 0, len = this.trackingTags.length; i < len; i++) {
-      this.nonLinearContainer.removeEventListener(this.trackingTags[i].event, this.onEventPingTracking);
+DEFAULT.fullscreen = function () {
+  // attach fullscreen states
+  // this assumes we have a polyfill for fullscreenchange event 
+  // see app/js/app.js
+  // we need this to handle VAST fullscreen events
+  let isInFullscreen = false;
+  const _onFullscreenchange = function (event) {
+    if (event && event.type) {
+      if (DEBUG) {
+        FW.log('event is ' + event.type);
+      }
+      if (event.type === 'fullscreenchange') {
+        if (isInFullscreen) {
+          isInFullscreen = false;
+          if (this.adOnStage && this.adIsLinear) {
+            HELPERS.dispatchPingEvent.call(this, 'exitFullscreen');
+          }
+        } else {
+          isInFullscreen = true;
+          if (this.adOnStage && this.adIsLinear) {
+            HELPERS.dispatchPingEvent.call(this, 'fullscreen');
+          }
+        }
+      } else if (event.type === 'webkitbeginfullscreen') {
+        // iOS uses webkitbeginfullscreen
+        if (this.adOnStage && this.adIsLinear) {
+          HELPERS.dispatchPingEvent.call(this, 'fullscreen');
+        }
+      } else if (event.type === 'webkitendfullscreen') {
+        // iOS uses webkitendfullscreen
+        if (this.adOnStage && this.adIsLinear) {
+          HELPERS.dispatchPingEvent.call(this, 'exitFullscreen');
+        }
+      }
     }
-  }
-  if (this.vastPlayer) {
-    this.vastPlayer.removeEventListener('error', this.onPlaybackError);
-    // vastPlayer content pause/resume events
-    this.vastPlayer.removeEventListener('durationchange', this.onDurationChange);
-    this.vastPlayer.removeEventListener('loadedmetadata', this.onLoadedmetadataPlay);
-    this.vastPlayer.removeEventListener('contextmenu', this.onContextMenu);
-    // unwire HTML5 video events
-    this.vastPlayer.removeEventListener('pause', this.onPause);
-    this.vastPlayer.removeEventListener('play', this.onPlay);
-    this.vastPlayer.removeEventListener('playing', this.onPlaying);
-    this.vastPlayer.removeEventListener('ended', this.onEnded);
-    this.vastPlayer.removeEventListener('volumechange', this.onVolumeChange);
-    this.vastPlayer.removeEventListener('timeupdate', this.onTimeupdate);
-
-    // unwire HTML5 VAST events
-    for (let i = 0, len = this.trackingTags.length; i < len; i++) {
-      this.vastPlayer.removeEventListener(this.trackingTags[i].event, this.onEventPingTracking);
+  };
+  // if we have native fullscreen support we handle fullscreen events
+  if (ENV.hasNativeFullscreenSupport) {
+    const onFullscreenchange = _onFullscreenchange.bind(this);
+    // for our beloved iOS 
+    if (ENV.isIos[0]) {
+      this.contentPlayer.addEventListener('webkitbeginfullscreen', onFullscreenchange);
+      this.contentPlayer.addEventListener('webkitendfullscreen', onFullscreenchange);
+    } else {
+      document.addEventListener('fullscreenchange', onFullscreenchange);
     }
-    // remove clicktrough handling
-    if (this.onClickThrough !== null) {
-      this.vastPlayer.removeEventListener('click', this.onClickThrough);
-    }
-    // remove icons 
-    if (this.onPlayingAppendIcons !== null) {
-      this.vastPlayer.removeEventListener('playing', this.onPlayingAppendIcons);
-    }
-    // skip
-    if (this.onTimeupdateCheckSkip !== null) {
-      this.vastPlayer.removeEventListener('timeupdate', this.onTimeupdateCheckSkip);
-    }
-    if (this.skipButton && this.onClickSkip !== null) {
-      this.skipButton.removeEventListener('click', this.onClickSkip);
-      this.skipButton.removeEventListener('touchend', this.onClickSkip);
-    }
-    // click UI on mobile
-    if (this.clickUIOnMobile && this.onClickThrough !== null) {
-      this.clickUIOnMobile.removeEventListener('touchend', this.onClickThrough);
-    }
-  }
-  if (this.contentPlayer) {
-    this.contentPlayer.removeEventListener('error', this.onPlaybackError);
   }
 };
 
-export default RESET;
+export default DEFAULT;

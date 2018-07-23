@@ -1,7 +1,6 @@
 import FW from '../fw/fw';
 import PING from './ping';
 import HELPERS from '../utils/helpers';
-import API from '../api/api';
 import VASTPLAYER from '../players/vast-player';
 
 const TRACKINGEVENTS = {};
@@ -30,7 +29,7 @@ const _onEventPingTracking = function (event) {
 
 const _onVolumeChange = function () {
   if (this.vastPlayer.muted || this.vastPlayer.volume === 0) {
-    API.createEvent.call(this, 'advolumemuted');
+    HELPERS.createApiEvent.call(this, 'advolumemuted');
     HELPERS.dispatchPingEvent.call(this, 'mute');
     this.vastPlayerMuted = true;
   } else {
@@ -39,7 +38,7 @@ const _onVolumeChange = function () {
       this.vastPlayerMuted = false;
     }
   }
-  API.createEvent.call(this, 'advolumechanged');
+  HELPERS.createApiEvent.call(this, 'advolumechanged');
 };
 
 const _onTimeupdate = function () {
@@ -48,15 +47,15 @@ const _onTimeupdate = function () {
     if (this.vastPlayerDuration > 0 && this.vastPlayerDuration > this.vastPlayerCurrentTime) {
       if (this.vastPlayerCurrentTime >= this.vastPlayerDuration * 0.25 && !this.firstQuartileEventFired) {
         this.firstQuartileEventFired = true;
-        API.createEvent.call(this, 'adfirstquartile');
+        HELPERS.createApiEvent.call(this, 'adfirstquartile');
         HELPERS.dispatchPingEvent.call(this, 'firstQuartile');
       } else if (this.vastPlayerCurrentTime >= this.vastPlayerDuration * 0.5 && !this.midpointEventFired) {
         this.midpointEventFired = true;
-        API.createEvent.call(this, 'admidpoint');
+        HELPERS.createApiEvent.call(this, 'admidpoint');
         HELPERS.dispatchPingEvent.call(this, 'midpoint');
       } else if (this.vastPlayerCurrentTime >= this.vastPlayerDuration * 0.75 && !this.thirdQuartileEventFired) {
         this.thirdQuartileEventFired = true;
-        API.createEvent.call(this, 'adthirdquartile');
+        HELPERS.createApiEvent.call(this, 'adthirdquartile');
         HELPERS.dispatchPingEvent.call(this, 'thirdQuartile');
       }
     }
@@ -86,7 +85,7 @@ const _onTimeupdate = function () {
 const _onPause = function () {
   if (!this.vastPlayerPaused) {
     this.vastPlayerPaused = true;
-    API.createEvent.call(this, 'adpaused');
+    HELPERS.createApiEvent.call(this, 'adpaused');
     // do not dispatchPingEvent for pause event here if it is already in this.trackingTags
     for (let i = 0, len = this.trackingTags.length; i < len; i++) {
       if (this.trackingTags[i].event === 'pause') {
@@ -100,21 +99,21 @@ const _onPause = function () {
 const _onPlay = function () {
   if (this.vastPlayerPaused) {
     this.vastPlayerPaused = false;
-    API.createEvent.call(this, 'adresumed');
+    HELPERS.createApiEvent.call(this, 'adresumed');
     HELPERS.dispatchPingEvent.call(this, 'resume');
   }
 };
 
 const _onPlaying = function () {
   this.vastPlayer.removeEventListener('playing', this.onPlaying);
-  API.createEvent.call(this, 'adimpression');
-  API.createEvent.call(this, 'adstarted');
+  HELPERS.createApiEvent.call(this, 'adimpression');
+  HELPERS.createApiEvent.call(this, 'adstarted');
   HELPERS.dispatchPingEvent.call(this, ['impression', 'creativeView', 'start']);
 };
 
 const _onEnded = function () {
   this.vastPlayer.removeEventListener('ended', this.onEnded);
-  API.createEvent.call(this, 'adcomplete');
+  HELPERS.createApiEvent.call(this, 'adcomplete');
   HELPERS.dispatchPingEvent.call(this, 'complete');
   VASTPLAYER.resumeContent.call(this);
 };

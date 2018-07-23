@@ -35,6 +35,7 @@
     ]
   },
   "globals": {
-    "DEBUG": true
+    "DEBUG": true,
+    "RmpVast": true
   }
 }

@@ -143,7 +143,7 @@
   // new RmpVast instance - we pass id (required) and params (optional) 
   rmpVast = new RmpVast(id, params);
   // we get rmpVast framework to help us out for the app
-  fw = rmpVast.getFW();
+  fw = rmpVast.getFramework();
   fw.log('APP: rmpVast instance created');
   /*** END RmpVast instantiation  ***/
 

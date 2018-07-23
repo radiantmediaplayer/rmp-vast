@@ -4,14 +4,72 @@ import HELPERS from '../utils/helpers';
 import CONTENTPLAYER from '../players/content-player';
 import VPAID from '../players/vpaid';
 import ICONS from '../creatives/icons';
-import RESET from '../utils/reset';
+import DEFAULT from '../utils/default';
 import TRACKINGEVENTS from '../tracking/tracking-events';
 import NONLINEAR from '../creatives/non-linear';
 import LINEAR from '../creatives/linear';
-import API from '../api/api';
 import VASTERRORS from '../utils/vast-errors';
 
 const VASTPLAYER = {};
+
+const _unwireVastPlayerEvents = function () {
+  if (DEBUG) {
+    FW.log('reset - unwireVastPlayerEvents');
+  }
+  if (this.nonLinearContainer) {
+    this.nonLinearImg.removeEventListener('load', this.onNonLinearLoadSuccess);
+    this.nonLinearImg.removeEventListener('error', this.onNonLinearLoadError);
+    this.nonLinearATag.removeEventListener('click', this.onNonLinearClickThrough);
+    this.nonLinearATag.removeEventListener('touchend', this.onNonLinearClickThrough);
+    this.nonLinearClose.removeEventListener('click', this.onClickCloseNonLinear);
+    this.nonLinearClose.removeEventListener('touchend', this.onClickCloseNonLinear);
+    for (let i = 0, len = this.trackingTags.length; i < len; i++) {
+      this.nonLinearContainer.removeEventListener(this.trackingTags[i].event, this.onEventPingTracking);
+    }
+  }
+  if (this.vastPlayer) {
+    this.vastPlayer.removeEventListener('error', this.onPlaybackError);
+    // vastPlayer content pause/resume events
+    this.vastPlayer.removeEventListener('durationchange', this.onDurationChange);
+    this.vastPlayer.removeEventListener('loadedmetadata', this.onLoadedmetadataPlay);
+    this.vastPlayer.removeEventListener('contextmenu', this.onContextMenu);
+    // unwire HTML5 video events
+    this.vastPlayer.removeEventListener('pause', this.onPause);
+    this.vastPlayer.removeEventListener('play', this.onPlay);
+    this.vastPlayer.removeEventListener('playing', this.onPlaying);
+    this.vastPlayer.removeEventListener('ended', this.onEnded);
+    this.vastPlayer.removeEventListener('volumechange', this.onVolumeChange);
+    this.vastPlayer.removeEventListener('timeupdate', this.onTimeupdate);
+
+    // unwire HTML5 VAST events
+    for (let i = 0, len = this.trackingTags.length; i < len; i++) {
+      this.vastPlayer.removeEventListener(this.trackingTags[i].event, this.onEventPingTracking);
+    }
+    // remove clicktrough handling
+    if (this.onClickThrough !== null) {
+      this.vastPlayer.removeEventListener('click', this.onClickThrough);
+    }
+    // remove icons 
+    if (this.onPlayingAppendIcons !== null) {
+      this.vastPlayer.removeEventListener('playing', this.onPlayingAppendIcons);
+    }
+    // skip
+    if (this.onTimeupdateCheckSkip !== null) {
+      this.vastPlayer.removeEventListener('timeupdate', this.onTimeupdateCheckSkip);
+    }
+    if (this.skipButton && this.onClickSkip !== null) {
+      this.skipButton.removeEventListener('click', this.onClickSkip);
+      this.skipButton.removeEventListener('touchend', this.onClickSkip);
+    }
+    // click UI on mobile
+    if (this.clickUIOnMobile && this.onClickThrough !== null) {
+      this.clickUIOnMobile.removeEventListener('touchend', this.onClickThrough);
+    }
+  }
+  if (this.contentPlayer) {
+    this.contentPlayer.removeEventListener('error', this.onPlaybackError);
+  }
+};
 
 const _destroyVastPlayer = function () {
   if (DEBUG) {
@@ -25,7 +83,7 @@ const _destroyVastPlayer = function () {
     VPAID.destroy.call(this);
   }
   // unwire events
-  RESET.unwireVastPlayerEvents.call(this);
+  _unwireVastPlayerEvents.call(this);
   // remove clickUI on mobile
   if (this.clickUIOnMobile) {
     FW.removeElement(this.clickUIOnMobile);
@@ -105,8 +163,8 @@ const _destroyVastPlayer = function () {
       FW.trace(e);
     }
   }
-  RESET.internalVariables.call(this);
-  API.createEvent.call(this, 'addestroyed');
+  DEFAULT.loadAdsVariables.call(this);
+  HELPERS.createApiEvent.call(this, 'addestroyed');
 };
 
 VASTPLAYER.init = function () {
@@ -115,7 +173,7 @@ VASTPLAYER.init = function () {
   }
   this.adContainer = document.createElement('div');
   this.adContainer.className = 'rmp-ad-container';
-  this.content.appendChild(this.adContainer);
+  this.contentWrapper.appendChild(this.adContainer);
   FW.hide(this.adContainer);
   if (!this.useContentPlayerForAds) {
     this.vastPlayer = document.createElement('video');

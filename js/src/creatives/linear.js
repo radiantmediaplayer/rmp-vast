@@ -5,7 +5,6 @@ import PING from '../tracking/ping';
 import CONTENTPLAYER from '../players/content-player';
 import VASTPLAYER from '../players/vast-player';
 import VPAID from '../players/vpaid';
-import API from '../api/api';
 import SKIP from './skip';
 import ICONS from './icons';
 import VASTERRORS from '../utils/vast-errors';
@@ -38,7 +37,7 @@ const _onDurationChange = function () {
   }
   this.vastPlayer.removeEventListener('durationchange', this.onDurationChange);
   this.vastPlayerDuration = VASTPLAYER.getDuration.call(this);
-  API.createEvent.call(this, 'addurationchange');
+  HELPERS.createApiEvent.call(this, 'addurationchange');
 };
 
 const _onLoadedmetadataPlay = function () {
@@ -47,7 +46,7 @@ const _onLoadedmetadataPlay = function () {
   }
   this.vastPlayer.removeEventListener('loadedmetadata', this.onLoadedmetadataPlay);
   clearTimeout(this.creativeLoadTimeoutCallback);
-  API.createEvent.call(this, 'adloaded');
+  HELPERS.createApiEvent.call(this, 'adloaded');
   if (DEBUG) {
     FW.log('pause content player');
   }
@@ -79,7 +78,7 @@ const _onClickThrough = function (event) {
   if (this.params.pauseOnClick) {
     this.pause();
   }
-  API.createEvent.call(this, 'adclick');
+  HELPERS.createApiEvent.call(this, 'adclick');
   HELPERS.dispatchPingEvent.call(this, 'clickthrough');
 };
 

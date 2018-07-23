@@ -1,6 +1,6 @@
 /**
  * @license Copyright (c) 2017-2018 Radiant Media Player | https://www.radiantmediaplayer.com
- * rmp-vast 2.0.1
+ * rmp-vast 2.1.0
  * GitHub: https://github.com/radiantmediaplayer/rmp-vast
  * MIT License: https://github.com/radiantmediaplayer/rmp-vast/blob/master/LICENSE
  */
@@ -144,378 +144,367 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var API = {};
 
-API.play = function () {
-  if (this.adOnStage && this.adIsLinear) {
-    if (this.isVPAID) {
-      _vpaid2.default.resumeAd.call(this);
-    } else {
-      _vastPlayer2.default.play.call(this);
-    }
-  } else {
-    _contentPlayer2.default.play.call(this);
-  }
-};
+API.attach = function (RmpVast) {
 
-API.pause = function () {
-  if (this.adOnStage && this.adIsLinear) {
-    if (this.isVPAID) {
-      _vpaid2.default.pauseAd.call(this);
-    } else {
-      _vastPlayer2.default.pause.call(this);
-    }
-  } else {
-    _contentPlayer2.default.pause.call(this);
-  }
-};
-
-API.getAdPaused = function () {
-  if (this.adOnStage && this.adIsLinear) {
-    if (this.isVPAID) {
-      return _vpaid2.default.getAdPaused.call(this);
-    } else {
-      return this.vastPlayerPaused;
-    }
-  }
-  return false;
-};
-
-API.setVolume = function (level) {
-  if (!_fw2.default.isNumber(level)) {
-    return;
-  }
-  var validatedLevel = 0;
-  if (level < 0) {
-    validatedLevel = 0;
-  } else if (level > 1) {
-    validatedLevel = 1;
-  } else {
-    validatedLevel = level;
-  }
-  if (this.adOnStage && this.adIsLinear) {
-    if (this.isVPAID) {
-      _vpaid2.default.setAdVolume.call(this, validatedLevel);
-    }
-    _vastPlayer2.default.setVolume.call(this, validatedLevel);
-  }
-  _contentPlayer2.default.setVolume.call(this, validatedLevel);
-};
-
-API.getVolume = function () {
-  if (this.adOnStage && this.adIsLinear) {
-    if (this.isVPAID) {
-      return _vpaid2.default.getAdVolume.call(this);
-    } else {
-      return _vastPlayer2.default.getVolume.call(this);
-    }
-  }
-  return _contentPlayer2.default.getVolume.call(this);
-};
-
-API.setMute = function (muted) {
-  if (typeof muted !== 'boolean') {
-    return;
-  }
-  if (this.adOnStage && this.adIsLinear) {
-    if (this.isVPAID) {
-      if (muted) {
-        _vpaid2.default.setAdVolume.call(this, 0);
+  RmpVast.prototype.play = function () {
+    if (this.adOnStage && this.adIsLinear) {
+      if (this.isVPAID) {
+        _vpaid2.default.resumeAd.call(this);
       } else {
-        _vpaid2.default.setAdVolume.call(this, 1);
+        _vastPlayer2.default.play.call(this);
       }
     } else {
-      _vastPlayer2.default.setMute.call(this, muted);
+      _contentPlayer2.default.play.call(this);
     }
-  }
-  _contentPlayer2.default.setMute.call(this, muted);
-};
+  };
 
-API.getMute = function () {
-  if (this.adOnStage && this.adIsLinear) {
-    if (this.isVPAID) {
-      if (_vpaid2.default.getAdVolume.call(this) === 0) {
-        return true;
+  RmpVast.prototype.pause = function () {
+    if (this.adOnStage && this.adIsLinear) {
+      if (this.isVPAID) {
+        _vpaid2.default.pauseAd.call(this);
+      } else {
+        _vastPlayer2.default.pause.call(this);
       }
-      return false;
     } else {
-      return _vastPlayer2.default.getMute.call(this);
+      _contentPlayer2.default.pause.call(this);
     }
-  }
-  return _contentPlayer2.default.getMute.call(this);
-};
+  };
 
-API.stopAds = function () {
-  if (this.adOnStage) {
-    if (this.isVPAID) {
-      _vpaid2.default.stopAd.call(this);
-    } else {
-      // this will destroy ad
-      _vastPlayer2.default.resumeContent.call(this);
-    }
-  }
-};
-
-API.getAdTagUrl = function () {
-  return this.adTagUrl;
-};
-
-API.getAdMediaUrl = function () {
-  if (this.adOnStage) {
-    if (this.isVPAID) {
-      return _vpaid2.default.getCreativeUrl.call(this);
-    } else {
-      return this.adMediaUrl;
-    }
-  }
-  return null;
-};
-
-API.getAdLinear = function () {
-  return this.adIsLinear;
-};
-
-API.getAdSystem = function () {
-  return this.adSystem;
-};
-
-API.getAdContentType = function () {
-  if (this.adOnStage) {
-    if (this.adIsLinear || this.isVPAID) {
-      return this.adContentType;
-    } else {
-      return this.nonLinearContentType;
-    }
-  }
-  return '';
-};
-
-API.getAdTitle = function () {
-  return this.adTitle;
-};
-
-API.getAdDescription = function () {
-  return this.adDescription;
-};
-
-API.getAdDuration = function () {
-  if (this.adOnStage && this.adIsLinear) {
-    if (this.isVPAID) {
-      var duration = _vpaid2.default.getAdDuration.call(this);
-      if (duration > 0) {
-        duration = duration * 1000;
+  RmpVast.prototype.getAdPaused = function () {
+    if (this.adOnStage && this.adIsLinear) {
+      if (this.isVPAID) {
+        return _vpaid2.default.getAdPaused.call(this);
+      } else {
+        return this.vastPlayerPaused;
       }
-      return duration;
-    } else {
-      return _vastPlayer2.default.getDuration.call(this);
     }
-  }
-  return -1;
-};
+    return false;
+  };
 
-API.getAdCurrentTime = function () {
-  if (this.adOnStage && this.adIsLinear) {
-    if (this.isVPAID) {
-      var remainingTime = _vpaid2.default.getAdRemainingTime.call(this);
-      var duration = _vpaid2.default.getAdDuration.call(this);
-      if (remainingTime === -1 || duration === -1 || remainingTime > duration) {
-        return -1;
+  RmpVast.prototype.setVolume = function (level) {
+    if (!_fw2.default.isNumber(level)) {
+      return;
+    }
+    var validatedLevel = 0;
+    if (level < 0) {
+      validatedLevel = 0;
+    } else if (level > 1) {
+      validatedLevel = 1;
+    } else {
+      validatedLevel = level;
+    }
+    if (this.adOnStage && this.adIsLinear) {
+      if (this.isVPAID) {
+        _vpaid2.default.setAdVolume.call(this, validatedLevel);
       }
-      return (duration - remainingTime) * 1000;
-    } else {
-      return _vastPlayer2.default.getCurrentTime.call(this);
+      _vastPlayer2.default.setVolume.call(this, validatedLevel);
     }
-  }
-  return -1;
-};
+    _contentPlayer2.default.setVolume.call(this, validatedLevel);
+  };
 
-API.getAdRemainingTime = function () {
-  if (this.adOnStage && this.adIsLinear) {
-    if (this.isVPAID) {
-      return _vpaid2.default.getAdRemainingTime.call(this);
-    } else {
-      var currentTime = _vastPlayer2.default.getCurrentTime.call(this);
-      var duration = _vastPlayer2.default.getDuration.call(this);
-      if (currentTime === -1 || duration === -1 || currentTime > duration) {
-        return -1;
+  RmpVast.prototype.getVolume = function () {
+    if (this.adOnStage && this.adIsLinear) {
+      if (this.isVPAID) {
+        return _vpaid2.default.getAdVolume.call(this);
+      } else {
+        return _vastPlayer2.default.getVolume.call(this);
       }
-      return (duration - currentTime) * 1000;
     }
-  }
-  return -1;
-};
+    return _contentPlayer2.default.getVolume.call(this);
+  };
 
-API.getAdOnStage = function () {
-  return this.adOnStage;
-};
+  RmpVast.prototype.setMute = function (muted) {
+    if (typeof muted !== 'boolean') {
+      return;
+    }
+    if (this.adOnStage && this.adIsLinear) {
+      if (this.isVPAID) {
+        if (muted) {
+          _vpaid2.default.setAdVolume.call(this, 0);
+        } else {
+          _vpaid2.default.setAdVolume.call(this, 1);
+        }
+      } else {
+        _vastPlayer2.default.setMute.call(this, muted);
+      }
+    }
+    _contentPlayer2.default.setMute.call(this, muted);
+  };
 
-API.getAdMediaWidth = function () {
-  if (this.adOnStage) {
-    if (this.isVPAID) {
-      return _vpaid2.default.getAdWidth.call(this);
-    } else if (this.adIsLinear) {
-      return this.adMediaWidth;
+  RmpVast.prototype.getMute = function () {
+    if (this.adOnStage && this.adIsLinear) {
+      if (this.isVPAID) {
+        if (_vpaid2.default.getAdVolume.call(this) === 0) {
+          return true;
+        }
+        return false;
+      } else {
+        return _vastPlayer2.default.getMute.call(this);
+      }
+    }
+    return _contentPlayer2.default.getMute.call(this);
+  };
+
+  RmpVast.prototype.stopAds = function () {
+    if (this.adOnStage) {
+      if (this.isVPAID) {
+        _vpaid2.default.stopAd.call(this);
+      } else {
+        // this will destroy ad
+        _vastPlayer2.default.resumeContent.call(this);
+      }
+    }
+  };
+
+  RmpVast.prototype.getAdTagUrl = function () {
+    return this.adTagUrl;
+  };
+
+  RmpVast.prototype.getAdMediaUrl = function () {
+    if (this.adOnStage) {
+      if (this.isVPAID) {
+        return _vpaid2.default.getCreativeUrl.call(this);
+      } else {
+        return this.adMediaUrl;
+      }
+    }
+    return null;
+  };
+
+  RmpVast.prototype.getAdLinear = function () {
+    return this.adIsLinear;
+  };
+
+  RmpVast.prototype.getAdSystem = function () {
+    return this.adSystem;
+  };
+
+  RmpVast.prototype.getAdContentType = function () {
+    if (this.adOnStage) {
+      if (this.adIsLinear || this.isVPAID) {
+        return this.adContentType;
+      } else {
+        return this.nonLinearContentType;
+      }
+    }
+    return '';
+  };
+
+  RmpVast.prototype.getAdTitle = function () {
+    return this.adTitle;
+  };
+
+  RmpVast.prototype.getAdDescription = function () {
+    return this.adDescription;
+  };
+
+  RmpVast.prototype.getAdDuration = function () {
+    if (this.adOnStage && this.adIsLinear) {
+      if (this.isVPAID) {
+        var duration = _vpaid2.default.getAdDuration.call(this);
+        if (duration > 0) {
+          duration = duration * 1000;
+        }
+        return duration;
+      } else {
+        return _vastPlayer2.default.getDuration.call(this);
+      }
+    }
+    return -1;
+  };
+
+  RmpVast.prototype.getAdCurrentTime = function () {
+    if (this.adOnStage && this.adIsLinear) {
+      if (this.isVPAID) {
+        var remainingTime = _vpaid2.default.getAdRemainingTime.call(this);
+        var duration = _vpaid2.default.getAdDuration.call(this);
+        if (remainingTime === -1 || duration === -1 || remainingTime > duration) {
+          return -1;
+        }
+        return (duration - remainingTime) * 1000;
+      } else {
+        return _vastPlayer2.default.getCurrentTime.call(this);
+      }
+    }
+    return -1;
+  };
+
+  RmpVast.prototype.getAdRemainingTime = function () {
+    if (this.adOnStage && this.adIsLinear) {
+      if (this.isVPAID) {
+        return _vpaid2.default.getAdRemainingTime.call(this);
+      } else {
+        var currentTime = _vastPlayer2.default.getCurrentTime.call(this);
+        var duration = _vastPlayer2.default.getDuration.call(this);
+        if (currentTime === -1 || duration === -1 || currentTime > duration) {
+          return -1;
+        }
+        return (duration - currentTime) * 1000;
+      }
+    }
+    return -1;
+  };
+
+  RmpVast.prototype.getAdOnStage = function () {
+    return this.adOnStage;
+  };
+
+  RmpVast.prototype.getAdMediaWidth = function () {
+    if (this.adOnStage) {
+      if (this.isVPAID) {
+        return _vpaid2.default.getAdWidth.call(this);
+      } else if (this.adIsLinear) {
+        return this.adMediaWidth;
+      } else {
+        return this.nonLinearCreativeWidth;
+      }
+    }
+    return -1;
+  };
+
+  RmpVast.prototype.getAdMediaHeight = function () {
+    if (this.adOnStage) {
+      if (this.isVPAID) {
+        return _vpaid2.default.getAdHeight.call(this);
+      } else if (this.adIsLinear) {
+        return this.adMediaHeight;
+      } else {
+        return this.nonLinearCreativeHeight;
+      }
+    }
+    return -1;
+  };
+
+  RmpVast.prototype.getClickThroughUrl = function () {
+    return this.clickThroughUrl;
+  };
+
+  RmpVast.prototype.getIsSkippableAd = function () {
+    return this.isSkippableAd;
+  };
+
+  RmpVast.prototype.getContentPlayerCompleted = function () {
+    return this.contentPlayerCompleted;
+  };
+
+  RmpVast.prototype.setContentPlayerCompleted = function (value) {
+    if (typeof value === 'boolean') {
+      this.contentPlayerCompleted = value;
+    }
+  };
+
+  RmpVast.prototype.getAdErrorMessage = function () {
+    return this.vastErrorMessage;
+  };
+
+  RmpVast.prototype.getAdVastErrorCode = function () {
+    return this.vastErrorCode;
+  };
+
+  RmpVast.prototype.getAdErrorType = function () {
+    return this.adErrorType;
+  };
+
+  RmpVast.prototype.getEnvironment = function () {
+    return _env2.default;
+  };
+
+  RmpVast.prototype.getFramework = function () {
+    return _fw2.default;
+  };
+
+  RmpVast.prototype.getVastPlayer = function () {
+    return this.vastPlayer;
+  };
+
+  RmpVast.prototype.getContentPlayer = function () {
+    return this.contentPlayer;
+  };
+
+  RmpVast.prototype.getVpaidCreative = function () {
+    if (this.adOnStage && this.isVPAID) {
+      return _vpaid2.default.getVpaidCreative.call(this);
+    }
+    return null;
+  };
+
+  RmpVast.prototype.getIsUsingContentPlayerForAds = function () {
+    return this.useContentPlayerForAds;
+  };
+
+  RmpVast.prototype.initialize = function () {
+    if (this.rmpVastInitialized) {
+      if (DEBUG) {
+        _fw2.default.log('rmp-vast already initialized');
+      }
     } else {
-      return this.nonLinearCreativeWidth;
+      if (DEBUG) {
+        _fw2.default.log('on user interaction - player needs to be initialized');
+      }
+      _vastPlayer2.default.init.call(this);
     }
-  }
-  return -1;
-};
+  };
 
-API.getAdMediaHeight = function () {
-  if (this.adOnStage) {
-    if (this.isVPAID) {
-      return _vpaid2.default.getAdHeight.call(this);
-    } else if (this.adIsLinear) {
-      return this.adMediaHeight;
-    } else {
-      return this.nonLinearCreativeHeight;
+  RmpVast.prototype.getInitialized = function () {
+    return this.rmpVastInitialized;
+  };
+
+  // adpod 
+  RmpVast.prototype.getAdPodInfo = function () {
+    if (this.adPodApiInfo.length > 0) {
+      var result = {};
+      result.adPodCurrentIndex = this.adPodCurrentIndex;
+      result.adPodLength = this.adPodApiInfo.length;
+      return result;
     }
-  }
-  return -1;
-};
+    return null;
+  };
 
-API.getClickThroughUrl = function () {
-  return this.clickThroughUrl;
-};
-
-API.getIsSkippableAd = function () {
-  return this.isSkippableAd;
-};
-
-API.getContentPlayerCompleted = function () {
-  return this.contentPlayerCompleted;
-};
-
-API.setContentPlayerCompleted = function (value) {
-  if (typeof value === 'boolean') {
-    this.contentPlayerCompleted = value;
-  }
-};
-
-API.createEvent = function (event) {
-  // adloaded, addurationchange, adclick, adimpression, adstarted, 
-  // adtagloaded, adtagstartloading, adpaused, adresumed 
-  // advolumemuted, advolumechanged, adcomplete, adskipped, 
-  // adskippablestatechanged, adclosed
-  // adfirstquartile, admidpoint, adthirdquartile, aderror, 
-  // adfollowingredirect, addestroyed
-  // adlinearchange, adexpandedchange, adremainingtimechange 
-  // adinteraction, adsizechange
-  if (typeof event === 'string' && event !== '' && this.container) {
-    _fw2.default.createStdEvent(event, this.container);
-  }
-};
-
-API.getAdErrorMessage = function () {
-  return this.vastErrorMessage;
-};
-
-API.getAdVastErrorCode = function () {
-  return this.vastErrorCode;
-};
-
-API.getAdErrorType = function () {
-  return this.adErrorType;
-};
-
-API.getEnv = function () {
-  return _env2.default;
-};
-
-API.getFW = function () {
-  return _fw2.default;
-};
-
-API.getVastPlayer = function () {
-  return this.vastPlayer;
-};
-
-API.getContentPlayer = function () {
-  return this.contentPlayer;
-};
-
-API.getVpaidCreative = function () {
-  if (this.adOnStage && this.isVPAID) {
-    return _vpaid2.default.getVpaidCreative.call(this);
-  }
-  return null;
-};
-
-API.getIsUsingContentPlayerForAds = function () {
-  return this.useContentPlayerForAds;
-};
-
-API.initialize = function () {
-  if (this.rmpVastInitialized) {
-    if (DEBUG) {
-      _fw2.default.log('rmp-vast already initialized');
+  // VPAID methods
+  RmpVast.prototype.resizeAd = function (width, height, viewMode) {
+    if (this.adOnStage && this.isVPAID) {
+      _vpaid2.default.resizeAd.call(this, width, height, viewMode);
     }
-  } else {
-    if (DEBUG) {
-      _fw2.default.log('on user interaction - player needs to be initialized');
+  };
+
+  RmpVast.prototype.expandAd = function () {
+    if (this.adOnStage && this.isVPAID) {
+      _vpaid2.default.expandAd.call(this);
     }
-    _vastPlayer2.default.init.call(this);
-  }
-};
+  };
 
-API.getInitialized = function () {
-  return this.rmpVastInitialized;
-};
+  RmpVast.prototype.collapseAd = function () {
+    if (this.adOnStage && this.isVPAID) {
+      _vpaid2.default.collapseAd.call(this);
+    }
+  };
 
-// adpod 
-API.getAdPodInfo = function () {
-  if (this.adPodApiInfo.length > 0) {
-    var result = {};
-    result.adPodCurrentIndex = this.adPodCurrentIndex;
-    result.adPodLength = this.adPodApiInfo.length;
-    return result;
-  }
-  return null;
-};
+  RmpVast.prototype.skipAd = function () {
+    if (this.adOnStage && this.isVPAID) {
+      _vpaid2.default.skipAd.call(this);
+    }
+  };
 
-// VPAID methods
-API.resizeAd = function (width, height, viewMode) {
-  if (this.adOnStage && this.isVPAID) {
-    _vpaid2.default.resizeAd.call(this, width, height, viewMode);
-  }
-};
+  RmpVast.prototype.getAdExpanded = function () {
+    if (this.adOnStage && this.isVPAID) {
+      _vpaid2.default.getAdExpanded.call(this);
+    }
+    return false;
+  };
 
-API.expandAd = function () {
-  if (this.adOnStage && this.isVPAID) {
-    _vpaid2.default.expandAd.call(this);
-  }
-};
+  RmpVast.prototype.getAdSkippableState = function () {
+    if (this.adOnStage && this.isVPAID) {
+      _vpaid2.default.getAdSkippableState.call(this);
+    }
+    return false;
+  };
 
-API.collapseAd = function () {
-  if (this.adOnStage && this.isVPAID) {
-    _vpaid2.default.collapseAd.call(this);
-  }
-};
-
-API.skipAd = function () {
-  if (this.adOnStage && this.isVPAID) {
-    _vpaid2.default.skipAd.call(this);
-  }
-};
-
-API.getAdExpanded = function () {
-  if (this.adOnStage && this.isVPAID) {
-    _vpaid2.default.getAdExpanded.call(this);
-  }
-  return false;
-};
-
-API.getAdSkippableState = function () {
-  if (this.adOnStage && this.isVPAID) {
-    _vpaid2.default.getAdSkippableState.call(this);
-  }
-  return false;
-};
-
-API.getAdCompanions = function () {
-  if (this.adOnStage && this.isVPAID) {
-    _vpaid2.default.getAdCompanions.call(this);
-  }
-  return '';
+  RmpVast.prototype.getAdCompanions = function () {
+    if (this.adOnStage && this.isVPAID) {
+      _vpaid2.default.getAdCompanions.call(this);
+    }
+    return '';
+  };
 };
 
 exports.default = API;
@@ -774,10 +763,6 @@ var _vpaid = require('../players/vpaid');
 
 var _vpaid2 = _interopRequireDefault(_vpaid);
 
-var _api = require('../api/api');
-
-var _api2 = _interopRequireDefault(_api);
-
 var _skip = require('./skip');
 
 var _skip2 = _interopRequireDefault(_skip);
@@ -811,7 +796,7 @@ var _onDurationChange = function _onDurationChange() {
   }
   this.vastPlayer.removeEventListener('durationchange', this.onDurationChange);
   this.vastPlayerDuration = _vastPlayer2.default.getDuration.call(this);
-  _api2.default.createEvent.call(this, 'addurationchange');
+  _helpers2.default.createApiEvent.call(this, 'addurationchange');
 };
 
 var _onLoadedmetadataPlay = function _onLoadedmetadataPlay() {
@@ -820,7 +805,7 @@ var _onLoadedmetadataPlay = function _onLoadedmetadataPlay() {
   }
   this.vastPlayer.removeEventListener('loadedmetadata', this.onLoadedmetadataPlay);
   clearTimeout(this.creativeLoadTimeoutCallback);
-  _api2.default.createEvent.call(this, 'adloaded');
+  _helpers2.default.createApiEvent.call(this, 'adloaded');
   if (DEBUG) {
     _fw2.default.log('pause content player');
   }
@@ -852,7 +837,7 @@ var _onClickThrough = function _onClickThrough(event) {
   if (this.params.pauseOnClick) {
     this.pause();
   }
-  _api2.default.createEvent.call(this, 'adclick');
+  _helpers2.default.createApiEvent.call(this, 'adclick');
   _helpers2.default.dispatchPingEvent.call(this, 'clickthrough');
 };
 
@@ -1208,7 +1193,7 @@ LINEAR.parse = function (linear) {
 
 exports.default = LINEAR;
 
-},{"../../../externals/rmp-connection":1,"../api/api":2,"../fw/env":7,"../fw/fw":8,"../players/content-player":10,"../players/vast-player":11,"../players/vpaid":12,"../tracking/ping":13,"../utils/helpers":15,"../utils/vast-errors":17,"./icons":3,"./skip":6}],5:[function(require,module,exports){
+},{"../../../externals/rmp-connection":1,"../fw/env":7,"../fw/fw":8,"../players/content-player":10,"../players/vast-player":11,"../players/vpaid":12,"../tracking/ping":13,"../utils/helpers":16,"../utils/vast-errors":17,"./icons":3,"./skip":6}],5:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1239,10 +1224,6 @@ var _contentPlayer = require('../players/content-player');
 
 var _contentPlayer2 = _interopRequireDefault(_contentPlayer);
 
-var _api = require('../api/api');
-
-var _api2 = _interopRequireDefault(_api);
-
 var _vastErrors = require('../utils/vast-errors');
 
 var _vastErrors2 = _interopRequireDefault(_vastErrors);
@@ -1261,9 +1242,9 @@ var _onNonLinearLoadSuccess = function _onNonLinearLoadSuccess() {
     _fw2.default.log('success loading non-linear creative at ' + this.adMediaUrl);
   }
   this.adOnStage = true;
-  _api2.default.createEvent.call(this, 'adloaded');
-  _api2.default.createEvent.call(this, 'adimpression');
-  _api2.default.createEvent.call(this, 'adstarted');
+  _helpers2.default.createApiEvent.call(this, 'adloaded');
+  _helpers2.default.createApiEvent.call(this, 'adimpression');
+  _helpers2.default.createApiEvent.call(this, 'adstarted');
   _helpers2.default.dispatchPingEvent.call(this, ['impression', 'creativeView', 'start']);
 };
 
@@ -1275,7 +1256,7 @@ var _onNonLinearClickThrough = function _onNonLinearClickThrough(event) {
     if (this.params.pauseOnClick) {
       this.pause();
     }
-    _api2.default.createEvent.call(this, 'adclick');
+    _helpers2.default.createApiEvent.call(this, 'adclick');
     _helpers2.default.dispatchPingEvent.call(this, 'clickthrough');
   } catch (e) {
     _fw2.default.trace(e);
@@ -1290,7 +1271,7 @@ var _onClickCloseNonLinear = function _onClickCloseNonLinear(event) {
     }
   }
   this.nonLinearContainer.style.display = 'none';
-  _api2.default.createEvent.call(this, 'adclosed');
+  _helpers2.default.createApiEvent.call(this, 'adclosed');
   _helpers2.default.dispatchPingEvent.call(this, 'close');
 };
 
@@ -1474,7 +1455,7 @@ NONLINEAR.parse = function (nonLinearAds) {
 
 exports.default = NONLINEAR;
 
-},{"../api/api":2,"../fw/env":7,"../fw/fw":8,"../players/content-player":10,"../players/vast-player":11,"../tracking/ping":13,"../utils/helpers":15,"../utils/vast-errors":17}],6:[function(require,module,exports){
+},{"../fw/env":7,"../fw/fw":8,"../players/content-player":10,"../players/vast-player":11,"../tracking/ping":13,"../utils/helpers":16,"../utils/vast-errors":17}],6:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1492,10 +1473,6 @@ var _helpers2 = _interopRequireDefault(_helpers);
 var _vastPlayer = require('../players/vast-player');
 
 var _vastPlayer2 = _interopRequireDefault(_vastPlayer);
-
-var _api = require('../api/api');
-
-var _api2 = _interopRequireDefault(_api);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -1524,7 +1501,7 @@ var _onTimeupdateCheckSkip = function _onTimeupdateCheckSkip() {
       this.vastPlayer.removeEventListener('timeupdate', this.onTimeupdateCheckSkip);
       _setCanBeSkippedUI.call(this);
       this.skippableAdCanBeSkipped = true;
-      _api2.default.createEvent.call(this, 'adskippablestatechanged');
+      _helpers2.default.createApiEvent.call(this, 'adskippablestatechanged');
     } else if (skipoffsetSeconds - this.vastPlayerCurrentTime > 0) {
       _updateWaitingForCanBeSkippedUI.call(this, skipoffsetSeconds - this.vastPlayerCurrentTime);
     }
@@ -1540,7 +1517,7 @@ var _onClickSkip = function _onClickSkip(event) {
   }
   if (this.skippableAdCanBeSkipped) {
     // create API event 
-    _api2.default.createEvent.call(this, 'adskipped');
+    _helpers2.default.createApiEvent.call(this, 'adskipped');
     // request ping for skip event
     if (this.hasSkipEvent) {
       _helpers2.default.dispatchPingEvent.call(this, 'skip');
@@ -1582,7 +1559,7 @@ SKIP.append = function () {
 
 exports.default = SKIP;
 
-},{"../api/api":2,"../fw/fw":8,"../players/vast-player":11,"../utils/helpers":15}],7:[function(require,module,exports){
+},{"../fw/fw":8,"../players/vast-player":11,"../utils/helpers":16}],7:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2360,9 +2337,9 @@ var _contentPlayer = require('./players/content-player');
 
 var _contentPlayer2 = _interopRequireDefault(_contentPlayer);
 
-var _reset = require('./utils/reset');
+var _default = require('./utils/default');
 
-var _reset2 = _interopRequireDefault(_reset);
+var _default2 = _interopRequireDefault(_default);
 
 var _vastErrors = require('./utils/vast-errors');
 
@@ -2410,9 +2387,9 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
     }
     this.id = id;
     this.container = document.getElementById(this.id);
-    this.content = this.container.querySelector('.rmp-content');
+    this.contentWrapper = this.container.querySelector('.rmp-content');
     this.contentPlayer = this.container.querySelector('.rmp-video');
-    if (this.container === null || this.content === null || this.contentPlayer === null) {
+    if (this.container === null || this.contentWrapper === null || this.contentPlayer === null) {
       if (DEBUG) {
         _fw2.default.log('invalid DOM layout - exit');
       }
@@ -2422,36 +2399,13 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
       _fw2.default.log('creating new RmpVast instance');
       _fw2.default.logVideoEvents(this.contentPlayer, 'content');
     }
-    this.adContainer = null;
-    this.rmpVastInitialized = false;
-    this.useContentPlayerForAds = false;
-    this.contentPlayerCompleted = false;
-    this.currentContentSrc = '';
-    this.currentContentCurrentTime = -1;
-    this.needsSeekAdjust = false;
-    this.seekAdjustAttached = false;
-    this.onDestroyLoadAds = null;
-    this.firstVastPlayerPlayRequest = true;
-    this.firstContentPlayerPlayRequest = true;
-    this.params = {};
-    // adpod 
-    this.adPod = [];
-    this.standaloneAdsInPod = [];
-    this.onAdDestroyLoadNextAdInPod = _fw2.default.nullFn;
-    this.runningAdPod = false;
-    this.adPodItemWrapper = false;
-    this.adPodCurrentIndex = 0;
-    this.adPodApiInfo = [];
-    this.adPodWrapperTrackings = [];
-    if (_env2.default.isIos[0] || _env2.default.isMacOSX && _env2.default.isSafari[0]) {
-      // on iOS and macOS Safari we use content player to play ads
-      // to avoid issues related to fullscreen management and autoplay
-      // as fullscreen on iOS is handled by the default OS player
-      this.useContentPlayerForAds = true;
-      if (DEBUG) {
-        _fw2.default.log('vast player will be content player');
-      }
-    }
+    // reset instance variables - once per session
+    _default2.default.instanceVariables.call(this);
+    // reset loadAds variables - this is reset at addestroyed 
+    // so that next loadAds is cleared
+    _default2.default.loadAdsVariables.call(this);
+    // handle fullscreen events
+    _default2.default.fullscreen.call(this);
     // filter input params
     _helpers2.default.filterParams.call(this, params);
     if (DEBUG) {
@@ -2468,69 +2422,16 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
       }
       _fw2.default.log(filteredEnv);
     }
-    // reset internal variables
-    _reset2.default.internalVariables.call(this);
-    // attach fullscreen states
-    // this assumes we have a polyfill for fullscreenchange event 
-    // see app/js/app.js
-    // we need this to handle VAST fullscreen events
-    var isInFullscreen = false;
-    var onFullscreenchange = null;
-    var _onFullscreenchange = function _onFullscreenchange(event) {
-      if (event && event.type) {
-        if (DEBUG) {
-          _fw2.default.log('event is ' + event.type);
-        }
-        if (event.type === 'fullscreenchange') {
-          if (isInFullscreen) {
-            isInFullscreen = false;
-            if (this.adOnStage && this.adIsLinear) {
-              _helpers2.default.dispatchPingEvent.call(this, 'exitFullscreen');
-            }
-          } else {
-            isInFullscreen = true;
-            if (this.adOnStage && this.adIsLinear) {
-              _helpers2.default.dispatchPingEvent.call(this, 'fullscreen');
-            }
-          }
-        } else if (event.type === 'webkitbeginfullscreen') {
-          // iOS uses webkitbeginfullscreen
-          if (this.adOnStage && this.adIsLinear) {
-            _helpers2.default.dispatchPingEvent.call(this, 'fullscreen');
-          }
-        } else if (event.type === 'webkitendfullscreen') {
-          // iOS uses webkitendfullscreen
-          if (this.adOnStage && this.adIsLinear) {
-            _helpers2.default.dispatchPingEvent.call(this, 'exitFullscreen');
-          }
-        }
-      }
-    };
-    // if we have native fullscreen support we handle fullscreen events
-    if (_env2.default.hasNativeFullscreenSupport) {
-      onFullscreenchange = _onFullscreenchange.bind(this);
-      // for our beloved iOS 
-      if (_env2.default.isIos[0]) {
-        this.contentPlayer.addEventListener('webkitbeginfullscreen', onFullscreenchange);
-        this.contentPlayer.addEventListener('webkitendfullscreen', onFullscreenchange);
-      } else {
-        document.addEventListener('fullscreenchange', onFullscreenchange);
-      }
-    }
   };
 
   // enrich RmpVast prototype with API methods
-  var apiKeys = Object.keys(_api2.default);
-  for (var i = 0, len = apiKeys.length; i < len; i++) {
-    var currentKey = apiKeys[i];
-    window.RmpVast.prototype[currentKey] = _api2.default[currentKey];
-  }
+  _api2.default.attach(window.RmpVast);
 
   var _execRedirect = function _execRedirect() {
     if (DEBUG) {
       _fw2.default.log('adfollowingredirect');
     }
-    _api2.default.createEvent.call(this, 'adfollowingredirect');
+    _helpers2.default.createApiEvent.call(this, 'adfollowingredirect');
     var redirectUrl = _fw2.default.getNodeValue(this.vastAdTagURI[0], true);
     if (DEBUG) {
       _fw2.default.log('redirect URL is ' + redirectUrl);
@@ -2559,8 +2460,8 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
       _fw2.default.log('_parseCreatives');
       _fw2.default.log(creative);
     }
-    for (var _i = 0, _len = creative.length; _i < _len; _i++) {
-      var currentCreative = creative[_i];
+    for (var i = 0, len = creative.length; i < len; i++) {
+      var currentCreative = creative[i];
       // we only pick the first creative that is either Linear or NonLinearAds
       var nonLinearAds = currentCreative.getElementsByTagName('NonLinearAds');
       var linear = currentCreative.getElementsByTagName('Linear');
@@ -2622,8 +2523,8 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
             this.clickThroughUrl = _fw2.default.getNodeValue(clickThrough[0], true);
           }
           if (clickTracking.length > 0) {
-            for (var _i2 = 0, _len2 = clickTracking.length; _i2 < _len2; _i2++) {
-              var clickTrackingUrl = _fw2.default.getNodeValue(clickTracking[_i2], true);
+            for (var _i = 0, _len = clickTracking.length; _i < _len; _i++) {
+              var clickTrackingUrl = _fw2.default.getNodeValue(clickTracking[_i], true);
               if (clickTrackingUrl !== null) {
                 this.trackingTags.push({
                   event: 'clickthrough',
@@ -2675,24 +2576,24 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
       }
       // we are in a pod but the running Ad item is a wrapper
       this.adPodItemWrapper = false;
-      for (var _i3 = 0, _len3 = ad.length; _i3 < _len3; _i3++) {
-        var sequence = ad[_i3].getAttribute('sequence');
+      for (var i = 0, len = ad.length; i < len; i++) {
+        var sequence = ad[i].getAttribute('sequence');
         if (sequence === '' || sequence === null) {
-          retainedAd = ad[_i3];
+          retainedAd = ad[i];
           break;
         }
       }
     } else {
       // we are not in a pod yet ... see if one exists or not
       var standaloneAds = [];
-      for (var _i4 = 0, _len4 = ad.length; _i4 < _len4; _i4++) {
-        var _sequence = ad[_i4].getAttribute('sequence');
+      for (var _i2 = 0, _len2 = ad.length; _i2 < _len2; _i2++) {
+        var _sequence = ad[_i2].getAttribute('sequence');
         if (_sequence === '' || _sequence === null) {
           // standalone ads
-          standaloneAds.push(ad[_i4]);
+          standaloneAds.push(ad[_i2]);
         } else {
           // if it has sequence attribute then push to adPod array
-          this.adPod.push(ad[_i4]);
+          this.adPod.push(ad[_i2]);
         }
       }
       if (this.adPod.length === 0 && standaloneAds.length > 0) {
@@ -2741,7 +2642,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
             this.adPodCurrentIndex = 0;
             this.adPodApiInfo = [];
             this.adPodWrapperTrackings = [];
-            _api2.default.createEvent.call(this, 'adpodcompleted');
+            _helpers2.default.createApiEvent.call(this, 'adpodcompleted');
           }
         };
         this.onAdDestroyLoadNextAdInPod = __onAdDestroyLoadNextAdInPod.bind(this);
@@ -2824,8 +2725,8 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
       this.adSystem = _fw2.default.getNodeValue(adSystem[0], false);
     }
     if (impression.length > 0) {
-      for (var _i5 = 0, _len5 = impression.length; _i5 < _len5; _i5++) {
-        var impressionUrl = _fw2.default.getNodeValue(impression[_i5], true);
+      for (var _i3 = 0, _len3 = impression.length; _i3 < _len3; _i3++) {
+        var impressionUrl = _fw2.default.getNodeValue(impression[_i3], true);
         if (impressionUrl !== null) {
           this.trackingTags.push({
             event: 'impression',
@@ -2869,10 +2770,10 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
     // VAST/Error node
     var errorNode = vastDocument.getElementsByTagName('Error');
     if (errorNode.length > 0) {
-      for (var _i6 = 0, _len6 = errorNode.length; _i6 < _len6; _i6++) {
+      for (var i = 0, len = errorNode.length; i < len; i++) {
         // we need to make sure those Error tags are directly beneath VAST tag. See 2.2.5.1 VAST 3 spec
-        if (errorNode[_i6].parentNode === vastDocument) {
-          var errorUrl = _fw2.default.getNodeValue(errorNode[_i6], true);
+        if (errorNode[i].parentNode === vastDocument) {
+          var errorUrl = _fw2.default.getNodeValue(errorNode[i], true);
           if (errorUrl !== null) {
             // we use an array here for vastErrorTags but we only have item in it
             // this is to be able to use PING.error for both vastErrorTags and inlineOrWrapperErrorTags
@@ -2916,11 +2817,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
       _vastErrors2.default.process.call(this, 1002);
       return;
     }
-    // if we already have an ad on stage - we need to destroy it first 
-    if (this.adOnStage) {
-      _api2.default.stopAds.call(this);
-    }
-    _api2.default.createEvent.call(this, 'adtagstartloading');
+    _helpers2.default.createApiEvent.call(this, 'adtagstartloading');
     this.isWrapper = false;
     this.vastAdTagURI = null;
     this.adTagUrl = vastUrl;
@@ -2931,7 +2828,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
       if (DEBUG) {
         _fw2.default.log('VAST loaded from ' + _this.adTagUrl);
       }
-      _api2.default.createEvent.call(_this, 'adtagloaded');
+      _helpers2.default.createApiEvent.call(_this, 'adtagloaded');
       var xml = void 0;
       try {
         // Parse XML
@@ -3002,7 +2899,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 /* module:ends */
 /* module:export */
 
-},{"./api/api":2,"./creatives/icons":3,"./creatives/linear":4,"./creatives/non-linear":5,"./fw/env":7,"./fw/fw":8,"./players/content-player":10,"./tracking/ping":13,"./tracking/tracking-events":14,"./utils/helpers":15,"./utils/reset":16,"./utils/vast-errors":17,"core-js/modules/es6.array.copy-within":122,"core-js/modules/es6.array.fill":123,"core-js/modules/es6.array.find":125,"core-js/modules/es6.array.find-index":124,"core-js/modules/es6.array.from":126,"core-js/modules/es6.array.iterator":127,"core-js/modules/es6.array.of":128,"core-js/modules/es6.function.name":129,"core-js/modules/es6.map":130,"core-js/modules/es6.math.acosh":131,"core-js/modules/es6.math.asinh":132,"core-js/modules/es6.math.atanh":133,"core-js/modules/es6.math.cbrt":134,"core-js/modules/es6.math.clz32":135,"core-js/modules/es6.math.cosh":136,"core-js/modules/es6.math.expm1":137,"core-js/modules/es6.math.fround":138,"core-js/modules/es6.math.hypot":139,"core-js/modules/es6.math.imul":140,"core-js/modules/es6.math.log10":141,"core-js/modules/es6.math.log1p":142,"core-js/modules/es6.math.log2":143,"core-js/modules/es6.math.sign":144,"core-js/modules/es6.math.sinh":145,"core-js/modules/es6.math.tanh":146,"core-js/modules/es6.math.trunc":147,"core-js/modules/es6.number.epsilon":148,"core-js/modules/es6.number.is-finite":149,"core-js/modules/es6.number.is-integer":150,"core-js/modules/es6.number.is-nan":151,"core-js/modules/es6.number.is-safe-integer":152,"core-js/modules/es6.number.max-safe-integer":153,"core-js/modules/es6.number.min-safe-integer":154,"core-js/modules/es6.object.assign":155,"core-js/modules/es6.object.freeze":156,"core-js/modules/es6.object.get-own-property-descriptor":157,"core-js/modules/es6.object.get-own-property-names":158,"core-js/modules/es6.object.get-prototype-of":159,"core-js/modules/es6.object.is":163,"core-js/modules/es6.object.is-extensible":160,"core-js/modules/es6.object.is-frozen":161,"core-js/modules/es6.object.is-sealed":162,"core-js/modules/es6.object.keys":164,"core-js/modules/es6.object.prevent-extensions":165,"core-js/modules/es6.object.seal":166,"core-js/modules/es6.object.set-prototype-of":167,"core-js/modules/es6.promise":168,"core-js/modules/es6.reflect.apply":169,"core-js/modules/es6.reflect.construct":170,"core-js/modules/es6.reflect.define-property":171,"core-js/modules/es6.reflect.delete-property":172,"core-js/modules/es6.reflect.get":175,"core-js/modules/es6.reflect.get-own-property-descriptor":173,"core-js/modules/es6.reflect.get-prototype-of":174,"core-js/modules/es6.reflect.has":176,"core-js/modules/es6.reflect.is-extensible":177,"core-js/modules/es6.reflect.own-keys":178,"core-js/modules/es6.reflect.prevent-extensions":179,"core-js/modules/es6.reflect.set":181,"core-js/modules/es6.reflect.set-prototype-of":180,"core-js/modules/es6.regexp.flags":182,"core-js/modules/es6.regexp.match":183,"core-js/modules/es6.regexp.replace":184,"core-js/modules/es6.regexp.search":185,"core-js/modules/es6.regexp.split":186,"core-js/modules/es6.set":187,"core-js/modules/es6.string.code-point-at":188,"core-js/modules/es6.string.ends-with":189,"core-js/modules/es6.string.from-code-point":190,"core-js/modules/es6.string.includes":191,"core-js/modules/es6.string.raw":192,"core-js/modules/es6.string.repeat":193,"core-js/modules/es6.string.starts-with":194,"core-js/modules/es6.symbol":195,"core-js/modules/es6.typed.array-buffer":196,"core-js/modules/es6.typed.data-view":197,"core-js/modules/es6.typed.float32-array":198,"core-js/modules/es6.typed.float64-array":199,"core-js/modules/es6.typed.int16-array":200,"core-js/modules/es6.typed.int32-array":201,"core-js/modules/es6.typed.int8-array":202,"core-js/modules/es6.typed.uint16-array":203,"core-js/modules/es6.typed.uint32-array":204,"core-js/modules/es6.typed.uint8-array":205,"core-js/modules/es6.typed.uint8-clamped-array":206,"core-js/modules/es6.weak-map":207,"core-js/modules/es6.weak-set":208,"core-js/modules/web.dom.iterable":209,"core-js/modules/web.immediate":210,"core-js/modules/web.timers":211}],10:[function(require,module,exports){
+},{"./api/api":2,"./creatives/icons":3,"./creatives/linear":4,"./creatives/non-linear":5,"./fw/env":7,"./fw/fw":8,"./players/content-player":10,"./tracking/ping":13,"./tracking/tracking-events":14,"./utils/default":15,"./utils/helpers":16,"./utils/vast-errors":17,"core-js/modules/es6.array.copy-within":122,"core-js/modules/es6.array.fill":123,"core-js/modules/es6.array.find":125,"core-js/modules/es6.array.find-index":124,"core-js/modules/es6.array.from":126,"core-js/modules/es6.array.iterator":127,"core-js/modules/es6.array.of":128,"core-js/modules/es6.function.name":129,"core-js/modules/es6.map":130,"core-js/modules/es6.math.acosh":131,"core-js/modules/es6.math.asinh":132,"core-js/modules/es6.math.atanh":133,"core-js/modules/es6.math.cbrt":134,"core-js/modules/es6.math.clz32":135,"core-js/modules/es6.math.cosh":136,"core-js/modules/es6.math.expm1":137,"core-js/modules/es6.math.fround":138,"core-js/modules/es6.math.hypot":139,"core-js/modules/es6.math.imul":140,"core-js/modules/es6.math.log10":141,"core-js/modules/es6.math.log1p":142,"core-js/modules/es6.math.log2":143,"core-js/modules/es6.math.sign":144,"core-js/modules/es6.math.sinh":145,"core-js/modules/es6.math.tanh":146,"core-js/modules/es6.math.trunc":147,"core-js/modules/es6.number.epsilon":148,"core-js/modules/es6.number.is-finite":149,"core-js/modules/es6.number.is-integer":150,"core-js/modules/es6.number.is-nan":151,"core-js/modules/es6.number.is-safe-integer":152,"core-js/modules/es6.number.max-safe-integer":153,"core-js/modules/es6.number.min-safe-integer":154,"core-js/modules/es6.object.assign":155,"core-js/modules/es6.object.freeze":156,"core-js/modules/es6.object.get-own-property-descriptor":157,"core-js/modules/es6.object.get-own-property-names":158,"core-js/modules/es6.object.get-prototype-of":159,"core-js/modules/es6.object.is":163,"core-js/modules/es6.object.is-extensible":160,"core-js/modules/es6.object.is-frozen":161,"core-js/modules/es6.object.is-sealed":162,"core-js/modules/es6.object.keys":164,"core-js/modules/es6.object.prevent-extensions":165,"core-js/modules/es6.object.seal":166,"core-js/modules/es6.object.set-prototype-of":167,"core-js/modules/es6.promise":168,"core-js/modules/es6.reflect.apply":169,"core-js/modules/es6.reflect.construct":170,"core-js/modules/es6.reflect.define-property":171,"core-js/modules/es6.reflect.delete-property":172,"core-js/modules/es6.reflect.get":175,"core-js/modules/es6.reflect.get-own-property-descriptor":173,"core-js/modules/es6.reflect.get-prototype-of":174,"core-js/modules/es6.reflect.has":176,"core-js/modules/es6.reflect.is-extensible":177,"core-js/modules/es6.reflect.own-keys":178,"core-js/modules/es6.reflect.prevent-extensions":179,"core-js/modules/es6.reflect.set":181,"core-js/modules/es6.reflect.set-prototype-of":180,"core-js/modules/es6.regexp.flags":182,"core-js/modules/es6.regexp.match":183,"core-js/modules/es6.regexp.replace":184,"core-js/modules/es6.regexp.search":185,"core-js/modules/es6.regexp.split":186,"core-js/modules/es6.set":187,"core-js/modules/es6.string.code-point-at":188,"core-js/modules/es6.string.ends-with":189,"core-js/modules/es6.string.from-code-point":190,"core-js/modules/es6.string.includes":191,"core-js/modules/es6.string.raw":192,"core-js/modules/es6.string.repeat":193,"core-js/modules/es6.string.starts-with":194,"core-js/modules/es6.symbol":195,"core-js/modules/es6.typed.array-buffer":196,"core-js/modules/es6.typed.data-view":197,"core-js/modules/es6.typed.float32-array":198,"core-js/modules/es6.typed.float64-array":199,"core-js/modules/es6.typed.int16-array":200,"core-js/modules/es6.typed.int32-array":201,"core-js/modules/es6.typed.int8-array":202,"core-js/modules/es6.typed.uint16-array":203,"core-js/modules/es6.typed.uint32-array":204,"core-js/modules/es6.typed.uint8-array":205,"core-js/modules/es6.typed.uint8-clamped-array":206,"core-js/modules/es6.weak-map":207,"core-js/modules/es6.weak-set":208,"core-js/modules/web.dom.iterable":209,"core-js/modules/web.immediate":210,"core-js/modules/web.timers":211}],10:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -3113,7 +3010,7 @@ CONTENTPLAYER.preventSeekingForCustomPlayback = function () {
 
 exports.default = CONTENTPLAYER;
 
-},{"../fw/fw":8,"../utils/helpers":15}],11:[function(require,module,exports){
+},{"../fw/fw":8,"../utils/helpers":16}],11:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -3144,9 +3041,9 @@ var _icons = require('../creatives/icons');
 
 var _icons2 = _interopRequireDefault(_icons);
 
-var _reset = require('../utils/reset');
+var _default = require('../utils/default');
 
-var _reset2 = _interopRequireDefault(_reset);
+var _default2 = _interopRequireDefault(_default);
 
 var _trackingEvents = require('../tracking/tracking-events');
 
@@ -3160,10 +3057,6 @@ var _linear = require('../creatives/linear');
 
 var _linear2 = _interopRequireDefault(_linear);
 
-var _api = require('../api/api');
-
-var _api2 = _interopRequireDefault(_api);
-
 var _vastErrors = require('../utils/vast-errors');
 
 var _vastErrors2 = _interopRequireDefault(_vastErrors);
@@ -3171,6 +3064,65 @@ var _vastErrors2 = _interopRequireDefault(_vastErrors);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var VASTPLAYER = {};
+
+var _unwireVastPlayerEvents = function _unwireVastPlayerEvents() {
+  if (DEBUG) {
+    _fw2.default.log('reset - unwireVastPlayerEvents');
+  }
+  if (this.nonLinearContainer) {
+    this.nonLinearImg.removeEventListener('load', this.onNonLinearLoadSuccess);
+    this.nonLinearImg.removeEventListener('error', this.onNonLinearLoadError);
+    this.nonLinearATag.removeEventListener('click', this.onNonLinearClickThrough);
+    this.nonLinearATag.removeEventListener('touchend', this.onNonLinearClickThrough);
+    this.nonLinearClose.removeEventListener('click', this.onClickCloseNonLinear);
+    this.nonLinearClose.removeEventListener('touchend', this.onClickCloseNonLinear);
+    for (var i = 0, len = this.trackingTags.length; i < len; i++) {
+      this.nonLinearContainer.removeEventListener(this.trackingTags[i].event, this.onEventPingTracking);
+    }
+  }
+  if (this.vastPlayer) {
+    this.vastPlayer.removeEventListener('error', this.onPlaybackError);
+    // vastPlayer content pause/resume events
+    this.vastPlayer.removeEventListener('durationchange', this.onDurationChange);
+    this.vastPlayer.removeEventListener('loadedmetadata', this.onLoadedmetadataPlay);
+    this.vastPlayer.removeEventListener('contextmenu', this.onContextMenu);
+    // unwire HTML5 video events
+    this.vastPlayer.removeEventListener('pause', this.onPause);
+    this.vastPlayer.removeEventListener('play', this.onPlay);
+    this.vastPlayer.removeEventListener('playing', this.onPlaying);
+    this.vastPlayer.removeEventListener('ended', this.onEnded);
+    this.vastPlayer.removeEventListener('volumechange', this.onVolumeChange);
+    this.vastPlayer.removeEventListener('timeupdate', this.onTimeupdate);
+
+    // unwire HTML5 VAST events
+    for (var _i = 0, _len = this.trackingTags.length; _i < _len; _i++) {
+      this.vastPlayer.removeEventListener(this.trackingTags[_i].event, this.onEventPingTracking);
+    }
+    // remove clicktrough handling
+    if (this.onClickThrough !== null) {
+      this.vastPlayer.removeEventListener('click', this.onClickThrough);
+    }
+    // remove icons 
+    if (this.onPlayingAppendIcons !== null) {
+      this.vastPlayer.removeEventListener('playing', this.onPlayingAppendIcons);
+    }
+    // skip
+    if (this.onTimeupdateCheckSkip !== null) {
+      this.vastPlayer.removeEventListener('timeupdate', this.onTimeupdateCheckSkip);
+    }
+    if (this.skipButton && this.onClickSkip !== null) {
+      this.skipButton.removeEventListener('click', this.onClickSkip);
+      this.skipButton.removeEventListener('touchend', this.onClickSkip);
+    }
+    // click UI on mobile
+    if (this.clickUIOnMobile && this.onClickThrough !== null) {
+      this.clickUIOnMobile.removeEventListener('touchend', this.onClickThrough);
+    }
+  }
+  if (this.contentPlayer) {
+    this.contentPlayer.removeEventListener('error', this.onPlaybackError);
+  }
+};
 
 var _destroyVastPlayer = function _destroyVastPlayer() {
   var _this = this;
@@ -3186,7 +3138,7 @@ var _destroyVastPlayer = function _destroyVastPlayer() {
     _vpaid2.default.destroy.call(this);
   }
   // unwire events
-  _reset2.default.unwireVastPlayerEvents.call(this);
+  _unwireVastPlayerEvents.call(this);
   // remove clickUI on mobile
   if (this.clickUIOnMobile) {
     _fw2.default.removeElement(this.clickUIOnMobile);
@@ -3265,8 +3217,8 @@ var _destroyVastPlayer = function _destroyVastPlayer() {
       _fw2.default.trace(e);
     }
   }
-  _reset2.default.internalVariables.call(this);
-  _api2.default.createEvent.call(this, 'addestroyed');
+  _default2.default.loadAdsVariables.call(this);
+  _helpers2.default.createApiEvent.call(this, 'addestroyed');
 };
 
 VASTPLAYER.init = function () {
@@ -3277,7 +3229,7 @@ VASTPLAYER.init = function () {
   }
   this.adContainer = document.createElement('div');
   this.adContainer.className = 'rmp-ad-container';
-  this.content.appendChild(this.adContainer);
+  this.contentWrapper.appendChild(this.adContainer);
   _fw2.default.hide(this.adContainer);
   if (!this.useContentPlayerForAds) {
     this.vastPlayer = document.createElement('video');
@@ -3473,7 +3425,7 @@ VASTPLAYER.resumeContent = function () {
 
 exports.default = VASTPLAYER;
 
-},{"../api/api":2,"../creatives/icons":3,"../creatives/linear":4,"../creatives/non-linear":5,"../fw/env":7,"../fw/fw":8,"../players/content-player":10,"../players/vpaid":12,"../tracking/tracking-events":14,"../utils/helpers":15,"../utils/reset":16,"../utils/vast-errors":17}],12:[function(require,module,exports){
+},{"../creatives/icons":3,"../creatives/linear":4,"../creatives/non-linear":5,"../fw/env":7,"../fw/fw":8,"../players/content-player":10,"../players/vpaid":12,"../tracking/tracking-events":14,"../utils/default":15,"../utils/helpers":16,"../utils/vast-errors":17}],12:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -3495,10 +3447,6 @@ var _helpers2 = _interopRequireDefault(_helpers);
 var _vastErrors = require('../utils/vast-errors');
 
 var _vastErrors2 = _interopRequireDefault(_vastErrors);
-
-var _api = require('../api/api');
-
-var _api2 = _interopRequireDefault(_api);
 
 var _ping = require('../tracking/ping');
 
@@ -3637,7 +3585,7 @@ var _onAdLoaded = function _onAdLoaded() {
   _contentPlayer2.default.pause.call(this);
   this.adOnStage = true;
   this.vpaidCreative.startAd();
-  _api2.default.createEvent.call(this, 'adloaded');
+  _helpers2.default.createApiEvent.call(this, 'adloaded');
 };
 
 var _onAdStarted = function _onAdStarted() {
@@ -3685,7 +3633,7 @@ var _onAdSkipped = function _onAdSkipped() {
   if (this.adSkippedTimeout) {
     clearTimeout(this.adSkippedTimeout);
   }
-  _api2.default.createEvent.call(this, 'adskipped');
+  _helpers2.default.createApiEvent.call(this, 'adskipped');
   _helpers2.default.dispatchPingEvent.call(this, 'skip');
 };
 
@@ -3693,7 +3641,7 @@ var _onAdSkippableStateChange = function _onAdSkippableStateChange() {
   if (DEBUG) {
     _fw2.default.log('VPAID AdSkippableStateChange event');
   }
-  _api2.default.createEvent.call(this, 'adskippablestatechanged');
+  _helpers2.default.createApiEvent.call(this, 'adskippablestatechanged');
 };
 
 var _onAdDurationChange = function _onAdDurationChange() {
@@ -3709,7 +3657,7 @@ var _onAdDurationChange = function _onAdDurationChange() {
       this.vpaidRemainingTime = remainingTime;
     }
   }
-  _api2.default.createEvent.call(this, 'addurationchange');
+  _helpers2.default.createApiEvent.call(this, 'addurationchange');
 };
 
 var _onAdVolumeChange = function _onAdVolumeChange() {
@@ -3726,14 +3674,14 @@ var _onAdVolumeChange = function _onAdVolumeChange() {
     _helpers2.default.dispatchPingEvent.call(this, 'unmute');
   }
   this.vpaidCurrentVolume = newVolume;
-  _api2.default.createEvent.call(this, 'advolumechanged');
+  _helpers2.default.createApiEvent.call(this, 'advolumechanged');
 };
 
 var _onAdImpression = function _onAdImpression() {
   if (DEBUG) {
     _fw2.default.log('VPAID AdImpression event');
   }
-  _api2.default.createEvent.call(this, 'adimpression');
+  _helpers2.default.createApiEvent.call(this, 'adimpression');
   _helpers2.default.dispatchPingEvent.call(this, 'impression');
 };
 
@@ -3747,7 +3695,7 @@ var _onAdVideoStart = function _onAdVideoStart() {
     newVolume = 1;
   }
   this.vpaidCurrentVolume = newVolume;
-  _api2.default.createEvent.call(this, 'adstarted');
+  _helpers2.default.createApiEvent.call(this, 'adstarted');
   _helpers2.default.dispatchPingEvent.call(this, 'start');
 };
 
@@ -3755,7 +3703,7 @@ var _onAdVideoFirstQuartile = function _onAdVideoFirstQuartile() {
   if (DEBUG) {
     _fw2.default.log('VPAID AdVideoFirstQuartile event');
   }
-  _api2.default.createEvent.call(this, 'adfirstquartile');
+  _helpers2.default.createApiEvent.call(this, 'adfirstquartile');
   _helpers2.default.dispatchPingEvent.call(this, 'firstQuartile');
 };
 
@@ -3763,7 +3711,7 @@ var _onAdVideoMidpoint = function _onAdVideoMidpoint() {
   if (DEBUG) {
     _fw2.default.log('VPAID AdVideoMidpoint event');
   }
-  _api2.default.createEvent.call(this, 'admidpoint');
+  _helpers2.default.createApiEvent.call(this, 'admidpoint');
   _helpers2.default.dispatchPingEvent.call(this, 'midpoint');
 };
 
@@ -3771,7 +3719,7 @@ var _onAdVideoThirdQuartile = function _onAdVideoThirdQuartile() {
   if (DEBUG) {
     _fw2.default.log('VPAID AdVideoThirdQuartile event');
   }
-  _api2.default.createEvent.call(this, 'adthirdquartile');
+  _helpers2.default.createApiEvent.call(this, 'adthirdquartile');
   _helpers2.default.dispatchPingEvent.call(this, 'thirdQuartile');
 };
 
@@ -3779,7 +3727,7 @@ var _onAdVideoComplete = function _onAdVideoComplete() {
   if (DEBUG) {
     _fw2.default.log('VPAID AdVideoComplete event');
   }
-  _api2.default.createEvent.call(this, 'adcomplete');
+  _helpers2.default.createApiEvent.call(this, 'adcomplete');
   _helpers2.default.dispatchPingEvent.call(this, 'complete');
 };
 
@@ -3787,7 +3735,7 @@ var _onAdClickThru = function _onAdClickThru(url, id, playerHandles) {
   if (DEBUG) {
     _fw2.default.log('VPAID AdClickThru event');
   }
-  _api2.default.createEvent.call(this, 'adclick');
+  _helpers2.default.createApiEvent.call(this, 'adclick');
   _helpers2.default.dispatchPingEvent.call(this, 'clickthrough');
   if (typeof playerHandles !== 'boolean') {
     return;
@@ -3814,7 +3762,7 @@ var _onAdPaused = function _onAdPaused() {
     _fw2.default.log('VPAID AdPaused event');
   }
   this.vpaidPaused = true;
-  _api2.default.createEvent.call(this, 'adpaused');
+  _helpers2.default.createApiEvent.call(this, 'adpaused');
   _helpers2.default.dispatchPingEvent.call(this, 'pause');
 };
 
@@ -3823,7 +3771,7 @@ var _onAdPlaying = function _onAdPlaying() {
     _fw2.default.log('VPAID AdPlaying event');
   }
   this.vpaidPaused = false;
-  _api2.default.createEvent.call(this, 'adresumed');
+  _helpers2.default.createApiEvent.call(this, 'adresumed');
   _helpers2.default.dispatchPingEvent.call(this, 'resume');
 };
 
@@ -3845,14 +3793,14 @@ var _onAdInteraction = function _onAdInteraction() {
   if (DEBUG) {
     _fw2.default.log('VPAID AdInteraction event');
   }
-  _api2.default.createEvent.call(this, 'adinteraction');
+  _helpers2.default.createApiEvent.call(this, 'adinteraction');
 };
 
 var _onAdUserAcceptInvitation = function _onAdUserAcceptInvitation() {
   if (DEBUG) {
     _fw2.default.log('VPAID AdUserAcceptInvitation event');
   }
-  _api2.default.createEvent.call(this, 'aduseracceptinvitation');
+  _helpers2.default.createApiEvent.call(this, 'aduseracceptinvitation');
   _helpers2.default.dispatchPingEvent.call(this, 'acceptInvitation');
 };
 
@@ -3860,7 +3808,7 @@ var _onAdUserMinimize = function _onAdUserMinimize() {
   if (DEBUG) {
     _fw2.default.log('VPAID AdUserMinimize event');
   }
-  _api2.default.createEvent.call(this, 'adcollapse');
+  _helpers2.default.createApiEvent.call(this, 'adcollapse');
   _helpers2.default.dispatchPingEvent.call(this, 'collapse');
 };
 
@@ -3868,7 +3816,7 @@ var _onAdUserClose = function _onAdUserClose() {
   if (DEBUG) {
     _fw2.default.log('VPAID AdUserClose event');
   }
-  _api2.default.createEvent.call(this, 'adclose');
+  _helpers2.default.createApiEvent.call(this, 'adclose');
   _helpers2.default.dispatchPingEvent.call(this, 'close');
 };
 
@@ -3876,7 +3824,7 @@ var _onAdSizeChange = function _onAdSizeChange() {
   if (DEBUG) {
     _fw2.default.log('VPAID AdSizeChange event');
   }
-  _api2.default.createEvent.call(this, 'adsizechange');
+  _helpers2.default.createApiEvent.call(this, 'adsizechange');
 };
 
 var _onAdLinearChange = function _onAdLinearChange() {
@@ -3885,7 +3833,7 @@ var _onAdLinearChange = function _onAdLinearChange() {
   }
   if (this.vpaidCreative && typeof this.vpaidCreative.getAdLinear === 'function') {
     this.adIsLinear = this.vpaidCreative.getAdLinear();
-    _api2.default.createEvent.call(this, 'adlinearchange');
+    _helpers2.default.createApiEvent.call(this, 'adlinearchange');
   }
 };
 
@@ -3893,7 +3841,7 @@ var _onAdExpandedChange = function _onAdExpandedChange() {
   if (DEBUG) {
     _fw2.default.log('VPAID AdExpandedChange event');
   }
-  _api2.default.createEvent.call(this, 'adexpandedchange');
+  _helpers2.default.createApiEvent.call(this, 'adexpandedchange');
 };
 
 var _onAdRemainingTimeChange = function _onAdRemainingTimeChange() {
@@ -3906,7 +3854,7 @@ var _onAdRemainingTimeChange = function _onAdRemainingTimeChange() {
       this.vpaidRemainingTime = remainingTime;
     }
   }
-  _api2.default.createEvent.call(this, 'adremainingtimechange');
+  _helpers2.default.createApiEvent.call(this, 'adremainingtimechange');
 };
 
 // vpaidCreative methods
@@ -4290,7 +4238,7 @@ VPAID.destroy = function () {
 
 exports.default = VPAID;
 
-},{"../api/api":2,"../creatives/icons":3,"../fw/env":7,"../fw/fw":8,"../players/content-player":10,"../players/vast-player":11,"../tracking/ping":13,"../tracking/tracking-events":14,"../utils/helpers":15,"../utils/vast-errors":17}],13:[function(require,module,exports){
+},{"../creatives/icons":3,"../fw/env":7,"../fw/fw":8,"../players/content-player":10,"../players/vast-player":11,"../tracking/ping":13,"../tracking/tracking-events":14,"../utils/helpers":16,"../utils/vast-errors":17}],13:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -4404,10 +4352,6 @@ var _helpers = require('../utils/helpers');
 
 var _helpers2 = _interopRequireDefault(_helpers);
 
-var _api = require('../api/api');
-
-var _api2 = _interopRequireDefault(_api);
-
 var _vastPlayer = require('../players/vast-player');
 
 var _vastPlayer2 = _interopRequireDefault(_vastPlayer);
@@ -4442,7 +4386,7 @@ var _onEventPingTracking = function _onEventPingTracking(event) {
 
 var _onVolumeChange = function _onVolumeChange() {
   if (this.vastPlayer.muted || this.vastPlayer.volume === 0) {
-    _api2.default.createEvent.call(this, 'advolumemuted');
+    _helpers2.default.createApiEvent.call(this, 'advolumemuted');
     _helpers2.default.dispatchPingEvent.call(this, 'mute');
     this.vastPlayerMuted = true;
   } else {
@@ -4451,7 +4395,7 @@ var _onVolumeChange = function _onVolumeChange() {
       this.vastPlayerMuted = false;
     }
   }
-  _api2.default.createEvent.call(this, 'advolumechanged');
+  _helpers2.default.createApiEvent.call(this, 'advolumechanged');
 };
 
 var _onTimeupdate = function _onTimeupdate() {
@@ -4462,15 +4406,15 @@ var _onTimeupdate = function _onTimeupdate() {
     if (this.vastPlayerDuration > 0 && this.vastPlayerDuration > this.vastPlayerCurrentTime) {
       if (this.vastPlayerCurrentTime >= this.vastPlayerDuration * 0.25 && !this.firstQuartileEventFired) {
         this.firstQuartileEventFired = true;
-        _api2.default.createEvent.call(this, 'adfirstquartile');
+        _helpers2.default.createApiEvent.call(this, 'adfirstquartile');
         _helpers2.default.dispatchPingEvent.call(this, 'firstQuartile');
       } else if (this.vastPlayerCurrentTime >= this.vastPlayerDuration * 0.5 && !this.midpointEventFired) {
         this.midpointEventFired = true;
-        _api2.default.createEvent.call(this, 'admidpoint');
+        _helpers2.default.createApiEvent.call(this, 'admidpoint');
         _helpers2.default.dispatchPingEvent.call(this, 'midpoint');
       } else if (this.vastPlayerCurrentTime >= this.vastPlayerDuration * 0.75 && !this.thirdQuartileEventFired) {
         this.thirdQuartileEventFired = true;
-        _api2.default.createEvent.call(this, 'adthirdquartile');
+        _helpers2.default.createApiEvent.call(this, 'adthirdquartile');
         _helpers2.default.dispatchPingEvent.call(this, 'thirdQuartile');
       }
     }
@@ -4499,7 +4443,7 @@ var _onTimeupdate = function _onTimeupdate() {
 var _onPause = function _onPause() {
   if (!this.vastPlayerPaused) {
     this.vastPlayerPaused = true;
-    _api2.default.createEvent.call(this, 'adpaused');
+    _helpers2.default.createApiEvent.call(this, 'adpaused');
     // do not dispatchPingEvent for pause event here if it is already in this.trackingTags
     for (var i = 0, len = this.trackingTags.length; i < len; i++) {
       if (this.trackingTags[i].event === 'pause') {
@@ -4513,21 +4457,21 @@ var _onPause = function _onPause() {
 var _onPlay = function _onPlay() {
   if (this.vastPlayerPaused) {
     this.vastPlayerPaused = false;
-    _api2.default.createEvent.call(this, 'adresumed');
+    _helpers2.default.createApiEvent.call(this, 'adresumed');
     _helpers2.default.dispatchPingEvent.call(this, 'resume');
   }
 };
 
 var _onPlaying = function _onPlaying() {
   this.vastPlayer.removeEventListener('playing', this.onPlaying);
-  _api2.default.createEvent.call(this, 'adimpression');
-  _api2.default.createEvent.call(this, 'adstarted');
+  _helpers2.default.createApiEvent.call(this, 'adimpression');
+  _helpers2.default.createApiEvent.call(this, 'adstarted');
   _helpers2.default.dispatchPingEvent.call(this, ['impression', 'creativeView', 'start']);
 };
 
 var _onEnded = function _onEnded() {
   this.vastPlayer.removeEventListener('ended', this.onEnded);
-  _api2.default.createEvent.call(this, 'adcomplete');
+  _helpers2.default.createApiEvent.call(this, 'adcomplete');
   _helpers2.default.dispatchPingEvent.call(this, 'complete');
   _vastPlayer2.default.resumeContent.call(this);
 };
@@ -4607,165 +4551,7 @@ TRACKINGEVENTS.filterPush = function (trackingEvents) {
 
 exports.default = TRACKINGEVENTS;
 
-},{"../api/api":2,"../fw/fw":8,"../players/vast-player":11,"../utils/helpers":15,"./ping":13}],15:[function(require,module,exports){
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-
-var _fw = require('../fw/fw');
-
-var _fw2 = _interopRequireDefault(_fw);
-
-var _api = require('../api/api');
-
-var _api2 = _interopRequireDefault(_api);
-
-var _vastErrors = require('./vast-errors');
-
-var _vastErrors2 = _interopRequireDefault(_vastErrors);
-
-var _ping = require('../tracking/ping');
-
-var _ping2 = _interopRequireDefault(_ping);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var HELPERS = {};
-
-HELPERS.filterParams = function (inputParams) {
-  var defaultParams = {
-    ajaxTimeout: 5000,
-    creativeLoadTimeout: 8000,
-    ajaxWithCredentials: false,
-    maxNumRedirects: 4,
-    maxNumItemsInAdPod: 10,
-    pauseOnClick: true,
-    skipMessage: 'Skip ad',
-    skipWaitingMessage: 'Skip ad in',
-    textForClickUIOnMobile: 'Learn more',
-    enableVpaid: true,
-    outstream: false,
-    vpaidSettings: {
-      width: 640,
-      height: 360,
-      viewMode: 'normal',
-      desiredBitrate: 500
-    }
-  };
-  this.params = defaultParams;
-  if (_fw2.default.isObject(inputParams)) {
-    var keys = Object.keys(inputParams);
-    for (var i = 0, len = keys.length; i < len; i++) {
-      var prop = keys[i];
-      if (_typeof(inputParams[prop]) === _typeof(this.params[prop])) {
-        if (_fw2.default.isNumber(inputParams[prop]) && inputParams[prop] > 0 || typeof inputParams[prop] !== 'number') {
-          if (prop === 'vpaidSettings') {
-            if (_fw2.default.isNumber(inputParams.vpaidSettings.width) && inputParams.vpaidSettings.width > 0) {
-              this.params.vpaidSettings.width = inputParams.vpaidSettings.width;
-            }
-            if (_fw2.default.isNumber(inputParams.vpaidSettings.height) && inputParams.vpaidSettings.height > 0) {
-              this.params.vpaidSettings.height = inputParams.vpaidSettings.height;
-            }
-            if (typeof inputParams.vpaidSettings.viewMode === 'string' && inputParams.vpaidSettings.viewMode === 'fullscreen') {
-              this.params.vpaidSettings.viewMode = inputParams.vpaidSettings.viewMode;
-            }
-            if (_fw2.default.isNumber(inputParams.vpaidSettings.desiredBitrate) && inputParams.vpaidSettings.desiredBitrate > 0) {
-              this.params.vpaidSettings.desiredBitrate = inputParams.vpaidSettings.desiredBitrate;
-            }
-          } else {
-            this.params[prop] = inputParams[prop];
-          }
-        }
-      }
-    }
-    // we need to avoid infinite wrapper loops scenario 
-    // so we cap maxNumRedirects to 30 
-    if (this.params.maxNumRedirects > 30) {
-      this.params.maxNumRedirects = 30;
-    }
-  }
-};
-
-HELPERS.dispatchPingEvent = function (event) {
-  if (event) {
-    var element = void 0;
-    if (this.adIsLinear && this.vastPlayer) {
-      element = this.vastPlayer;
-    } else if (!this.adIsLinear && this.nonLinearContainer) {
-      element = this.nonLinearContainer;
-    }
-    if (element) {
-      if (Array.isArray(event)) {
-        event.forEach(function (currentEvent) {
-          _fw2.default.createStdEvent(currentEvent, element);
-        });
-      } else {
-        _fw2.default.createStdEvent(event, element);
-      }
-    }
-  }
-};
-
-HELPERS.playPromise = function (whichPlayer, firstPlayerPlayRequest) {
-  var _this = this;
-
-  var targetPlayer = void 0;
-  switch (whichPlayer) {
-    case 'content':
-      targetPlayer = this.contentPlayer;
-      break;
-    case 'vast':
-      targetPlayer = this.vastPlayer;
-      break;
-    default:
-      break;
-  }
-  if (targetPlayer) {
-    var playPromise = targetPlayer.play();
-    // most modern browsers support play as a Promise
-    // this lets us handle autoplay rejection 
-    // https://developers.google.com/web/updates/2016/03/play-returns-promise
-    if (playPromise !== undefined) {
-      playPromise.then(function () {
-        if (firstPlayerPlayRequest) {
-          if (DEBUG) {
-            _fw2.default.log('initial play promise on ' + whichPlayer + ' player has succeeded');
-          }
-          _api2.default.createEvent.call(_this, 'adinitialplayrequestsucceeded');
-        }
-      }).catch(function (e) {
-        if (firstPlayerPlayRequest && whichPlayer === 'vast' && _this.adIsLinear) {
-          if (DEBUG) {
-            _fw2.default.log(e);
-            _fw2.default.log('initial play promise on VAST player has been rejected for linear asset - likely autoplay is being blocked');
-          }
-          _ping2.default.error.call(_this, 400);
-          _vastErrors2.default.process.call(_this, 400);
-          _api2.default.createEvent.call(_this, 'adinitialplayrequestfailed');
-        } else if (firstPlayerPlayRequest && whichPlayer === 'content' && !_this.adIsLinear) {
-          if (DEBUG) {
-            _fw2.default.log(e);
-            _fw2.default.log('initial play promise on content player has been rejected for non-linear asset - likely autoplay is being blocked');
-          }
-          _api2.default.createEvent.call(_this, 'adinitialplayrequestfailed');
-        } else {
-          if (DEBUG) {
-            _fw2.default.log(e);
-            _fw2.default.log('playPromise on ' + whichPlayer + ' player has been rejected');
-          }
-        }
-      });
-    }
-  }
-};
-
-exports.default = HELPERS;
-
-},{"../api/api":2,"../fw/fw":8,"../tracking/ping":13,"./vast-errors":17}],16:[function(require,module,exports){
+},{"../fw/fw":8,"../players/vast-player":11,"../utils/helpers":16,"./ping":13}],15:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -4776,14 +4562,52 @@ var _fw = require('../fw/fw');
 
 var _fw2 = _interopRequireDefault(_fw);
 
+var _env = require('../fw/env');
+
+var _env2 = _interopRequireDefault(_env);
+
+var _helpers = require('./helpers');
+
+var _helpers2 = _interopRequireDefault(_helpers);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var RESET = {};
+var DEFAULT = {};
 
-RESET.internalVariables = function () {
-  if (DEBUG) {
-    _fw2.default.log('reset - internalVariables');
+DEFAULT.instanceVariables = function () {
+  this.adContainer = null;
+  this.rmpVastInitialized = false;
+  this.useContentPlayerForAds = false;
+  this.contentPlayerCompleted = false;
+  this.currentContentSrc = '';
+  this.currentContentCurrentTime = -1;
+  this.needsSeekAdjust = false;
+  this.seekAdjustAttached = false;
+  this.onDestroyLoadAds = null;
+  this.firstVastPlayerPlayRequest = true;
+  this.firstContentPlayerPlayRequest = true;
+  this.params = {};
+  // adpod 
+  this.adPod = [];
+  this.standaloneAdsInPod = [];
+  this.onAdDestroyLoadNextAdInPod = _fw2.default.nullFn;
+  this.runningAdPod = false;
+  this.adPodItemWrapper = false;
+  this.adPodCurrentIndex = 0;
+  this.adPodApiInfo = [];
+  this.adPodWrapperTrackings = [];
+  // on iOS and macOS Safari we use content player to play ads
+  // to avoid issues related to fullscreen management and autoplay
+  // as fullscreen on iOS is handled by the default OS player
+  if (_env2.default.isIos[0] || _env2.default.isMacOSX && _env2.default.isSafari[0]) {
+    this.useContentPlayerForAds = true;
+    if (DEBUG) {
+      _fw2.default.log('vast player will be content player');
+    }
   }
+};
+
+DEFAULT.loadAdsVariables = function () {
   // init internal methods 
   this.onLoadedmetadataPlay = null;
   this.onPlaybackError = null;
@@ -4887,68 +4711,226 @@ RESET.internalVariables = function () {
   this.onJSVPAIDError = _fw2.default.nullFn;
 };
 
-RESET.unwireVastPlayerEvents = function () {
-  if (DEBUG) {
-    _fw2.default.log('reset - unwireVastPlayerEvents');
-  }
-  if (this.nonLinearContainer) {
-    this.nonLinearImg.removeEventListener('load', this.onNonLinearLoadSuccess);
-    this.nonLinearImg.removeEventListener('error', this.onNonLinearLoadError);
-    this.nonLinearATag.removeEventListener('click', this.onNonLinearClickThrough);
-    this.nonLinearATag.removeEventListener('touchend', this.onNonLinearClickThrough);
-    this.nonLinearClose.removeEventListener('click', this.onClickCloseNonLinear);
-    this.nonLinearClose.removeEventListener('touchend', this.onClickCloseNonLinear);
-    for (var i = 0, len = this.trackingTags.length; i < len; i++) {
-      this.nonLinearContainer.removeEventListener(this.trackingTags[i].event, this.onEventPingTracking);
+DEFAULT.fullscreen = function () {
+  // attach fullscreen states
+  // this assumes we have a polyfill for fullscreenchange event 
+  // see app/js/app.js
+  // we need this to handle VAST fullscreen events
+  var isInFullscreen = false;
+  var _onFullscreenchange = function _onFullscreenchange(event) {
+    if (event && event.type) {
+      if (DEBUG) {
+        _fw2.default.log('event is ' + event.type);
+      }
+      if (event.type === 'fullscreenchange') {
+        if (isInFullscreen) {
+          isInFullscreen = false;
+          if (this.adOnStage && this.adIsLinear) {
+            _helpers2.default.dispatchPingEvent.call(this, 'exitFullscreen');
+          }
+        } else {
+          isInFullscreen = true;
+          if (this.adOnStage && this.adIsLinear) {
+            _helpers2.default.dispatchPingEvent.call(this, 'fullscreen');
+          }
+        }
+      } else if (event.type === 'webkitbeginfullscreen') {
+        // iOS uses webkitbeginfullscreen
+        if (this.adOnStage && this.adIsLinear) {
+          _helpers2.default.dispatchPingEvent.call(this, 'fullscreen');
+        }
+      } else if (event.type === 'webkitendfullscreen') {
+        // iOS uses webkitendfullscreen
+        if (this.adOnStage && this.adIsLinear) {
+          _helpers2.default.dispatchPingEvent.call(this, 'exitFullscreen');
+        }
+      }
     }
-  }
-  if (this.vastPlayer) {
-    this.vastPlayer.removeEventListener('error', this.onPlaybackError);
-    // vastPlayer content pause/resume events
-    this.vastPlayer.removeEventListener('durationchange', this.onDurationChange);
-    this.vastPlayer.removeEventListener('loadedmetadata', this.onLoadedmetadataPlay);
-    this.vastPlayer.removeEventListener('contextmenu', this.onContextMenu);
-    // unwire HTML5 video events
-    this.vastPlayer.removeEventListener('pause', this.onPause);
-    this.vastPlayer.removeEventListener('play', this.onPlay);
-    this.vastPlayer.removeEventListener('playing', this.onPlaying);
-    this.vastPlayer.removeEventListener('ended', this.onEnded);
-    this.vastPlayer.removeEventListener('volumechange', this.onVolumeChange);
-    this.vastPlayer.removeEventListener('timeupdate', this.onTimeupdate);
-
-    // unwire HTML5 VAST events
-    for (var _i = 0, _len = this.trackingTags.length; _i < _len; _i++) {
-      this.vastPlayer.removeEventListener(this.trackingTags[_i].event, this.onEventPingTracking);
+  };
+  // if we have native fullscreen support we handle fullscreen events
+  if (_env2.default.hasNativeFullscreenSupport) {
+    var onFullscreenchange = _onFullscreenchange.bind(this);
+    // for our beloved iOS 
+    if (_env2.default.isIos[0]) {
+      this.contentPlayer.addEventListener('webkitbeginfullscreen', onFullscreenchange);
+      this.contentPlayer.addEventListener('webkitendfullscreen', onFullscreenchange);
+    } else {
+      document.addEventListener('fullscreenchange', onFullscreenchange);
     }
-    // remove clicktrough handling
-    if (this.onClickThrough !== null) {
-      this.vastPlayer.removeEventListener('click', this.onClickThrough);
-    }
-    // remove icons 
-    if (this.onPlayingAppendIcons !== null) {
-      this.vastPlayer.removeEventListener('playing', this.onPlayingAppendIcons);
-    }
-    // skip
-    if (this.onTimeupdateCheckSkip !== null) {
-      this.vastPlayer.removeEventListener('timeupdate', this.onTimeupdateCheckSkip);
-    }
-    if (this.skipButton && this.onClickSkip !== null) {
-      this.skipButton.removeEventListener('click', this.onClickSkip);
-      this.skipButton.removeEventListener('touchend', this.onClickSkip);
-    }
-    // click UI on mobile
-    if (this.clickUIOnMobile && this.onClickThrough !== null) {
-      this.clickUIOnMobile.removeEventListener('touchend', this.onClickThrough);
-    }
-  }
-  if (this.contentPlayer) {
-    this.contentPlayer.removeEventListener('error', this.onPlaybackError);
   }
 };
 
-exports.default = RESET;
+exports.default = DEFAULT;
 
-},{"../fw/fw":8}],17:[function(require,module,exports){
+},{"../fw/env":7,"../fw/fw":8,"./helpers":16}],16:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+var _fw = require('../fw/fw');
+
+var _fw2 = _interopRequireDefault(_fw);
+
+var _vastErrors = require('./vast-errors');
+
+var _vastErrors2 = _interopRequireDefault(_vastErrors);
+
+var _ping = require('../tracking/ping');
+
+var _ping2 = _interopRequireDefault(_ping);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var HELPERS = {};
+
+HELPERS.filterParams = function (inputParams) {
+  var defaultParams = {
+    ajaxTimeout: 5000,
+    creativeLoadTimeout: 8000,
+    ajaxWithCredentials: false,
+    maxNumRedirects: 4,
+    maxNumItemsInAdPod: 10,
+    pauseOnClick: true,
+    skipMessage: 'Skip ad',
+    skipWaitingMessage: 'Skip ad in',
+    textForClickUIOnMobile: 'Learn more',
+    enableVpaid: true,
+    outstream: false,
+    vpaidSettings: {
+      width: 640,
+      height: 360,
+      viewMode: 'normal',
+      desiredBitrate: 500
+    }
+  };
+  this.params = defaultParams;
+  if (_fw2.default.isObject(inputParams)) {
+    var keys = Object.keys(inputParams);
+    for (var i = 0, len = keys.length; i < len; i++) {
+      var prop = keys[i];
+      if (_typeof(inputParams[prop]) === _typeof(this.params[prop])) {
+        if (_fw2.default.isNumber(inputParams[prop]) && inputParams[prop] > 0 || typeof inputParams[prop] !== 'number') {
+          if (prop === 'vpaidSettings') {
+            if (_fw2.default.isNumber(inputParams.vpaidSettings.width) && inputParams.vpaidSettings.width > 0) {
+              this.params.vpaidSettings.width = inputParams.vpaidSettings.width;
+            }
+            if (_fw2.default.isNumber(inputParams.vpaidSettings.height) && inputParams.vpaidSettings.height > 0) {
+              this.params.vpaidSettings.height = inputParams.vpaidSettings.height;
+            }
+            if (typeof inputParams.vpaidSettings.viewMode === 'string' && inputParams.vpaidSettings.viewMode === 'fullscreen') {
+              this.params.vpaidSettings.viewMode = inputParams.vpaidSettings.viewMode;
+            }
+            if (_fw2.default.isNumber(inputParams.vpaidSettings.desiredBitrate) && inputParams.vpaidSettings.desiredBitrate > 0) {
+              this.params.vpaidSettings.desiredBitrate = inputParams.vpaidSettings.desiredBitrate;
+            }
+          } else {
+            this.params[prop] = inputParams[prop];
+          }
+        }
+      }
+    }
+    // we need to avoid infinite wrapper loops scenario 
+    // so we cap maxNumRedirects to 30 
+    if (this.params.maxNumRedirects > 30) {
+      this.params.maxNumRedirects = 30;
+    }
+  }
+};
+
+HELPERS.createApiEvent = function (event) {
+  // adloaded, addurationchange, adclick, adimpression, adstarted, 
+  // adtagloaded, adtagstartloading, adpaused, adresumed 
+  // advolumemuted, advolumechanged, adcomplete, adskipped, 
+  // adskippablestatechanged, adclosed
+  // adfirstquartile, admidpoint, adthirdquartile, aderror, 
+  // adfollowingredirect, addestroyed
+  // adlinearchange, adexpandedchange, adremainingtimechange 
+  // adinteraction, adsizechange
+  if (typeof event === 'string' && event !== '') {
+    _fw2.default.createStdEvent(event, this.container);
+  }
+};
+
+HELPERS.dispatchPingEvent = function (event) {
+  if (event) {
+    var element = void 0;
+    if (this.adIsLinear && this.vastPlayer) {
+      element = this.vastPlayer;
+    } else if (!this.adIsLinear && this.nonLinearContainer) {
+      element = this.nonLinearContainer;
+    }
+    if (element) {
+      if (Array.isArray(event)) {
+        event.forEach(function (currentEvent) {
+          _fw2.default.createStdEvent(currentEvent, element);
+        });
+      } else {
+        _fw2.default.createStdEvent(event, element);
+      }
+    }
+  }
+};
+
+HELPERS.playPromise = function (whichPlayer, firstPlayerPlayRequest) {
+  var _this = this;
+
+  var targetPlayer = void 0;
+  switch (whichPlayer) {
+    case 'content':
+      targetPlayer = this.contentPlayer;
+      break;
+    case 'vast':
+      targetPlayer = this.vastPlayer;
+      break;
+    default:
+      break;
+  }
+  if (targetPlayer) {
+    var playPromise = targetPlayer.play();
+    // most modern browsers support play as a Promise
+    // this lets us handle autoplay rejection 
+    // https://developers.google.com/web/updates/2016/03/play-returns-promise
+    if (playPromise !== undefined) {
+      playPromise.then(function () {
+        if (firstPlayerPlayRequest) {
+          if (DEBUG) {
+            _fw2.default.log('initial play promise on ' + whichPlayer + ' player has succeeded');
+          }
+          HELPERS.createApiEvent.call(_this, 'adinitialplayrequestsucceeded');
+        }
+      }).catch(function (e) {
+        if (firstPlayerPlayRequest && whichPlayer === 'vast' && _this.adIsLinear) {
+          if (DEBUG) {
+            _fw2.default.log(e);
+            _fw2.default.log('initial play promise on VAST player has been rejected for linear asset - likely autoplay is being blocked');
+          }
+          _ping2.default.error.call(_this, 400);
+          _vastErrors2.default.process.call(_this, 400);
+          HELPERS.createApiEvent.call(_this, 'adinitialplayrequestfailed');
+        } else if (firstPlayerPlayRequest && whichPlayer === 'content' && !_this.adIsLinear) {
+          if (DEBUG) {
+            _fw2.default.log(e);
+            _fw2.default.log('initial play promise on content player has been rejected for non-linear asset - likely autoplay is being blocked');
+          }
+          HELPERS.createApiEvent.call(_this, 'adinitialplayrequestfailed');
+        } else {
+          if (DEBUG) {
+            _fw2.default.log(e);
+            _fw2.default.log('playPromise on ' + whichPlayer + ' player has been rejected');
+          }
+        }
+      });
+    }
+  }
+};
+
+exports.default = HELPERS;
+
+},{"../fw/fw":8,"../tracking/ping":13,"./vast-errors":17}],17:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -4959,9 +4941,9 @@ var _fw = require('../fw/fw');
 
 var _fw2 = _interopRequireDefault(_fw);
 
-var _api = require('../api/api');
+var _helpers = require('../utils/helpers');
 
-var _api2 = _interopRequireDefault(_api);
+var _helpers2 = _interopRequireDefault(_helpers);
 
 var _vastPlayer = require('../players/vast-player');
 
@@ -5104,13 +5086,13 @@ var _updateVastError = function _updateVastError(errorCode) {
 
 VASTERRORS.process = function (errorCode) {
   _updateVastError.call(this, errorCode);
-  _api2.default.createEvent.call(this, 'aderror');
+  _helpers2.default.createApiEvent.call(this, 'aderror');
   _vastPlayer2.default.resumeContent.call(this);
 };
 
 exports.default = VASTERRORS;
 
-},{"../api/api":2,"../fw/fw":8,"../players/vast-player":11}],18:[function(require,module,exports){
+},{"../fw/fw":8,"../players/vast-player":11,"../utils/helpers":16}],18:[function(require,module,exports){
 module.exports = function (it) {
   if (typeof it != 'function') throw TypeError(it + ' is not a function!');
   return it;

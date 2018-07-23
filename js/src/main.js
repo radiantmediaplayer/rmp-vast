@@ -10,7 +10,7 @@ import NONLINEAR from './creatives/non-linear';
 import TRACKINGEVENTS from './tracking/tracking-events';
 import API from './api/api';
 import CONTENTPLAYER from './players/content-player';
-import RESET from './utils/reset';
+import DEFAULT from './utils/default';
 import VASTERRORS from './utils/vast-errors';
 import ICONS from './creatives/icons';
 
@@ -45,9 +45,9 @@ import ICONS from './creatives/icons';
     }
     this.id = id;
     this.container = document.getElementById(this.id);
-    this.content = this.container.querySelector('.rmp-content');
+    this.contentWrapper = this.container.querySelector('.rmp-content');
     this.contentPlayer = this.container.querySelector('.rmp-video');
-    if (this.container === null || this.content === null || this.contentPlayer === null) {
+    if (this.container === null || this.contentWrapper === null || this.contentPlayer === null) {
       if (DEBUG) {
         FW.log('invalid DOM layout - exit');
       }
@@ -57,36 +57,13 @@ import ICONS from './creatives/icons';
       FW.log('creating new RmpVast instance');
       FW.logVideoEvents(this.contentPlayer, 'content');
     }
-    this.adContainer = null;
-    this.rmpVastInitialized = false;
-    this.useContentPlayerForAds = false;
-    this.contentPlayerCompleted = false;
-    this.currentContentSrc = '';
-    this.currentContentCurrentTime = -1;
-    this.needsSeekAdjust = false;
-    this.seekAdjustAttached = false;
-    this.onDestroyLoadAds = null;
-    this.firstVastPlayerPlayRequest = true;
-    this.firstContentPlayerPlayRequest = true;
-    this.params = {};
-    // adpod 
-    this.adPod = [];
-    this.standaloneAdsInPod = [];
-    this.onAdDestroyLoadNextAdInPod = FW.nullFn;
-    this.runningAdPod = false;
-    this.adPodItemWrapper = false;
-    this.adPodCurrentIndex = 0;
-    this.adPodApiInfo = [];
-    this.adPodWrapperTrackings = [];
-    if (ENV.isIos[0] || (ENV.isMacOSX && ENV.isSafari[0])) {
-      // on iOS and macOS Safari we use content player to play ads
-      // to avoid issues related to fullscreen management and autoplay
-      // as fullscreen on iOS is handled by the default OS player
-      this.useContentPlayerForAds = true;
-      if (DEBUG) {
-        FW.log('vast player will be content player');
-      }
-    }
+    // reset instance variables - once per session
+    DEFAULT.instanceVariables.call(this);
+    // reset loadAds variables - this is reset at addestroyed 
+    // so that next loadAds is cleared
+    DEFAULT.loadAdsVariables.call(this);
+    // handle fullscreen events
+    DEFAULT.fullscreen.call(this);
     // filter input params
     HELPERS.filterParams.call(this, params);
     if (DEBUG) {
@@ -103,69 +80,16 @@ import ICONS from './creatives/icons';
       }
       FW.log(filteredEnv);
     }
-    // reset internal variables
-    RESET.internalVariables.call(this);
-    // attach fullscreen states
-    // this assumes we have a polyfill for fullscreenchange event 
-    // see app/js/app.js
-    // we need this to handle VAST fullscreen events
-    let isInFullscreen = false;
-    let onFullscreenchange = null;
-    const _onFullscreenchange = function (event) {
-      if (event && event.type) {
-        if (DEBUG) {
-          FW.log('event is ' + event.type);
-        }
-        if (event.type === 'fullscreenchange') {
-          if (isInFullscreen) {
-            isInFullscreen = false;
-            if (this.adOnStage && this.adIsLinear) {
-              HELPERS.dispatchPingEvent.call(this, 'exitFullscreen');
-            }
-          } else {
-            isInFullscreen = true;
-            if (this.adOnStage && this.adIsLinear) {
-              HELPERS.dispatchPingEvent.call(this, 'fullscreen');
-            }
-          }
-        } else if (event.type === 'webkitbeginfullscreen') {
-          // iOS uses webkitbeginfullscreen
-          if (this.adOnStage && this.adIsLinear) {
-            HELPERS.dispatchPingEvent.call(this, 'fullscreen');
-          }
-        } else if (event.type === 'webkitendfullscreen') {
-          // iOS uses webkitendfullscreen
-          if (this.adOnStage && this.adIsLinear) {
-            HELPERS.dispatchPingEvent.call(this, 'exitFullscreen');
-          }
-        }
-      }
-    };
-    // if we have native fullscreen support we handle fullscreen events
-    if (ENV.hasNativeFullscreenSupport) {
-      onFullscreenchange = _onFullscreenchange.bind(this);
-      // for our beloved iOS 
-      if (ENV.isIos[0]) {
-        this.contentPlayer.addEventListener('webkitbeginfullscreen', onFullscreenchange);
-        this.contentPlayer.addEventListener('webkitendfullscreen', onFullscreenchange);
-      } else {
-        document.addEventListener('fullscreenchange', onFullscreenchange);
-      }
-    }
   };
 
   // enrich RmpVast prototype with API methods
-  const apiKeys = Object.keys(API);
-  for (let i = 0, len = apiKeys.length; i < len; i++) {
-    const currentKey = apiKeys[i];
-    window.RmpVast.prototype[currentKey] = API[currentKey];
-  }
+  API.attach(window.RmpVast);
 
   const _execRedirect = function () {
     if (DEBUG) {
       FW.log('adfollowingredirect');
     }
-    API.createEvent.call(this, 'adfollowingredirect');
+    HELPERS.createApiEvent.call(this, 'adfollowingredirect');
     const redirectUrl = FW.getNodeValue(this.vastAdTagURI[0], true);
     if (DEBUG) {
       FW.log('redirect URL is ' + redirectUrl);
@@ -377,7 +301,7 @@ import ICONS from './creatives/icons';
             this.adPodCurrentIndex = 0;
             this.adPodApiInfo = [];
             this.adPodWrapperTrackings = [];
-            API.createEvent.call(this, 'adpodcompleted');
+            HELPERS.createApiEvent.call(this, 'adpodcompleted');
           }
         };
         this.onAdDestroyLoadNextAdInPod = __onAdDestroyLoadNextAdInPod.bind(this);
@@ -512,9 +436,9 @@ import ICONS from './creatives/icons';
           if (errorUrl !== null) {
             // we use an array here for vastErrorTags but we only have item in it
             // this is to be able to use PING.error for both vastErrorTags and inlineOrWrapperErrorTags
-            this.vastErrorTags.push({ 
-              event: 'error', 
-              url: errorUrl 
+            this.vastErrorTags.push({
+              event: 'error',
+              url: errorUrl
             });
           }
         }
@@ -550,11 +474,7 @@ import ICONS from './creatives/icons';
       VASTERRORS.process.call(this, 1002);
       return;
     }
-    // if we already have an ad on stage - we need to destroy it first 
-    if (this.adOnStage) {
-      API.stopAds.call(this);
-    }
-    API.createEvent.call(this, 'adtagstartloading');
+    HELPERS.createApiEvent.call(this, 'adtagstartloading');
     this.isWrapper = false;
     this.vastAdTagURI = null;
     this.adTagUrl = vastUrl;
@@ -565,7 +485,7 @@ import ICONS from './creatives/icons';
       if (DEBUG) {
         FW.log('VAST loaded from ' + this.adTagUrl);
       }
-      API.createEvent.call(this, 'adtagloaded');
+      HELPERS.createApiEvent.call(this, 'adtagloaded');
       let xml;
       try {
         // Parse XML
@@ -594,7 +514,7 @@ import ICONS from './creatives/icons';
   const _onDestroyLoadAds = function (vastUrl) {
     this.container.removeEventListener('addestroyed', this.onDestroyLoadAds);
     this.loadAds(vastUrl);
-  };
+  }; 
 
   window.RmpVast.prototype.loadAds = function (vastUrl) {
     if (DEBUG) {

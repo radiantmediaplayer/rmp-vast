@@ -4,7 +4,6 @@ import HELPERS from '../utils/helpers';
 import PING from '../tracking/ping';
 import VASTPLAYER from '../players/vast-player';
 import CONTENTPLAYER from '../players/content-player';
-import API from '../api/api';
 import VASTERRORS from '../utils/vast-errors';
 
 const NONLINEAR = {};
@@ -19,9 +18,9 @@ const _onNonLinearLoadSuccess = function () {
     FW.log('success loading non-linear creative at ' + this.adMediaUrl);
   }
   this.adOnStage = true;
-  API.createEvent.call(this, 'adloaded');
-  API.createEvent.call(this, 'adimpression');
-  API.createEvent.call(this, 'adstarted');
+  HELPERS.createApiEvent.call(this, 'adloaded');
+  HELPERS.createApiEvent.call(this, 'adimpression');
+  HELPERS.createApiEvent.call(this, 'adstarted');
   HELPERS.dispatchPingEvent.call(this, ['impression', 'creativeView', 'start']);
 };
 
@@ -33,7 +32,7 @@ const _onNonLinearClickThrough = function (event) {
     if (this.params.pauseOnClick) {
       this.pause();
     }
-    API.createEvent.call(this, 'adclick');
+    HELPERS.createApiEvent.call(this, 'adclick');
     HELPERS.dispatchPingEvent.call(this, 'clickthrough');
   } catch (e) {
     FW.trace(e);
@@ -48,7 +47,7 @@ const _onClickCloseNonLinear = function (event) {
     }
   }
   this.nonLinearContainer.style.display = 'none';
-  API.createEvent.call(this, 'adclosed');
+  HELPERS.createApiEvent.call(this, 'adclosed');
   HELPERS.dispatchPingEvent.call(this, 'close');
 };
 

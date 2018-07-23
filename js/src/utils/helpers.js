@@ -1,5 +1,4 @@
 import FW from '../fw/fw';
-import API from '../api/api';
 import VASTERRORS from './vast-errors';
 import PING from '../tracking/ping';
 
@@ -59,6 +58,20 @@ HELPERS.filterParams = function (inputParams) {
   }
 };
 
+HELPERS.createApiEvent = function (event) {
+  // adloaded, addurationchange, adclick, adimpression, adstarted, 
+  // adtagloaded, adtagstartloading, adpaused, adresumed 
+  // advolumemuted, advolumechanged, adcomplete, adskipped, 
+  // adskippablestatechanged, adclosed
+  // adfirstquartile, admidpoint, adthirdquartile, aderror, 
+  // adfollowingredirect, addestroyed
+  // adlinearchange, adexpandedchange, adremainingtimechange 
+  // adinteraction, adsizechange
+  if (typeof event === 'string' && event !== '') {
+    FW.createStdEvent(event, this.container);
+  }
+};
+
 HELPERS.dispatchPingEvent = function (event) {
   if (event) {
     let element;
@@ -102,7 +115,7 @@ HELPERS.playPromise = function (whichPlayer, firstPlayerPlayRequest) {
           if (DEBUG) {
             FW.log('initial play promise on ' + whichPlayer + ' player has succeeded');
           }
-          API.createEvent.call(this, 'adinitialplayrequestsucceeded');
+          HELPERS.createApiEvent.call(this, 'adinitialplayrequestsucceeded');
         }
       }).catch((e) => {
         if (firstPlayerPlayRequest && whichPlayer === 'vast' && this.adIsLinear) {
@@ -112,13 +125,13 @@ HELPERS.playPromise = function (whichPlayer, firstPlayerPlayRequest) {
           }
           PING.error.call(this, 400);
           VASTERRORS.process.call(this, 400);
-          API.createEvent.call(this, 'adinitialplayrequestfailed');
+          HELPERS.createApiEvent.call(this, 'adinitialplayrequestfailed');
         } else if (firstPlayerPlayRequest && whichPlayer === 'content' && !this.adIsLinear) {
           if (DEBUG) {
             FW.log(e);
             FW.log('initial play promise on content player has been rejected for non-linear asset - likely autoplay is being blocked');
           }
-          API.createEvent.call(this, 'adinitialplayrequestfailed');
+          HELPERS.createApiEvent.call(this, 'adinitialplayrequestfailed');
         } else {
           if (DEBUG) {
             FW.log(e);
