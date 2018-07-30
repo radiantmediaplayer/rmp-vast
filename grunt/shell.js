@@ -1,15 +1,15 @@
 module.exports = {
   eslintSrc: {
-    command: 'eslint --config .eslintrc-es2015.json --ignore-path .es2015.eslintignore js/src/.'
+    command: 'eslint --config .eslintrc-es2015.json --ignore-path .es2015.eslintignore js/src/'
   },
   eslintModule: {
     command: 'eslint --config .eslintrc-es2015.json js/src/module.js'
   },
   eslintES5: {
-    command: 'eslint --config .eslintrc-es5.json --ignore-path .es5.eslintignore test/spec/. app/js/.'
+    command: 'eslint --config .eslintrc-es5.json --ignore-path .es5.eslintignore test/spec/ app/js/'
   },
   eslintNode: {
-    command: 'eslint --config .eslintrc-node.json test/spec/main/. test/spec/helpers/. Gruntfile.js grunt/'
+    command: 'eslint --config .eslintrc-node.json test/spec/main/ test/spec/helpers/ Gruntfile.js grunt/'
   },
   browserify: {
     command: 'browserify js/src/main.js -o js/dist/rmp-vast.js -t [ babelify ] -v'

@@ -1,6 +1,6 @@
 /**
  * @license Copyright (c) 2017-2018 Radiant Media Player | https://www.radiantmediaplayer.com
- * rmp-vast 2.1.0
+ * rmp-vast 2.1.1
  * GitHub: https://github.com/radiantmediaplayer/rmp-vast
  * MIT License: https://github.com/radiantmediaplayer/rmp-vast/blob/master/LICENSE
  */
@@ -2874,12 +2874,9 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
       this.stopAds();
       return;
     }
-    // if we try to load ads when currentTime < 200 ms - be it linear or non-linear - we pause CONTENTPLAYER
-    // CONTENTPLAYER (non-linear) or VASTPLAYER (linear) will resume later when VAST has finished loading/parsing
-    // this is to avoid bad user experience where content may start for a few ms before ad starts
-    var contentCurrentTime = _contentPlayer2.default.getCurrentTime.call(this);
     // for useContentPlayerForAds we need to know early what is the content src
     // so that we can resume content when ad finishes or on aderror
+    var contentCurrentTime = _contentPlayer2.default.getCurrentTime.call(this);
     if (this.useContentPlayerForAds) {
       this.currentContentSrc = this.contentPlayer.src;
       if (DEBUG) {

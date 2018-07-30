@@ -508,12 +508,9 @@ RmpVast.prototype.loadAds = function (vastUrl) {
     this.stopAds();
     return;
   }
-  // if we try to load ads when currentTime < 200 ms - be it linear or non-linear - we pause CONTENTPLAYER
-  // CONTENTPLAYER (non-linear) or VASTPLAYER (linear) will resume later when VAST has finished loading/parsing
-  // this is to avoid bad user experience where content may start for a few ms before ad starts
-  const contentCurrentTime = CONTENTPLAYER.getCurrentTime.call(this);
   // for useContentPlayerForAds we need to know early what is the content src
   // so that we can resume content when ad finishes or on aderror
+  const contentCurrentTime = CONTENTPLAYER.getCurrentTime.call(this);
   if (this.useContentPlayerForAds) {
     this.currentContentSrc = this.contentPlayer.src;
     if (DEBUG) {

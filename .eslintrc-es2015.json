@@ -19,7 +19,7 @@
     ],
     "linebreak-style": [
       "error",
-      "windows"
+      "unix"
     ],
     "quotes": [
       "error",
@@ -32,6 +32,14 @@
     "eol-last": [
       "error",
       "always"
+    ],
+    "no-use-before-define": [
+      "error",
+      {
+        "functions": true,
+        "classes": true,
+        "variables": true
+      }
     ]
   },
   "globals": {
