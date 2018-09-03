@@ -44,8 +44,7 @@
   .transition(border-color, 0.4s);
 }
 
-.rmp-ad-container-skip:hover,
-.rmp-ad-container-skip:focus {
+.rmp-ad-container-skip:hover {
   border-color: @black;
 }
 
@@ -73,12 +72,11 @@
   height: 100%;
   background-repeat: no-repeat;
   background-position: center;
-  opacity: 0.75;
+  opacity: 0.7;
   .transition(opacity, 0.4s);
 }
 
-.rmp-ad-container-skip:hover .rmp-ad-container-skip-icon,
-.rmp-ad-container-skip:focus .rmp-ad-container-skip-icon {
+.rmp-ad-container-skip:hover .rmp-ad-container-skip-icon {
   opacity: 1;
 }
 
@@ -90,13 +88,9 @@
   .transform-translate(-50%, 0);
 }
 
-.rmp-ad-non-linear-anchor {
-  cursor: auto;
-  text-decoration: none;
-}
-
-.rmp-ad-non-linear-anchor:hover,
+.rmp-ad-non-linear-anchor:link,
 .rmp-ad-non-linear-anchor:visited,
+.rmp-ad-non-linear-anchor:hover,
 .rmp-ad-non-linear-anchor:active {
   text-decoration: none;
 }
@@ -132,24 +126,14 @@
   font-size: 18px;
   width: 112px;
   height: 34px;
-  cursor: auto;
   text-decoration: none;
   text-align: center;
   line-height: 30px;
   .box-shadow(0 0 2px @shadow);
 }
 
-.rmp-ad-click-ui-mobile:visited {
-  color: @white;
-  text-decoration: none;
-}
-
-.rmp-ad-click-ui-mobile:hover {
-  color: @white;
-  cursor: pointer;
-  text-decoration: none;
-}
-
+.rmp-ad-click-ui-mobile:visited,
+.rmp-ad-click-ui-mobile:hover,
 .rmp-ad-click-ui-mobile:active {
   color: @white;
   text-decoration: none;

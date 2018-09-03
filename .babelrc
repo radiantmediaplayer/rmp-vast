@@ -18,8 +18,12 @@
         "useBuiltIns": true,
         "exclude": [
           "transform-es2015-classes",
+          "transform-es2015-function-name",
           "transform-es2015-object-super",
+          "transform-es2015-sticky-regex",
           "transform-es2015-template-literals",
+          "transform-es2015-typeof-symbol",
+          "transform-es2015-unicode-regex",
           "transform-regenerator",
           "transform-exponentiation-operator",
           "syntax-trailing-function-commas",

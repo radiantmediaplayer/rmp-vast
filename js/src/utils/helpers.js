@@ -143,4 +143,22 @@ HELPERS.playPromise = function (whichPlayer, firstPlayerPlayRequest) {
   }
 };
 
+HELPERS.accessibleButton = function (element, ariaLabel) {
+  // make skip button accessible
+  element.tabIndex = 0;
+  element.setAttribute('role', 'button');
+  element.addEventListener('keyup', (event) => {
+    const code = event.which;
+    // 13 = Return, 32 = Space
+    if ((code === 13) || (code === 32)) {
+      event.stopPropagation();
+      event.preventDefault();
+      FW.createStdEvent('click', element);
+    }
+  });
+  if (ariaLabel) {
+    element.setAttribute('aria-label', ariaLabel);
+  }
+};
+
 export default HELPERS;

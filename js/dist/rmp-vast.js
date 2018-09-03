@@ -1,6 +1,6 @@
 /**
  * @license Copyright (c) 2017-2018 Radiant Media Player | https://www.radiantmediaplayer.com
- * rmp-vast 2.1.1
+ * rmp-vast 2.1.2
  * GitHub: https://github.com/radiantmediaplayer/rmp-vast
  * MIT License: https://github.com/radiantmediaplayer/rmp-vast/blob/master/LICENSE
  */
@@ -12,21 +12,21 @@ Object.defineProperty(exports, "__esModule", {
 });
 /**
  * @license Copyright (c) 2015-2018 Radiant Media Player 
- * rmp-connection 0.1.6 | https://github.com/radiantmediaplayer/rmp-connection
+ * rmp-connection 0.1.7 | https://github.com/radiantmediaplayer/rmp-connection
  */
 
 var RMPCONNECTION = {};
 
 var connectionType = null;
 
-var _getConnectionType = function _getConnectionType() {
+var _getConnectionType = function () {
   if (typeof navigator.connection.type === 'string' && navigator.connection.type !== '') {
     return navigator.connection.type;
   }
   return null;
 };
 
-var _getArbitraryBitrateData = function _getArbitraryBitrateData() {
+var _getArbitraryBitrateData = function () {
   // we actually have indication here: http://wicg.github.io/netinfo/#effective-connection-types
   var equivalentMbpsArray = [0.025, 0.035, 0.35, 1.4];
   // if we are in a bluetooth/cellular connection.type with 4g assuming 1.4 Mbps is a bit high so we settle for 0.7 Mbps
@@ -540,7 +540,7 @@ ICONS.destroy = function () {
   }
 };
 
-var _programAlreadyPresent = function _programAlreadyPresent(program) {
+var _programAlreadyPresent = function (program) {
   var newArray = [];
   for (var i = 0, len = this.icons.length; i < len; i++) {
     if (this.icons[i].program !== program) {
@@ -639,7 +639,7 @@ ICONS.parse = function (icons) {
   }
 };
 
-var _onIconClickThrough = function _onIconClickThrough(index, event) {
+var _onIconClickThrough = function (index, event) {
   var _this = this;
 
   if (DEBUG) {
@@ -663,14 +663,14 @@ var _onIconClickThrough = function _onIconClickThrough(index, event) {
   }
 };
 
-var _onIconLoadPingTracking = function _onIconLoadPingTracking(index) {
+var _onIconLoadPingTracking = function (index) {
   if (DEBUG) {
     _fw2.default.log('IconViewTracking for icon at index ' + index);
   }
   _ping2.default.tracking.call(this, this.icons[index].iconViewTrackingUrl, null);
 };
 
-var _onPlayingAppendIcons = function _onPlayingAppendIcons() {
+var _onPlayingAppendIcons = function () {
   if (DEBUG) {
     _fw2.default.log('playing states has been reached - append icons');
   }
@@ -790,7 +790,7 @@ var DASH_PATTERN = /application\/dash\+xml/i;
 var html5MediaErrorTypes = ['MEDIA_ERR_CUSTOM', 'MEDIA_ERR_ABORTED', 'MEDIA_ERR_NETWORK', 'MEDIA_ERR_DECODE', 'MEDIA_ERR_SRC_NOT_SUPPORTED', 'MEDIA_ERR_ENCRYPTED'];
 var testCommonVideoFormats = ['video/webm', 'video/mp4', 'video/ogg', 'video/3gpp'];
 
-var _onDurationChange = function _onDurationChange() {
+var _onDurationChange = function () {
   if (DEBUG) {
     _fw2.default.log('durationchange for VAST player reached');
   }
@@ -799,7 +799,7 @@ var _onDurationChange = function _onDurationChange() {
   _helpers2.default.createApiEvent.call(this, 'addurationchange');
 };
 
-var _onLoadedmetadataPlay = function _onLoadedmetadataPlay() {
+var _onLoadedmetadataPlay = function () {
   if (DEBUG) {
     _fw2.default.log('loadedmetadata for VAST player reached');
   }
@@ -824,7 +824,7 @@ var _onLoadedmetadataPlay = function _onLoadedmetadataPlay() {
   }
 };
 
-var _onClickThrough = function _onClickThrough(event) {
+var _onClickThrough = function (event) {
   if (event) {
     event.stopPropagation();
   }
@@ -841,7 +841,7 @@ var _onClickThrough = function _onClickThrough(event) {
   _helpers2.default.dispatchPingEvent.call(this, 'clickthrough');
 };
 
-var _onPlaybackError = function _onPlaybackError(event) {
+var _onPlaybackError = function (event) {
   // https://www.w3.org/TR/html50/embedded-content-0.html#mediaerror
   // MEDIA_ERR_SRC_NOT_SUPPORTED is sign of fatal error
   // other errors may produce non-fatal error in the browser so we do not 
@@ -869,7 +869,7 @@ var _onPlaybackError = function _onPlaybackError(event) {
   }
 };
 
-var _appendClickUIOnMobile = function _appendClickUIOnMobile() {
+var _appendClickUIOnMobile = function () {
   // we create a <a> tag rather than using window.open 
   // because it works better in standalone mode and WebView
   this.clickUIOnMobile = document.createElement('a');
@@ -881,7 +881,7 @@ var _appendClickUIOnMobile = function _appendClickUIOnMobile() {
   this.adContainer.appendChild(this.clickUIOnMobile);
 };
 
-var _onContextMenu = function _onContextMenu(event) {
+var _onContextMenu = function (event) {
   if (event) {
     event.stopPropagation();
     event.preventDefault();
@@ -1074,7 +1074,7 @@ LINEAR.parse = function (linear) {
   }
   var retainedCreatives = [];
   // first we check for the common formats below ... 
-  var __filterCommonCreatives = function __filterCommonCreatives(i, creative) {
+  var __filterCommonCreatives = function (i, creative) {
     if (creative.codec && creative.type === testCommonVideoFormats[i]) {
       return _env2.default.canPlayType(creative.type, creative.codec);
     } else if (creative.type === testCommonVideoFormats[i]) {
@@ -1091,7 +1091,7 @@ LINEAR.parse = function (linear) {
   // ... if none of the common format work, then we check for exotic format
   // first we check for those with codec information as it provides more accurate support indication ...
   if (retainedCreatives.length === 0) {
-    var __filterCodecCreatives = function __filterCodecCreatives(codec, type, creative) {
+    var __filterCodecCreatives = function (codec, type, creative) {
       return creative.codec === codec && creative.type === type;
     };
     for (var _i4 = 0, _len3 = creatives.length; _i4 < _len3; _i4++) {
@@ -1103,7 +1103,7 @@ LINEAR.parse = function (linear) {
   }
   // ... if codec information are not available then we go first type matching
   if (retainedCreatives.length === 0) {
-    var __filterTypeCreatives = function __filterTypeCreatives(type, creative) {
+    var __filterTypeCreatives = function (type, creative) {
       return creative.type === type;
     };
     for (var _i5 = 0, _len4 = creatives.length; _i5 < _len4; _i5++) {
@@ -1232,12 +1232,12 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var NONLINEAR = {};
 
-var _onNonLinearLoadError = function _onNonLinearLoadError() {
+var _onNonLinearLoadError = function () {
   _ping2.default.error.call(this, 502);
   _vastErrors2.default.process.call(this, 502);
 };
 
-var _onNonLinearLoadSuccess = function _onNonLinearLoadSuccess() {
+var _onNonLinearLoadSuccess = function () {
   if (DEBUG) {
     _fw2.default.log('success loading non-linear creative at ' + this.adMediaUrl);
   }
@@ -1248,7 +1248,7 @@ var _onNonLinearLoadSuccess = function _onNonLinearLoadSuccess() {
   _helpers2.default.dispatchPingEvent.call(this, ['impression', 'creativeView', 'start']);
 };
 
-var _onNonLinearClickThrough = function _onNonLinearClickThrough(event) {
+var _onNonLinearClickThrough = function (event) {
   try {
     if (event) {
       event.stopPropagation();
@@ -1263,7 +1263,7 @@ var _onNonLinearClickThrough = function _onNonLinearClickThrough(event) {
   }
 };
 
-var _onClickCloseNonLinear = function _onClickCloseNonLinear(event) {
+var _onClickCloseNonLinear = function (event) {
   if (event) {
     event.stopPropagation();
     if (event.type === 'touchend') {
@@ -1275,11 +1275,12 @@ var _onClickCloseNonLinear = function _onClickCloseNonLinear(event) {
   _helpers2.default.dispatchPingEvent.call(this, 'close');
 };
 
-var _appendCloseButton = function _appendCloseButton() {
+var _appendCloseButton = function () {
   var _this = this;
 
   this.nonLinearClose = document.createElement('div');
   this.nonLinearClose.className = 'rmp-ad-non-linear-close';
+  _helpers2.default.accessibleButton(this.nonLinearClose, 'close ad button');
   if (this.nonLinearMinSuggestedDuration > 0) {
     this.nonLinearClose.style.display = 'none';
     setTimeout(function () {
@@ -1478,19 +1479,19 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var SKIP = {};
 
-var _setCanBeSkippedUI = function _setCanBeSkippedUI() {
+var _setCanBeSkippedUI = function () {
   this.skipWaiting.style.display = 'none';
   this.skipMessage.style.display = 'block';
   this.skipIcon.style.display = 'block';
 };
 
-var _updateWaitingForCanBeSkippedUI = function _updateWaitingForCanBeSkippedUI(delta) {
+var _updateWaitingForCanBeSkippedUI = function (delta) {
   if (Math.round(delta) > 0) {
     this.skipWaiting.textContent = this.params.skipWaitingMessage + ' ' + Math.round(delta) + 's';
   }
 };
 
-var _onTimeupdateCheckSkip = function _onTimeupdateCheckSkip() {
+var _onTimeupdateCheckSkip = function () {
   if (this.skipButton.style.display === 'none') {
     this.skipButton.style.display = 'block';
   }
@@ -1508,7 +1509,7 @@ var _onTimeupdateCheckSkip = function _onTimeupdateCheckSkip() {
   }
 };
 
-var _onClickSkip = function _onClickSkip(event) {
+var _onClickSkip = function (event) {
   if (event) {
     event.stopPropagation();
     if (event.type === 'touchend') {
@@ -1531,6 +1532,7 @@ SKIP.append = function () {
   this.skipButton = document.createElement('div');
   this.skipButton.className = 'rmp-ad-container-skip';
   this.skipButton.style.display = 'none';
+  _helpers2.default.accessibleButton(this.skipButton, 'skip ad button');
 
   this.skipWaiting = document.createElement('div');
   this.skipWaiting.className = 'rmp-ad-container-skip-waiting';
@@ -1576,7 +1578,7 @@ var ENV = {};
 
 var testVideo = document.createElement('video');
 
-var _hasTouchEvents = function _hasTouchEvents() {
+var _hasTouchEvents = function () {
   if (typeof window.ontouchstart !== 'undefined' || window.DocumentTouch && document instanceof window.DocumentTouch) {
     return true;
   }
@@ -1584,7 +1586,7 @@ var _hasTouchEvents = function _hasTouchEvents() {
 };
 var hasTouchEvents = _hasTouchEvents();
 
-var _getUserAgent = function _getUserAgent() {
+var _getUserAgent = function () {
   if (window.navigator && window.navigator.userAgent) {
     return window.navigator.userAgent;
   }
@@ -1592,7 +1594,7 @@ var _getUserAgent = function _getUserAgent() {
 };
 var userAgent = _getUserAgent();
 
-var _filterVersion = function _filterVersion(pattern) {
+var _filterVersion = function (pattern) {
   if (userAgent !== null) {
     var versionArray = userAgent.match(pattern);
     if (Array.isArray(versionArray) && typeof versionArray[1] !== 'undefined') {
@@ -1604,7 +1606,7 @@ var _filterVersion = function _filterVersion(pattern) {
 
 var IOS_PATTERN = /(ipad|iphone|ipod)/i;
 var IOS_VERSION_PATTERN = /os\s+(\d+)_/i;
-var _isIos = function _isIos() {
+var _isIos = function () {
   var support = [false, -1];
   if (!hasTouchEvents) {
     return support;
@@ -1617,7 +1619,7 @@ var _isIos = function _isIos() {
 var isIos = _isIos();
 
 var MACOS_PATTERN = /(macintosh|mac\s+os)/i;
-var _isMacOSX = function _isMacOSX() {
+var _isMacOSX = function () {
   if (!isIos[0] && MACOS_PATTERN.test(userAgent)) {
     return true;
   }
@@ -1627,7 +1629,7 @@ var _isMacOSX = function _isMacOSX() {
 var SAFARI_PATTERN = /safari\/[.0-9]*/i;
 var SAFARI_VERSION_PATTERN = /version\/(\d+)\./i;
 var NO_SAFARI_PATTERN = /(chrome|chromium|android|crios|fxios)/i;
-var _isSafari = function _isSafari() {
+var _isSafari = function () {
   var isSafari = false;
   var safariVersion = -1;
   if (SAFARI_PATTERN.test(userAgent) && !NO_SAFARI_PATTERN.test(userAgent)) {
@@ -1639,7 +1641,7 @@ var _isSafari = function _isSafari() {
 
 var ANDROID_PATTERN = /android/i;
 var ANDROID_VERSION_PATTERN = /android\s*(\d+)\./i;
-var _isAndroid = function _isAndroid() {
+var _isAndroid = function () {
   var support = [false, -1];
   if (isIos[0] || !hasTouchEvents) {
     return support;
@@ -1653,20 +1655,20 @@ var _isAndroid = function _isAndroid() {
 // from https://developer.mozilla.org/en-US/docs/Web/HTTP/Browser_detection_using_the_user_agent
 var FIREFOX_PATTERN = /firefox\//i;
 var SEAMONKEY_PATTERN = /seamonkey\//i;
-var _isFirefox = function _isFirefox() {
+var _isFirefox = function () {
   if (FIREFOX_PATTERN.test(userAgent) && !SEAMONKEY_PATTERN.test(userAgent)) {
     return true;
   }
   return false;
 };
 
-var _video5 = function _video5() {
+var _video5 = function () {
   return typeof testVideo.canPlayType !== 'undefined';
 };
 var html5VideoSupport = _video5();
 
 var MP4_H264_AAC_BASELINE_MIME_PATTERN = 'video/mp4; codecs="avc1.42E01E,mp4a.40.2"';
-var _okMp4 = function _okMp4() {
+var _okMp4 = function () {
   if (html5VideoSupport) {
     var canPlayType = testVideo.canPlayType(MP4_H264_AAC_BASELINE_MIME_PATTERN);
     if (canPlayType !== '') {
@@ -1677,7 +1679,7 @@ var _okMp4 = function _okMp4() {
 };
 var okMp4 = _okMp4();
 
-var _okHls = function _okHls() {
+var _okHls = function () {
   if (html5VideoSupport && okMp4) {
     var isSupp1 = testVideo.canPlayType('application/vnd.apple.mpegurl');
     var isSupp2 = testVideo.canPlayType('application/x-mpegurl');
@@ -1688,7 +1690,7 @@ var _okHls = function _okHls() {
   return false;
 };
 
-var _okDash = function _okDash() {
+var _okDash = function () {
   if (html5VideoSupport) {
     var dashSupport = testVideo.canPlayType('application/dash+xml');
     if (dashSupport !== '') {
@@ -1698,7 +1700,7 @@ var _okDash = function _okDash() {
   return false;
 };
 
-var _hasNativeFullscreenSupport = function _hasNativeFullscreenSupport() {
+var _hasNativeFullscreenSupport = function () {
   var doc = document.documentElement;
   if (doc) {
     if (typeof doc.requestFullscreen !== 'undefined' || typeof doc.webkitRequestFullscreen !== 'undefined' || typeof doc.mozRequestFullScreen !== 'undefined' || typeof doc.msRequestFullscreen !== 'undefined' || typeof testVideo.webkitEnterFullscreen !== 'undefined') {
@@ -1708,7 +1710,7 @@ var _hasNativeFullscreenSupport = function _hasNativeFullscreenSupport() {
   return false;
 };
 
-var _getDevicePixelRatio = function _getDevicePixelRatio() {
+var _getDevicePixelRatio = function () {
   var pixelRatio = 1;
   if (_fw2.default.isNumber(window.devicePixelRatio) && window.devicePixelRatio > 1) {
     pixelRatio = window.devicePixelRatio;
@@ -1757,9 +1759,6 @@ exports.default = ENV;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-
 var FW = {};
 
 /* FW from Radiant Media Player core */
@@ -1810,7 +1809,7 @@ FW.createStdEvent = function (eventName, element) {
   }
 };
 
-var _getComputedStyle = function _getComputedStyle(element, style) {
+var _getComputedStyle = function (element, style) {
   var propertyValue = '';
   if (element && typeof window.getComputedStyle === 'function') {
     var cs = window.getComputedStyle(element, null);
@@ -1822,7 +1821,7 @@ var _getComputedStyle = function _getComputedStyle(element, style) {
   return propertyValue;
 };
 
-var _getStyleAttributeData = function _getStyleAttributeData(element, style) {
+var _getStyleAttributeData = function (element, style) {
   var styleAttributeData = _getComputedStyle(element, style) || 0;
   styleAttributeData = styleAttributeData.toString();
   if (styleAttributeData.indexOf('px') > -1) {
@@ -2099,7 +2098,7 @@ FW.isNumber = function (n) {
 };
 
 FW.isObject = function (obj) {
-  if (typeof obj !== 'undefined' && obj !== null && (typeof obj === 'undefined' ? 'undefined' : _typeof(obj)) === 'object') {
+  if (typeof obj !== 'undefined' && obj !== null && typeof obj === 'object') {
     return true;
   }
   return false;
@@ -2427,7 +2426,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
   // enrich RmpVast prototype with API methods
   _api2.default.attach(window.RmpVast);
 
-  var _execRedirect = function _execRedirect() {
+  var _execRedirect = function () {
     if (DEBUG) {
       _fw2.default.log('adfollowingredirect');
     }
@@ -2455,7 +2454,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
     }
   };
 
-  var _parseCreatives = function _parseCreatives(creative) {
+  var _parseCreatives = function (creative) {
     if (DEBUG) {
       _fw2.default.log('_parseCreatives');
       _fw2.default.log(creative);
@@ -2556,7 +2555,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
     }
   };
 
-  var _filterAdPod = function _filterAdPod(ad) {
+  var _filterAdPod = function (ad) {
     if (DEBUG) {
       _fw2.default.log('_filterAdPod');
     }
@@ -2622,7 +2621,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
         });
         retainedAd = this.adPod[0];
         this.adPod.shift();
-        var __onAdDestroyLoadNextAdInPod = function __onAdDestroyLoadNextAdInPod() {
+        var __onAdDestroyLoadNextAdInPod = function () {
           if (DEBUG) {
             _fw2.default.log('addestroyed - checking for ads left in pod');
             if (this.adPod.length > 0) {
@@ -2751,7 +2750,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
     _parseCreatives.call(this, creative);
   };
 
-  var _onXmlAvailable = function _onXmlAvailable(xml) {
+  var _onXmlAvailable = function (xml) {
     // if VMAP we abort
     var vmap = xml.getElementsByTagName('vmap:VMAP');
     if (vmap.length > 0) {
@@ -2804,7 +2803,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
     _filterAdPod.call(this, ad);
   };
 
-  var _makeAjaxRequest = function _makeAjaxRequest(vastUrl) {
+  var _makeAjaxRequest = function (vastUrl) {
     var _this = this;
 
     // we check for required VAST URL and API here
@@ -2854,7 +2853,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
     });
   };
 
-  var _onDestroyLoadAds = function _onDestroyLoadAds(vastUrl) {
+  var _onDestroyLoadAds = function (vastUrl) {
     this.container.removeEventListener('addestroyed', this.onDestroyLoadAds);
     this.loadAds(vastUrl);
   };
@@ -3062,7 +3061,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var VASTPLAYER = {};
 
-var _unwireVastPlayerEvents = function _unwireVastPlayerEvents() {
+var _unwireVastPlayerEvents = function () {
   if (DEBUG) {
     _fw2.default.log('reset - unwireVastPlayerEvents');
   }
@@ -3121,7 +3120,7 @@ var _unwireVastPlayerEvents = function _unwireVastPlayerEvents() {
   }
 };
 
-var _destroyVastPlayer = function _destroyVastPlayer() {
+var _destroyVastPlayer = function () {
   var _this = this;
 
   if (DEBUG) {
@@ -3554,7 +3553,7 @@ VPAID.getAdCompanions = function () {
 };
 
 // VPAID creative events
-var _onAdLoaded = function _onAdLoaded() {
+var _onAdLoaded = function () {
   var _this = this;
 
   if (DEBUG) {
@@ -3585,7 +3584,7 @@ var _onAdLoaded = function _onAdLoaded() {
   _helpers2.default.createApiEvent.call(this, 'adloaded');
 };
 
-var _onAdStarted = function _onAdStarted() {
+var _onAdStarted = function () {
   if (DEBUG) {
     _fw2.default.log('VPAID AdStarted event');
   }
@@ -3613,7 +3612,7 @@ var _onAdStarted = function _onAdStarted() {
   _helpers2.default.dispatchPingEvent.call(this, 'creativeView');
 };
 
-var _onAdStopped = function _onAdStopped() {
+var _onAdStopped = function () {
   if (DEBUG) {
     _fw2.default.log('VPAID AdStopped event');
   }
@@ -3623,7 +3622,7 @@ var _onAdStopped = function _onAdStopped() {
   _vastPlayer2.default.resumeContent.call(this);
 };
 
-var _onAdSkipped = function _onAdSkipped() {
+var _onAdSkipped = function () {
   if (DEBUG) {
     _fw2.default.log('VPAID AdSkipped event');
   }
@@ -3634,14 +3633,14 @@ var _onAdSkipped = function _onAdSkipped() {
   _helpers2.default.dispatchPingEvent.call(this, 'skip');
 };
 
-var _onAdSkippableStateChange = function _onAdSkippableStateChange() {
+var _onAdSkippableStateChange = function () {
   if (DEBUG) {
     _fw2.default.log('VPAID AdSkippableStateChange event');
   }
   _helpers2.default.createApiEvent.call(this, 'adskippablestatechanged');
 };
 
-var _onAdDurationChange = function _onAdDurationChange() {
+var _onAdDurationChange = function () {
   if (DEBUG) {
     _fw2.default.log('VPAID AdDurationChange event ' + VPAID.getAdDuration.call(this));
   }
@@ -3657,7 +3656,7 @@ var _onAdDurationChange = function _onAdDurationChange() {
   _helpers2.default.createApiEvent.call(this, 'addurationchange');
 };
 
-var _onAdVolumeChange = function _onAdVolumeChange() {
+var _onAdVolumeChange = function () {
   if (DEBUG) {
     _fw2.default.log('VPAID AdVolumeChange event');
   }
@@ -3674,7 +3673,7 @@ var _onAdVolumeChange = function _onAdVolumeChange() {
   _helpers2.default.createApiEvent.call(this, 'advolumechanged');
 };
 
-var _onAdImpression = function _onAdImpression() {
+var _onAdImpression = function () {
   if (DEBUG) {
     _fw2.default.log('VPAID AdImpression event');
   }
@@ -3682,7 +3681,7 @@ var _onAdImpression = function _onAdImpression() {
   _helpers2.default.dispatchPingEvent.call(this, 'impression');
 };
 
-var _onAdVideoStart = function _onAdVideoStart() {
+var _onAdVideoStart = function () {
   if (DEBUG) {
     _fw2.default.log('VPAID AdVideoStart event');
   }
@@ -3696,7 +3695,7 @@ var _onAdVideoStart = function _onAdVideoStart() {
   _helpers2.default.dispatchPingEvent.call(this, 'start');
 };
 
-var _onAdVideoFirstQuartile = function _onAdVideoFirstQuartile() {
+var _onAdVideoFirstQuartile = function () {
   if (DEBUG) {
     _fw2.default.log('VPAID AdVideoFirstQuartile event');
   }
@@ -3704,7 +3703,7 @@ var _onAdVideoFirstQuartile = function _onAdVideoFirstQuartile() {
   _helpers2.default.dispatchPingEvent.call(this, 'firstQuartile');
 };
 
-var _onAdVideoMidpoint = function _onAdVideoMidpoint() {
+var _onAdVideoMidpoint = function () {
   if (DEBUG) {
     _fw2.default.log('VPAID AdVideoMidpoint event');
   }
@@ -3712,7 +3711,7 @@ var _onAdVideoMidpoint = function _onAdVideoMidpoint() {
   _helpers2.default.dispatchPingEvent.call(this, 'midpoint');
 };
 
-var _onAdVideoThirdQuartile = function _onAdVideoThirdQuartile() {
+var _onAdVideoThirdQuartile = function () {
   if (DEBUG) {
     _fw2.default.log('VPAID AdVideoThirdQuartile event');
   }
@@ -3720,7 +3719,7 @@ var _onAdVideoThirdQuartile = function _onAdVideoThirdQuartile() {
   _helpers2.default.dispatchPingEvent.call(this, 'thirdQuartile');
 };
 
-var _onAdVideoComplete = function _onAdVideoComplete() {
+var _onAdVideoComplete = function () {
   if (DEBUG) {
     _fw2.default.log('VPAID AdVideoComplete event');
   }
@@ -3728,7 +3727,7 @@ var _onAdVideoComplete = function _onAdVideoComplete() {
   _helpers2.default.dispatchPingEvent.call(this, 'complete');
 };
 
-var _onAdClickThru = function _onAdClickThru(url, id, playerHandles) {
+var _onAdClickThru = function (url, id, playerHandles) {
   if (DEBUG) {
     _fw2.default.log('VPAID AdClickThru event');
   }
@@ -3754,7 +3753,7 @@ var _onAdClickThru = function _onAdClickThru(url, id, playerHandles) {
   }
 };
 
-var _onAdPaused = function _onAdPaused() {
+var _onAdPaused = function () {
   if (DEBUG) {
     _fw2.default.log('VPAID AdPaused event');
   }
@@ -3763,7 +3762,7 @@ var _onAdPaused = function _onAdPaused() {
   _helpers2.default.dispatchPingEvent.call(this, 'pause');
 };
 
-var _onAdPlaying = function _onAdPlaying() {
+var _onAdPlaying = function () {
   if (DEBUG) {
     _fw2.default.log('VPAID AdPlaying event');
   }
@@ -3772,13 +3771,13 @@ var _onAdPlaying = function _onAdPlaying() {
   _helpers2.default.dispatchPingEvent.call(this, 'resume');
 };
 
-var _onAdLog = function _onAdLog(message) {
+var _onAdLog = function (message) {
   if (DEBUG) {
     _fw2.default.log('VPAID AdLog event ' + message);
   }
 };
 
-var _onAdError = function _onAdError(message) {
+var _onAdError = function (message) {
   if (DEBUG) {
     _fw2.default.log('VPAID AdError event ' + message);
   }
@@ -3786,14 +3785,14 @@ var _onAdError = function _onAdError(message) {
   _vastErrors2.default.process.call(this, 901);
 };
 
-var _onAdInteraction = function _onAdInteraction() {
+var _onAdInteraction = function () {
   if (DEBUG) {
     _fw2.default.log('VPAID AdInteraction event');
   }
   _helpers2.default.createApiEvent.call(this, 'adinteraction');
 };
 
-var _onAdUserAcceptInvitation = function _onAdUserAcceptInvitation() {
+var _onAdUserAcceptInvitation = function () {
   if (DEBUG) {
     _fw2.default.log('VPAID AdUserAcceptInvitation event');
   }
@@ -3801,7 +3800,7 @@ var _onAdUserAcceptInvitation = function _onAdUserAcceptInvitation() {
   _helpers2.default.dispatchPingEvent.call(this, 'acceptInvitation');
 };
 
-var _onAdUserMinimize = function _onAdUserMinimize() {
+var _onAdUserMinimize = function () {
   if (DEBUG) {
     _fw2.default.log('VPAID AdUserMinimize event');
   }
@@ -3809,7 +3808,7 @@ var _onAdUserMinimize = function _onAdUserMinimize() {
   _helpers2.default.dispatchPingEvent.call(this, 'collapse');
 };
 
-var _onAdUserClose = function _onAdUserClose() {
+var _onAdUserClose = function () {
   if (DEBUG) {
     _fw2.default.log('VPAID AdUserClose event');
   }
@@ -3817,14 +3816,14 @@ var _onAdUserClose = function _onAdUserClose() {
   _helpers2.default.dispatchPingEvent.call(this, 'close');
 };
 
-var _onAdSizeChange = function _onAdSizeChange() {
+var _onAdSizeChange = function () {
   if (DEBUG) {
     _fw2.default.log('VPAID AdSizeChange event');
   }
   _helpers2.default.createApiEvent.call(this, 'adsizechange');
 };
 
-var _onAdLinearChange = function _onAdLinearChange() {
+var _onAdLinearChange = function () {
   if (DEBUG) {
     _fw2.default.log('VPAID AdLinearChange event');
   }
@@ -3834,14 +3833,14 @@ var _onAdLinearChange = function _onAdLinearChange() {
   }
 };
 
-var _onAdExpandedChange = function _onAdExpandedChange() {
+var _onAdExpandedChange = function () {
   if (DEBUG) {
     _fw2.default.log('VPAID AdExpandedChange event');
   }
   _helpers2.default.createApiEvent.call(this, 'adexpandedchange');
 };
 
-var _onAdRemainingTimeChange = function _onAdRemainingTimeChange() {
+var _onAdRemainingTimeChange = function () {
   if (DEBUG) {
     _fw2.default.log('VPAID AdRemainingTimeChange event');
   }
@@ -3942,7 +3941,7 @@ VPAID.setAdVolume = function (volume) {
   }
 };
 
-var _setCallbacksForCreative = function _setCallbacksForCreative() {
+var _setCallbacksForCreative = function () {
   if (!this.vpaidCreative) {
     return;
   }
@@ -3982,7 +3981,7 @@ var _setCallbacksForCreative = function _setCallbacksForCreative() {
   }
 };
 
-var _unsetCallbacksForCreative = function _unsetCallbacksForCreative() {
+var _unsetCallbacksForCreative = function () {
   if (!this.vpaidCreative) {
     return;
   }
@@ -3994,14 +3993,14 @@ var _unsetCallbacksForCreative = function _unsetCallbacksForCreative() {
   }
 };
 
-var _isValidVPAID = function _isValidVPAID(creative) {
+var _isValidVPAID = function (creative) {
   if (typeof creative.initAd === 'function' && typeof creative.startAd === 'function' && typeof creative.stopAd === 'function' && typeof creative.skipAd === 'function' && typeof creative.resizeAd === 'function' && typeof creative.pauseAd === 'function' && typeof creative.resumeAd === 'function' && typeof creative.expandAd === 'function' && typeof creative.collapseAd === 'function' && typeof creative.subscribe === 'function' && typeof creative.unsubscribe === 'function') {
     return true;
   }
   return false;
 };
 
-var _onVPAIDAvailable = function _onVPAIDAvailable() {
+var _onVPAIDAvailable = function () {
   var _this4 = this;
 
   if (this.vpaidAvailableInterval) {
@@ -4087,7 +4086,7 @@ var _onVPAIDAvailable = function _onVPAIDAvailable() {
   }
 };
 
-var _onJSVPAIDLoaded = function _onJSVPAIDLoaded() {
+var _onJSVPAIDLoaded = function () {
   var _this5 = this;
 
   if (DEBUG) {
@@ -4106,7 +4105,7 @@ var _onJSVPAIDLoaded = function _onJSVPAIDLoaded() {
   }
 };
 
-var _onJSVPAIDError = function _onJSVPAIDError() {
+var _onJSVPAIDError = function () {
   if (DEBUG) {
     _fw2.default.log('VPAID JS error loading');
   }
@@ -4258,7 +4257,7 @@ var PING = {};
 
 PING.events = ['impression', 'creativeView', 'start', 'firstQuartile', 'midpoint', 'thirdQuartile', 'complete', 'mute', 'unmute', 'pause', 'resume', 'fullscreen', 'exitFullscreen', 'skip', 'progress', 'clickthrough', 'close', 'collapse', 'acceptInvitation'];
 
-var _replaceMacros = function _replaceMacros(url, errorCode, assetUri) {
+var _replaceMacros = function (url, errorCode, assetUri) {
   var pattern1 = /\[CACHEBUSTING\]/gi;
   var finalString = url;
   if (pattern1.test(finalString)) {
@@ -4281,7 +4280,7 @@ var _replaceMacros = function _replaceMacros(url, errorCode, assetUri) {
   return finalString;
 };
 
-var _ping = function _ping(url) {
+var _ping = function (url) {
   // we expect an image format for the tracker (generally a 1px GIF/PNG/JPG) as 
   // this is the most common format in the industry 
   // other format may produce errors and the related tracker may not be requested properly
@@ -4357,7 +4356,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var TRACKINGEVENTS = {};
 
-var _pingTrackers = function _pingTrackers(trackers) {
+var _pingTrackers = function (trackers) {
   var _this = this;
 
   trackers.forEach(function (element) {
@@ -4365,7 +4364,7 @@ var _pingTrackers = function _pingTrackers(trackers) {
   });
 };
 
-var _onEventPingTracking = function _onEventPingTracking(event) {
+var _onEventPingTracking = function (event) {
   if (event && event.type) {
     if (DEBUG) {
       _fw2.default.log('ping tracking for ' + event.type + ' VAST event');
@@ -4381,7 +4380,7 @@ var _onEventPingTracking = function _onEventPingTracking(event) {
   }
 };
 
-var _onVolumeChange = function _onVolumeChange() {
+var _onVolumeChange = function () {
   if (this.vastPlayer.muted || this.vastPlayer.volume === 0) {
     _helpers2.default.createApiEvent.call(this, 'advolumemuted');
     _helpers2.default.dispatchPingEvent.call(this, 'mute');
@@ -4395,7 +4394,7 @@ var _onVolumeChange = function _onVolumeChange() {
   _helpers2.default.createApiEvent.call(this, 'advolumechanged');
 };
 
-var _onTimeupdate = function _onTimeupdate() {
+var _onTimeupdate = function () {
   var _this2 = this;
 
   this.vastPlayerCurrentTime = _vastPlayer2.default.getCurrentTime.call(this);
@@ -4437,7 +4436,7 @@ var _onTimeupdate = function _onTimeupdate() {
   }
 };
 
-var _onPause = function _onPause() {
+var _onPause = function () {
   if (!this.vastPlayerPaused) {
     this.vastPlayerPaused = true;
     _helpers2.default.createApiEvent.call(this, 'adpaused');
@@ -4451,7 +4450,7 @@ var _onPause = function _onPause() {
   }
 };
 
-var _onPlay = function _onPlay() {
+var _onPlay = function () {
   if (this.vastPlayerPaused) {
     this.vastPlayerPaused = false;
     _helpers2.default.createApiEvent.call(this, 'adresumed');
@@ -4459,14 +4458,14 @@ var _onPlay = function _onPlay() {
   }
 };
 
-var _onPlaying = function _onPlaying() {
+var _onPlaying = function () {
   this.vastPlayer.removeEventListener('playing', this.onPlaying);
   _helpers2.default.createApiEvent.call(this, 'adimpression');
   _helpers2.default.createApiEvent.call(this, 'adstarted');
   _helpers2.default.dispatchPingEvent.call(this, ['impression', 'creativeView', 'start']);
 };
 
-var _onEnded = function _onEnded() {
+var _onEnded = function () {
   this.vastPlayer.removeEventListener('ended', this.onEnded);
   _helpers2.default.createApiEvent.call(this, 'adcomplete');
   _helpers2.default.dispatchPingEvent.call(this, 'complete');
@@ -4714,7 +4713,7 @@ DEFAULT.fullscreen = function () {
   // see app/js/app.js
   // we need this to handle VAST fullscreen events
   var isInFullscreen = false;
-  var _onFullscreenchange = function _onFullscreenchange(event) {
+  var _onFullscreenchange = function (event) {
     if (event && event.type) {
       if (DEBUG) {
         _fw2.default.log('event is ' + event.type);
@@ -4766,8 +4765,6 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-
 var _fw = require('../fw/fw');
 
 var _fw2 = _interopRequireDefault(_fw);
@@ -4809,7 +4806,7 @@ HELPERS.filterParams = function (inputParams) {
     var keys = Object.keys(inputParams);
     for (var i = 0, len = keys.length; i < len; i++) {
       var prop = keys[i];
-      if (_typeof(inputParams[prop]) === _typeof(this.params[prop])) {
+      if (typeof inputParams[prop] === typeof this.params[prop]) {
         if (_fw2.default.isNumber(inputParams[prop]) && inputParams[prop] > 0 || typeof inputParams[prop] !== 'number') {
           if (prop === 'vpaidSettings') {
             if (_fw2.default.isNumber(inputParams.vpaidSettings.width) && inputParams.vpaidSettings.width > 0) {
@@ -4922,6 +4919,24 @@ HELPERS.playPromise = function (whichPlayer, firstPlayerPlayRequest) {
         }
       });
     }
+  }
+};
+
+HELPERS.accessibleButton = function (element, ariaLabel) {
+  // make skip button accessible
+  element.tabIndex = 0;
+  element.setAttribute('role', 'button');
+  element.addEventListener('keyup', function (event) {
+    var code = event.which;
+    // 13 = Return, 32 = Space
+    if (code === 13 || code === 32) {
+      event.stopPropagation();
+      event.preventDefault();
+      _fw2.default.createStdEvent('click', element);
+    }
+  });
+  if (ariaLabel) {
+    element.setAttribute('aria-label', ariaLabel);
   }
 };
 
@@ -5056,7 +5071,7 @@ var vastErrorsList = [{
   description: 'Could not find vast player in DOM'
 }];
 
-var _updateVastError = function _updateVastError(errorCode) {
+var _updateVastError = function (errorCode) {
   var error = vastErrorsList.filter(function (value) {
     return value.code === errorCode;
   });

@@ -54,6 +54,7 @@ const _onClickCloseNonLinear = function (event) {
 const _appendCloseButton = function () {
   this.nonLinearClose = document.createElement('div');
   this.nonLinearClose.className = 'rmp-ad-non-linear-close';
+  HELPERS.accessibleButton(this.nonLinearClose, 'close ad button');
   if (this.nonLinearMinSuggestedDuration > 0) {
     this.nonLinearClose.style.display = 'none';
     setTimeout(() => {

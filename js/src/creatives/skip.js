@@ -57,6 +57,7 @@ SKIP.append = function () {
   this.skipButton = document.createElement('div');
   this.skipButton.className = 'rmp-ad-container-skip';
   this.skipButton.style.display = 'none';
+  HELPERS.accessibleButton(this.skipButton, 'skip ad button');
 
   this.skipWaiting = document.createElement('div');
   this.skipWaiting.className = 'rmp-ad-container-skip-waiting';
