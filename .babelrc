@@ -1,7 +1,7 @@
 {
   "presets": [
     [
-      "env",
+      "@babel/preset-env",
       {
         "targets": {
           "android": 31,
@@ -14,27 +14,7 @@
           "ios": 9,
           "Samsung": 5
         },
-        "debug": true,
-        "useBuiltIns": true,
-        "exclude": [
-          "transform-es2015-classes",
-          "transform-es2015-function-name",
-          "transform-es2015-object-super",
-          "transform-es2015-sticky-regex",
-          "transform-es2015-template-literals",
-          "transform-es2015-typeof-symbol",
-          "transform-es2015-unicode-regex",
-          "transform-regenerator",
-          "transform-exponentiation-operator",
-          "syntax-trailing-function-commas",
-          "transform-async-to-generator",
-          "es7.array.includes",
-          "es7.object.values",
-          "es7.object.entries",
-          "es7.object.get-own-property-descriptors",
-          "es7.string.pad-start",
-          "es7.string.pad-end"
-        ]
+        "useBuiltIns": "usage"
       }
     ]
   ]
