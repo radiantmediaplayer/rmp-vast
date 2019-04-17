@@ -5,16 +5,15 @@
       {
         "targets": {
           "android": 31,
-          "ChromeAndroid": 31,
           "chrome": 31,
           "edge": 12,
-          "explorer": 11,
+          "ie": 11,
           "firefox": 42,
           "safari": 8,
-          "ios": 9,
-          "Samsung": 5
+          "ios": 9
         },
-        "useBuiltIns": "usage"
+        "useBuiltIns": "usage",
+        "corejs": 3 
       }
     ]
   ]
