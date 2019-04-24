@@ -148,10 +148,12 @@ FW.ajax = function (url, timeout, returnData, withCredentials) {
   });
 };
 
+const consoleStyleOne = 'color: white; background-color: #00ACC1; padding:1px 3px; border-radius: 3px; margin-right: 7px';
+
 FW.log = function (data) {
   if (window.console && window.console.log) {
     if (typeof data === 'string') {
-      window.console.log('rmp-vast: ' + data);
+      window.console.log('%crmp-vast%c' + data, consoleStyleOne, '');
     } else {
       window.console.log(data);
     }
