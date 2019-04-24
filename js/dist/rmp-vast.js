@@ -1,6 +1,6 @@
 /**
  * @license Copyright (c) 2017-2019 Radiant Media Player | https://www.radiantmediaplayer.com
- * rmp-vast 2.3.1
+ * rmp-vast 2.3.2
  * GitHub: https://github.com/radiantmediaplayer/rmp-vast
  * MIT License: https://github.com/radiantmediaplayer/rmp-vast/blob/master/LICENSE
  */
@@ -276,6 +276,17 @@ API.attach = function (RmpVast) {
     }
   };
 
+  RmpVast.prototype.skipAd = function () {
+    if (this.adOnStage && this.getAdSkippableState()) {
+      if (this.isVPAID) {
+        _vpaid.default.skipAd.call(this);
+      } else {
+        // this will destroy ad
+        _vastPlayer.default.resumeContent.call(this);
+      }
+    }
+  };
+
   RmpVast.prototype.getAdTagUrl = function () {
     return this.adTagUrl;
   };
@@ -468,6 +479,20 @@ API.attach = function (RmpVast) {
     return this.useContentPlayerForAds;
   };
 
+  RmpVast.prototype.getAdSkippableState = function () {
+    if (this.adOnStage) {
+      if (this.isVPAID) {
+        return _vpaid.default.getAdSkippableState.call(this);
+      } else {
+        if (this.getIsSkippableAd()) {
+          return this.skippableAdCanBeSkipped;
+        }
+      }
+    }
+
+    return false;
+  };
+
   RmpVast.prototype.initialize = function () {
     if (this.rmpVastInitialized) {
       if (DEBUG) {
@@ -517,23 +542,9 @@ API.attach = function (RmpVast) {
     }
   };
 
-  RmpVast.prototype.skipAd = function () {
-    if (this.adOnStage && this.isVPAID) {
-      _vpaid.default.skipAd.call(this);
-    }
-  };
-
   RmpVast.prototype.getAdExpanded = function () {
     if (this.adOnStage && this.isVPAID) {
       _vpaid.default.getAdExpanded.call(this);
-    }
-
-    return false;
-  };
-
-  RmpVast.prototype.getAdSkippableState = function () {
-    if (this.adOnStage && this.isVPAID) {
-      _vpaid.default.getAdSkippableState.call(this);
     }
 
     return false;

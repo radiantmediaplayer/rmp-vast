@@ -243,6 +243,7 @@ For linear ads rmp-vast exposes 2 players: a content player (for the actual cont
 - `setMute(muted)`: set mute state of (content|vast) player depending on what is on stage. Input value should be a Boolean.
 - `getMute()`: return Boolean, the mute state of (content|vast) player depending on what is on stage.  Returned value is a Boolean.
 - `stopAds()`: stop playing the ad on stage.
+- `skipAd()`: skips the creative on stage - this method only has effects if the creative on stage is a skippable ad and can be skipped (e.g. `getAdSkippableState` returns true).
 - `getAdTagUrl()`: return String, representing the current VAST tag URL.
 - `getAdOnStage()`: return Boolean, stating if an ad is currently on stage.
 - `getInitialized()`: return Boolean, stating if rmp-vast has been initialized.
@@ -261,6 +262,7 @@ The following methods should be queried after the `adstarted` event has fired fo
 - `getAdMediaHeight()`: return Number, representing the height of the selected creative. -1 is returned if this value is not available.
 - `getClickThroughUrl()`: return String, representing the click-through (e.g. destination) URL for the selected creative.
 - `getIsSkippableAd()`: return Boolean, stating if the loaded linear ad is a VAST skippable ad - can be querried when adloaded event fires.
+- `getAdSkippableState()`: return Boolean, stating if the creative on stage can be skipped or not.
 - `getContentPlayerCompleted()`: return Boolean, stating if content player has reached end of content.
 - `setContentPlayerCompleted(value)`: input value must be a Boolean - sets the contentPlayerCompleted state of the player, this is used when source on content player changes and we need to explicitly reset contentPlayerCompleted internal value so that content can resume as expected on next ad load.
 
@@ -272,10 +274,8 @@ Additional VPAID-related methods
 - `resizeAd(width, height, viewMode)`: resizes the VPAID creative based on width: Number, height: Number and viewMode: String. viewMode should be either 'normal' or 'fullscreen'.
 - `expandAd()`: expands the VPAID creative on stage.
 - `collapseAd()`: collapses the VPAID creative on stage.
-- `skipAd()`: skips the VPAID creative on stage.
 - `getVpaidCreative()`: return (Object|null) reference to the VPAID creative.
 - `getAdExpanded()`: return Boolean, stating if the VPAID creative on stage is expanded or not.
-- `getAdSkippableState()`: return Boolean, stating if the VPAID creative on stage can be skipped or not.
 - `getAdCompanions()`: return String, providing ad companion details in VAST 3.0 format for the `<CompanionAds>` element.
 
 The following methods should be queried after the `aderror` event has fired for accurate data:
