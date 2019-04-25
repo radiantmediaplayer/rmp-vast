@@ -1,6 +1,6 @@
 /**
  * @license Copyright (c) 2017-2019 Radiant Media Player | https://www.radiantmediaplayer.com
- * rmp-vast 2.3.2
+ * rmp-vast 2.3.3
  * GitHub: https://github.com/radiantmediaplayer/rmp-vast
  * MIT License: https://github.com/radiantmediaplayer/rmp-vast/blob/master/LICENSE
  */
@@ -3692,12 +3692,8 @@ VASTPLAYER.setMute = function (muted) {
   if (this.vastPlayer) {
     if (muted && !this.vastPlayer.muted) {
       this.vastPlayer.muted = true;
-
-      _helpers.default.dispatchPingEvent.call(this, 'mute');
     } else if (!muted && this.vastPlayer.muted) {
       this.vastPlayer.muted = false;
-
-      _helpers.default.dispatchPingEvent.call(this, 'unmute');
     }
   }
 };

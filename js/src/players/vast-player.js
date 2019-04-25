@@ -304,10 +304,8 @@ VASTPLAYER.setMute = function (muted) {
   if (this.vastPlayer) {
     if (muted && !this.vastPlayer.muted) {
       this.vastPlayer.muted = true;
-      HELPERS.dispatchPingEvent.call(this, 'mute');
     } else if (!muted && this.vastPlayer.muted) {
       this.vastPlayer.muted = false;
-      HELPERS.dispatchPingEvent.call(this, 'unmute');
     }
   }
 };
