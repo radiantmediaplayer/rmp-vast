@@ -149,11 +149,27 @@ FW.ajax = function (url, timeout, returnData, withCredentials) {
 };
 
 const consoleStyleOne = 'color: white; background-color: #00ACC1; padding:1px 3px; border-radius: 3px; margin-right: 7px';
+let hasLog = false;
+let hasDir = false;
+let hasTrace = false;
+if (typeof window.console !== 'undefined') {
+  if (typeof window.console.log === 'function') {
+    hasLog = true;
+  }
+  if (typeof window.console.dir === 'function') {
+    hasDir = true;
+  }
+  if (typeof window.console.trace === 'function') {
+    hasTrace = true;
+  }
+}
 
 FW.log = function (data) {
-  if (window.console && window.console.log) {
+  if (hasLog) {
     if (typeof data === 'string') {
       window.console.log('%crmp-vast%c' + data, consoleStyleOne, '');
+    } else if (hasDir && typeof data === 'object') {
+      window.console.dir(data);
     } else {
       window.console.log(data);
     }
@@ -162,8 +178,10 @@ FW.log = function (data) {
 
 FW.trace = function (data) {
   if (DEBUG) {
-    if (data && window.console && window.console.trace) {
+    if (hasTrace) {
       window.console.trace(data);
+    } else if (hasLog) {
+      FW.log(data);
     }
   }
 };
