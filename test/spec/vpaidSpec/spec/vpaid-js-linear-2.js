@@ -51,14 +51,14 @@ describe('Test for vpaid-js-linear-2', function () {
         rmpVast.resizeAd(320, 180, 'normal');
       }
       _incrementAndLog(e);
-      setTimeout(() => {
+      setTimeout(function () {
         rmpVast.setVolume(0.5);
       }, 400);
     });
     container.addEventListener('advolumechanged', function (e) {
       if (rmpVast.getVolume() === 0.5) {
         _incrementAndLog(e);
-        setTimeout(() => {
+        setTimeout(function () {
           rmpVast.stopAds();
         }, 400);
       }

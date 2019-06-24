@@ -45,7 +45,7 @@ describe('Test for Inline Skippable Linear ad', function () {
 
     container.addEventListener('adstarted', function (e) {
       _incrementAndLog(e);
-      setTimeout(() => {
+      setTimeout(function () {
         var skip = document.getElementsByClassName('rmp-ad-container-skip')[0];
         fw.log('click skip');
         fw.createStdEvent('click', skip);

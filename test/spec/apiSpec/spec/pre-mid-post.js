@@ -81,23 +81,23 @@ describe('Test for pre-mid-post', function () {
       }
       if (addestroyedCount === 1) {
         expect(validSteps).toBe(9);
-        setTimeout(() => {
+        setTimeout(function () {
           contentPlayer.currentTime = 15;
         }, 1000);
 
-        setTimeout(() => {
+        setTimeout(function () {
           rmpVast.loadAds(ADTAG2);
         }, 3000);
       }
       if (addestroyedCount === 2) {
         expect(validSteps).toBe(18);
-        contentPlayer.addEventListener('ended', () => {
+        contentPlayer.addEventListener('ended', function () {
           if (loadPostRoll) {
             loadPostRoll = false;
             rmpVast.loadAds(ADTAG3);
           }
         });
-        setTimeout(() => {
+        setTimeout(function () {
           contentPlayer.currentTime = 96;
         }, 1000);
       }

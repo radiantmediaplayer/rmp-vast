@@ -52,7 +52,7 @@ describe('Test for vpaid-js-linear-3', function () {
         rmpVast.resizeAd(320, 180, 'normal');
       }
       _incrementAndLog(e);
-      setTimeout(() => {
+      setTimeout(function () {
         if (!mutedAutoplay) {
           rmpVast.setMute(true);
         }

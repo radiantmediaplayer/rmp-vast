@@ -45,7 +45,7 @@ describe('Test for Smart Ad Server ad', function () {
 
     container.addEventListener('adstarted', function (e) {
       _incrementAndLog(e);
-      setTimeout(()=> {
+      setTimeout(function () {
         rmpVast.stopAds();
       }, 3000);
     });

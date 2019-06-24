@@ -37,7 +37,7 @@ describe('Test for no-impression-tag', function () {
 
     container.addEventListener('adstarted', function (e) {
       _incrementAndLog(e);
-      setTimeout(()=> {
+      setTimeout(function () {
         rmpVast.stopAds();
       }, 400);
     });

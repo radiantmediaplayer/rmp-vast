@@ -48,19 +48,19 @@ describe('Test for vpaid-js-linear-1-interaction', function () {
         rmpVast.resizeAd(320, 180, 'normal');
       }
       _incrementAndLog(e);
-      setTimeout(() => {
+      setTimeout(function () {
         rmpVast.pause();
       }, 400);
     });
     container.addEventListener('adskippablestatechanged', function (e) {
       _incrementAndLog(e);
-      setTimeout(() => {
+      setTimeout(function () {
         rmpVast.skipAd();
       }, 400);
     });
     container.addEventListener('adpaused', function (e) {
       _incrementAndLog(e);
-      setTimeout(() => {
+      setTimeout(function () {
         if (rmpVast.getAdPaused()) {
           rmpVast.play();
         }

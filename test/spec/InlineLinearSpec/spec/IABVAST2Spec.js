@@ -43,7 +43,7 @@ describe('Test for Inline Linear ad (IAB VAST2)', function () {
     });
     container.addEventListener('adstarted', function (e) {
       _incrementAndLog(e);
-      setTimeout(() => {
+      setTimeout(function () {
         rmpVast.stopAds();
       }, 3000);
     });

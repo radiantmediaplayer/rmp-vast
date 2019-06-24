@@ -17,7 +17,7 @@
   // first we need some polyfill to handle fullscreenchange event in a unified way
   var _proxyFullscreenEvents = function (event) {
     if (event && event.type) {
-      let newType = event.type.replace(/^(webkit|moz|MS)/, '').toLowerCase();
+      var newType = event.type.replace(/^(webkit|moz|MS)/, '').toLowerCase();
       fw.createStdEvent(newType, document);
     }
   };

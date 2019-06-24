@@ -41,7 +41,7 @@ describe('Test for NonLinearSpec', function () {
 
     container.addEventListener('adstarted', function (e) {
       _incrementAndLog(e);
-      setTimeout(() => {
+      setTimeout(function () {
         var close = document.getElementsByClassName('rmp-ad-non-linear-close')[0];
         fw.log('click close');
         fw.createStdEvent('click', close);
