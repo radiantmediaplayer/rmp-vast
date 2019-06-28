@@ -19,12 +19,10 @@ describe('Test for vpaid-js-linear-3', function () {
   var rmpVast = new RmpVast(id, params);
   var fw = rmpVast.getFramework();
   var env = rmpVast.getEnvironment();
-  var ua = window.navigator.userAgent;
-  var regExp = /(edge\/|firefox\/)/i;
+  video.muted = true;
   var mutedAutoplay = false;
-  if (!regExp.test(ua) || env.isAndroid[0] || (env.isMacOSX && env.isSafari[0])) {
+  if (env.isAndroid[0] || (env.isMacOSX && env.isSafari[0])) {
     mutedAutoplay = true;
-    video.muted = true;
   }
   if (env.isAndroid[0]) {
     container.style.width = '320px';

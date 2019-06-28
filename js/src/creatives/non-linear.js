@@ -179,8 +179,7 @@ NONLINEAR.parse = function (nonLinearAds) {
         continue;
       }
       // we only support images for StaticResource
-      const imagePattern = /^image\/(png|jpeg|jpg|gif)$/i;
-      if (!imagePattern.test(creativeType)) {
+      if (!FW.imagePattern.test(creativeType)) {
         continue;
       }
       // if width of non-linear creative does not fit within current player container width 

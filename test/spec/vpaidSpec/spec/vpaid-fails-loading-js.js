@@ -19,11 +19,7 @@ describe('Test for vpaid-fails-loading-js', function () {
   var rmpVast = new RmpVast(id, params);
   var fw = rmpVast.getFramework();
   var env = rmpVast.getEnvironment();
-  var ua = window.navigator.userAgent;
-  var regExp = /(edge\/|firefox\/)/i;
-  if (!regExp.test(ua)) {
-    video.muted = true;
-  }
+  video.muted = true;
   if (env.isAndroid[0]) {
     container.style.width = '320px';
     container.style.height = '180px';

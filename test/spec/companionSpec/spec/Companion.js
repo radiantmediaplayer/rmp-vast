@@ -1,16 +1,16 @@
 'use strict';
 
-var ADTAG = 'https://www.radiantmediaplayer.com/vast/tags/iab/vast2/Inline_NonLinear_VAST2.0.xml';
+var ADTAG = 'https://www.radiantmediaplayer.com/vast/tags/inline-linear-companion.xml';
 
-describe('Test for NonLinearSpecIABVAST2', function () {
+describe('Test for Companion', function () {
 
   var id = 'rmpPlayer';
   var container = document.getElementById(id);
   var video = document.querySelector('.rmp-video');
+  video.muted = true;
   var rmpVast = new RmpVast(id);
   var fw = rmpVast.getFramework();
   var env = rmpVast.getEnvironment();
-  video.muted = true;
   if (env.isAndroid[0]) {
     container.style.width = '320px';
     container.style.height = '180px';
@@ -31,18 +31,8 @@ describe('Test for NonLinearSpecIABVAST2', function () {
       _incrementAndLog(e);
     });
 
-    container.addEventListener('aderror', function (e) {
-      var errorCode = rmpVast.getAdVastErrorCode();
-      if (env.isAndroid[0] && errorCode === 501) {
-        _incrementAndLog(e);
-        expect(validSteps).toBe(3);
-        if (validSteps === 3) {
-          title.textContent = 'Test completed';
-        }
-        setTimeout(function () {
-          done();
-        }, 200);
-      }
+    container.addEventListener('addurationchange', function (e) {
+      _incrementAndLog(e);
     });
 
     container.addEventListener('adimpression', function (e) {
@@ -51,11 +41,19 @@ describe('Test for NonLinearSpecIABVAST2', function () {
 
     container.addEventListener('adstarted', function (e) {
       _incrementAndLog(e);
+      if (rmpVast.getCompanionAdsRequiredAttribute()) {
+        _incrementAndLog(e);
+      }
+      if (rmpVast.getCompanionAdsAdSlotID()) {
+        _incrementAndLog(e);
+      }
+      var companionAds = rmpVast.getCompanionAds(600, 500);
+      if (Array.isArray(companionAds) && companionAds.length === 2 && typeof companionAds[0] === 'object') {
+        _incrementAndLog(e);
+      }
       setTimeout(function () {
-        var close = document.getElementsByClassName('rmp-ad-non-linear-close')[0];
-        fw.log('click close');
-        fw.createStdEvent('click', close);
-      }, 7000);
+        rmpVast.stopAds();
+      }, 3000);
     });
 
     container.addEventListener('adtagstartloading', function (e) {
@@ -66,15 +64,15 @@ describe('Test for NonLinearSpecIABVAST2', function () {
       _incrementAndLog(e);
     });
 
-    container.addEventListener('adclosed', function (e) {
+    container.addEventListener('addestroyed', function (e) {
       _incrementAndLog(e);
       var timeupdateCount = 0;
       video.addEventListener('timeupdate', function (e) {
         timeupdateCount++;
         if (timeupdateCount === 5) {
           _incrementAndLog(e);
-          if (validSteps === 7) {
-            expect(validSteps).toBe(7);
+          if (validSteps === 11) {
+            expect(validSteps).toBe(11);
             title.textContent = 'Test completed';
             done();
           }

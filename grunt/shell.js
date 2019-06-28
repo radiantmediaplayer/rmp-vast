@@ -32,6 +32,8 @@ module.exports = {
       'node test/spec/main/adPodSpec.js chrome',
       'node test/spec/main/apiSpec.js',
       'node test/spec/main/apiSpec.js chrome',
+      'node test/spec/main/companionSpec.js',
+      'node test/spec/main/companionSpec.js chrome',
       'node test/spec/main/errorSpec.js',
       'node test/spec/main/errorSpec.js chrome',
       'node test/spec/main/inlineLinearSpec.js',
@@ -52,6 +54,7 @@ module.exports = {
     command: [
       'node test/spec/main/adPodSpec.js android',
       'node test/spec/main/apiSpec.js android',
+      'node test/spec/main/companionSpec.js android',
       'node test/spec/main/errorSpec.js android',
       'node test/spec/main/inlineLinearSpec.js android',
       'node test/spec/main/nonLinearSpec.js android',
@@ -65,6 +68,7 @@ module.exports = {
     command: [
       'node test/spec/main/adPodSpec.js safari',
       'node test/spec/main/apiSpec.js safari',
+      'node test/spec/main/companionSpec.js safari',
       'node test/spec/main/errorSpec.js safari',
       'node test/spec/main/inlineLinearSpec.js safari',
       'node test/spec/main/nonLinearSpec.js safari',

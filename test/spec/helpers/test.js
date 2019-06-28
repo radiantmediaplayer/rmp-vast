@@ -14,8 +14,6 @@ TEST.getDriver = function (which) {
     driver = new Builder().forBrowser('chrome').build();
   } else if (which === 'firefox') {
     driver = new Builder().forBrowser('firefox').build();
-  } else if (which === 'MicrosoftEdge') {
-    driver = new Builder().forBrowser('MicrosoftEdge').build();
   } else if (which === 'internet explorer') {
     driver = new Builder().forBrowser('internet explorer').build();
   } else if (which === 'android') {

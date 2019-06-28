@@ -62,8 +62,7 @@ ICONS.parse = function (icons) {
     }
     // in StaticResource we only support images (application/x-javascript and application/x-shockwave-flash not supported)
     const creativeType = staticResource[0].getAttribute('creativeType');
-    const imagePattern = /^image\/(gif|jpeg|jpg|png)$/i;
-    if (creativeType === null || creativeType === '' || !imagePattern.test(creativeType)) {
+    if (creativeType === null || creativeType === '' || !FW.imagePattern.test(creativeType)) {
       continue;
     }
     const staticResourceUrl = FW.getNodeValue(staticResource[0], true);

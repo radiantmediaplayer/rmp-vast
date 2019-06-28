@@ -376,4 +376,6 @@ FW.openWindow = function (link) {
   }
 };
 
+FW.imagePattern = /^image\/(gif|jpeg|jpg|png)$/i;
+
 export default FW;

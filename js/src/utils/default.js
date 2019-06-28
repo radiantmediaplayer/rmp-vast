@@ -112,6 +112,10 @@ DEFAULT.loadAdsVariables = function () {
   this.nonLinearCreativeWidth = 0;
   this.nonLinearContentType = '';
   this.nonLinearMinSuggestedDuration = 0;
+  // companion ads
+  this.validCompanionAds = [];
+  this.companionAdsRequiredAttribute = '';
+  this.companionAdsAdSlotID = [];
   // VPAID
   this.isVPAID = false;
   this.vpaidCreative = null;

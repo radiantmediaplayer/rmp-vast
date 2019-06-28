@@ -1,9 +1,11 @@
-import FW from './fw/fw';
+import 'core-js-pure/es';
+import FW from './fw/fw'; 
 import ENV from './fw/env';
 import HELPERS from './utils/helpers';
 import PING from './tracking/ping';
 import LINEAR from './creatives/linear';
 import NONLINEAR from './creatives/non-linear';
+import COMPANION from './creatives/companion';
 import TRACKINGEVENTS from './tracking/tracking-events';
 import API from './api/api';
 import CONTENTPLAYER from './players/content-player';
@@ -115,6 +117,15 @@ import ICONS from './creatives/icons';
       FW.log('_parseCreatives');
       FW.log(creative);
     }
+    // filter companion ads
+    for (let i = 0, len = creative.length; i < len; i++) {
+      const currentCreative = creative[i];
+      const companionAds = currentCreative.getElementsByTagName('CompanionAds');
+      if (companionAds.length > 0) {
+        COMPANION.parse.call(this, companionAds);
+        break;
+      }
+    }
     for (let i = 0, len = creative.length; i < len; i++) {
       const currentCreative = creative[i];
       // we only pick the first creative that is either Linear or NonLinearAds
@@ -122,16 +133,13 @@ import ICONS from './creatives/icons';
       const linear = currentCreative.getElementsByTagName('Linear');
       // for now we ignore CreativeExtensions tag
       //let creativeExtensions = currentCreative.getElementsByTagName('CreativeExtensions');
-      const companionAds = currentCreative.getElementsByTagName('CompanionAds');
-      if (companionAds.length > 0) {
-        continue;
-      }
       // we expect 1 Linear or NonLinearAds tag 
       if (nonLinearAds.length === 0 && linear.length === 0) {
         PING.error.call(this, 101);
         VASTERRORS.process.call(this, 101);
         return;
       }
+
       if (nonLinearAds.length > 0) {
         const trackingEvents = nonLinearAds[0].getElementsByTagName('TrackingEvents');
         // if TrackingEvents tag

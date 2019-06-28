@@ -23,6 +23,7 @@
       </video>
     </div>
   </div>
+  <div id="companionId" style="height: 250px; width: 300px"></div>
   <script>
     var id = 'rmpPlayer';
     var container = document.getElementById(id);
@@ -37,7 +38,12 @@
     rmpVast.loadAds(ADTAG2);
     container.addEventListener('adstarted', function () {
       console.log('adstarted');
-      console.log(rmpVast.getCompanionAds(400, 500));
+      var img = rmpVast.getCompanionAds(400, 500);
+      console.log(img);
+      console.log(rmpVast.getCompanionAdsRequiredAttribute());
+      console.log(rmpVast.getCompanionAdsAdSlotID());
+      var companionId = document.getElementById('companionId');
+      companionId.appendChild(img[0]);
     });
   </script>
 </body>

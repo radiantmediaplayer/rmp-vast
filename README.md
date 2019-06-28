@@ -14,6 +14,7 @@ rmp-vast is an open-source project released under [MIT license](https://github.c
 - Linear Ads (MP4/WebM or HLS, DASH where natively supported)
 - Skippable Linear Ads (MP4/WebM or HLS, DASH where natively supported)
 - Non Linear Ads (Images)
+- Companion Ads (Images) - BETA
 - Tracking Events (tracking URLs must return an image - typically a 1px GIF/PNG/JPG)
 - Error Reporting
 - Industry Icons
@@ -276,7 +277,7 @@ Additional VPAID-related methods
 - `collapseAd()`: collapses the VPAID creative on stage.
 - `getVpaidCreative()`: return (Object|null) reference to the VPAID creative.
 - `getAdExpanded()`: return Boolean, stating if the VPAID creative on stage is expanded or not.
-- `getAdCompanions()`: return String, providing ad companion details in VAST 3.0 format for the `<CompanionAds>` element.
+- `getVPAIDCompanionAds()`: return String, providing ad companion details in VAST 3.0 format for the `<CompanionAds>` element.
 
 The following methods should be queried after the `aderror` event has fired for accurate data:
 - `getAdErrorMessage()`: return String, representing the error message for the current error.
@@ -290,8 +291,17 @@ The following methods provide context information for the rmp-vast instance:
 - `getContentPlayer()`: return HTMLVideoElement, the content player video tag.
 - `getIsUsingContentPlayerForAds()`: return Boolean, on iOS and macOS Safari the VAST player is the content player. This is to avoid fullscreen management and autoplay issues and to provide a consistent user experience. This method will return true for iOS and macOS Safari, false otherwise.
 
+### Companion ads support - BETA
+Feedback is welcome! Companion ads support is currently in BETA in rmp-vast, your contributions can help us make this a rock-solid feature faster.
+We support StaticResource images (JPEG, GIF, PNG) in Companion tags. We do not support IFrameResource or HTMLResource in Companion tags.
+We support AltText, CompanionClickThrough, CompanionClickTracking, TrackingEvents tags in Companion tags. We support "required" attribute for CompanionAds tag as well as "adSlotID" attribute for Companion tag. We also support CompanionAds in wrappers/redirects (The CompanionAds nearer to the final linear creative will be selected).
+See app/companion.html for an example of implementation.
+The following methods must be querried when the `adstarted` event fires for the master linear ad.
+- `getCompanionAds(width, height)`: return an Array of HTMLElement images. Each image can be appended to a DOM node where the companion ads can be displayed. Input width and height parameters are used to select companion ads based on available width and height for display.
+- `getCompanionAdsAdSlotID()`: return an Array of String representing the adSlotID for each companion ad. An empty array is returned when this method has no information to provide.
+- `getCompanionAdsRequiredAttribute()`: return a String representing the "required" attribute for CompanionAds tag. Value can be all, any, none or an empty String when this attribute is not defined. See section 2.3.3.4 of VAST 3 specification for more information.
+
 ### VPAID support
-**We need your help!**
 It is no secret that VPAID in the industry is a jungle and we need your help to best implement it. 
 Any feedback and test adTags that can improve VPAID support in rmp-vast are welcome - open an issue when needed.
 Current VPAID support limitations:

@@ -2,6 +2,7 @@ import FW from '../fw/fw';
 import ENV from '../fw/env';
 import VASTPLAYER from '../players/vast-player';
 import CONTENTPLAYER from '../players/content-player';
+import PING from '../tracking/ping';
 import VPAID from '../players/vpaid';
 
 const API = {};
@@ -318,6 +319,88 @@ API.attach = function (RmpVast) {
     return false;
   };
 
+  const _onImgClickThrough = function (companionClickThroughUrl, companionClickTrackingUrl, event) {
+    if (DEBUG) {
+      FW.log('click on companion img');
+    }
+    if (event) {
+      event.stopPropagation();
+      if (event.type === 'touchend') {
+        event.preventDefault();
+      }
+    }
+    if (companionClickTrackingUrl) {
+      PING.tracking.call(this, companionClickTrackingUrl, null);
+    }
+    FW.openWindow(companionClickThroughUrl);
+  };
+
+  // companion ads
+  RmpVast.prototype.getCompanionAds = function (inputWidth, inputHeight) {
+    let width = 300;
+    if (inputWidth) {
+      width = inputWidth;
+    }
+    let height = 250;
+    if (inputHeight) {
+      height = inputHeight;
+    }
+    if (this.adOnStage) {
+      const availableCompanionAds = this.validCompanionAds.filter((companionAds) => {
+        return width >= companionAds.width && height >= companionAds.height;
+      });
+      if (availableCompanionAds.length > 0) {
+        const result = [];
+        for (let i = 0, len = availableCompanionAds.length; i < len; i++) {
+          const img = document.createElement('img');
+          if (availableCompanionAds[i].altText) {
+            img.alt = availableCompanionAds[i].altText;
+          }
+          img.style.width = '100%';
+          img.style.height = '100%';
+          img.style.cursor = 'pointer';
+          if (availableCompanionAds[i].imageUrl) {
+            const trackingEventsUri = availableCompanionAds[i].trackingEventsUri;
+            if (trackingEventsUri.length > 0) {
+              img.addEventListener('load', () => {
+                for (let j = 0, len = trackingEventsUri.length; j < len; j++) {
+                  PING.tracking.call(this, trackingEventsUri[j], null);
+                }
+              });
+              img.addEventListener('error', () => {
+                PING.error.call(this, 603);
+              });
+            }
+            let companionClickTrackingUrl = null;
+            if (availableCompanionAds[i].companionClickTrackingUrl) {
+              companionClickTrackingUrl = availableCompanionAds[i].companionClickTrackingUrl;
+            }
+            img.addEventListener('touchend', _onImgClickThrough.bind(this, availableCompanionAds[i].companionClickThroughUrl, companionClickTrackingUrl));
+            img.addEventListener('click', _onImgClickThrough.bind(this, availableCompanionAds[i].companionClickThroughUrl, companionClickTrackingUrl));
+            img.src = availableCompanionAds[i].imageUrl;
+          }
+          result.push(img);
+        }
+        return result;
+      }
+    }
+    return null;
+  };
+
+  RmpVast.prototype.getCompanionAdsAdSlotID = function () { 
+    if (this.adOnStage) {
+      return this.companionAdsAdSlotID;
+    }
+    return [];
+  };
+
+  RmpVast.prototype.getCompanionAdsRequiredAttribute = function () {
+    if (this.adOnStage) {
+      return this.companionAdsRequiredAttribute;
+    }
+    return '';
+  }; 
+
   RmpVast.prototype.initialize = function () {
     if (this.rmpVastInitialized) {
       if (DEBUG) {
@@ -372,12 +455,13 @@ API.attach = function (RmpVast) {
     return false;
   };
 
-  RmpVast.prototype.getAdCompanions = function () {
+  RmpVast.prototype.getVPAIDCompanionAds = function () {
     if (this.adOnStage && this.isVPAID) {
       VPAID.getAdCompanions.call(this);
     }
     return '';
   };
+
 };
 
 export default API;
