@@ -293,10 +293,15 @@ The following methods provide context information for the rmp-vast instance:
 
 ### Companion ads support - BETA
 Feedback is welcome! Companion ads support is currently in BETA in rmp-vast, your contributions can help us make this a rock-solid feature faster.
+
 We support StaticResource images (JPEG, GIF, PNG) in Companion tags. We do not support IFrameResource or HTMLResource in Companion tags.
+
 We support AltText, CompanionClickThrough, CompanionClickTracking, TrackingEvents tags in Companion tags. We support "required" attribute for CompanionAds tag as well as "adSlotID" attribute for Companion tag. We also support CompanionAds in wrappers/redirects (The CompanionAds nearer to the final linear creative will be selected).
+
 See app/companion.html for an example of implementation.
+
 The following methods must be querried when the `adstarted` event fires for the master linear ad.
+
 - `getCompanionAds(width, height)`: return an Array of HTMLElement images. Each image can be appended to a DOM node where the companion ads can be displayed. Input width and height parameters are used to select companion ads based on available width and height for display.
 - `getCompanionAdsAdSlotID()`: return an Array of String representing the adSlotID for each companion ad. An empty array is returned when this method has no information to provide.
 - `getCompanionAdsRequiredAttribute()`: return a String representing the "required" attribute for CompanionAds tag. Value can be all, any, none or an empty String when this attribute is not defined. See section 2.3.3.4 of VAST 3 specification for more information.
