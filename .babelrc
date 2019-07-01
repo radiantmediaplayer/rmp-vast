@@ -12,12 +12,21 @@
           "safari": 8,
           "ios": 9
         },
-        "useBuiltIns": "entry",
+        "useBuiltIns": "usage",
         "corejs": 3
       }
     ]
   ],
   "plugins": [
-    "@babel/plugin-transform-runtime"
+    [
+      "@babel/plugin-transform-runtime",
+      {
+        "absoluteRuntime": false,
+        "corejs": 3,
+        "helpers": true,
+        "regenerator": false,
+        "useESModules": false
+      }
+    ]
   ]
 }
