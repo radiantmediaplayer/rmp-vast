@@ -1,4 +1,3 @@
-import 'core-js-pure/es';
 import FW from './fw/fw';
 import ENV from './fw/env';
 import HELPERS from './utils/helpers';
