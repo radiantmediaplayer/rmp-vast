@@ -9,12 +9,17 @@ rmp-vast is used and maintained by [Radiant Media Player](https://www.radiantmed
 
 rmp-vast is an open-source project released under [MIT license](https://github.com/radiantmediaplayer/rmp-vast/blob/master/LICENSE). It is built with ES2015 JavaScript and ported to ES5 JavaScript with Babel.
 
-## Sections
+## Documentation sections
 - [Supported VAST 3 features](#supported-vast-3-features)
 - [Supported environments](#supported-environments)
 - [CORS requirements](#cors-requirements)
 - [Quick start guide](#quick-start-guide)
-- [Documentation](#documentation)
+- [Parameters, API events and methods](#parameters-api-events-and-methods)
+  * [Parameters when creating a rmp-vast instance](#parameters-when-creating-a-rmp-vast-instance)
+  * [Starting the rmp-vast player](#starting-the-rmp-vast-player)
+  * [Importing rmp-vast as a ES2015 module](#importing-rmp-vast-as-a-es2015-module)
+  * [API events](#api-events)
+  * [API methods](#api-methods)
 - [Companion ads support](#companion-ads-support)
 - [VPAID support](#vpaid-support)
 - [Autoplay support](#autoplay-support)
@@ -52,6 +57,8 @@ enough coverage to support current industry requirements and best practices.
 - VAST 4 specific features
 - VMAP
 
+[Back to documentation sections](#documentation-sections)
+
 ## Supported environments
 
 ### Browsers
@@ -73,8 +80,12 @@ Specifically we support the latest stable release for each browser
 
 It is fairly possible that rmp-vast would work in other environments but they are not officially supported.
 
+[Back to documentation sections](#documentation-sections)
+
 ## CORS requirements
 rmp-vast uses JavaScript XMLHttpRequests to load VAST tags. Hence proper [CORS configuration](https://enable-cors.org/) is required on your ad-server in order for rmp-vast to be able to retrieve VAST tags. Refer to this [Google documentation](https://developers.google.com/interactive-media-ads/docs/sdks/html5/cors) for more information.
+
+[Back to documentation sections](#documentation-sections)
 
 ## Quick start guide
 First download latest rmp-vast package from the [release tab](https://github.com/radiantmediaplayer/rmp-vast/releases).
@@ -117,10 +128,12 @@ rmpVast.loadAds(adTag);
 A complete implementation example is provided in app/index.html. You should look at app/js/app.js. 
 This example can be found live at https://www.radiantmediaplayer.com/rmp-vast/app/.
 
-## Documentation
+[Back to documentation sections](#documentation-sections)
+
+## Parameters, API events and methods
 Source code for rmp-vast is available for review in js/src/ folder. Code comments should be available at key points to better understand rmp-vast inner workings.
 
-### Creating a rmp-vast instance
+### Parameters when creating a rmp-vast instance
 Once rmp-vast library is loaded on your page you can create a new rmp-vast instance as follows:
 
 `new RmpVast(id, params)`
@@ -320,24 +333,36 @@ The following methods must be querried when the `adstarted` event fires for the 
 - `getCompanionAdsAdSlotID()`: return an Array of String representing the adSlotID for each companion ad. An empty array is returned when this method has no information to provide.
 - `getCompanionAdsRequiredAttribute()`: return a String representing the "required" attribute for CompanionAds tag. Value can be all, any, none or an empty String when this attribute is not defined. See section 2.3.3.4 of VAST 3 specification for more information.
 
+[Back to documentation sections](#documentation-sections)
+
 ## VPAID support
 It is no secret that VPAID in the industry is a jungle and we need your help to best implement it. 
 Any feedback and test adTags that can improve VPAID support in rmp-vast are welcome - open an issue when needed.
 Current VPAID support limitations:
 - supports only linear VPAID (non-linear support may be coming later)
 - no support for changes in linearity (likely to cause playback issues): we need production adTag to test this but we have not found reliable resources for it - please share if you have some available
- 
+
+[Back to documentation sections](#documentation-sections)
+
 ## Autoplay support
 This is done by simply calling `loadAds` method on page load (after HTML5 content video player is in DOM and rmp-vast library is loaded and instantiated). For muted autoplay (iOS, Android, Desktop Chrome 66+ and Desktop Safari 11+) also add the `muted` attribute on the HTML5 content video player.
+
+[Back to documentation sections](#documentation-sections)
 
 ## Fullscreen management
 rmp-vast supports fullscreen for the global player (e.g. content + vast players) but there is an extra layer to add to your application. See the app/js/app.js file around line 25 for an example of implementation.
 
+[Back to documentation sections](#documentation-sections)
+
 ## Pre, mid and post rolls
 rmp-vast can handle pre/mid/post rolls ad breaks through the loadAds API method. See app/pre-mid-post-roll.html for an example.
 
+[Back to documentation sections](#documentation-sections)
+
 ## Outstream ads
 rmp-vast supports displaying outstream ads when parameter `outstream` is set to true. For an implementation example see test/spec/outstreamSpec/Simple.html.
+
+[Back to documentation sections](#documentation-sections)
 
 ## Contributing
 Contributions are welcome. Please review general code structure and stick to existing patterns.
@@ -375,4 +400,4 @@ For testing on macOS Safari use:
 
 Before running `grunt test` make sure to update `TEST.pathToTest` in test/helpers/test.js with your local IP address. Running test on Android requires a [runnning adb server](https://developer.android.com/studio/command-line/adb.html).
 
-[Back at top](#rmp-vast)
+[Back to documentation sections](#documentation-sections)
