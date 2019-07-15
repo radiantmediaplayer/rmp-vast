@@ -174,6 +174,8 @@ vpaidSettings: {
 }
 ```
 
+[Back to documentation sections](#documentation-sections)
+
 ### Starting the rmp-vast player
 It is important for the rmp-vast instance to be properly initialized to avoid playback issues. 
 
@@ -183,6 +185,8 @@ To sum up: use the rmp-vast API `loadAds()` method to start playback. On mobile 
 
 If you do not want to call `loadAds()` method directly - call `initialize()` method (as a result of a user interaction or on page 
 load for autoplay) then call `loadAds()` later on when you wish to load a VAST tag.
+
+[Back to documentation sections](#documentation-sections)
 
 ### Importing rmp-vast as a ES2015 module
 ```javascript
@@ -203,6 +207,8 @@ rmpVast.loadAds(adTag);
 Note that 'core-js' is not provided when rmp-vast is imported as a ES2015 module, if wanted you will need to add it in your main app (and transform resulting code with Babel if needed).
 
 To enable debug logs you will need to add `window.DEBUG = true;` in module.js (just after import). The removal of the global `DEBUG` varibale should be handled with uglifyjs when building your main app (see grunt/shell.js). 
+
+[Back to documentation sections](#documentation-sections)
 
 ### API events
 rmp-vast will fire VAST-related events on the player container as they occur. 
@@ -251,6 +257,8 @@ VPAID-related events:
 - `adremainingtimechange`
 - `adinteraction`
 
+[Back to documentation sections](#documentation-sections)
+
 ### API methods
 Once a rmp-vast instance is created you can query the API methods to interact with the player. Example:
 ```javascript
@@ -297,7 +305,6 @@ The following methods should be queried after the `adstarted` event has fired fo
 Additional AdPod-related methods
 - `getAdPodInfo()`: return (Object|null) as {adPodCurrentIndex: Number, adPodLength: Number} giving information about the currently playing pod.
 
-
 Additional VPAID-related methods
 - `resizeAd(width, height, viewMode)`: resizes the VPAID creative based on width: Number, height: Number and viewMode: String. viewMode should be either 'normal' or 'fullscreen'.
 - `expandAd()`: expands the VPAID creative on stage.
@@ -317,6 +324,8 @@ The following methods provide context information for the rmp-vast instance:
 - `getVastPlayer()`: return HTMLVideoElement, the VAST player video tag.
 - `getContentPlayer()`: return HTMLVideoElement, the content player video tag.
 - `getIsUsingContentPlayerForAds()`: return Boolean, on iOS and macOS Safari the VAST player is the content player. This is to avoid fullscreen management and autoplay issues and to provide a consistent user experience. This method will return true for iOS and macOS Safari, false otherwise.
+
+[Back to documentation sections](#documentation-sections)
 
 ## Companion ads support
 Feedback is welcome! Companion ads support is currently in BETA in rmp-vast, your contributions can help us make this a rock-solid feature faster.
