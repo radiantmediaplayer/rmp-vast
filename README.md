@@ -9,6 +9,20 @@ rmp-vast is used and maintained by [Radiant Media Player](https://www.radiantmed
 
 rmp-vast is an open-source project released under [MIT license](https://github.com/radiantmediaplayer/rmp-vast/blob/master/LICENSE). It is built with ES2015 JavaScript and ported to ES5 JavaScript with Babel.
 
+## Sections
+- [Supported VAST 3 features](#supported-vast-3-features)
+- [Supported environments](#supported-environments)
+- [CORS requirements](#cors-requirements)
+- [Quick start guide](#quick-start-guide)
+- [Documentation](#documentation)
+- [Companion ads support](#companion-ads-support)
+- [VPAID support](#vpaid-support)
+- [Autoplay support](#autoplay-support)
+- [Fullscreen management](#fullscreen-management)
+- [Pre, mid and post rolls](#pre-mid-and-post-rolls)
+- [Outstream ads](#outstream-ads)
+- [Contributing](#contributing)
+
 ## Supported VAST 3 features
 - Inline and Wrapper Ads
 - Linear Ads (MP4/WebM or HLS, DASH where natively supported)
@@ -29,13 +43,13 @@ VAST 2 resources should also be compatible with rmp-vast.
 rmp-vast scope is not to implement all aspects of the VAST 3 specification but rather provide 
 enough coverage to support current industry requirements and best practices.
 
-## Additional supported features
+### Additional supported features
 - Mobile compatible (Android + iOS)
 - Autoplay support (muted autoplay on iOS, Android, Desktop Chrome 66+ and Desktop Safari 11+)
 - API to build a fully fledged player on top of rmp-vast
 
-## Currently unsupported VAST features
-- Companion Ads
+### Currently unsupported VAST features
+- VAST 4 specific features
 - VMAP
 
 ## Supported environments
@@ -103,26 +117,6 @@ rmpVast.loadAds(adTag);
 A complete implementation example is provided in app/index.html. You should look at app/js/app.js. 
 This example can be found live at https://www.radiantmediaplayer.com/rmp-vast/app/.
 
-## Importing rmp-vast as a ES2015 module
-```javascript
-import RmpVast from 'js/src/module';
-
-const adTag = 'https://www.radiantmediaplayer.com/vast/tags/inline-linear-1.xml';
-const id = 'rmpPlayer';
-const params = {
-  ajaxTimeout: 8000
-};
-
-// create RmpVast instance
-const rmpVast = new RmpVast(id, params);
-
-// call loadAds
-rmpVast.loadAds(adTag);
-```
-Note that 'core-js' is not provided when rmp-vast is imported as a ES2015 module, if wanted you will need to add it in your main app (and transform resulting code with Babel if needed).
-
-To enable debug logs you will need to add `window.DEBUG = true;` in module.js (just after import). The removal of the global `DEBUG` varibale should be handled with uglifyjs when building your main app (see grunt/shell.js). 
-
 ## Documentation
 Source code for rmp-vast is available for review in js/src/ folder. Code comments should be available at key points to better understand rmp-vast inner workings.
 
@@ -176,6 +170,26 @@ To sum up: use the rmp-vast API `loadAds()` method to start playback. On mobile 
 
 If you do not want to call `loadAds()` method directly - call `initialize()` method (as a result of a user interaction or on page 
 load for autoplay) then call `loadAds()` later on when you wish to load a VAST tag.
+
+### Importing rmp-vast as a ES2015 module
+```javascript
+import RmpVast from 'js/src/module';
+
+const adTag = 'https://www.radiantmediaplayer.com/vast/tags/inline-linear-1.xml';
+const id = 'rmpPlayer';
+const params = {
+  ajaxTimeout: 8000
+};
+
+// create RmpVast instance
+const rmpVast = new RmpVast(id, params);
+
+// call loadAds
+rmpVast.loadAds(adTag);
+```
+Note that 'core-js' is not provided when rmp-vast is imported as a ES2015 module, if wanted you will need to add it in your main app (and transform resulting code with Babel if needed).
+
+To enable debug logs you will need to add `window.DEBUG = true;` in module.js (just after import). The removal of the global `DEBUG` varibale should be handled with uglifyjs when building your main app (see grunt/shell.js). 
 
 ### API events
 rmp-vast will fire VAST-related events on the player container as they occur. 
@@ -291,7 +305,7 @@ The following methods provide context information for the rmp-vast instance:
 - `getContentPlayer()`: return HTMLVideoElement, the content player video tag.
 - `getIsUsingContentPlayerForAds()`: return Boolean, on iOS and macOS Safari the VAST player is the content player. This is to avoid fullscreen management and autoplay issues and to provide a consistent user experience. This method will return true for iOS and macOS Safari, false otherwise.
 
-### Companion ads support - BETA
+## Companion ads support
 Feedback is welcome! Companion ads support is currently in BETA in rmp-vast, your contributions can help us make this a rock-solid feature faster.
 
 We support StaticResource images (JPEG, GIF, PNG) in Companion tags. We do not support IFrameResource or HTMLResource in Companion tags.
@@ -302,27 +316,27 @@ See app/companion.html for an example of implementation.
 
 The following methods must be querried when the `adstarted` event fires for the master linear ad.
 
-- `getCompanionAds(width, height)`: return an Array of HTMLElement images. Each image can be appended to a DOM node where the companion ads can be displayed. Input width and height parameters are used to select companion ads based on available width and height for display.
+- `getCompanionAds(width, height, wantedCompanionAds)`: return an Array of HTMLElement images. Each image can be appended to a DOM node where the companion ads can be displayed. Input `width` and `height` parameters are used to select companion ads based on available width and height for display. `wantedCompanionAds` input parameter represents the number of expected companion ads with the request to `getCompanionAds`. By default this method returns as many companion ads as possible while automatically pinging ALL returned companion ads (`creativeView` event).
 - `getCompanionAdsAdSlotID()`: return an Array of String representing the adSlotID for each companion ad. An empty array is returned when this method has no information to provide.
 - `getCompanionAdsRequiredAttribute()`: return a String representing the "required" attribute for CompanionAds tag. Value can be all, any, none or an empty String when this attribute is not defined. See section 2.3.3.4 of VAST 3 specification for more information.
 
-### VPAID support
+## VPAID support
 It is no secret that VPAID in the industry is a jungle and we need your help to best implement it. 
 Any feedback and test adTags that can improve VPAID support in rmp-vast are welcome - open an issue when needed.
 Current VPAID support limitations:
 - supports only linear VPAID (non-linear support may be coming later)
 - no support for changes in linearity (likely to cause playback issues): we need production adTag to test this but we have not found reliable resources for it - please share if you have some available
  
-### Autoplay support
+## Autoplay support
 This is done by simply calling `loadAds` method on page load (after HTML5 content video player is in DOM and rmp-vast library is loaded and instantiated). For muted autoplay (iOS, Android, Desktop Chrome 66+ and Desktop Safari 11+) also add the `muted` attribute on the HTML5 content video player.
 
-### Fullscreen management
+## Fullscreen management
 rmp-vast supports fullscreen for the global player (e.g. content + vast players) but there is an extra layer to add to your application. See the app/js/app.js file around line 25 for an example of implementation.
 
-### pre/mid/post rolls
+## Pre, mid and post rolls
 rmp-vast can handle pre/mid/post rolls ad breaks through the loadAds API method. See app/pre-mid-post-roll.html for an example.
 
-### Outstream ads
+## Outstream ads
 rmp-vast supports displaying outstream ads when parameter `outstream` is set to true. For an implementation example see test/spec/outstreamSpec/Simple.html.
 
 ## Contributing
@@ -360,3 +374,5 @@ For testing on macOS Safari use:
 `grunt testSafari` 
 
 Before running `grunt test` make sure to update `TEST.pathToTest` in test/helpers/test.js with your local IP address. Running test on Android requires a [runnning adb server](https://developer.android.com/studio/command-line/adb.html).
+
+[Back at top](#rmp-vast)

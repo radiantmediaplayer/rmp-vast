@@ -336,7 +336,7 @@ API.attach = function (RmpVast) {
   };
 
   // companion ads
-  RmpVast.prototype.getCompanionAds = function (inputWidth, inputHeight) {
+  RmpVast.prototype.getCompanionAds = function (inputWidth, inputHeight, inputWantedCompanionAds) {
     let width = 300;
     if (inputWidth) {
       width = inputWidth;
@@ -344,6 +344,10 @@ API.attach = function (RmpVast) {
     let height = 250;
     if (inputHeight) {
       height = inputHeight;
+    }
+    let wantedCompanionAds = Infinity;
+    if (inputWantedCompanionAds) {
+      wantedCompanionAds = inputWantedCompanionAds;
     }
     if (this.adOnStage) {
       const availableCompanionAds = this.validCompanionAds.filter((companionAds) => {
@@ -380,6 +384,9 @@ API.attach = function (RmpVast) {
             img.src = availableCompanionAds[i].imageUrl;
           }
           result.push(img);
+          if (result.length >= wantedCompanionAds) {
+            break;
+          }
         }
         return result;
       }

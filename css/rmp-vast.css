@@ -95,7 +95,7 @@
   position: absolute;
   right: 0;
   bottom: 44px;
-  width: 138px;
+  width: 160px;
   height: 40px;
   line-height: 38px;
   text-align: center;
@@ -118,7 +118,7 @@
 .rmp-ad-container-skip-waiting {
   width: 100%;
   position: absolute;
-  padding: 0 4px;
+  padding: 0 2px;
   color: #cfcfcf;
   white-space: nowrap;
   overflow: hidden;

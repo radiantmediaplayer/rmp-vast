@@ -1,6 +1,6 @@
 /**
  * @license Copyright (c) 2017-2019 Radiant Media Player | https://www.radiantmediaplayer.com
- * rmp-vast 2.4.1
+ * rmp-vast 2.4.2
  * GitHub: https://github.com/radiantmediaplayer/rmp-vast
  * MIT License: https://github.com/radiantmediaplayer/rmp-vast/blob/master/LICENSE
  */
@@ -526,7 +526,7 @@ API.attach = function (RmpVast) {
   }; // companion ads
 
 
-  RmpVast.prototype.getCompanionAds = function (inputWidth, inputHeight) {
+  RmpVast.prototype.getCompanionAds = function (inputWidth, inputHeight, inputWantedCompanionAds) {
     var _this = this;
 
     var width = 300;
@@ -539,6 +539,12 @@ API.attach = function (RmpVast) {
 
     if (inputHeight) {
       height = inputHeight;
+    }
+
+    var wantedCompanionAds = Infinity;
+
+    if (inputWantedCompanionAds) {
+      wantedCompanionAds = inputWantedCompanionAds;
     }
 
     if (this.adOnStage) {
@@ -590,6 +596,10 @@ API.attach = function (RmpVast) {
           }
 
           result.push(img);
+
+          if (result.length >= wantedCompanionAds) {
+            break;
+          }
         }
 
         return result;
