@@ -1,6 +1,6 @@
 /**
  * @license Copyright (c) 2017-2019 Radiant Media Player | https://www.radiantmediaplayer.com
- * rmp-vast 2.4.2
+ * rmp-vast 2.4.3
  * GitHub: https://github.com/radiantmediaplayer/rmp-vast
  * MIT License: https://github.com/radiantmediaplayer/rmp-vast/blob/master/LICENSE
  */
@@ -526,9 +526,7 @@ API.attach = function (RmpVast) {
   }; // companion ads
 
 
-  RmpVast.prototype.getCompanionAds = function (inputWidth, inputHeight, inputWantedCompanionAds) {
-    var _this = this;
-
+  RmpVast.prototype.getCompanionAdsList = function (inputWidth, inputHeight) {
     var width = 300;
 
     if (inputWidth) {
@@ -539,12 +537,6 @@ API.attach = function (RmpVast) {
 
     if (inputHeight) {
       height = inputHeight;
-    }
-
-    var wantedCompanionAds = Infinity;
-
-    if (inputWantedCompanionAds) {
-      wantedCompanionAds = inputWantedCompanionAds;
     }
 
     if (this.adOnStage) {
@@ -558,50 +550,10 @@ API.attach = function (RmpVast) {
         var result = [];
 
         for (var i = 0, len = availableCompanionAds.length; i < len; i++) {
-          var img = document.createElement('img');
-
-          if (availableCompanionAds[i].altText) {
-            img.alt = availableCompanionAds[i].altText;
-          }
-
-          img.style.width = '100%';
-          img.style.height = '100%';
-          img.style.cursor = 'pointer';
-
-          if (availableCompanionAds[i].imageUrl) {
-            (function () {
-              var trackingEventsUri = availableCompanionAds[i].trackingEventsUri;
-
-              if (trackingEventsUri.length > 0) {
-                img.addEventListener('load', function () {
-                  for (var j = 0, _len = trackingEventsUri.length; j < _len; j++) {
-                    _ping.default.tracking.call(_this, trackingEventsUri[j], null);
-                  }
-                });
-                img.addEventListener('error', function () {
-                  _ping.default.error.call(_this, 603);
-                });
-              }
-
-              var companionClickTrackingUrl = null;
-
-              if (availableCompanionAds[i].companionClickTrackingUrl) {
-                companionClickTrackingUrl = availableCompanionAds[i].companionClickTrackingUrl;
-              }
-
-              img.addEventListener('touchend', (0, _bind.default)(_onImgClickThrough).call(_onImgClickThrough, _this, availableCompanionAds[i].companionClickThroughUrl, companionClickTrackingUrl));
-              img.addEventListener('click', (0, _bind.default)(_onImgClickThrough).call(_onImgClickThrough, _this, availableCompanionAds[i].companionClickThroughUrl, companionClickTrackingUrl));
-              img.src = availableCompanionAds[i].imageUrl;
-            })();
-          }
-
-          result.push(img);
-
-          if (result.length >= wantedCompanionAds) {
-            break;
-          }
+          result.push(availableCompanionAds[i]);
         }
 
+        this.companionAdsList = result;
         return result;
       }
     }
@@ -609,12 +561,45 @@ API.attach = function (RmpVast) {
     return null;
   };
 
-  RmpVast.prototype.getCompanionAdsAdSlotID = function () {
-    if (this.adOnStage) {
-      return this.companionAdsAdSlotID;
+  RmpVast.prototype.getCompanionAd = function (index) {
+    var _this = this;
+
+    if (typeof this.companionAdsList[index] === 'undefined') {
+      return null;
     }
 
-    return [];
+    var img = document.createElement('img');
+
+    if (this.companionAdsList[index].altText) {
+      img.alt = this.companionAdsList[index].altText;
+    }
+
+    img.style.width = '100%';
+    img.style.height = '100%';
+    img.style.cursor = 'pointer';
+    var trackingEventsUri = this.companionAdsList[index].trackingEventsUri;
+
+    if (trackingEventsUri.length > 0) {
+      img.addEventListener('load', function () {
+        for (var j = 0, len = trackingEventsUri.length; j < len; j++) {
+          _ping.default.tracking.call(_this, trackingEventsUri[j], null);
+        }
+      });
+      img.addEventListener('error', function () {
+        _ping.default.error.call(_this, 603);
+      });
+    }
+
+    var companionClickTrackingUrl = null;
+
+    if (this.companionAdsList[index].companionClickTrackingUrl) {
+      companionClickTrackingUrl = this.companionAdsList[index].companionClickTrackingUrl;
+    }
+
+    img.addEventListener('touchend', (0, _bind.default)(_onImgClickThrough).call(_onImgClickThrough, this, this.companionAdsList[index].companionClickThroughUrl, companionClickTrackingUrl));
+    img.addEventListener('click', (0, _bind.default)(_onImgClickThrough).call(_onImgClickThrough, this, this.companionAdsList[index].companionClickThroughUrl, companionClickTrackingUrl));
+    img.src = this.companionAdsList[index].imageUrl;
+    return img;
   };
 
   RmpVast.prototype.getCompanionAdsRequiredAttribute = function () {
@@ -720,8 +705,7 @@ var COMPANION = {};
 COMPANION.parse = function (companionAds) {
   // reset variables in case wrapper
   this.validCompanionAds = [];
-  this.companionAdsRequiredAttribute = '';
-  this.companionAdsAdSlotID = []; // getCompanionAdsRequiredAttribute
+  this.companionAdsRequiredAttribute = ''; // getCompanionAdsRequiredAttribute
 
   this.companionAdsRequiredAttribute = companionAds[0].getAttribute('required');
 
@@ -831,7 +815,7 @@ COMPANION.parse = function (companionAds) {
       var adSlotID = companion.getAttribute('adSlotID');
 
       if (adSlotID !== null) {
-        this.companionAdsAdSlotID.push(adSlotID);
+        newCompanionAds.adSlotID = adSlotID;
       }
 
       var trackingEvents = companion.getElementsByTagName('TrackingEvents'); // if TrackingEvents tag
@@ -5605,7 +5589,7 @@ DEFAULT.loadAdsVariables = function () {
 
   this.validCompanionAds = [];
   this.companionAdsRequiredAttribute = '';
-  this.companionAdsAdSlotID = []; // VPAID
+  this.companionAdsList = []; // VPAID
 
   this.isVPAID = false;
   this.vpaidCreative = null;

@@ -336,7 +336,7 @@ API.attach = function (RmpVast) {
   };
 
   // companion ads
-  RmpVast.prototype.getCompanionAds = function (inputWidth, inputHeight, inputWantedCompanionAds) {
+  RmpVast.prototype.getCompanionAdsList = function (inputWidth, inputHeight) {
     let width = 300;
     if (inputWidth) {
       width = inputWidth;
@@ -345,10 +345,6 @@ API.attach = function (RmpVast) {
     if (inputHeight) {
       height = inputHeight;
     }
-    let wantedCompanionAds = Infinity;
-    if (inputWantedCompanionAds) {
-      wantedCompanionAds = inputWantedCompanionAds;
-    }
     if (this.adOnStage) {
       const availableCompanionAds = this.validCompanionAds.filter((companionAds) => {
         return width >= companionAds.width && height >= companionAds.height;
@@ -356,49 +352,45 @@ API.attach = function (RmpVast) {
       if (availableCompanionAds.length > 0) {
         const result = [];
         for (let i = 0, len = availableCompanionAds.length; i < len; i++) {
-          const img = document.createElement('img');
-          if (availableCompanionAds[i].altText) {
-            img.alt = availableCompanionAds[i].altText;
-          }
-          img.style.width = '100%';
-          img.style.height = '100%';
-          img.style.cursor = 'pointer';
-          if (availableCompanionAds[i].imageUrl) {
-            const trackingEventsUri = availableCompanionAds[i].trackingEventsUri;
-            if (trackingEventsUri.length > 0) {
-              img.addEventListener('load', () => {
-                for (let j = 0, len = trackingEventsUri.length; j < len; j++) {
-                  PING.tracking.call(this, trackingEventsUri[j], null);
-                }
-              });
-              img.addEventListener('error', () => {
-                PING.error.call(this, 603);
-              });
-            }
-            let companionClickTrackingUrl = null;
-            if (availableCompanionAds[i].companionClickTrackingUrl) {
-              companionClickTrackingUrl = availableCompanionAds[i].companionClickTrackingUrl;
-            }
-            img.addEventListener('touchend', _onImgClickThrough.bind(this, availableCompanionAds[i].companionClickThroughUrl, companionClickTrackingUrl));
-            img.addEventListener('click', _onImgClickThrough.bind(this, availableCompanionAds[i].companionClickThroughUrl, companionClickTrackingUrl));
-            img.src = availableCompanionAds[i].imageUrl;
-          }
-          result.push(img);
-          if (result.length >= wantedCompanionAds) {
-            break;
-          }
+          result.push(availableCompanionAds[i]);
         }
+        this.companionAdsList = result;
         return result;
       }
     }
     return null;
   };
 
-  RmpVast.prototype.getCompanionAdsAdSlotID = function () { 
-    if (this.adOnStage) {
-      return this.companionAdsAdSlotID;
+  RmpVast.prototype.getCompanionAd = function (index) { 
+    if (typeof this.companionAdsList[index] === 'undefined') {
+      return null;
     }
-    return [];
+    const img = document.createElement('img');
+    if (this.companionAdsList[index].altText) {
+      img.alt = this.companionAdsList[index].altText;
+    }
+    img.style.width = '100%';
+    img.style.height = '100%';
+    img.style.cursor = 'pointer';
+    const trackingEventsUri = this.companionAdsList[index].trackingEventsUri;
+    if (trackingEventsUri.length > 0) {
+      img.addEventListener('load', () => {
+        for (let j = 0, len = trackingEventsUri.length; j < len; j++) {
+          PING.tracking.call(this, trackingEventsUri[j], null);
+        }
+      });
+      img.addEventListener('error', () => {
+        PING.error.call(this, 603);
+      });
+    }
+    let companionClickTrackingUrl = null;
+    if (this.companionAdsList[index].companionClickTrackingUrl) {
+      companionClickTrackingUrl = this.companionAdsList[index].companionClickTrackingUrl;
+    }
+    img.addEventListener('touchend', _onImgClickThrough.bind(this, this.companionAdsList[index].companionClickThroughUrl, companionClickTrackingUrl));
+    img.addEventListener('click', _onImgClickThrough.bind(this, this.companionAdsList[index].companionClickThroughUrl, companionClickTrackingUrl));
+    img.src = this.companionAdsList[index].imageUrl;
+    return img;
   };
 
   RmpVast.prototype.getCompanionAdsRequiredAttribute = function () {
@@ -406,7 +398,7 @@ API.attach = function (RmpVast) {
       return this.companionAdsRequiredAttribute;
     }
     return '';
-  }; 
+  };
 
   RmpVast.prototype.initialize = function () {
     if (this.rmpVastInitialized) {

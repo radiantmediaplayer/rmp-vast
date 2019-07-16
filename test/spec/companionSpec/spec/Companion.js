@@ -44,15 +44,18 @@ describe('Test for Companion', function () {
       if (rmpVast.getCompanionAdsRequiredAttribute()) {
         _incrementAndLog(e);
       }
-      if (rmpVast.getCompanionAdsAdSlotID()) {
+      var companionAds = rmpVast.getCompanionAdsList(900, 750);
+      if (Array.isArray(companionAds) && companionAds.length === 3 && typeof companionAds[0] === 'object') {
         _incrementAndLog(e);
       }
-      var companionAds = rmpVast.getCompanionAds(600, 500);
-      if (Array.isArray(companionAds) && companionAds.length === 2 && typeof companionAds[0] === 'object') {
-        _incrementAndLog(e);
-      }
+      var companionAd = rmpVast.getCompanionAd(0);
+      var companionSlot = document.getElementById('companionId');
+      companionSlot.appendChild(companionAd);
       setTimeout(function () {
-        rmpVast.stopAds();
+        var img = document.querySelector('#companionId > img');
+        if (img !== null) {
+          rmpVast.stopAds();
+        }
       }, 3000);
     });
 
@@ -71,8 +74,8 @@ describe('Test for Companion', function () {
         timeupdateCount++;
         if (timeupdateCount === 5) {
           _incrementAndLog(e);
-          if (validSteps === 11) {
-            expect(validSteps).toBe(11);
+          if (validSteps === 10) {
+            expect(validSteps).toBe(10);
             title.textContent = 'Test completed';
             done();
           }

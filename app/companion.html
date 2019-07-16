@@ -38,12 +38,14 @@
     rmpVast.loadAds(ADTAG2);
     container.addEventListener('adstarted', function () {
       console.log('adstarted');
-      var img = rmpVast.getCompanionAds(400, 500);
+      var list = rmpVast.getCompanionAdsList(900, 750);
+      console.log(list);
+      var img = rmpVast.getCompanionAd(2);
       console.log(img);
       console.log(rmpVast.getCompanionAdsRequiredAttribute());
-      console.log(rmpVast.getCompanionAdsAdSlotID());
+      //console.log(rmpVast.getCompanionAdsAdSlotID());
       var companionId = document.getElementById('companionId');
-      companionId.appendChild(img[0]);
+      companionId.appendChild(img);
     });
   </script>
 </body>

@@ -44,7 +44,8 @@ describe('Test for RedirectCompanionCompanion', function () {
       if (rmpVast.getCompanionAdsRequiredAttribute()) {
         _incrementAndLog(e);
       }
-      if (Array.isArray(rmpVast.getCompanionAds(400, 500)) && typeof rmpVast.getCompanionAds(400, 500) === 'object') {
+      var companionAds = rmpVast.getCompanionAdsList(400, 300);
+      if (Array.isArray(companionAds) && companionAds.length === 1 && typeof companionAds[0] === 'object') {
         _incrementAndLog(e);
       }
     });

@@ -115,7 +115,7 @@ DEFAULT.loadAdsVariables = function () {
   // companion ads
   this.validCompanionAds = [];
   this.companionAdsRequiredAttribute = '';
-  this.companionAdsAdSlotID = [];
+  this.companionAdsList = [];
   // VPAID
   this.isVPAID = false;
   this.vpaidCreative = null;

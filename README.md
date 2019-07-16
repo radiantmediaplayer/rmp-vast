@@ -338,8 +338,41 @@ See app/companion.html for an example of implementation.
 
 The following methods must be querried when the `adstarted` event fires for the master linear ad.
 
-- `getCompanionAds(width, height, wantedCompanionAds)`: return an Array of HTMLElement images. Each image can be appended to a DOM node where the companion ads can be displayed. Input `width` and `height` parameters are used to select companion ads based on available width and height for display. `wantedCompanionAds` input parameter represents the number of expected companion ads with the request to `getCompanionAds`. By default this method returns as many companion ads as possible while automatically pinging ALL returned companion ads (`creativeView` event).
-- `getCompanionAdsAdSlotID()`: return an Array of String representing the adSlotID for each companion ad. An empty array is returned when this method has no information to provide.
+- `getCompanionAdsList(width, height)`: return (Array of Object|null). Each Object represents a companion ad. Input `width` and `height` parameters are used to select companion ads based on available width and height for display. Each companion ad Object is represented as:
+```javascript
+{
+  adSlotID: "RMPSLOTID-1"
+  altText: "Radiant Media Player logo"
+  companionClickThroughUrl: "https://www.radiantmediaplayer.com"
+  companionClickTrackingUrl: "https://www.radiantmediaplayer.com/vast/tags/ping.gif?creativeType=companion&type=companionClickTracking"
+  height: 250
+  imageUrl: "https://www.radiantmediaplayer.com/vast/mp4s/companion.jpg"
+  trackingEventsUri: [
+    "https://www.radiantmediaplayer.com/vast/tags/ping.gif?creativeType=companion&type=creativeView", 
+    "https://www.radiantmediaplayer.com/vast/tags/ping.gif?creativeType=companion&type=creativeViewTwo"
+  ]
+  width: 300
+}
+```
+Not all field may be available, so check availability before usage.
+- `getCompanionAd(index)`: return (HTMLElement image|null) representing the companion ad. It takes a `Number` index parameter which represent the index of the wanted companion ads in the Array from `getCompanionAdsList` method. This method automates the required pinging for companion ads. Usage example:
+```javascript
+  container.addEventListener('adstarted', function () {
+    // we need to call getCompanionAdsList BEFORE calling getCompanionAd so that 
+    // rmp-vast can first create a collection of available companion ads based on getCompanionAdsList 
+    // input parameters
+    var list = rmpVast.getCompanionAdsList(900, 750);
+    if (list && list.length === 3) {
+      var img = rmpVast.getCompanionAd(2);
+      if (img) {
+        // we get our companion image and can append it to DOM
+        // VAST trackers will be called automatically when needed
+        var companionId = document.getElementById('companionId');
+        companionId.appendChild(img);
+      }
+    }
+  });
+```
 - `getCompanionAdsRequiredAttribute()`: return a String representing the "required" attribute for CompanionAds tag. Value can be all, any, none or an empty String when this attribute is not defined. See section 2.3.3.4 of VAST 3 specification for more information.
 
 [Back to documentation sections](#documentation-sections)

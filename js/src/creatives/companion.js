@@ -8,7 +8,6 @@ COMPANION.parse = function (companionAds) {
   // reset variables in case wrapper
   this.validCompanionAds = [];
   this.companionAdsRequiredAttribute = '';
-  this.companionAdsAdSlotID = [];
   // getCompanionAdsRequiredAttribute
   this.companionAdsRequiredAttribute = companionAds[0].getAttribute('required');
   if (this.companionAdsRequiredAttribute === null) {
@@ -94,7 +93,7 @@ COMPANION.parse = function (companionAds) {
       
       const adSlotID = companion.getAttribute('adSlotID');
       if (adSlotID !== null) {
-        this.companionAdsAdSlotID.push(adSlotID);
+        newCompanionAds.adSlotID = adSlotID;
       }
 
       const trackingEvents = companion.getElementsByTagName('TrackingEvents');
