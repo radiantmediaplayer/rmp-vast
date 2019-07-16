@@ -338,7 +338,7 @@ See app/companion.html for an example of implementation.
 
 The following methods must be querried when the `adstarted` event fires for the master linear ad.
 
-- `getCompanionAdsList(width, height)`: return (Array of Object|null). Each Object represents a companion ad. Input `width` and `height` parameters are used to select companion ads based on available width and height for display. Each companion ad Object is represented as:
+- `getCompanionAdsList(width, height)`: return (Array of Object|null). Each Object in the Array represents a companion ad. Input `width` and `height` parameters are used to select companion ads based on available width and height for display. Each companion ad Object is represented as:
 ```javascript
 {
   adSlotID: "RMPSLOTID-1"
@@ -354,8 +354,8 @@ The following methods must be querried when the `adstarted` event fires for the 
   width: 300
 }
 ```
-Not all field may be available, so check availability before usage.
-- `getCompanionAd(index)`: return (HTMLElement image|null) representing the companion ad. It takes a `Number` index parameter which represent the index of the wanted companion ads in the Array from `getCompanionAdsList` method. This method automates the required pinging for companion ads. Usage example:
+Not all fields may be available, so check availability before usage.
+- `getCompanionAd(index)`: return (HTMLElement image|null) representing the companion ad. It takes a `Number` index parameter which represents the index of the wanted companion ad in the Array returned from `getCompanionAdsList` method. This method automates the required pinging for companion ads. Usage example:
 ```javascript
   container.addEventListener('adstarted', function () {
     // we need to call getCompanionAdsList BEFORE calling getCompanionAd so that 
@@ -365,7 +365,7 @@ Not all field may be available, so check availability before usage.
     if (list && list.length === 3) {
       var img = rmpVast.getCompanionAd(2);
       if (img) {
-        // we get our companion image and can append it to DOM
+        // we get our companion ad image and we can append it to DOM now
         // VAST trackers will be called automatically when needed
         var companionId = document.getElementById('companionId');
         companionId.appendChild(img);
