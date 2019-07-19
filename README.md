@@ -72,7 +72,7 @@ enough coverage to support current industry requirements and best practices.
 - MS Edge for Desktop
 - Internet Explorer 11+ for Desktop
 
-Specifically we support the latest stable release for each browser
+Specifically we support the latest stable release for each browser.
 
 ### WebViews
 - Android 5+
@@ -408,7 +408,7 @@ rmp-vast supports displaying outstream ads when parameter `outstream` is set to 
 
 ## Contributing
 Contributions are welcome. Please review general code structure and stick to existing patterns.
-Provide test where appropriate (see test/ folder). Tests are written with Jasmine and automated with [node.js 6.11+ and selenium web driver 3.6+](https://www.npmjs.com/package/selenium-webdriver) and are validated in latest webdriver for Chrome, Firefox and MS Edge for Windows 10. Additionally we test on latest Chrome for Android 8 and macOS Safari 11.
+Provide test where appropriate (see test/ folder). Tests are written with Jasmine and automated with [node.js 6.11+ and selenium web driver 3.6+](https://www.npmjs.com/package/selenium-webdriver) and are validated in latest webdriver for Chrome and Firefox for Windows 10. Additionally we test on latest Chrome for Android 8 and macOS Safari 12.
 
 To develop rmp-vast do install it:
 
