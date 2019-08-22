@@ -1,6 +1,6 @@
 /**
  * @license Copyright (c) 2017-2019 Radiant Media Player | https://www.radiantmediaplayer.com
- * rmp-vast 2.4.4
+ * rmp-vast 2.4.5
  * GitHub: https://github.com/radiantmediaplayer/rmp-vast
  * MIT License: https://github.com/radiantmediaplayer/rmp-vast/blob/master/LICENSE
  */
@@ -10087,8 +10087,22 @@ module.exports = function (it, TAG, STATIC) {
 },{"../internals/has":258,"../internals/object-define-property":274,"../internals/well-known-symbol":303}],292:[function(require,module,exports){
 arguments[4][158][0].apply(exports,arguments)
 },{"../internals/shared":293,"../internals/uid":302,"dup":158}],293:[function(require,module,exports){
-arguments[4][159][0].apply(exports,arguments)
-},{"../internals/global":257,"../internals/is-pure":268,"../internals/set-global":290,"dup":159}],294:[function(require,module,exports){
+var global = require('../internals/global');
+var setGlobal = require('../internals/set-global');
+var IS_PURE = require('../internals/is-pure');
+
+var SHARED = '__core-js_shared__';
+var store = global[SHARED] || setGlobal(SHARED, {});
+
+(module.exports = function (key, value) {
+  return store[key] || (store[key] = value !== undefined ? value : {});
+})('versions', []).push({
+  version: '3.2.1',
+  mode: IS_PURE ? 'pure' : 'global',
+  copyright: '© 2019 Denis Pushkarev (zloirock.ru)'
+});
+
+},{"../internals/global":257,"../internals/is-pure":268,"../internals/set-global":290}],294:[function(require,module,exports){
 arguments[4][161][0].apply(exports,arguments)
 },{"../internals/a-function":237,"../internals/an-object":239,"../internals/well-known-symbol":303,"dup":161}],295:[function(require,module,exports){
 arguments[4][162][0].apply(exports,arguments)
