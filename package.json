@@ -27,6 +27,8 @@
     "@babel/plugin-transform-runtime": "^7.5.5",
     "@babel/preset-env": "^7.5.5",
     "babelify": "^10.0.0",
+    "browserify": "^16.5.0",
+    "eslint": "^6.2.2",
     "grunt": "^1.0.4",
     "grunt-concurrent": "^3.0.0",
     "grunt-contrib-compress": "^1.5.0",
@@ -35,11 +37,13 @@
     "grunt-contrib-watch": "^1.1.0",
     "grunt-shell": "^3.0.1",
     "grunt-text-replace": "^0.4.0",
+    "js-beautify": "^1.10.2",
     "load-grunt-config": "^3.0.0",
     "selenium-webdriver": "^3.6.0",
     "stylelint": "^10.1.0",
     "stylelint-config-standard": "^18.3.0",
-    "time-grunt": "^2.0.0"
+    "time-grunt": "^2.0.0",
+    "uglify": "^0.1.5"
   },
   "dependencies": {
     "@babel/runtime-corejs3": "^7.5.5",
