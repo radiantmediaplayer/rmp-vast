@@ -6,7 +6,11 @@ const TEST = {};
 
 TEST.driverCount = 2;
 
-TEST.pathToTest = 'http://192.168.1.98/rmp-vast/test/spec/';
+// todo:
+// cd rmp-vast
+// cd ../rmp-vast # to illustrate that desired folder one above rmp-vast
+// npm i -g http-server && http-server
+TEST.pathToTest = 'http://localhost:8080/rmp-vast/test/spec/';
 
 TEST.getDriver = function (which) {
   var driver;
