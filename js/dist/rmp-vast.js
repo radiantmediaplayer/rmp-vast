@@ -1282,9 +1282,10 @@ var _onPlaybackError = function _onPlaybackError(event) {
 var _appendClickUIOnMobile = function _appendClickUIOnMobile() {
   // we create a <a> tag rather than using window.open 
   // because it works better in standalone mode and WebView
+  var textBtn = this.params.textForClickUIOnMobile;
   this.clickUIOnMobile = document.createElement('a');
-  this.clickUIOnMobile.className = 'rmp-ad-click-ui-mobile';
-  this.clickUIOnMobile.textContent = this.params.textForClickUIOnMobile;
+  this.clickUIOnMobile.className = textBtn ? 'rmp-ad-click-ui-mobile' : 'rmp-ad-click-ui-mobile-no-text';
+  this.clickUIOnMobile.textContent = textBtn;
   this.clickUIOnMobile.addEventListener('touchend', this.onClickThrough);
   this.clickUIOnMobile.href = this.clickThroughUrl;
   this.clickUIOnMobile.target = '_blank';
@@ -5715,7 +5716,8 @@ HELPERS.filterParams = function (inputParams) {
     pauseOnClick: true,
     skipMessage: 'Skip ad',
     skipWaitingMessage: 'Skip ad in',
-    textForClickUIOnMobile: 'Learn more',
+    textForClickUIOnMobile: '',
+    //'Learn more',
     enableVpaid: true,
     outstream: false,
     vpaidSettings: {
