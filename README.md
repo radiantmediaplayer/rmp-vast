@@ -410,13 +410,15 @@ rmp-vast supports displaying outstream ads when parameter `outstream` is set to 
 Contributions are welcome. Please review general code structure and stick to existing patterns.
 Provide test where appropriate (see test/ folder). Tests are written with Jasmine and automated with [node.js 6.11+ and selenium web driver 3.6+](https://www.npmjs.com/package/selenium-webdriver) and are validated in latest webdriver for Chrome and Firefox for Windows 10. Additionally we test on latest Chrome for Android 8 and macOS Safari 12.
 
-To develop rmp-vast do install it:
+Please review `script.preinstall` in `package.json` to make sure our preinstall script does not overwrite some of your already installed global packages.
+
+To develop rmp-vast do install it (you need to have node.js installed globally):
 
 `git clone https://github.com/radiantmediaplayer/rmp-vast.git`
 
-`npm install`
+`npm preinstall`
 
-Please review grunt/shell.js - you need to have eslint, browserify, watchify, uglifyjs, node, stylelint and js-beautify installed globally to move forward.
+`npm install`
 
 Make changes to code and then run:
 
