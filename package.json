@@ -21,7 +21,7 @@
     "url": "https://github.com/radiantmediaplayer/rmp-vast/issues"
   },
   "homepage": "https://www.radiantmediaplayer.com/rmp-vast/app/",
-  "script": {
+  "scripts": {
     "preinstall": "npm i -g eslint@5 browserify watchify uglify-js@3 js-beautify stylelint"
   },
   "devDependencies": {
