@@ -90,7 +90,7 @@ rmp-vast uses JavaScript XMLHttpRequests to load VAST tags. Hence proper [CORS c
 
 ## Video ads from Google Ads network and rmp-vast
 
-When serving ads from Google Ads network (DFP, ADX, AdSense for Video) you must use [Google IMA HTML5 SDK](https://developers.google.com/interactive-media-ads/docs/sdks/html5/). Radiant Media Player supports Google IMA HTML5 SDK and is a certified [Google's video technology partner](https://support.google.com/admanager/answer/186110?hl=en). ADX and AdSense for Video ads will not render with rmp-vast. DFP ads may render with rmp-vast but we cannot guarentee full support.
+When serving ads from Google Ads network (DFP, ADX, AdSense for Video) you must use [Google IMA HTML5 SDK](https://developers.google.com/interactive-media-ads/docs/sdks/html5/). Radiant Media Player supports [Google IMA HTML5 SDK](https://www.radiantmediaplayer.com/docs/latest/video-ads-documentation.html) and is a certified [Google's video technology partner](https://support.google.com/admanager/answer/186110?hl=en). ADX and AdSense for Video ads will not render with rmp-vast. DFP ads may render with rmp-vast but we cannot guarentee full support.
 
 [Back to documentation sections](#documentation-sections)
 
