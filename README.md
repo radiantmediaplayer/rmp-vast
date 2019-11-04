@@ -423,8 +423,6 @@ To develop rmp-vast do install it (you need to have node.js installed globally):
 
 `git clone https://github.com/radiantmediaplayer/rmp-vast.git`
 
-`npm run preinstall`
-
 `npm install`
 
 Make changes to code and then run:
