@@ -1,6 +1,6 @@
 /**
  * @license Copyright (c) 2017-2019 Radiant Media Player | https://www.radiantmediaplayer.com
- * rmp-vast 2.4.8
+ * rmp-vast 2.4.9
  * GitHub: https://github.com/radiantmediaplayer/rmp-vast
  * MIT License: https://github.com/radiantmediaplayer/rmp-vast/blob/master/LICENSE
  */
@@ -1124,11 +1124,11 @@ exports.default = _default;
 
 var _interopRequireDefault = require("@babel/runtime-corejs3/helpers/interopRequireDefault");
 
+var _Object$defineProperty = require("@babel/runtime-corejs3/core-js-stable/object/define-property");
+
 require("core-js/modules/es.object.to-string");
 
 require("core-js/modules/es.regexp.to-string");
-
-var _Object$defineProperty = require("@babel/runtime-corejs3/core-js-stable/object/define-property");
 
 _Object$defineProperty(exports, "__esModule", {
   value: true
@@ -1673,11 +1673,11 @@ exports.default = _default;
 
 var _interopRequireDefault = require("@babel/runtime-corejs3/helpers/interopRequireDefault");
 
+var _Object$defineProperty = require("@babel/runtime-corejs3/core-js-stable/object/define-property");
+
 require("core-js/modules/es.object.to-string");
 
 require("core-js/modules/es.regexp.to-string");
-
-var _Object$defineProperty = require("@babel/runtime-corejs3/core-js-stable/object/define-property");
 
 _Object$defineProperty(exports, "__esModule", {
   value: true
@@ -2099,9 +2099,9 @@ exports.default = _default;
 
 var _interopRequireDefault = require("@babel/runtime-corejs3/helpers/interopRequireDefault");
 
-require("core-js/modules/es.string.match");
-
 var _Object$defineProperty = require("@babel/runtime-corejs3/core-js-stable/object/define-property");
+
+require("core-js/modules/es.string.match");
 
 _Object$defineProperty(exports, "__esModule", {
   value: true
@@ -2150,6 +2150,17 @@ var _filterVersion = function _filterVersion(pattern) {
   return -1;
 };
 
+var _getDevicePixelRatio = function _getDevicePixelRatio() {
+  var pixelRatio = 1;
+
+  if (_fw.default.isNumber(window.devicePixelRatio) && window.devicePixelRatio > 1) {
+    pixelRatio = window.devicePixelRatio;
+  }
+
+  return pixelRatio;
+};
+
+ENV.devicePixelRatio = _getDevicePixelRatio();
 var IOS_PATTERN = /(ipad|iphone|ipod)/i;
 var IOS_VERSION_PATTERN = /os\s+(\d+)_/i;
 
@@ -2170,14 +2181,21 @@ var _isIos = function _isIos() {
 var isIos = _isIos();
 
 var MACOS_PATTERN = /(macintosh|mac\s+os)/i;
+var MACOS_VERSION_PATTERN = /mac\s+os\s+x\s+(\d+)_(\d+)/i;
 
-var _isMacOSX = function _isMacOSX() {
+var _isMacOS = function _isMacOS() {
+  var isMacOS = false;
+  var macOSXMinorVersion = -1;
+
   if (!isIos[0] && MACOS_PATTERN.test(userAgent)) {
-    return true;
+    isMacOS = true;
+    macOSXMinorVersion = _filterVersion(MACOS_VERSION_PATTERN, true);
   }
 
-  return false;
+  return [isMacOS, macOSXMinorVersion];
 };
+
+var isMacOS = _isMacOS();
 
 var SAFARI_PATTERN = /safari\/[.0-9]*/i;
 var SAFARI_VERSION_PATTERN = /version\/(\d+)\./i;
@@ -2195,6 +2213,17 @@ var _isSafari = function _isSafari() {
   return [isSafari, safariVersion];
 };
 
+var isSafari = _isSafari();
+
+var _isIpadOS = function _isIpadOS() {
+  if (!isIos[0] && isSafari[0] && isSafari[1] > 12 && isMacOS[0] && isMacOS[1] > 14 && ENV.devicePixelRatio > 1) {
+    return true;
+  }
+
+  return false;
+};
+
+ENV.isIpadOS = _isIpadOS();
 var ANDROID_PATTERN = /android/i;
 var ANDROID_VERSION_PATTERN = /android\s*(\d+)\./i;
 
@@ -2283,24 +2312,14 @@ var _hasNativeFullscreenSupport = function _hasNativeFullscreenSupport() {
   return false;
 };
 
-var _getDevicePixelRatio = function _getDevicePixelRatio() {
-  var pixelRatio = 1;
-
-  if (_fw.default.isNumber(window.devicePixelRatio) && window.devicePixelRatio > 1) {
-    pixelRatio = window.devicePixelRatio;
-  }
-
-  return pixelRatio;
-};
-
+ENV.isSafari = isSafari;
 ENV.isIos = isIos;
 ENV.isAndroid = _isAndroid();
-ENV.isMacOSX = _isMacOSX();
-ENV.isSafari = _isSafari();
+ENV.isMacOS = _isMacOS();
 ENV.isFirefox = _isFirefox();
 ENV.isMobile = false;
 
-if (ENV.isIos[0] || ENV.isAndroid[0]) {
+if (ENV.isIos[0] || ENV.isAndroid[0] || ENV.isIpadOS) {
   ENV.isMobile = true;
 }
 
@@ -2329,7 +2348,6 @@ ENV.canPlayType = function (type, codec) {
 };
 
 ENV.hasNativeFullscreenSupport = _hasNativeFullscreenSupport();
-ENV.devicePixelRatio = _getDevicePixelRatio();
 var _default = ENV;
 exports.default = _default;
 
@@ -2338,6 +2356,8 @@ exports.default = _default;
 
 var _interopRequireDefault = require("@babel/runtime-corejs3/helpers/interopRequireDefault");
 
+var _Object$defineProperty = require("@babel/runtime-corejs3/core-js-stable/object/define-property");
+
 require("core-js/modules/es.object.to-string");
 
 require("core-js/modules/es.regexp.to-string");
@@ -2345,8 +2365,6 @@ require("core-js/modules/es.regexp.to-string");
 require("core-js/modules/es.string.replace");
 
 require("core-js/modules/es.string.split");
-
-var _Object$defineProperty = require("@babel/runtime-corejs3/core-js-stable/object/define-property");
 
 _Object$defineProperty(exports, "__esModule", {
   value: true
@@ -5074,9 +5092,9 @@ exports.default = _default;
 
 var _interopRequireDefault = require("@babel/runtime-corejs3/helpers/interopRequireDefault");
 
-require("core-js/modules/es.string.replace");
-
 var _Object$defineProperty = require("@babel/runtime-corejs3/core-js-stable/object/define-property");
+
+require("core-js/modules/es.string.replace");
 
 _Object$defineProperty(exports, "__esModule", {
   value: true
@@ -5502,7 +5520,7 @@ DEFAULT.instanceVariables = function () {
   // to avoid issues related to fullscreen management and autoplay
   // as fullscreen on iOS is handled by the default OS player
 
-  if (_env.default.isIos[0] || _env.default.isMacOSX && _env.default.isSafari[0]) {
+  if (_env.default.isIos[0] || _env.default.isMacOS[0] && _env.default.isSafari[0] || _env.default.isIpadOS) {
     this.useContentPlayerForAds = true;
 
     if (DEBUG) {
@@ -5895,11 +5913,11 @@ exports.default = _default;
 
 var _interopRequireDefault = require("@babel/runtime-corejs3/helpers/interopRequireDefault");
 
+var _Object$defineProperty = require("@babel/runtime-corejs3/core-js-stable/object/define-property");
+
 require("core-js/modules/es.symbol");
 
 require("core-js/modules/es.symbol.description");
-
-var _Object$defineProperty = require("@babel/runtime-corejs3/core-js-stable/object/define-property");
 
 _Object$defineProperty(exports, "__esModule", {
   value: true
@@ -8028,7 +8046,7 @@ var store = require('../internals/shared-store');
 (module.exports = function (key, value) {
   return store[key] || (store[key] = value !== undefined ? value : {});
 })('versions', []).push({
-  version: '3.3.6',
+  version: '3.4.0',
   mode: IS_PURE ? 'pure' : 'global',
   copyright: '© 2019 Denis Pushkarev (zloirock.ru)'
 });
@@ -9256,6 +9274,7 @@ defineWellKnownSymbol('iterator');
 'use strict';
 var $ = require('../internals/export');
 var global = require('../internals/global');
+var getBuiltIn = require('../internals/get-built-in');
 var IS_PURE = require('../internals/is-pure');
 var DESCRIPTORS = require('../internals/descriptors');
 var NATIVE_SYMBOL = require('../internals/native-symbol');
@@ -9297,8 +9316,7 @@ var setInternalState = InternalStateModule.set;
 var getInternalState = InternalStateModule.getterFor(SYMBOL);
 var ObjectPrototype = Object[PROTOTYPE];
 var $Symbol = global.Symbol;
-var JSON = global.JSON;
-var nativeJSONStringify = JSON && JSON.stringify;
+var $stringify = getBuiltIn('JSON', 'stringify');
 var nativeGetOwnPropertyDescriptor = getOwnPropertyDescriptorModule.f;
 var nativeDefineProperty = definePropertyModule.f;
 var nativeGetOwnPropertyNames = getOwnPropertyNamesExternal.f;
@@ -9519,30 +9537,35 @@ $({ target: 'Object', stat: true, forced: fails(function () { getOwnPropertySymb
 
 // `JSON.stringify` method behavior with symbols
 // https://tc39.github.io/ecma262/#sec-json.stringify
-JSON && $({ target: 'JSON', stat: true, forced: !NATIVE_SYMBOL || fails(function () {
-  var symbol = $Symbol();
-  // MS Edge converts symbol values to JSON as {}
-  return nativeJSONStringify([symbol]) != '[null]'
-    // WebKit converts symbol values to JSON as null
-    || nativeJSONStringify({ a: symbol }) != '{}'
-    // V8 throws on boxed symbols
-    || nativeJSONStringify(Object(symbol)) != '{}';
-}) }, {
-  stringify: function stringify(it) {
-    var args = [it];
-    var index = 1;
-    var replacer, $replacer;
-    while (arguments.length > index) args.push(arguments[index++]);
-    $replacer = replacer = args[1];
-    if (!isObject(replacer) && it === undefined || isSymbol(it)) return; // IE8 returns string on undefined
-    if (!isArray(replacer)) replacer = function (key, value) {
-      if (typeof $replacer == 'function') value = $replacer.call(this, key, value);
-      if (!isSymbol(value)) return value;
-    };
-    args[1] = replacer;
-    return nativeJSONStringify.apply(JSON, args);
-  }
-});
+if ($stringify) {
+  var FORCED_JSON_STRINGIFY = !NATIVE_SYMBOL || fails(function () {
+    var symbol = $Symbol();
+    // MS Edge converts symbol values to JSON as {}
+    return $stringify([symbol]) != '[null]'
+      // WebKit converts symbol values to JSON as null
+      || $stringify({ a: symbol }) != '{}'
+      // V8 throws on boxed symbols
+      || $stringify(Object(symbol)) != '{}';
+  });
+
+  $({ target: 'JSON', stat: true, forced: FORCED_JSON_STRINGIFY }, {
+    // eslint-disable-next-line no-unused-vars
+    stringify: function stringify(it, replacer, space) {
+      var args = [it];
+      var index = 1;
+      var $replacer;
+      while (arguments.length > index) args.push(arguments[index++]);
+      $replacer = replacer;
+      if (!isObject(replacer) && it === undefined || isSymbol(it)) return; // IE8 returns string on undefined
+      if (!isArray(replacer)) replacer = function (key, value) {
+        if (typeof $replacer == 'function') value = $replacer.call(this, key, value);
+        if (!isSymbol(value)) return value;
+      };
+      args[1] = replacer;
+      return $stringify.apply(null, args);
+    }
+  });
+}
 
 // `Symbol.prototype[@@toPrimitive]` method
 // https://tc39.github.io/ecma262/#sec-symbol.prototype-@@toprimitive
@@ -9555,7 +9578,7 @@ setToStringTag($Symbol, SYMBOL);
 
 hiddenKeys[HIDDEN] = true;
 
-},{"../internals/an-object":81,"../internals/array-iteration":85,"../internals/create-non-enumerable-property":95,"../internals/create-property-descriptor":96,"../internals/define-well-known-symbol":99,"../internals/descriptors":100,"../internals/export":105,"../internals/fails":106,"../internals/global":112,"../internals/has":113,"../internals/hidden-keys":114,"../internals/internal-state":119,"../internals/is-array":121,"../internals/is-object":124,"../internals/is-pure":125,"../internals/native-symbol":131,"../internals/object-create":135,"../internals/object-define-property":137,"../internals/object-get-own-property-descriptor":138,"../internals/object-get-own-property-names":140,"../internals/object-get-own-property-names-external":139,"../internals/object-get-own-property-symbols":141,"../internals/object-keys":144,"../internals/object-property-is-enumerable":145,"../internals/redefine":154,"../internals/set-to-string-tag":158,"../internals/shared":161,"../internals/shared-key":159,"../internals/to-indexed-object":168,"../internals/to-object":171,"../internals/to-primitive":172,"../internals/uid":173,"../internals/well-known-symbol":176,"../internals/wrapped-well-known-symbol":178}],208:[function(require,module,exports){
+},{"../internals/an-object":81,"../internals/array-iteration":85,"../internals/create-non-enumerable-property":95,"../internals/create-property-descriptor":96,"../internals/define-well-known-symbol":99,"../internals/descriptors":100,"../internals/export":105,"../internals/fails":106,"../internals/get-built-in":110,"../internals/global":112,"../internals/has":113,"../internals/hidden-keys":114,"../internals/internal-state":119,"../internals/is-array":121,"../internals/is-object":124,"../internals/is-pure":125,"../internals/native-symbol":131,"../internals/object-create":135,"../internals/object-define-property":137,"../internals/object-get-own-property-descriptor":138,"../internals/object-get-own-property-names":140,"../internals/object-get-own-property-names-external":139,"../internals/object-get-own-property-symbols":141,"../internals/object-keys":144,"../internals/object-property-is-enumerable":145,"../internals/redefine":154,"../internals/set-to-string-tag":158,"../internals/shared":161,"../internals/shared-key":159,"../internals/to-indexed-object":168,"../internals/to-object":171,"../internals/to-primitive":172,"../internals/uid":173,"../internals/well-known-symbol":176,"../internals/wrapped-well-known-symbol":178}],208:[function(require,module,exports){
 var defineWellKnownSymbol = require('../internals/define-well-known-symbol');
 
 // `Symbol.matchAll` well-known symbol
@@ -10656,4 +10679,4 @@ if (DESCRIPTORS && typeof NativeSymbol == 'function' && (!('description' in Nati
 
 },{"../internals/copy-constructor-properties":251,"../internals/descriptors":255,"../internals/export":258,"../internals/global":263,"../internals/has":264,"../internals/is-object":272,"../internals/object-define-property":279}],317:[function(require,module,exports){
 arguments[4][207][0].apply(exports,arguments)
-},{"../internals/an-object":244,"../internals/array-iteration":246,"../internals/create-non-enumerable-property":252,"../internals/create-property-descriptor":253,"../internals/define-well-known-symbol":254,"../internals/descriptors":255,"../internals/export":258,"../internals/fails":259,"../internals/global":263,"../internals/has":264,"../internals/hidden-keys":265,"../internals/internal-state":269,"../internals/is-array":270,"../internals/is-object":272,"../internals/is-pure":273,"../internals/native-symbol":275,"../internals/object-create":277,"../internals/object-define-property":279,"../internals/object-get-own-property-descriptor":280,"../internals/object-get-own-property-names":282,"../internals/object-get-own-property-names-external":281,"../internals/object-get-own-property-symbols":283,"../internals/object-keys":285,"../internals/object-property-is-enumerable":286,"../internals/redefine":290,"../internals/set-to-string-tag":296,"../internals/shared":299,"../internals/shared-key":297,"../internals/to-indexed-object":303,"../internals/to-object":306,"../internals/to-primitive":307,"../internals/uid":308,"../internals/well-known-symbol":309,"../internals/wrapped-well-known-symbol":310,"dup":207}]},{},[10]);
+},{"../internals/an-object":244,"../internals/array-iteration":246,"../internals/create-non-enumerable-property":252,"../internals/create-property-descriptor":253,"../internals/define-well-known-symbol":254,"../internals/descriptors":255,"../internals/export":258,"../internals/fails":259,"../internals/get-built-in":262,"../internals/global":263,"../internals/has":264,"../internals/hidden-keys":265,"../internals/internal-state":269,"../internals/is-array":270,"../internals/is-object":272,"../internals/is-pure":273,"../internals/native-symbol":275,"../internals/object-create":277,"../internals/object-define-property":279,"../internals/object-get-own-property-descriptor":280,"../internals/object-get-own-property-names":282,"../internals/object-get-own-property-names-external":281,"../internals/object-get-own-property-symbols":283,"../internals/object-keys":285,"../internals/object-property-is-enumerable":286,"../internals/redefine":290,"../internals/set-to-string-tag":296,"../internals/shared":299,"../internals/shared-key":297,"../internals/to-indexed-object":303,"../internals/to-object":306,"../internals/to-primitive":307,"../internals/uid":308,"../internals/well-known-symbol":309,"../internals/wrapped-well-known-symbol":310,"dup":207}]},{},[10]);

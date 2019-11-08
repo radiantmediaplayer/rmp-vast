@@ -31,6 +31,15 @@ const _filterVersion = function (pattern) {
   return -1;
 };
 
+const _getDevicePixelRatio = function () {
+  let pixelRatio = 1;
+  if (FW.isNumber(window.devicePixelRatio) && window.devicePixelRatio > 1) {
+    pixelRatio = window.devicePixelRatio;
+  }
+  return pixelRatio;
+};
+ENV.devicePixelRatio = _getDevicePixelRatio();
+
 const IOS_PATTERN = /(ipad|iphone|ipod)/i;
 const IOS_VERSION_PATTERN = /os\s+(\d+)_/i;
 const _isIos = function () {
@@ -46,12 +55,17 @@ const _isIos = function () {
 const isIos = _isIos();
 
 const MACOS_PATTERN = /(macintosh|mac\s+os)/i;
-const _isMacOSX = function () {
+const MACOS_VERSION_PATTERN = /mac\s+os\s+x\s+(\d+)_(\d+)/i;
+const _isMacOS = function () {
+  let isMacOS = false;
+  let macOSXMinorVersion = -1;
   if (!isIos[0] && MACOS_PATTERN.test(userAgent)) {
-    return true;
+    isMacOS = true;
+    macOSXMinorVersion = _filterVersion(MACOS_VERSION_PATTERN, true);
   }
-  return false;
+  return [isMacOS, macOSXMinorVersion];
 };
+const isMacOS = _isMacOS();
 
 const SAFARI_PATTERN = /safari\/[.0-9]*/i;
 const SAFARI_VERSION_PATTERN = /version\/(\d+)\./i;
@@ -65,6 +79,15 @@ const _isSafari = function () {
   }
   return [isSafari, safariVersion];
 };
+const isSafari = _isSafari();
+
+const _isIpadOS = function() {
+  if (!isIos[0] && isSafari[0] && isSafari[1] > 12 && isMacOS[0] && isMacOS[1] > 14 && ENV.devicePixelRatio > 1) {
+    return true;
+  }
+  return false;
+};
+ENV.isIpadOS = _isIpadOS();
 
 const ANDROID_PATTERN = /android/i;
 const ANDROID_VERSION_PATTERN = /android\s*(\d+)\./i;
@@ -141,22 +164,13 @@ const _hasNativeFullscreenSupport = function () {
   return false;
 };
 
-
-const _getDevicePixelRatio = function () {
-  let pixelRatio = 1;
-  if (FW.isNumber(window.devicePixelRatio) && window.devicePixelRatio > 1) {
-    pixelRatio = window.devicePixelRatio;
-  }
-  return pixelRatio;
-};
-
+ENV.isSafari = isSafari;
 ENV.isIos = isIos;
 ENV.isAndroid = _isAndroid();
-ENV.isMacOSX = _isMacOSX();
-ENV.isSafari = _isSafari();
+ENV.isMacOS = _isMacOS();
 ENV.isFirefox = _isFirefox();
 ENV.isMobile = false;
-if (ENV.isIos[0] || ENV.isAndroid[0]) {
+if (ENV.isIos[0] || ENV.isAndroid[0] || ENV.isIpadOS) {
   ENV.isMobile = true;
 }
 
@@ -181,6 +195,5 @@ ENV.canPlayType = function (type, codec) {
 };
 
 ENV.hasNativeFullscreenSupport = _hasNativeFullscreenSupport();
-ENV.devicePixelRatio = _getDevicePixelRatio();
 
 export default ENV;

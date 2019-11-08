@@ -29,7 +29,7 @@ DEFAULT.instanceVariables = function () {
   // on iOS and macOS Safari we use content player to play ads
   // to avoid issues related to fullscreen management and autoplay
   // as fullscreen on iOS is handled by the default OS player
-  if (ENV.isIos[0] || (ENV.isMacOSX && ENV.isSafari[0])) {
+  if (ENV.isIos[0] || (ENV.isMacOS[0] && ENV.isSafari[0]) || ENV.isIpadOS) {
     this.useContentPlayerForAds = true;
     if (DEBUG) {
       FW.log('vast player will be content player');
