@@ -150,10 +150,7 @@ const _onPlayingAppendIcons = function () {
   for (let i = 0, len = this.icons.length; i < len; i++) {
     const icon = document.createElement('img');
     icon.className = 'rmp-ad-container-icons';
-
-    icon.style.width = parseInt(this.icons[i].width) + 'px';
-
-    icon.style.height = parseInt(this.icons[i].height) + 'px';
+    FW.setStyle(icon, { width: parseInt(this.icons[i].width) + 'px', height: parseInt(this.icons[i].height) + 'px' });
 
     const xPosition = this.icons[i].xPosition;
     if (xPosition === 'left') {

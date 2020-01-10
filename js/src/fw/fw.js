@@ -69,6 +69,16 @@ const _getStyleAttributeData = function (element, style) {
   return parseFloat(styleAttributeData);
 };
 
+FW.setStyle = function (element, styleObject) {
+  if (element && FW.isObject(styleObject)) {
+    const keys = Object.keys(styleObject);
+    for (let i = 0, len = keys.length; i < len; i++) {
+      const currentKey = keys[i];
+      element.style[currentKey] = styleObject[currentKey];
+    }
+  }
+};
+
 FW.getWidth = function (element) {
   if (element) {
     if (FW.isNumber(element.offsetWidth) && element.offsetWidth !== 0) {

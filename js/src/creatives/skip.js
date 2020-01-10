@@ -5,9 +5,9 @@ import VASTPLAYER from '../players/vast-player';
 const SKIP = {};
 
 const _setCanBeSkippedUI = function () {
-  this.skipWaiting.style.display = 'none';
-  this.skipMessage.style.display = 'block';
-  this.skipIcon.style.display = 'block';
+  FW.setStyle(this.skipWaiting, { display: 'none' });
+  FW.setStyle(this.skipMessage, { display: 'block' });
+  FW.setStyle(this.skipIcon, { display: 'block' });
 };
 
 const _updateWaitingForCanBeSkippedUI = function (delta) {
@@ -18,7 +18,7 @@ const _updateWaitingForCanBeSkippedUI = function (delta) {
 
 const _onTimeupdateCheckSkip = function () {
   if (this.skipButton.style.display === 'none') {
-    this.skipButton.style.display = 'block';
+    FW.setStyle(this.skipButton, { display: 'block' });
   }
   this.vastPlayerCurrentTime = this.vastPlayer.currentTime;
   if (FW.isNumber(this.vastPlayerCurrentTime) && this.vastPlayerCurrentTime > 0) {
@@ -56,22 +56,22 @@ const _onClickSkip = function (event) {
 SKIP.append = function () {
   this.skipButton = document.createElement('div');
   this.skipButton.className = 'rmp-ad-container-skip';
-  this.skipButton.style.display = 'none';
+  FW.setStyle(this.skipButton, { display: 'none' });
   HELPERS.accessibleButton(this.skipButton, 'skip ad button');
 
   this.skipWaiting = document.createElement('div');
   this.skipWaiting.className = 'rmp-ad-container-skip-waiting';
   _updateWaitingForCanBeSkippedUI.call(this, this.skipoffset);
-  this.skipWaiting.style.display = 'block';
+  FW.setStyle(this.skipWaiting, { display: 'block' });
 
   this.skipMessage = document.createElement('div');
   this.skipMessage.className = 'rmp-ad-container-skip-message';
   this.skipMessage.textContent = this.params.skipMessage;
-  this.skipMessage.style.display = 'none';
+  FW.setStyle(this.skipMessage, { display: 'none' });
 
   this.skipIcon = document.createElement('div');
   this.skipIcon.className = 'rmp-ad-container-skip-icon';
-  this.skipIcon.style.display = 'none';
+  FW.setStyle(this.skipIcon, { display: 'none' });
 
   this.onClickSkip = _onClickSkip.bind(this);
   this.skipButton.addEventListener('click', this.onClickSkip);

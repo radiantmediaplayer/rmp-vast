@@ -361,7 +361,7 @@ API.attach = function (RmpVast) {
     return null;
   };
 
-  RmpVast.prototype.getCompanionAd = function (index) { 
+  RmpVast.prototype.getCompanionAd = function (index) {
     if (typeof this.companionAdsList[index] === 'undefined') {
       return null;
     }
@@ -369,9 +369,7 @@ API.attach = function (RmpVast) {
     if (this.companionAdsList[index].altText) {
       img.alt = this.companionAdsList[index].altText;
     }
-    img.style.width = '100%';
-    img.style.height = '100%';
-    img.style.cursor = 'pointer';
+    FW.setStyle(img, { width: '100%', height: '100%', cursor: 'pointer' });
     const trackingEventsUri = this.companionAdsList[index].trackingEventsUri;
     if (trackingEventsUri.length > 0) {
       img.addEventListener('load', () => {

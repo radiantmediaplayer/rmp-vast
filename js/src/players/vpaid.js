@@ -690,10 +690,7 @@ VPAID.loadCreative = function (creativeUrl, vpaidSettings) {
   this.vpaidIframe.id = 'vpaid-frame';
   // do not use display: none;
   // https://bugzilla.mozilla.org/show_bug.cgi?id=548397
-  this.vpaidIframe.style.visibility = 'hidden';
-  this.vpaidIframe.style.width = '0px';
-  this.vpaidIframe.style.height = '0px';
-  this.vpaidIframe.style.border = 'none';
+  FW.setStyle(this.vpaidIframe, { visibility: 'hidden', width: '0px', height: '0px', border: 'none' });
   // this is to adhere to Best Practices for Rich Media Ads 
   // in Asynchronous Ad Environments  http://www.iab.net/media/file/rich_media_ajax_best_practices.pdf
   let src = 'about:self';

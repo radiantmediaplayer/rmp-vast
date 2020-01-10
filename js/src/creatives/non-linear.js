@@ -46,7 +46,7 @@ const _onClickCloseNonLinear = function (event) {
       event.preventDefault();
     }
   }
-  this.nonLinearContainer.style.display = 'none';
+  FW.setStyle(this.nonLinearContainer, { display: 'none' });
   HELPERS.createApiEvent.call(this, 'adclosed');
   HELPERS.dispatchPingEvent.call(this, 'close');
 };
@@ -56,14 +56,12 @@ const _appendCloseButton = function () {
   this.nonLinearClose.className = 'rmp-ad-non-linear-close';
   HELPERS.accessibleButton(this.nonLinearClose, 'close ad button');
   if (this.nonLinearMinSuggestedDuration > 0) {
-    this.nonLinearClose.style.display = 'none';
+    FW.setStyle(this.nonLinearClose, { display: 'none' });
     setTimeout(() => {
-      if (this.nonLinearClose) {
-        this.nonLinearClose.style.display = 'block';
-      }
+      FW.setStyle(this.nonLinearClose, { display: 'block' });
     }, this.nonLinearMinSuggestedDuration * 1000);
   } else {
-    this.nonLinearClose.style.display = 'block';
+    FW.setStyle(this.nonLinearClose, { display: 'block' });
   }
   this.onClickCloseNonLinear = _onClickCloseNonLinear.bind(this);
   this.nonLinearClose.addEventListener('touchend', this.onClickCloseNonLinear);
@@ -79,8 +77,7 @@ NONLINEAR.update = function () {
   // non-linear ad container
   this.nonLinearContainer = document.createElement('div');
   this.nonLinearContainer.className = 'rmp-ad-non-linear-container';
-  this.nonLinearContainer.style.width = (this.nonLinearCreativeWidth).toString() + 'px';
-  this.nonLinearContainer.style.height = (this.nonLinearCreativeHeight).toString() + 'px';
+  FW.setStyle(this.nonLinearContainer, { width: (this.nonLinearCreativeWidth).toString() + 'px', height: (this.nonLinearCreativeHeight).toString() + 'px' });
 
   // a tag to handle click - a tag is best for WebView support
   this.nonLinearATag = document.createElement('a');

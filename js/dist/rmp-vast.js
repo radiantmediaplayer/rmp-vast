@@ -1,6 +1,6 @@
 /**
  * @license Copyright (c) 2017-2020 Radiant Media Player | https://www.radiantmediaplayer.com
- * rmp-vast 2.4.10
+ * rmp-vast 2.4.11
  * GitHub: https://github.com/radiantmediaplayer/rmp-vast
  * MIT License: https://github.com/radiantmediaplayer/rmp-vast/blob/master/LICENSE
  */
@@ -574,9 +574,12 @@ API.attach = function (RmpVast) {
       img.alt = this.companionAdsList[index].altText;
     }
 
-    img.style.width = '100%';
-    img.style.height = '100%';
-    img.style.cursor = 'pointer';
+    _fw.default.setStyle(img, {
+      width: '100%',
+      height: '100%',
+      cursor: 'pointer'
+    });
+
     var trackingEventsUri = this.companionAdsList[index].trackingEventsUri;
 
     if (trackingEventsUri.length > 0) {
@@ -1070,8 +1073,12 @@ var _onPlayingAppendIcons = function _onPlayingAppendIcons() {
   for (var i = 0, len = this.icons.length; i < len; i++) {
     var icon = document.createElement('img');
     icon.className = 'rmp-ad-container-icons';
-    icon.style.width = (0, _parseInt2.default)(this.icons[i].width) + 'px';
-    icon.style.height = (0, _parseInt2.default)(this.icons[i].height) + 'px';
+
+    _fw.default.setStyle(icon, {
+      width: (0, _parseInt2.default)(this.icons[i].width) + 'px',
+      height: (0, _parseInt2.default)(this.icons[i].height) + 'px'
+    });
+
     var xPosition = this.icons[i].xPosition;
 
     if (xPosition === 'left') {
@@ -1756,7 +1763,9 @@ var _onClickCloseNonLinear = function _onClickCloseNonLinear(event) {
     }
   }
 
-  this.nonLinearContainer.style.display = 'none';
+  _fw.default.setStyle(this.nonLinearContainer, {
+    display: 'none'
+  });
 
   _helpers.default.createApiEvent.call(this, 'adclosed');
 
@@ -1772,14 +1781,19 @@ var _appendCloseButton = function _appendCloseButton() {
   _helpers.default.accessibleButton(this.nonLinearClose, 'close ad button');
 
   if (this.nonLinearMinSuggestedDuration > 0) {
-    this.nonLinearClose.style.display = 'none';
+    _fw.default.setStyle(this.nonLinearClose, {
+      display: 'none'
+    });
+
     (0, _setTimeout2.default)(function () {
-      if (_this.nonLinearClose) {
-        _this.nonLinearClose.style.display = 'block';
-      }
+      _fw.default.setStyle(_this.nonLinearClose, {
+        display: 'block'
+      });
     }, this.nonLinearMinSuggestedDuration * 1000);
   } else {
-    this.nonLinearClose.style.display = 'block';
+    _fw.default.setStyle(this.nonLinearClose, {
+      display: 'block'
+    });
   }
 
   this.onClickCloseNonLinear = (0, _bind.default)(_onClickCloseNonLinear).call(_onClickCloseNonLinear, this);
@@ -1796,8 +1810,12 @@ NONLINEAR.update = function () {
 
   this.nonLinearContainer = document.createElement('div');
   this.nonLinearContainer.className = 'rmp-ad-non-linear-container';
-  this.nonLinearContainer.style.width = this.nonLinearCreativeWidth.toString() + 'px';
-  this.nonLinearContainer.style.height = this.nonLinearCreativeHeight.toString() + 'px'; // a tag to handle click - a tag is best for WebView support
+
+  _fw.default.setStyle(this.nonLinearContainer, {
+    width: this.nonLinearCreativeWidth.toString() + 'px',
+    height: this.nonLinearCreativeHeight.toString() + 'px'
+  }); // a tag to handle click - a tag is best for WebView support
+
 
   this.nonLinearATag = document.createElement('a');
   this.nonLinearATag.className = 'rmp-ad-non-linear-anchor';
@@ -2002,9 +2020,17 @@ var _vastPlayer = _interopRequireDefault(require("../players/vast-player"));
 var SKIP = {};
 
 var _setCanBeSkippedUI = function _setCanBeSkippedUI() {
-  this.skipWaiting.style.display = 'none';
-  this.skipMessage.style.display = 'block';
-  this.skipIcon.style.display = 'block';
+  _fw.default.setStyle(this.skipWaiting, {
+    display: 'none'
+  });
+
+  _fw.default.setStyle(this.skipMessage, {
+    display: 'block'
+  });
+
+  _fw.default.setStyle(this.skipIcon, {
+    display: 'block'
+  });
 };
 
 var _updateWaitingForCanBeSkippedUI = function _updateWaitingForCanBeSkippedUI(delta) {
@@ -2015,7 +2041,9 @@ var _updateWaitingForCanBeSkippedUI = function _updateWaitingForCanBeSkippedUI(d
 
 var _onTimeupdateCheckSkip = function _onTimeupdateCheckSkip() {
   if (this.skipButton.style.display === 'none') {
-    this.skipButton.style.display = 'block';
+    _fw.default.setStyle(this.skipButton, {
+      display: 'block'
+    });
   }
 
   this.vastPlayerCurrentTime = this.vastPlayer.currentTime;
@@ -2063,7 +2091,10 @@ var _onClickSkip = function _onClickSkip(event) {
 SKIP.append = function () {
   this.skipButton = document.createElement('div');
   this.skipButton.className = 'rmp-ad-container-skip';
-  this.skipButton.style.display = 'none';
+
+  _fw.default.setStyle(this.skipButton, {
+    display: 'none'
+  });
 
   _helpers.default.accessibleButton(this.skipButton, 'skip ad button');
 
@@ -2072,14 +2103,25 @@ SKIP.append = function () {
 
   _updateWaitingForCanBeSkippedUI.call(this, this.skipoffset);
 
-  this.skipWaiting.style.display = 'block';
+  _fw.default.setStyle(this.skipWaiting, {
+    display: 'block'
+  });
+
   this.skipMessage = document.createElement('div');
   this.skipMessage.className = 'rmp-ad-container-skip-message';
   this.skipMessage.textContent = this.params.skipMessage;
-  this.skipMessage.style.display = 'none';
+
+  _fw.default.setStyle(this.skipMessage, {
+    display: 'none'
+  });
+
   this.skipIcon = document.createElement('div');
   this.skipIcon.className = 'rmp-ad-container-skip-icon';
-  this.skipIcon.style.display = 'none';
+
+  _fw.default.setStyle(this.skipIcon, {
+    display: 'none'
+  });
+
   this.onClickSkip = (0, _bind.default)(_onClickSkip).call(_onClickSkip, this);
   this.skipButton.addEventListener('click', this.onClickSkip);
   this.skipButton.addEventListener('touchend', this.onClickSkip);
@@ -2388,6 +2430,8 @@ var _typeof2 = _interopRequireDefault(require("@babel/runtime-corejs3/helpers/ty
 
 var _promise = _interopRequireDefault(require("@babel/runtime-corejs3/core-js-stable/promise"));
 
+var _keys = _interopRequireDefault(require("@babel/runtime-corejs3/core-js-stable/object/keys"));
+
 var _parseFloat2 = _interopRequireDefault(require("@babel/runtime-corejs3/core-js-stable/parse-float"));
 
 var _indexOf = _interopRequireDefault(require("@babel/runtime-corejs3/core-js-stable/instance/index-of"));
@@ -2470,6 +2514,17 @@ var _getStyleAttributeData = function _getStyleAttributeData(element, style) {
   }
 
   return (0, _parseFloat2.default)(styleAttributeData);
+};
+
+FW.setStyle = function (element, styleObject) {
+  if (element && FW.isObject(styleObject)) {
+    var keys = (0, _keys.default)(styleObject);
+
+    for (var i = 0, len = keys.length; i < len; i++) {
+      var currentKey = keys[i];
+      element.style[currentKey] = styleObject[currentKey];
+    }
+  }
 };
 
 FW.getWidth = function (element) {
@@ -2817,7 +2872,7 @@ FW.imagePattern = /^image\/(gif|jpeg|jpg|png)$/i;
 var _default = FW;
 exports.default = _default;
 
-},{"@babel/runtime-corejs3/core-js-stable/instance/for-each":23,"@babel/runtime-corejs3/core-js-stable/instance/index-of":24,"@babel/runtime-corejs3/core-js-stable/instance/trim":27,"@babel/runtime-corejs3/core-js-stable/number/is-finite":28,"@babel/runtime-corejs3/core-js-stable/object/define-property":29,"@babel/runtime-corejs3/core-js-stable/parse-float":31,"@babel/runtime-corejs3/core-js-stable/parse-int":32,"@babel/runtime-corejs3/core-js-stable/promise":33,"@babel/runtime-corejs3/helpers/interopRequireDefault":42,"@babel/runtime-corejs3/helpers/typeof":46,"core-js/modules/es.object.to-string":318,"core-js/modules/es.regexp.exec":319,"core-js/modules/es.regexp.to-string":320,"core-js/modules/es.string.replace":322,"core-js/modules/es.string.split":323}],10:[function(require,module,exports){
+},{"@babel/runtime-corejs3/core-js-stable/instance/for-each":23,"@babel/runtime-corejs3/core-js-stable/instance/index-of":24,"@babel/runtime-corejs3/core-js-stable/instance/trim":27,"@babel/runtime-corejs3/core-js-stable/number/is-finite":28,"@babel/runtime-corejs3/core-js-stable/object/define-property":29,"@babel/runtime-corejs3/core-js-stable/object/keys":30,"@babel/runtime-corejs3/core-js-stable/parse-float":31,"@babel/runtime-corejs3/core-js-stable/parse-int":32,"@babel/runtime-corejs3/core-js-stable/promise":33,"@babel/runtime-corejs3/helpers/interopRequireDefault":42,"@babel/runtime-corejs3/helpers/typeof":46,"core-js/modules/es.object.to-string":318,"core-js/modules/es.regexp.exec":319,"core-js/modules/es.regexp.to-string":320,"core-js/modules/es.string.replace":322,"core-js/modules/es.string.split":323}],10:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime-corejs3/helpers/interopRequireDefault");
@@ -4979,11 +5034,14 @@ VPAID.loadCreative = function (creativeUrl, vpaidSettings) {
   this.vpaidIframe.id = 'vpaid-frame'; // do not use display: none;
   // https://bugzilla.mozilla.org/show_bug.cgi?id=548397
 
-  this.vpaidIframe.style.visibility = 'hidden';
-  this.vpaidIframe.style.width = '0px';
-  this.vpaidIframe.style.height = '0px';
-  this.vpaidIframe.style.border = 'none'; // this is to adhere to Best Practices for Rich Media Ads 
+  _fw.default.setStyle(this.vpaidIframe, {
+    visibility: 'hidden',
+    width: '0px',
+    height: '0px',
+    border: 'none'
+  }); // this is to adhere to Best Practices for Rich Media Ads 
   // in Asynchronous Ad Environments  http://www.iab.net/media/file/rich_media_ajax_best_practices.pdf
+
 
   var src = 'about:self'; // ... however this does not work in Firefox (onload is never reached)
   // https://bugzilla.mozilla.org/show_bug.cgi?id=444165
