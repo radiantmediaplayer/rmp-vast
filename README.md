@@ -7,8 +7,6 @@ It aims at closely implementing the [IAB VAST 3 specification](https://www.iab.c
 
 rmp-vast is used and maintained by [Radiant Media Player](https://www.radiantmediaplayer.com/).
 
-rmp-vast is an open-source project released under [MIT license](https://github.com/radiantmediaplayer/rmp-vast/blob/master/LICENSE). It is built with ES2015 JavaScript and ported to ES5 JavaScript with Babel.
-
 ## Documentation sections
 - [Supported VAST 3 features](#supported-vast-3-features)
 - [Supported environments](#supported-environments)
@@ -28,6 +26,8 @@ rmp-vast is an open-source project released under [MIT license](https://github.c
 - [Pre, mid and post rolls](#pre-mid-and-post-rolls)
 - [Outstream ads](#outstream-ads)
 - [Contributing](#contributing)
+- [License](#license)
+- [Radiant Media Player](#radiant-media-player)
 
 ## Supported VAST 3 features
 - Inline and Wrapper Ads
@@ -67,13 +67,14 @@ enough coverage to support current industry requirements and best practices.
 - Chrome for Desktop
 - Firefox for Android 5+
 - Firefox for Desktop
-- Samsung Internet 5+ for Android 5+
+- Samsung Internet 10+ for Android 5+
 - Safari 10+ for macOS
 - Safari for iOS 10+
-- MS Edge for Desktop
+- MS Edge 79+ for Desktop
+- MS Edge Legacy 18+ for Desktop
 - Internet Explorer 11+ for Desktop
 
-Specifically we support the latest stable release for each browser.
+Specifically we support the 3 latest stable release for each browser.
 
 ### WebViews
 - Android 5+
@@ -448,5 +449,15 @@ For testing on macOS Safari use:
 `grunt testSafari` 
 
 Before running `grunt test` make sure to update `TEST.pathToTest` in test/helpers/test.js with your local IP address. Running test on Android requires a [runnning adb server](https://developer.android.com/studio/command-line/adb.html).
+
+## License for rmp-vast
+rmp-vast is released under MIT.
+
+## Radiant Media Player
+If you like rmp-vast you can check out [Radiant Media Player](https://www.radiantmediaplayer.com), a modern and versatile HTML5 video player for every device. 
+
+Radiant Media Player is a commercial HTML5 media player, not covered by the above MIT license. 
+
+You may request a free trial for Radiant Media Player at: [https://www.radiantmediaplayer.com/free-trial.html](https://www.radiantmediaplayer.com/free-trial.html).
 
 [Back to documentation sections](#documentation-sections)
