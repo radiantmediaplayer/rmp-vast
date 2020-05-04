@@ -450,7 +450,7 @@ For testing on macOS Safari use:
 
 Before running `grunt test` make sure to update `TEST.pathToTest` in test/helpers/test.js with your local IP address. Running test on Android requires a [runnning adb server](https://developer.android.com/studio/command-line/adb.html).
 
-## License for rmp-vast
+## License
 rmp-vast is released under MIT.
 
 ## Radiant Media Player
