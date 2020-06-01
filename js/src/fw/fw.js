@@ -344,7 +344,7 @@ FW.convertOffsetToSeconds = function (offset, duration) {
   } else if (skipPattern2.test(offset) && duration > 0) {
     let percent = offset.split('%');
     percent = parseInt(percent[0]);
-    seconds = Math.round((duration * percent) / 100);
+    seconds = Math.round(((duration * percent) / 100) / 1000);
   }
   return seconds;
 };
