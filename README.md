@@ -78,7 +78,9 @@ Specifically we support the 3 latest stable release for each browser.
 
 ### WebViews
 - Android 5+
-- iOS 10+
+- iOS 10+ (WKWebView)
+
+With the announcement of Apple in december 2019, to remove support for UIWebView API by end 2020, we only support WKWebView API for iOS apps built with Cordova or Ionic. [See this blog post](https://www.radiantmediaplayer.com/blog/updating-ios-apps-for-wkwebview.html) to help you update to WKWebView API.
 
 It is fairly possible that rmp-vast would work in other environments but they are not officially supported.
 
