@@ -108,7 +108,7 @@ You must use rmp-vast in a well-formed HTML document. This means a web-page with
 ```html
 <div class="rmp-container" id="rmpPlayer">
   <div class="rmp-content">
-    <video class="rmp-video" src="https://www.rmp-streaming.com/media/bbb-360p.mp4" playsinline></video>
+    <video class="rmp-video" src="https://www.radiantmediaplayer.com/media/big-buck-bunny-360p.mp4" playsinline></video>
   </div>
 </div>
 ```
