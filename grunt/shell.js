@@ -17,8 +17,8 @@ module.exports = {
   watchify: {
     command: 'watchify js/src/main.js -o js/dist/rmp-vast.js -t [ babelify ] -v'
   },
-  uglify: {
-    command: 'uglifyjs js/dist/rmp-vast.js --compress --define DEBUG=false --mangle --comments --timings -o js/dist/rmp-vast.min.js'
+  terser: {
+    command: 'terser js/dist/rmp-vast.js --compress --define DEBUG=false --mangle --comments --timings --safari10 -o js/dist/rmp-vast.min.js'
   },
   jsbeautify: {
     command: 'js-beautify -f js/src/module.js -o js/src/module.js'

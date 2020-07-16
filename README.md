@@ -67,14 +67,13 @@ enough coverage to support current industry requirements and best practices.
 - Chrome for Desktop
 - Firefox for Android 5+
 - Firefox for Desktop
-- Samsung Internet 10+ for Android 5+
+- Samsung Internet for Android 5+
 - Safari 10+ for macOS
 - Safari for iOS 10+
-- MS Edge 79+ for Desktop
+- MS Edge for Desktop
 - MS Edge Legacy 18+ for Desktop
-- Internet Explorer 11+ for Desktop
 
-Specifically we support the 3 latest stable release for each browser.
+Specifically we support the 2 latest stable release for each browser.
 
 ### WebViews
 - Android 5+
@@ -216,7 +215,7 @@ rmpVast.loadAds(adTag);
 ```
 Note that 'core-js' is not provided when rmp-vast is imported as a ES2015 module, if wanted you will need to add it in your main app (and transform resulting code with Babel if needed).
 
-To enable debug logs you will need to add `window.DEBUG = true;` in module.js (just after import). The removal of the global `DEBUG` varibale should be handled with uglifyjs when building your main app (see grunt/shell.js). 
+To enable debug logs you will need to add `window.DEBUG = true;` in module.js (just after import). The removal of the global `DEBUG` varibale should be handled with terser when building your main app (see grunt/shell.js). 
 
 [Back to documentation sections](#documentation-sections)
 

@@ -1,8 +1,13 @@
 # Browsers that we support
 
 defaults
-IE 11
 iOS 10
 Safari 10
 Edge 18
 not op_mini all
+not op_mob 46
+not IE 11
+not kaios 2.5
+not and_qq 10.4
+not and_uc 12.12
+not baidu 7.12

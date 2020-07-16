@@ -1,6 +1,6 @@
 {
   "name": "rmp-vast",
-  "version": "2.4.15",
+  "version": "2.5.0",
   "author": "Radiant Media Player <support@radiantmediaplayer.com>",
   "description": "A client-side JavaScript solution to load, parse and display VAST resources (advertising)",
   "repository": {
@@ -22,15 +22,15 @@
   },
   "homepage": "https://www.radiantmediaplayer.com/rmp-vast/app/",
   "scripts": {
-    "preinstall": "npm i -g eslint@5 browserify watchify uglify-js@3 js-beautify stylelint"
+    "preinstall": "npm i -g eslint@5 browserify watchify terser@4 js-beautify stylelint"
   },
   "devDependencies": {
-    "@babel/cli": "^7.10.4",
-    "@babel/core": "^7.10.4",
-    "@babel/plugin-transform-runtime": "^7.10.4",
+    "@babel/cli": "^7.10.5",
+    "@babel/core": "^7.10.5",
+    "@babel/plugin-transform-runtime": "^7.10.5",
     "@babel/preset-env": "^7.10.4",
     "babelify": "^10.0.0",
-    "grunt": "^1.1.0",
+    "grunt": "^1.2.1",
     "grunt-concurrent": "^3.0.0",
     "grunt-contrib-compress": "^1.6.0",
     "grunt-contrib-concat": "^1.0.1",
@@ -45,7 +45,7 @@
     "time-grunt": "^2.0.0"
   },
   "dependencies": {
-    "@babel/runtime-corejs3": "^7.10.4",
+    "@babel/runtime-corejs3": "^7.10.5",
     "core-js": "^3.6.5"
   }
 }
