@@ -56,18 +56,12 @@
     });
 
     var pause = document.getElementById('pause');
-    pause.addEventListener('click', function () {
-      rmpVast.pause();
-    });
+    pause.addEventListener('click', rmpVast.pause);
 
     var stop = document.getElementById('stop');
-    stop.addEventListener('click', function () {
-      rmpVast.stopAds();
-    });
+    stop.addEventListener('click', rmpVast.stopAds);
 
     var skip = document.getElementById('skip');
-    skip.addEventListener('click', function () {
-      rmpVast.skipAd();
-    });
+    skip.addEventListener('click', rmpVast.skipAd);
   </script>
 </body>
