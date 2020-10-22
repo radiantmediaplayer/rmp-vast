@@ -1,6 +1,6 @@
 /**
  * @license Copyright (c) 2017-2020 Radiant Media Player | https://www.radiantmediaplayer.com
- * rmp-vast 2.5.0
+ * rmp-vast 2.5.1
  * GitHub: https://github.com/radiantmediaplayer/rmp-vast
  * MIT License: https://github.com/radiantmediaplayer/rmp-vast/blob/master/LICENSE
  */
@@ -2857,6 +2857,8 @@ exports.default = _default;
 
 var _interopRequireDefault = require("@babel/runtime-corejs3/helpers/interopRequireDefault");
 
+require("core-js/modules/es.array.iterator");
+
 require("core-js/modules/web.dom-collections.iterator");
 
 var _bind = _interopRequireDefault(require("@babel/runtime-corejs3/core-js-stable/instance/bind"));
@@ -3578,7 +3580,7 @@ var _icons = _interopRequireDefault(require("./creatives/icons"));
 
 /* module:export */
 
-},{"./api/api":2,"./creatives/companion":3,"./creatives/icons":4,"./creatives/linear":5,"./creatives/non-linear":6,"./fw/env":8,"./fw/fw":9,"./players/content-player":11,"./tracking/ping":14,"./tracking/tracking-events":15,"./utils/default":16,"./utils/helpers":17,"./utils/vast-errors":18,"@babel/runtime-corejs3/core-js-stable/instance/bind":20,"@babel/runtime-corejs3/core-js-stable/instance/sort":24,"@babel/runtime-corejs3/core-js-stable/object/keys":29,"@babel/runtime-corejs3/core-js-stable/parse-int":31,"@babel/runtime-corejs3/helpers/interopRequireDefault":35,"core-js/modules/web.dom-collections.iterator":272}],11:[function(require,module,exports){
+},{"./api/api":2,"./creatives/companion":3,"./creatives/icons":4,"./creatives/linear":5,"./creatives/non-linear":6,"./fw/env":8,"./fw/fw":9,"./players/content-player":11,"./tracking/ping":14,"./tracking/tracking-events":15,"./utils/default":16,"./utils/helpers":17,"./utils/vast-errors":18,"@babel/runtime-corejs3/core-js-stable/instance/bind":20,"@babel/runtime-corejs3/core-js-stable/instance/sort":24,"@babel/runtime-corejs3/core-js-stable/object/keys":29,"@babel/runtime-corejs3/core-js-stable/parse-int":31,"@babel/runtime-corejs3/helpers/interopRequireDefault":35,"core-js/modules/es.array.iterator":265,"core-js/modules/web.dom-collections.iterator":272}],11:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime-corejs3/helpers/interopRequireDefault");
@@ -5112,6 +5114,8 @@ var _interopRequireDefault = require("@babel/runtime-corejs3/helpers/interopRequ
 
 var _Object$defineProperty = require("@babel/runtime-corejs3/core-js-stable/object/define-property");
 
+require("core-js/modules/es.array.iterator");
+
 require("core-js/modules/es.string.replace");
 
 require("core-js/modules/web.dom-collections.iterator");
@@ -5219,7 +5223,7 @@ PING.error = function (errorCode) {
 var _default = PING;
 exports.default = _default;
 
-},{"../fw/fw":9,"../players/content-player":11,"@babel/runtime-corejs3/core-js-stable/object/define-property":28,"@babel/runtime-corejs3/helpers/interopRequireDefault":35,"core-js/modules/es.string.replace":269,"core-js/modules/web.dom-collections.iterator":272}],15:[function(require,module,exports){
+},{"../fw/fw":9,"../players/content-player":11,"@babel/runtime-corejs3/core-js-stable/object/define-property":28,"@babel/runtime-corejs3/helpers/interopRequireDefault":35,"core-js/modules/es.array.iterator":265,"core-js/modules/es.string.replace":269,"core-js/modules/web.dom-collections.iterator":272}],15:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime-corejs3/helpers/interopRequireDefault");
@@ -7058,7 +7062,7 @@ module.exports = function (it) {
 };
 
 },{"../internals/classof":71,"../internals/iterators":108,"../internals/well-known-symbol":153}],92:[function(require,module,exports){
-(function (global){
+(function (global){(function (){
 var check = function (it) {
   return it && it.Math == Math && it;
 };
@@ -7073,7 +7077,7 @@ module.exports =
   // eslint-disable-next-line no-new-func
   Function('return this')();
 
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+}).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{}],93:[function(require,module,exports){
 var hasOwnProperty = {}.hasOwnProperty;
 

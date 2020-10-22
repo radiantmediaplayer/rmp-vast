@@ -1,4 +1,7 @@
 module.exports = {
+  browserslist: {
+    command: 'npx browserslist'
+  },
   eslintSrc: {
     command: 'eslint --config .eslintrc-es2015.json --ignore-path .es2015.eslintignore js/src/'
   },
