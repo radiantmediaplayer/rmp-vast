@@ -2,18 +2,17 @@
 
 const TEST = require('../helpers/test');
 
-var driver;
+let driver;
 
-var testUrls = [
+let testUrls = [
   TEST.pathToTest + 'redirectSpec/IABVAST3RedirectSpec.html'
 ];
 
-var testUrlsChromeOnly = [
+const testUrlsChromeOnly = [
   TEST.pathToTest + 'redirectSpec/IABVAST3RedirectSpec.html',
   TEST.pathToTest + 'redirectSpec/ImaRedirectLinearSpec.html',
   TEST.pathToTest + 'redirectSpec/MaximumRedirectSpec.html',
   TEST.pathToTest + 'redirectSpec/RedirectRedirectSpec.html',
-  TEST.pathToTest + 'redirectSpec/RedirectSpec.html',
   TEST.pathToTest + 'redirectSpec/RedirectErrorSpec.html'
 ];
 
@@ -29,8 +28,8 @@ if (args[2] === 'android') {
   driver = TEST.getDriver('firefox');
 }
 
-var intialTime = TEST.getTime();
-var index = 0;
+const intialTime = TEST.getTime();
+let index = 0;
 
 const _run = function () {
   console.log('Run HTML spec ' + testUrls[index] + ' at: ' + (TEST.getTime() - intialTime) + 'ms');

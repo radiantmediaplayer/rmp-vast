@@ -1,15 +1,15 @@
-'use strict';
+import { RmpVast } from '../../../../js/src/index.js';
 
-var ADTAG1 = 'https://www.radiantmediaplayer.com/vast/tags/inline-linear-1.xml';
-var ADTAG2 = 'https://www.radiantmediaplayer.com/vast/tags/vpaid-2-js-linear.xml';
-var ADTAG3 = 'https://www.radiantmediaplayer.com/vast/tags/inline-linear-1.xml';
+const ADTAG1 = 'https://www.radiantmediaplayer.com/vast/tags/inline-linear-1.xml';
+const ADTAG2 = 'https://www.radiantmediaplayer.com/vast/tags/vpaid-2-js-linear.xml';
+const ADTAG3 = 'https://www.radiantmediaplayer.com/vast/tags/inline-linear-1.xml';
 
 describe('Test for pre-mid-post', function () {
 
-  var id = 'rmpPlayer';
-  var container = document.getElementById(id);
-  var video = document.querySelector('.rmp-video');
-  var params = {
+  const id = 'rmpPlayer';
+  const container = document.getElementById(id);
+  const video = document.querySelector('.rmp-video');
+  const params = {
     enableVpaid: true,
     vpaidSettings: {
       width: 640,
@@ -18,21 +18,21 @@ describe('Test for pre-mid-post', function () {
       desiredBitrate: 500
     }
   };
-  var rmpVast = new RmpVast(id, params);
-  var fw = rmpVast.getFramework();
-  var env = rmpVast.getEnvironment();
+  const rmpVast = new RmpVast(id, params);
+  const fw = rmpVast.getFramework();
+  const env = rmpVast.getEnvironment();
   video.muted = true;
   if (env.isAndroid[0]) {
     container.style.width = '320px';
     container.style.height = '180px';
   }
 
-  var title = document.getElementsByTagName('title')[0];
+  const title = document.getElementsByTagName('title')[0];
 
   it('should load pre-mid-post', function (done) {
-    var validSteps = 0;
+    let validSteps = 0;
 
-    var _incrementAndLog = function (event) {
+    const _incrementAndLog = function (event) {
       validSteps++;
       if (event && event.type) {
         fw.log(event.type);
@@ -66,15 +66,12 @@ describe('Test for pre-mid-post', function () {
     container.addEventListener('adthirdquartile', function (e) {
       _incrementAndLog(e);
     });
-    var addestroyedCount = 0;
-    var contentPlayer;
-    var loadPostRoll = true;
+    let addestroyedCount = 0;
+    const contentPlayer = document.querySelector('.rmp-video');
+    let loadPostRoll = true;
     container.addEventListener('addestroyed', function (e) {
       _incrementAndLog(e);
       addestroyedCount++;
-      if (!contentPlayer) {
-        contentPlayer = rmpVast.getContentPlayer();
-      }
       if (addestroyedCount === 1) {
         expect(validSteps).toBe(9);
         setTimeout(function () {

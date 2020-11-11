@@ -1,31 +1,31 @@
-'use strict';
+import { RmpVast } from '../../../../js/src/index.js';
 
-var ADTAG1 = 'https://www.radiantmediaplayer.com/vast/tags/inline-linear-1.xml';
+const ADTAG1 = 'https://www.radiantmediaplayer.com/vast/tags/inline-linear-1.xml';
 
 describe('Test for outstream/Simple', function () {
 
-  var id = 'rmpPlayer';
-  var container = document.getElementById(id);
-  var video = document.querySelector('.rmp-video');
+  const id = 'rmpPlayer';
+  const container = document.getElementById(id);
+  const video = document.querySelector('.rmp-video');
   // enables outstream ad mode
-  var params = {
+  const params = {
     outstream: true
   };
-  var rmpVast = new RmpVast(id, params);
-  var fw = rmpVast.getFramework();
-  var env = rmpVast.getEnvironment();
+  const rmpVast = new RmpVast(id, params);
+  const fw = rmpVast.getFramework();
+  const env = rmpVast.getEnvironment();
   video.muted = true;
   if (env.isAndroid[0]) {
     container.style.width = '320px';
     container.style.height = '180px';
   }
 
-  var title = document.getElementsByTagName('title')[0];
+  const title = document.getElementsByTagName('title')[0];
 
   it('should load outstream', function (done) {
-    var validSteps = 0;
+    let validSteps = 0;
 
-    var _incrementAndLog = function (event) {
+    const _incrementAndLog = function (event) {
       validSteps++;
       if (event && event.type) {
         fw.log(event.type);

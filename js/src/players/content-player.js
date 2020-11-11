@@ -1,41 +1,41 @@
 import FW from '../fw/fw';
 import HELPERS from '../utils/helpers';
 
-const CONTENTPLAYER = {};
+const CONTENT_PLAYER = {};
 
-CONTENTPLAYER.play = function (firstContentPlayerPlayRequest) {
+CONTENT_PLAYER.play = function (firstContentPlayerPlayRequest) {
   if (this.contentPlayer && this.contentPlayer.paused) {
     HELPERS.playPromise.call(this, 'content', firstContentPlayerPlayRequest);
   }
 };
 
-CONTENTPLAYER.pause = function () {
+CONTENT_PLAYER.pause = function () {
   if (this.contentPlayer && !this.contentPlayer.paused) {
     this.contentPlayer.pause();
   }
 };
 
-CONTENTPLAYER.setVolume = function (level) {
+CONTENT_PLAYER.setVolume = function (level) {
   if (this.contentPlayer) {
     this.contentPlayer.volume = level;
   }
 };
 
-CONTENTPLAYER.getVolume = function () {
+CONTENT_PLAYER.getVolume = function () {
   if (this.contentPlayer) {
     return this.contentPlayer.volume;
   }
   return -1;
 };
 
-CONTENTPLAYER.getMute = function () {
+CONTENT_PLAYER.getMute = function () {
   if (this.contentPlayer) {
     return this.contentPlayer.muted;
   }
   return false;
 };
 
-CONTENTPLAYER.setMute = function (muted) {
+CONTENT_PLAYER.setMute = function (muted) {
   if (this.contentPlayer) {
     if (muted && !this.contentPlayer.muted) {
       this.contentPlayer.muted = true;
@@ -45,7 +45,7 @@ CONTENTPLAYER.setMute = function (muted) {
   }
 };
 
-CONTENTPLAYER.getDuration = function () {
+CONTENT_PLAYER.getDuration = function () {
   if (this.contentPlayer) {
     const duration = this.contentPlayer.duration;
     if (FW.isNumber(duration)) {
@@ -55,7 +55,7 @@ CONTENTPLAYER.getDuration = function () {
   return -1;
 };
 
-CONTENTPLAYER.getCurrentTime = function () {
+CONTENT_PLAYER.getCurrentTime = function () {
   if (this.contentPlayer) {
     const currentTime = this.contentPlayer.currentTime;
     if (FW.isNumber(currentTime)) {
@@ -65,7 +65,7 @@ CONTENTPLAYER.getCurrentTime = function () {
   return -1;
 };
 
-CONTENTPLAYER.seekTo = function (msSeek) {
+CONTENT_PLAYER.seekTo = function (msSeek) {
   if (!FW.isNumber(msSeek)) {
     return;
   }
@@ -75,12 +75,12 @@ CONTENTPLAYER.seekTo = function (msSeek) {
   }
 };
 
-CONTENTPLAYER.preventSeekingForCustomPlayback = function () {
+CONTENT_PLAYER.preventSeekingForCustomPlayback = function () {
   // after much poking it appears we cannot rely on seek events for iOS to 
   // set this up reliably - so interval it is
   if (this.contentPlayer) {
     this.antiSeekLogicInterval = setInterval(() => {
-      if (this.adIsLinear && this.adOnStage) {
+      if (this.creative.isLinear && this.adOnStage) {
         const diff = Math.abs(this.customPlaybackCurrentTime - this.contentPlayer.currentTime);
         if (diff > 1) {
           this.contentPlayer.currentTime = this.customPlaybackCurrentTime;
@@ -91,4 +91,4 @@ CONTENTPLAYER.preventSeekingForCustomPlayback = function () {
   }
 };
 
-export default CONTENTPLAYER;
+export default CONTENT_PLAYER;

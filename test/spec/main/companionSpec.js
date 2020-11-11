@@ -2,12 +2,12 @@
 
 const TEST = require('../helpers/test');
 
-var driver;
+let driver;
 
-var testUrls = [
-  TEST.pathToTest + 'companionSpec/Companion.html',
-  TEST.pathToTest + 'companionSpec/RedirectCompanion.html',
-  TEST.pathToTest + 'companionSpec/RedirectCompanionCompanion.html'
+const testUrls = [
+  TEST.pathToTest + 'companionSpec/companion-html.html',
+  TEST.pathToTest + 'companionSpec/companion-iframe.html',
+  TEST.pathToTest + 'companionSpec/companion-image.html'
 ];
 
 const args = process.argv;
@@ -21,8 +21,8 @@ if (args[2] === 'android') {
   driver = TEST.getDriver('firefox');
 }
 
-var intialTime = TEST.getTime();
-var index = 0;
+const intialTime = TEST.getTime();
+let index = 0;
 
 const _run = function () {
   console.log('Run HTML spec ' + testUrls[index] + ' at: ' + (TEST.getTime() - intialTime) + 'ms');

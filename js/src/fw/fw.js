@@ -123,39 +123,11 @@ FW.removeElement = function (element) {
   }
 };
 
-FW.ajax = function (url, timeout, returnData, withCredentials) {
-  return new Promise((resolve, reject) => {
-    if (window.XMLHttpRequest) {
-      const xhr = new XMLHttpRequest();
-      xhr.open('GET', url, true);
-      xhr.timeout = timeout;
-      if (withCredentials) {
-        xhr.withCredentials = true;
-      }
-      xhr.onloadend = function () {
-        if (FW.isNumber(xhr.status) && xhr.status >= 200 && xhr.status < 300) {
-          if (typeof xhr.responseText === 'string' && xhr.responseText !== '') {
-            if (returnData) {
-              resolve(xhr.responseText);
-            } else {
-              resolve();
-            }
-          } else {
-            reject();
-          }
-        } else {
-          reject();
-        }
-      };
-      xhr.ontimeout = function () {
-        FW.log('XMLHttpRequest timeout');
-        reject();
-      };
-      xhr.send(null);
-    } else {
-      reject();
-    }
-  });
+FW.isEmptyObject = function (obj) {
+  if (FW.isObject(obj) && Object.keys(obj).length === 0) {
+    return true;
+  }
+  return false;
 };
 
 const consoleStyleOne = 'color: white; background-color: #00ACC1; padding:1px 3px; border-radius: 3px; margin-right: 7px';
@@ -174,25 +146,22 @@ if (typeof window.console !== 'undefined') {
   }
 }
 
-FW.log = function (data) {
+FW.log = function (text, data) {
   if (hasLog) {
-    if (typeof data === 'string') {
-      window.console.log('%crmp-vast%c' + data, consoleStyleOne, '');
-    } else if (hasDir && typeof data === 'object') {
+    if (typeof text === 'string') {
+      window.console.log('%crmp-vast%c' + text, consoleStyleOne, '');
+    }
+    if (hasDir && typeof data === 'object') {
       window.console.dir(data);
-    } else {
-      window.console.log(data);
     }
   }
 };
 
 FW.trace = function (data) {
-  if (DEBUG) {
-    if (hasTrace) {
-      window.console.trace(data);
-    } else if (hasLog) {
-      FW.log(data);
-    }
+  if (hasTrace) {
+    window.console.trace(data);
+  } else if (hasLog) {
+    FW.log(data);
   }
 };
 
@@ -295,12 +264,6 @@ FW.getNodeValue = function (element, http) {
   return null;
 };
 
-FW.RFC3986EncodeURIComponent = function (str) {
-  return encodeURIComponent(str).replace(/[!'()*]/g, (c) => {
-    return '%' + c.charCodeAt(0).toString(16);
-  });
-};
-
 FW.isValidDuration = function (duration) {
   // HH:MM:SS or HH:MM:SS.mmm
   const skipPattern = /^\d+:\d+:\d+(\.\d+)?$/i;
@@ -350,8 +313,16 @@ FW.convertOffsetToSeconds = function (offset, duration) {
 };
 
 FW.logVideoEvents = function (video, type) {
-  const events = ['loadstart', 'durationchange',
-    'loadedmetadata', 'loadeddata', 'canplay', 'canplaythrough'];
+  const events = [
+    'loadstart', 
+    'durationchange', 
+    'playing',
+    'waiting',
+    'loadedmetadata', 
+    'loadeddata', 
+    'canplay', 
+    'canplaythrough'
+  ];
   events.forEach((value) => {
     video.addEventListener(value, (e) => {
       if (e && e.type) {
@@ -386,6 +357,29 @@ FW.openWindow = function (link) {
   }
 };
 
-FW.imagePattern = /^image\/(gif|jpeg|jpg|png)$/i;
+const _getTagElement = function (element) {
+  if (document[element]) {
+    return document[element];
+  }
+  if (document.querySelector(element) !== null) {
+    return document.querySelector(element);
+  }
+  return null;
+};
+
+FW.appendToHead = function (data) {
+  try {
+    let head = _getTagElement('head');
+    if (!head) {
+      head = _getTagElement('body');
+    }
+    if (head && data) {
+      head.appendChild(data);
+    }
+  } catch (e) {
+    FW.trace(e);
+  }
+};
+
 
 export default FW;

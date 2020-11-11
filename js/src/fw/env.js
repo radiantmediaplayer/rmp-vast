@@ -81,7 +81,7 @@ const _isSafari = function () {
 };
 const isSafari = _isSafari();
 
-const _isIpadOS = function() {
+const _isIpadOS = function () {
   if (!isIos[0] && isSafari[0] && isSafari[1] > 12 && isMacOS[0] && isMacOS[1] > 14 && ENV.devicePixelRatio > 1) {
     return true;
   }
@@ -99,7 +99,7 @@ const _isAndroid = function () {
   if (ANDROID_PATTERN.test(userAgent)) {
     support = [true, _filterVersion(ANDROID_VERSION_PATTERN)];
   }
-  return support;
+  return support; 
 };
 
 // from https://developer.mozilla.org/en-US/docs/Web/HTTP/Browser_detection_using_the_user_agent
@@ -116,39 +116,6 @@ const _video5 = function () {
   return typeof testVideo.canPlayType !== 'undefined';
 };
 const html5VideoSupport = _video5();
-
-const MP4_H264_AAC_BASELINE_MIME_PATTERN = 'video/mp4; codecs="avc1.42E01E,mp4a.40.2"';
-const _okMp4 = function () {
-  if (html5VideoSupport) {
-    const canPlayType = testVideo.canPlayType(MP4_H264_AAC_BASELINE_MIME_PATTERN);
-    if (canPlayType !== '') {
-      return true;
-    }
-  }
-  return false;
-};
-const okMp4 = _okMp4();
-
-const _okHls = function () {
-  if (html5VideoSupport && okMp4) {
-    const isSupp1 = testVideo.canPlayType('application/vnd.apple.mpegurl');
-    const isSupp2 = testVideo.canPlayType('application/x-mpegurl');
-    if (isSupp1 !== '' || isSupp2 !== '') {
-      return true;
-    }
-  }
-  return false;
-};
-
-const _okDash = function () {
-  if (html5VideoSupport) {
-    const dashSupport = testVideo.canPlayType('application/dash+xml');
-    if (dashSupport !== '') {
-      return true;
-    }
-  }
-  return false;
-};
 
 const _hasNativeFullscreenSupport = function () {
   const doc = document.documentElement;
@@ -173,10 +140,6 @@ ENV.isMobile = false;
 if (ENV.isIos[0] || ENV.isAndroid[0] || ENV.isIpadOS) {
   ENV.isMobile = true;
 }
-
-ENV.okMp4 = okMp4;
-ENV.okHls = _okHls();
-ENV.okDash = _okDash();
 ENV.canPlayType = function (type, codec) {
   if (html5VideoSupport) {
     if (type && codec) {
@@ -195,5 +158,25 @@ ENV.canPlayType = function (type, codec) {
 };
 
 ENV.hasNativeFullscreenSupport = _hasNativeFullscreenSupport();
+
+ENV.coordinates = {};
+
+const _onGetCurrentPositionSuccess = function(position) {
+  const coordinates = position.coordinates;
+  ENV.coordinates.latitude = coordinates.latitude;
+  ENV.coordinates.longitude = coordinates.longitude;
+};
+
+const _getCurrentPosition = function () {
+  if (navigator.geolocation && navigator.geolocation.getCurrentPosition) {
+    const options = {
+      enableHighAccuracy: false,
+      timeout: 5000,
+      maximumAge: 600000
+    };
+    navigator.geolocation.getCurrentPosition(_onGetCurrentPositionSuccess, FW.nullFn, options);
+  }
+};
+_getCurrentPosition();
 
 export default ENV;

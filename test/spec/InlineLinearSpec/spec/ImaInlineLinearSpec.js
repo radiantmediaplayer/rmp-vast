@@ -1,27 +1,27 @@
-'use strict';
+import { RmpVast } from '../../../../js/src/index.js';
 
-var ADTAG = 'https://pubads.g.doubleclick.net/gampad/ads?sz=640x480&iu=/124319096/external/single_ad_samples&ciu_szs=300x250&impl=s&gdfp_req=1&env=vp&output=vast&unviewed_position_start=1&cust_params=deployment%3Ddevsite%26sample_ct%3Dlinear&correlator=' + Date.now();
+const ADTAG = 'https://pubads.g.doubleclick.net/gampad/ads?sz=640x480&iu=/124319096/external/single_ad_samples&ciu_szs=300x250&impl=s&gdfp_req=1&env=vp&output=vast&unviewed_position_start=1&cust_params=deployment%3Ddevsite%26sample_ct%3Dlinear&correlator=' + Date.now();
 
 
 describe('Test for ImaInlineLinearSpec', function () {
 
-  var id = 'rmpPlayer';
-  var container = document.getElementById(id);
-  var video = document.querySelector('.rmp-video');
-  var rmpVast = new RmpVast(id);
-  var fw = rmpVast.getFramework();
-  var env = rmpVast.getEnvironment();
+  const id = 'rmpPlayer';
+  const container = document.getElementById(id);
+  const video = document.querySelector('.rmp-video');
+  const rmpVast = new RmpVast(id);
+  const fw = rmpVast.getFramework();
+  const env = rmpVast.getEnvironment();
   video.muted = true;
   if (env.isAndroid[0]) {
     container.style.width = '320px';
     container.style.height = '180px';
   }
-  var title = document.getElementsByTagName('title')[0];
+  const title = document.getElementsByTagName('title')[0];
 
   it('should load adTag and play it', function (done) {
-    var validSteps = 0;
+    let validSteps = 0;
 
-    var _incrementAndLog = function (event) {
+    const _incrementAndLog = function (event) {
       validSteps++;
       if (event && event.type) {
         fw.log(event.type);
@@ -67,7 +67,7 @@ describe('Test for ImaInlineLinearSpec', function () {
     });
     container.addEventListener('addestroyed', function (e) {
       _incrementAndLog(e);
-      var timeupdateCount = 0;
+      let timeupdateCount = 0;
       video.addEventListener('timeupdate', function (e) {
         timeupdateCount++;
         if (timeupdateCount === 5) {

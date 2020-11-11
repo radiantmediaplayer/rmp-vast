@@ -1,6 +1,5 @@
 import FW from '../fw/fw';
-import VASTERRORS from './vast-errors';
-import PING from '../tracking/ping';
+import VAST_ERRORS from './vast-errors';
 
 const HELPERS = {};
 
@@ -10,11 +9,12 @@ HELPERS.filterParams = function (inputParams) {
     creativeLoadTimeout: 8000,
     ajaxWithCredentials: false,
     maxNumRedirects: 4,
-    maxNumItemsInAdPod: 10,
     pauseOnClick: true,
-    skipMessage: 'Skip ad',
-    skipWaitingMessage: 'Skip ad in',
-    textForClickUIOnMobile: 'Learn more',
+    labels: {
+      skipMessage: 'Skip ad',
+      closeAd: 'Close ad',
+      textForClickUIOnMobile: 'Learn more'
+    },
     enableVpaid: true,
     outstream: false,
     vpaidSettings: {
@@ -50,11 +50,15 @@ HELPERS.filterParams = function (inputParams) {
         }
       }
     }
-    // we need to avoid infinite wrapper loops scenario 
-    // so we cap maxNumRedirects to 30 
-    if (this.params.maxNumRedirects > 30) {
-      this.params.maxNumRedirects = 30;
+  }
+};
+
+const _createEvent = function (event) {
+  if (typeof event === 'string' && event !== '') {
+    if (this.debug) {
+      FW.log(event);
     }
+    FW.createStdEvent(event, this.container);
   }
 };
 
@@ -64,31 +68,15 @@ HELPERS.createApiEvent = function (event) {
   // advolumemuted, advolumechanged, adcomplete, adskipped, 
   // adskippablestatechanged, adclosed
   // adfirstquartile, admidpoint, adthirdquartile, aderror, 
-  // adfollowingredirect, addestroyed
+  // addestroyed
   // adlinearchange, adexpandedchange, adremainingtimechange 
   // adinteraction, adsizechange
-  if (typeof event === 'string' && event !== '') {
-    FW.createStdEvent(event, this.container);
-  }
-};
-
-HELPERS.dispatchPingEvent = function (event) {
-  if (event) {
-    let element;
-    if (this.adIsLinear && this.vastPlayer) {
-      element = this.vastPlayer;
-    } else if (!this.adIsLinear && this.nonLinearContainer) {
-      element = this.nonLinearContainer;
-    }
-    if (element) {
-      if (Array.isArray(event)) {
-        event.forEach((currentEvent) => {
-          FW.createStdEvent(currentEvent, element);
-        });
-      } else {
-        FW.createStdEvent(event, element);
-      }
-    }
+  if (Array.isArray(event)) {
+    event.forEach(currentEvent => {
+      _createEvent.call(this, currentEvent);
+    });
+  } else {
+    _createEvent.call(this, event);
   }
 };
 
@@ -112,30 +100,26 @@ HELPERS.playPromise = function (whichPlayer, firstPlayerPlayRequest) {
     if (playPromise !== undefined) {
       playPromise.then(() => {
         if (firstPlayerPlayRequest) {
-          if (DEBUG) {
+          if (this.debug) {
             FW.log('initial play promise on ' + whichPlayer + ' player has succeeded');
           }
           HELPERS.createApiEvent.call(this, 'adinitialplayrequestsucceeded');
         }
       }).catch((e) => {
-        if (firstPlayerPlayRequest && whichPlayer === 'vast' && this.adIsLinear) {
-          if (DEBUG) {
-            FW.log(e);
-            FW.log('initial play promise on VAST player has been rejected for linear asset - likely autoplay is being blocked');
+        if (firstPlayerPlayRequest && whichPlayer === 'vast' && this.creative.isLinear) {
+          if (this.debug) {
+            FW.log('initial play promise on VAST player has been rejected for linear asset - likely autoplay is being blocked', e);
           }
-          PING.error.call(this, 400);
-          VASTERRORS.process.call(this, 400);
+          VAST_ERRORS.process.call(this, 400, true);
           HELPERS.createApiEvent.call(this, 'adinitialplayrequestfailed');
-        } else if (firstPlayerPlayRequest && whichPlayer === 'content' && !this.adIsLinear) {
-          if (DEBUG) {
-            FW.log(e);
-            FW.log('initial play promise on content player has been rejected for non-linear asset - likely autoplay is being blocked');
+        } else if (firstPlayerPlayRequest && whichPlayer === 'content' && !this.creative.isLinear) {
+          if (this.debug) {
+            FW.log('initial play promise on content player has been rejected for non-linear asset - likely autoplay is being blocked', e);
           }
           HELPERS.createApiEvent.call(this, 'adinitialplayrequestfailed');
         } else {
-          if (DEBUG) {
-            FW.log(e);
-            FW.log('playPromise on ' + whichPlayer + ' player has been rejected');
+          if (this.debug) {
+            FW.log('playPromise on ' + whichPlayer + ' player has been rejected', e);
           }
         }
       });

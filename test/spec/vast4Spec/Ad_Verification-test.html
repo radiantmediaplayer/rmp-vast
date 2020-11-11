@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+
+<!-- THIS IS NOT PRELIMENARY SUPPORT FOR VAST 4 FEATURES -->
+<!-- JUST VALIDATION THAT VAST 4 TAG CAN PLAY IN RMP-VAST BUT WITHOUT VAST 4 FEATURES -->
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+  <title>Ad_Verification-test</title>
+
+  <!-- jasmine -->
+  <link rel="shortcut icon" type="image/png" href="../../lib/jasmine-2.5.2/jasmine_favicon.png">
+  <link rel="stylesheet" href="../../lib/jasmine-2.5.2/jasmine.css">
+  <script src="../../lib/jasmine-2.5.2/jasmine.js"></script>
+  <script src="../../lib/jasmine-2.5.2/jasmine-html.js"></script>
+  <script src="../../lib/jasmine-2.5.2/boot.js"></script>
+
+  <!-- rmp-vast -->
+  <link rel="stylesheet" href="../../../css/rmp-vast.min.css">
+  <link rel="stylesheet" href="../../../app/css/app.css">
+
+</head>
+
+<body>
+  <div class="rmp-container" id="rmpPlayer">
+    <div class="rmp-content">
+      <video class="rmp-video" src="https://www.radiantmediaplayer.com/media/big-buck-bunny-360p.mp4" playsinline>
+      </video>
+    </div>
+  </div>
+  <!-- include spec files here... -->
+  <script type="module" src="spec/Ad_Verification-test.js"></script>
+</body>
+
+</html>

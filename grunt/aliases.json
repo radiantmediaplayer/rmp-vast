@@ -1,38 +1,18 @@
 {
   "default": [
-    "shell:browserslist",
     "shell:eslintSrc",
-    "shell:eslintES5",
     "shell:eslintNode",
-    "shell:browserify",
-    "replace:debugOff",
     "replace:sourceHeader",
-    "concat",
     "shell:stylelint",
     "less",
-    "shell:terser",
-    "replace:debugOn",
-    "replace:module",
-    "shell:jsbeautify",
-    "shell:eslintModule",
     "compress"
   ],
   "build": [
-    "shell:browserslist",
     "shell:eslintSrc",
-    "shell:eslintES5",
     "shell:eslintNode",
-    "shell:browserify",
-    "replace:debugOff",
     "replace:sourceHeader",
-    "concat",
     "shell:stylelint",
-    "less",
-    "shell:terser",
-    "replace:debugOn",
-    "replace:module",
-    "shell:jsbeautify",
-    "shell:eslintModule"
+    "less"
   ],
   "test": [
     "shell:test"

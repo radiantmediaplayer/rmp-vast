@@ -2,23 +2,17 @@
 
 const TEST = require('../helpers/test');
 
-var driver;
+let driver;
 
-var testUrls = [
+let testUrls = [
   TEST.pathToTest + 'adPodSpec/AdPodNoStandaloneSpec.html'
 ];
 
-var testUrlsChromeOnly = [
+const testUrlsChromeOnly = [
   TEST.pathToTest + 'adPodSpec/AdPodAllWrappers.html',
   TEST.pathToTest + 'adPodSpec/AdPodErrorCreativeOnSecondAd.html',
   TEST.pathToTest + 'adPodSpec/AdPodNoStandaloneSpec.html',
-  TEST.pathToTest + 'adPodSpec/AdPodOneAd.html',
-  TEST.pathToTest + 'adPodSpec/AdPodOneWrapper.html',
-  TEST.pathToTest + 'adPodSpec/AdPodThreeWrappersWithErrors.html',
-  TEST.pathToTest + 'adPodSpec/AdPodVpaid.html',
-  TEST.pathToTest + 'adPodSpec/AdPodWithStandaloneSpec.html',
-  TEST.pathToTest + 'adPodSpec/AdPodWrapperToAdPod.html',
-  TEST.pathToTest + 'adPodSpec/AdPodWrapperToWrapperToAdPod.html'
+  TEST.pathToTest + 'adPodSpec/AdPodWithStandaloneSpec.html'
 ];
 
 const args = process.argv;
@@ -33,8 +27,8 @@ if (args[2] === 'android') {
   driver = TEST.getDriver('firefox');
 }
 
-var intialTime = TEST.getTime();
-var index = 0;
+const intialTime = TEST.getTime();
+let index = 0;
 
 const _run = function () {
   console.log('Run HTML spec ' + testUrls[index] + ' at: ' + (TEST.getTime() - intialTime) + 'ms');

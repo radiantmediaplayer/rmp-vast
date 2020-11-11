@@ -2,14 +2,16 @@
 
 const TEST = require('../helpers/test');
 
-var driver;
+let driver;
 
-var testUrls = [
-  TEST.pathToTest + 'vast4Spec/IABVAST4Universal_Ad_ID-test'
+let testUrls = [
+  TEST.pathToTest + 'vast4Spec/Ad_Verification-test.html'
 ];
 
-var testUrlsChromeOnly = [
-  TEST.pathToTest + 'vast4Spec/IABVAST4Universal_Ad_ID-test'
+const testUrlsChromeOnly = [
+  TEST.pathToTest + 'vast4Spec/Ad_Verification-test.html',
+  TEST.pathToTest + 'vast4Spec/Category-test.html',
+  TEST.pathToTest + 'vast4Spec/Viewable_Impression-test.html'
 ];
 
 const args = process.argv;
@@ -24,8 +26,8 @@ if (args[2] === 'android') {
   driver = TEST.getDriver('firefox');
 }
 
-var intialTime = TEST.getTime();
-var index = 0;
+const intialTime = TEST.getTime();
+let index = 0;
 
 const _run = function () {
   console.log('Run HTML spec ' + testUrls[index] + ' at: ' + (TEST.getTime() - intialTime) + 'ms');

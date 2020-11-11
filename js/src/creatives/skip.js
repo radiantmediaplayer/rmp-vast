@@ -1,6 +1,7 @@
 import FW from '../fw/fw';
 import HELPERS from '../utils/helpers';
-import VASTPLAYER from '../players/vast-player';
+import VAST_PLAYER from '../players/vast-player';
+import TRACKING_EVENTS from '../tracking/tracking-events';
 
 const SKIP = {};
 
@@ -12,7 +13,7 @@ const _setCanBeSkippedUI = function () {
 
 const _updateWaitingForCanBeSkippedUI = function (delta) {
   if (Math.round(delta) > 0) {
-    this.skipWaiting.textContent = this.params.skipWaitingMessage + ' ' + Math.round(delta) + 's';
+    this.skipWaiting.textContent = this.params.labels.skipMessage + ' ' + Math.round(delta) + 's';
   }
 };
 
@@ -22,14 +23,13 @@ const _onTimeupdateCheckSkip = function () {
   }
   this.vastPlayerCurrentTime = this.vastPlayer.currentTime;
   if (FW.isNumber(this.vastPlayerCurrentTime) && this.vastPlayerCurrentTime > 0) {
-    const skipoffsetSeconds = FW.convertOffsetToSeconds(this.skipoffset, this.vastPlayerDuration);
-    if (this.vastPlayerCurrentTime >= skipoffsetSeconds) {
+    if (this.vastPlayerCurrentTime >= this.creative.skipoffset) {
       this.vastPlayer.removeEventListener('timeupdate', this.onTimeupdateCheckSkip);
       _setCanBeSkippedUI.call(this);
       this.skippableAdCanBeSkipped = true;
       HELPERS.createApiEvent.call(this, 'adskippablestatechanged');
-    } else if (skipoffsetSeconds - this.vastPlayerCurrentTime > 0) {
-      _updateWaitingForCanBeSkippedUI.call(this, skipoffsetSeconds - this.vastPlayerCurrentTime);
+    } else if (this.creative.skipoffset - this.vastPlayerCurrentTime > 0) {
+      _updateWaitingForCanBeSkippedUI.call(this, this.creative.skipoffset - this.vastPlayerCurrentTime);
     }
   }
 };
@@ -45,11 +45,9 @@ const _onClickSkip = function (event) {
     // create API event 
     HELPERS.createApiEvent.call(this, 'adskipped');
     // request ping for skip event
-    if (this.hasSkipEvent) {
-      HELPERS.dispatchPingEvent.call(this, 'skip');
-    }
+    TRACKING_EVENTS.dispatch.call(this, 'skip');
     // resume content
-    VASTPLAYER.resumeContent.call(this);
+    VAST_PLAYER.resumeContent.call(this);
   }
 };
 
@@ -57,16 +55,16 @@ SKIP.append = function () {
   this.skipButton = document.createElement('div');
   this.skipButton.className = 'rmp-ad-container-skip';
   FW.setStyle(this.skipButton, { display: 'none' });
-  HELPERS.accessibleButton(this.skipButton, 'skip ad button');
+  HELPERS.accessibleButton(this.skipButton, this.params.labels.skipMessage);
 
   this.skipWaiting = document.createElement('div');
   this.skipWaiting.className = 'rmp-ad-container-skip-waiting';
-  _updateWaitingForCanBeSkippedUI.call(this, this.skipoffset);
+  _updateWaitingForCanBeSkippedUI.call(this, this.creative.skipoffset);
   FW.setStyle(this.skipWaiting, { display: 'block' });
 
   this.skipMessage = document.createElement('div');
   this.skipMessage.className = 'rmp-ad-container-skip-message';
-  this.skipMessage.textContent = this.params.skipMessage;
+  this.skipMessage.textContent = this.params.labels.skipMessage;
   FW.setStyle(this.skipMessage, { display: 'none' });
 
   this.skipIcon = document.createElement('div');

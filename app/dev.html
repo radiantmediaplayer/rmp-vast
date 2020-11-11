@@ -4,14 +4,13 @@
 
 <head>
   <meta charset="utf-8">
-  <meta name="viewport"
-    content="width=device-width,minimum-scale=1,initial-scale=1">
+  <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
   <title>RmpVast - Example</title>
   <link rel="stylesheet"
     href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
   <link rel="stylesheet" href="css/app.css">
   <link rel="stylesheet" href="../css/rmp-vast.css">
-  <script src="../js/dist/rmp-vast.js"></script>
+  <!--<script type="module" src="../vast-client-js/dist/vast-client.js"></script>-->
 </head>
 
 <body>
@@ -23,16 +22,28 @@
       </video>
     </div>
   </div>
-  <script>
+  <script type="module">
+    import { RmpVast } from '../js/src/index.js';
     var id = 'rmpPlayer';
     var container = document.getElementById(id);
-    var video = container.getElementsByClassName('rmp-video')[0];
-    var ADTAG2 = 'https://www.radiantmediaplayer.com/vast/tags/inline-linear-skippable-per-cent.xml';
+    var ADTAG2 = 'https://www.radiantmediaplayer.com/vast/tags/ad-pod-no-standalone.xml';
+   // var ADTAG = 'https://www.radiantmediaplayer.com/vast/tags/non-linear.xml';
+   // var ADTAG3 = 'https://www.radiantmediaplayer.com/vast/tags/ad-pod-all-wrappers.xml';
     //var ADTAG2 = 'https://pubads.g.doubleclick.net/gampad/ads?sz=640x480&iu=/124319096/external/single_ad_samples&ciu_szs=300x250&impl=s&gdfp_req=1&env=vp&output=vast&unviewed_position_start=1&cust_params=deployment%3Ddevsite%26sample_ct%3Dlinear&correlator=';
     var params = {
       ajaxWithCredentials: false
     };
-    var rmpVast = new RmpVast(id, params);
-    rmpVast.loadAds(ADTAG2);
+    window.rmpVast = new RmpVast(id, params, true);
+    window.rmpVast.loadAds(ADTAG2);
+
+
+    /*import { VASTClient } from '../vast-client-js/dist/vast-client.js';
+    const vastClient = new VASTClient();
+    vastClient.get('https://www.radiantmediaplayer.com/vast/tags/inline-linear-companion.xml')
+      .then(res => {
+        window.console.log(res);
+      })
+      .catch(err => {
+      });*/
   </script>
 </body>

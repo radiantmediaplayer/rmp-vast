@@ -1,26 +1,26 @@
-'use strict';
+import { RmpVast } from '../../../../js/src/index.js';
 
-var ADTAG = 'https://www.radiantmediaplayer.com/vast/tags/iab/vast3/Inline_Non-Linear_Tag-test.xml';
+const ADTAG = 'https://www.radiantmediaplayer.com/vast/tags/iab/vast3/Inline_Non-Linear_Tag-test.xml';
 
 describe('Test for NonLinearSpecIABVAST3Spec', function () {
 
-  var id = 'rmpPlayer';
-  var container = document.getElementById(id);
-  var video = document.querySelector('.rmp-video');
-  var rmpVast = new RmpVast(id);
-  var fw = rmpVast.getFramework();
-  var env = rmpVast.getEnvironment();
+  const id = 'rmpPlayer';
+  const container = document.getElementById(id);
+  const video = document.querySelector('.rmp-video');
+  const rmpVast = new RmpVast(id);
+  const fw = rmpVast.getFramework();
+  const env = rmpVast.getEnvironment();
   video.muted = true;
   if (env.isAndroid[0]) {
     container.style.width = '320px';
     container.style.height = '180px';
   }
-  var title = document.getElementsByTagName('title')[0];
+  const title = document.getElementsByTagName('title')[0];
 
   it('should load adTag and play it', function (done) {
-    var validSteps = 0;
+    let validSteps = 0;
 
-    var _incrementAndLog = function (event) {
+    const _incrementAndLog = function (event) {
       validSteps++;
       if (event && event.type) {
         fw.log(event.type);
@@ -32,10 +32,10 @@ describe('Test for NonLinearSpecIABVAST3Spec', function () {
     });
 
     container.addEventListener('aderror', function (e) {
-      var errorCode = rmpVast.getAdVastErrorCode();
+      const errorCode = rmpVast.getAdVastErrorCode();
       if (env.isAndroid[0] && errorCode === 501) {
         _incrementAndLog(e);
-        var timeupdateCount = 0;
+        let timeupdateCount = 0;
         video.addEventListener('timeupdate', function (e) {
           timeupdateCount++;
           if (timeupdateCount === 5) {
@@ -57,7 +57,7 @@ describe('Test for NonLinearSpecIABVAST3Spec', function () {
     container.addEventListener('adstarted', function (e) {
       _incrementAndLog(e);
       setTimeout(function () {
-        var close = document.getElementsByClassName('rmp-ad-non-linear-close')[0];
+        const close = document.getElementsByClassName('rmp-ad-non-linear-close')[0];
         fw.log('click close');
         fw.createStdEvent('click', close);
       }, 7000);

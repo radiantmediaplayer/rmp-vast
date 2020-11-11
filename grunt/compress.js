@@ -12,6 +12,7 @@ module.exports = {
         'grunt/**',
         'js/**',
         'test/**',
+        'vast-client-js/**',
         '.*',
         '*.js',
         'LICENSE',

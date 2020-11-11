@@ -1,21 +1,19 @@
 import FW from '../fw/fw';
 import ENV from '../fw/env';
 import HELPERS from '../utils/helpers';
-import PING from '../tracking/ping';
-import CONTENTPLAYER from '../players/content-player';
-import VASTPLAYER from '../players/vast-player';
+import TRACKING_EVENTS from '../tracking/tracking-events';
+import CONTENT_PLAYER from '../players/content-player';
+import VAST_PLAYER from '../players/vast-player';
 import VPAID from '../players/vpaid';
 import SKIP from './skip';
 import ICONS from './icons';
-import VASTERRORS from '../utils/vast-errors';
+import VAST_ERRORS from '../utils/vast-errors';
 import RMPCONNECTION from '../../../externals/rmp-connection';
 
 const LINEAR = {};
 
 const VPAID_PATTERN = /vpaid/i;
 const JS_PATTERN = /\/javascript/i;
-const HLS_PATTERN = /(application\/vnd\.apple\.mpegurl|x-mpegurl)/i;
-const DASH_PATTERN = /application\/dash\+xml/i;
 const html5MediaErrorTypes = [
   'MEDIA_ERR_CUSTOM',
   'MEDIA_ERR_ABORTED',
@@ -32,34 +30,60 @@ const testCommonVideoFormats = [
 ];
 
 const _onDurationChange = function () {
-  if (DEBUG) {
-    FW.log('durationchange for VAST player reached');
-  }
   this.vastPlayer.removeEventListener('durationchange', this.onDurationChange);
-  this.vastPlayerDuration = VASTPLAYER.getDuration.call(this);
+  this.vastPlayerDuration = VAST_PLAYER.getDuration.call(this);
   HELPERS.createApiEvent.call(this, 'addurationchange');
+  // progress event
+  if (this.vastPlayerDuration === -1) {
+    return;
+  }
+  const keys = Object.keys(this.creative.trackingEvents);
+  for (let k = 0, len = keys.length; k < len; k++) {
+    const eventName = keys[k];
+    if (/progress-/i.test(eventName)) {
+      const time = eventName.split('-');
+      const time_2 = time[1];
+      if (/%/i.test(time_2)) {
+        let timePerCent = time_2.slice(0, -1);
+        timePerCent = (this.vastPlayerDuration * parseFloat(timePerCent)) / 100;
+        const trackingUrls = this.creative.trackingEvents[keys[k]];
+        trackingUrls.forEach(url => {
+          this.progressEvents.push({
+            time: timePerCent,
+            url: url
+          });
+        });
+      } else {
+        const trackingUrls = this.creative.trackingEvents[keys[k]];
+        trackingUrls.forEach(url => {
+          this.progressEvents.push({
+            time: parseFloat(time_2) * 1000,
+            url: url
+          });
+        });
+      }
+    }
+  }
+  // sort progress time ascending
+  if (this.progressEvents.length > 0) {
+    this.progressEvents.sort(function (a, b) {
+      return a.time - b.time;
+    });
+  }
 };
 
 const _onLoadedmetadataPlay = function () {
-  if (DEBUG) {
-    FW.log('loadedmetadata for VAST player reached');
-  }
   this.vastPlayer.removeEventListener('loadedmetadata', this.onLoadedmetadataPlay);
   clearTimeout(this.creativeLoadTimeoutCallback);
   HELPERS.createApiEvent.call(this, 'adloaded');
-  if (DEBUG) {
-    FW.log('pause content player');
-  }
-  CONTENTPLAYER.pause.call(this);
+  TRACKING_EVENTS.dispatch.call(this, 'loaded');
+  CONTENT_PLAYER.pause.call(this);
   // show ad container holding vast player
   FW.show(this.adContainer);
   FW.show(this.vastPlayer);
   this.adOnStage = true;
   // play VAST player
-  if (DEBUG) {
-    FW.log('play VAST player');
-  }
-  VASTPLAYER.play.call(this, this.firstVastPlayerPlayRequest);
+  VAST_PLAYER.play.call(this, this.firstVastPlayerPlayRequest);
   if (this.firstVastPlayerPlayRequest) {
     this.firstVastPlayerPlayRequest = false;
   }
@@ -69,17 +93,14 @@ const _onClickThrough = function (event) {
   if (event) {
     event.stopPropagation();
   }
-  if (DEBUG) {
-    FW.log('onClickThrough');
-  }
   if (!ENV.isMobile) {
-    FW.openWindow(this.clickThroughUrl);
+    FW.openWindow(this.creative.clickThroughUrl);
   }
   if (this.params.pauseOnClick) {
     this.pause();
   }
   HELPERS.createApiEvent.call(this, 'adclick');
-  HELPERS.dispatchPingEvent.call(this, 'clickthrough');
+  TRACKING_EVENTS.dispatch.call(this, 'clickthrough');
 };
 
 const _onPlaybackError = function (event) {
@@ -95,7 +116,7 @@ const _onPlaybackError = function (event) {
       if (typeof videoElement.error.message === 'string') {
         errorMessage = videoElement.error.message;
       }
-      if (DEBUG) {
+      if (this.debug) {
         FW.log('error on video element with code ' + errorCode.toString() + ' and message ' + errorMessage);
         if (html5MediaErrorTypes[errorCode]) {
           FW.log('error type is ' + html5MediaErrorTypes[errorCode]);
@@ -103,8 +124,7 @@ const _onPlaybackError = function (event) {
       }
       // EDIA_ERR_SRC_NOT_SUPPORTED (numeric value 4)
       if (errorCode === 4) {
-        PING.error.call(this, 401);
-        VASTERRORS.process.call(this, 401);
+        VAST_ERRORS.process.call(this, 401, true);
       }
     }
   }
@@ -115,9 +135,9 @@ const _appendClickUIOnMobile = function () {
   // because it works better in standalone mode and WebView
   this.clickUIOnMobile = document.createElement('a');
   this.clickUIOnMobile.className = 'rmp-ad-click-ui-mobile';
-  this.clickUIOnMobile.textContent = this.params.textForClickUIOnMobile;
+  this.clickUIOnMobile.textContent = this.params.labels.textForClickUIOnMobile;
   this.clickUIOnMobile.addEventListener('touchend', this.onClickThrough);
-  this.clickUIOnMobile.href = this.clickThroughUrl;
+  this.clickUIOnMobile.href = this.creative.clickThroughUrl;
   this.clickUIOnMobile.target = '_blank';
   this.adContainer.appendChild(this.clickUIOnMobile);
 };
@@ -130,7 +150,7 @@ const _onContextMenu = function (event) {
 };
 
 LINEAR.update = function (url, type) {
-  if (DEBUG) {
+  if (this.debug) {
     FW.log('update vast player for linear creative of type ' + type + ' located at ' + url);
   }
   this.onDurationChange = _onDurationChange.bind(this);
@@ -148,8 +168,7 @@ LINEAR.update = function (url, type) {
 
   // start creativeLoadTimeout
   this.creativeLoadTimeoutCallback = setTimeout(() => {
-    PING.error.call(this, 402);
-    VASTERRORS.process.call(this, 402);
+    VAST_ERRORS.process.call(this, 402, true);
   }, this.params.creativeLoadTimeout);
   // load ad asset
   if (this.useContentPlayerForAds) {
@@ -164,7 +183,7 @@ LINEAR.update = function (url, type) {
 
   // clickthrough interaction
   this.onClickThrough = _onClickThrough.bind(this);
-  if (this.clickThroughUrl) {
+  if (this.creative.clickThroughUrl) {
     if (ENV.isMobile) {
       _appendClickUIOnMobile.call(this);
     } else {
@@ -174,119 +193,49 @@ LINEAR.update = function (url, type) {
 
   // skippable - only where vast player is different from 
   // content player
-  if (this.isSkippableAd) {
+  if (this.creative.isSkippableAd) {
     SKIP.append.call(this);
   }
 };
 
-LINEAR.parse = function (linear) {
-  // we have an InLine Linear which is not a Wrapper - process MediaFiles
-  this.adIsLinear = true;
-  if (DEBUG) {
-    const duration = linear[0].getElementsByTagName('Duration');
-    if (duration.length === 0) {
-      if (DEBUG) {
-        FW.log('missing Duration tag child of Linear tag - this is not a VAST 3 spec compliant adTag - continuing anyway (same as IMA)');
-      }
-    }
-  }
-  const mediaFiles = linear[0].getElementsByTagName('MediaFiles');
-  if (mediaFiles.length === 0) {
-    // 1 MediaFiles element must be present otherwise VAST document is not spec compliant 
-    PING.error.call(this, 101);
-    VASTERRORS.process.call(this, 101);
-    return;
-  }
-  // Industry Icons - currently we only support one icon
-  const icons = linear[0].getElementsByTagName('Icons');
+LINEAR.parse = function (icons, adParameters, mediaFiles) {
   if (icons.length > 0) {
     ICONS.parse.call(this, icons);
   }
   // check for AdParameters tag in case we have a VPAID creative
-  const adParameters = linear[0].getElementsByTagName('AdParameters');
   this.adParametersData = '';
-  if (adParameters.length > 0) {
-    this.adParametersData = FW.getNodeValue(adParameters[0], false);
-  }
-  const mediaFile = mediaFiles[0].getElementsByTagName('MediaFile');
-  if (mediaFile.length === 0) {
-    // at least 1 MediaFile element must be present otherwise VAST document is not spec compliant 
-    PING.error.call(this, 101);
-    VASTERRORS.process.call(this, 101);
-    return;
+  if (adParameters !== null) {
+    this.adParametersData = adParameters;
   }
   let mediaFileItems = [];
-  let mediaFileToRemove = [];
-  for (let i = 0, len = mediaFile.length; i < len; i++) {
-    mediaFileItems[i] = {};
-    // required per VAST3 spec CDATA URL location to media, delivery, type, width, height
-    const currentMediaFile = mediaFile[i];
-    const mediaFileValue = FW.getNodeValue(currentMediaFile, true);
-    if (mediaFileValue === null) {
-      mediaFileToRemove.push(i);
+  for (let i = 0, len = mediaFiles.length; i < len; i++) {
+    const currentMediaFile = mediaFiles[i];
+    const mediaFileValue = currentMediaFile.fileURL;
+    const type = currentMediaFile.mimeType;
+    if (mediaFileValue === null || type === null) {
       continue;
     }
-    const type = currentMediaFile.getAttribute('type');
-    if (type === null || type === '') {
-      mediaFileToRemove.push(i);
-      continue;
+    const newMediaFileItem = {};
+    newMediaFileItem.url = mediaFileValue;
+    newMediaFileItem.type = type;
+    if (currentMediaFile.codec !== null) {
+      newMediaFileItem.codec = currentMediaFile.codec;
     }
-    mediaFileItems[i].url = mediaFileValue;
-    mediaFileItems[i].type = type;
-    const codec = currentMediaFile.getAttribute('codec');
-    if (codec !== null && codec !== '') {
-      mediaFileItems[i].codec = codec;
-    }
-    // check for potential VPAID
-    const apiFramework = mediaFileItems[i].apiFramework = currentMediaFile.getAttribute('apiFramework');
-    // we have a VPAID JS - we break
+    // check for potential VPAID - we have a VPAID JS - we break
     // for VPAID we may not have a width, height or delivery
-    if (this.params.enableVpaid && apiFramework &&
-      VPAID_PATTERN.test(apiFramework) && JS_PATTERN.test(type)) {
-      if (DEBUG) {
+    if (this.params.enableVpaid && currentMediaFile.apiFramework &&
+      VPAID_PATTERN.test(currentMediaFile.apiFramework) && JS_PATTERN.test(type)) {
+      if (this.debug) {
         FW.log('VPAID creative detected');
       }
-      mediaFileItems = [mediaFileItems[i]];
-      mediaFileToRemove = [];
+      mediaFileItems = [newMediaFileItem];
       this.isVPAID = true;
       break;
     }
-    /* delivery attribute is required but sometimes missing in real world and not really necessary to move forward */
-    /*let delivery = currentMediaFile.getAttribute('delivery');
-    if (delivery !== 'progressive' && delivery !== 'streaming') {
-      delivery = 'progressive';
-      if (DEBUG) {
-        FW.log('missing required delivery attribute on MediaFile tag - this is not a VAST 3 spec compliant adTag - continuing anyway (same as IMA)');
-      }
-    }*/
-    let width = currentMediaFile.getAttribute('width');
-    if (width === null || width === '') {
-      if (DEBUG) {
-        FW.log('missing required width attribute on MediaFile tag - this is not a VAST 3 spec compliant adTag - continuing anyway (same as IMA)');
-      }
-      width = 0;
-    }
-    let height = currentMediaFile.getAttribute('height');
-    if (height === null || height === '') {
-      if (DEBUG) {
-        FW.log('missing required height attribute on MediaFile tag - this is not a VAST 3 spec compliant adTag - continuing anyway (same as IMA)');
-      }
-      height = 0;
-    }
-    let bitrate = currentMediaFile.getAttribute('bitrate');
-    if (bitrate === null || bitrate === '' || bitrate < 10) {
-      bitrate = 0;
-    }
-    mediaFileItems[i].width = parseInt(width);
-    mediaFileItems[i].height = parseInt(height);
-    mediaFileItems[i].bitrate = parseInt(bitrate);
-
-  }
-  // remove MediaFile items that do not hold VAST spec-compliant attributes or data
-  if (mediaFileToRemove.length > 0) {
-    for (let i = mediaFileToRemove.length - 1; i >= 0; i--) {
-      mediaFileItems.splice(mediaFileToRemove[i], 1);
-    }
+    newMediaFileItem.width = currentMediaFile.width;
+    newMediaFileItem.height = currentMediaFile.height;
+    newMediaFileItem.bitrate = currentMediaFile.bitrate;
+    mediaFileItems.push(newMediaFileItem);
   }
   // we support HLS; MP4; WebM: VPAID so let us fecth for those
   const creatives = [];
@@ -296,18 +245,18 @@ LINEAR.parse = function (linear) {
     const url = currentMediaFileItem.url;
     if (this.isVPAID && url) {
       VPAID.loadCreative.call(this, url, this.params.vpaidSettings);
-      this.adContentType = type;
+      this.creative.type = type;
       return;
     }
     // we have HLS or DASH and it is natively supported - display ad with HLS in priority
-    if (HLS_PATTERN.test(type) && ENV.okHls) {
-      VASTPLAYER.append.call(this, url, type);
-      this.adContentType = type;
+    if (ENV.canPlayType('application/vnd.apple.mpegurl') || ENV.canPlayType('application/x-mpegurl')) {
+      VAST_PLAYER.append.call(this, url, type);
+      this.creative.type = type;
       return;
     }
-    if (DASH_PATTERN.test(type) && ENV.okDash) {
-      VASTPLAYER.append.call(this, url, type);
-      this.adContentType = type;
+    if (ENV.canPlayType('application/dash+xml')) {
+      VAST_PLAYER.append.call(this, url, type);
+      this.creative.type = type;
       return;
     }
     // we gather MP4, WebM, OGG and remaining files
@@ -358,8 +307,7 @@ LINEAR.parse = function (linear) {
   // still no match for supported format - we exit
   if (retainedCreatives.length === 0) {
     // None of the MediaFile provided are supported by the player
-    PING.error.call(this, 403);
-    VASTERRORS.process.call(this, 403);
+    VAST_ERRORS.process.call(this, 403, true);
     return;
   }
 
@@ -368,9 +316,8 @@ LINEAR.parse = function (linear) {
     return a.width - b.width;
   });
 
-  if (DEBUG) {
-    FW.log('available linear creative follows');
-    FW.log(retainedCreatives);
+  if (this.debug) {
+    FW.log('available linear creative follows', retainedCreatives);
   }
 
   // we have files matching device capabilities
@@ -421,15 +368,14 @@ LINEAR.parse = function (linear) {
     }
   }
 
-  if (DEBUG) {
-    FW.log('selected linear creative follows');
-    FW.log(finalCreative);
+  if (this.debug) {
+    FW.log('selected linear creative follows', finalCreative);
   }
-  this.adMediaUrl = finalCreative.url;
-  this.adMediaHeight = finalCreative.height;
-  this.adMediaWidth = finalCreative.width;
-  this.adContentType = finalCreative.type;
-  VASTPLAYER.append.call(this, finalCreative.url, finalCreative.type);
+  this.creative.mediaUrl = finalCreative.url;
+  this.creative.height = finalCreative.height;
+  this.creative.width = finalCreative.width;
+  this.creative.type = finalCreative.type;
+  VAST_PLAYER.append.call(this, finalCreative.url, finalCreative.type);
 };
 
 export default LINEAR;

@@ -2,14 +2,16 @@
 
 const TEST = require('../helpers/test');
 
-var driver;
+let driver;
 
-var testUrls = [
+let testUrls = [
   TEST.pathToTest + 'nonLinearSpec/NonLinearSpecIABVAST3Spec.html'
 ];
 
-var testUrlsChromeOnly = [
-  TEST.pathToTest + 'nonLinearSpec/NonLinearSpec.html',
+const testUrlsChromeOnly = [
+  TEST.pathToTest + 'nonLinearSpec/non-linear-iframe.html',
+  TEST.pathToTest + 'nonLinearSpec/non-linear-html.html',
+  TEST.pathToTest + 'nonLinearSpec/non-linear-image.html',
   TEST.pathToTest + 'nonLinearSpec/NonLinearSpecIABVAST2Spec.html',
   TEST.pathToTest + 'nonLinearSpec/NonLinearSpecIABVAST3Spec.html'
 ];
@@ -26,8 +28,8 @@ if (args[2] === 'android') {
   driver = TEST.getDriver('firefox');
 }
 
-var intialTime = TEST.getTime();
-var index = 0;
+const intialTime = TEST.getTime();
+let index = 0;
 
 const _run = function () {
   console.log('Run HTML spec ' + testUrls[index] + ' at: ' + (TEST.getTime() - intialTime) + 'ms');

@@ -8,7 +8,6 @@
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
 	<link rel="stylesheet" href="css/app.css">
 	<link rel="stylesheet" href="../css/rmp-vast.min.css">
-	<script src="../js/dist/rmp-vast.js"></script>
 </head>
 
 <body>
@@ -37,7 +36,7 @@
 						<button id="stopAds">stopAds()</button>
 					</div>
 					<div class="margin-top-10">
-						<input class="form-control" id="newAdTagUrl" type="url" placeholder="input your adTag URL here">
+						<input class="form-control" id="newAdTagUrl" type="url" placeholder="https://www.radiantmediaplayer.com/vast/tags/inline-linear.xml">
 						<button id="loadAds">loadAds(newAdTagUrl)</button>
 					</div>
 					<div class="margin-top-10">
@@ -70,6 +69,9 @@
 							<button id="getAdSystem">getAdSystem</button><span id="getAdSystemResult"></span>
 						</div>
 						<div class="margin-top-10">
+							<button id="getAdUniversalAdId">getAdUniversalAdId</button><span id="getAdUniversalAdIdResult"></span>
+						</div>
+						<div class="margin-top-10">
 							<button id="getAdContentType">getAdContentType</button><span id="getAdContentTypeResult"></span>
 						</div>
 						<div class="margin-top-10">
@@ -79,10 +81,31 @@
 							<button id="getAdDescription">getAdDescription</button><span id="getAdDescriptionResult"></span>
 						</div>
 						<div class="margin-top-10">
+							<button id="getAdAdvertiser">getAdAdvertiser</button><span id="getAdAdvertiserResult"></span>
+						</div>
+						<div class="margin-top-10">
+							<button id="getAdPricing">getAdPricing</button><span id="getAdPricingResult"></span>
+						</div>
+						<div class="margin-top-10">
+							<button id="getAdSurvey">getAdSurvey</button><span id="getAdSurveyResult"></span>
+						</div>
+						<div class="margin-top-10">
+							<button id="getAdAdServingId">getAdAdServingId</button><span id="getAdAdServingIdResult"></span>
+						</div>
+						<div class="margin-top-10">
+							<button id="getAdCategories">getAdCategories</button><span id="getAdCategoriesResult"></span>
+						</div>
+						<div class="margin-top-10">
+							<button id="getAdBlockedAdCategories">getAdBlockedAdCategories</button><span id="getAdBlockedAdCategoriesResult"></span>
+						</div>
+						<div class="margin-top-10">
 							<button id="getAdDuration">getAdDuration</button><span id="getAdDurationResult"></span>
 						</div>
 						<div class="margin-top-10">
 							<button id="getAdCurrentTime">getAdCurrentTime</button><span id="getAdCurrentTimeResult"></span>
+						</div>
+						<div class="margin-top-10">
+							<button id="getAdRemainingTime">getAdRemainingTime</button><span id="getAdRemainingTimeResult"></span>
 						</div>
 						<div class="margin-top-10">
 							<button id="getAdOnStage">getAdOnStage</button><span id="getAdOnStageResult"></span>
@@ -96,6 +119,15 @@
 						<div class="margin-top-10">
 							<button id="getClickThroughUrl">getClickThroughUrl</button><span id="getClickThroughUrlResult"></span>
 						</div>
+						<div class="margin-top-10">
+							<button id="getSkipTimeOffset">getSkipTimeOffset</button><span id="getSkipTimeOffsetResult"></span>
+						</div>
+						<div class="margin-top-10">
+							<button id="getIsSkippableAd">getIsSkippableAd</button><span id="getIsSkippableAdResult"></span>
+						</div>
+						<div class="margin-top-10">
+							<button id="getAdSkippableState">getAdSkippableState</button><span id="getAdSkippableStateResult"></span>
+						</div>
 						<br><br><br>
 					</div>
 				</div>
@@ -106,7 +138,7 @@
 			</div>
 		</div>
 	</div>
-	<script src="js/app.js"></script>
+	<script type="module" src="js/app.js"></script>
 </body>
 
 </html>

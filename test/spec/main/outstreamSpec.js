@@ -2,15 +2,14 @@
 
 const TEST = require('../helpers/test');
 
-var driver;
+let driver;
 
-var testUrls = [
+let testUrls = [
   TEST.pathToTest + 'outstreamSpec/Simple.html'
 ];
 
-var testUrlsChromeOnly = [
+const testUrlsChromeOnly = [
   TEST.pathToTest + 'outstreamSpec/Simple.html',
-  TEST.pathToTest + 'outstreamSpec/AdPod.html',
   TEST.pathToTest + 'outstreamSpec/Reload.html',
   TEST.pathToTest + 'outstreamSpec/Vpaid.html'
 ];
@@ -27,8 +26,8 @@ if (args[2] === 'android') {
   driver = TEST.getDriver('firefox');
 }
 
-var intialTime = TEST.getTime();
-var index = 0;
+const intialTime = TEST.getTime();
+let index = 0;
 
 const _run = function () {
   console.log('Run HTML spec ' + testUrls[index] + ' at: ' + (TEST.getTime() - intialTime) + 'ms');

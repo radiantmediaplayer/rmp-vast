@@ -2,13 +2,16 @@
 
 A client-side JavaScript solution to load, parse and display VAST resources (advertising).
 
-It aims at closely implementing the [IAB VAST 3 specification](https://www.iab.com/guidelines/digital-video-ad-serving-template-vast-3-0/) for web-based environments 
-(e.g. browser, WebView ...) where both HTML5 video and JavaScript are available.
+It aims at implementing the [IAB VAST 4.2 specification](https://iabtechlab.com/standards/vast/) for web-based environments (e.g. browser, WebView ...) where both HTML5 video and JavaScript are available. VAST 2 and VAST 3 support is also provided.
+
+rmp-vast is written in ES2017 and does not include any polyfill or transpiling to ES5 for backward compatibility. It is up to you to transpile/polyfill the library if needs be.
+
+rmp-vast makes use of [vast-client-js](https://github.com/dailymotion/vast-client-js) for fetching and parsing VAST XML resources.
 
 rmp-vast is used and maintained by [Radiant Media Player](https://www.radiantmediaplayer.com/).
 
 ## Documentation sections
-- [Supported VAST 3 features](#supported-vast-3-features)
+- [Supported VAST 4.2 features](#supported-vast-3-features)
 - [Supported environments](#supported-environments)
 - [CORS requirements](#cors-requirements)
 - [Video ads from Google Ads network and rmp-vast](#video-ads-from-google-ads-network-and-rmp-vast)
@@ -16,7 +19,6 @@ rmp-vast is used and maintained by [Radiant Media Player](https://www.radiantmed
 - [Parameters, API events and methods](#parameters-api-events-and-methods)
   * [Parameters when creating a rmp-vast instance](#parameters-when-creating-a-rmp-vast-instance)
   * [Starting the rmp-vast player](#starting-the-rmp-vast-player)
-  * [Importing rmp-vast as a ES2015 module](#importing-rmp-vast-as-a-es2015-module)
   * [API events](#api-events)
   * [API methods](#api-methods)
 - [Companion ads support](#companion-ads-support)
@@ -29,25 +31,21 @@ rmp-vast is used and maintained by [Radiant Media Player](https://www.radiantmed
 - [License](#license)
 - [Radiant Media Player](#radiant-media-player)
 
-## Supported VAST 3 features
+## Supported VAST 4.2 features
 - Inline and Wrapper Ads
 - Linear Ads (MP4/WebM or HLS, DASH where natively supported)
 - Skippable Linear Ads (MP4/WebM or HLS, DASH where natively supported)
-- Non Linear Ads (Images)
-- Companion Ads (Images) - BETA
+- Non Linear Ads (image/iframe/HTML)
+- Companion Ads (image/iframe/HTML)
 - Tracking Events (tracking URLs must return an image - typically a 1px GIF/PNG/JPG)
 - Error Reporting
-- Industry Icons
-- VAST 3 Macros
-- VPAID 1 and 2 JavaScript
+- Industry Icons (image/iframe/HTML)
+- VAST 4.2 Macros
+- VPAID 1 and 2 JavaScript (deprecated)
 - Outstream ads
 - Ad Pods
 - Audio Ads (MP3/M4A/HLS where natively supported) in HTML5 video
-
-VAST 2 resources should also be compatible with rmp-vast.
-
-rmp-vast scope is not to implement all aspects of the VAST 3 specification but rather provide 
-enough coverage to support current industry requirements and best practices.
+- ViewableImpression, Universal Ad ID, AdServingId, Survey and Ad Categories
 
 ### Additional supported features
 - Mobile compatible (Android + iOS)
@@ -55,7 +53,8 @@ enough coverage to support current industry requirements and best practices.
 - API to build a fully fledged player on top of rmp-vast
 
 ### Currently unsupported VAST features
-- VAST 4 specific features
+- SIMID
+- AdVerifications (PR welcome)
 - VMAP
 
 [Back to documentation sections](#documentation-sections)
@@ -68,8 +67,8 @@ enough coverage to support current industry requirements and best practices.
 - Firefox for Android 5+
 - Firefox for Desktop
 - Samsung Internet for Android 5+
-- Safari 10+ for macOS
-- Safari for iOS 10+
+- Safari 11+ for macOS
+- Safari for iOS 11+ and iPadOS 13+
 - MS Edge for Desktop
 - MS Edge Legacy 18+ for Desktop
 
@@ -77,9 +76,9 @@ Specifically we support the 2 latest stable release for each browser.
 
 ### WebViews
 - Android 5+
-- iOS 10+ (WKWebView)
+- iOS 11+ (WKWebView)
 
-With the announcement of Apple in december 2019, to remove support for UIWebView API by end 2020, we only support WKWebView API for iOS apps built with Cordova or Ionic. [See this blog post](https://www.radiantmediaplayer.com/blog/updating-ios-apps-for-wkwebview.html) to help you update to WKWebView API.
+With the announcement of Apple in december 2019, to remove support for UIWebView API by end 2020, we only support WKWebView API for iOS apps built with Cordova, Ionic or WebView. [See this blog post](https://www.radiantmediaplayer.com/blog/updating-ios-apps-for-wkwebview.html) to help you update to WKWebView API.
 
 It is fairly possible that rmp-vast would work in other environments but they are not officially supported.
 
@@ -102,7 +101,6 @@ First download latest rmp-vast package from the [release tab](https://github.com
 You must use rmp-vast in a well-formed HTML document. This means a web-page with a valid HTML5 DOCTYPE and other elements that are commonly available in today's web. See app/index.html for an example.
 
 - Include rmp-vast.min.css
-- Include rmp-vast.min.js - for debug logs include rmp-vast.js instead
 - In order to use rmp-vast you must adhere to a specific HTML layout pattern. This pattern is as follows: 
 ```html
 <div class="rmp-container" id="rmpPlayer">
@@ -113,8 +111,9 @@ You must use rmp-vast in a well-formed HTML document. This means a web-page with
 ```
 This structure must not be altered. CSS classes on the above elements must not be renamed.
 The HTML5 video tag used for content must use the src property on the HTML5 video (e.g. do not use source tag).
-- Init rmp-vast with JavaScript:
+- Import rmp-vast and init the library with JavaScript:
 ```javascript
+import { RmpVast } from './js/src/index.js';
 var adTag = 'https://www.radiantmediaplayer.com/vast/tags/inline-linear-1.xml';
 var id = 'rmpPlayer';
 var params = {
@@ -145,7 +144,7 @@ Source code for rmp-vast is available for review in js/src/ folder. Code comment
 ### Parameters when creating a rmp-vast instance
 Once rmp-vast library is loaded on your page you can create a new rmp-vast instance as follows:
 
-`new RmpVast(id, params)`
+`new RmpVast(id, params, debug)`
 
 `id: String` is the id for the player container. This is a required parameter.
 
@@ -159,15 +158,15 @@ Once rmp-vast library is loaded on your page you can create a new rmp-vast insta
 
 `params.maxNumRedirects: Number` the number of VAST wrappers the player should follow before triggering an error. Default: 4. Capped at 30 to avoid infinite wrapper loops.
 
-`params.maxNumItemsInAdPod: Number` maximum number of Ad an AdPod can play. Default: 10.
-
 `params.pauseOnClick: Boolean` when an ad is clicked - pause or not VAST player (linear) or content player (non-linear). Default: true.
 
-`params.skipMessage: String` the skip message to show on player when a skippable ad is detected and the ad is in a state where it can be skipped. Default: 'Skip ad'.
+`params.labels: Object` labels used to display information to the viewer. 
 
-`params.skipWaitingMessage: String` the skip message to show on player when a skippable ad is detected and the ad is in a state where it cannot be skipped. Default: 'Skip ad in'. This will be completed by the number of seconds remaining before the ad state changes to a state where it can be skipped.
+`params.labels.skipMessage: String` skip message. Default: 'Skip ad'.
 
-`params.textForClickUIOnMobile: String` on mobile devices the click-through URL for a linear ad is provided in a box located at the top right corner of the player. This setting set the text for this box. Default: 'Learn more'.
+`params.labels.closeAd: String` close ad message. Default: 'Close ad'.
+
+`params.labels.textForClickUIOnMobile: String` on mobile devices the click-through URL for a linear ad is provided in a box located at the top right corner of the player. This setting set the text for this box. Default: 'Learn more'.
 
 `params.outstream: Boolean` Enables outstream ad mode. Default: false.
 
@@ -188,34 +187,12 @@ vpaidSettings: {
 ### Starting the rmp-vast player
 It is important for the rmp-vast instance to be properly initialized to avoid playback issues. 
 
-Playing video ads in HTML5 video is a non-trivial process that requires the overlaying of multiple video tags or changes in source depending on the targeted environments. On mobile devices a user interaction is required to properly initialized a video tag and various restrictions are set by the OS to limit the manipulation of a video tag with JavaScript.
+Playing video ads in HTML5 video is a non-immediate process that requires the overlaying of multiple video tags or changes in content source depending on the targeted environments. On mobile devices a user interaction is required to properly initialized a video tag and various restrictions are set by the OS to limit manipulation of a video tag with JavaScript.
 
 To sum up: use the rmp-vast API `loadAds()` method to start playback. On mobile devices this should be the result of a direct user interaction. You can also use autoplay (desktop) or muted autoplay (mobiles) to start playback. Refer to the autoplay support section.
 
 If you do not want to call `loadAds()` method directly - call `initialize()` method (as a result of a user interaction or on page 
 load for autoplay) then call `loadAds()` later on when you wish to load a VAST tag.
-
-[Back to documentation sections](#documentation-sections)
-
-### Importing rmp-vast as a ES2015 module
-```javascript
-import RmpVast from 'js/src/module';
-
-const adTag = 'https://www.radiantmediaplayer.com/vast/tags/inline-linear-1.xml';
-const id = 'rmpPlayer';
-const params = {
-  ajaxTimeout: 8000
-};
-
-// create RmpVast instance
-const rmpVast = new RmpVast(id, params);
-
-// call loadAds
-rmpVast.loadAds(adTag);
-```
-Note that 'core-js' is not provided when rmp-vast is imported as a ES2015 module, if wanted you will need to add it in your main app (and transform resulting code with Babel if needed).
-
-To enable debug logs you will need to add `window.DEBUG = true;` in module.js (just after import). The removal of the global `DEBUG` varibale should be handled with terser when building your main app (see grunt/shell.js). 
 
 [Back to documentation sections](#documentation-sections)
 
@@ -232,32 +209,36 @@ container.addEventListener('adloaded', function() {
 });
 ```
 Available events are:
-- `adtagstartloading`
-- `adtagloaded`
-- `adfollowingredirect`
 - `adloaded`
 - `addurationchange`
+- `adclick`
+- `adclosed`
 - `adimpression`
+- `aduseracceptinvitation`
+- `adcollapse`
 - `adstarted`
+- `adtagloaded`
+- `adprogress`
+- `adviewable`
+- `adviewundetermined`
+- `adinitialplayrequestfailed`
+- `adinitialplayrequestsucceeded`
 - `adpaused`
 - `adresumed`
+- `adtagstartloading`
+- `advolumemuted`
+- `advolumechanged`
+- `adcomplete`
 - `adskipped`
 - `adskippablestatechanged`
 - `adfirstquartile`
 - `admidpoint`
 - `adthirdquartile`
-- `adcomplete`
-- `adclick`
-- `advolumemuted`
-- `advolumechanged`
-- `adclosed`
 - `aderror`
 - `addestroyed`
-- `adinitialplayrequestfailed`
-- `adinitialplayrequestsucceeded`
-- `adpodcompleted`: the current ad pod has finished playing all its Ad
+- `adpodcompleted`
 
-The `adinitialplayrequestfailed` event tells if the vast (or content in case of non-linear creatives) player was able to play on first attempt. Typically this event will fire when autoplay is requested but blocked by an interference engine (macOS Safari 11+, Chrome 66+, Firefox w/ media.autoplay.enabled set to false, browser extensions ...). If the initial play request was a success, the `adinitialplayrequestsucceeded` event will fire.
+The `adinitialplayrequestfailed` event tells if the vast (or content in case of non-linear creatives) player was able to play on first attempt. Typically this event will fire when autoplay is requested but blocked by an interference engine (macOS Safari 11+, Chrome 66+, browser extensions ...). If the initial play request was a success, the `adinitialplayrequestsucceeded` event will fire.
 
 VPAID-related events:
 - `adlinearchange`
@@ -296,10 +277,17 @@ For linear ads rmp-vast exposes 2 players: a content player (for the actual cont
 The following methods should be queried after the `adstarted` event has fired for accurate data:
 - `getAdMediaUrl()`: return String, representing the selected creative URL.
 - `getAdLinear()`: return Boolean, representing the type of the selected creative either linear (true) or non linear (false).
-- `getAdSystem()`: return String, representing the VAST AdSystem tag.
+- `getAdSystem()`: return `{value: String, version: String}: Object`, representing the VAST AdSystem tag.
+- `getAdUniversalAdId()`: return `{idRegistry: String, value: String}: Object`, representing the VAST UniversalAdId tag.
 - `getAdContentType()`: return String, representing the MIME type for the selected creative.
 - `getAdTitle()`: return String, representing the VAST AdTitle tag.
 - `getAdDescription()`: return String, representing the VAST Description tag.
+- `getAdAdvertiser()`: return `{id: String, value: String}: Object`, representing the VAST Advertiser tag.
+- `getAdPricing()`: return `{value: String, model: String, currency: String}: Object`, representing the VAST Pricing tag.
+- `getAdSurvey()`: return `String`, representing the VAST Survey tag.
+- `getAdAdServingId()`: return `String`, representing the VAST AdServingId tag.
+- `getAdCategories()`: return `{authority: String, value: String}: Object`, representing the VAST Category tag.
+- `getAdBlockedAdCategories()`: return `{authority: String, value: String}: Object`, representing the VAST BlockedAdCategories tag.
 - `getAdDuration()`: return Number in ms, representing the duration of the selected linear creative. -1 is returned if this value is not available.
 - `getAdCurrentTime()`: return Number in ms, representing the current timestamp in the selected linear creative. -1 is returned if this value is not available.
 - `getAdRemainingTime()`: return Number in ms, representing the current time remaining in the selected linear creative. -1 is returned if this value is not available.
@@ -307,7 +295,8 @@ The following methods should be queried after the `adstarted` event has fired fo
 - `getAdMediaHeight()`: return Number, representing the height of the selected creative. -1 is returned if this value is not available.
 - `getClickThroughUrl()`: return String, representing the click-through (e.g. destination) URL for the selected creative.
 - `getIsSkippableAd()`: return Boolean, stating if the loaded linear ad is a VAST skippable ad - can be querried when adloaded event fires.
-- `getAdSkippableState()`: return Boolean, stating if the creative on stage can be skipped or not.
+- `getSkipTimeOffset()`: return `Number|-1` giving the skip offset when a skippable ad is displayed.
+- `getAdSkippableState()`: return `Boolean`, stating if the creative on stage can be skipped or not.
 - `getContentPlayerCompleted()`: return Boolean, stating if content player has reached end of content.
 - `setContentPlayerCompleted(value)`: input value must be a Boolean - sets the contentPlayerCompleted state of the player, this is used when source on content player changes and we need to explicitly reset contentPlayerCompleted internal value so that content can resume as expected on next ad load.
 
@@ -318,7 +307,7 @@ Additional VPAID-related methods
 - `resizeAd(width, height, viewMode)`: resizes the VPAID creative based on width: Number, height: Number and viewMode: String. viewMode should be either 'normal' or 'fullscreen'.
 - `expandAd()`: expands the VPAID creative on stage.
 - `collapseAd()`: collapses the VPAID creative on stage.
-- `getVpaidCreative()`: return (Object|null) reference to the VPAID creative.
+- `getVpaidCreative()`: return `Object|null` reference to the VPAID creative.
 - `getAdExpanded()`: return Boolean, stating if the VPAID creative on stage is expanded or not.
 - `getVPAIDCompanionAds()`: return String, providing ad companion details in VAST 3.0 format for the `<CompanionAds>` element.
 
@@ -337,13 +326,10 @@ The following methods provide context information for the rmp-vast instance:
 [Back to documentation sections](#documentation-sections)
 
 ## Companion ads support
-Feedback is welcome! Companion ads support is currently in BETA in rmp-vast, your contributions can help us make this a rock-solid feature faster.
+We support StaticResource, IFrameResource and HTMLResource in Companion tags.
+We also support AltText, CompanionClickThrough, CompanionClickTracking, TrackingEvents tags in Companion tags. We support "required" attribute for CompanionAds tag as well as "adSlotID" attribute for Companion tag. We also support CompanionAds in wrappers/redirects (The CompanionAds nearer to the final linear creative will be selected).
 
-We support StaticResource images (JPEG, GIF, PNG) in Companion tags. We do not support IFrameResource or HTMLResource in Companion tags.
-
-We support AltText, CompanionClickThrough, CompanionClickTracking, TrackingEvents tags in Companion tags. We support "required" attribute for CompanionAds tag as well as "adSlotID" attribute for Companion tag. We also support CompanionAds in wrappers/redirects (The CompanionAds nearer to the final linear creative will be selected).
-
-See app/companion.html for an example of implementation.
+See test/spec/companionSpec/ for an example of implementation.
 
 The following methods must be querried when the `adstarted` event fires for the master linear ad.
 
@@ -364,7 +350,7 @@ The following methods must be querried when the `adstarted` event fires for the 
 }
 ```
 Not all fields may be available, so check availability before usage.
-- `getCompanionAd(index)`: return (HTMLElement image|null) representing the companion ad. It takes a `Number` index parameter which represents the index of the wanted companion ad in the Array returned from `getCompanionAdsList` method. This method automates the required pinging for companion ads. Usage example:
+- `getCompanionAd(index)`: return `HTMLElement|null` representing the companion ad. It takes a `Number` index parameter which represents the index of the wanted companion ad in the Array returned from `getCompanionAdsList` method. This method automates the required pinging for companion ads. Usage example:
 ```javascript
   container.addEventListener('adstarted', function () {
     // we need to call getCompanionAdsList BEFORE calling getCompanionAd so that 
@@ -406,7 +392,7 @@ rmp-vast supports fullscreen for the global player (e.g. content + vast players)
 [Back to documentation sections](#documentation-sections)
 
 ## Pre, mid and post rolls
-rmp-vast can handle pre/mid/post rolls ad breaks through the loadAds API method. See app/pre-mid-post-roll.html for an example.
+rmp-vast can handle pre/mid/post rolls ad breaks through the loadAds API method. See test/spec/apiSpec/pre-mid-post-roll.html for an example.
 
 [Back to documentation sections](#documentation-sections)
 
@@ -417,9 +403,7 @@ rmp-vast supports displaying outstream ads when parameter `outstream` is set to 
 
 ## Contributing
 Contributions are welcome. Please review general code structure and stick to existing patterns.
-Provide test where appropriate (see test/ folder). Tests are written with Jasmine and automated with [node.js 6.11+ and selenium web driver 3.6+](https://www.npmjs.com/package/selenium-webdriver) and are validated in latest webdriver for Chrome and Firefox for Windows 10. Additionally we test on latest Chrome for Android 8 and macOS Safari 12.
-
-Please review `scripts.preinstall` in `package.json` to make sure our preinstall script does not overwrite some of your already installed global packages.
+Provide test where appropriate (see test/ folder). Tests are written with Jasmine and automated with [selenium web driver 4.0.0-alpha.7](https://www.npmjs.com/package/selenium-webdriver) and are validated in latest webdriver for Chrome and Firefox for Windows 10. Additionally we test on latest Chrome for Android and macOS Safari.
 
 To develop rmp-vast do install it (you need to have node.js installed globally):
 
@@ -430,12 +414,6 @@ To develop rmp-vast do install it (you need to have node.js installed globally):
 Make changes to code and then run:
 
 `grunt build`
-
-You can also use 
-
-`grunt concurrent` 
-
-to make developement easier (watchify task) and use the app/dev.html file (which references js/dist/rmp-vast.js).
 
 Before committing for a pull request - run test:
 

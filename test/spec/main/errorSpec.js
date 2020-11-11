@@ -2,17 +2,16 @@
 
 const TEST = require('../helpers/test');
 
-var driver;
+let driver;
 
-var testUrls = [
+let testUrls = [
   TEST.pathToTest + 'errorSpec/EmptySpec.html'
 ];
 
-var testUrlsChromeOnly = [
+const testUrlsChromeOnly = [
   TEST.pathToTest + 'errorSpec/EmptySpec.html',
   TEST.pathToTest + 'errorSpec/ErrorMediaSpec.html',
   TEST.pathToTest + 'errorSpec/MalformedSpec.html',
-  TEST.pathToTest + 'errorSpec/no-impression-tag.html',
   TEST.pathToTest + 'errorSpec/VMAPSpec.html'
 ];
 
@@ -28,8 +27,8 @@ if (args[2] === 'android') {
   driver = TEST.getDriver('firefox');
 }
 
-var intialTime = TEST.getTime();
-var index = 0;
+const intialTime = TEST.getTime();
+let index = 0;
 
 const _run = function () {
   console.log('Run HTML spec ' + testUrls[index] + ' at: ' + (TEST.getTime() - intialTime) + 'ms');

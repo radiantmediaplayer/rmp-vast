@@ -6,10 +6,10 @@ const TEST = {};
 
 TEST.driverCount = 2;
 
-TEST.pathToTest = 'http://192.168.1.98/rmp-vast/test/spec/';
+TEST.pathToTest = 'http://192.168.4.58/rmp-vast-1/test/spec/';
 
 TEST.getDriver = function (which) {
-  var driver;
+  let driver;
   if (which === 'chrome' || !which) {
     driver = new Builder().forBrowser('chrome').build();
   } else if (which === 'firefox') {

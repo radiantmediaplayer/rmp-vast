@@ -2,16 +2,15 @@
 
 const TEST = require('../helpers/test');
 
-var driver;
+let driver;
 
-var testUrls = [
+let testUrls = [
   TEST.pathToTest + 'apiSpec/pre-mid-post.html'
 ];
 
-var testUrlsChromeOnly = [
+const testUrlsChromeOnly = [
   TEST.pathToTest + 'apiSpec/pre-mid-post.html',
-  TEST.pathToTest + 'apiSpec/ThreeConsecutiveWithErrorLinearSpec.html',
-  TEST.pathToTest + 'apiSpec/TwoConsecutiveLinearSpec.html'
+  TEST.pathToTest + 'apiSpec/ThreeConsecutiveWithErrorLinearSpec.html'
 ];
 
 const args = process.argv;
@@ -26,8 +25,8 @@ if (args[2] === 'android') {
   driver = TEST.getDriver('firefox');
 }
 
-var intialTime = TEST.getTime();
-var index = 0;
+const intialTime = TEST.getTime();
+let index = 0;
 
 const _run = function () {
   console.log('Run HTML spec ' + testUrls[index] + ' at: ' + (TEST.getTime() - intialTime) + 'ms');

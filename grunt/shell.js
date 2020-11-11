@@ -1,40 +1,19 @@
 module.exports = {
-  browserslist: {
-    command: 'npx browserslist'
-  },
   eslintSrc: {
-    command: 'eslint --config .eslintrc-es2015.json --ignore-path .es2015.eslintignore js/src/'
-  },
-  eslintModule: {
-    command: 'eslint --config .eslintrc-es2015.json js/src/module.js'
-  },
-  eslintES5: {
-    command: 'eslint --config .eslintrc-es5.json --ignore-path .es5.eslintignore test/spec/ app/js/'
+    command: 'npx eslint --config .eslintrc-es2015.json --ignore-path .es2015.eslintignore test/spec/ js/src/ app/js/'
   },
   eslintNode: {
-    command: 'eslint --config .eslintrc-node.json test/spec/main/ test/spec/helpers/ Gruntfile.js grunt/'
-  },
-  browserify: {
-    command: 'browserify js/src/main.js -o js/dist/rmp-vast.js -t [ babelify ] -v'
-  },
-  watchify: {
-    command: 'watchify js/src/main.js -o js/dist/rmp-vast.js -t [ babelify ] -v'
-  },
-  terser: {
-    command: 'terser js/dist/rmp-vast.js --compress --define DEBUG=false --mangle --comments --timings --safari10 -o js/dist/rmp-vast.min.js'
-  },
-  jsbeautify: {
-    command: 'js-beautify -f js/src/module.js -o js/src/module.js'
+    command: 'npx eslint --config .eslintrc-node.json test/spec/main/ test/spec/helpers/ test/spec/main/ Gruntfile.js grunt/'
   },
   stylelint: {
-    command: 'stylelint "css/*.less" "css/import-less/*.less" "app/css/*.css"'
+    command: 'npx stylelint "css/*.less" "css/import-less/*.less" "app/css/*.css"'
   },
   test: {
     command: [
-      'node test/spec/main/adPodSpec.js',
+      /*'node test/spec/main/adPodSpec.js',
       'node test/spec/main/adPodSpec.js chrome',
       'node test/spec/main/apiSpec.js',
-      'node test/spec/main/apiSpec.js chrome',
+      'node test/spec/main/apiSpec.js chrome',*/
       'node test/spec/main/companionSpec.js',
       'node test/spec/main/companionSpec.js chrome',
       'node test/spec/main/errorSpec.js',

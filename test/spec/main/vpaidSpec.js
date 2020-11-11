@@ -2,16 +2,14 @@
 
 const TEST = require('../helpers/test');
 
-var driver;
+let driver;
 
-var testUrls = [
-  TEST.pathToTest + 'vpaidSpec/vpaid-js-linear-1-interaction.html',
-  TEST.pathToTest + 'vpaidSpec/vpaid-js-linear-3-api.html'
+let testUrls = [
+  TEST.pathToTest + 'vpaidSpec/vpaid-js-linear-2.html'
 ];
 
-var testUrlsChromeOnly = [
+const testUrlsChromeOnly = [
   TEST.pathToTest + 'vpaidSpec/vpaid-fails-loading-js.html',
-  TEST.pathToTest + 'vpaidSpec/vpaid-js-linear-1-interaction.html',
   TEST.pathToTest + 'vpaidSpec/vpaid-js-linear-2.html',
   TEST.pathToTest + 'vpaidSpec/vpaid-js-linear-3-api.html'
 ];
@@ -28,8 +26,8 @@ if (args[2] === 'android') {
   driver = TEST.getDriver('firefox');
 }
 
-var intialTime = TEST.getTime();
-var index = 0;
+const intialTime = TEST.getTime();
+let index = 0;
 
 const _run = function () {
   console.log('Run HTML spec ' + testUrls[index] + ' at: ' + (TEST.getTime() - intialTime) + 'ms');
