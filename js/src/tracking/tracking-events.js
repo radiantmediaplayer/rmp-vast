@@ -281,12 +281,14 @@ TRACKING_EVENTS.error = function (errorCode) {
   }
   if (errorTags.length > 0) {
     for (let i = 0, len = errorTags.length; i < len; i++) {
-      let errorUrl = errorTags[i].url;
-      const errorRegExp = /\[ERRORCODE\]/gi;
-      if (errorRegExp.test(errorUrl) && FW.isNumber(errorCode) && errorCode > 0 && errorCode < 1000) {
-        errorUrl = errorUrl.replace(errorRegExp, errorCode);
+      if (errorTags[i].url) {
+        let errorUrl = errorTags[i].url;
+        const errorRegExp = /\[ERRORCODE\]/gi;
+        if (errorRegExp.test(errorUrl) && FW.isNumber(errorCode) && errorCode > 0 && errorCode < 1000) {
+          errorUrl = errorUrl.replace(errorRegExp, errorCode);
+        }
+        _ping.call(this, errorUrl);
       }
-      _ping.call(this, errorUrl);
     }
   }
 };
@@ -330,7 +332,9 @@ const _onTimeupdate = function () {
           return progressEvent.time === this.progressEvents[0].time;
         });
         filterProgressEvent.forEach(progressEvent => {
-          TRACKING_EVENTS.pingURI.call(this, progressEvent.url);
+          if (progressEvent.url) {
+            TRACKING_EVENTS.pingURI.call(this, progressEvent.url);
+          }
         });
         this.progressEvents.shift();
         HELPERS.createApiEvent.call(this, 'adprogress');

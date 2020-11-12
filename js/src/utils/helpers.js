@@ -9,7 +9,6 @@ HELPERS.filterParams = function (inputParams) {
     creativeLoadTimeout: 8000,
     ajaxWithCredentials: false,
     maxNumRedirects: 4,
-    pauseOnClick: true,
     labels: {
       skipMessage: 'Skip ad',
       closeAd: 'Close ad',

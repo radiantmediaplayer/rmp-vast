@@ -54,7 +54,7 @@ COMPANION.parse = function (creative) {
         newCompanionAds.companionClickThroughUrl = companion.companionClickThroughURLTemplate;
       }
       if (companion.companionClickTrackingURLTemplates.length > 0) {
-        newCompanionAds.companionClickTrackingUrl = companion.companionClickTrackingURLTemplates;
+        newCompanionAds.companionClickTrackingUrls = companion.companionClickTrackingURLTemplates;
       }
       if (companion.altText) {
         newCompanionAds.altText = companion.altText;
@@ -63,8 +63,10 @@ COMPANION.parse = function (creative) {
         newCompanionAds.adSlotID = companion.adSlotID;
       }
       newCompanionAds.trackingEventsUrls = [];
-      for (let j = 0, len = companion.trackingEvents.length; j < len; j++) {
-        newCompanionAds.trackingEventsUrls.push(companion.trackingEvents[j].creativeView);
+      if (companion.trackingEvents && companion.trackingEvents.creativeView) {
+        for (let j = 0, len = companion.trackingEvents.creativeView.length; j < len; j++) {
+          newCompanionAds.trackingEventsUrls.push(companion.trackingEvents.creativeView[j]);
+        }
       }
       this.validCompanionAds.push(newCompanionAds);
     }

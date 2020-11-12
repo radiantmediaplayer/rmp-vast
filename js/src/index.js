@@ -154,9 +154,13 @@ export class RmpVast {
             url: currentAd.errorURLTemplates[j]
           });
         }
-        this.ad.impressionUrls = [];
-        currentAd.impressionURLTemplates.forEach(impressionObject => {
-          this.ad.impressionUrls.push(impressionObject.url);
+        currentAd.impressionURLTemplates.forEach(impression => {
+          if (impression.url) {
+            this.trackingTags.push({
+              event: 'impression',
+              url: impression.url
+            });
+          }
         });
         this.ad.adVerifications = currentAd.adVerifications;
         const that = this;
@@ -203,13 +207,17 @@ export class RmpVast {
                 this.creative.skipoffset = creative.skipDelay;
                 this.creative.isSkippableAd = true;
               }
-              this.creative.clickThroughUrl = creative.videoClickThroughURLTemplate;
+              if (creative.videoClickThroughURLTemplate && creative.videoClickThroughURLTemplate.url) {
+                this.creative.clickThroughUrl = creative.videoClickThroughURLTemplate.url;
+              }
               if (creative.videoClickTrackingURLTemplates.length > 0) {
                 for (let k = 0, len = creative.videoClickTrackingURLTemplates.length; k < len; k++) {
-                  this.trackingTags.push({
-                    event: 'clickthrough',
-                    url: creative.videoClickTrackingURLTemplates[k]
-                  });
+                  if (creative.videoClickTrackingURLTemplates[k].url) {
+                    this.trackingTags.push({
+                      event: 'clickthrough',
+                      url: creative.videoClickTrackingURLTemplates[k].url
+                    });
+                  }
                 }
               }
               this.creative.isLinear = true;
@@ -502,7 +510,7 @@ export class RmpVast {
     if (this.ad && this.ad.system) {
       return this.ad.system;
     }
-    return '';
+    return null;
   }
 
   getAdUniversalAdId() {
@@ -737,7 +745,7 @@ export class RmpVast {
 
   // companion ads
   getCompanionAdsList(inputWidth, inputHeight) {
-    if (this.adOnStage) {
+    if (this.validCompanionAds.length > 0) {
       let availableCompanionAds;
       if (typeof inputWidth === 'number' && inputWidth > 0 && typeof inputHeight === 'number' && inputHeight > 0) {
         availableCompanionAds = this.validCompanionAds.filter((companionAds) => {
@@ -791,25 +799,34 @@ export class RmpVast {
           TRACKING_EVENTS.error.call(this, 603);
         });
       }
-      let companionClickTrackingUrl = null;
-      if (companionAd.companionClickTrackingUrl) {
-        companionClickTrackingUrl = companionAd.companionClickTrackingUrl;
+      let companionClickTrackingUrls = null;
+      if (companionAd.companionClickTrackingUrls) {
+        if (this.debug) {
+          FW.log('companion click tracking URIs', companionClickTrackingUrls);
+        }
+        companionClickTrackingUrls = companionAd.companionClickTrackingUrls;
       }
-      const _onImgClickThrough = function (companionClickThroughUrl, companionClickTrackingUrl, event) {
+      const _onImgClickThrough = function (companionClickThroughUrl, companionClickTrackingUrls, event) {
         if (event) {
           event.stopPropagation();
           if (event.type === 'touchend') {
             event.preventDefault();
           }
         }
-        if (companionClickTrackingUrl) {
-          TRACKING_EVENTS.pingURI.call(this, companionClickTrackingUrl);
+        if (companionClickTrackingUrls) {
+          companionClickTrackingUrls.forEach(companionClickTrackingUrl => {
+            if (companionClickTrackingUrl.url) {
+              TRACKING_EVENTS.pingURI.call(this, companionClickTrackingUrl.url);
+            }
+          });
         }
         FW.openWindow(companionClickThroughUrl);
       };
       if (companionAd.companionClickThroughUrl) {
-        html.addEventListener('touchend', _onImgClickThrough.bind(this, companionAd.companionClickThroughUrl, companionClickTrackingUrl));
-        html.addEventListener('click', _onImgClickThrough.bind(this, companionAd.companionClickThroughUrl, companionClickTrackingUrl));
+        html.addEventListener('touchend',
+          _onImgClickThrough.bind(this, companionAd.companionClickThroughUrl, companionClickTrackingUrls));
+        html.addEventListener('click',
+          _onImgClickThrough.bind(this, companionAd.companionClickThroughUrl, companionClickTrackingUrls));
       }
     }
     if (companionAd.imageUrl) {

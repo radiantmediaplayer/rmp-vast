@@ -27,6 +27,7 @@ rmp-vast is used and maintained by [Radiant Media Player](https://www.radiantmed
 - [Fullscreen management](#fullscreen-management)
 - [Pre, mid and post rolls](#pre-mid-and-post-rolls)
 - [Outstream ads](#outstream-ads)
+- [Changes from v2 to v3](#changes-from-v2-to-v3)
 - [Contributing](#contributing)
 - [License](#license)
 - [Radiant Media Player](#radiant-media-player)
@@ -158,8 +159,6 @@ Once rmp-vast library is loaded on your page you can create a new rmp-vast insta
 
 `params.maxNumRedirects: Number` the number of VAST wrappers the player should follow before triggering an error. Default: 4. Capped at 30 to avoid infinite wrapper loops.
 
-`params.pauseOnClick: Boolean` when an ad is clicked - pause or not VAST player (linear) or content player (non-linear). Default: true.
-
 `params.labels: Object` labels used to display information to the viewer. 
 
 `params.labels.skipMessage: String` skip message. Default: 'Skip ad'.
@@ -181,6 +180,8 @@ vpaidSettings: {
   desiredBitrate: 500
 }
 ```
+
+`debug: Boolean` display debug console logs in browser dev tools. Default: false.
 
 [Back to documentation sections](#documentation-sections)
 
@@ -214,7 +215,6 @@ Available events are:
 - `adclick`
 - `adclosed`
 - `adimpression`
-- `aduseracceptinvitation`
 - `adcollapse`
 - `adstarted`
 - `adtagloaded`
@@ -246,6 +246,8 @@ VPAID-related events:
 - `adexpandedchange`
 - `adremainingtimechange`
 - `adinteraction`
+- `aduseracceptinvitation`
+- `adcollapse`
 
 [Back to documentation sections](#documentation-sections)
 
@@ -263,65 +265,65 @@ For linear ads rmp-vast exposes 2 players: a content player (for the actual cont
 - `pause()`: pause content or vast player depending on what is on stage.
 - `loadAds()`: load a new VAST tag and start displaying it - if rmp-vast is not initialized when loadAds is called then `initialize()` is called first.
 - `initialize()`: initialize rmp-vast - this method can be used in case of deferred use of `loadAds()` - Note that when autoplay is not wanted the call to `initialize()` must be the result of a direct user interaction.
-- `getAdPaused()`: return Boolean, stating if the ad on stage is paused or not.
+- `getAdPaused()`: return `Boolean`, stating if the ad on stage is paused or not.
 - `setVolume(volume)`: set volume of (content|vast) player depending on what is on stage. Input value should be a Number between 0 and 1.
-- `getVolume()`: return Number, the volume of (content|vast) player depending on what is on stage. Returned value is a number between 0 and 1. -1 is returned if this value is not available.
+- `getVolume()`: return `Number`, the volume of (content|vast) player depending on what is on stage. Returned value is a number between 0 and 1. -1 is returned if this value is not available.
 - `setMute(muted)`: set mute state of (content|vast) player depending on what is on stage. Input value should be a Boolean.
-- `getMute()`: return Boolean, the mute state of (content|vast) player depending on what is on stage.  Returned value is a Boolean.
+- `getMute()`: return `Boolean`, the mute state of (content|vast) player depending on what is on stage.  Returned value is a Boolean.
 - `stopAds()`: stop playing the ad on stage.
 - `skipAd()`: skips the creative on stage - this method only has effects if the creative on stage is a skippable ad and can be skipped (e.g. `getAdSkippableState` returns true).
-- `getAdTagUrl()`: return String, representing the current VAST tag URL.
-- `getAdOnStage()`: return Boolean, stating if an ad is currently on stage.
-- `getInitialized()`: return Boolean, stating if rmp-vast has been initialized.
+- `getAdTagUrl()`: return `String`, representing the current VAST tag URL.
+- `getAdOnStage()`: return `Boolean`, stating if an ad is currently on stage.
+- `getInitialized()`: return `Boolean`, stating if rmp-vast has been initialized.
 
 The following methods should be queried after the `adstarted` event has fired for accurate data:
-- `getAdMediaUrl()`: return String, representing the selected creative URL.
-- `getAdLinear()`: return Boolean, representing the type of the selected creative either linear (true) or non linear (false).
-- `getAdSystem()`: return `{value: String, version: String}: Object`, representing the VAST AdSystem tag.
-- `getAdUniversalAdId()`: return `{idRegistry: String, value: String}: Object`, representing the VAST UniversalAdId tag.
-- `getAdContentType()`: return String, representing the MIME type for the selected creative.
-- `getAdTitle()`: return String, representing the VAST AdTitle tag.
-- `getAdDescription()`: return String, representing the VAST Description tag.
-- `getAdAdvertiser()`: return `{id: String, value: String}: Object`, representing the VAST Advertiser tag.
-- `getAdPricing()`: return `{value: String, model: String, currency: String}: Object`, representing the VAST Pricing tag.
+- `getAdMediaUrl()`: return `String`, representing the selected creative URL.
+- `getAdLinear()`: return `Boolean`, representing the type of the selected creative either linear (true) or non linear (false).
+- `getAdSystem()`: return `{value: String, version: String}: Object|null`, representing the VAST AdSystem tag.
+- `getAdUniversalAdId()`: return `{idRegistry: String, value: String}: Object|null`, representing the VAST UniversalAdId tag.
+- `getAdContentType()`: return `String`, representing the MIME type for the selected creative.
+- `getAdTitle()`: return `String`, representing the VAST AdTitle tag.
+- `getAdDescription()`: return `String`, representing the VAST Description tag.
+- `getAdAdvertiser()`: return `{id: String, value: String}: Object|null`, representing the VAST Advertiser tag.
+- `getAdPricing()`: return `{value: String, model: String, currency: String}: Object|null`, representing the VAST Pricing tag.
 - `getAdSurvey()`: return `String`, representing the VAST Survey tag.
 - `getAdAdServingId()`: return `String`, representing the VAST AdServingId tag.
-- `getAdCategories()`: return `{authority: String, value: String}: Object`, representing the VAST Category tag.
-- `getAdBlockedAdCategories()`: return `{authority: String, value: String}: Object`, representing the VAST BlockedAdCategories tag.
-- `getAdDuration()`: return Number in ms, representing the duration of the selected linear creative. -1 is returned if this value is not available.
-- `getAdCurrentTime()`: return Number in ms, representing the current timestamp in the selected linear creative. -1 is returned if this value is not available.
-- `getAdRemainingTime()`: return Number in ms, representing the current time remaining in the selected linear creative. -1 is returned if this value is not available.
-- `getAdMediaWidth()`: return Number, representing the width of the selected creative. -1 is returned if this value is not available.
-- `getAdMediaHeight()`: return Number, representing the height of the selected creative. -1 is returned if this value is not available.
-- `getClickThroughUrl()`: return String, representing the click-through (e.g. destination) URL for the selected creative.
-- `getIsSkippableAd()`: return Boolean, stating if the loaded linear ad is a VAST skippable ad - can be querried when adloaded event fires.
-- `getSkipTimeOffset()`: return `Number|-1` giving the skip offset when a skippable ad is displayed.
+- `getAdCategories()`: return `{authority: String, value: String}: Object|null`, representing the VAST Category tag.
+- `getAdBlockedAdCategories()`: return `{authority: String, value: String}: Object|null`, representing the VAST BlockedAdCategories tag.
+- `getAdDuration()`: return `Number` in ms, representing the duration of the selected linear creative. -1 is returned if this value is not available.
+- `getAdCurrentTime()`: return `Number` in ms, representing the current timestamp in the selected linear creative. -1 is returned if this value is not available.
+- `getAdRemainingTime()`: return `Number` in ms, representing the current time remaining in the selected linear creative. -1 is returned if this value is not available.
+- `getAdMediaWidth()`: return `Number`, representing the width of the selected creative. -1 is returned if this value is not available.
+- `getAdMediaHeight()`: return `Number`, representing the height of the selected creative. -1 is returned if this value is not available.
+- `getClickThroughUrl()`: return `String`, representing the click-through (e.g. destination) URL for the selected creative.
+- `getIsSkippableAd()`: return `Boolean`, stating if the loaded linear ad is a VAST skippable ad - can be querried when adloaded event fires.
+- `getSkipTimeOffset()`: return `Number` giving the skip offset when a skippable ad is displayed.
 - `getAdSkippableState()`: return `Boolean`, stating if the creative on stage can be skipped or not.
-- `getContentPlayerCompleted()`: return Boolean, stating if content player has reached end of content.
+- `getContentPlayerCompleted()`: return `Boolean`, stating if content player has reached end of content.
 - `setContentPlayerCompleted(value)`: input value must be a Boolean - sets the contentPlayerCompleted state of the player, this is used when source on content player changes and we need to explicitly reset contentPlayerCompleted internal value so that content can resume as expected on next ad load.
 
 Additional AdPod-related methods
-- `getAdPodInfo()`: return (Object|null) as {adPodCurrentIndex: Number, adPodLength: Number} giving information about the currently playing pod.
+- `getAdPodInfo()`: return `{adPodCurrentIndex: Number, adPodLength: Number}: Object|null` giving information about the currently playing pod.
 
 Additional VPAID-related methods
-- `resizeAd(width, height, viewMode)`: resizes the VPAID creative based on width: Number, height: Number and viewMode: String. viewMode should be either 'normal' or 'fullscreen'.
+- `resizeAd(width, height, viewMode)`: resizes the VPAID creative based on `width: Number`, `height: Number` and `viewMode: String`. viewMode should be either 'normal' or 'fullscreen'.
 - `expandAd()`: expands the VPAID creative on stage.
 - `collapseAd()`: collapses the VPAID creative on stage.
 - `getVpaidCreative()`: return `Object|null` reference to the VPAID creative.
-- `getAdExpanded()`: return Boolean, stating if the VPAID creative on stage is expanded or not.
-- `getVPAIDCompanionAds()`: return String, providing ad companion details in VAST 3.0 format for the `<CompanionAds>` element.
+- `getAdExpanded()`: return `Boolean`, stating if the VPAID creative on stage is expanded or not.
+- `getVPAIDCompanionAds()`: return `String`, providing ad companion details in VAST 3.0 format for the `<CompanionAds>` element.
 
 The following methods should be queried after the `aderror` event has fired for accurate data:
-- `getAdErrorMessage()`: return String, representing the error message for the current error.
-- `getAdVastErrorCode()`: return Number, representing the VAST error code for the current error. -1 is returned if this value is not available.
-- `getAdErrorType()`: return String, representing the detected ad error type, possible values: 'adLoadError', 'adPlayError' or '' (if unknown error type).
+- `getAdErrorMessage()`: return `String`, representing the error message for the current error.
+- `getAdVastErrorCode()`: return `Number`, representing the VAST error code for the current error. -1 is returned if this value is not available.
+- `getAdErrorType()`: return `String`, representing the detected ad error type, possible values: 'adLoadError', 'adPlayError' or '' (if unknown error type).
 
 The following methods provide context information for the rmp-vast instance:
-- `getEnvironment()`: return Object, the rmp-vast environment object.
-- `getFramework()`: return Object, the core internal rmp-vast framework.
-- `getVastPlayer()`: return HTMLVideoElement, the VAST player video tag.
-- `getContentPlayer()`: return HTMLVideoElement, the content player video tag.
-- `getIsUsingContentPlayerForAds()`: return Boolean, on iOS and macOS Safari the VAST player is the content player. This is to avoid fullscreen management and autoplay issues and to provide a consistent user experience. This method will return true for iOS and macOS Safari, false otherwise.
+- `getEnvironment()`: return `Object`, the rmp-vast environment object.
+- `getFramework()`: return `Object`, the core internal rmp-vast framework.
+- `getVastPlayer()`: return `HTMLVideoElement`, the VAST player video tag.
+- `getContentPlayer()`: return `HTMLVideoElement`, the content player video tag.
+- `getIsUsingContentPlayerForAds()`: return `Boolean`, on iOS and macOS Safari the VAST player is the content player. This is to avoid fullscreen management and autoplay issues and to provide a consistent user experience. This method will return true for iOS and macOS Safari, false otherwise.
 
 [Back to documentation sections](#documentation-sections)
 
@@ -333,7 +335,7 @@ See test/spec/companionSpec/ for an example of implementation.
 
 The following methods must be querried when the `adstarted` event fires for the master linear ad.
 
-- `getCompanionAdsList(width, height)`: return (Array of Object|null). Each Object in the Array represents a companion ad. Input `width` and `height` parameters are used to select companion ads based on available width and height for display. Each companion ad Object is represented as:
+- `getCompanionAdsList(width, height)`: return `Array of Object|null`. Each Object in the Array represents a companion ad. Input `width` and `height` parameters are used to select companion ads based on available width and height for display. Each companion ad Object is represented as:
 ```javascript
 {
   adSlotID: "RMPSLOTID-1"
@@ -400,6 +402,19 @@ rmp-vast can handle pre/mid/post rolls ad breaks through the loadAds API method.
 rmp-vast supports displaying outstream ads when parameter `outstream` is set to true. For an implementation example see test/spec/outstreamSpec/Simple.html.
 
 [Back to documentation sections](#documentation-sections)
+
+## Changes from v2 to v3
+- rmp-vast v3 only comes as a ES2017 class that needs to be imported into your project. We do not provide any polyfill/transpiling to ES5 or ES2015. With that beind said rmp-vast can be tested out of the box in latest version of Chrome, Firefox or Safari
+- removes params.pauseOnClick (always true now) and params.skipWaitingMessage settings
+- params.skipMessage, params.textForClickUIOnMobile settings are now placed under params.labels.skipMessage and params.labels.textForClickUIOnMobile settings
+- removes adfollowingredirect API event
+- adds adprogress, adviewable, adviewundetermined API events
+- adds adcollapse and aduseracceptinvitation API event for VPAID creatives
+- getAdSystem now returns an Object 
+- adds getAdUniversalAdId, getAdAdvertiser, getAdPricing, getAdSurvey, getAdAdServingId, getAdCategories, getAdBlockedAdCategories, getSkipTimeOffset API methods
+- support for VAST 4, 4.1 and 4.2 features including latest VAST 4.2 macros
+- companion ads support is now out of BETA 
+- companion ads, non-linead ads and icons now support image, iframe and HTML content
 
 ## Contributing
 Contributions are welcome. Please review general code structure and stick to existing patterns.

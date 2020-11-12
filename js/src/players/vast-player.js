@@ -182,7 +182,12 @@ VAST_PLAYER.init = function () {
       this.vastPlayer.disableRemotePlayback = true;
     }
     this.vastPlayer.className = 'rmp-ad-vast-video-player';
-    this.vastPlayer.controls = false;
+    if (this.debug) {
+      this.vastPlayer.controls = true;
+    } else {
+      this.vastPlayer.controls = false;
+    }
+
     // this.contentPlayer.muted may not be set because of a bug in some version of Chromium
     if (this.contentPlayer.hasAttribute('muted')) {
       this.contentPlayer.muted = true;

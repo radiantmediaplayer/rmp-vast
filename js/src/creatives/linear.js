@@ -94,11 +94,12 @@ const _onClickThrough = function (event) {
     event.stopPropagation();
   }
   if (!ENV.isMobile) {
+    if (this.debug) {
+      FW.log('opening clickthrough URL at ' + this.creative.clickThroughUrl);
+    }
     FW.openWindow(this.creative.clickThroughUrl);
   }
-  if (this.params.pauseOnClick) {
-    this.pause();
-  }
+  this.pause();
   HELPERS.createApiEvent.call(this, 'adclick');
   TRACKING_EVENTS.dispatch.call(this, 'clickthrough');
 };

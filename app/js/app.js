@@ -127,7 +127,6 @@ const params = {
   creativeLoadTimeout: 8000,
   ajaxWithCredentials: false,
   maxNumRedirects: 4,
-  pauseOnClick: true,
   labels: {
     skipMessage: 'Skip ad',
     closeAd: 'close ad',
@@ -321,6 +320,19 @@ const _wireUI = function () {
     container.addEventListener(events[j], _logEvent);
   }
 
+  // companion ad
+  container.addEventListener('adstarted', function () {
+    const list = rmpVast.getCompanionAdsList();
+    if (list) {
+      const html = rmpVast.getCompanionAd(0);
+      if (html) {
+        // we get our companion ad image and we can append it to DOM now
+        // VAST trackers will be called automatically when needed
+        const companionId = document.getElementById('companion-ad');
+        companionId.appendChild(html);
+      }
+    }
+  });
   // new ad with loadAds
   const loadAds = document.getElementById('loadAds');
   const newAdTagUrl = document.getElementById('newAdTagUrl');

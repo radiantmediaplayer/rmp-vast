@@ -22,7 +22,7 @@
   },
   "homepage": "https://www.radiantmediaplayer.com/rmp-vast/app/",
   "devDependencies": {
-    "eslint": "^7.12.1",
+    "eslint": "^7.13.0",
     "grunt": "^1.3.0",
     "grunt-contrib-compress": "^1.6.0",
     "grunt-contrib-less": "^2.0.0",

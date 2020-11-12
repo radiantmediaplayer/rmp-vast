@@ -26,9 +26,7 @@ const _onNonLinearClickThrough = function (event) {
     if (event) {
       event.stopPropagation();
     }
-    if (this.params.pauseOnClick) {
-      this.pause();
-    }
+    this.pause();
     HELPERS.createApiEvent.call(this, 'adclick');
     TRACKING_EVENTS.dispatch.call(this, 'clickthrough');
   } catch (e) {
@@ -190,10 +188,12 @@ NON_LINEAR.parse = function (variations) {
   this.creative.clickThroughUrl = currentVariation.nonlinearClickThroughURLTemplate;
   if (currentVariation.nonlinearClickTrackingURLTemplates.length > 0) {
     for (let i = 0, len = currentVariation.nonlinearClickTrackingURLTemplates.length; i < len; i++) {
-      this.trackingTags.push({
-        event: 'clickthrough',
-        url: currentVariation.nonlinearClickTrackingURLTemplates[i].url
-      });
+      if (currentVariation.nonlinearClickTrackingURLTemplates[i].url) {
+        this.trackingTags.push({
+          event: 'clickthrough',
+          url: currentVariation.nonlinearClickTrackingURLTemplates[i].url
+        });
+      }
     }
   }
   VAST_PLAYER.append.call(this);
