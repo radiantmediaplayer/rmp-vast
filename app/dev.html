@@ -10,7 +10,6 @@
     href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
   <link rel="stylesheet" href="css/app.css">
   <link rel="stylesheet" href="../css/rmp-vast.css">
-  <!--<script type="module" src="../vast-client-js/dist/vast-client.js"></script>-->
 </head>
 
 <body>
@@ -35,15 +34,5 @@
     };
     window.rmpVast = new RmpVast(id, params, true);
     window.rmpVast.loadAds(ADTAG2);
-
-
-    /*import { VASTClient } from '../vast-client-js/dist/vast-client.js';
-    const vastClient = new VASTClient();
-    vastClient.get('https://www.radiantmediaplayer.com/vast/tags/inline-linear-companion.xml')
-      .then(res => {
-        window.console.log(res);
-      })
-      .catch(err => {
-      });*/
   </script>
 </body>

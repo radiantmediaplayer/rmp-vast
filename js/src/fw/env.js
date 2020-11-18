@@ -159,24 +159,4 @@ ENV.canPlayType = function (type, codec) {
 
 ENV.hasNativeFullscreenSupport = _hasNativeFullscreenSupport();
 
-ENV.coordinates = {};
-
-const _onGetCurrentPositionSuccess = function(position) {
-  const coordinates = position.coordinates;
-  ENV.coordinates.latitude = coordinates.latitude;
-  ENV.coordinates.longitude = coordinates.longitude;
-};
-
-const _getCurrentPosition = function () {
-  if (navigator.geolocation && navigator.geolocation.getCurrentPosition) {
-    const options = {
-      enableHighAccuracy: false,
-      timeout: 5000,
-      maximumAge: 600000
-    };
-    navigator.geolocation.getCurrentPosition(_onGetCurrentPositionSuccess, FW.nullFn, options);
-  }
-};
-_getCurrentPosition();
-
 export default ENV;

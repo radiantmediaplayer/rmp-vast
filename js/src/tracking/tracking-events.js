@@ -49,7 +49,7 @@ TRACKING_EVENTS.replaceMacros = function (url, trackingPixels) {
   }
   let finalString = url;
   // Marking Macro Values as Unknown or Unavailable 
-  const pattern8 = /\[ADCOUNT|TRANSACTIONID|PLACEMENTTYPE|BREAKMAXDURATION|BREAKMINDURATION|BREAKMAXADS|BREAKMINADLENGTH|BREAKMAXADLENGTH|IFA|IFATYPE|CLIENTUA|SERVERUA|DEVICEIP|APPBUNDLE|EXTENSIONS|VERIFICATIONVENDORS|OMIDPARTNER|INVENTORYSTATE|CONTENTID|REASON\]/gi;
+  const pattern8 = /\[ADCOUNT|TRANSACTIONID|PLACEMENTTYPE|BREAKMAXDURATION|BREAKMINDURATION|BREAKMAXADS|BREAKMINADLENGTH|BREAKMAXADLENGTH|IFA|IFATYPE|CLIENTUA|SERVERUA|DEVICEIP|APPBUNDLE|EXTENSIONS|VERIFICATIONVENDORS|OMIDPARTNER|INVENTORYSTATE|CONTENTID|REASON|LATLONG\]/gi;
   if (pattern8.test(finalString)) {
     finalString = finalString.replace(pattern8, '-1');
   }
@@ -100,13 +100,6 @@ TRACKING_EVENTS.replaceMacros = function (url, trackingPixels) {
     finalString = finalString.replace(
       pattern11bis,
       '0'
-    );
-  }
-  const pattern12 = /\[LATLONG\]/gi;
-  if (pattern12.test(finalString) && !FW.isEmptyObject(ENV.coordinates)) {
-    finalString = finalString.replace(
-      pattern12,
-      encodeURIComponent(ENV.coordinates.latitude + ',' + ENV.coordinates.longitude)
     );
   }
   const pattern13 = /\[DOMAIN\]/gi;

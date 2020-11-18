@@ -1,6 +1,6 @@
 /**
  * @license Copyright (c) 2017-2020 Radiant Media Player | https://www.radiantmediaplayer.com
- * rmp-vast 3.0.0
+ * rmp-vast 3.0.1
  * GitHub: https://github.com/radiantmediaplayer/rmp-vast
  * MIT License: https://github.com/radiantmediaplayer/rmp-vast/blob/master/LICENSE
  */
@@ -881,7 +881,7 @@ export class RmpVast {
   getAdPodInfo() {
     if (this.adPod && this.adPodLength) {
       const result = {};
-      result.adPodCurrentIndex = this.ad.sequence;
+      result.adPodCurrentIndex = this.adSequence;
       result.adPodLength = this.adPodLength;
       return result;
     }
