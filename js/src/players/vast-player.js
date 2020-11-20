@@ -182,7 +182,7 @@ VAST_PLAYER.init = function () {
       this.vastPlayer.disableRemotePlayback = true;
     }
     this.vastPlayer.className = 'rmp-ad-vast-video-player';
-    if (this.debug) {
+    if (this.debug && this.showControlsForVastPlayer) {
       this.vastPlayer.controls = true;
     } else {
       this.vastPlayer.controls = false;

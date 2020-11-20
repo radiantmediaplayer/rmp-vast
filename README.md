@@ -171,6 +171,8 @@ Once rmp-vast library is loaded on your page you can create a new rmp-vast insta
 
 `params.enableVpaid: Boolean` Enables VPAID support or not. Default: true.
 
+`params.showControlsForVastPlayer: Boolean` Shows VAST player HTML5 default video controls. Only works when `debug` setting is true. Default: true.
+
 `params.vpaidSettings: Object` information required to properly display VPAID creatives - note that it is to the parent application of rmp-vast to provide those informations - below values are default (see test/spec/vpaidSpec/ for examples):
 ```javascript
 vpaidSettings: {
@@ -263,12 +265,18 @@ rmpVast.setVolume(0.5);
 For linear ads rmp-vast exposes 2 players: a content player (for the actual content) and a vast player (for the loaded ad).
 - `play()`: play content or vast player depending on what is on stage.
 - `pause()`: pause content or vast player depending on what is on stage.
-- `loadAds()`: load a new VAST tag and start displaying it - if rmp-vast is not initialized when loadAds is called then `initialize()` is called first.
+- `loadAds(vastUrl: String, regulationsInfo: Object, requireCategory: Boolean)`: load a new VAST tag and start displaying it - if rmp-vast is not initialized when loadAds is called then `initialize()` is called first. Input parameters are
+  - `vastUrl: String` the URI to the VAST resource to be loaded
+  - `regulationsInfo: Object` data for regulations as 
+    - `regulationsInfo.regulations: String` coppa|gdpr for REGULATIONS macro
+    - `regulationsInfo.limitAdTracking: String` 0|1 for LIMITADTRACKING macro
+    - `regulationsInfo.gdprConsent: String` Base64-encoded Cookie Value of IAB GDPR consent info for GDPRCONSENT macro
+  - `requireCategory: Boolean` for enforcement of VAST 4 Ad Categories
 - `initialize()`: initialize rmp-vast - this method can be used in case of deferred use of `loadAds()` - Note that when autoplay is not wanted the call to `initialize()` must be the result of a direct user interaction.
 - `getAdPaused()`: return `Boolean`, stating if the ad on stage is paused or not.
-- `setVolume(volume)`: set volume of (content|vast) player depending on what is on stage. Input value should be a Number between 0 and 1.
+- `setVolume(volume)`: set volume of (content|vast) player depending on what is on stage. Input value should be a `Number` between 0 and 1.
 - `getVolume()`: return `Number`, the volume of (content|vast) player depending on what is on stage. Returned value is a number between 0 and 1. -1 is returned if this value is not available.
-- `setMute(muted)`: set mute state of (content|vast) player depending on what is on stage. Input value should be a Boolean.
+- `setMute(muted)`: set mute state of (content|vast) player depending on what is on stage. Input value should be a `Boolean`.
 - `getMute()`: return `Boolean`, the mute state of (content|vast) player depending on what is on stage.  Returned value is a Boolean.
 - `stopAds()`: stop playing the ad on stage.
 - `skipAd()`: skips the creative on stage - this method only has effects if the creative on stage is a skippable ad and can be skipped (e.g. `getAdSkippableState` returns true).

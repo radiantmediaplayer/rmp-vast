@@ -16,6 +16,7 @@ HELPERS.filterParams = function (inputParams) {
     },
     enableVpaid: true,
     outstream: false,
+    showControlsForVastPlayer: true,
     vpaidSettings: {
       width: 640,
       height: 360,
