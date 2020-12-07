@@ -145,7 +145,7 @@ Source code for rmp-vast is available for review in js/src/ folder. Code comment
 ### Parameters when creating a rmp-vast instance
 Once rmp-vast library is loaded on your page you can create a new rmp-vast instance as follows:
 
-`new RmpVast(id, params, debug)`
+`new RmpVast(id: String, params: Object, debug: Boolean)`
 
 `id: String` is the id for the player container. This is a required parameter.
 
@@ -274,9 +274,9 @@ For linear ads rmp-vast exposes 2 players: a content player (for the actual cont
   - `requireCategory: Boolean` for enforcement of VAST 4 Ad Categories
 - `initialize()`: initialize rmp-vast - this method can be used in case of deferred use of `loadAds()` - Note that when autoplay is not wanted the call to `initialize()` must be the result of a direct user interaction.
 - `getAdPaused()`: return `Boolean`, stating if the ad on stage is paused or not.
-- `setVolume(volume)`: set volume of (content|vast) player depending on what is on stage. Input value should be a `Number` between 0 and 1.
+- `setVolume(volume: Number)`: set volume of (content|vast) player depending on what is on stage. Input value should be a `Number` between 0 and 1.
 - `getVolume()`: return `Number`, the volume of (content|vast) player depending on what is on stage. Returned value is a number between 0 and 1. -1 is returned if this value is not available.
-- `setMute(muted)`: set mute state of (content|vast) player depending on what is on stage. Input value should be a `Boolean`.
+- `setMute(muted: Boolean)`: set mute state of (content|vast) player depending on what is on stage.
 - `getMute()`: return `Boolean`, the mute state of (content|vast) player depending on what is on stage.  Returned value is a Boolean.
 - `stopAds()`: stop playing the ad on stage.
 - `skipAd()`: skips the creative on stage - this method only has effects if the creative on stage is a skippable ad and can be skipped (e.g. `getAdSkippableState` returns true).
@@ -287,17 +287,17 @@ For linear ads rmp-vast exposes 2 players: a content player (for the actual cont
 The following methods should be queried after the `adstarted` event has fired for accurate data:
 - `getAdMediaUrl()`: return `String`, representing the selected creative URL.
 - `getAdLinear()`: return `Boolean`, representing the type of the selected creative either linear (true) or non linear (false).
-- `getAdSystem()`: return `{value: String, version: String}: Object|null`, representing the VAST AdSystem tag.
-- `getAdUniversalAdId()`: return `{idRegistry: String, value: String}: Object|null`, representing the VAST UniversalAdId tag.
+- `getAdSystem()`: return `Object: {value: String, version: String}|null`, representing the VAST AdSystem tag.
+- `getAdUniversalAdId()`: return `Object: {idRegistry: String, value: String}|null`, representing the VAST UniversalAdId tag.
 - `getAdContentType()`: return `String`, representing the MIME type for the selected creative.
 - `getAdTitle()`: return `String`, representing the VAST AdTitle tag.
 - `getAdDescription()`: return `String`, representing the VAST Description tag.
-- `getAdAdvertiser()`: return `{id: String, value: String}: Object|null`, representing the VAST Advertiser tag.
-- `getAdPricing()`: return `{value: String, model: String, currency: String}: Object|null`, representing the VAST Pricing tag.
+- `getAdAdvertiser()`: return `Object: {id: String, value: String}|null`, representing the VAST Advertiser tag.
+- `getAdPricing()`: return `Object: {value: String, model: String, currency: String}|null`, representing the VAST Pricing tag.
 - `getAdSurvey()`: return `String`, representing the VAST Survey tag.
 - `getAdAdServingId()`: return `String`, representing the VAST AdServingId tag.
-- `getAdCategories()`: return `{authority: String, value: String}: Object|null`, representing the VAST Category tag.
-- `getAdBlockedAdCategories()`: return `{authority: String, value: String}: Object|null`, representing the VAST BlockedAdCategories tag.
+- `getAdCategories()`: return `Object: {authority: String, value: String}|null`, representing the VAST Category tag.
+- `getAdBlockedAdCategories()`: return `Object: {authority: String, value: String}|null`, representing the VAST BlockedAdCategories tag.
 - `getAdDuration()`: return `Number` in ms, representing the duration of the selected linear creative. -1 is returned if this value is not available.
 - `getAdCurrentTime()`: return `Number` in ms, representing the current timestamp in the selected linear creative. -1 is returned if this value is not available.
 - `getAdRemainingTime()`: return `Number` in ms, representing the current time remaining in the selected linear creative. -1 is returned if this value is not available.
@@ -308,13 +308,13 @@ The following methods should be queried after the `adstarted` event has fired fo
 - `getSkipTimeOffset()`: return `Number` giving the skip offset when a skippable ad is displayed.
 - `getAdSkippableState()`: return `Boolean`, stating if the creative on stage can be skipped or not.
 - `getContentPlayerCompleted()`: return `Boolean`, stating if content player has reached end of content.
-- `setContentPlayerCompleted(value)`: input value must be a Boolean - sets the contentPlayerCompleted state of the player, this is used when source on content player changes and we need to explicitly reset contentPlayerCompleted internal value so that content can resume as expected on next ad load.
+- `setContentPlayerCompleted(value: Boolean)`: sets the contentPlayerCompleted state of the player, this is used when source on content player changes and we need to explicitly reset contentPlayerCompleted internal value so that content can resume as expected on next ad load.
 
 Additional AdPod-related methods
-- `getAdPodInfo()`: return `{adPodCurrentIndex: Number, adPodLength: Number}: Object|null` giving information about the currently playing pod.
+- `getAdPodInfo()`: return `Object: {adPodCurrentIndex: Number, adPodLength: Number}|null` giving information about the currently playing pod.
 
 Additional VPAID-related methods
-- `resizeAd(width, height, viewMode)`: resizes the VPAID creative based on `width: Number`, `height: Number` and `viewMode: String`. viewMode should be either 'normal' or 'fullscreen'.
+- `resizeAd(width: Number, height: Number, viewMode: String)`: resizes the VPAID creative based on `width`, `height` and `viewMode`. viewMode should be either 'normal' or 'fullscreen'.
 - `expandAd()`: expands the VPAID creative on stage.
 - `collapseAd()`: collapses the VPAID creative on stage.
 - `getVpaidCreative()`: return `Object|null` reference to the VPAID creative.
@@ -343,7 +343,7 @@ See test/spec/companionSpec/ for an example of implementation.
 
 The following methods must be querried when the `adstarted` event fires for the master linear ad.
 
-- `getCompanionAdsList(width, height)`: return `Array of Object|null`. Each Object in the Array represents a companion ad. Input `width` and `height` parameters are used to select companion ads based on available width and height for display. Each companion ad Object is represented as:
+- `getCompanionAdsList(width: Number, height: Number)`: return `Array of Object|null`. Each Object in the Array represents a companion ad. Input `width` and `height` parameters are used to select companion ads based on available width and height for display. Each companion ad Object is represented as:
 ```javascript
 {
   adSlotID: "RMPSLOTID-1"
@@ -360,7 +360,7 @@ The following methods must be querried when the `adstarted` event fires for the 
 }
 ```
 Not all fields may be available, so check availability before usage.
-- `getCompanionAd(index)`: return `HTMLElement|null` representing the companion ad. It takes a `Number` index parameter which represents the index of the wanted companion ad in the Array returned from `getCompanionAdsList` method. This method automates the required pinging for companion ads. Usage example:
+- `getCompanionAd(index: Number)`: return `HTMLElement|null` representing the companion ad. It takes a `Number` index parameter which represents the index of the wanted companion ad in the Array returned from `getCompanionAdsList` method. This method automates the required pinging for companion ads. Usage example:
 ```javascript
   container.addEventListener('adstarted', function () {
     // we need to call getCompanionAdsList BEFORE calling getCompanionAd so that 
