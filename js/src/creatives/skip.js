@@ -25,8 +25,7 @@ const _onTimeupdateCheckSkip = function () {
   if (FW.isNumber(this.vastPlayerCurrentTime) && this.vastPlayerCurrentTime > 0) {
     if (this.vastPlayerCurrentTime >= this.creative.skipoffset) {
       this.vastPlayer.removeEventListener('timeupdate', this.onTimeupdateCheckSkip);
-      _setCanBeSkippedUI.call(this);
-      this.skippableAdCanBeSkipped = true;
+      SKIP.setCanBeSkipped.call(this);
       HELPERS.createApiEvent.call(this, 'adskippablestatechanged');
     } else if (this.creative.skipoffset - this.vastPlayerCurrentTime > 0) {
       _updateWaitingForCanBeSkippedUI.call(this, this.creative.skipoffset - this.vastPlayerCurrentTime);
@@ -81,6 +80,11 @@ SKIP.append = function () {
   this.onTimeupdateCheckSkip = _onTimeupdateCheckSkip.bind(this);
   this.vastPlayer.addEventListener('timeupdate', this.onTimeupdateCheckSkip);
 };
+
+SKIP.setCanBeSkipped = function () {
+  _setCanBeSkippedUI.call(this);
+  this.skippableAdCanBeSkipped = true;
+}
 
 
 export default SKIP;

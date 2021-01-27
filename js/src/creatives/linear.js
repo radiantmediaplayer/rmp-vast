@@ -100,6 +100,7 @@ const _onClickThrough = function (event) {
     FW.openWindow(this.creative.clickThroughUrl);
   }
   this.pause();
+  SKIP.setCanBeSkipped.call(this);
   HELPERS.createApiEvent.call(this, 'adclick');
   TRACKING_EVENTS.dispatch.call(this, 'clickthrough');
 };
