@@ -21,6 +21,14 @@ const _getUserAgent = function () {
 };
 const userAgent = _getUserAgent();
 
+const _getPlatform = function () {
+  if (navigator && navigator.platform) {
+    return navigator.platform;
+  }
+  return null;
+};
+const platform = _getPlatform();
+
 const _filterVersion = function (pattern) {
   if (userAgent !== null) {
     const versionArray = userAgent.match(pattern);
@@ -39,6 +47,14 @@ const _getDevicePixelRatio = function () {
   return pixelRatio;
 };
 ENV.devicePixelRatio = _getDevicePixelRatio();
+
+const _maxTouchPoints = function () {
+  if (navigator && typeof navigator.maxTouchPoints === 'number') {
+    return navigator.maxTouchPoints;
+  }
+  return -1;
+};
+ENV.maxTouchPoints = _maxTouchPoints();
 
 const IOS_PATTERN = /(ipad|iphone|ipod)/i;
 const IOS_VERSION_PATTERN = /os\s+(\d+)_/i;
@@ -65,7 +81,7 @@ const _isMacOS = function () {
   }
   return [isMacOS, macOSXMinorVersion];
 };
-const isMacOS = _isMacOS();
+let isMacOS = _isMacOS();
 
 const SAFARI_PATTERN = /safari\/[.0-9]*/i;
 const SAFARI_VERSION_PATTERN = /version\/(\d+)\./i;
@@ -81,13 +97,18 @@ const _isSafari = function () {
 };
 const isSafari = _isSafari();
 
+const MAC_PLATFORM_PATTERN = /macintel/i;
 const _isIpadOS = function () {
-  if (!isIos[0] && isSafari[0] && isSafari[1] > 12 && isMacOS[0] && isMacOS[1] > 14 && ENV.devicePixelRatio > 1) {
+  if (!isIos[0] && hasTouchEvents && MAC_PLATFORM_PATTERN.test(platform) && devicePixelRatio > 1 &&
+    ENV.maxTouchPoints > 1) {
     return true;
   }
   return false;
 };
 ENV.isIpadOS = _isIpadOS();
+if (ENV.isIpadOS) {
+  isMacOS = [false, -1];
+}
 
 const ANDROID_PATTERN = /android/i;
 const ANDROID_VERSION_PATTERN = /android\s*(\d+)\./i;
@@ -99,7 +120,7 @@ const _isAndroid = function () {
   if (ANDROID_PATTERN.test(userAgent)) {
     support = [true, _filterVersion(ANDROID_VERSION_PATTERN)];
   }
-  return support; 
+  return support;
 };
 
 // from https://developer.mozilla.org/en-US/docs/Web/HTTP/Browser_detection_using_the_user_agent
@@ -131,10 +152,9 @@ const _hasNativeFullscreenSupport = function () {
   return false;
 };
 
-ENV.isSafari = isSafari;
 ENV.isIos = isIos;
 ENV.isAndroid = _isAndroid();
-ENV.isMacOS = _isMacOS();
+ENV.isMacOSSafari = isMacOS[0] && isSafari[0];
 ENV.isFirefox = _isFirefox();
 ENV.isMobile = false;
 if (ENV.isIos[0] || ENV.isAndroid[0] || ENV.isIpadOS) {

@@ -1,6 +1,6 @@
 /**
  * @license Copyright (c) 2017-2020 Radiant Media Player | https://www.radiantmediaplayer.com
- * rmp-vast 3.0.5
+ * rmp-vast 3.0.6
  * GitHub: https://github.com/radiantmediaplayer/rmp-vast
  * MIT License: https://github.com/radiantmediaplayer/rmp-vast/blob/master/LICENSE
  */
@@ -50,6 +50,8 @@ export class RmpVast {
     }
     if (this.debug) {
       FW.log('creating new RmpVast instance');
+      FW.log('environment follows');
+      FW.log(null, ENV);
       FW.logVideoEvents(this.contentPlayer, 'content');
     }
     // reset loadAds variables - this is reset at addestroyed 
