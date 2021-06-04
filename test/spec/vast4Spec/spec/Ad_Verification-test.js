@@ -1,6 +1,6 @@
 import { RmpVast } from '../../../../js/src/index.js';
 
-const ADTAG = 'https://www.radiantmediaplayer.com/vast/tags/iab/vast4_2/Ad_Verification-test.xml';
+const ADTAG = 'https://www.radiantmediaplayer.com/vast/tags/iab/vast4_2/Ad_Verification_OMID-valid-test.xml';
 
 
 describe('Ad_Verification-test', function () {
@@ -59,7 +59,9 @@ describe('Ad_Verification-test', function () {
                 const title = rmpVast.getAdTitle();
                 window.console.log(title);
                 if (title === 'iabtechlab video ad') {
-                  _incrementAndLog(e);
+                  if (document.getElementById('verified-id') !== null) {
+                    _incrementAndLog(e);
+                  }
                 }
               }
             }

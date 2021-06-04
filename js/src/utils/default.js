@@ -14,7 +14,6 @@ DEFAULT.instanceVariables = function () {
   this.currentContentCurrentTime = -1;
   this.needsSeekAdjust = false;
   this.seekAdjustAttached = false;
-  this.onDestroyLoadAds = null;
   this.firstVastPlayerPlayRequest = true;
   this.firstContentPlayerPlayRequest = true;
   this.params = {};
@@ -40,25 +39,27 @@ DEFAULT.instanceVariables = function () {
 };
 
 DEFAULT.resetLoadAds = function () {
+  this.container.removeEventListener('adstarted', this.attachViewableObserver);
   // init internal methods 
-  this.onLoadedmetadataPlay = null;
-  this.onPlaybackError = null;
+  this.onLoadedmetadataPlay = FW.nullFn;
+  this.onPlaybackError = FW.nullFn;
   // init internal tracking events methods
-  this.onPause = null;
-  this.onPlay = null;
-  this.onPlaying = null;
-  this.onEnded = null;
-  this.onVolumeChange = null;
-  this.onTimeupdate = null;
-  this.onEventPingTracking = null;
-  this.onClickThrough = null;
-  this.onPlayingAppendIcons = null;
-  this.onTimeupdateCheckSkip = null;
-  this.onClickSkip = null;
-  this.onNonLinearLoadSuccess = null;
-  this.onNonLinearLoadError = null;
-  this.onNonLinearClickThrough = null;
-  this.onContextMenu = null;
+  this.onPause = FW.nullFn;
+  this.onPlay = FW.nullFn;
+  this.onPlaying = FW.nullFn;
+  this.onEnded = FW.nullFn;
+  this.onVolumeChange = FW.nullFn;
+  this.onTimeupdate = FW.nullFn;
+  this.onEventPingTracking = FW.nullFn;
+  this.onClickThrough = FW.nullFn;
+  this.onPlayingAppendIcons = FW.nullFn;
+  this.onDurationChange = FW.nullFn;
+  this.onTimeupdateCheckSkip = FW.nullFn;
+  this.onClickSkip = FW.nullFn;
+  this.onNonLinearLoadSuccess = FW.nullFn;
+  this.onNonLinearLoadError = FW.nullFn;
+  this.onNonLinearClickThrough = FW.nullFn;
+  this.onContextMenu = FW.nullFn;
   // init internal variables
   this.adTagUrl = '';
   this.vastPlayer = null;
@@ -103,7 +104,7 @@ DEFAULT.resetLoadAds = function () {
   this.nonLinearContainer = null;
   this.nonLinearATag = null;
   this.nonLinearInnerElement = null;
-  this.onClickCloseNonLinear = null;
+  this.onClickCloseNonLinear = FW.nullFn;
   this.nonLinearMinSuggestedDuration = 0;
   // companion ads
   this.validCompanionAds = [];
@@ -134,14 +135,6 @@ DEFAULT.resetLoadAds = function () {
   this.vpaidAdLoaded = false;
   this.vpaidAdStarted = false;
   this.vpaidCallbacks = {};
-  this.onJSVPAIDLoaded = FW.nullFn;
-  this.onJSVPAIDError = FW.nullFn;
-  if (this.container) {
-    this.container.removeEventListener('adstarted', this.attachViewableObserver);
-  }
-  if (this.vastPlayer) {
-    this.vastPlayer.removeEventListener('timeupdate', this.onTimeupdateCheckSkip);
-  }
 };
 
 DEFAULT.fullscreen = function () {

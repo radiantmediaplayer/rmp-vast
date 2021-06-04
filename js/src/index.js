@@ -1,6 +1,6 @@
 /**
  * @license Copyright (c) 2017-2020 Radiant Media Player | https://www.radiantmediaplayer.com
- * rmp-vast 3.0.6
+ * rmp-vast 3.1.0
  * GitHub: https://github.com/radiantmediaplayer/rmp-vast
  * MIT License: https://github.com/radiantmediaplayer/rmp-vast/blob/master/LICENSE
  */
@@ -18,6 +18,7 @@ import DEFAULT from './utils/default';
 import VAST_ERRORS from './utils/vast-errors';
 import VIEWABLE_IMPRESSION from './tracking/viewable-impression';
 import TRACKING_EVENTS from './tracking/tracking-events';
+import AD_VERIFICATIONS from './verification/ad-verifications';
 import { VASTClient } from '../../vast-client-js/src/vast_client';
 
 export class RmpVast {
@@ -164,18 +165,18 @@ export class RmpVast {
             });
           }
         });
-        this.ad.adVerifications = currentAd.adVerifications;
-        const that = this;
-        this.container.addEventListener('addestroyed', function onAdDestroyResolve() {
-          that.container.removeEventListener('addestroyed', onAdDestroyResolve);
-          if (that.adPod && that.adSequence === that.adPodLength) {
-            that.adPodLength = 0;
-            that.adSequence = 0;
-            that.adPod = false;
-            HELPERS.createApiEvent.call(that, 'adpodcompleted');
+        if (currentAd.adVerifications.length > 0) {
+          AD_VERIFICATIONS.init(currentAd.adVerifications, this.debug);
+        }
+        this.container.addEventListener('addestroyed', () => {
+          if (this.adPod && this.adSequence === this.adPodLength) {
+            this.adPodLength = 0;
+            this.adSequence = 0;
+            this.adPod = false;
+            HELPERS.createApiEvent.call(this, 'adpodcompleted');
           }
           resolve();
-        });
+        }, { once: true });
         // parse companion
         const creatives = currentAd.creatives;
         if (this.debug) {
@@ -323,11 +324,9 @@ export class RmpVast {
         FW.log('creative alreadt on stage calling stopAds before loading new ad');
       }
       const _onDestroyLoadAds = function (url) {
-        this.container.removeEventListener('addestroyed', this.onDestroyLoadAds);
         this.loadAds(url);
       };
-      this.onDestroyLoadAds = _onDestroyLoadAds.bind(this, finalUrl);
-      this.container.addEventListener('addestroyed', this.onDestroyLoadAds);
+      this.container.addEventListener('addestroyed', _onDestroyLoadAds.bind(this, finalUrl), { once: true });
       this.stopAds();
       return;
     }
@@ -792,14 +791,14 @@ export class RmpVast {
     if (companionAd.imageUrl || companionAd.iframeUrl) {
       const trackingEventsUrls = companionAd.trackingEventsUrls;
       if (trackingEventsUrls.length > 0) {
-        html.addEventListener('load', () => {
+        html.onload = () => {
           for (let j = 0, len = trackingEventsUrls.length; j < len; j++) {
             TRACKING_EVENTS.pingURI.call(this, trackingEventsUrls[j]);
           }
-        });
-        html.addEventListener('error', () => {
+        };
+        html.onerror = () => {
           TRACKING_EVENTS.error.call(this, 603);
-        });
+        };
       }
       let companionClickTrackingUrls = null;
       if (companionAd.companionClickTrackingUrls) {
@@ -867,13 +866,11 @@ export class RmpVast {
   }
 
   destroy() {
-    if (ENV.hasNativeFullscreenSupport) {
-      if (ENV.isIos[0]) {
-        this.contentPlayer.removeEventListener('webkitbeginfullscreen', this.onFullscreenchange);
-        this.contentPlayer.removeEventListener('webkitendfullscreen', this.onFullscreenchange);
-      } else {
-        document.removeEventListener('fullscreenchange', this.onFullscreenchange);
-      }
+    if (this.contentPlayer) {
+      this.contentPlayer.removeEventListener('webkitbeginfullscreen', this.onFullscreenchange);
+      this.contentPlayer.removeEventListener('webkitendfullscreen', this.onFullscreenchange);
+    } else {
+      document.removeEventListener('fullscreenchange', this.onFullscreenchange);
     }
     VAST_PLAYER.destroy.call(this);
     DEFAULT.instanceVariables.call(this);
@@ -922,4 +919,4 @@ export class RmpVast {
     }
     return '';
   }
-} 
+}

@@ -8,7 +8,7 @@ const _handleIntersect = function (entries) {
     if (entry.intersectionRatio > this.viewablePreviousRatio) {
       this.viewableObserver.unobserve(this.container);
       HELPERS.createApiEvent.call(this, 'adviewable');
-      TRACKING_EVENTS.dispatch.call(this, 'viewable');
+      TRACKING_EVENTS.dispatch.call(this, 'viewable'); 
     }
     this.viewablePreviousRatio = entry.intersectionRatio;
   });

@@ -46,25 +46,18 @@ const _unwireVastPlayerEvents = function () {
       this.vastPlayer.removeEventListener(this.trackingTags[i].event, this.onEventPingTracking);
     }
     // remove clicktrough handling
-    if (this.onClickThrough !== null) {
-      this.vastPlayer.removeEventListener('click', this.onClickThrough);
-    }
-    // remove icons 
-    if (this.onPlayingAppendIcons !== null) {
-      this.vastPlayer.removeEventListener('playing', this.onPlayingAppendIcons);
-    }
+    this.vastPlayer.removeEventListener('click', this.onClickThrough);
+    this.vastPlayer.removeEventListener('playing', this.onPlayingAppendIcons);
     // skip
-    if (this.onTimeupdateCheckSkip !== null) {
-      this.vastPlayer.removeEventListener('timeupdate', this.onTimeupdateCheckSkip);
-    }
-    if (this.skipButton && this.onClickSkip !== null) {
-      this.skipButton.removeEventListener('click', this.onClickSkip);
-      this.skipButton.removeEventListener('touchend', this.onClickSkip);
-    }
-    // click UI on mobile
-    if (this.clickUIOnMobile && this.onClickThrough !== null) {
-      this.clickUIOnMobile.removeEventListener('touchend', this.onClickThrough);
-    }
+    this.vastPlayer.removeEventListener('timeupdate', this.onTimeupdateCheckSkip);
+  }
+  if (this.skipButton) {
+    this.skipButton.removeEventListener('click', this.onClickSkip);
+    this.skipButton.removeEventListener('touchend', this.onClickSkip);
+  }
+  // click UI on mobile
+  if (this.clickUIOnMobile) {
+    this.clickUIOnMobile.removeEventListener('touchend', this.onClickThrough);
   }
   if (this.contentPlayer) {
     this.contentPlayer.removeEventListener('error', this.onPlaybackError);

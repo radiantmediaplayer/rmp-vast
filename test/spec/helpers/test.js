@@ -6,7 +6,7 @@ const TEST = {};
 
 TEST.driverCount = 2;
 
-TEST.pathToTest = 'http://192.168.4.58/rmp-vast-1/test/spec/';
+TEST.pathToTest = 'http://192.168.4.100/rmp-vast/test/spec/';
 
 TEST.getDriver = function (which) {
   let driver;

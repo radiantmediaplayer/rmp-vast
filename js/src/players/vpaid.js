@@ -569,7 +569,6 @@ const _onJSVPAIDLoaded = function () {
   if (this.debug) {
     FW.log('VPAID JS loaded');
   }
-  this.vpaidScript.removeEventListener('load', this.onJSVPAIDLoaded);
   const iframeWindow = this.vpaidIframe.contentWindow;
   if (typeof iframeWindow.getVPAIDAd === 'function') {
     _onVPAIDAvailable.call(this);
@@ -580,14 +579,17 @@ const _onJSVPAIDLoaded = function () {
       }
     }, 100);
   }
+  this.vpaidScript.onload = null;
+  this.vpaidScript.onerror = null;
 };
 
 const _onJSVPAIDError = function () {
   if (this.debug) {
     FW.log('VPAID JS error loading');
   }
-  this.vpaidScript.removeEventListener('error', this.onJSVPAIDError);
   VAST_ERRORS.process.call(this, 901, true);
+  this.vpaidScript.onload = null;
+  this.vpaidScript.onerror = null;
 };
 
 VPAID.loadCreative = function (creativeUrl, vpaidSettings) {
@@ -647,14 +649,12 @@ VPAID.loadCreative = function (creativeUrl, vpaidSettings) {
       if (this.debug) {
         FW.log('could not load VPAID JS Creative or getVPAIDAd in iframeWindow - resume content');
       }
-      this.vpaidScript.removeEventListener('load', this.onJSVPAIDLoaded);
-      this.vpaidScript.removeEventListener('error', this.onJSVPAIDError);
+      this.vpaidScript.onload = null;
+      this.vpaidScript.onerror = null;
       VAST_PLAYER.resumeContent.call(this);
     }, this.params.creativeLoadTimeout);
-    this.onJSVPAIDLoaded = _onJSVPAIDLoaded.bind(this);
-    this.onJSVPAIDError = _onJSVPAIDError.bind(this);
-    this.vpaidScript.addEventListener('load', this.onJSVPAIDLoaded);
-    this.vpaidScript.addEventListener('error', this.onJSVPAIDError);
+    this.vpaidScript.onload = _onJSVPAIDLoaded.bind(this);
+    this.vpaidScript.onerror = _onJSVPAIDError.bind(this);
     iframeBody.appendChild(this.vpaidScript);
     this.vpaidScript.src = this.vpaidCreativeUrl;
   }.bind(this);
@@ -691,8 +691,8 @@ VPAID.destroy = function () {
   }
   _unsetCallbacksForCreative.call(this);
   if (this.vpaidScript) {
-    this.vpaidScript.removeEventListener('load', this.onJSVPAIDLoaded);
-    this.vpaidScript.removeEventListener('error', this.onJSVPAIDError);
+    this.vpaidScript.onload = null;
+    this.vpaidScript.onerror = null;
   }
   if (this.vpaidSlot) {
     FW.removeElement(this.vpaidSlot);

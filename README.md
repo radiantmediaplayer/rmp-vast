@@ -42,6 +42,7 @@ rmp-vast is used and maintained by [Radiant Media Player](https://www.radiantmed
 - Error Reporting
 - Industry Icons (image/iframe/HTML)
 - VAST 4.2 Macros
+- AdVerifications (including OMID Web)
 - VPAID 1 and 2 JavaScript (deprecated)
 - Outstream ads
 - Ad Pods
@@ -53,9 +54,8 @@ rmp-vast is used and maintained by [Radiant Media Player](https://www.radiantmed
 - Autoplay support (muted autoplay on iOS, Android, Desktop Chrome 66+ and Desktop Safari 11+)
 - API to build a fully fledged player on top of rmp-vast
 
-### Currently unsupported VAST features
-- SIMID
-- AdVerifications (PR welcome)
+### Currently unsupported features
+- SIMID (PR welcome)
 - VMAP
 
 [Back to documentation sections](#documentation-sections)
@@ -63,17 +63,19 @@ rmp-vast is used and maintained by [Radiant Media Player](https://www.radiantmed
 ## Supported environments
 
 ### Browsers
-- Chrome for Android 5+
-- Chrome for Desktop
-- Firefox for Android 5+
-- Firefox for Desktop
-- Samsung Internet for Android 5+
+- Chrome 61+ for Android 5+
+- Chrome 61+ for Desktop
+- Firefox 60+ for Android 5+
+- Firefox 60+ for Desktop
+- Opera 62+ for Android 5+
+- Opera 62+ for Desktop
+- Samsung Internet 13+ for Android 5+
 - Safari 11+ for macOS
-- Safari for iOS 11+ and iPadOS 13+
-- MS Edge for Desktop
+- Safari for iOS 12+ and iPadOS 13+
+- MS Edge 79+ for Desktop
 - MS Edge Legacy 18+ for Desktop
 
-Specifically we support the 2 latest stable release for each browser.
+Desktop means Windows 7+, macOS 10.11+, Linux (latest LTS Ubuntu).
 
 ### WebViews
 - Android 5+

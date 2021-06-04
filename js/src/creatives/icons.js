@@ -144,7 +144,7 @@ const _onPlayingAppendIcons = function () {
       icon.style.top = '0px';
     }
     if (iconData.iconViewTrackingUrl) {
-      icon.addEventListener('load', _onIconLoadPingTracking.bind(this, i));
+      icon.onload = _onIconLoadPingTracking.bind(this, i);
     }
     if (iconData.iconClickThroughUrl) {
       icon.addEventListener('touchend', _onIconClickThrough.bind(this, i));
