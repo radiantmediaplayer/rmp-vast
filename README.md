@@ -79,7 +79,7 @@ Desktop means Windows 7+, macOS 10.11+, Linux (latest LTS Ubuntu).
 
 ### WebViews
 - Android 5+
-- iOS 11+ (WKWebView)
+- iOS 12+ (WKWebView)
 
 With the announcement of Apple in december 2019, to remove support for UIWebView API by end 2020, we only support WKWebView API for iOS apps built with Cordova, Ionic or WebView. [See this blog post](https://www.radiantmediaplayer.com/blog/updating-ios-apps-for-wkwebview.html) to help you update to WKWebView API.
 
