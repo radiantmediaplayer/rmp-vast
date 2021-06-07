@@ -42,7 +42,7 @@ rmp-vast is used and maintained by [Radiant Media Player](https://www.radiantmed
 - Error Reporting
 - Industry Icons (image/iframe/HTML)
 - VAST 4.2 Macros
-- AdVerifications (including OMID Web)
+- AdVerifications (OMID Web) <sup>TO BE COMING SOON</sup>
 - VPAID 1 and 2 JavaScript (deprecated)
 - Outstream ads
 - Ad Pods
