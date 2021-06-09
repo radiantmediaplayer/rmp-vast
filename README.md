@@ -182,15 +182,11 @@ Once rmp-vast library is loaded on your page you can create a new rmp-vast insta
   - `params.outstream: Boolean` Enables outstream ad mode. Default: false.
   - `params.showControlsForVastPlayer: Boolean` Shows VAST player HTML5 default video controls. Only works when `debug` setting is true. Default: true.
   - `params.enableVpaid: Boolean` Enables VPAID support or not. Default: true.
-  - `params.vpaidSettings: Object` information required to properly display VPAID creatives - note that it is to the parent application of rmp-vast to provide those informations - below values are default (see test/spec/vpaidSpec/ for examples):
-```javascript
-vpaidSettings: {
-  width: 640,
-  height: 360,
-  viewMode: 'normal',
-  desiredBitrate: 500
-}
-```
+  - `params.vpaidSettings: Object` information required to properly display VPAID creatives - note that it is up to the parent application of rmp-vast to provide those informations - below values are default (see test/spec/vpaidSpec/ for examples):
+    - `params.vpaidSettings.width: Number` Default: 640.
+    - `params.vpaidSettings.height: Number` Default: 360.
+    - `params.vpaidSettings.viewMode: String` Default: 'normal'. Can be 'fullscreen' as well.
+    - `params.vpaidSettings.desiredBitrate: Number` Default: 500. In kbps.
   - `params.omidSupport: Boolean` Enables OMID (OM Web SDK) support in rmp-vast. Default: false (as currently in BETA).
   - `params.omidAllowedVendors: Array` List of allowed vendors for ad verification. Vendors not listed will be rejected. Default: [].
   - `params.omidPathTo: String` Path to OM Web SDK script. Default: '../externals/omweb-v1.js'.
