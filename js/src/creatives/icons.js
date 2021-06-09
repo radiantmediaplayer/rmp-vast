@@ -99,6 +99,7 @@ const _onPlayingAppendIcons = function () {
       src = iconData.staticResourceUrl;
     } else if (iconData.iframeResourceUrl || iconData.htmlContent) {
       icon = document.createElement('iframe');
+      icon.sandbox = 'allow-scripts allow-same-origin';
       if (iconData.htmlContent) {
         src = iconData.htmlContent;
       } else {

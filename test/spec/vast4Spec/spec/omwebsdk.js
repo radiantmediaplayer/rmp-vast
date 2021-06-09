@@ -1,9 +1,9 @@
 import { RmpVast } from '../../../../js/src/index.js';
 
-const ADTAG = 'https://www.radiantmediaplayer.com/vast/tags/iab/vast4_2/Ad_Verification_OMID-valid-test-2.xml';
+const ADTAG = 'https://www.radiantmediaplayer.com/vast/tags/iab/vast4_2/Ad_Verification_OMID-valid-test.xml';
 
 
-describe('Ad_Verification-test', function () {
+describe('omwebsdk', function () {
 
   const id = 'rmpPlayer';
   const container = document.getElementById(id);
@@ -13,7 +13,7 @@ describe('Ad_Verification-test', function () {
     omidPathTo: 'https://cdn.radiantmediatechs.com/rmp/omsdk/omweb-v1.js',
     autoplay: true
   };
-  const rmpVast = new RmpVast(id, params, true);
+  const rmpVast = new RmpVast(id, params);
   const env = rmpVast.getEnvironment();
   video.muted = true;
   if (env.isAndroid[0]) {
@@ -61,9 +61,7 @@ describe('Ad_Verification-test', function () {
               const universalAdId = rmpVast.getAdUniversalAdId();
               window.console.log(universalAdId);
               if (universalAdId.idRegistry === 'Ad-ID' && universalAdId.value === '8465') {
-                const title = rmpVast.getAdTitle();
-                window.console.log(title);
-                if (title === 'iabtechlab video ad') {
+                if (typeof OmidSessionClient !== 'undefined') {
                   _incrementAndLog(e);
                 }
               }

@@ -614,6 +614,7 @@ VPAID.loadCreative = function (creativeUrl, vpaidSettings) {
   }
   // create FiF 
   this.vpaidIframe = document.createElement('iframe');
+  this.vpaidIframe.sandbox = 'allow-scripts allow-same-origin';
   this.vpaidIframe.id = 'vpaid-frame';
   // do not use display: none;
   // https://bugzilla.mozilla.org/show_bug.cgi?id=548397

@@ -240,7 +240,12 @@ const _ping = function (url) {
   if (jsPattern.test(url)) {
     const script = document.createElement('script');
     script.src = url;
-    FW.appendToHead(script);
+    try {
+      document.head.appendChild(script);
+    } catch (e) {
+      FW.trace(e);
+      document.body.appendChild(script);
+    }
   } else {
     let img = new Image();
     img.addEventListener('load', () => {

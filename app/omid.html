@@ -26,14 +26,14 @@
     var id = 'rmpPlayer';
     var container = document.getElementById(id);
 
-    //var ADTAG = 'https://www.radiantmediaplayer.com/vast/tags/iab/vast4_2/Ad_Verification-test.xml';
-    var ADTAG = 'https://www.radiantmediaplayer.com/vast/tags/iab/vast4_2/Ad_Verification_OMID-valid-test.xml';
+    //var ADTAG = 'https://www.radiantmediaplayer.com/vast/tags/iab/vast4_2/Ad_Verification_OMID-valid-test-2.xml';
+    //var ADTAG = 'https://www.radiantmediaplayer.com/vast/tags/iab/vast4_2/Ad_Verification_OMID-valid-test-3.xml';
+    //var ADTAG = 'https://www.radiantmediaplayer.com/vast/tags/iab/vast4_2/Ad_Verification_OMID-valid-test.xml';
+    var ADTAG = 'https://www.radiantmediaplayer.com/vast/tags/iab/vast4_2/ad-pod-with-omid.xml';
     var params = {
       ajaxWithCredentials: false,
-      omidSupport: false,
-      omidAllowedVendors: [],
-      omidPathTo: '../externals/omweb-v1.js',
-      autoplay: false,
+      omidSupport: true,
+      autoplay: true,
       partnerName: 'Radiantmediaplayer',
       partnerVersion: '3.2.0'
     };

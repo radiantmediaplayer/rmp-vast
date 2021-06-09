@@ -357,29 +357,4 @@ FW.openWindow = function (link) {
   }
 };
 
-const _getTagElement = function (element) {
-  if (document[element]) {
-    return document[element];
-  }
-  if (document.querySelector(element) !== null) {
-    return document.querySelector(element);
-  }
-  return null;
-};
-
-FW.appendToHead = function (data) {
-  try {
-    let head = _getTagElement('head');
-    if (!head) {
-      head = _getTagElement('body');
-    }
-    if (head && data) {
-      head.appendChild(data);
-    }
-  } catch (e) {
-    FW.trace(e);
-  }
-};
-
-
 export default FW;

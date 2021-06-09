@@ -90,6 +90,7 @@ NON_LINEAR.update = function () {
     this.nonLinearInnerElement = document.createElement('img');
   } else {
     this.nonLinearInnerElement = document.createElement('iframe');
+    this.nonLinearInnerElement.sandbox = 'allow-scripts allow-same-origin';
     FW.setStyle(
       this.nonLinearInnerElement,
       {

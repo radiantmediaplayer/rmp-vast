@@ -22,7 +22,14 @@ HELPERS.filterParams = function (inputParams) {
       height: 360,
       viewMode: 'normal',
       desiredBitrate: 500
-    }
+    },
+    // OM SDK params
+    omidSupport: false,
+    omidAllowedVendors: [],
+    omidPathTo: '../externals/omweb-v1.js',
+    autoplay: false,
+    partnerName: 'Radiantmediaplayer',
+    partnerVersion: '3.2.0'
   };
   this.params = defaultParams;
   if (FW.isObject(inputParams)) {

@@ -1,6 +1,6 @@
 /**
  * @license Copyright (c) 2017-2020 Radiant Media Player | https://www.radiantmediaplayer.com
- * rmp-vast 3.1.0
+ * rmp-vast 3.2.0
  * GitHub: https://github.com/radiantmediaplayer/rmp-vast
  * MIT License: https://github.com/radiantmediaplayer/rmp-vast/blob/master/LICENSE
  */
@@ -18,7 +18,7 @@ import DEFAULT from './utils/default';
 import VAST_ERRORS from './utils/vast-errors';
 import VIEWABLE_IMPRESSION from './tracking/viewable-impression';
 import TRACKING_EVENTS from './tracking/tracking-events';
-import AD_VERIFICATIONS from './verification/ad-verifications';
+import OmSdkManager from './verification/omsdk';
 import { VASTClient } from '../../vast-client-js/src/vast_client';
 
 export class RmpVast {
@@ -67,7 +67,7 @@ export class RmpVast {
     }
   }
 
-  _addTrackingEvents(trackingEvents) {
+  addTrackingEvents_(trackingEvents) {
     const keys = Object.keys(trackingEvents);
     for (let k = 0, len = keys.length; k < len; k++) {
       const trackingUrls = trackingEvents[keys[k]];
@@ -80,7 +80,7 @@ export class RmpVast {
     }
   }
 
-  async _loopAds(ads) {
+  async loopAds_(ads) {
     for (let i = 0, len = ads.length; i < len; i++) {
       await new Promise(resolve => {
         const currentAd = ads[i];
@@ -165,9 +165,6 @@ export class RmpVast {
             });
           }
         });
-        if (currentAd.adVerifications.length > 0) {
-          AD_VERIFICATIONS.init(currentAd.adVerifications, this.debug);
-        }
         this.container.addEventListener('addestroyed', () => {
           if (this.adPod && this.adSequence === this.adPodLength) {
             this.adPodLength = 0;
@@ -224,12 +221,23 @@ export class RmpVast {
                 }
               }
               this.creative.isLinear = true;
-              this._addTrackingEvents(creative.trackingEvents);
+              this.addTrackingEvents_(creative.trackingEvents);
               LINEAR.parse.call(this, creative.icons, creative.adParameters, creative.mediaFiles);
+              if (this.params.omidSupport && currentAd.adVerifications.length > 0) {
+                const omSdkManager = new OmSdkManager(
+                  currentAd.adVerifications,
+                  this.vastPlayer,
+                  this.params,
+                  this.getIsSkippableAd(),
+                  this.getSkipTimeOffset(),
+                  this.debug
+                );
+                omSdkManager.init();
+              }
               break;
             case 'nonlinear':
               this.creative.isLinear = false;
-              this._addTrackingEvents(creative.trackingEvents);
+              this.addTrackingEvents_(creative.trackingEvents);
               NON_LINEAR.parse.call(this, creative.variations);
               break;
             default:
@@ -240,7 +248,7 @@ export class RmpVast {
     }
   }
 
-  _getVastTag(vastUrl) {
+  getVastTag_(vastUrl) {
     // we check for required VAST URL and API here
     // as we need to have this.currentContentSrc available for iOS
     if (typeof vastUrl !== 'string' || vastUrl === '') {
@@ -283,7 +291,7 @@ export class RmpVast {
         VAST_ERRORS.process.call(this, 303, true);
         return;
       } else {
-        this._loopAds(response.ads);
+        this.loopAds_(response.ads);
       }
     }).catch(error => {
       FW.trace(error);
@@ -323,10 +331,10 @@ export class RmpVast {
       if (this.debug) {
         FW.log('creative alreadt on stage calling stopAds before loading new ad');
       }
-      const _onDestroyLoadAds = function (url) {
+      const onDestroyLoadAds_ = function (url) {
         this.loadAds(url);
       };
-      this.container.addEventListener('addestroyed', _onDestroyLoadAds.bind(this, finalUrl), { once: true });
+      this.container.addEventListener('addestroyed', onDestroyLoadAds_.bind(this, finalUrl), { once: true });
       this.stopAds();
       return;
     }
@@ -345,7 +353,7 @@ export class RmpVast {
       // on iOS we need to prevent seeking when linear ad is on stage
       CONTENT_PLAYER.preventSeekingForCustomPlayback.call(this);
     }
-    this._getVastTag(finalUrl);
+    this.getVastTag_(finalUrl);
   }
 
   play() {
@@ -778,6 +786,7 @@ export class RmpVast {
         html = document.createElement('img');
       } else {
         html = document.createElement('iframe');
+        html.sandbox = 'allow-scripts allow-same-origin';
       }
       if (companionAd.altText) {
         html.alt = companionAd.altText;
@@ -807,7 +816,7 @@ export class RmpVast {
         }
         companionClickTrackingUrls = companionAd.companionClickTrackingUrls;
       }
-      const _onImgClickThrough = function (companionClickThroughUrl, companionClickTrackingUrls, event) {
+      const onImgClickThrough_ = function (companionClickThroughUrl, companionClickTrackingUrls, event) {
         if (event) {
           event.stopPropagation();
           if (event.type === 'touchend') {
@@ -824,10 +833,14 @@ export class RmpVast {
         FW.openWindow(companionClickThroughUrl);
       };
       if (companionAd.companionClickThroughUrl) {
-        html.addEventListener('touchend',
-          _onImgClickThrough.bind(this, companionAd.companionClickThroughUrl, companionClickTrackingUrls));
-        html.addEventListener('click',
-          _onImgClickThrough.bind(this, companionAd.companionClickThroughUrl, companionClickTrackingUrls));
+        html.addEventListener(
+          'touchend',
+          onImgClickThrough_.bind(this, companionAd.companionClickThroughUrl, companionClickTrackingUrls)
+        );
+        html.addEventListener(
+          'click',
+          onImgClickThrough_.bind(this, companionAd.companionClickThroughUrl, companionClickTrackingUrls)
+        );
       }
     }
     if (companionAd.imageUrl) {

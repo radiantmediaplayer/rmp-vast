@@ -9,6 +9,7 @@ let testUrls = [
 ];
 
 const testUrlsChromeOnly = [
+  TEST.pathToTest + 'vast4Spec/omwebsdk.html',
   TEST.pathToTest + 'vast4Spec/Ad_Verification-test.html',
   TEST.pathToTest + 'vast4Spec/Category-test.html',
   TEST.pathToTest + 'vast4Spec/Viewable_Impression-test.html'

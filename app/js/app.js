@@ -139,7 +139,13 @@ const params = {
     height: 360,
     viewMode: 'normal',
     desiredBitrate: 500
-  }
+  },
+  omidSupport: true,
+  omidAllowedVendors: [],
+  omidPathTo: 'https://cdn.radiantmediatechs.com/rmp/omsdk/omweb-v1.js',
+  autoplay: false,
+  partnerName: 'Radiantmediaplayer',
+  partnerVersion: '3.2.0'
 };
 // new RmpVast instance - we pass id (required) and params (optional) 
 rmpVast = new RmpVast(id, params);

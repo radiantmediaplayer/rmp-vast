@@ -1,6 +1,6 @@
 module.exports = {
   eslintSrc: {
-    command: 'npx eslint --config .eslintrc-es2015.json --ignore-path .es2015.eslintignore test/spec/ js/src/ app/js/'
+    command: 'npx eslint --config .eslintrc-es2017.json --ignore-path .es2017.eslintignore test/spec/ js/src/ app/js/'
   },
   eslintNode: {
     command: 'npx eslint --config .eslintrc-node.json test/spec/main/ test/spec/helpers/ test/spec/main/ Gruntfile.js grunt/'
