@@ -1,5 +1,4 @@
 import FW from '../fw/fw';
-import ENV from '../fw/env';
 import HELPERS from '../utils/helpers';
 import VAST_ERRORS from '../utils/vast-errors';
 import VAST_PLAYER from '../players/vast-player';
@@ -621,14 +620,20 @@ VPAID.loadCreative = function (creativeUrl, vpaidSettings) {
   FW.setStyle(this.vpaidIframe, { visibility: 'hidden', width: '0px', height: '0px', border: 'none' });
   // this is to adhere to Best Practices for Rich Media Ads 
   // in Asynchronous Ad Environments  http://www.iab.net/media/file/rich_media_ajax_best_practices.pdf
-  let src = 'about:self';
+  const src = 'about:blank';
   // ... however this does not work in Firefox (onload is never reached)
   // https://bugzilla.mozilla.org/show_bug.cgi?id=444165
   // about:self also causes protocol mis-match issues with iframes in iOS/macOS Safari
   // ... TL;DR iframes are troubles
-  if (ENV.isFirefox || this.useContentPlayerForAds) {
+  //let src = 'about:self';
+  /*if (ENV.isFirefox || this.useContentPlayerForAds) {
     src = '';
-  }
+  }*/
+  // see https://bugs.chromium.org/p/chromium/issues/detail?id=1220186 about:self no longer works
+  // we use about:blank instead but this is still under review
+  // since about:blank seems to work in our testing cross browsers and is what is 
+  // recommended on the web 
+  // (see https://stackoverflow.com/questions/5946607/is-an-empty-iframe-src-valid/5946631) we now use about:blank
   this.vpaidIframe.onload = function () {
     if (this.debug) {
       FW.log('iframe.onload');

@@ -29,7 +29,7 @@ HELPERS.filterParams = function (inputParams) {
     omidPathTo: '../externals/omweb-v1.js',
     autoplay: false,
     partnerName: 'Radiantmediaplayer',
-    partnerVersion: '3.2.0'
+    partnerVersion: '6.3.0'
   };
   this.params = defaultParams;
   if (FW.isObject(inputParams)) {

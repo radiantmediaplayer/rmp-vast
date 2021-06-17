@@ -1,4 +1,8 @@
-;(function(omidGlobal, factory, exports) {
+/**
+ * @license Copyright (c) 2015-2021 Radiant Media Player 
+ * omid-session-client-v1 - 1.3.20
+ */
+(function(omidGlobal, factory, exports) {
   // CommonJS support
   if (typeof exports === 'object' && typeof exports.nodeName !== 'string') {
     factory(omidGlobal, exports);
