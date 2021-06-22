@@ -228,6 +228,22 @@ function mergeWrapperAdData(unwrappedAd, wrapper) {
   );
   unwrappedAd.extensions = wrapper.extensions.concat(unwrappedAd.extensions);
 
+  // merge viewableImpressions from child and parent
+  if(wrapper.viewableImpression.notviewable)
+  unwrappedAd.viewableImpression.notviewable = wrapper.viewableImpression.notviewable.concat(
+    unwrappedAd.viewableImpression.notviewable
+  );
+
+  if(wrapper.viewableImpression.viewable)
+  unwrappedAd.viewableImpression.viewable = wrapper.viewableImpression.viewable.concat(
+    unwrappedAd.viewableImpression.viewable
+  );
+
+  if(wrapper.viewableImpression.viewundetermined)
+  unwrappedAd.viewableImpression.viewundetermined = wrapper.viewableImpression.viewundetermined.concat(
+    unwrappedAd.viewableImpression.viewundetermined
+  );
+
   // values from the child wrapper will be overridden
   unwrappedAd.followAdditionalWrappers = wrapper.followAdditionalWrappers;
   unwrappedAd.allowMultipleAds = wrapper.allowMultipleAds;
