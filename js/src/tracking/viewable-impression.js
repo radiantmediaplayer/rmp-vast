@@ -4,12 +4,18 @@ import TRACKING_EVENTS from '../tracking/tracking-events';
 const VIEWABLE_IMPRESSION = {};
 
 const _handleIntersect = function (entries) {
+  const visibiliyThreshold = 0.5;
   entries.forEach(entry => {
     if (entry.intersectionRatio > this.viewablePreviousRatio) {
       this.viewableObserver.unobserve(this.container);
       HELPERS.createApiEvent.call(this, 'adviewable');
       TRACKING_EVENTS.dispatch.call(this, 'viewable'); 
     }
+    else if (entry.intersectionRatio < visibiliyThreshold){
+      this.viewableObserver.unobserve(this.container);
+      HELPERS.createApiEvent.call(this, 'notviewable');
+      TRACKING_EVENTS.dispatch.call(this, 'notviewable'); 
+    }   
     this.viewablePreviousRatio = entry.intersectionRatio;
   });
 };
