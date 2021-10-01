@@ -1,6 +1,6 @@
 {
   "name": "rmp-vast",
-  "version": "3.3.0",
+  "version": "4.0.0-beta-1",
   "author": "Radiant Media Player <support@radiantmediaplayer.com>",
   "description": "A client-side JavaScript solution to load, parse and display VAST resources (advertising)",
   "repository": {
@@ -30,7 +30,7 @@
     "grunt-shell": "^3.0.1",
     "grunt-text-replace": "^0.4.0",
     "load-grunt-config": "^4.0.1",
-    "selenium-webdriver": "^4.0.0-rc-1",
+    "selenium-webdriver": "^4.0.0-rc-2",
     "stylelint": "^13.13.1",
     "stylelint-config-standard": "^22.0.0",
     "time-grunt": "^2.0.0"

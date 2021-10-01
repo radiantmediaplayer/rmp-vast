@@ -29,7 +29,7 @@ rmp-vast is used and maintained by [Radiant Media Player](https://www.radiantmed
 - [Fullscreen management](#fullscreen-management)
 - [Pre, mid and post rolls](#pre-mid-and-post-rolls)
 - [Outstream ads](#outstream-ads)
-- [Changes from v2 to v3](#changes-from-v2-to-v3)
+- [TypeScript support](#typescript-support)
 - [Contributing](#contributing)
 - [License](#license)
 - [Radiant Media Player](#radiant-media-player)
@@ -308,17 +308,17 @@ The following methods should be queried after the `adstarted` event has fired fo
 
 - `getAdMediaUrl()`: return `String`, representing the selected creative URL.
 - `getAdLinear()`: return `Boolean`, representing the type of the selected creative either linear (true) or non linear (false).
-- `getAdSystem()`: return `Object: {value: String, version: String}|null`, representing the VAST AdSystem tag.
-- `getAdUniversalAdId()`: return `Object: {idRegistry: String, value: String}|null`, representing the VAST UniversalAdId tag.
+- `getAdSystem()`: return `{value: String, version: String}`, representing the VAST AdSystem tag.
+- `getAdUniversalAdId()`: return `{idRegistry: String, value: String}`, representing the VAST UniversalAdId tag.
 - `getAdContentType()`: return `String`, representing the MIME type for the selected creative.
 - `getAdTitle()`: return `String`, representing the VAST AdTitle tag.
 - `getAdDescription()`: return `String`, representing the VAST Description tag.
-- `getAdAdvertiser()`: return `Object: {id: String, value: String}|null`, representing the VAST Advertiser tag.
-- `getAdPricing()`: return `Object: {value: String, model: String, currency: String}|null`, representing the VAST Pricing tag.
+- `getAdAdvertiser()`: return `{id: String, value: String}`, representing the VAST Advertiser tag.
+- `getAdPricing()`: return `{value: String, model: String, currency: String}`, representing the VAST Pricing tag.
 - `getAdSurvey()`: return `String`, representing the VAST Survey tag.
 - `getAdAdServingId()`: return `String`, representing the VAST AdServingId tag.
-- `getAdCategories()`: return `Object: {authority: String, value: String}|null`, representing the VAST Category tag.
-- `getAdBlockedAdCategories()`: return `Object: {authority: String, value: String}|null`, representing the VAST BlockedAdCategories tag.
+- `getAdCategories()`: return `{authority: String, value: String}[]`, representing the VAST Category tag.
+- `getAdBlockedAdCategories()`: return `{authority: String, value: String}[]`, representing the VAST BlockedAdCategories tag.
 - `getAdDuration()`: return `Number` in ms, representing the duration of the selected linear creative. -1 is returned if this value is not available.
 - `getAdCurrentTime()`: return `Number` in ms, representing the current timestamp in the selected linear creative. -1 is returned if this value is not available.
 - `getAdRemainingTime()`: return `Number` in ms, representing the current time remaining in the selected linear creative. -1 is returned if this value is not available.
@@ -333,14 +333,13 @@ The following methods should be queried after the `adstarted` event has fired fo
 
 Additional AdPod-related methods
 
-- `getAdPodInfo()`: return `Object: {adPodCurrentIndex: Number, adPodLength: Number}|null` giving information about the currently playing pod.
+- `getAdPodInfo()`: return `{adPodCurrentIndex: Number, adPodLength: Number}` giving information about the currently playing pod.
 
 Additional VPAID-related methods
 
 - `resizeAd(width: Number, height: Number, viewMode: String)`: resizes the VPAID creative based on `width`, `height` and `viewMode`. viewMode should be either 'normal' or 'fullscreen'.
 - `expandAd()`: expands the VPAID creative on stage.
 - `collapseAd()`: collapses the VPAID creative on stage.
-- `getVpaidCreative()`: return `Object|null` reference to the VPAID creative.
 - `getAdExpanded()`: return `Boolean`, stating if the VPAID creative on stage is expanded or not.
 - `getVPAIDCompanionAds()`: return `String`, providing ad companion details in VAST 3.0 format for the `<CompanionAds>` element.
 
@@ -352,10 +351,6 @@ The following methods should be queried after the `aderror` event has fired for 
 
 The following methods provide context information for the rmp-vast instance:
 
-- `getEnvironment()`: return `Object`, the rmp-vast environment object.
-- `getFramework()`: return `Object`, the core internal rmp-vast framework.
-- `getVastPlayer()`: return `HTMLVideoElement`, the VAST player video tag.
-- `getContentPlayer()`: return `HTMLVideoElement`, the content player video tag.
 - `getIsUsingContentPlayerForAds()`: return `Boolean`, on iOS and macOS Safari the VAST player is the content player. This is to avoid fullscreen management and autoplay issues and to provide a consistent user experience. This method will return true for iOS and macOS Safari, false otherwise.
 
 [Back to documentation sections](#documentation-sections)
@@ -369,7 +364,7 @@ See test/spec/companionSpec/ for an example of implementation.
 
 The following methods must be querried when the `adstarted` event fires for the master linear ad.
 
-- `getCompanionAdsList(width: Number, height: Number)`: return `Array of Object|null`. Each Object in the Array represents a companion ad. Input `width` and `height` parameters are used to select companion ads based on available width and height for display. Each companion ad Object is represented as:
+- `getCompanionAdsList(width: Number, height: Number)`: return `Object[]`. Each Object in the Array represents a companion ad. Input `width` and `height` parameters are used to select companion ads based on available width and height for display. Each companion ad Object is represented as:
 
 ```javascript
 {
@@ -454,19 +449,9 @@ rmp-vast supports displaying outstream ads when parameter `outstream` is set to 
 
 [Back to documentation sections](#documentation-sections)
 
-## Changes from v2 to v3
+## TypeScript support
 
-- rmp-vast v3 only comes as a ES2017 class that needs to be imported into your project. We do not provide any polyfill/transpiling to ES5 or ES2015. With that beind said rmp-vast can be tested out of the box in latest version of Chrome, Firefox or Safari
-- removes params.pauseOnClick (always true now) and params.skipWaitingMessage settings
-- params.skipMessage, params.textForClickUIOnMobile settings are now placed under params.labels.skipMessage and params.labels.textForClickUIOnMobile settings
-- removes adfollowingredirect API event
-- adds adprogress, adviewable, adviewundetermined API events
-- adds adcollapse and aduseracceptinvitation API event for VPAID creatives
-- getAdSystem now returns an Object
-- adds getAdUniversalAdId, getAdAdvertiser, getAdPricing, getAdSurvey, getAdAdServingId, getAdCategories, getAdBlockedAdCategories, getSkipTimeOffset API methods
-- support for VAST 4, 4.1 and 4.2 features including latest VAST 4.2 macros
-- companion ads support is now out of BETA
-- companion ads, non-linead ads and icons now support image, iframe and HTML content
+Make sure to inluce ./types/ folder in your TypeScript configuration file and you can start using rmp-vast in a TypeScript environment. Note: the resulting .d.ts files are generated from JavaScript using JSDoc syntax.
 
 ## Contributing
 

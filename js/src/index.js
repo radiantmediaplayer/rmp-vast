@@ -1,6 +1,6 @@
 /**
- * @license Copyright (c) 2017-2020 Radiant Media Player | https://www.radiantmediaplayer.com
- * rmp-vast 3.2.1
+ * @license Copyright (c) 2015-2021 Radiant Media Player | https://www.radiantmediaplayer.com
+ * rmp-vast 4.0.0-beta-1
  * GitHub: https://github.com/radiantmediaplayer/rmp-vast
  * MIT License: https://github.com/radiantmediaplayer/rmp-vast/blob/master/LICENSE
  */
@@ -22,7 +22,36 @@ import OmSdkManager from './verification/omsdk';
 import { VASTClient } from '../../vast-client-js/src/vast_client';
 
 export class RmpVast {
-
+  /**
+   * @param {string}  id - is the id for the player container. This is a required parameter.
+   * @typedef {object} VpaidSettings
+   * @property {number} width
+   * @property {number} height
+   * @property {string} viewMode
+   * @property {number} desiredBitrate
+   * @typedef {object} Labels
+   * @property {string} skipMessage
+   * @property {string} closeAd
+   * @property {string} textForClickUIOnMobile 
+   * @typedef {object} RmpVastParams
+   * @property {number} [ajaxTimeout] - timeout in ms for an AJAX request to load a VAST tag from the ad server. Default 8000.
+   * @property {number} [creativeLoadTimeout] - timeout in ms to load linear media creative from the server. Default 10000.
+   * @property {boolean} [ajaxWithCredentials] - AJAX request to load VAST tag from ad server should or should not be made with credentials. Default: false.
+   * @property {number} [maxNumRedirects] - the number of VAST wrappers the player should follow before triggering an error. Default: 4. Capped at 30 to avoid infinite wrapper loops.
+   * @property {boolean} [outstream] - Enables outstream ad mode. Default: false.
+   * @property {boolean} [showControlsForVastPlayer] - Shows VAST player HTML5 default video controls. Only works when debug setting is true. Default: true.
+   * @property {boolean} [enableVpaid] - Enables VPAID support or not. Default: true.
+   * @property {boolean} [omidSupport] - Enables OMID (OM Web SDK) support in rmp-vast. Default: false (as currently in BETA).
+   * @property {string[]} [omidAllowedVendors] - List of allowed vendors for ad verification. Vendors not listed will be rejected. Default: [].
+   * @property {string} [omidPathTo] - Path to OM Web SDK script. Default: '../externals/omweb-v1.js'.
+   * @property {boolean} [autoplay] - The content player will autoplay or not. The possibility of autoplay is not determined by rmp-vast, this information needs to be passed to rmp-vast (see this script for example). Default: false (means a click to play is required).
+   * @property {string} [partnerName] - partnerName for OMID. Default: 'Radiantmediaplayer'.
+   * @property {string} [partnerVersion] - partnerVersion for OMID. Default: '3.2.0'.
+   * @property {VpaidSettings} [vpaidSettings] - information required to properly display VPAID creatives - note that it is up to the parent application of rmp-vast to provide those informations
+   * @property {Labels} [labels] - information required to properly display VPAID creatives - note that it is up to the parent application of rmp-vast to provide those informations
+   * @param {RmpVastParams} [params] - is an optional object representing various parameters that can be passed to a rmp-vast instance and that will affect the player inner-workings
+   * @param {boolean} [debug] - display debug console logs in browser dev tools. Default: false.
+   */
   constructor(id, params, debug) {
     // reset instance variables - once per session
     DEFAULT.instanceVariables.call(this);
@@ -67,6 +96,9 @@ export class RmpVast {
     }
   }
 
+  /** 
+   * @private
+   */
   addTrackingEvents_(trackingEvents) {
     const keys = Object.keys(trackingEvents);
     for (let k = 0, len = keys.length; k < len; k++) {
@@ -80,6 +112,9 @@ export class RmpVast {
     }
   }
 
+  /** 
+   * @private
+   */
   async loopAds_(ads) {
     for (let i = 0, len = ads.length; i < len; i++) {
       await new Promise(resolve => {
@@ -248,6 +283,9 @@ export class RmpVast {
     }
   }
 
+  /** 
+   * @private
+   */
   getVastTag_(vastUrl) {
     // we check for required VAST URL and API here
     // as we need to have this.currentContentSrc available for iOS
@@ -300,6 +338,15 @@ export class RmpVast {
     });
   }
 
+  /** 
+   * @param {string} vastUrl - the URI to the VAST resource to be loaded
+   * @param {object} [regulationsInfo] - data for regulations as
+   * @param {string} [regulationsInfo.regulations] - coppa|gdpr for REGULATIONS macro
+   * @param {string} [regulationsInfo.limitAdTracking] - 0|1 for LIMITADTRACKING macro
+   * @param {string} [regulationsInfo.gdprConsent] - Base64-encoded Cookie Value of IAB GDPR consent info for GDPRCONSENT macro
+   * @param {boolean} [requireCategory] - for enforcement of VAST 4 Ad Categories
+   * @return {void}
+   */
   loadAds(vastUrl, regulationsInfo, requireCategory) {
     if (this.debug) {
       FW.log('loadAds starts');
@@ -356,6 +403,9 @@ export class RmpVast {
     this.getVastTag_(finalUrl);
   }
 
+  /** 
+   * @type {() => void} 
+   */
   play() {
     if (this.adOnStage && this.creative && this.creative.isLinear) {
       if (this.isVPAID) {
@@ -368,6 +418,9 @@ export class RmpVast {
     }
   }
 
+  /** 
+   * @type {() => void} 
+   */
   pause() {
     if (this.adOnStage && this.creative && this.creative.isLinear) {
       if (this.isVPAID) {
@@ -380,6 +433,9 @@ export class RmpVast {
     }
   }
 
+  /** 
+   * @type {() => boolean} 
+   */
   getAdPaused() {
     if (this.adOnStage && this.creative && this.creative.isLinear) {
       if (this.isVPAID) {
@@ -391,6 +447,9 @@ export class RmpVast {
     return false;
   }
 
+  /** 
+   * @type {(level: number) => void} 
+   */
   setVolume(level) {
     if (!FW.isNumber(level)) {
       return;
@@ -412,6 +471,9 @@ export class RmpVast {
     CONTENT_PLAYER.setVolume.call(this, validatedLevel);
   }
 
+  /** 
+   * @type {() => number} 
+   */
   getVolume() {
     if (this.adOnStage && this.creative && this.creative.isLinear) {
       if (this.isVPAID) {
@@ -423,6 +485,9 @@ export class RmpVast {
     return CONTENT_PLAYER.getVolume.call(this);
   }
 
+  /** 
+   * @type {(muted: boolean) => void} 
+   */
   setMute(muted) {
     if (typeof muted !== 'boolean') {
       return;
@@ -441,6 +506,9 @@ export class RmpVast {
     CONTENT_PLAYER.setMute.call(this, muted);
   }
 
+  /** 
+   * @type {() => boolean} 
+   */
   getMute() {
     if (this.adOnStage && this.creative && this.creative.isLinear) {
       if (this.isVPAID) {
@@ -455,10 +523,16 @@ export class RmpVast {
     return CONTENT_PLAYER.getMute.call(this);
   }
 
+  /** 
+   * @type {() => boolean} 
+   */
   getFullscreen() {
     return this.isInFullscreen;
   }
 
+  /** 
+   * @type {() => void} 
+   */
   stopAds() {
     if (this.adOnStage) {
       if (this.isVPAID) {
@@ -470,6 +544,9 @@ export class RmpVast {
     }
   }
 
+  /** 
+   * @type {() => void} 
+   */
   skipAd() {
     if (this.adOnStage && this.getAdSkippableState()) {
       if (this.isVPAID) {
@@ -481,10 +558,16 @@ export class RmpVast {
     }
   }
 
+  /** 
+   * @type {() => string} 
+   */
   getAdTagUrl() {
     return this.adTagUrl;
   }
 
+  /** 
+   * @type {() => string} 
+   */
   getAdMediaUrl() {
     if (this.adOnStage) {
       if (this.isVPAID) {
@@ -498,6 +581,9 @@ export class RmpVast {
     return null;
   }
 
+  /** 
+   * @type {() => boolean} 
+   */
   getAdLinear() {
     if (this.creative && this.creative.isLinear) {
       return this.creative.isLinear;
@@ -505,32 +591,45 @@ export class RmpVast {
     return true;
   }
 
-  getEnvironment() {
-    return ENV;
-  }
-
-  getFramework() {
-    return FW;
-  }
-
+  /** 
+   * @typedef {object} AdSystem
+   * @property {string} value
+   * @property {string} version
+   * @return {AdSystem}
+   */
   getAdSystem() {
     // <AdSystem version="2.0" ><![CDATA[AdServer]]></AdSystem>
     // {value: String, version: String}
     if (this.ad && this.ad.system) {
       return this.ad.system;
     }
-    return null;
+    return {
+      value: '',
+      version: ''
+    };
   }
 
+  /** 
+   * @typedef {object} UniversalAdId
+   * @property {string} idRegistry
+   * @property {string} value
+   * @return {UniversalAdId}
+   */
   getAdUniversalAdId() {
     // <UniversalAdId idRegistry="daily-motion-L">Linear-12345</UniversalAdId>
     // {idRegistry: String, value: String}
     if (this.creative && this.creative.universalAdId) {
       return this.creative.universalAdId;
     }
-    return null;
+    return {
+      idRegistry: '',
+      value: ''
+    };
   }
 
+  /** 
+   * @type {() => string} 
+   */
   getAdContentType() {
     if (this.creative && this.creative.type) {
       return this.creative.type;
@@ -538,6 +637,9 @@ export class RmpVast {
     return '';
   }
 
+  /** 
+   * @type {() => string} 
+   */
   getAdTitle() {
     if (this.ad && this.ad.title) {
       return this.ad.title;
@@ -545,6 +647,9 @@ export class RmpVast {
     return '';
   }
 
+  /** 
+   * @type {() => string} 
+   */
   getAdDescription() {
     if (this.ad && this.ad.description) {
       return this.ad.description;
@@ -552,24 +657,47 @@ export class RmpVast {
     return '';
   }
 
+  /** 
+   * @typedef {object} Advertiser
+   * @property {string} id
+   * @property {string} value
+   * @return {Advertiser}
+   */
   getAdAdvertiser() {
     // <Advertiser id='advertiser-desc'><![CDATA[Advertiser name]]></Advertiser>
     // {id: String, value: String}
     if (this.ad && !FW.isEmptyObject(this.ad.advertiser)) {
       return this.ad.advertiser;
     }
-    return null;
+    return {
+      id: '',
+      value: ''
+    };
   }
 
+  /** 
+   * @typedef {object} Pricing
+   * @property {string} value
+   * @property {string} model
+   * @property {string} currency
+   * @return {Pricing}
+   */
   getAdPricing() {
     // <Pricing model="CPM" currency="USD" ><![CDATA[1.09]]></Pricing>
     // {value: String, model: String, currency: String}
     if (this.ad && !FW.isEmptyObject(this.ad.pricing)) {
       return this.ad.pricing;
     }
-    return null;
+    return {
+      value: '',
+      model: '',
+      currency: ''
+    };
   }
 
+  /** 
+   * @type {() => string} 
+   */
   getAdSurvey() {
     if (this.ad && this.ad.survey) {
       return this.ad.survey;
@@ -577,6 +705,9 @@ export class RmpVast {
     return '';
   }
 
+  /** 
+   * @type {() => string} 
+   */
   getAdAdServingId() {
     if (this.ad && this.ad.adServingId) {
       return this.ad.adServingId;
@@ -584,6 +715,12 @@ export class RmpVast {
     return '';
   }
 
+  /** 
+   * @typedef {object} Category
+   * @property {string} authority
+   * @property {string} value
+   * @return {Category[]}
+   */
   getAdCategories() {
     // <Category authority=”iabtechlab.com”>232</Category> 
     // Array<Object>
@@ -591,9 +728,15 @@ export class RmpVast {
     if (this.ad && this.ad.categories && this.ad.categories.length > 0) {
       return this.ad.categories;
     }
-    return null;
+    return [];
   }
 
+  /** 
+   * @typedef {object} BlockedAdCategory
+   * @property {string} authority
+   * @property {string} value
+   * @return {BlockedAdCategory[]}
+   */
   getAdBlockedAdCategories() {
     // <BlockedAdCategories authority=”iabtechlab.com”>232</BlockedAdCategories> 
     // Array<Object>
@@ -601,9 +744,12 @@ export class RmpVast {
     if (this.ad && this.ad.blockedAdCategories && this.ad.blockedAdCategories.length > 0) {
       return this.ad.blockedAdCategories;
     }
-    return null;
+    return [];
   }
 
+  /** 
+   * @type {() => number} 
+   */
   getAdDuration() {
     if (this.adOnStage && this.creative && this.creative.isLinear) {
       if (this.isVPAID) {
@@ -619,6 +765,9 @@ export class RmpVast {
     return -1;
   }
 
+  /** 
+   * @type {() => number} 
+   */
   getAdCurrentTime() {
     if (this.adOnStage && this.creative && this.creative.isLinear) {
       if (this.isVPAID) {
@@ -635,6 +784,9 @@ export class RmpVast {
     return -1;
   }
 
+  /** 
+   * @type {() => number} 
+   */
   getAdRemainingTime() {
     if (this.adOnStage && this.creative && this.creative.isLinear) {
       if (this.isVPAID) {
@@ -651,10 +803,16 @@ export class RmpVast {
     return -1;
   }
 
+  /** 
+   * @type {() => boolean} 
+   */
   getAdOnStage() {
     return this.adOnStage;
   }
 
+  /** 
+   * @type {() => number} 
+   */
   getAdMediaWidth() {
     if (this.adOnStage) {
       if (this.isVPAID) {
@@ -666,6 +824,9 @@ export class RmpVast {
     return -1;
   }
 
+  /** 
+   * @type {() => number} 
+   */
   getAdMediaHeight() {
     if (this.adOnStage) {
       if (this.isVPAID) {
@@ -677,6 +838,9 @@ export class RmpVast {
     return -1;
   }
 
+  /** 
+   * @type {() => string} 
+   */
   getClickThroughUrl() {
     if (this.creative && this.creative.clickThroughUrl) {
       return this.creative.clickThroughUrl;
@@ -684,6 +848,9 @@ export class RmpVast {
     return '';
   }
 
+  /** 
+   * @type {() => number} 
+   */
   getSkipTimeOffset() {
     if (this.creative && this.creative.skipoffset) {
       return this.creative.skipoffset;
@@ -691,6 +858,9 @@ export class RmpVast {
     return -1;
   }
 
+  /** 
+   * @type {() => boolean} 
+   */
   getIsSkippableAd() {
     if (this.creative && this.creative.isSkippableAd) {
       return true;
@@ -698,39 +868,54 @@ export class RmpVast {
     return false;
   }
 
+  /** 
+   * @type {() => boolean} 
+   */
   getContentPlayerCompleted() {
     return this.contentPlayerCompleted;
   }
 
+  /** 
+   * @param {boolean} value
+   * @return {void}
+   */
   setContentPlayerCompleted(value) {
     if (typeof value === 'boolean') {
       this.contentPlayerCompleted = value;
     }
   }
 
+  /** 
+   * @type {() => string} 
+   */
   getAdErrorMessage() {
     return this.vastErrorMessage;
   }
 
+  /** 
+   * @type {() => number} 
+   */
   getAdVastErrorCode() {
     return this.vastErrorCode;
   }
 
+  /** 
+   * @type {() => string} 
+   */
   getAdErrorType() {
     return this.adErrorType;
   }
 
-  getVpaidCreative() {
-    if (this.adOnStage && this.isVPAID) {
-      return VPAID.getVpaidCreative.call(this);
-    }
-    return null;
-  }
-
+  /** 
+   * @type {() => boolean} 
+   */
   getIsUsingContentPlayerForAds() {
     return this.useContentPlayerForAds;
   }
 
+  /** 
+   * @type {() => boolean} 
+   */
   getAdSkippableState() {
     if (this.adOnStage) {
       if (this.isVPAID) {
@@ -744,15 +929,20 @@ export class RmpVast {
     return false;
   }
 
-  getVastPlayer() {
-    return this.vastPlayer;
-  }
-
-  getContentPlayer() {
-    return this.contentPlayer;
-  }
-
-  // companion ads
+  /** 
+   * @param {number} inputWidth
+   * @param {number} inputHeight
+   * @typedef {object} Companion
+   * @property {string} adSlotID
+   * @property {string} altText
+   * @property {string} companionClickThroughUrl
+   * @property {string} companionClickTrackingUrl
+   * @property {number} height
+   * @property {number} width
+   * @property {string} imageUrl
+   * @property {string[]} trackingEventsUri
+   * @return {Companion[]}
+   */
   getCompanionAdsList(inputWidth, inputHeight) {
     if (this.validCompanionAds.length > 0) {
       let availableCompanionAds;
@@ -772,9 +962,13 @@ export class RmpVast {
         return result;
       }
     }
-    return null;
+    return [];
   }
 
+  /** 
+   * @param {number} index
+   * @return {HTMLElement|null}
+   */
   getCompanionAd(index) {
     if (typeof this.companionAdsList[index] === 'undefined') {
       return null;
@@ -858,6 +1052,9 @@ export class RmpVast {
     return html;
   }
 
+  /** 
+   * @type {() => string} 
+   */
   getCompanionAdsRequiredAttribute() {
     if (this.adOnStage) {
       return this.companionAdsRequiredAttribute;
@@ -865,6 +1062,9 @@ export class RmpVast {
     return '';
   }
 
+  /** 
+   * @type {() => void} 
+   */
   initialize() {
     if (!this.rmpVastInitialized) {
       if (this.debug) {
@@ -874,10 +1074,16 @@ export class RmpVast {
     }
   }
 
+  /** 
+   * @type {() => boolean} 
+   */
   getInitialized() {
     return this.rmpVastInitialized;
   }
 
+  /** 
+   * @type {() => void} 
+   */
   destroy() {
     if (this.contentPlayer) {
       this.contentPlayer.removeEventListener('webkitbeginfullscreen', this.onFullscreenchange);
@@ -889,7 +1095,12 @@ export class RmpVast {
     DEFAULT.instanceVariables.call(this);
   }
 
-  // adpod 
+  /** 
+   * @typedef {object} AdPod
+   * @property {number} adPodCurrentIndex
+   * @property {number} adPodLength
+   * @return {AdPod}
+   */
   getAdPodInfo() {
     if (this.adPod && this.adPodLength) {
       const result = {};
@@ -897,28 +1108,43 @@ export class RmpVast {
       result.adPodLength = this.adPodLength;
       return result;
     }
-    return null;
+    return {
+      adPodCurrentIndex: -1,
+      adPodLength: 0
+    };
   }
 
   // VPAID methods
+  /** 
+   * @type {(width: number, height: number, viewMode: string) => void} 
+   */
   resizeAd(width, height, viewMode) {
     if (this.adOnStage && this.isVPAID) {
       VPAID.resizeAd.call(this, width, height, viewMode);
     }
   }
 
+  /** 
+   * @type {() => void} 
+   */
   expandAd() {
     if (this.adOnStage && this.isVPAID) {
       VPAID.expandAd.call(this);
     }
   }
 
+  /** 
+   * @type {() => void} 
+   */
   collapseAd() {
     if (this.adOnStage && this.isVPAID) {
       VPAID.collapseAd.call(this);
     }
   }
 
+  /** 
+   * @type {() => boolean} 
+   */
   getAdExpanded() {
     if (this.adOnStage && this.isVPAID) {
       VPAID.getAdExpanded.call(this);
@@ -926,6 +1152,9 @@ export class RmpVast {
     return false;
   }
 
+  /** 
+   * @type {() => string} 
+   */
   getVPAIDCompanionAds() {
     if (this.adOnStage && this.isVPAID) {
       VPAID.getAdCompanions.call(this);

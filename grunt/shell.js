@@ -8,6 +8,9 @@ module.exports = {
   stylelint: {
     command: 'npx stylelint "css/*.less" "css/import-less/*.less" "app/css/*.css"'
   },
+  generatetypes: {
+    command: 'npx -p typescript tsc js/**/*.js --declaration --allowJs --emitDeclarationOnly --outDir types'
+  },
   test: {
     command: [
       'node test/spec/main/adPodSpec.js',

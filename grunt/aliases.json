@@ -5,14 +5,16 @@
     "replace:sourceHeader",
     "shell:stylelint",
     "less",
-    "compress"
+    "compress",
+    "shell:generatetypes"
   ],
   "build": [
     "shell:eslintSrc",
     "shell:eslintNode",
     "replace:sourceHeader",
     "shell:stylelint",
-    "less"
+    "less",
+    "shell:generatetypes"
   ],
   "test": [
     "shell:test"
