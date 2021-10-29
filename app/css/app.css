@@ -19,7 +19,7 @@
   margin: 0 5px 5px;
 }
 
-#eventLogs {
+#event-logs {
   max-height: 600px;
   overflow: auto;
 }

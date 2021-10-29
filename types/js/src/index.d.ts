@@ -1,15 +1,21 @@
+/**
+ * The class to instantiate RmpVast
+ * @export
+ * @class RmpVast
+*/
 export class RmpVast {
     /**
-     * @param {string}  id - is the id for the player container. This is a required parameter.
+     * @constructor
+     * @param {string}  id - the id for the player container. Required parameter.
      * @typedef {object} VpaidSettings
-     * @property {number} width
-     * @property {number} height
-     * @property {string} viewMode
-     * @property {number} desiredBitrate
+     * @property {number} [width]
+     * @property {number} [height]
+     * @property {string} [viewMode]
+     * @property {number} [desiredBitrate]
      * @typedef {object} Labels
-     * @property {string} skipMessage
-     * @property {string} closeAd
-     * @property {string} textForClickUIOnMobile
+     * @property {string} [skipMessage]
+     * @property {string} [closeAd]
+     * @property {string} [textForClickUIOnMobile]
      * @typedef {object} RmpVastParams
      * @property {number} [ajaxTimeout] - timeout in ms for an AJAX request to load a VAST tag from the ad server. Default 8000.
      * @property {number} [creativeLoadTimeout] - timeout in ms to load linear media creative from the server. Default 10000.
@@ -26,8 +32,8 @@ export class RmpVast {
      * @property {string} [partnerVersion] - partnerVersion for OMID. Default: '3.2.0'.
      * @property {VpaidSettings} [vpaidSettings] - information required to properly display VPAID creatives - note that it is up to the parent application of rmp-vast to provide those informations
      * @property {Labels} [labels] - information required to properly display VPAID creatives - note that it is up to the parent application of rmp-vast to provide those informations
-     * @param {RmpVastParams} [params] - is an optional object representing various parameters that can be passed to a rmp-vast instance and that will affect the player inner-workings
-     * @param {boolean} [debug] - display debug console logs in browser dev tools. Default: false.
+     * @param {RmpVastParams} [params] - an object representing various parameters that can be passed to a rmp-vast instance and that will affect the player inner-workings. Optional parameter.
+     * @param {boolean} [debug] - display debug console logs in browser dev tools. Default: false. Optional parameter.
      */
     constructor(id: string, params?: {
         /**
@@ -86,18 +92,18 @@ export class RmpVast {
          * - information required to properly display VPAID creatives - note that it is up to the parent application of rmp-vast to provide those informations
          */
         vpaidSettings?: {
-            width: number;
-            height: number;
-            viewMode: string;
-            desiredBitrate: number;
+            width?: number;
+            height?: number;
+            viewMode?: string;
+            desiredBitrate?: number;
         };
         /**
          * - information required to properly display VPAID creatives - note that it is up to the parent application of rmp-vast to provide those informations
          */
         labels?: {
-            skipMessage: string;
-            closeAd: string;
-            textForClickUIOnMobile: string;
+            skipMessage?: string;
+            closeAd?: string;
+            textForClickUIOnMobile?: string;
         };
     }, debug?: boolean);
     debug: boolean;

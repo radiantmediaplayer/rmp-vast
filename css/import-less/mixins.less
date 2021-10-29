@@ -1,29 +1,6 @@
-.font-rmp() {
-  font-family: 'Roboto', Arial, sans-serif;
-}
-
-.transform-translate(@pcX: -50%; @pcY: -50%) {
-  -webkit-transform: translate(@pcX, @pcY);
-  -moz-transform: translate(@pcX, @pcY);
-  -ms-transform: translate(@pcX, @pcY);
-  transform: translate(@pcX, @pcY);
-}
-
-.box-sizing(@string: border-box) {
-  -webkit-box-sizing: @string;
-  -moz-box-sizing: @string;
-  box-sizing: @string;
-}
-
 .transition(@property: background; @duration: 0.4s; @timing: ease-in) {
-  -webkit-transition-property: @property;
-  -moz-transition-property: @property;
   transition-property: @property;
-  -webkit-transition-duration: @duration;
-  -moz-transition-duration: @duration;
   transition-duration: @duration;
-  -webkit-transition-timing-function: @timing;
-  -moz-transition-timing-function: @timing;
   transition-timing-function: @timing;
 }
 
@@ -34,7 +11,5 @@
 }
 
 .box-shadow(@string: 0 0 4px 0 @shadow-2) {
-  -webkit-box-shadow: @string;
-  -moz-box-shadow: @string;
   box-shadow: @string;
 }

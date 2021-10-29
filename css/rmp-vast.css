@@ -45,14 +45,8 @@
   cursor: pointer;
   background-color: #333;
   border: 1px solid #333;
-  -webkit-transition-property: border-color;
-  -moz-transition-property: border-color;
   transition-property: border-color;
-  -webkit-transition-duration: 0.4s;
-  -moz-transition-duration: 0.4s;
   transition-duration: 0.4s;
-  -webkit-transition-timing-function: ease-in;
-  -moz-transition-timing-function: ease-in;
   transition-timing-function: ease-in;
 }
 .rmp-ad-container-skip:hover {
@@ -85,14 +79,8 @@
   background-repeat: no-repeat;
   background-position: center;
   opacity: 0.7;
-  -webkit-transition-property: opacity;
-  -moz-transition-property: opacity;
   transition-property: opacity;
-  -webkit-transition-duration: 0.4s;
-  -moz-transition-duration: 0.4s;
   transition-duration: 0.4s;
-  -webkit-transition-timing-function: ease-in;
-  -moz-transition-timing-function: ease-in;
   transition-timing-function: ease-in;
 }
 .rmp-ad-container-skip:hover .rmp-ad-container-skip-icon {
@@ -103,9 +91,6 @@
   text-align: center;
   left: 50%;
   bottom: 0;
-  -webkit-transform: translate(-50%, 0);
-  -moz-transform: translate(-50%, 0);
-  -ms-transform: translate(-50%, 0);
   transform: translate(-50%, 0);
 }
 .rmp-ad-non-linear-anchor:link,
@@ -148,8 +133,6 @@
   text-decoration: none;
   text-align: center;
   line-height: 30px;
-  -webkit-box-shadow: 0 0 2px rgba(0, 0, 0, 0.6);
-  -moz-box-shadow: 0 0 2px rgba(0, 0, 0, 0.6);
   box-shadow: 0 0 2px rgba(0, 0, 0, 0.6);
 }
 .rmp-ad-click-ui-mobile:visited,
@@ -171,14 +154,10 @@
   max-height: none;
   overflow: hidden;
   line-height: 1;
-  font-family: 'Roboto', Arial, sans-serif;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
   box-sizing: border-box;
+  font-family: "Roboto", "Arial", sans-serif;
 }
 .rmp-container * {
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
   box-sizing: border-box;
 }
 .rmp-video,

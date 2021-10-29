@@ -1,8 +1,8 @@
 @charset "UTF-8";
 
-@import url('https://fonts.googleapis.com/css?family=Roboto');
-@import 'import-less/mixins.less';
-@import 'import-less/rmp-ad.less';
+@import url("https://fonts.googleapis.com/css?family=Roboto");
+@import "import-less/mixins.less";
+@import "import-less/rmp-ad.less";
 
 @black: rgba(0, 0, 0, 1);
 @grey: #333;
@@ -26,12 +26,12 @@
   max-height: none;
   overflow: hidden;
   line-height: 1;
-  .font-rmp();
-  .box-sizing();
+  box-sizing: border-box;
+  font-family: "Roboto", "Arial", sans-serif;
 }
 
 .rmp-container * {
-  .box-sizing();
+  box-sizing: border-box;
 }
 
 .rmp-video,

@@ -271,7 +271,7 @@ const _wireUI = function () {
   }
 
   // events logging
-  const eventLogs = document.getElementById('eventLogs');
+  const eventLogs = document.getElementById('event-logs');
   const events = [
     'adloaded',
     'addurationchange',
