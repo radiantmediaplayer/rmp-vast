@@ -1,4 +1,5 @@
 import { RmpVast } from '../../../../js/src/index.js';
+import { HELP } from '../../helpers/function.js';
 
 const ADTAG = 'https://www.radiantmediaplayer.com/vast/tags/iab/vast3/Inline_Non-Linear_Tag-test.xml';
 
@@ -8,7 +9,6 @@ describe('Test for NonLinearSpecIABVAST3Spec', function () {
   const container = document.getElementById(id);
   const video = document.querySelector('.rmp-video');
   const rmpVast = new RmpVast(id);
-  const fw = rmpVast.getFramework();
   const env = rmpVast.getEnvironment();
   video.muted = true;
   if (env.isAndroid[0]) {
@@ -23,7 +23,7 @@ describe('Test for NonLinearSpecIABVAST3Spec', function () {
     const _incrementAndLog = function (event) {
       validSteps++;
       if (event && event.type) {
-        fw.log(event.type);
+        console.log(event.type);
       }
     };
 
@@ -58,8 +58,8 @@ describe('Test for NonLinearSpecIABVAST3Spec', function () {
       _incrementAndLog(e);
       setTimeout(function () {
         const close = document.getElementsByClassName('rmp-ad-non-linear-close')[0];
-        fw.log('click close');
-        fw.createStdEvent('click', close);
+        console.log('click close');
+        HELP.createStdEvent('click', close);
       }, 7000);
     });
 

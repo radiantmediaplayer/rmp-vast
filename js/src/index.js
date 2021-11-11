@@ -1,6 +1,6 @@
 /**
  * @license Copyright (c) 2015-2021 Radiant Media Player | https://www.radiantmediaplayer.com
- * rmp-vast 4.0.0-beta-2
+ * rmp-vast 4.0.0
  * GitHub: https://github.com/radiantmediaplayer/rmp-vast
  * MIT License: https://github.com/radiantmediaplayer/rmp-vast/blob/master/LICENSE
  */
@@ -47,7 +47,7 @@ export class RmpVast {
    * @property {boolean} [outstream] - Enables outstream ad mode. Default: false.
    * @property {boolean} [showControlsForVastPlayer] - Shows VAST player HTML5 default video controls. Only works when debug setting is true. Default: true.
    * @property {boolean} [enableVpaid] - Enables VPAID support or not. Default: true.
-   * @property {boolean} [omidSupport] - Enables OMID (OM Web SDK) support in rmp-vast. Default: false (as currently in BETA).
+   * @property {boolean} [omidSupport] - Enables OMID (OM Web SDK) support in rmp-vast. Default: false.
    * @property {string[]} [omidAllowedVendors] - List of allowed vendors for ad verification. Vendors not listed will be rejected. Default: [].
    * @property {string} [omidPathTo] - Path to OM Web SDK script. Default: '../externals/omweb-v1.js'.
    * @property {boolean} [autoplay] - The content player will autoplay or not. The possibility of autoplay is not determined by rmp-vast, this information needs to be passed to rmp-vast (see this script for example). Default: false (means a click to play is required).
@@ -299,7 +299,7 @@ export class RmpVast {
       VAST_ERRORS.process.call(this, 1001, false);
       return;
     }
-    if (!FW.hasDOMParser()) {
+    if (typeof DOMParser === 'undefined') {
       VAST_ERRORS.process.call(this, 1002, false);
       return;
     }
@@ -588,6 +588,23 @@ export class RmpVast {
   }
 
   /** 
+   * @typedef {object} Environment
+   * @property {number} devicePixelRatio
+   * @property {number} maxTouchPoints
+   * @property {boolean} isIpadOS
+   * @property {array} isIos
+   * @property {array} isAndroid
+   * @property {boolean} isMacOSSafari
+   * @property {boolean} isFirefox
+   * @property {boolean} isMobile
+   * @property {boolean} hasNativeFullscreenSupport
+   * @return {Environment}
+   */
+  getEnvironment() {
+    return ENV;
+  }
+
+  /** 
    * @type {() => boolean} 
    */
   getAdLinear() {
@@ -729,8 +746,6 @@ export class RmpVast {
    */
   getAdCategories() {
     // <Category authority=”iabtechlab.com”>232</Category> 
-    // Array<Object>
-    // {authority: String, value: String}
     if (this.ad && this.ad.categories && this.ad.categories.length > 0) {
       return this.ad.categories;
     }
@@ -745,8 +760,6 @@ export class RmpVast {
    */
   getAdBlockedAdCategories() {
     // <BlockedAdCategories authority=”iabtechlab.com”>232</BlockedAdCategories> 
-    // Array<Object>
-    // {authority: String, value: String}
     if (this.ad && this.ad.blockedAdCategories && this.ad.blockedAdCategories.length > 0) {
       return this.ad.blockedAdCategories;
     }
@@ -933,6 +946,20 @@ export class RmpVast {
       }
     }
     return false;
+  }
+
+  /** 
+   * @return {HTMLMediaElement|null}
+   */
+  getVastPlayer() {
+    return this.vastPlayer;
+  }
+
+  /** 
+   * @return {HTMLMediaElement|null}
+   */
+  getContentPlayer() {
+    return this.contentPlayer;
   }
 
   /** 

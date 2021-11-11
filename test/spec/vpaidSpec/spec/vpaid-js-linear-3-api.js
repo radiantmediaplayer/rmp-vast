@@ -16,7 +16,6 @@ describe('Test for vpaid-js-linear-3', function () {
     }
   };
   const rmpVast = new RmpVast(id, params);
-  const fw = rmpVast.getFramework();
   const env = rmpVast.getEnvironment();
   video.muted = true;
   let mutedAutoplay = false;
@@ -37,7 +36,7 @@ describe('Test for vpaid-js-linear-3', function () {
     const _incrementAndLog = function (event) {
       validSteps++;
       if (event && event.type) {
-        fw.log(event.type);
+        console.log(event.type);
       }
     };
 

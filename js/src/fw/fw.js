@@ -1,49 +1,17 @@
 const FW = {};
 
-/* FW from Radiant Media Player core */
-
 FW.nullFn = function () {
   return null;
-};
-
-FW.addClass = function (element, className) {
-  if (element && typeof className === 'string') {
-    if (element.className) {
-      if (element.className.indexOf(className) === -1) {
-        element.className = (element.className + ' ' + className).replace(/\s\s+/g, ' ');
-      }
-    } else {
-      element.className = className;
-    }
-  }
-};
-
-FW.removeClass = function (element, className) {
-  if (element && typeof className === 'string') {
-    if (element.className.indexOf(className) > -1) {
-      element.className = (element.className.replace(className, '')).replace(/\s\s+/g, ' ');
-    }
-  }
 };
 
 FW.createStdEvent = function (eventName, element) {
   let event;
   if (element) {
-    if (typeof window.Event === 'function') {
-      try {
-        event = new Event(eventName);
-        element.dispatchEvent(event);
-      } catch (e) {
-        FW.trace(e);
-      }
-    } else {
-      try {
-        event = document.createEvent('Event');
-        event.initEvent(eventName, true, true);
-        element.dispatchEvent(event);
-      } catch (e) {
-        FW.trace(e);
-      }
+    try {
+      event = new Event(eventName);
+      element.dispatchEvent(event);
+    } catch (e) {
+      console.trace(e);
     }
   }
 };
@@ -70,7 +38,7 @@ const _getStyleAttributeData = function (element, style) {
 };
 
 FW.setStyle = function (element, styleObject) {
-  if (element && FW.isObject(styleObject)) {
+  if (element && typeof styleObject === 'object') {
     const keys = Object.keys(styleObject);
     for (let i = 0, len = keys.length; i < len; i++) {
       const currentKey = keys[i];
@@ -124,7 +92,7 @@ FW.removeElement = function (element) {
 };
 
 FW.isEmptyObject = function (obj) {
-  if (FW.isObject(obj) && Object.keys(obj).length === 0) {
+  if (obj && typeof obj === 'object' && Object.keys(obj).length === 0) {
     return true;
   }
   return false;
@@ -134,14 +102,14 @@ const consoleStyleOne = 'color: white; background-color: #00ACC1; padding:1px 3p
 let hasLog = false;
 let hasDir = false;
 let hasTrace = false;
-if (typeof window.console !== 'undefined') {
-  if (typeof window.console.log === 'function') {
+if (typeof console !== 'undefined') {
+  if (typeof console.log === 'function') {
     hasLog = true;
   }
-  if (typeof window.console.dir === 'function') {
+  if (typeof console.dir === 'function') {
     hasDir = true;
   }
-  if (typeof window.console.trace === 'function') {
+  if (typeof console.trace === 'function') {
     hasTrace = true;
   }
 }
@@ -149,178 +117,31 @@ if (typeof window.console !== 'undefined') {
 FW.log = function (text, data) {
   if (hasLog) {
     if (typeof text === 'string') {
-      window.console.log('%crmp-vast%c' + text, consoleStyleOne, '');
+      console.log('%crmp-vast%c' + text, consoleStyleOne, '');
     }
     if (hasDir && typeof data === 'object') {
-      window.console.dir(data);
+      console.dir(data);
     }
   }
 };
 
 FW.trace = function (data) {
   if (hasTrace) {
-    window.console.trace(data);
+    console.trace(data);
   } else if (hasLog) {
     FW.log(data);
   }
 };
 
-/* FW specific to rmp-vast */
-FW.hasDOMParser = function () {
-  if (typeof window.DOMParser !== 'undefined') {
-    return true;
-  }
-  return false;
-};
-
-FW.vastReadableTime = function (time) {
-  if (FW.isNumber(time) && time >= 0) {
-    let seconds = 0;
-    let minutes = 0;
-    let hours = 0;
-    let ms = Math.floor(time % 1000);
-    if (ms === 0) {
-      ms = '000';
-    } else if (ms < 10) {
-      ms = '00' + ms;
-    } else if (ms < 100) {
-      ms = '0' + ms;
-    } else {
-      ms = ms.toString();
-    }
-    seconds = Math.floor(time * 1.0 / 1000);
-    if (seconds > 59) {
-      minutes = Math.floor(seconds * 1.0 / 60);
-      seconds = seconds - (minutes * 60);
-    }
-    if (seconds === 0) {
-      seconds = '00';
-    } else if (seconds < 10) {
-      seconds = '0' + seconds;
-    } else {
-      seconds = seconds.toString();
-    }
-    if (minutes > 59) {
-      hours = Math.floor(minutes * 1.0 / 60);
-      minutes = minutes - (hours * 60);
-    }
-    if (minutes === 0) {
-      minutes = '00';
-    } else if (minutes < 10) {
-      minutes = '0' + minutes;
-    } else {
-      minutes = minutes.toString();
-    }
-    if (hours === 0) {
-      hours = '00';
-    } else if (hours < 10) {
-      hours = '0' + hours;
-    } else {
-      if (hours > 23) {
-        hours = '00';
-      } else {
-        hours = hours.toString();
-      }
-    }
-    return hours + ':' + minutes + ':' + seconds + '.' + ms;
-  } else {
-    return '00:00:00.000';
-  }
-};
-
-FW.generateCacheBusting = function () {
-  let text = '';
-  const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  for (let i = 0; i < 8; i++) {
-    text += possible.charAt(Math.floor(Math.random() * possible.length));
-  }
-  return text;
-};
-
-FW.getNodeValue = function (element, http) {
-  const childNodes = element.childNodes;
-  let value = '';
-  // sometimes we have may several nodes - some of which may hold whitespaces
-  for (let i = 0, len = childNodes.length; i < len; i++) {
-    if (childNodes[i] && childNodes[i].textContent) {
-      value += childNodes[i].textContent.trim();
-    }
-  }
-  if (value) {
-    // in case we have some leftovers CDATA - mainly for VPAID
-    const pattern = /^<!\[CDATA\[.*\]\]>$/i;
-    if (pattern.test(value)) {
-      value = value.replace('<![CDATA[', '').replace(']]>', '');
-    }
-    if (http) {
-      const httpPattern = /^(https?:)?\/\//i;
-      if (httpPattern.test(value)) {
-        return value;
-      }
-    } else {
-      return value;
-    }
-  }
-  return null;
-};
-
-FW.isValidDuration = function (duration) {
-  // HH:MM:SS or HH:MM:SS.mmm
-  const skipPattern = /^\d+:\d+:\d+(\.\d+)?$/i;
-  if (skipPattern.test(duration)) {
-    return true;
-  }
-  return false;
-};
-
-FW.convertDurationToSeconds = function (duration) {
-  // duration is HH:MM:SS or HH:MM:SS.mmm
-  // remove .mmm
-  let splitNoMS = duration.split('.');
-  splitNoMS = splitNoMS[0];
-  const splitTime = splitNoMS.split(':');
-  let seconds = 0;
-  seconds = (parseInt(splitTime[0]) * 60 * 60) + (parseInt(splitTime[1]) * 60) +
-    parseInt(splitTime[2]);
-  return seconds;
-};
-
-// HH:MM:SS or HH:MM:SS.mmm
-const skipPattern1 = /^\d+:\d+:\d+(\.\d+)?$/i;
-// n%
-const skipPattern2 = /^\d+%$/i;
-FW.isValidOffset = function (offset) {
-  if (skipPattern1.test(offset) || skipPattern2.test(offset)) {
-    return true;
-  }
-  return false;
-};
-
-FW.convertOffsetToSeconds = function (offset, duration) {
-  let seconds = 0;
-  if (skipPattern1.test(offset)) {
-    // remove .mmm
-    let splitNoMS = offset.split('.');
-    splitNoMS = splitNoMS[0];
-    const splitTime = splitNoMS.split(':');
-    seconds = (parseInt(splitTime[0]) * 60 * 60) + (parseInt(splitTime[1]) * 60) + parseInt(splitTime[2]);
-  } else if (skipPattern2.test(offset) && duration > 0) {
-    let percent = offset.split('%');
-    percent = parseInt(percent[0]);
-    seconds = Math.round(((duration * percent) / 100) / 1000);
-  }
-  return seconds;
-};
-
 FW.logVideoEvents = function (video, type) {
   const events = [
-    'loadstart', 
-    'durationchange', 
+    'loadstart',
+    'durationchange',
     'playing',
     'waiting',
-    'loadedmetadata', 
-    'loadeddata', 
-    'canplay', 
+    'loadedmetadata',
+    'loadeddata',
+    'canplay',
     'canplaythrough'
   ];
   events.forEach((value) => {
@@ -334,13 +155,6 @@ FW.logVideoEvents = function (video, type) {
 
 FW.isNumber = function (n) {
   if (typeof n !== 'undefined' && typeof n === 'number' && Number.isFinite(n)) {
-    return true;
-  }
-  return false;
-};
-
-FW.isObject = function (obj) {
-  if (typeof obj !== 'undefined' && obj !== null && typeof obj === 'object') {
     return true;
   }
   return false;

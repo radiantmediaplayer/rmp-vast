@@ -42,6 +42,70 @@ TRACKING_EVENTS.dispatch = function (event) {
   }
 };
 
+const _vastReadableTime = function (time) {
+  if (FW.isNumber(time) && time >= 0) {
+    let seconds = 0;
+    let minutes = 0;
+    let hours = 0;
+    let ms = Math.floor(time % 1000);
+    if (ms === 0) {
+      ms = '000';
+    } else if (ms < 10) {
+      ms = '00' + ms;
+    } else if (ms < 100) {
+      ms = '0' + ms;
+    } else {
+      ms = ms.toString();
+    }
+    seconds = Math.floor(time * 1.0 / 1000);
+    if (seconds > 59) {
+      minutes = Math.floor(seconds * 1.0 / 60);
+      seconds = seconds - (minutes * 60);
+    }
+    if (seconds === 0) {
+      seconds = '00';
+    } else if (seconds < 10) {
+      seconds = '0' + seconds;
+    } else {
+      seconds = seconds.toString();
+    }
+    if (minutes > 59) {
+      hours = Math.floor(minutes * 1.0 / 60);
+      minutes = minutes - (hours * 60);
+    }
+    if (minutes === 0) {
+      minutes = '00';
+    } else if (minutes < 10) {
+      minutes = '0' + minutes;
+    } else {
+      minutes = minutes.toString();
+    }
+    if (hours === 0) {
+      hours = '00';
+    } else if (hours < 10) {
+      hours = '0' + hours;
+    } else {
+      if (hours > 23) {
+        hours = '00';
+      } else {
+        hours = hours.toString();
+      }
+    }
+    return hours + ':' + minutes + ':' + seconds + '.' + ms;
+  } else {
+    return '00:00:00.000';
+  }
+};
+
+const _generateCacheBusting = function () {
+  let text = '';
+  const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  for (let i = 0; i < 8; i++) {
+    text += possible.charAt(Math.floor(Math.random() * possible.length));
+  }
+  return text;
+};
+
 TRACKING_EVENTS.replaceMacros = function (url, trackingPixels) {
   const pattern0 = /\[.+?\]/i;
   if (!pattern0.test(url)) {
@@ -65,13 +129,13 @@ TRACKING_EVENTS.replaceMacros = function (url, trackingPixels) {
   }
   const pattern2 = /\[CACHEBUSTING\]/gi;
   if (pattern2.test(finalString)) {
-    finalString = finalString.replace(pattern2, FW.generateCacheBusting());
+    finalString = finalString.replace(pattern2, _generateCacheBusting());
   }
 
   const pattern3 = /\[(CONTENTPLAYHEAD|MEDIAPLAYHEAD)\]/gi;
   let currentContentTime = CONTENT_PLAYER.getCurrentTime.call(this);
   if (pattern3.test(finalString) && currentContentTime > -1) {
-    finalString = finalString.replace(pattern3, encodeURIComponent(FW.vastReadableTime(currentContentTime)));
+    finalString = finalString.replace(pattern3, encodeURIComponent(_vastReadableTime(currentContentTime)));
   }
   const pattern5 = /\[BREAKPOSITION\]/gi;
   const duration = VAST_PLAYER.getDuration.call(this);
@@ -142,7 +206,7 @@ TRACKING_EVENTS.replaceMacros = function (url, trackingPixels) {
     const pattern4 = /\[ADPLAYHEAD\]/gi;
     const currentVastTime = VAST_PLAYER.getCurrentTime.call(this);
     if (pattern4.test(finalString) && currentVastTime > -1) {
-      finalString = finalString.replace(pattern4, encodeURIComponent(FW.vastReadableTime(currentVastTime)));
+      finalString = finalString.replace(pattern4, encodeURIComponent(_vastReadableTime(currentVastTime)));
     }
     const pattern10 = /\[UNIVERSALADID\]/gi;
     if (pattern10.test(finalString) && !FW.isEmptyObject(this.creative.universalAdId)) {

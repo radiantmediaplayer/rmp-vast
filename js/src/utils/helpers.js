@@ -32,7 +32,7 @@ HELPERS.filterParams = function (inputParams) {
     partnerVersion: '6.3.0'
   };
   this.params = defaultParams;
-  if (FW.isObject(inputParams)) {
+  if (inputParams && typeof inputParams === 'object') {
     const keys = Object.keys(inputParams);
     for (let i = 0, len = keys.length; i < len; i++) {
       const prop = keys[i];

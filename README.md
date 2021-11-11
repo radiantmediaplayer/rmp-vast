@@ -45,7 +45,7 @@ rmp-vast is used and maintained by [Radiant Media Player](https://www.radiantmed
 - Error Reporting
 - Industry Icons (image/iframe/HTML)
 - VAST 4.2 Macros
-- AdVerifications (OM Web SDK) <sup>BETA</sup>
+- AdVerifications (OM Web SDK) 
 - VPAID 1 and 2 JavaScript <sup>deprecated</sup>
 - Outstream ads
 - Ad Pods
@@ -187,7 +187,7 @@ Once rmp-vast library is loaded on your page you can create a new rmp-vast insta
     - `params.vpaidSettings.height: Number` Default: 360.
     - `params.vpaidSettings.viewMode: String` Default: 'normal'. Can be 'fullscreen' as well.
     - `params.vpaidSettings.desiredBitrate: Number` Default: 500. In kbps.
-  - `params.omidSupport: Boolean` Enables OMID (OM Web SDK) support in rmp-vast. Default: false (as currently in BETA).
+  - `params.omidSupport: Boolean` Enables OMID (OM Web SDK) support in rmp-vast. Default: false.
   - `params.omidAllowedVendors: Array` List of allowed vendors for ad verification. Vendors not listed will be rejected. Default: [].
   - `params.omidPathTo: String` Path to OM Web SDK script. Default: '../externals/omweb-v1.js'.
   - `params.autoplay: Boolean` The content player will autoplay or not. The possibility of autoplay is not determined by rmp-vast, this information needs to be passed to rmp-vast ([see this script for example](https://github.com/video-dev/can-autoplay)). Default: false (means a click to play is required).
@@ -350,7 +350,9 @@ The following methods should be queried after the `aderror` event has fired for 
 - `getAdErrorType()`: return `String`, representing the detected ad error type, possible values: 'adLoadError', 'adPlayError' or '' (if unknown error type).
 
 The following methods provide context information for the rmp-vast instance:
-
+- `getEnvironment()`: return `Object`, data about the environment that rmp-vast runs into.
+- `getVastPlayer()`: return `HTMLMediaElement|null`, the VAST player video tag.
+- `getContentPlayer()`: return `HTMLMediaElement|null`, the content player video tag.
 - `getIsUsingContentPlayerForAds()`: return `Boolean`, on iOS and macOS Safari the VAST player is the content player. This is to avoid fullscreen management and autoplay issues and to provide a consistent user experience. This method will return true for iOS and macOS Safari, false otherwise.
 
 [Back to documentation sections](#documentation-sections)
@@ -410,7 +412,7 @@ container.addEventListener("adstarted", function () {
 
 ## AdVerifications OM Web SDK
 
-With rmp-vast 3.2.0 release we support AdVerifications through the [IAB OM Web SDK](https://iabtechlab.com/standards/open-measurement-sdk/). Our implementation is based on IAB GitHub [Open-Measurement-JSClients](https://github.com/InteractiveAdvertisingBureau/Open-Measurement-JSClients) and sports OM Web SDK version 1.3.20 (at time of rmp-vast 3.2.0 release). This feature is currently in BETA and needs to be activated through omidSupport: true setting. Feedback is welcome. Please see test/spec/vast4Spec/omwebsdk.html for an implementation example.
+rmp-vast supports AdVerifications through the [IAB OM Web SDK](https://iabtechlab.com/standards/open-measurement-sdk/). Our implementation is based on IAB GitHub [Open-Measurement-JSClients](https://github.com/InteractiveAdvertisingBureau/Open-Measurement-JSClients) and sports OM Web SDK version 1.3.26. This feature needs to be activated through `omidSupport: true` setting. Feedback is welcome. Please see test/spec/vast4Spec/omwebsdk.html for an implementation example.
 
 [Back to documentation sections](#documentation-sections)
 

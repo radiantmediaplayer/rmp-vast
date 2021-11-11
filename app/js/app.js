@@ -4,11 +4,22 @@ import { RmpVast } from '../../js/src/index.js';
 const id = 'rmpPlayer';
 const container = document.getElementById(id);
 let rmpVast;
-let fw;
 let playerWidth = 640;
 let playerHeight = 360;
 // the default adTag when none is provided
 let adTag = 'https://www.radiantmediaplayer.com/vast/tags/inline-linear.xml';
+
+const _createStdEvent = function (eventName, element) {
+  let event;
+  if (element) {
+    try {
+      event = new Event(eventName);
+      element.dispatchEvent(event);
+    } catch (e) {
+      console.trace(e);
+    }
+  }
+};
 
 /*** start of fullscreen management logic ***/
 /* yes HTML5 video fullscreen is probably not as easy as it sounds */
@@ -16,7 +27,7 @@ let adTag = 'https://www.radiantmediaplayer.com/vast/tags/inline-linear.xml';
 const _proxyFullscreenEvents = function (event) {
   if (event && event.type) {
     const newType = event.type.replace(/^(webkit|moz|MS)/, '').toLowerCase();
-    fw.createStdEvent(newType, document);
+    _createStdEvent(newType, document);
   }
 };
 document.addEventListener('webkitfullscreenchange', _proxyFullscreenEvents);
@@ -30,11 +41,11 @@ let isInFullscreen = false;
 const _onfullscreenchange = function () {
   if (!isInFullscreen) {
     isInFullscreen = true;
-    fw.addClass(container, 'rmp-fullscreen-on');
+    container.classList.add('rmp-fullscreen-on');
     rmpVast.resizeAd(window.screen.width, window.screen.height, 'fullscreen');
   } else {
     isInFullscreen = false;
-    fw.removeClass(container, 'rmp-fullscreen-on');
+    container.classList.remove('rmp-fullscreen-on');
     rmpVast.resizeAd(playerWidth, playerHeight, 'normal');
   }
 };
@@ -150,8 +161,7 @@ const params = {
 // new RmpVast instance - we pass id (required) and params (optional) 
 rmpVast = new RmpVast(id, params);
 // we get rmpVast framework to help us out for the app
-fw = rmpVast.getFramework();
-fw.log('APP: rmpVast instance created');
+console.log('APP: rmpVast instance created');
 /*** END RmpVast instantiation  ***/
 
 let nowOffset = 0;
@@ -311,13 +321,13 @@ const _wireUI = function () {
     if (event && event.type) {
       let data = event.type;
       data += ' - ' + (_getNow() - nowOffset) + ' ms';
-      fw.log(data);
+      console.log(data);
       eventLogs.insertAdjacentHTML('afterbegin', '<p>' + data + '</p>');
       if (event.type === 'aderror') {
         const errorMessage = rmpVast.getAdErrorMessage();
         const errorCode = rmpVast.getAdVastErrorCode();
         const errorLog = errorCode + ' - ' + errorMessage;
-        fw.log(errorLog);
+        console.log(errorLog);
         eventLogs.insertAdjacentHTML('afterbegin', '<p>' + errorLog + '</p>');
       }
     }

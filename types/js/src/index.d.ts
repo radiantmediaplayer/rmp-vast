@@ -24,7 +24,7 @@ export class RmpVast {
      * @property {boolean} [outstream] - Enables outstream ad mode. Default: false.
      * @property {boolean} [showControlsForVastPlayer] - Shows VAST player HTML5 default video controls. Only works when debug setting is true. Default: true.
      * @property {boolean} [enableVpaid] - Enables VPAID support or not. Default: true.
-     * @property {boolean} [omidSupport] - Enables OMID (OM Web SDK) support in rmp-vast. Default: false (as currently in BETA).
+     * @property {boolean} [omidSupport] - Enables OMID (OM Web SDK) support in rmp-vast. Default: false.
      * @property {string[]} [omidAllowedVendors] - List of allowed vendors for ad verification. Vendors not listed will be rejected. Default: [].
      * @property {string} [omidPathTo] - Path to OM Web SDK script. Default: '../externals/omweb-v1.js'.
      * @property {boolean} [autoplay] - The content player will autoplay or not. The possibility of autoplay is not determined by rmp-vast, this information needs to be passed to rmp-vast (see this script for example). Default: false (means a click to play is required).
@@ -65,7 +65,7 @@ export class RmpVast {
          */
         enableVpaid?: boolean;
         /**
-         * - Enables OMID (OM Web SDK) support in rmp-vast. Default: false (as currently in BETA).
+         * - Enables OMID (OM Web SDK) support in rmp-vast. Default: false.
          */
         omidSupport?: boolean;
         /**
@@ -192,6 +192,30 @@ export class RmpVast {
      * @type {() => string}
      */
     getAdMediaUrl(): string;
+    /**
+     * @typedef {object} Environment
+     * @property {number} devicePixelRatio
+     * @property {number} maxTouchPoints
+     * @property {boolean} isIpadOS
+     * @property {array} isIos
+     * @property {array} isAndroid
+     * @property {boolean} isMacOSSafari
+     * @property {boolean} isFirefox
+     * @property {boolean} isMobile
+     * @property {boolean} hasNativeFullscreenSupport
+     * @return {Environment}
+     */
+    getEnvironment(): {
+        devicePixelRatio: number;
+        maxTouchPoints: number;
+        isIpadOS: boolean;
+        isIos: any[];
+        isAndroid: any[];
+        isMacOSSafari: boolean;
+        isFirefox: boolean;
+        isMobile: boolean;
+        hasNativeFullscreenSupport: boolean;
+    };
     /**
      * @type {() => boolean}
      */
@@ -344,6 +368,14 @@ export class RmpVast {
      * @type {() => boolean}
      */
     getAdSkippableState(): boolean;
+    /**
+     * @return {HTMLMediaElement|null}
+     */
+    getVastPlayer(): HTMLMediaElement | null;
+    /**
+     * @return {HTMLMediaElement|null}
+     */
+    getContentPlayer(): HTMLMediaElement | null;
     /**
      * @param {number} inputWidth
      * @param {number} inputHeight

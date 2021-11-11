@@ -27,10 +27,6 @@ TEST.getDriver = function (which) {
   return driver; 
 };
 
-TEST.getTime = function () {
-  return Date.now();
-};
-
 TEST.loadHTMLSpec = function (driver, url) {
   return new Promise((resolve, reject) => {
     driver.get(url).then(() => {

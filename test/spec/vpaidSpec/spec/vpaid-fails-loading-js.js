@@ -17,7 +17,6 @@ describe('Test for vpaid-fails-loading-js', function () {
     }
   };
   const rmpVast = new RmpVast(id, params);
-  const fw = rmpVast.getFramework();
   const env = rmpVast.getEnvironment();
   video.muted = true;
   if (env.isAndroid[0]) {
@@ -32,7 +31,7 @@ describe('Test for vpaid-fails-loading-js', function () {
     const _incrementAndLog = function (event) {
       validSteps++;
       if (event && event.type) {
-        fw.log(event.type);
+        console.log(event.type);
       }
     };
     container.addEventListener('aderror', function (e) {

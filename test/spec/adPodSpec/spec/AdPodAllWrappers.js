@@ -12,7 +12,6 @@ describe('Test for AdPodAllWrappers', function () {
   const video = document.querySelector('.rmp-video');
   video.muted = true;
   const rmpVast = new RmpVast(id);
-  const fw = rmpVast.getFramework();
   const env = rmpVast.getEnvironment();
   if (env.isAndroid[0]) {
     container.style.width = '320px';
@@ -27,7 +26,7 @@ describe('Test for AdPodAllWrappers', function () {
     const _incrementAndLog = function (event) {
       validSteps++;
       if (event && event.type) {
-        fw.log(event.type);
+        console.log(event.type);
       }
     };
 

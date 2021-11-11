@@ -1,5 +1,7 @@
 import { RmpVast } from '../../../../js/src/index.js';
 
+import { HELP } from '../../helpers/function.js';
+
 const ADTAG = 'https://www.radiantmediaplayer.com/vast/tags/inline-linear-skippable.xml';
 
 describe('Test for Inline Skippable Linear ad', function () {
@@ -8,7 +10,6 @@ describe('Test for Inline Skippable Linear ad', function () {
   const container = document.getElementById(id);
   const video = document.querySelector('.rmp-video');
   const rmpVast = new RmpVast(id);
-  const fw = rmpVast.getFramework();
   const env = rmpVast.getEnvironment();
   video.muted = true;
   if (env.isAndroid[0]) {
@@ -23,7 +24,7 @@ describe('Test for Inline Skippable Linear ad', function () {
     const _incrementAndLog = function (event) {
       validSteps++;
       if (event && event.type) {
-        fw.log(event.type);
+        console.log(event.type);
       }
     };
 
@@ -43,8 +44,8 @@ describe('Test for Inline Skippable Linear ad', function () {
       _incrementAndLog(e);
       setTimeout(function () {
         const skip = document.getElementsByClassName('rmp-ad-container-skip')[0];
-        fw.log('click skip');
-        fw.createStdEvent('click', skip);
+        console.log('click skip');
+        HELP.createStdEvent('click', skip);
       }, 6500);
     });
 

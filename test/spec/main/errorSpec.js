@@ -27,11 +27,11 @@ if (args[2] === 'android') {
   driver = TEST.getDriver('firefox');
 }
 
-const intialTime = TEST.getTime();
+const intialTime = Date.now();
 let index = 0;
 
 const _run = function () {
-  console.log('Run HTML spec ' + testUrls[index] + ' at: ' + (TEST.getTime() - intialTime) + 'ms');
+  console.log('Run HTML spec ' + testUrls[index] + ' at: ' + (Date.now() - intialTime) + 'ms');
   const p = TEST.loadHTMLSpec(driver, testUrls[index]);
   p.then(() => {
     if (index === testUrls.length - 1) {

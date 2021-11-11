@@ -1,9 +1,9 @@
 module.exports = {
   eslintSrc: {
-    command: 'npx eslint --config .eslintrc-es2017.json --ignore-path .es2017.eslintignore test/spec/ js/src/ app/js/'
+    command: 'npx eslint --config .eslintrc-es2017.json --ignore-path .es2017.eslintignore test/spec/ js/src/ app/js/ test/spec/helpers/function.js'
   },
   eslintNode: {
-    command: 'npx eslint --config .eslintrc-node.json test/spec/main/ test/spec/helpers/ test/spec/main/ Gruntfile.js grunt/'
+    command: 'npx eslint --config .eslintrc-node.json test/spec/main/ test/spec/helpers/test.js test/spec/main/ Gruntfile.js grunt/'
   },
   stylelint: {
     command: 'npx stylelint "css/*.less" "css/import-less/*.less" "app/css/*.css"'

@@ -111,7 +111,7 @@ const _onPlaybackError = function (event) {
   // act upon them
   if (event && event.target) {
     const videoElement = event.target;
-    if (FW.isObject(videoElement.error) && FW.isNumber(videoElement.error.code)) {
+    if (videoElement.error && FW.isNumber(videoElement.error.code)) {
       const errorCode = videoElement.error.code;
       let errorMessage = '';
       if (typeof videoElement.error.message === 'string') {

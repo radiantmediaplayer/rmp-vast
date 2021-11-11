@@ -8,7 +8,6 @@ describe('Test for RedirectErrorSpec', function () {
   const container = document.getElementById(id);
   const video = document.querySelector('.rmp-video');
   const rmpVast = new RmpVast(id);
-  const fw = rmpVast.getFramework();
   const env = rmpVast.getEnvironment();
   video.muted = true;
   if (env.isAndroid[0]) {
@@ -23,7 +22,7 @@ describe('Test for RedirectErrorSpec', function () {
     const _incrementAndLog = function (event) {
       validSteps++;
       if (event && event.type) {
-        fw.log(event.type);
+        console.log(event.type);
       }
     };
 
