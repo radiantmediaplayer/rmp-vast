@@ -3,4 +3,4 @@
  * @param  {any} creativeNodes - The creative nodes to parse.
  * @return {Array<Creative>} - An array of Creative objects.
  */
-export function parseCreatives(creativeNodes: any): Array<any>;
+export function parseCreatives(creativeNodes: any): Array<Creative>;

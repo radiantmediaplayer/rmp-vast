@@ -86,5 +86,5 @@ declare function assignAttributes(attributes: any, verificationObject: any): voi
  * @param  {Ad} wrapper - The wrapper Ad.
  * @return {void}
  */
-declare function mergeWrapperAdData(unwrappedAd: any, wrapper: any): void;
+declare function mergeWrapperAdData(unwrappedAd: Ad, wrapper: Ad): void;
 export {};

@@ -4,4 +4,4 @@
  * @param  {String} type - The type of extensions to parse.(Ad|Creative)
  * @return {AdExtension[]|CreativeExtension[]} - The nodes parsed to extensions
  */
-export function parseExtensions(extensions: Node[]): any[] | any[];
+export function parseExtensions(extensions: Node[]): AdExtension[] | CreativeExtension[];
