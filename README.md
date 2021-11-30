@@ -134,14 +134,14 @@ The HTML5 video tag used for content must use the src property on the HTML5 vide
 
 ```javascript
 import { RmpVast } from "./js/src/index.js";
-var adTag = "https://www.radiantmediaplayer.com/vast/tags/inline-linear-1.xml";
-var id = "rmpPlayer";
-var params = {
+const adTag = "https://www.radiantmediaplayer.com/vast/tags/inline-linear-1.xml";
+const id = "rmpPlayer";
+const params = {
   ajaxTimeout: 8000,
 };
 
 // create RmpVast instance
-var rmpVast = new RmpVast(id, params);
+const rmpVast = new RmpVast(id, params);
 
 // call loadAds - this will start the ad loading process, display the ad and resume content automatically in the case of linear pre-roll
 // in this case we use autoplay
@@ -217,8 +217,8 @@ rmp-vast will fire VAST-related events on the player container as they occur.
 Events are registered and unregistered with the addEventListener and removeEventListener JavaScript methods set on the player container. Example:
 
 ```javascript
-var id = 'rmpPlayer';
-var container = document.getElementById(id);
+const id = 'rmpPlayer';
+const container = document.getElementById(id);
 ...
 container.addEventListener('adloaded', function() {
   console.log('adloaded event');
@@ -274,7 +274,7 @@ VPAID-related events:
 Once a rmp-vast instance is created you can query the API methods to interact with the player. Example:
 
 ```javascript
-var rmpVast = new RmpVast(id);
+const rmpVast = new RmpVast(id);
 ...
 rmpVast.pause();
 ...
@@ -393,13 +393,13 @@ container.addEventListener("adstarted", function () {
   // we need to call getCompanionAdsList BEFORE calling getCompanionAd so that
   // rmp-vast can first create a collection of available companion ads based on getCompanionAdsList
   // input parameters
-  var list = rmpVast.getCompanionAdsList(900, 750);
+  const list = rmpVast.getCompanionAdsList(900, 750);
   if (list && list.length === 3) {
-    var img = rmpVast.getCompanionAd(2);
+    const img = rmpVast.getCompanionAd(2);
     if (img) {
       // we get our companion ad image and we can append it to DOM now
       // VAST trackers will be called automatically when needed
-      var companionId = document.getElementById("companionId");
+      const companionId = document.getElementById("companionId");
       companionId.appendChild(img);
     }
   }
