@@ -80,6 +80,7 @@ rmp-vast is used and maintained by [Radiant Media Player](https://www.radiantmed
 - Safari for iOS 12+ and iPadOS 13+
 - MS Edge 79+ for Desktop
 - MS Edge Legacy 18+ for Desktop
+- Amazon Silk 94+ for fireOS 7+
 
 Desktop means Windows 7+, macOS 10.11+, Linux (latest LTS Ubuntu).
 
