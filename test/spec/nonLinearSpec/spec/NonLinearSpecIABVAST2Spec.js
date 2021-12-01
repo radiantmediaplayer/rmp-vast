@@ -1,4 +1,4 @@
-import { RmpVast } from '../../../../js/src/index.js';
+import RmpVast from '../../../../js/src/index.js';
 
 import { HELP } from '../../helpers/function.js';
 

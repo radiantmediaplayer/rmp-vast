@@ -1,4 +1,4 @@
-import { RmpVast } from '../../../../js/src/index.js';
+import RmpVast from '../../../../js/src/index.js';
 
 const ADTAG = 'https://www.radiantmediaplayer.com/vast/tags/inline-linear-icons-image.xml';
 

@@ -1,4 +1,4 @@
-import { RmpVast } from '../../../../js/src/index.js';
+import RmpVast from '../../../../js/src/index.js';
 
 const ADTAG1 = 'https://www.radiantmediaplayer.com/vast/tags/inline-linear-1.xml';
 const ADTAG2 = 'https://www.radiantmediaplayer.com/vast/tags/vpaid-2-js-linear.xml';

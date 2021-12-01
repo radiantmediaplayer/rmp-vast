@@ -1,4 +1,4 @@
-import { RmpVast } from '../../../../js/src/index.js';
+import RmpVast from '../../../../js/src/index.js';
 
 //Viewable_Impression in wrapper >> not supported right now
 //const ADTAG = 'https://www.radiantmediaplayer.com/vast/tags/iab/vast4_2/Viewable_Impression-test.xml';

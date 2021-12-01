@@ -1,4 +1,4 @@
-import { RmpVast } from '../../../../js/src/index.js';
+import RmpVast from '../../../../js/src/index.js';
 
 const ADTAG = 'https://www.radiantmediaplayer.com/vast/tags/iab/vast4_2/Inline_Companion_Tag-test.xml';
 

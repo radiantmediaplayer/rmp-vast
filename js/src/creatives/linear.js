@@ -8,7 +8,7 @@ import VPAID from '../players/vpaid';
 import SKIP from './skip';
 import ICONS from './icons';
 import VAST_ERRORS from '../utils/vast-errors';
-import { RmpConnection } from '../../../externals/rmp-connection';
+import RmpConnection from '../../../externals/rmp-connection';
 
 const LINEAR = {};
 
@@ -343,6 +343,9 @@ LINEAR.parse = function (icons, adParameters, mediaFiles) {
     // filter by bitrate to provide best quality
     const rmpConnection = new RmpConnection();
     let availableBandwidth = rmpConnection.getBandwidthEstimate();
+    if (this.debug) {
+      FW.log('availableBandwidth is ' + availableBandwidth + ' Mbps');
+    }
     if (availableBandwidth > -1 && validCreativesByWidth.length > 1) {
       // sort supported creatives by bitrates
       validCreativesByWidth.sort((a, b) => {

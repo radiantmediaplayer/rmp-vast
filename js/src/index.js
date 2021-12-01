@@ -1,6 +1,6 @@
 /**
  * @license Copyright (c) 2015-2021 Radiant Media Player | https://www.radiantmediaplayer.com
- * rmp-vast 4.1.0
+ * rmp-vast 5.0.0
  * GitHub: https://github.com/radiantmediaplayer/rmp-vast
  * MIT License: https://github.com/radiantmediaplayer/rmp-vast/blob/master/LICENSE
  */
@@ -26,7 +26,7 @@ import { VASTClient } from '../../vast-client-js/src/vast_client';
  * @export
  * @class RmpVast
 */
-export class RmpVast {
+export default class RmpVast {
   /**
    * @constructor
    * @param {string}  id - the id for the player container. Required parameter.

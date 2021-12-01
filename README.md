@@ -133,7 +133,7 @@ The HTML5 video tag used for content must use the src property on the HTML5 vide
 - Import rmp-vast and init the library with JavaScript:
 
 ```javascript
-import { RmpVast } from "./js/src/index.js";
+import RmpVast from "./js/src/index.js";
 const adTag = "https://www.radiantmediaplayer.com/vast/tags/inline-linear-1.xml";
 const id = "rmpPlayer";
 const params = {

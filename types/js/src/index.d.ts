@@ -3,7 +3,7 @@
  * @export
  * @class RmpVast
 */
-export class RmpVast {
+export default class RmpVast {
     /**
      * @constructor
      * @param {string}  id - the id for the player container. Required parameter.
