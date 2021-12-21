@@ -3,6 +3,7 @@
     "shell:eslintSrc",
     "shell:eslintNode",
     "replace:sourceHeader",
+    "replace:omidPartnerVersion",
     "shell:stylelint",
     "less",
     "compress",
@@ -12,6 +13,7 @@
     "shell:eslintSrc",
     "shell:eslintNode",
     "replace:sourceHeader",
+    "replace:omidPartnerVersion",
     "shell:stylelint",
     "less",
     "shell:generatetypes"

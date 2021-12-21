@@ -24,12 +24,12 @@ HELPERS.filterParams = function (inputParams) {
       desiredBitrate: 500
     },
     // OM SDK params
-    omidSupport: false,
+    omidSupport: true,
     omidAllowedVendors: [],
     omidPathTo: '../externals/omweb-v1.js',
     autoplay: false,
-    partnerName: 'Radiantmediaplayer',
-    partnerVersion: '6.3.0'
+    partnerName: 'rmp-vast',
+    partnerVersion: '5.1.0'
   };
   this.params = defaultParams;
   if (inputParams && typeof inputParams === 'object') {

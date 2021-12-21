@@ -76,7 +76,7 @@ rmp-vast is used and maintained by [Radiant Media Player](https://www.radiantmed
 - Opera 62+ for Android 5+
 - Opera 62+ for Desktop
 - Samsung Internet 13+ for Android 5+
-- Safari 11+ for macOS
+- Safari 11+ for Desktop
 - Safari for iOS 12+ and iPadOS 13+
 - MS Edge 79+ for Desktop
 - MS Edge Legacy 18+ for Desktop
@@ -188,12 +188,12 @@ Once rmp-vast library is loaded on your page you can create a new rmp-vast insta
     - `params.vpaidSettings.height: Number` Default: 360.
     - `params.vpaidSettings.viewMode: String` Default: 'normal'. Can be 'fullscreen' as well.
     - `params.vpaidSettings.desiredBitrate: Number` Default: 500. In kbps.
-  - `params.omidSupport: Boolean` Enables OMID (OM Web SDK) support in rmp-vast. Default: false.
+  - `params.omidSupport: Boolean` Enables OMID (OM Web SDK) support in rmp-vast. Default: true.
   - `params.omidAllowedVendors: Array` List of allowed vendors for ad verification. Vendors not listed will be rejected. Default: [].
   - `params.omidPathTo: String` Path to OM Web SDK script. Default: '../externals/omweb-v1.js'.
   - `params.autoplay: Boolean` The content player will autoplay or not. The possibility of autoplay is not determined by rmp-vast, this information needs to be passed to rmp-vast ([see this script for example](https://github.com/video-dev/can-autoplay)). Default: false (means a click to play is required).
   - `params.partnerName: String` partnerName for OMID. Default: 'Radiantmediaplayer'.
-  - `params.partnerVersion: String` partnerVersion for OMID. Default: '3.2.0'.
+  - `params.partnerVersion: String` partnerVersion for OMID. Default: '5.1.0'.
 - `debug: Boolean` display debug console logs in browser dev tools. Default: false.
 
 [Back to documentation sections](#documentation-sections)

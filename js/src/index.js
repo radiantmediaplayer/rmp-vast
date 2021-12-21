@@ -1,6 +1,6 @@
 /**
  * @license Copyright (c) 2015-2021 Radiant Media Player | https://www.radiantmediaplayer.com
- * rmp-vast 5.0.0
+ * rmp-vast 5.1.0
  * GitHub: https://github.com/radiantmediaplayer/rmp-vast
  * MIT License: https://github.com/radiantmediaplayer/rmp-vast/blob/master/LICENSE
  */
@@ -47,7 +47,7 @@ export default class RmpVast {
    * @property {boolean} [outstream] - Enables outstream ad mode. Default: false.
    * @property {boolean} [showControlsForVastPlayer] - Shows VAST player HTML5 default video controls. Only works when debug setting is true. Default: true.
    * @property {boolean} [enableVpaid] - Enables VPAID support or not. Default: true.
-   * @property {boolean} [omidSupport] - Enables OMID (OM Web SDK) support in rmp-vast. Default: false.
+   * @property {boolean} [omidSupport] - Enables OMID (OM Web SDK) support in rmp-vast. Default: true.
    * @property {string[]} [omidAllowedVendors] - List of allowed vendors for ad verification. Vendors not listed will be rejected. Default: [].
    * @property {string} [omidPathTo] - Path to OM Web SDK script. Default: '../externals/omweb-v1.js'.
    * @property {boolean} [autoplay] - The content player will autoplay or not. The possibility of autoplay is not determined by rmp-vast, this information needs to be passed to rmp-vast (see this script for example). Default: false (means a click to play is required).

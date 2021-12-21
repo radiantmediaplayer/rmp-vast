@@ -3,8 +3,19 @@
  * rmp-connection 1.0.0 | https://github.com/radiantmediaplayer/rmp-connection
  * rmp-connection is released under MIT | https://github.com/radiantmediaplayer/rmp-connection/blob/master/LICENSE
  */
+/**
+ * The class to instantiate RmpConnection
+ * @export
+ * @class RmpConnection
+*/
 export default class RmpConnection {
     connectionType: string;
-    _getConnectionType(): "" | ConnectionType;
-    getBandwidthEstimate(): any;
+    /**
+      * @private
+      */
+    private _getConnectionType;
+    /**
+     * @return {number}
+     */
+    getBandwidthEstimate(): number;
 }
