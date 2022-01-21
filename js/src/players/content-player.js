@@ -1,11 +1,11 @@
 import FW from '../fw/fw';
-import HELPERS from '../utils/helpers';
+import Utils from '../utils/utils';
 
 const CONTENT_PLAYER = {};
 
 CONTENT_PLAYER.play = function (firstContentPlayerPlayRequest) {
   if (this.contentPlayer && this.contentPlayer.paused) {
-    HELPERS.playPromise.call(this, 'content', firstContentPlayerPlayRequest);
+    Utils.playPromise.call(this, 'content', firstContentPlayerPlayRequest);
   }
 };
 

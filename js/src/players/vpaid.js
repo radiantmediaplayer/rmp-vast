@@ -1,6 +1,5 @@
 import FW from '../fw/fw';
-import HELPERS from '../utils/helpers';
-import VAST_ERRORS from '../utils/vast-errors';
+import Utils from '../utils/utils';
 import VAST_PLAYER from '../players/vast-player';
 import ICONS from '../creatives/icons';
 import TRACKING_EVENTS from '../tracking/tracking-events';
@@ -117,7 +116,7 @@ const _onAdLoaded = function () {
   CONTENT_PLAYER.pause.call(this);
   this.adOnStage = true;
   this.vpaidCreative.startAd();
-  HELPERS.createApiEvent.call(this, 'adloaded');
+  Utils.createApiEvent.call(this, 'adloaded');
   TRACKING_EVENTS.dispatch.call(this, 'loaded');
 };
 
@@ -160,12 +159,12 @@ const _onAdSkipped = function () {
   if (this.adSkippedTimeout) {
     clearTimeout(this.adSkippedTimeout);
   }
-  HELPERS.createApiEvent.call(this, 'adskipped');
+  Utils.createApiEvent.call(this, 'adskipped');
   TRACKING_EVENTS.dispatch.call(this, 'skip');
 };
 
 const _onAdSkippableStateChange = function () {
-  HELPERS.createApiEvent.call(this, 'adskippablestatechanged');
+  Utils.createApiEvent.call(this, 'adskippablestatechanged');
 };
 
 const _onAdDurationChange = function () {
@@ -178,7 +177,7 @@ const _onAdDurationChange = function () {
       this.vpaidRemainingTime = remainingTime;
     }
   }
-  HELPERS.createApiEvent.call(this, 'addurationchange');
+  Utils.createApiEvent.call(this, 'addurationchange');
 };
 
 const _onAdVolumeChange = function () {
@@ -192,11 +191,11 @@ const _onAdVolumeChange = function () {
     TRACKING_EVENTS.dispatch.call(this, 'unmute');
   }
   this.vpaidCurrentVolume = newVolume;
-  HELPERS.createApiEvent.call(this, 'advolumechanged');
+  Utils.createApiEvent.call(this, 'advolumechanged');
 };
 
 const _onAdImpression = function () {
-  HELPERS.createApiEvent.call(this, 'adimpression');
+  Utils.createApiEvent.call(this, 'adimpression');
   TRACKING_EVENTS.dispatch.call(this, 'impression');
 };
 
@@ -207,32 +206,32 @@ const _onAdVideoStart = function () {
     newVolume = 1;
   }
   this.vpaidCurrentVolume = newVolume;
-  HELPERS.createApiEvent.call(this, 'adstarted');
+  Utils.createApiEvent.call(this, 'adstarted');
   TRACKING_EVENTS.dispatch.call(this, 'start');
 };
 
 const _onAdVideoFirstQuartile = function () {
-  HELPERS.createApiEvent.call(this, 'adfirstquartile');
+  Utils.createApiEvent.call(this, 'adfirstquartile');
   TRACKING_EVENTS.dispatch.call(this, 'firstQuartile');
 };
 
 const _onAdVideoMidpoint = function () {
-  HELPERS.createApiEvent.call(this, 'admidpoint');
+  Utils.createApiEvent.call(this, 'admidpoint');
   TRACKING_EVENTS.dispatch.call(this, 'midpoint');
 };
 
 const _onAdVideoThirdQuartile = function () {
-  HELPERS.createApiEvent.call(this, 'adthirdquartile');
+  Utils.createApiEvent.call(this, 'adthirdquartile');
   TRACKING_EVENTS.dispatch.call(this, 'thirdQuartile');
 };
 
 const _onAdVideoComplete = function () {
-  HELPERS.createApiEvent.call(this, 'adcomplete');
+  Utils.createApiEvent.call(this, 'adcomplete');
   TRACKING_EVENTS.dispatch.call(this, 'complete');
 };
 
 const _onAdClickThru = function (url, id, playerHandles) {
-  HELPERS.createApiEvent.call(this, 'adclick');
+  Utils.createApiEvent.call(this, 'adclick');
   TRACKING_EVENTS.dispatch.call(this, 'clickthrough');
   if (typeof playerHandles !== 'boolean') {
     return;
@@ -256,13 +255,13 @@ const _onAdClickThru = function (url, id, playerHandles) {
 
 const _onAdPaused = function () {
   this.vpaidPaused = true;
-  HELPERS.createApiEvent.call(this, 'adpaused');
+  Utils.createApiEvent.call(this, 'adpaused');
   TRACKING_EVENTS.dispatch.call(this, 'pause');
 };
 
 const _onAdPlaying = function () {
   this.vpaidPaused = false;
-  HELPERS.createApiEvent.call(this, 'adresumed');
+  Utils.createApiEvent.call(this, 'adresumed');
   TRACKING_EVENTS.dispatch.call(this, 'resume');
 };
 
@@ -276,41 +275,41 @@ const _onAdError = function (message) {
   if (this.debug) {
     FW.log('VPAID AdError event ' + message);
   }
-  VAST_ERRORS.process.call(this, 901, true);
+  Utils.processVastErrors.call(this, 901, true);
 };
 
 const _onAdInteraction = function () {
-  HELPERS.createApiEvent.call(this, 'adinteraction');
+  Utils.createApiEvent.call(this, 'adinteraction');
 };
 
 const _onAdUserAcceptInvitation = function () {
-  HELPERS.createApiEvent.call(this, 'aduseracceptinvitation');
+  Utils.createApiEvent.call(this, 'aduseracceptinvitation');
   TRACKING_EVENTS.dispatch.call(this, 'acceptInvitation');
 };
 
 const _onAdUserMinimize = function () {
-  HELPERS.createApiEvent.call(this, 'adcollapse');
+  Utils.createApiEvent.call(this, 'adcollapse');
   TRACKING_EVENTS.dispatch.call(this, ['collapse', 'adCollapse']);
 };
 
 const _onAdUserClose = function () {
-  HELPERS.createApiEvent.call(this, 'adclosed');
+  Utils.createApiEvent.call(this, 'adclosed');
   TRACKING_EVENTS.dispatch.call(this, 'close');
 };
 
 const _onAdSizeChange = function () {
-  HELPERS.createApiEvent.call(this, 'adsizechange');
+  Utils.createApiEvent.call(this, 'adsizechange');
 };
 
 const _onAdLinearChange = function () {
   if (this.vpaidCreative && typeof this.vpaidCreative.getAdLinear === 'function') {
     this.creative.isLinear = this.vpaidCreative.getAdLinear();
-    HELPERS.createApiEvent.call(this, 'adlinearchange');
+    Utils.createApiEvent.call(this, 'adlinearchange');
   }
 };
 
 const _onAdExpandedChange = function () {
-  HELPERS.createApiEvent.call(this, 'adexpandedchange');
+  Utils.createApiEvent.call(this, 'adexpandedchange');
 };
 
 const _onAdRemainingTimeChange = function () {
@@ -320,7 +319,7 @@ const _onAdRemainingTimeChange = function () {
       this.vpaidRemainingTime = remainingTime;
     }
   }
-  HELPERS.createApiEvent.call(this, 'adremainingtimechange');
+  Utils.createApiEvent.call(this, 'adremainingtimechange');
 };
 
 // vpaidCreative methods
@@ -491,11 +490,11 @@ const _onVPAIDAvailable = function () {
     try {
       vpaidVersion = this.vpaidCreative.handshakeVersion('2.0');
     } catch (e) {
-      FW.trace(e);
+      console.trace(e);
       if (this.debug) {
         FW.log('could not validate VPAID ad unit handshakeVersion');
       }
-      VAST_ERRORS.process.call(this, 901, true);
+      Utils.processVastErrors.call(this, 901, true);
       return;
     }
     this.vpaidVersion = parseInt(vpaidVersion);
@@ -503,7 +502,7 @@ const _onVPAIDAvailable = function () {
       if (this.debug) {
         FW.log('unsupported VPAID version - exit');
       }
-      VAST_ERRORS.process.call(this, 901, true);
+      Utils.processVastErrors.call(this, 901, true);
       return;
     }
     if (!_isValidVPAID(this.vpaidCreative)) {
@@ -511,7 +510,7 @@ const _onVPAIDAvailable = function () {
       if (this.debug) {
         FW.log('VPAID creative does not conform to VPAID spec - exit');
       }
-      VAST_ERRORS.process.call(this, 901, true);
+      Utils.processVastErrors.call(this, 901, true);
       return;
     }
     // wire callback for VPAID events
@@ -586,7 +585,7 @@ const _onJSVPAIDError = function () {
   if (this.debug) {
     FW.log('VPAID JS error loading');
   }
-  VAST_ERRORS.process.call(this, 901, true);
+  Utils.processVastErrors.call(this, 901, true);
   this.vpaidScript.onload = null;
   this.vpaidScript.onerror = null;
 };
@@ -605,7 +604,7 @@ VPAID.loadCreative = function (creativeUrl, vpaidSettings) {
       // available and initialized (no need for user interaction)
       const existingVastPlayer = this.adContainer.querySelector('.rmp-ad-vast-video-player');
       if (existingVastPlayer === null) {
-        VAST_ERRORS.process.call(this, 900, true);
+        Utils.processVastErrors.call(this, 900, true);
         return;
       }
       this.vastPlayer = existingVastPlayer;
@@ -643,7 +642,7 @@ VPAID.loadCreative = function (creativeUrl, vpaidSettings) {
     if (!this.vpaidIframe.contentWindow || !this.vpaidIframe.contentWindow.document ||
       !this.vpaidIframe.contentWindow.document.body) {
       // PING error and resume content
-      VAST_ERRORS.process.call(this, 901, true);
+      Utils.processVastErrors.call(this, 901, true);
       return;
     }
     const iframeWindow = this.vpaidIframe.contentWindow;
@@ -672,7 +671,7 @@ VPAID.loadCreative = function (creativeUrl, vpaidSettings) {
     // we unwire listeners
     this.vpaidIframe.onload = this.vpaidIframe.onerror = FW.nullFn;
     // PING error and resume content
-    VAST_ERRORS.process.call(this, 901, true);
+    Utils.processVastErrors.call(this, 901, true);
   }.bind(this);
 
   this.vpaidIframe.src = src;

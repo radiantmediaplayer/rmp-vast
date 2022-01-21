@@ -1,14 +1,16 @@
-export default ENV;
-declare namespace ENV {
-    export const devicePixelRatio: number;
-    export const maxTouchPoints: number;
-    export const isIpadOS: boolean;
-    export { isIos };
-    export const isAndroid: (number | boolean)[];
-    export const isMacOSSafari: number | boolean;
-    export const isFirefox: boolean;
-    export const isMobile: boolean;
-    export function canPlayType(type: any, codec: any): boolean;
-    export const hasNativeFullscreenSupport: boolean;
+export default class ENV {
+    static _filterVersion(pattern: any): number;
+    static get hasTouchEvents(): boolean;
+    static get userAgent(): string;
+    static get devicePixelRatio(): number;
+    static get maxTouchPoints(): number;
+    static get isIos(): (number | boolean)[];
+    static get isIpadOS(): boolean;
+    static get isMacOS(): (number | boolean)[];
+    static get isSafari(): (number | boolean)[];
+    static get isMacOSSafari(): number | boolean;
+    static get isAndroid(): (number | boolean)[];
+    static get isMobile(): boolean;
+    static get hasNativeFullscreenSupport(): boolean;
+    static checkCanPlayType(type: any, codec: any): boolean;
 }
-declare const isIos: (number | boolean)[];

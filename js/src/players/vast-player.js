@@ -1,14 +1,12 @@
 import FW from '../fw/fw';
 import ENV from '../fw/env';
-import HELPERS from '../utils/helpers';
+import Utils from '../utils/utils';
 import CONTENT_PLAYER from '../players/content-player';
 import VPAID from '../players/vpaid';
 import ICONS from '../creatives/icons';
-import DEFAULT from '../utils/default';
 import TRACKING_EVENTS from '../tracking/tracking-events';
 import NON_LINEAR from '../creatives/non-linear';
 import LINEAR from '../creatives/linear';
-import VAST_ERRORS from '../utils/vast-errors';
 
 const VAST_PLAYER = {};
 
@@ -133,7 +131,7 @@ VAST_PLAYER.destroy = function () {
           }
         }
       } catch (e) {
-        FW.trace(e);
+        console.trace(e);
       }
     }
   } else {
@@ -141,9 +139,15 @@ VAST_PLAYER.destroy = function () {
     try {
       if (this.vastPlayer) {
         this.vastPlayer.pause();
-        // empty buffer
-        this.vastPlayer.removeAttribute('src');
-        this.vastPlayer.load();
+        if (this.readingHlsJS) {
+          this.readingHlsJS = false;
+          this.hlsJS[this.hlsJSIndex].destroy();
+          this.hlsJSIndex++;
+        } else {
+          // empty buffer
+          this.vastPlayer.removeAttribute('src');
+          this.vastPlayer.load();
+        }
         FW.hide(this.vastPlayer);
         if (this.debug) {
           FW.log('flushing vastPlayer buffer after ad');
@@ -153,11 +157,11 @@ VAST_PLAYER.destroy = function () {
         FW.removeElement(this.nonLinearContainer);
       }
     } catch (e) {
-      FW.trace(e);
+      console.trace(e);
     }
   }
-  DEFAULT.resetLoadAds.call(this);
-  HELPERS.createApiEvent.call(this, 'addestroyed');
+  Utils.resetVariablesForNewLoadAds.call(this);
+  Utils.createApiEvent.call(this, 'addestroyed');
 };
 
 VAST_PLAYER.init = function () {
@@ -246,7 +250,7 @@ VAST_PLAYER.append = function (url, type) {
       // available and initialized (no need for user interaction)
       const existingVastPlayer = this.adContainer.querySelector('.rmp-ad-vast-video-player');
       if (existingVastPlayer === null) {
-        VAST_ERRORS.process.call(this, 900, true);
+        Utils.processVastErrors.call(this, 900, true);
         return;
       }
       this.vastPlayer = existingVastPlayer;
@@ -259,7 +263,7 @@ VAST_PLAYER.append = function (url, type) {
       if (this.debug) {
         FW.log('non-linear creative detected for outstream ad mode - discarding creative');
       }
-      VAST_ERRORS.process.call(this, 201, true);
+      Utils.processVastErrors.call(this, 201, true);
       return;
     } else {
       NON_LINEAR.update.call(this);
@@ -311,7 +315,7 @@ VAST_PLAYER.getMute = function () {
 
 VAST_PLAYER.play = function (firstVastPlayerPlayRequest) {
   if (this.vastPlayer && this.vastPlayer.paused) {
-    HELPERS.playPromise.call(this, 'vast', firstVastPlayerPlayRequest);
+    Utils.playPromise.call(this, 'vast', firstVastPlayerPlayRequest);
   }
 };
 
@@ -343,6 +347,7 @@ VAST_PLAYER.getCurrentTime = function () {
 
 VAST_PLAYER.resumeContent = function () {
   VAST_PLAYER.destroy.call(this);
+  this.readingHlsJS = false;
   // if this.contentPlayerCompleted = true - we are in a post-roll situation
   // in that case we must not resume content once the post-roll has completed
   // you can use setContentPlayerCompleted/getContentPlayerCompleted to support 

@@ -1,6 +1,6 @@
 import ENV from '../fw/env';
 import FW from '../fw/fw';
-import HELPERS from '../utils/helpers';
+import Utils from '../utils/utils';
 import VAST_PLAYER from '../players/vast-player';
 import CONTENT_PLAYER from '../players/content-player';
 
@@ -12,7 +12,6 @@ const MEDIA_MIME = [
   'video/ogg',
   'video/3gpp',
   'application/vnd.apple.mpegurl',
-  'application/x-mpegurl',
   'application/dash+xml'
 ];
 
@@ -255,7 +254,7 @@ TRACKING_EVENTS.replaceMacros = function (url, trackingPixels) {
     if (pattern17.test(finalString)) {
       let mimeTyepString = '';
       MEDIA_MIME.forEach((value) => {
-        if (ENV.canPlayType(value)) {
+        if (ENV.checkCanPlayType(value)) {
           mimeTyepString += value + ',';
         }
       });
@@ -307,7 +306,7 @@ const _ping = function (url) {
     try {
       document.head.appendChild(script);
     } catch (e) {
-      FW.trace(e);
+      console.trace(e);
       document.body.appendChild(script);
     }
   } else {
@@ -357,7 +356,7 @@ TRACKING_EVENTS.error = function (errorCode) {
 
 const _onVolumeChange = function () {
   if (this.vastPlayer.muted || this.vastPlayer.volume === 0) {
-    HELPERS.createApiEvent.call(this, 'advolumemuted');
+    Utils.createApiEvent.call(this, 'advolumemuted');
     TRACKING_EVENTS.dispatch.call(this, 'mute');
     this.vastPlayerMuted = true;
   } else {
@@ -366,7 +365,7 @@ const _onVolumeChange = function () {
       this.vastPlayerMuted = false;
     }
   }
-  HELPERS.createApiEvent.call(this, 'advolumechanged');
+  Utils.createApiEvent.call(this, 'advolumechanged');
 };
 
 const _onTimeupdate = function () {
@@ -375,15 +374,15 @@ const _onTimeupdate = function () {
     if (this.vastPlayerDuration > 0 && this.vastPlayerDuration > this.vastPlayerCurrentTime) {
       if (this.vastPlayerCurrentTime >= this.vastPlayerDuration * 0.25 && !this.firstQuartileEventFired) {
         this.firstQuartileEventFired = true;
-        HELPERS.createApiEvent.call(this, 'adfirstquartile');
+        Utils.createApiEvent.call(this, 'adfirstquartile');
         TRACKING_EVENTS.dispatch.call(this, 'firstQuartile');
       } else if (this.vastPlayerCurrentTime >= this.vastPlayerDuration * 0.5 && !this.midpointEventFired) {
         this.midpointEventFired = true;
-        HELPERS.createApiEvent.call(this, 'admidpoint');
+        Utils.createApiEvent.call(this, 'admidpoint');
         TRACKING_EVENTS.dispatch.call(this, 'midpoint');
       } else if (this.vastPlayerCurrentTime >= this.vastPlayerDuration * 0.75 && !this.thirdQuartileEventFired) {
         this.thirdQuartileEventFired = true;
-        HELPERS.createApiEvent.call(this, 'adthirdquartile');
+        Utils.createApiEvent.call(this, 'adthirdquartile');
         TRACKING_EVENTS.dispatch.call(this, 'thirdQuartile');
       }
     }
@@ -399,7 +398,7 @@ const _onTimeupdate = function () {
           }
         });
         this.progressEvents.shift();
-        HELPERS.createApiEvent.call(this, 'adprogress');
+        Utils.createApiEvent.call(this, 'adprogress');
       }
     }
   }
@@ -408,7 +407,7 @@ const _onTimeupdate = function () {
 const _onPause = function () {
   if (!this.vastPlayerPaused) {
     this.vastPlayerPaused = true;
-    HELPERS.createApiEvent.call(this, 'adpaused');
+    Utils.createApiEvent.call(this, 'adpaused');
     // do not dispatchPingEvent for pause event here if it is already in this.trackingTags
     for (let i = 0, len = this.trackingTags.length; i < len; i++) {
       if (this.trackingTags[i].event === 'pause') {
@@ -422,20 +421,20 @@ const _onPause = function () {
 const _onPlay = function () {
   if (this.vastPlayerPaused) {
     this.vastPlayerPaused = false;
-    HELPERS.createApiEvent.call(this, 'adresumed');
+    Utils.createApiEvent.call(this, 'adresumed');
     TRACKING_EVENTS.dispatch.call(this, 'resume');
   }
 };
 
 const _onPlaying = function () {
   this.vastPlayer.removeEventListener('playing', this.onPlaying);
-  HELPERS.createApiEvent.call(this, ['adimpression', 'adstarted']);
+  Utils.createApiEvent.call(this, ['adimpression', 'adstarted']);
   TRACKING_EVENTS.dispatch.call(this, ['impression', 'creativeView', 'start']);
 };
 
 const _onEnded = function () {
   this.vastPlayer.removeEventListener('ended', this.onEnded);
-  HELPERS.createApiEvent.call(this, 'adcomplete');
+  Utils.createApiEvent.call(this, 'adcomplete');
   TRACKING_EVENTS.dispatch.call(this, 'complete');
   VAST_PLAYER.resumeContent.call(this);
 };

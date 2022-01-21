@@ -36,18 +36,18 @@ class OmSdkManager {
 
   init() {
     // load omweb script
-    this.OMIframe = this.createOMIframe_();
-    this.OMIframe.onload = this.onOMWebIframeLoaded_.bind(this);
+    this.OMIframe = this._createOMIframe();
+    this.OMIframe.onload = this._onOMWebIframeLoaded.bind(this);
     try {
       document.body.appendChild(this.OMIframe);
     } catch (e) {
-      FW.trace(e);
+      console.trace(e);
       document.head.appendChild(this.OMIframe);
     }
     VIDEO_EVENT_TYPES.forEach((eventType) => {
       this.videoElement.addEventListener(
         eventType,
-        (event) => this.vastPlayerDidDispatchEvent_(event)
+        (event) => this._vastPlayerDidDispatchEvent(event)
       );
     });
   }
@@ -57,7 +57,7 @@ class OmSdkManager {
     FW.removeElement(this.OMIframe);
   }
 
-  pingVerificationNotExecuted_(verification, reasonCode) {
+  _pingVerificationNotExecuted(verification, reasonCode) {
     if (typeof verification.trackingEvents !== 'undefined' &&
       Array.isArray(verification.trackingEvents.verificationNotExecuted) &&
       verification.trackingEvents.verificationNotExecuted.length > 0) {
@@ -75,7 +75,7 @@ class OmSdkManager {
     }
   }
 
-  createOMIframe_() {
+  _createOMIframe() {
     const iframe = document.createElement('iframe');
     iframe.sandbox = 'allow-scripts allow-same-origin';
     iframe.style.display = 'none';
@@ -86,7 +86,7 @@ class OmSdkManager {
     return iframe;
   }
 
-  vastPlayerDidDispatchTimeUpdate_() {
+  _vastPlayerDidDispatchTimeUpdate() {
     if (!this.adEvents || !this.mediaEvents || this.videoElement.playbackRate === 0) {
       return;
     }
@@ -126,7 +126,7 @@ class OmSdkManager {
     }
   }
 
-  vastPlayerDidDispatchEvent_(event) {
+  _vastPlayerDidDispatchEvent(event) {
     if (!this.adSession || !this.adEvents || !this.mediaEvents || !this.VastProperties) {
       return;
     }
@@ -162,7 +162,7 @@ class OmSdkManager {
         }
         break;
       case 'timeupdate':
-        this.vastPlayerDidDispatchTimeUpdate_();
+        this._vastPlayerDidDispatchTimeUpdate();
         break;
       case 'volumechange':
         volume = this.videoElement.muted ? 0 : this.videoElement.volume;
@@ -173,7 +173,7 @@ class OmSdkManager {
     }
   }
 
-  onOMWebIframeLoaded_() {
+  _onOMWebIframeLoaded() {
     if (this.log) {
       FW.log('OmSdkManager: iframe content loaded');
     }
@@ -192,12 +192,12 @@ class OmSdkManager {
       // verification resources provided are not implemented or supported by
       // the player/SDK
       if (typeof verification.type !== 'undefined' && verification.type === 'executable') {
-        this.pingVerificationNotExecuted_(verification, '2');
+        this._pingVerificationNotExecuted(verification, '2');
         continue;
       }
       // if not OMID, we reject
       if (typeof verification.apiFramework !== 'undefined' && verification.apiFramework !== 'omid') {
-        this.pingVerificationNotExecuted_(verification, '2');
+        this._pingVerificationNotExecuted(verification, '2');
         continue;
       }
       // reject vendors not in omidAllowedVendors if omidAllowedVendors is not empty
@@ -222,7 +222,7 @@ class OmSdkManager {
     try {
       sessionClient = OmidSessionClient['default'];
     } catch (e) {
-      FW.trace(e);
+      console.trace(e);
       return;
     }
     const AdSession = sessionClient.AdSession;

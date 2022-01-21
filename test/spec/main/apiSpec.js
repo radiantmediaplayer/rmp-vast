@@ -10,6 +10,7 @@ let testUrls = [
 
 const testUrlsChromeOnly = [
   TEST.pathToTest + 'apiSpec/pre-mid-post.html',
+  TEST.pathToTest + 'apiSpec/stopAds-hls.html',
   TEST.pathToTest + 'apiSpec/ThreeConsecutiveWithErrorLinearSpec.html'
 ];
 

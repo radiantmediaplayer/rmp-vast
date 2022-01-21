@@ -1,17 +1,17 @@
-export default FW;
-declare namespace FW {
-    function nullFn(): any;
-    function createStdEvent(eventName: any, element: any): void;
-    function setStyle(element: any, styleObject: any): void;
-    function getWidth(element: any): any;
-    function getHeight(element: any): any;
-    function show(element: any): void;
-    function hide(element: any): void;
-    function removeElement(element: any): void;
-    function isEmptyObject(obj: any): boolean;
-    function log(text: any, data: any): void;
-    function trace(data: any): void;
-    function logVideoEvents(video: any, type: any): void;
-    function isNumber(n: any): boolean;
-    function openWindow(link: any): void;
+export default class FW {
+    static nullFn(): any;
+    static createStdEvent(eventName: any, element: any): void;
+    static setStyle(element: any, styleObject: any): void;
+    static getWidth(element: any): any;
+    static getHeight(element: any): any;
+    static show(element: any): void;
+    static hide(element: any): void;
+    static removeElement(element: any): void;
+    static isEmptyObject(obj: any): boolean;
+    static log(text: any, data: any): void;
+    static logVideoEvents(video: any, type: any): void;
+    static isNumber(n: any): boolean;
+    static openWindow(link: any): void;
+    _getComputedStyle(element: any, style: any): string;
+    _getStyleAttributeData(element: any, style: any): number;
 }

@@ -25,6 +25,7 @@ rmp-vast is used and maintained by [Radiant Media Player](https://www.radiantmed
 - [Companion ads support](#companion-ads-support)
 - [AdVerifications OM Web SDK](#adverifications-om-web-sdk)
 - [VPAID support](#vpaid-support)
+- [HLS video ads support](#hls-video-ads-support)
 - [Autoplay support](#autoplay-support)
 - [Fullscreen management](#fullscreen-management)
 - [Pre, mid and post rolls](#pre-mid-and-post-rolls)
@@ -37,8 +38,10 @@ rmp-vast is used and maintained by [Radiant Media Player](https://www.radiantmed
 ## Supported VAST 4.2 features
 
 - Inline and Wrapper Ads
-- Linear Ads (MP4/WebM or HLS, DASH where natively supported)
-- Skippable Linear Ads (MP4/WebM or HLS, DASH where natively supported)
+- Linear Ads
+- Skippable Linear Ads
+- Linear creatives in MP4/WebM progressive download
+- Linear creatives in HLS format on all supported devices (with hls.js) - BETA
 - Non Linear Ads (image/iframe/HTML)
 - Companion Ads (image/iframe/HTML)
 - Tracking Events (tracking URLs must return an image - typically a 1px GIF/PNG/JPG)
@@ -73,13 +76,13 @@ rmp-vast is used and maintained by [Radiant Media Player](https://www.radiantmed
 - Chrome 61+ for Desktop
 - Firefox 60+ for Android 5+
 - Firefox 60+ for Desktop
-- Opera 62+ for Android 5+
-- Opera 62+ for Desktop
-- Samsung Internet 13+ for Android 5+
+- Opera 64+ for Android 5+
+- Opera 48+ for Desktop
+- Samsung Internet 12+ for Android 5+
 - Safari 11+ for Desktop
 - Safari for iOS 12+ and iPadOS 13+
 - MS Edge 79+ for Desktop
-- MS Edge Legacy 18+ for Desktop
+- MS Edge Legacy 16+ for Desktop
 - Amazon Silk 94+ for fireOS 7+
 
 Desktop means Windows 7+, macOS 10.11+, Linux (latest LTS Ubuntu).
@@ -427,6 +430,13 @@ Current VPAID support limitations:
 - no support for changes in linearity (likely to cause playback issues): we need production adTag to test this but we have not found reliable resources for it - please share if you have some available
 
 [Back to documentation sections](#documentation-sections)
+
+## HLS Video ads support
+This is a BETA feature, please open a GitHub issue if you spot anything. 
+With rmp-vast 5.2.0 we now support linear creatives in HLS format on all supported devices for rmp-vast. This is made possible thanks to the [hls.js project](https://github.com/video-dev/hls.js).
+
+[Back to documentation sections](#documentation-sections)
+
 
 ## Autoplay support
 

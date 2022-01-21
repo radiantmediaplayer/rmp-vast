@@ -6,17 +6,17 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
   <title>RmpVast - Example</title>
-  <link rel="stylesheet"
-    href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
   <link rel="stylesheet" href="css/app.css">
   <link rel="stylesheet" href="../css/rmp-vast.css">
+  <script src="../hls/hls.min.js"></script>
 </head>
 
 <body>
   <div class="rmp-container" id="rmpPlayer">
     <div class="rmp-content">
-      <video class="rmp-video" src="https://www.rmp-streaming.com/media/big-buck-bunny-360p.mp4"
-        playsinline muted controls>
+      <video class="rmp-video" src="https://www.rmp-streaming.com/media/big-buck-bunny-360p.mp4" playsinline muted
+        controls>
       </video>
     </div>
   </div>
@@ -26,7 +26,7 @@
     var container = document.getElementById(id);
 
     //var ADTAG = 'https://www.radiantmediaplayer.com/vast/tags/iab/vast4_2/Ad_Verification-test.xml';
-    var ADTAG = 'https://pubads.g.doubleclick.net/gampad/ads?sz=640x480&iu=/124319096/external/single_ad_samples&ciu_szs=300x250&impl=s&gdfp_req=1&env=vp&output=vast&unviewed_position_start=1&cust_params=deployment%3Ddevsite%26sample_ct%3Dlinear&correlator=';
+    var ADTAG = 'https://www.radiantmediaplayer.com/vast/tags/inline-linear-hls.xml';
     var params = {
       ajaxWithCredentials: false,
       autoplay: false

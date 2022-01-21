@@ -1,22 +1,18 @@
 /**
  * @license Copyright (c) 2015-2021 Radiant Media Player | https://www.radiantmediaplayer.com
- * rmp-vast 5.1.0
+ * rmp-vast 5.2.0
  * GitHub: https://github.com/radiantmediaplayer/rmp-vast
  * MIT License: https://github.com/radiantmediaplayer/rmp-vast/blob/master/LICENSE
  */
 
 import FW from './fw/fw';
 import ENV from './fw/env';
-import HELPERS from './utils/helpers';
+import Utils from './utils/utils';
 import LINEAR from './creatives/linear';
 import NON_LINEAR from './creatives/non-linear';
-import COMPANION from './creatives/companion';
 import VPAID from './players/vpaid';
 import VAST_PLAYER from './players/vast-player';
 import CONTENT_PLAYER from './players/content-player';
-import DEFAULT from './utils/default';
-import VAST_ERRORS from './utils/vast-errors';
-import VIEWABLE_IMPRESSION from './tracking/viewable-impression';
 import TRACKING_EVENTS from './tracking/tracking-events';
 import OmSdkManager from './verification/omsdk';
 import { VASTClient } from '../../vast-client-js/src/vast_client';
@@ -27,6 +23,7 @@ import { VASTClient } from '../../vast-client-js/src/vast_client';
  * @class RmpVast
 */
 export default class RmpVast {
+
   /**
    * @constructor
    * @param {string}  id - the id for the player container. Required parameter.
@@ -60,7 +57,7 @@ export default class RmpVast {
    */
   constructor(id, params, debug) {
     // reset instance variables - once per session
-    DEFAULT.instanceVariables.call(this);
+    Utils.initInstanceVariables.call(this);
     this.debug = debug || false;
     if (typeof id !== 'string' || id === '') {
       if (this.debug) {
@@ -92,11 +89,11 @@ export default class RmpVast {
     }
     // reset loadAds variables - this is reset at addestroyed 
     // so that next loadAds is cleared
-    DEFAULT.resetLoadAds.call(this);
+    Utils.resetVariablesForNewLoadAds.call(this);
     // handle fullscreen events
-    DEFAULT.fullscreen.call(this);
+    Utils.handleFullscreen.call(this);
     // filter input params
-    HELPERS.filterParams.call(this, params);
+    Utils.filterParams.call(this, params);
     if (this.debug) {
       FW.log('filtered params follow', this.params);
     }
@@ -105,7 +102,7 @@ export default class RmpVast {
   /** 
    * @private
    */
-  addTrackingEvents_(trackingEvents) {
+  _addTrackingEvents(trackingEvents) {
     const keys = Object.keys(trackingEvents);
     for (let k = 0, len = keys.length; k < len; k++) {
       const trackingUrls = trackingEvents[keys[k]];
@@ -121,7 +118,152 @@ export default class RmpVast {
   /** 
    * @private
    */
-  async loopAds_(ads) {
+  _parseCompanion(creative) {
+    // reset variables in case wrapper
+    this.validCompanionAds = [];
+    this.companionAdsRequiredAttribute = '';
+    if (creative.required === null) {
+      this.companionAdsRequiredAttribute = creative.required;
+    }
+    const companions = creative.variations;
+    // at least 1 Companion is expected to continue
+    if (companions.length > 0) {
+      for (let i = 0, len = companions.length; i < len; i++) {
+        const companion = companions[i];
+        const staticResources = companion.staticResources;
+        const iframeResources = companion.iframeResources;
+        const htmlResources = companion.htmlResources;
+        let staticResourceUrl;
+        for (let j = 0, len = staticResources.length; j < len; j++) {
+          if (staticResources[j].url) {
+            staticResourceUrl = staticResources[j].url;
+            break;
+          }
+        }
+        let iframeResourceUrl;
+        for (let k = 0, len = iframeResources.length; k < len; k++) {
+          if (iframeResources[k]) {
+            iframeResourceUrl = iframeResources[k];
+            break;
+          }
+        }
+        let htmlResourceContent;
+        for (let k = 0, len = htmlResources.length; k < len; k++) {
+          if (htmlResources[k]) {
+            htmlResourceContent = htmlResources[k];
+            break;
+          }
+        }
+        let width = companion.width;
+        let height = companion.height;
+        if (!staticResourceUrl && !iframeResourceUrl && !htmlResourceContent) {
+          continue;
+        }
+        const newCompanionAds = {
+          width: width,
+          height: height,
+          imageUrl: staticResourceUrl,
+          iframeUrl: iframeResourceUrl,
+          htmlContent: htmlResourceContent
+        };
+        if (companion.companionClickThroughURLTemplate) {
+          newCompanionAds.companionClickThroughUrl = companion.companionClickThroughURLTemplate;
+        }
+        if (companion.companionClickTrackingURLTemplates.length > 0) {
+          newCompanionAds.companionClickTrackingUrls = companion.companionClickTrackingURLTemplates;
+        }
+        if (companion.altText) {
+          newCompanionAds.altText = companion.altText;
+        }
+        if (companion.adSlotID) {
+          newCompanionAds.adSlotID = companion.adSlotID;
+        }
+        newCompanionAds.trackingEventsUrls = [];
+        if (companion.trackingEvents && companion.trackingEvents.creativeView) {
+          for (let j = 0, len = companion.trackingEvents.creativeView.length; j < len; j++) {
+            newCompanionAds.trackingEventsUrls.push(companion.trackingEvents.creativeView[j]);
+          }
+        }
+        this.validCompanionAds.push(newCompanionAds);
+      }
+    }
+    if (this.debug) {
+      FW.log('parse companion ads follow', this.validCompanionAds);
+    }
+  }
+
+  /** 
+   * @private
+   */
+  _handleIntersect(entries) {
+    entries.forEach(entry => {
+      if (entry.intersectionRatio > this.viewablePreviousRatio) {
+        this.viewableObserver.unobserve(this.container);
+        Utils.createApiEvent.call(this, 'adviewable');
+        TRACKING_EVENTS.dispatch.call(this, 'viewable');
+      }
+      this.viewablePreviousRatio = entry.intersectionRatio;
+    });
+  }
+
+  /** 
+   * @private
+   */
+  _attachViewableObserver() {
+    this.container.removeEventListener('adstarted', this.attachViewableObserver);
+    if (typeof window.IntersectionObserver !== 'undefined') {
+      const options = {
+        root: null,
+        rootMargin: '0px',
+        threshold: [0.5],
+      };
+      this.viewableObserver = new IntersectionObserver(this._handleIntersect.bind(this), options);
+      this.viewableObserver.observe(this.container);
+    } else {
+      Utils.createApiEvent.call(this, 'adviewundetermined');
+      TRACKING_EVENTS.dispatch.call(this, 'viewundetermined');
+    }
+  }
+
+  /** 
+   * @private
+   */
+  _initViewableImpression() {
+    if (this.viewableObserver) {
+      this.viewableObserver.unobserve(this.container);
+    }
+    if (this.ad.viewableImpression.viewable.length > 0) {
+      this.ad.viewableImpression.viewable.forEach(url => {
+        this.trackingTags.push({
+          event: 'viewable',
+          url: url
+        });
+      });
+    }
+    if (this.ad.viewableImpression.notviewable.length > 0) {
+      this.ad.viewableImpression.notviewable.forEach(url => {
+        this.trackingTags.push({
+          event: 'notviewable',
+          url: url
+        });
+      });
+    }
+    if (this.ad.viewableImpression.viewundetermined.length > 0) {
+      this.ad.viewableImpression.viewundetermined.forEach(url => {
+        this.trackingTags.push({
+          event: 'viewundetermined',
+          url: url
+        });
+      });
+    }
+    this.attachViewableObserver = this._attachViewableObserver.bind(this);
+    this.container.addEventListener('adstarted', this.attachViewableObserver);
+  }
+
+  /** 
+   * @private
+   */
+  async _loopAds(ads) {
     for (let i = 0, len = ads.length; i < len; i++) {
       await new Promise(resolve => {
         const currentAd = ads[i];
@@ -133,7 +275,7 @@ export default class RmpVast {
         this.ad.categories = currentAd.categories;
         if (this.requireCategory) {
           if (this.ad.categories.length === 0 || !this.ad.categories[0].authority) {
-            VAST_ERRORS.process.call(this, 204, true);
+            Utils.processVastErrors.call(this, 204, true);
             resolve();
           }
         }
@@ -147,7 +289,7 @@ export default class RmpVast {
               const categoriesAuthority = category.authority;
               const categoriesValue = category.value;
               if (blockedAdCategoryAuthority === categoriesAuthority && blockedAdCategoryValue === categoriesValue) {
-                VAST_ERRORS.process.call(this, 205, true);
+                Utils.processVastErrors.call(this, 205, true);
                 haltDueToBlockedAdCategories = true;
               }
             });
@@ -190,7 +332,7 @@ export default class RmpVast {
         }
         this.ad.viewableImpression = currentAd.viewableImpression;
         if (!FW.isEmptyObject(this.ad.viewableImpression)) {
-          VIEWABLE_IMPRESSION.init.call(this);
+          this._initViewableImpression();
         }
         for (let j = 0, len = currentAd.errorURLTemplates.length; j < len; j++) {
           this.adErrorTags.push({
@@ -211,7 +353,7 @@ export default class RmpVast {
             this.adPodLength = 0;
             this.adSequence = 0;
             this.adPod = false;
-            HELPERS.createApiEvent.call(this, 'adpodcompleted');
+            Utils.createApiEvent.call(this, 'adpodcompleted');
           }
           resolve();
         }, { once: true });
@@ -226,7 +368,7 @@ export default class RmpVast {
             if (this.debug) {
               FW.log('creative type companion detected');
             }
-            COMPANION.parse.call(this, creative);
+            this._parseCompanion(creative);
             break;
           }
         }
@@ -262,7 +404,7 @@ export default class RmpVast {
                 }
               }
               this.creative.isLinear = true;
-              this.addTrackingEvents_(creative.trackingEvents);
+              this._addTrackingEvents(creative.trackingEvents);
               LINEAR.parse.call(this, creative.icons, creative.adParameters, creative.mediaFiles);
               if (this.params.omidSupport && currentAd.adVerifications.length > 0) {
                 const omSdkManager = new OmSdkManager(
@@ -278,7 +420,7 @@ export default class RmpVast {
               break;
             case 'nonlinear':
               this.creative.isLinear = false;
-              this.addTrackingEvents_(creative.trackingEvents);
+              this._addTrackingEvents(creative.trackingEvents);
               NON_LINEAR.parse.call(this, creative.variations);
               break;
             default:
@@ -292,18 +434,18 @@ export default class RmpVast {
   /** 
    * @private
    */
-  getVastTag_(vastUrl) {
+  _getVastTag(vastUrl) {
     // we check for required VAST URL and API here
     // as we need to have this.currentContentSrc available for iOS
     if (typeof vastUrl !== 'string' || vastUrl === '') {
-      VAST_ERRORS.process.call(this, 1001, false);
+      Utils.processVastErrors.call(this, 1001, false);
       return;
     }
     if (typeof DOMParser === 'undefined') {
-      VAST_ERRORS.process.call(this, 1002, false);
+      Utils.processVastErrors.call(this, 1002, false);
       return;
     }
-    HELPERS.createApiEvent.call(this, 'adtagstartloading');
+    Utils.createApiEvent.call(this, 'adtagstartloading');
     const vastClient = new VASTClient();
     const options = {
       timeout: this.params.ajaxTimeout,
@@ -319,7 +461,7 @@ export default class RmpVast {
       if (this.debug) {
         FW.log('VAST response follows', response);
       }
-      HELPERS.createApiEvent.call(this, 'adtagloaded');
+      Utils.createApiEvent.call(this, 'adtagloaded');
       // error at VAST/Error level
       const errorTags = response.errorURLTemplates;
       if (errorTags.length > 0) {
@@ -332,15 +474,15 @@ export default class RmpVast {
       }
       // VAST/Ad 
       if (response.ads.length === 0) {
-        VAST_ERRORS.process.call(this, 303, true);
+        Utils.processVastErrors.call(this, 303, true);
         return;
       } else {
-        this.loopAds_(response.ads);
+        this._loopAds(response.ads);
       }
     }).catch(error => {
-      FW.trace(error);
+      console.trace(error);
       // PING 900 Undefined Error.
-      VAST_ERRORS.process.call(this, 900, true);
+      Utils.processVastErrors.call(this, 900, true);
     });
   }
 
@@ -384,10 +526,10 @@ export default class RmpVast {
       if (this.debug) {
         FW.log('creative alreadt on stage calling stopAds before loading new ad');
       }
-      const onDestroyLoadAds_ = function (url) {
+      const _onDestroyLoadAds = function (url) {
         this.loadAds(url);
       };
-      this.container.addEventListener('addestroyed', onDestroyLoadAds_.bind(this, finalUrl), { once: true });
+      this.container.addEventListener('addestroyed', _onDestroyLoadAds.bind(this, finalUrl), { once: true });
       this.stopAds();
       return;
     }
@@ -406,7 +548,7 @@ export default class RmpVast {
       // on iOS we need to prevent seeking when linear ad is on stage
       CONTENT_PLAYER.preventSeekingForCustomPlayback.call(this);
     }
-    this.getVastTag_(finalUrl);
+    this._getVastTag(finalUrl);
   }
 
   /** 
@@ -1043,7 +1185,7 @@ export default class RmpVast {
         }
         companionClickTrackingUrls = companionAd.companionClickTrackingUrls;
       }
-      const onImgClickThrough_ = function (companionClickThroughUrl, companionClickTrackingUrls, event) {
+      const _onImgClickThrough = function (companionClickThroughUrl, companionClickTrackingUrls, event) {
         if (event) {
           event.stopPropagation();
           if (event.type === 'touchend') {
@@ -1062,11 +1204,11 @@ export default class RmpVast {
       if (companionAd.companionClickThroughUrl) {
         html.addEventListener(
           'touchend',
-          onImgClickThrough_.bind(this, companionAd.companionClickThroughUrl, companionClickTrackingUrls)
+          _onImgClickThrough.bind(this, companionAd.companionClickThroughUrl, companionClickTrackingUrls)
         );
         html.addEventListener(
           'click',
-          onImgClickThrough_.bind(this, companionAd.companionClickThroughUrl, companionClickTrackingUrls)
+          _onImgClickThrough.bind(this, companionAd.companionClickThroughUrl, companionClickTrackingUrls)
         );
       }
     }
@@ -1125,7 +1267,7 @@ export default class RmpVast {
       document.removeEventListener('fullscreenchange', this.onFullscreenchange);
     }
     VAST_PLAYER.destroy.call(this);
-    DEFAULT.instanceVariables.call(this);
+    Utils.initInstanceVariables.call(this);
   }
 
   /** 

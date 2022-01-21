@@ -1,15 +1,14 @@
 import FW from '../fw/fw';
 import ENV from '../fw/env';
-import HELPERS from '../utils/helpers';
+import Utils from '../utils/utils';
 import VAST_PLAYER from '../players/vast-player';
 import CONTENT_PLAYER from '../players/content-player';
-import VAST_ERRORS from '../utils/vast-errors';
 import TRACKING_EVENTS from '../tracking/tracking-events';
 
 const NON_LINEAR = {};
 
 const _onNonLinearLoadError = function () {
-  VAST_ERRORS.process.call(this, 502, true);
+  Utils.processVastErrors.call(this, 502, true);
 };
 
 const _onNonLinearLoadSuccess = function () {
@@ -17,7 +16,7 @@ const _onNonLinearLoadSuccess = function () {
     FW.log('success loading non-linear creative at ' + this.creative.mediaUrl);
   }
   this.adOnStage = true;
-  HELPERS.createApiEvent.call(this, ['adloaded', 'adimpression', 'adstarted']);
+  Utils.createApiEvent.call(this, ['adloaded', 'adimpression', 'adstarted']);
   TRACKING_EVENTS.dispatch.call(this, ['impression', 'creativeView', 'start', 'loaded']);
 };
 
@@ -27,10 +26,10 @@ const _onNonLinearClickThrough = function (event) {
       event.stopPropagation();
     }
     this.pause();
-    HELPERS.createApiEvent.call(this, 'adclick');
+    Utils.createApiEvent.call(this, 'adclick');
     TRACKING_EVENTS.dispatch.call(this, 'clickthrough');
   } catch (e) {
-    FW.trace(e);
+    console.trace(e);
   }
 };
 
@@ -42,14 +41,14 @@ const _onClickCloseNonLinear = function (event) {
     }
   }
   FW.setStyle(this.nonLinearContainer, { display: 'none' });
-  HELPERS.createApiEvent.call(this, 'adclosed');
+  Utils.createApiEvent.call(this, 'adclosed');
   TRACKING_EVENTS.dispatch.call(this, 'close');
 };
 
 const _appendCloseButton = function () {
   this.nonLinearClose = document.createElement('div');
   this.nonLinearClose.className = 'rmp-ad-non-linear-close';
-  HELPERS.accessibleButton(this.nonLinearClose, this.params.labels.closeAd);
+  Utils.makeButtonAccessible(this.nonLinearClose, this.params.labels.closeAd);
   if (this.nonLinearMinSuggestedDuration > 0) {
     FW.setStyle(this.nonLinearClose, { display: 'none' });
     setTimeout(() => {
@@ -183,7 +182,7 @@ NON_LINEAR.parse = function (variations) {
     if (isDimensionError) {
       vastErrorCode = 501;
     }
-    VAST_ERRORS.process.call(this, vastErrorCode, true);
+    Utils.processVastErrors.call(this, vastErrorCode, true);
     return;
   }
   this.creative.clickThroughUrl = currentVariation.nonlinearClickThroughURLTemplate;

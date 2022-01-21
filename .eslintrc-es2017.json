@@ -45,6 +45,7 @@
   "globals": {
     "DEBUG": true,
     "RmpVast": true,
-    "OmidSessionClient": true
+    "OmidSessionClient": true,
+    "Hls": true
   }
 }

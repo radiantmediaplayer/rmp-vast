@@ -16,9 +16,9 @@ declare class OmSdkManager {
     videoPosition: string;
     init(): void;
     destroy(): void;
-    pingVerificationNotExecuted_(verification: any, reasonCode: any): void;
-    createOMIframe_(): HTMLIFrameElement;
-    vastPlayerDidDispatchTimeUpdate_(): void;
-    vastPlayerDidDispatchEvent_(event: any): void;
-    onOMWebIframeLoaded_(): void;
+    _pingVerificationNotExecuted(verification: any, reasonCode: any): void;
+    _createOMIframe(): HTMLIFrameElement;
+    _vastPlayerDidDispatchTimeUpdate(): void;
+    _vastPlayerDidDispatchEvent(event: any): void;
+    _onOMWebIframeLoaded(): void;
 }

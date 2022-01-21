@@ -114,18 +114,39 @@ export default class RmpVast {
     /**
      * @private
      */
-    private addTrackingEvents_;
+    private _addTrackingEvents;
     /**
      * @private
      */
-    private loopAds_;
+    private _parseCompanion;
+    validCompanionAds: any[];
+    companionAdsRequiredAttribute: any;
+    /**
+     * @private
+     */
+    private _handleIntersect;
+    viewablePreviousRatio: any;
+    /**
+     * @private
+     */
+    private _attachViewableObserver;
+    viewableObserver: IntersectionObserver;
+    /**
+     * @private
+     */
+    private _initViewableImpression;
+    attachViewableObserver: any;
+    /**
+     * @private
+     */
+    private _loopAds;
     adPod: boolean;
     adPodLength: number;
     adSequence: number;
     /**
      * @private
      */
-    private getVastTag_;
+    private _getVastTag;
     adTagUrl: string;
     /**
      * @param {string} vastUrl - the URI to the VAST resource to be loaded
