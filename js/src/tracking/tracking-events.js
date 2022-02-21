@@ -208,10 +208,17 @@ TRACKING_EVENTS.replaceMacros = function (url, trackingPixels) {
       finalString = finalString.replace(pattern4, encodeURIComponent(_vastReadableTime(currentVastTime)));
     }
     const pattern10 = /\[UNIVERSALADID\]/gi;
-    if (pattern10.test(finalString) && !FW.isEmptyObject(this.creative.universalAdId)) {
+    if (pattern10.test(finalString) && this.creative.universalAdIds.length > 0) {
+      let universalAdIdString = '';
+      this.creative.universalAdIds.forEach((universalAdId, index) => {
+        if (index !== 0 || index !== this.creative.universalAdIds.length - 1) {
+          universalAdIdString += ',';
+        }
+        universalAdIdString += universalAdId.idRegistry + ' ' + universalAdId.value;
+      });
       finalString = finalString.replace(
         pattern10,
-        encodeURIComponent(this.creative.universalAdId.idRegistry + ' ' + this.creative.universalAdId.value)
+        encodeURIComponent(universalAdIdString)
       );
     }
     const pattern22 = /\[ASSETURI\]/gi;

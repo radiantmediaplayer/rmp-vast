@@ -1,6 +1,6 @@
 /**
  * @license Copyright (c) 2015-2021 Radiant Media Player | https://www.radiantmediaplayer.com
- * rmp-vast 5.2.0
+ * rmp-vast 6.0.0
  * GitHub: https://github.com/radiantmediaplayer/rmp-vast
  * MIT License: https://github.com/radiantmediaplayer/rmp-vast/blob/master/LICENSE
  */
@@ -232,30 +232,32 @@ export default class RmpVast {
     if (this.viewableObserver) {
       this.viewableObserver.unobserve(this.container);
     }
-    if (this.ad.viewableImpression.viewable.length > 0) {
-      this.ad.viewableImpression.viewable.forEach(url => {
-        this.trackingTags.push({
-          event: 'viewable',
-          url: url
+    this.ad.viewableImpression.forEach(viewableImpression => {
+      if (viewableImpression.viewable.length > 0) {
+        viewableImpression.viewable.forEach(url => {
+          this.trackingTags.push({
+            event: 'viewable',
+            url: url
+          });
         });
-      });
-    }
-    if (this.ad.viewableImpression.notviewable.length > 0) {
-      this.ad.viewableImpression.notviewable.forEach(url => {
-        this.trackingTags.push({
-          event: 'notviewable',
-          url: url
+      }
+      if (viewableImpression.notviewable.length > 0) {
+        viewableImpression.notviewable.forEach(url => {
+          this.trackingTags.push({
+            event: 'notviewable',
+            url: url
+          });
         });
-      });
-    }
-    if (this.ad.viewableImpression.viewundetermined.length > 0) {
-      this.ad.viewableImpression.viewundetermined.forEach(url => {
-        this.trackingTags.push({
-          event: 'viewundetermined',
-          url: url
+      }
+      if (viewableImpression.viewundetermined.length > 0) {
+        viewableImpression.viewundetermined.forEach(url => {
+          this.trackingTags.push({
+            event: 'viewundetermined',
+            url: url
+          });
         });
-      });
-    }
+      }
+    });
     this.attachViewableObserver = this._attachViewableObserver.bind(this);
     this.container.addEventListener('adstarted', this.attachViewableObserver);
   }
@@ -331,7 +333,7 @@ export default class RmpVast {
           }
         }
         this.ad.viewableImpression = currentAd.viewableImpression;
-        if (!FW.isEmptyObject(this.ad.viewableImpression)) {
+        if (this.ad.viewableImpression.length > 0) {
           this._initViewableImpression();
         }
         for (let j = 0, len = currentAd.errorURLTemplates.length; j < len; j++) {
@@ -379,7 +381,7 @@ export default class RmpVast {
             continue;
           }
           this.creative.id = creative.id;
-          this.creative.universalAdId = creative.universalAdId;
+          this.creative.universalAdIds = creative.universalAdIds;
           this.creative.adId = creative.adId;
           this.creative.trackingEvents = creative.trackingEvents;
           switch (creative.type) {
@@ -775,21 +777,21 @@ export default class RmpVast {
   }
 
   /** 
-   * @typedef {object} UniversalAdId
+   * @typedef {object} universalAdId
    * @property {string} idRegistry
    * @property {string} value
-   * @return {UniversalAdId}
+   * @return {universalAdId[]}
    */
-  getAdUniversalAdId() {
+  getAdUniversalAdIds() {
     // <UniversalAdId idRegistry="daily-motion-L">Linear-12345</UniversalAdId>
     // {idRegistry: String, value: String}
-    if (this.creative && this.creative.universalAdId) {
-      return this.creative.universalAdId;
+    if (this.creative && this.creative.universalAdIds) {
+      return this.creative.universalAdIds;
     }
-    return {
+    return [{
       idRegistry: '',
       value: ''
-    };
+    }];
   }
 
   /** 
