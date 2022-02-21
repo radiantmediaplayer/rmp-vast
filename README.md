@@ -313,7 +313,7 @@ The following methods should be queried after the `adstarted` event has fired fo
 - `getAdMediaUrl()`: return `String`, representing the selected creative URL.
 - `getAdLinear()`: return `Boolean`, representing the type of the selected creative either linear (true) or non linear (false).
 - `getAdSystem()`: return `{value: String, version: String}`, representing the VAST AdSystem tag.
-- `getAdUniversalAdIds()`: return `{idRegistry: String, value: String}`, representing the VAST UniversalAdId tag.
+- `getAdUniversalAdIds()`: return `[{idRegistry: String, value: String}]`, representing the VAST UniversalAdId tag.
 - `getAdContentType()`: return `String`, representing the MIME type for the selected creative.
 - `getAdTitle()`: return `String`, representing the VAST AdTitle tag.
 - `getAdDescription()`: return `String`, representing the VAST Description tag.
