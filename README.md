@@ -13,7 +13,7 @@ rmp-vast is used and maintained by [Radiant Media Player](https://www.radiantmed
 ## Documentation sections
 
 - [Quick start guide](#quick-start-guide)
-- [Supported VAST 4.2 features](#supported-vast-4.2-features)
+- [Supported VAST 4.2 features](#supported-vast-42-features)
 - [Supported environments](#supported-environments)
 - [CORS requirements](#cors-requirements)
 - [Video ads from Google Ads network and rmp-vast](#video-ads-from-google-ads-network-and-rmp-vast)
