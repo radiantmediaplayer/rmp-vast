@@ -1,12 +1,20 @@
-import RmpVast from '../../../../js/src/index.js';
-
-import { HELP } from '../../helpers/function.js';
+const _createStdEvent = function (eventName, element) {
+  let event;
+  if (element) {
+    try {
+      event = new Event(eventName);
+      element.dispatchEvent(event);
+    } catch (e) {
+      console.trace(e);
+    }
+  }
+};
 
 const ADTAG = 'https://www.radiantmediaplayer.com/vast/tags/iab/vast2/Inline_NonLinear_VAST2.0.xml';
 
 describe('Test for NonLinearSpecIABVAST2', function () {
 
-  const id = 'rmpPlayer';
+  const id = 'rmp';
   const container = document.getElementById(id);
   const video = document.querySelector('.rmp-video');
   const rmpVast = new RmpVast(id);
@@ -55,7 +63,7 @@ describe('Test for NonLinearSpecIABVAST2', function () {
       setTimeout(function () {
         const close = document.getElementsByClassName('rmp-ad-non-linear-close')[0];
         console.log('click close');
-        HELP.createStdEvent('click', close);
+        _createStdEvent('click', close);
       }, 7000);
     });
 

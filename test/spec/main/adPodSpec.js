@@ -20,6 +20,7 @@ if (args[2] === 'android') {
   driver = TEST.getDriver('android');
 } else if (args[2] === 'safari') {
   driver = TEST.getDriver('safari');
+  driver.manage().window().setRect({ width: 1280, height: 960 });
 } else if (args[2] === 'chrome') {
   testUrls = testUrlsChromeOnly;
   driver = TEST.getDriver('chrome');

@@ -1,5 +1,3 @@
-import RmpVast from '../../../../js/src/index.js';
-
 //Viewable_Impression in wrapper >> not supported right now
 //const ADTAG = 'https://www.radiantmediaplayer.com/vast/tags/iab/vast4_2/Viewable_Impression-test.xml';
 
@@ -7,7 +5,7 @@ const ADTAG = 'https://www.radiantmediaplayer.com/vast/tags/inline-linear-viewab
 
 describe('Viewable_Impression-test', function () {
 
-  const id = 'rmpPlayer';
+  const id = 'rmp';
   const container = document.getElementById(id);
   const video = document.querySelector('.rmp-video');
   const rmpVast = new RmpVast(id);

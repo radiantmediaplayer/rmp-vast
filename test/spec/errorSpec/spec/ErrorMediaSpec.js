@@ -1,11 +1,9 @@
-import RmpVast from '../../../../js/src/index.js';
-
 const ADTAG = 'https://www.radiantmediaplayer.com/vast/tags/inline-linear-error-media.xml';
 
 
 describe('Test for ErrorMediaSpec', function () {
 
-  const id = 'rmpPlayer';
+  const id = 'rmp';
   const container = document.getElementById(id);
   const video = document.querySelector('.rmp-video');
   const rmpVast = new RmpVast(id);
@@ -33,7 +31,7 @@ describe('Test for ErrorMediaSpec', function () {
     });
 
     container.addEventListener('aderror', function (e) {
-      if (rmpVast.getAdVastErrorCode() === 401) {
+      if (rmpVast.getAdVastErrorCode() === 401 && rmpVast.getAdErrorType() === 'adPlayError' && rmpVast.getAdErrorMessage() === 'File not found. Unable to find Linear/MediaFile from URI.') {
         _incrementAndLog(e);
       }
     });

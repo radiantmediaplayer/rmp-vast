@@ -1,15 +1,14 @@
-import RmpVast from '../../../../js/src/index.js';
-
 const ADTAG = 'https://www.radiantmediaplayer.com/vast/tags/inline-linear-hls.xml';
 
 
 describe('Test for hls-creative', function () {
 
-  const id = 'rmpPlayer';
+  const id = 'rmp';
   const container = document.getElementById(id);
   const video = document.querySelector('.rmp-video');
   const params = {
-    debug: true
+    useHlsJS: true,
+    debugHlsJS: false
   };
   const rmpVast = new RmpVast(id, params);
   const env = rmpVast.getEnvironment();

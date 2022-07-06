@@ -1,11 +1,9 @@
-import RmpVast from '../../../../js/src/index.js';
-
 const ADTAG = 'https://www.radiantmediaplayer.com/vast/tags/iab/vast3/Inline_Linear_Tag-test.xml';
 
 
 describe('Test for IABVAST3Spec', function () {
 
-  const id = 'rmpPlayer';
+  const id = 'rmp';
   const container = document.getElementById(id);
   const video = document.querySelector('.rmp-video');
   const rmpVast = new RmpVast(id);

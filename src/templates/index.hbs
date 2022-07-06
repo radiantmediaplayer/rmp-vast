@@ -1,0 +1,32 @@
+<html lang="en">
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="{{htmlWebpackPlugin.options.description}}"
+    />
+    <title>{{htmlWebpackPlugin.options.title}}</title>
+  </head>
+
+  <body>
+    <div class="rmp-container" id="rmp" style="width: 640px; height: 360px;">
+      <div class="rmp-content">
+        <video
+          class="rmp-video"
+          src="https://www.rmp-streaming.com/media/big-buck-bunny-360p.mp4"
+          playsinline
+          muted
+        ></video>
+      </div>
+    </div>
+    <script>
+      var adTag
+      ="https://www.radiantmediaplayer.com/vast/tags/inline-linear.xml"; var
+      id= "rmp"; var params = { ajaxTimeout: 8000 }; var rmpVast = new
+      RmpVast(id, params); rmpVast.loadAds(adTag);
+    </script>
+  </body>
+
+</html>

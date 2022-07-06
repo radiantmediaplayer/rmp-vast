@@ -1,10 +1,8 @@
-import RmpVast from '../../../../js/src/index.js';
-
 const ADTAG = 'https://www.radiantmediaplayer.com/vast/tags/redirect-redirect-redirect.xml';
 
 describe('Test for MaximumRedirectSpec', function () {
 
-  const id = 'rmpPlayer';
+  const id = 'rmp';
   const container = document.getElementById(id);
   const video = document.querySelector('.rmp-video');
   const params = {

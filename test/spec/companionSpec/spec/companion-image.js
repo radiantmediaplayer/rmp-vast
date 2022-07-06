@@ -1,11 +1,9 @@
-import RmpVast from '../../../../js/src/index.js';
-
 const ADTAG = 'https://www.radiantmediaplayer.com/vast/tags/iab/vast4_2/Inline_Companion_Tag-test.xml';
 
 
 describe('companion-image', function () {
 
-  const id = 'rmpPlayer';
+  const id = 'rmp';
   const container = document.getElementById(id);
   const video = document.querySelector('.rmp-video');
   const rmpVast = new RmpVast(id);
@@ -50,16 +48,18 @@ describe('companion-image', function () {
           const adDescription = rmpVast.getAdDescription();
           window.console.log(adDescription);
           if (adDescription === 'This is sample companion ad tag with Linear ad tag. This tag while showing video ad on the player, will show a companion ad beside the player where it can be fitted. At most 3 companion ads can be placed. Modify accordingly to see your own content.') {
-            const universalAdId = rmpVast.getAdUniversalAdId();
-            window.console.log(universalAdId);
-            if (universalAdId.idRegistry === 'Ad-ID' && universalAdId.value === '8466') {
+            const universalAdIds = rmpVast.getAdUniversalAdIds();
+            window.console.log(universalAdIds);
+            if (universalAdIds[0].idRegistry === 'Ad-ID' && universalAdIds[0].value === '8466') {
               const title = rmpVast.getAdTitle();
               window.console.log(title);
               if (title === 'VAST 4.0 Pilot - Scenario 5') {
                 const companionAdsList = rmpVast.getCompanionAdsList();
+                console.log(companionAdsList);
                 if (companionAdsList.length === 1) {
                   const companionAd = rmpVast.getCompanionAd(0);
                   if (companionAd instanceof HTMLImageElement) {
+                    window.console.log(rmpVast.getCompanionAdsRequiredAttribute());
                     window.console.log(companionAd);
                     _incrementAndLog(e);
                   }

@@ -6,24 +6,22 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
   <title>RmpVast - Example</title>
-  <link rel="stylesheet"
-    href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
   <link rel="stylesheet" href="css/app.css">
-  <link rel="stylesheet" href="../css/rmp-vast.css">
+  <script src="../externals/omid/omid-session-client-v1.js"></script>
+  <script src="../dist/rmp-vast.min.js"></script>
 </head>
 
 <body>
-  <div class="rmp-container" id="rmpPlayer">
+  <div class="rmp-container" id="rmp">
     <div class="rmp-content">
-      <video class="rmp-video" src="https://www.rmp-streaming.com/media/big-buck-bunny-360p.mp4"
-        playsinline muted controls>
+      <video class="rmp-video" src="https://www.rmp-streaming.com/media/big-buck-bunny-360p.mp4" playsinline muted
+        controls>
       </video>
     </div>
   </div>
-  <script src="../externals/omid-session-client-v1.js"></script>
-  <script type="module">
-    import RmpVast from '../js/src/index.js';
-    var id = 'rmpPlayer';
+  <script>
+    var id = 'rmp';
     var container = document.getElementById(id);
 
     //var ADTAG = 'https://www.radiantmediaplayer.com/vast/tags/iab/vast4_2/Ad_Verification_OMID-valid-test-2.xml';
@@ -33,11 +31,12 @@
     var params = {
       ajaxWithCredentials: false,
       omidSupport: true,
-      autoplay: true,
-      partnerName: 'Radiantmediaplayer',
-      partnerVersion: '3.2.0'
+      omidUnderEvaluation: true,
+      omidAutoplay: true,
+      partnerName: 'test-player',
+      partnerVersion: '1.0.0'
     };
-    window.rmpVast = new RmpVast(id, params, true);
-    window.rmpVast.loadAds(ADTAG);
+    var rmpVast = new RmpVast(id, params);
+    rmpVast.loadAds(ADTAG);
   </script>
 </body>

@@ -1,10 +1,8 @@
-import RmpVast from '../../../../js/src/index.js';
-
 const ADTAG = 'https://www.radiantmediaplayer.com/vast/tags/ad-pod-error-creative-on-second-ad.xml';
 
 describe('Test for AdPodErrorCreativeOnSecondAd', function () {
 
-  const id = 'rmpPlayer';
+  const id = 'rmp';
   const container = document.getElementById(id);
   const video = document.querySelector('.rmp-video');
   video.muted = true;

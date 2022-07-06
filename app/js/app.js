@@ -1,7 +1,5 @@
-import RmpVast from '../../js/src/index.js';
-
 // our elements
-const id = 'rmpPlayer';
+const id = 'rmp';
 const container = document.getElementById(id);
 let rmpVast;
 let playerWidth = 640;
@@ -240,7 +238,7 @@ const _wireUI = function () {
     'getAdMediaUrl',
     'getAdLinear',
     'getAdSystem',
-    'getAdUniversalAdId',
+    'getAdUniversalAdIds',
     'getAdContentType',
     'getAdTitle',
     'getAdDescription',

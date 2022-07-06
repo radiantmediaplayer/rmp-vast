@@ -13,22 +13,22 @@
   <script src="../../lib/jasmine-3.10.0/jasmine-html.js"></script>
   <script src="../../lib/jasmine-3.10.0/boot0.js"></script>
   <script src="../../lib/jasmine-3.10.0/boot1.js"></script>
+  <link rel="stylesheet" href="../../../app/css/app.css">
 
   <!-- rmp-vast -->
-  <link rel="stylesheet" href="../../../css/rmp-vast.min.css">
-  <link rel="stylesheet" href="../../../app/css/app.css">
+  <script src="../../../dist/rmp-vast.min.js"></script>
 
 </head>
 
 <body>
-  <div class="rmp-container" id="rmpPlayer">
+  <div class="rmp-container" id="rmp">
     <div class="rmp-content">
       <video class="rmp-video" src="https://www.rmp-streaming.com/media/big-buck-bunny-360p.mp4" playsinline>
       </video>
     </div>
   </div>
   <!-- include spec files here... -->
-  <script type="module" src="spec/IABVAST2Spec.js"></script>
+  <script src="spec/IABVAST2Spec.js"></script>
 </body>
 
 </html>

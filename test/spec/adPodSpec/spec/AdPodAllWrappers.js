@@ -1,5 +1,3 @@
-import RmpVast from '../../../../js/src/index.js';
-
 const ADTAG = 'https://www.radiantmediaplayer.com/vast/tags/ad-pod-all-wrappers.xml';
 
 // right now pod in wrappers only cause the first ad to return
@@ -7,7 +5,7 @@ const ADTAG = 'https://www.radiantmediaplayer.com/vast/tags/ad-pod-all-wrappers.
 
 describe('Test for AdPodAllWrappers', function () {
 
-  const id = 'rmpPlayer';
+  const id = 'rmp';
   const container = document.getElementById(id);
   const video = document.querySelector('.rmp-video');
   video.muted = true;

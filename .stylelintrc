@@ -1,8 +1,4 @@
 {
   "extends": "stylelint-config-standard",
-  "customSyntax": "postcss-less",
-  "rules": {
-    "font-family-name-quotes": "always-unless-keyword",
-    "alpha-value-notation": "number"
-  }
+  "customSyntax": "postcss-less"
 }

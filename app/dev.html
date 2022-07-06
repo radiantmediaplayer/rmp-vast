@@ -8,30 +8,31 @@
   <title>RmpVast - Example</title>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
   <link rel="stylesheet" href="css/app.css">
-  <link rel="stylesheet" href="../css/rmp-vast.css">
-  <script src="../hls/hls.min.js"></script>
+  <script src="../dist/rmp-vast.min.js"></script>
 </head>
 
 <body>
-  <div class="rmp-container" id="rmpPlayer">
+  <div class="rmp-container" id="rmp">
     <div class="rmp-content">
       <video class="rmp-video" src="https://www.rmp-streaming.com/media/big-buck-bunny-360p.mp4" playsinline muted
         controls>
       </video>
     </div>
   </div>
-  <script type="module">
-    import RmpVast from '../js/src/index.js';
-    var id = 'rmpPlayer';
+  <script>
+    var id = 'rmp';
     var container = document.getElementById(id);
 
     //var ADTAG = 'https://www.radiantmediaplayer.com/vast/tags/iab/vast4_2/Ad_Verification-test.xml';
-    var ADTAG = 'https://www.radiantmediaplayer.com/vast/tags/redirect-to-inline-linear-viewable.xml';
+    //var ADTAG = 'https://raw.githubusercontent.com/InteractiveAdvertisingBureau/VAST_Samples/master/VAST%204.2%20Samples/Inline_Linear_Tag-test.xml';
+    var ADTAG = 'https://www.radiantmediaplayer.com/vast/tags/iab/vast4_2/Inline_Companion_Tag-test.xml';
     var params = {
-      ajaxWithCredentials: false,
-      autoplay: false
     };
-    window.rmpVast = new RmpVast(id, params, true);
-    window.rmpVast.loadAds(ADTAG);
+    var rmpVast = new RmpVast(id, params);
+    rmpVast.loadAds(ADTAG);
+    container.addEventListener('adstarted', function () {
+      const companionAdsList = rmpVast.getCompanionAdsList();
+      console.log(companionAdsList);
+    });
   </script>
 </body>

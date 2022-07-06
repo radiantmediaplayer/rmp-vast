@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<!-- this page is used for development purposes refer to index.html for the full demo app -->
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+  <title>RmpVast - Example</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/app.css">
+  <script src="../externals/hls/hls.min.js"></script>
+  <script src="../dist/rmp-vast.min.js"></script>
+</head>
+
+<body>
+  <div class="rmp-container" id="rmp">
+    <div class="rmp-content">
+      <video class="rmp-video" src="https://www.rmp-streaming.com/media/big-buck-bunny-360p.mp4" playsinline muted
+        controls>
+      </video>
+    </div>
+  </div>
+  <script>
+    var id = 'rmp';
+    var container = document.getElementById(id);
+
+    //var ADTAG = 'https://www.radiantmediaplayer.com/vast/tags/iab/vast4_2/Ad_Verification-test.xml';
+    var ADTAG = 'https://raw.githubusercontent.com/InteractiveAdvertisingBureau/VAST_Samples/master/VAST%204.2%20Samples/Inline_Linear_Tag-test.xml';
+    var params = {
+      ajaxWithCredentials: false,
+      autoplay: false,
+      useHlsJS: true,
+      debugHlsJS: false
+    };
+    var rmpVast = new RmpVast(id, params);
+    rmpVast.loadAds(ADTAG);
+  </script>
+</body>

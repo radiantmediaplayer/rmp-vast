@@ -14,8 +14,7 @@ const testUrlsChromeOnly = [
   TEST.pathToTest + 'inlineLinearSpec/IABVAST3Spec.html',
   TEST.pathToTest + 'inlineLinearSpec/hls-creative.html',
   TEST.pathToTest + 'inlineLinearSpec/ImaInlineLinearSpec.html',
-  TEST.pathToTest + 'inlineLinearSpec/SkippableSpec.html',
-  TEST.pathToTest + 'inlineLinearSpec/SmartAdServerSpec.html'
+  TEST.pathToTest + 'inlineLinearSpec/SkippableSpec.html'
 ];
 
 const args = process.argv;
@@ -23,6 +22,7 @@ if (args[2] === 'android') {
   driver = TEST.getDriver('android');
 } else if (args[2] === 'safari') {
   driver = TEST.getDriver('safari');
+  driver.manage().window().setRect({ width: 1280, height: 960 });
 } else if (args[2] === 'chrome') {
   testUrls = testUrlsChromeOnly;
   driver = TEST.getDriver('chrome');

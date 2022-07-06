@@ -20,11 +20,11 @@ TEST.getDriver = function (which) {
     driver = new Builder().
       forBrowser('chrome').
       setChromeOptions(new Options().androidChrome()).
-      build(); 
+      build();
   } else if (which === 'safari') {
     driver = new Builder().forBrowser('safari').build();
   }
-  return driver; 
+  return driver;
 };
 
 TEST.loadHTMLSpec = function (driver, url) {

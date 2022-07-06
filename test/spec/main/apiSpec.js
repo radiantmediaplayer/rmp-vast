@@ -9,6 +9,9 @@ let testUrls = [
 ];
 
 const testUrlsChromeOnly = [
+  TEST.pathToTest + 'apiSpec/events.html',
+  TEST.pathToTest + 'apiSpec/methods.html',
+  TEST.pathToTest + 'apiSpec/initialize.html',
   TEST.pathToTest + 'apiSpec/pre-mid-post.html',
   TEST.pathToTest + 'apiSpec/stopAds-hls.html',
   TEST.pathToTest + 'apiSpec/ThreeConsecutiveWithErrorLinearSpec.html'
@@ -19,6 +22,7 @@ if (args[2] === 'android') {
   driver = TEST.getDriver('android');
 } else if (args[2] === 'safari') {
   driver = TEST.getDriver('safari');
+  driver.manage().window().setRect({ width: 1280, height: 960 });
 } else if (args[2] === 'chrome') {
   testUrls = testUrlsChromeOnly;
   driver = TEST.getDriver('chrome');

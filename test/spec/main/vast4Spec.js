@@ -5,12 +5,10 @@ const TEST = require('../helpers/test');
 let driver;
 
 let testUrls = [
-  TEST.pathToTest + 'vast4Spec/Ad_Verification-test.html'
+  TEST.pathToTest + 'vast4Spec/Viewable_Impression-test.html'
 ];
 
 const testUrlsChromeOnly = [
-  TEST.pathToTest + 'vast4Spec/omwebsdk.html',
-  TEST.pathToTest + 'vast4Spec/Ad_Verification-test.html',
   TEST.pathToTest + 'vast4Spec/Category-test.html',
   TEST.pathToTest + 'vast4Spec/Viewable_Impression-test.html'
 ];
@@ -20,6 +18,7 @@ if (args[2] === 'android') {
   driver = TEST.getDriver('android');
 } else if (args[2] === 'safari') {
   driver = TEST.getDriver('safari');
+  driver.manage().window().setRect({ width: 1280, height: 960 });
 } else if (args[2] === 'chrome') {
   testUrls = testUrlsChromeOnly;
   driver = TEST.getDriver('chrome');

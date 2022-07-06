@@ -1,14 +1,12 @@
-import RmpVast from '../../../../js/src/index.js';
-
 const ADTAG = 'https://www.radiantmediaplayer.com/vast/tags/empty.xml';
 
 
 describe('Test for EmptySpec', function () {
 
-  const id = 'rmpPlayer';
+  const id = 'rmp';
   const container = document.getElementById(id);
   const video = document.querySelector('.rmp-video');
-  const rmpVast = new RmpVast(id, {}, true);
+  const rmpVast = new RmpVast(id, {});
   const env = rmpVast.getEnvironment();
   video.muted = true;
   if (env.isAndroid[0]) {

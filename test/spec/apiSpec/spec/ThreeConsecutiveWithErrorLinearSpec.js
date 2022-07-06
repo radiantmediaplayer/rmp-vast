@@ -1,12 +1,10 @@
-import RmpVast from '../../../../js/src/index.js';
-
 const ADTAG1 = 'https://www.radiantmediaplayer.com/vast/tags/inline-linear-1.xml';
 const ADTAG2 = 'https://www.radiantmediaplayer.com/vast/tags/inline-linear-error.xml';
 const ADTAG3 = 'https://www.radiantmediaplayer.com/vast/tags/inline-linear-1.xml';
 
 describe('Test for ThreeConsecutiveWithErrorLinearSpec', function () {
 
-  const id = 'rmpPlayer';
+  const id = 'rmp';
   const container = document.getElementById(id);
   const video = document.querySelector('.rmp-video');
   const rmpVast = new RmpVast(id);

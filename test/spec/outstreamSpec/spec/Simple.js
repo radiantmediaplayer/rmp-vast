@@ -1,10 +1,8 @@
-import RmpVast from '../../../../js/src/index.js';
-
 const ADTAG1 = 'https://www.radiantmediaplayer.com/vast/tags/inline-linear-1.xml';
 
 describe('Test for outstream/Simple', function () {
 
-  const id = 'rmpPlayer';
+  const id = 'rmp';
   const container = document.getElementById(id);
   const video = document.querySelector('.rmp-video');
   // enables outstream ad mode

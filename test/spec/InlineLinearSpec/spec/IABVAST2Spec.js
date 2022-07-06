@@ -1,11 +1,9 @@
-import RmpVast from '../../../../js/src/index.js';
-
 const ADTAG = 'https://www.radiantmediaplayer.com/vast/tags/iab/vast2/Inline_LinearRegular_VAST2.0.xml';
 
 
 describe('Test for Inline Linear ad (IAB VAST2)', function () {
 
-  const id = 'rmpPlayer';
+  const id = 'rmp';
   const container = document.getElementById(id);
   const video = document.querySelector('.rmp-video');
   const rmpVast = new RmpVast(id);

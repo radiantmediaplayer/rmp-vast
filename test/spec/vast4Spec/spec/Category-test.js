@@ -1,11 +1,9 @@
-import RmpVast from '../../../../js/src/index.js';
-
 const ADTAG = 'https://www.radiantmediaplayer.com/vast/tags/iab/vast4_2/Category-test.xml';
 
 
 describe('Category-test', function () {
 
-  const id = 'rmpPlayer';
+  const id = 'rmp';
   const container = document.getElementById(id);
   const video = document.querySelector('.rmp-video');
   const rmpVast = new RmpVast(id);
@@ -78,9 +76,9 @@ describe('Category-test', function () {
             if (valid === 3) {
               const advertiser = rmpVast.getAdAdvertiser();
               if (advertiser === null) {
-                const universalAdId = rmpVast.getAdUniversalAdId();
-                window.console.log(universalAdId);
-                if (universalAdId.idRegistry === 'Ad-ID' && universalAdId.value === '8465') {
+                const universalAdIds = rmpVast.getAdUniversalAdIds();
+                window.console.log(universalAdIds);
+                if (universalAdIds[0].idRegistry === 'Ad-ID' && universalAdIds[0].value === '8465') {
                   const title = rmpVast.getAdTitle();
                   if (title === 'iabtechlab video ad') {
                     _incrementAndLog(e);
