@@ -2,9 +2,9 @@
 
 A client-side JavaScript solution to load, parse, ping and display VAST resources (advertising).
 
-It aims at implementing the [IAB VAST 4.2 specification](https://iabtechlab.com/standards/vast/) for web-based environments (e.g. browser, WebView ...) where both HTML5 video and JavaScript are available. VAST 2 and VAST 3 support is also provided.
+It aims at implementing the [IAB VAST 4.2 specification](https://iabtechlab.com/standards/vast/) for web-based environments (e.g. browser, Ionic, OTT apps ...) where both HTML5 video and JavaScript are available. VAST 2 and VAST 3 support is also provided.
 
-rmp-vast comes as a compiled library (./dist/ folder) but can also be imported as a ES6 module. Is is written in ES2017.
+rmp-vast comes as a compiled library (./dist/ folder) but it can also be imported as a ES2015 module. Is is written in ES2017.
 
 rmp-vast makes use of [vast-client-js](https://github.com/dailymotion/vast-client-js) for fetching and parsing VAST XML resources.
 
@@ -13,20 +13,16 @@ rmp-vast is used and maintained by [Radiant Media Player](https://www.radiantmed
 ## Documentation sections
 
 - [Quick start guide](#quick-start-guide)
-- [Supported VAST 4.2 features](#supported-vast-3-features)
+- [Supported VAST 4.2 features](#supported-vast-4.2-features)
 - [Supported environments](#supported-environments)
 - [CORS requirements](#cors-requirements)
 - [Video ads from Google Ads network and rmp-vast](#video-ads-from-google-ads-network-and-rmp-vast)
 - [Debugging](#debugging)
 - [Parameters, API events and methods](#parameters-api-events-and-methods)
-  - [Parameters when creating a rmp-vast instance](#parameters-when-creating-a-rmp-vast-instance)
-  - [Starting the rmp-vast player](#starting-the-rmp-vast-player)
-  - [API events](#api-events)
-  - [API methods](#api-methods)
 - [Companion ads support](#companion-ads-support)
 - [AdVerifications OM Web SDK](#adverifications-om-web-sdk)
 - [VPAID support](#vpaid-support)
-- [HLS video ads support](#hls-video-ads-support)
+- [HLS creatives support](#hls-creatives-support)
 - [Autoplay support](#autoplay-support)
 - [Fullscreen management](#fullscreen-management)
 - [Pre, mid and post rolls](#pre-mid-and-post-rolls)
@@ -116,9 +112,11 @@ This example can be found live at https://www.radiantmediaplayer.com/rmp-vast/ap
 
 [Back to documentation sections](#documentation-sections)
 
-## Supported environments for rmp-vast compiled library (./dist/rmp-vast.min.js)
+## Supported environments 
 
-### Browsers
+### rmp-vast compiled library (./dist/rmp-vast.min.js)
+
+#### Browsers
 
 - Latest Chrome for Android 5+
 - Chrome 38+ for Desktop
@@ -135,14 +133,14 @@ This example can be found live at https://www.radiantmediaplayer.com/rmp-vast/ap
 Desktop means Windows 7+, macOS 10.11+, Linux (latest LTS Ubuntu).
 It could work on Internet Explorer 11 but we are not actively testing for it anymore.
 
-### WebViews (mobile apps built with Ionic, Cordova)
+#### WebViews (mobile apps built with Ionic, Cordova)
 
 - Android 5+
 - iOS 12+ (WKWebView)
 
 With the announcement of Apple in december 2019, to remove support for UIWebView API by end 2020, we only support WKWebView API for iOS apps built with Cordova, Ionic or WebView. [See this blog post](https://www.radiantmediaplayer.com/blog/updating-ios-apps-for-wkwebview.html) to help you update to WKWebView API.
 
-### Smart TV & OTT
+#### Smart TV & OTT
 
 - Samsung Tizen 3+ apps
 - LG webOS 3+ apps
@@ -152,7 +150,7 @@ With the announcement of Apple in december 2019, to remove support for UIWebView
 
 [Back to documentation sections](#documentation-sections)
 
-## Supported environments for rmp-vast as module
+### rmp-vast as a ES2015 module
 
 rmp-vast as a module is written with ES2017. It is up to you to run it in a ES2017 compatible environment or use a tool like Babel to make it work on older versions of ES. Please refer to .babelrc and webpack.dev.config.js for guidance. Code example:
 
@@ -466,8 +464,10 @@ rmp-vast supports AdVerifications through the [IAB OM Web SDK](https://iabtechla
 
 ## VPAID support
 
---- DEPRECATED with rmp-vast 7 --- 
---- SIMID is meant to replace VPAID. SIMID is not yet implemented in rmp-vast. Contributions are welcomed ---
+### --- DEPRECATED with rmp-vast 7 --- 
+
+### --- SIMID is meant to replace VPAID. SIMID is not yet implemented in rmp-vast. Contributions are welcomed ---
+
 It is no secret that VPAID in the industry is a jungle and we need your help to best implement it.
 Any feedback and test adTags that can improve VPAID support in rmp-vast are welcome - open an issue when needed.
 Current VPAID support limitations:
@@ -477,7 +477,7 @@ Current VPAID support limitations:
 
 [Back to documentation sections](#documentation-sections)
 
-## HLS Video ads support
+## HLS creatives support
 This is a BETA feature, please open a GitHub issue if you spot anything. 
 With rmp-vast 5.2.0 we now support linear creatives in HLS format on all supported devices for rmp-vast. This is made possible thanks to the [hls.js project](https://github.com/video-dev/hls.js). Make sure to add ./externals/hls/hls.min.js to your page and enable this feature with `useHlsJS: true` setting. See ./test/spec/inlineLinearSpec/hls-creative.html for an example.
 
@@ -510,7 +510,7 @@ rmp-vast supports displaying outstream ads when parameter `outstream` is set to 
 
 ## TypeScript support
 
-Make sure to inluce ./types folder in your TypeScript configuration file and you can start using rmp-vast in a TypeScript environment. Note: the resulting .d.ts files are generated from JavaScript using JSDoc syntax. Type support is only available when using rmp-vast as a ES6 module right now.
+Make sure to inluce ./types folder in your TypeScript configuration file and you can start using rmp-vast in a TypeScript environment. Note: the resulting .d.ts files are generated from JavaScript using JSDoc syntax. Type support is only available when using rmp-vast as a ES2015 module right now.
 
 ## Contributing
 
