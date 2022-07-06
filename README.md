@@ -65,7 +65,7 @@ The HTML5 video tag used for content must use the src property on the HTML5 vide
 const adTag = "https://www.radiantmediaplayer.com/vast/tags/inline-linear-1.xml";
 const id = "rmp";
 const params = {
-  ajaxTimeout: 8000,
+  ajaxTimeout: 8000
 };
 // create RmpVast instance
 const rmpVast = new RmpVast(id, params);
@@ -177,7 +177,7 @@ import RmpVast from "./src/js/index.js";
 const adTag = "https://www.radiantmediaplayer.com/vast/tags/inline-linear-1.xml";
 const id = "rmp";
 const params = {
-  ajaxTimeout: 8000,
+  ajaxTimeout: 8000
 };
 // create RmpVast instance
 const rmpVast = new RmpVast(id, params);
