@@ -208,13 +208,13 @@ When serving ads from Google Ads network (DFP, ADX, AdSense for Video) you shoul
 
 ## Debugging
 
-rmp-vast compiled does not print any log to the console. If you want those logs for debugging purposes please use ./dist/rmp-vast.js instead
+rmp-vast compiled library (./dist/rmp-vast.min.js) does not print any log to the console. If you want those logs for debugging purposes please use ./dist/rmp-vast.js instead
 
 [Back to documentation sections](#debugging)
 
 ## Parameters, API events and methods
 
-Source code for rmp-vast is available for review in ./src/js/ folder. Code comments should be available at key points to better understand rmp-vast inner workings.
+Source code for rmp-vast is available for review in ./src/ folder. Code comments should be available at key points to better understand rmp-vast inner workings.
 
 ### Parameters when creating a rmp-vast instance
 
