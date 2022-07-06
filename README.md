@@ -4,7 +4,7 @@ A client-side JavaScript solution to load, parse, ping and display VAST resource
 
 It aims at implementing the [IAB VAST 4.2 specification](https://iabtechlab.com/standards/vast/) for web-based environments (e.g. browser, Ionic, OTT apps ...) where both HTML5 video and JavaScript are available. VAST 2 and VAST 3 support is also provided.
 
-rmp-vast comes as a compiled library (./dist/ folder) but it can also be imported as a ES2015 module. Is is written in ES2017.
+rmp-vast comes as a compiled library (./dist/ folder) but it can also be imported as a ES2015 module. rmp-vast is written in ES2017.
 
 rmp-vast makes use of [vast-client-js](https://github.com/dailymotion/vast-client-js) for fetching and parsing VAST XML resources.
 
@@ -185,6 +185,8 @@ const rmpVast = new RmpVast(id, params);
 // in this case we use autoplay
 rmpVast.loadAds(adTag);
 ```
+
+[Back to documentation sections](#documentation-sections)
 
 ## CORS requirements
 
@@ -371,7 +373,7 @@ The following methods should be queried after the `adstarted` event has fired fo
 - `getAdMediaWidth()`: return `Number`, representing the width of the selected creative. -1 is returned if this value is not available.
 - `getAdMediaHeight()`: return `Number`, representing the height of the selected creative. -1 is returned if this value is not available.
 - `getClickThroughUrl()`: return `String`, representing the click-through (e.g. destination) URL for the selected creative.
-- `getIsSkippableAd()`: return `Boolean`, stating if the loaded linear ad is a VAST skippable ad - can be querried when adloaded event fires.
+- `getIsSkippableAd()`: return `Boolean`, stating if the loaded linear ad is a VAST skippable ad - can be queried when adloaded event fires.
 - `getSkipTimeOffset()`: return `Number` giving the skip offset when a skippable ad is displayed.
 - `getAdSkippableState()`: return `Boolean`, stating if the creative on stage can be skipped or not.
 - `getContentPlayerCompleted()`: return `Boolean`, stating if content player has reached end of content.
@@ -410,7 +412,7 @@ We also support AltText, CompanionClickThrough, CompanionClickTracking, Tracking
 
 See ./test/spec/companionSpec/ for examples of implementation.
 
-The following methods must be querried when the `adstarted` event fires for the master linear ad.
+The following methods must be queried when the `adstarted` event fires for the master linear ad.
 
 - `getCompanionAdsList(width: Number, height: Number)`: return `Object[]`. Each Object in the Array represents a companion ad. Input `width` and `height` parameters are used to select companion ads based on available width and height for display. Each companion ad Object is represented as:
 
