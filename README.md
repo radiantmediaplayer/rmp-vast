@@ -38,10 +38,15 @@ First download latest rmp-vast package from the [release tab](https://github.com
 
 You must use rmp-vast in a well-formed HTML document. This means a web-page with a valid HTML5 DOCTYPE and other elements that are commonly available in today's web.
 
-- In order to use rmp-vast you must adhere to a specific HTML layout pattern. This pattern is as follows:
+- First we add rmp-vast library (./dist/rmp-vast.min.js) on our page - in &lt;head&gt; for example.
 
 ```html
 <script src="./dist/rmp-vast.min.js">
+```
+
+- Then we must adhere to a specific HTML layout pattern. This pattern is as follows:
+
+```html
 <div class="rmp-container" id="rmp">
   <div class="rmp-content">
     <video
@@ -55,14 +60,14 @@ You must use rmp-vast in a well-formed HTML document. This means a web-page with
 </div>
 ```
 
-First we add rmp-vast library. Then our HTML layout (do not rename CSS classes or alter this layout).
-The HTML5 video tag used for content must use the src property on the HTML5 video (e.g. do not use &lt;source&gt; tag).
+Do not rename CSS classes or alter this layout. The HTML5 video tag used for content must use the src property on the HTML5 video (e.g. do not use &lt;source&gt; tag).
 
 - Init the library with JavaScript:
 
 ```javascript
 // our VAST tag to be displayed
-const adTag = "https://www.radiantmediaplayer.com/vast/tags/inline-linear-1.xml";
+const adTag =
+  "https://www.radiantmediaplayer.com/vast/tags/inline-linear-1.xml";
 const id = "rmp";
 const params = {
   ajaxTimeout: 8000
@@ -98,7 +103,7 @@ This example can be found live at https://www.radiantmediaplayer.com/rmp-vast/ap
 - Error Reporting
 - Industry Icons (image/iframe/HTML)
 - VAST 4.2 Macros
-- AdVerifications (OM Web SDK) 
+- AdVerifications (OM Web SDK)
 - VPAID 1 and 2 JavaScript <sup>deprecated</sup>
 - Outstream ads
 - Ad Pods
@@ -112,7 +117,7 @@ This example can be found live at https://www.radiantmediaplayer.com/rmp-vast/ap
 
 [Back to documentation sections](#documentation-sections)
 
-## Supported environments 
+## Supported environments
 
 ### rmp-vast compiled library (./dist/rmp-vast.min.js)
 
@@ -174,7 +179,8 @@ rmp-vast as a module is written with ES2017. It is up to you to run it in a ES20
 // import rmp-vast as a module
 import RmpVast from "./src/js/index.js";
 // our VAST tag to be displayed
-const adTag = "https://www.radiantmediaplayer.com/vast/tags/inline-linear-1.xml";
+const adTag =
+  "https://www.radiantmediaplayer.com/vast/tags/inline-linear-1.xml";
 const id = "rmp";
 const params = {
   ajaxTimeout: 8000
@@ -398,6 +404,7 @@ The following methods should be queried after the `aderror` event has fired for 
 - `getAdErrorType()`: return `String`, representing the detected ad error type, possible values: 'adLoadError', 'adPlayError' or '' (if unknown error type).
 
 The following methods provide context information for the rmp-vast instance:
+
 - `getEnvironment()`: return `Object`, data about the environment that rmp-vast runs into.
 - `getVastPlayer()`: return `HTMLMediaElement|null`, the VAST player video tag.
 - `getContentPlayer()`: return `HTMLMediaElement|null`, the content player video tag.
@@ -466,7 +473,7 @@ rmp-vast supports AdVerifications through the [IAB OM Web SDK](https://iabtechla
 
 ## VPAID support
 
-### --- DEPRECATED with rmp-vast 7 --- 
+### --- DEPRECATED with rmp-vast 7 ---
 
 ### --- SIMID is meant to replace VPAID. SIMID is not yet implemented in rmp-vast. Contributions are welcomed ---
 
@@ -480,11 +487,11 @@ Current VPAID support limitations:
 [Back to documentation sections](#documentation-sections)
 
 ## HLS creatives support
-This is a BETA feature, please open a GitHub issue if you spot anything. 
+
+This is a BETA feature, please open a GitHub issue if you spot anything.
 With rmp-vast 5.2.0 we now support linear creatives in HLS format on all supported devices for rmp-vast. This is made possible thanks to the [hls.js project](https://github.com/video-dev/hls.js). Make sure to add ./externals/hls/hls.min.js to your page and enable this feature with `useHlsJS: true` setting. See ./test/spec/inlineLinearSpec/hls-creative.html for an example.
 
 [Back to documentation sections](#documentation-sections)
-
 
 ## Autoplay support
 
