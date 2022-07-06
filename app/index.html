@@ -7,6 +7,8 @@
 	<title>RmpVast - Example</title>
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
 	<link rel="stylesheet" href="./css/app.css">
+	<script src="../externals/hls/hls.min.js"></script>
+	<script src="../externals/omid/omid-session-client-v1.min.js"></script>
 	<script src="../dist/rmp-vast.min.js"></script>
 </head>
 
@@ -17,10 +19,12 @@
 				<h1>rmp-vast</h1>
 				<h4>Open-source client-side JavaScript solution to load, parse and display VAST resources</h4>
 				<h4>Implementation example</h4>
-				<p><a href="https://github.com/radiantmediaplayer/rmp-vast">See source on GitHub</a> - a <a href="https://www.radiantmediaplayer.com">Radiant Media Player</a>					project</p>
+				<p><a href="https://github.com/radiantmediaplayer/rmp-vast">See source on GitHub</a> - a <a
+						href="https://www.radiantmediaplayer.com">Radiant Media Player</a> project</p>
 				<div class="rmp-container" id="rmp">
 					<div class="rmp-content">
-						<video class="rmp-video" src="https://www.rmp-streaming.com/media/big-buck-bunny-360p.mp4" playsinline></video>
+						<video class="rmp-video" src="https://www.rmp-streaming.com/media/big-buck-bunny-360p.mp4"
+							playsinline></video>
 					</div>
 				</div>
 			</div>
@@ -36,7 +40,8 @@
 						<button id="stopAds">stopAds()</button>
 					</div>
 					<div class="margin-top-10">
-						<input class="form-control" id="newAdTagUrl" type="url" placeholder="https://www.radiantmediaplayer.com/vast/tags/inline-linear.xml">
+						<input class="form-control" id="newAdTagUrl" type="url"
+							placeholder="https://www.radiantmediaplayer.com/vast/tags/inline-linear.xml">
 						<button id="loadAds">loadAds(newAdTagUrl)</button>
 					</div>
 					<div class="margin-top-10">
@@ -96,7 +101,8 @@
 							<button id="getAdCategories">getAdCategories</button><span id="getAdCategoriesResult"></span>
 						</div>
 						<div class="margin-top-10">
-							<button id="getAdBlockedAdCategories">getAdBlockedAdCategories</button><span id="getAdBlockedAdCategoriesResult"></span>
+							<button id="getAdBlockedAdCategories">getAdBlockedAdCategories</button><span
+								id="getAdBlockedAdCategoriesResult"></span>
 						</div>
 						<div class="margin-top-10">
 							<button id="getAdDuration">getAdDuration</button><span id="getAdDurationResult"></span>

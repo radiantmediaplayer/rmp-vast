@@ -17365,7 +17365,7 @@ var RmpVast = /*#__PURE__*/function () {
     value: function getAdAdvertiser() {
       // <Advertiser id='advertiser-desc'><![CDATA[Advertiser name]]></Advertiser>
       // {id: String, value: String}
-      if (this.ad && !FW.isEmptyObject(this.ad.advertiser)) {
+      if (this.ad && this.ad.advertiser && this.ad.advertiser !== null) {
         return this.ad.advertiser;
       }
 

@@ -138,23 +138,26 @@ const params = {
   maxNumRedirects: 4,
   labels: {
     skipMessage: 'Skip ad',
-    closeAd: 'close ad',
+    closeAd: 'Close ad',
     textForClickUIOnMobile: 'Learn more'
   },
-  enableVpaid: true,
   outstream: false,
+  showControlsForVastPlayer: true,
+  enableVpaid: true,
   vpaidSettings: {
     width: 640,
     height: 360,
     viewMode: 'normal',
     desiredBitrate: 500
   },
+  useHlsJS: true,
+  debugHlsJS: false,
+  // OM SDK params
   omidSupport: true,
   omidAllowedVendors: [],
-  omidPathTo: 'https://cdn.radiantmediatechs.com/rmp/omsdk/omweb-v1.js',
-  autoplay: false,
-  partnerName: 'Radiantmediaplayer',
-  partnerVersion: '3.2.0'
+  omidPathTo: '../externals/omweb-v1.js',
+  omidUnderEvaluation: true,
+  omidAutoplay: true
 };
 // new RmpVast instance - we pass id (required) and params (optional) 
 rmpVast = new RmpVast(id, params);
