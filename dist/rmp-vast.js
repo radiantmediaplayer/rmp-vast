@@ -1137,6 +1137,15 @@ module.exports = typeof window == 'object' && typeof Deno != 'object';
 
 /***/ }),
 
+/***/ 3823:
+/***/ (function(module) {
+
+/* global Deno -- Deno case */
+module.exports = typeof Deno == 'object' && Deno && typeof Deno.version == 'object';
+
+
+/***/ }),
+
 /***/ 256:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
@@ -2144,6 +2153,7 @@ var ResultPrototype = Result.prototype;
 module.exports = function (iterable, unboundFunction, options) {
   var that = options && options.that;
   var AS_ENTRIES = !!(options && options.AS_ENTRIES);
+  var IS_RECORD = !!(options && options.IS_RECORD);
   var IS_ITERATOR = !!(options && options.IS_ITERATOR);
   var INTERRUPTED = !!(options && options.INTERRUPTED);
   var fn = bind(unboundFunction, that);
@@ -2161,7 +2171,9 @@ module.exports = function (iterable, unboundFunction, options) {
     } return INTERRUPTED ? fn(value, stop) : fn(value);
   };
 
-  if (IS_ITERATOR) {
+  if (IS_RECORD) {
+    iterator = iterable.iterator;
+  } else if (IS_ITERATOR) {
     iterator = iterable;
   } else {
     iterFn = getIteratorMethod(iterable);
@@ -2176,7 +2188,7 @@ module.exports = function (iterable, unboundFunction, options) {
     iterator = getIterator(iterable, iterFn);
   }
 
-  next = iterator.next;
+  next = IS_RECORD ? iterable.next : iterator.next;
   while (!(step = call(next, iterator)).done) {
     try {
       result = callFn(step.value);
@@ -3175,6 +3187,7 @@ var isForced = __webpack_require__(4705);
 var inspectSource = __webpack_require__(2788);
 var wellKnownSymbol = __webpack_require__(5112);
 var IS_BROWSER = __webpack_require__(7871);
+var IS_DENO = __webpack_require__(3823);
 var IS_PURE = __webpack_require__(1913);
 var V8_VERSION = __webpack_require__(7392);
 
@@ -3195,18 +3208,18 @@ var FORCED_PROMISE_CONSTRUCTOR = isForced('Promise', function () {
   // We can't use @@species feature detection in V8 since it causes
   // deoptimization and performance degradation
   // https://github.com/zloirock/core-js/issues/679
-  if (V8_VERSION >= 51 && /native code/.test(PROMISE_CONSTRUCTOR_SOURCE)) return false;
-  // Detect correctness of subclassing with @@species support
-  var promise = new NativePromiseConstructor(function (resolve) { resolve(1); });
-  var FakePromise = function (exec) {
-    exec(function () { /* empty */ }, function () { /* empty */ });
-  };
-  var constructor = promise.constructor = {};
-  constructor[SPECIES] = FakePromise;
-  SUBCLASSING = promise.then(function () { /* empty */ }) instanceof FakePromise;
-  if (!SUBCLASSING) return true;
+  if (V8_VERSION < 51 || !/native code/.test(PROMISE_CONSTRUCTOR_SOURCE)) {
+    // Detect correctness of subclassing with @@species support
+    var promise = new NativePromiseConstructor(function (resolve) { resolve(1); });
+    var FakePromise = function (exec) {
+      exec(function () { /* empty */ }, function () { /* empty */ });
+    };
+    var constructor = promise.constructor = {};
+    constructor[SPECIES] = FakePromise;
+    SUBCLASSING = promise.then(function () { /* empty */ }) instanceof FakePromise;
+    if (!SUBCLASSING) return true;
   // Unhandled rejections tracking support, NodeJS Promise without it fails @@species test
-  return !GLOBAL_CORE_JS_PROMISE && IS_BROWSER && !NATIVE_PROMISE_REJECTION_EVENT;
+  } return !GLOBAL_CORE_JS_PROMISE && (IS_BROWSER || IS_DENO) && !NATIVE_PROMISE_REJECTION_EVENT;
 });
 
 module.exports = {
@@ -3434,7 +3447,7 @@ if (PATCH) {
     }
     if (NPCG_INCLUDED && match && match.length > 1) {
       // Fix browsers whose `exec` methods don't consistently return `undefined`
-      // for NPCG, like IE8. NOTE: This doesn' work for /(.?)?/
+      // for NPCG, like IE8. NOTE: This doesn't work for /(.?)?/
       call(nativeReplace, match[0], reCopy, function () {
         for (i = 1; i < arguments.length - 2; i++) {
           if (arguments[i] === undefined) match[i] = undefined;
@@ -3675,10 +3688,10 @@ var store = __webpack_require__(5465);
 (module.exports = function (key, value) {
   return store[key] || (store[key] = value !== undefined ? value : {});
 })('versions', []).push({
-  version: '3.23.3',
+  version: '3.24.0',
   mode: IS_PURE ? 'pure' : 'global',
   copyright: '© 2014-2022 Denis Pushkarev (zloirock.ru)',
-  license: 'https://github.com/zloirock/core-js/blob/v3.23.3/LICENSE',
+  license: 'https://github.com/zloirock/core-js/blob/v3.24.0/LICENSE',
   source: 'https://github.com/zloirock/core-js'
 });
 
@@ -5859,7 +5872,7 @@ var charAt = uncurryThis(''.charAt);
 var replace = uncurryThis(''.replace);
 var stringIndexOf = uncurryThis(''.indexOf);
 var stringSlice = uncurryThis(''.slice);
-// TODO: Use only propper RegExpIdentifierName
+// TODO: Use only proper RegExpIdentifierName
 var IS_NCG = /^\?<[^\s\d!#%&*+<=>@^][^\s!#%&*+<=>@^]*>/;
 var re1 = /a/g;
 var re2 = /a/g;
@@ -10087,19 +10100,27 @@ var _onAdSkippableStateChange = function _onAdSkippableStateChange() {
 };
 
 var _onAdDurationChange = function _onAdDurationChange() {
-  if (!this.vpaidCreative) {
-    return;
-  }
+  var _this2 = this;
 
-  if (typeof this.vpaidCreative.getAdRemainingTime === 'function') {
+  if (this.vpaidCreative && typeof this.vpaidCreative.getAdRemainingTime === 'function') {
     var remainingTime = this.vpaidCreative.getAdRemainingTime();
 
     if (remainingTime >= 0) {
       this.vpaidRemainingTime = remainingTime;
-    }
-  }
+    } // AdRemainingTimeChange is deprecated in VPAID 2
+    // instead we use setInterval
 
-  Utils.createApiEvent.call(this, 'addurationchange');
+
+    clearInterval(this.vpaidAdRemainingTimeInterval);
+    this.vpaidAdRemainingTimeInterval = setInterval(function () {
+      var remainingTime = _this2.vpaidCreative.getAdRemainingTime();
+
+      if (remainingTime >= 0) {
+        _this2.vpaidRemainingTime = remainingTime;
+      }
+    }, 200);
+    Utils.createApiEvent.call(this, 'addurationchange');
+  }
 };
 
 var _onAdVolumeChange = function _onAdVolumeChange() {
@@ -10240,15 +10261,15 @@ var _onAdExpandedChange = function _onAdExpandedChange() {
 };
 
 var _onAdRemainingTimeChange = function _onAdRemainingTimeChange() {
-  if (!this.vpaidCreative && typeof this.vpaidCreative.getAdRemainingTime === 'function') {
+  if (this.vpaidCreative && typeof this.vpaidCreative.getAdRemainingTime === 'function') {
     var remainingTime = this.vpaidCreative.getAdRemainingTime();
 
     if (remainingTime >= 0) {
       this.vpaidRemainingTime = remainingTime;
     }
-  }
 
-  Utils.createApiEvent.call(this, 'adremainingtimechange');
+    Utils.createApiEvent.call(this, 'adremainingtimechange');
+  }
 }; // vpaidCreative methods
 
 
@@ -10276,7 +10297,7 @@ VPAID.resizeAd = function (width, height, viewMode) {
 };
 
 VPAID.stopAd = function () {
-  var _this2 = this;
+  var _this3 = this;
 
   if (!this.vpaidCreative) {
     return;
@@ -10286,7 +10307,7 @@ VPAID.stopAd = function () {
   // AdStopped event follows
 
   this.adStoppedTimeout = setTimeout(function () {
-    _onAdStopped.call(_this2);
+    _onAdStopped.call(_this3);
   }, this.params.creativeLoadTimeout);
   this.vpaidCreative.stopAd();
 };
@@ -10320,7 +10341,7 @@ VPAID.collapseAd = function () {
 };
 
 VPAID.skipAd = function () {
-  var _this3 = this;
+  var _this4 = this;
 
   if (!this.vpaidCreative) {
     return;
@@ -10329,7 +10350,7 @@ VPAID.skipAd = function () {
 
 
   this.adSkippedTimeout = setTimeout(function () {
-    _onAdStopped.call(_this3);
+    _onAdStopped.call(_this4);
   }, this.params.creativeLoadTimeout);
   this.vpaidCreative.skipAd();
 };
@@ -10341,7 +10362,7 @@ VPAID.setAdVolume = function (volume) {
 };
 
 var _setCallbacksForCreative = function _setCallbacksForCreative() {
-  var _this4 = this;
+  var _this5 = this;
 
   if (!this.vpaidCreative) {
     return;
@@ -10378,12 +10399,12 @@ var _setCallbacksForCreative = function _setCallbacksForCreative() {
 
   var callbacksKeys = Object.keys(this.vpaidCallbacks);
   callbacksKeys.forEach(function (key) {
-    _this4.vpaidCreative.subscribe(_this4.vpaidCallbacks[key], key);
+    _this5.vpaidCreative.subscribe(_this5.vpaidCallbacks[key], key);
   });
 };
 
 var _unsetCallbacksForCreative = function _unsetCallbacksForCreative() {
-  var _this5 = this;
+  var _this6 = this;
 
   if (!this.vpaidCreative) {
     return;
@@ -10392,7 +10413,7 @@ var _unsetCallbacksForCreative = function _unsetCallbacksForCreative() {
 
   var callbacksKeys = Object.keys(this.vpaidCallbacks);
   callbacksKeys.forEach(function (key) {
-    _this5.vpaidCreative.unsubscribe(_this5.vpaidCallbacks[key], key);
+    _this6.vpaidCreative.unsubscribe(_this6.vpaidCallbacks[key], key);
   });
 };
 
@@ -10405,7 +10426,7 @@ var _isValidVPAID = function _isValidVPAID(creative) {
 };
 
 var _onVPAIDAvailable = function _onVPAIDAvailable() {
-  var _this6 = this;
+  var _this7 = this;
 
   if (this.vpaidAvailableInterval) {
     clearInterval(this.vpaidAvailableInterval);
@@ -10473,12 +10494,12 @@ var _onVPAIDAvailable = function _onVPAIDAvailable() {
     // if not we need to resume content
 
     this.initAdTimeout = setTimeout(function () {
-      if (!_this6.vpaidAdLoaded) {
+      if (!_this7.vpaidAdLoaded) {
         console.log("".concat(FW.consolePrepend, " initAdTimeout"), FW.consoleStyle, '');
-        vast_player.resumeContent.call(_this6);
+        vast_player.resumeContent.call(_this7);
       }
 
-      _this6.vpaidAdLoaded = false;
+      _this7.vpaidAdLoaded = false;
     }, this.params.creativeLoadTimeout * 10);
     console.log("".concat(FW.consolePrepend, " calling initAd on VPAID creative now"), FW.consoleStyle, '');
     this.vpaidCreative.initAd(this.initialWidth, this.initialHeight, this.initialViewMode, this.desiredBitrate, creativeData, environmentVars);
@@ -10486,7 +10507,7 @@ var _onVPAIDAvailable = function _onVPAIDAvailable() {
 };
 
 var _onJSVPAIDLoaded = function _onJSVPAIDLoaded() {
-  var _this7 = this;
+  var _this8 = this;
 
   console.log("".concat(FW.consolePrepend, " VPAID JS loaded"), FW.consoleStyle, '');
   var iframeWindow = this.vpaidIframe.contentWindow;
@@ -10496,7 +10517,7 @@ var _onJSVPAIDLoaded = function _onJSVPAIDLoaded() {
   } else {
     this.vpaidAvailableInterval = setInterval(function () {
       if (typeof iframeWindow.getVPAIDAd === 'function') {
-        _onVPAIDAvailable.call(_this7);
+        _onVPAIDAvailable.call(_this8);
       }
     }, 100);
   }
@@ -10566,7 +10587,7 @@ VPAID.loadCreative = function (creativeUrl, vpaidSettings) {
   // (see https://stackoverflow.com/questions/5946607/is-an-empty-iframe-src-valid/5946631) we now use about:blank
 
   this.vpaidIframe.onload = function () {
-    var _this8 = this;
+    var _this9 = this;
 
     console.log("".concat(FW.consolePrepend, " vpaidIframe.onload"), FW.consoleStyle, ''); // we unwire listeners
 
@@ -10584,9 +10605,9 @@ VPAID.loadCreative = function (creativeUrl, vpaidSettings) {
     this.vpaidScript = iframeDocument.createElement('script');
     this.vpaidLoadTimeout = setTimeout(function () {
       console.log("".concat(FW.consolePrepend, " could not load VPAID JS Creative or getVPAIDAd in iframeWindow - resume content"), FW.consoleStyle, '');
-      _this8.vpaidScript.onload = null;
-      _this8.vpaidScript.onerror = null;
-      vast_player.resumeContent.call(_this8);
+      _this9.vpaidScript.onload = null;
+      _this9.vpaidScript.onerror = null;
+      vast_player.resumeContent.call(_this9);
     }, this.params.creativeLoadTimeout);
     this.vpaidScript.onload = _onJSVPAIDLoaded.bind(this);
     this.vpaidScript.onerror = _onJSVPAIDError.bind(this);
@@ -10611,6 +10632,10 @@ VPAID.destroy = function () {
 
   if (this.vpaidAvailableInterval) {
     clearInterval(this.vpaidAvailableInterval);
+  }
+
+  if (this.vpaidAdRemainingTimeInterval) {
+    clearInterval(this.vpaidAdRemainingTimeInterval);
   }
 
   if (this.vpaidLoadTimeout) {
@@ -12073,9 +12098,10 @@ var Utils = /*#__PURE__*/function () {
         omidAllowedVendors: [],
         omidPathTo: '../externals/omweb-v1.js',
         omidUnderEvaluation: false,
+        omidRunValidationScript: false,
         omidAutoplay: false,
         partnerName: 'rmp-vast',
-        partnerVersion: "7.0.0"
+        partnerVersion: "7.1.0"
       };
       this.params = defaultParams;
 
@@ -12327,6 +12353,7 @@ var Utils = /*#__PURE__*/function () {
       this.vpaidCurrentVolume = 1;
       this.vpaidPaused = true;
       this.vpaidCreativeUrl = '';
+      this.vpaidAdRemainingTimeInterval = null;
       this.vpaidRemainingTime = -1;
       this.vpaidVersion = -1;
       this.vpaid1AdDuration = -1;
@@ -12711,11 +12738,25 @@ var OmSdkManager = /*#__PURE__*/function () {
       var MediaEvents = sessionClient.MediaEvents;
       this.VastProperties = sessionClient.VastProperties;
       var partner = new Partner(this.params.partnerName, this.params.partnerVersion);
-      var resources = this.adVerifications.map(function (verification) {
-        return new VerificationScriptResource(verification.resource, verification.vendor, verification.verificationParameters, ACCESS_MODE);
-      });
-      console.dir(resources);
+      var resources = [];
+
+      if (this.params.omidRunValidationScript) {
+        // https://interactiveadvertisingbureau.github.io/Open-Measurement-SDKJS/validation.html
+        var VALIDATION_SCRIPT_URL = 'https://cdn.radiantmediatechs.com/rmp/omsdk/1.3.36/omid-validation-verification-script-v1.js';
+        var VENDOR_KEY = 'dummyVendor'; // you must use this value as is
+
+        var PARAMS = JSON.stringify({
+          'k': 'v'
+        });
+        resources.push(new VerificationScriptResource(VALIDATION_SCRIPT_URL, VENDOR_KEY, PARAMS));
+      } else {
+        resources = this.adVerifications.map(function (verification) {
+          return new VerificationScriptResource(verification.resource, verification.vendor, verification.parameters, ACCESS_MODE);
+        });
+      }
+
       var context = new Context(partner, resources, CONTENT_URL);
+      console.dir(resources);
 
       if (this.params.omidUnderEvaluation) {
         context.underEvaluation = true;
@@ -12730,6 +12771,7 @@ var OmSdkManager = /*#__PURE__*/function () {
 
       context.setServiceWindow(serviceWindow);
       context.setVideoElement(this.videoElement);
+      console.dir(context);
       this.adSession = new AdSession(context);
       this.adSession.setCreativeType('video');
       this.adSession.setImpressionType('beginToRender');
@@ -17472,7 +17514,7 @@ var RmpVast = /*#__PURE__*/function () {
             duration = duration * 1000;
           }
 
-          return duration;
+          return Math.round(duration);
         } else {
           return vast_player.getDuration.call(this);
         }
@@ -17496,7 +17538,7 @@ var RmpVast = /*#__PURE__*/function () {
             return -1;
           }
 
-          return (duration - remainingTime) * 1000;
+          return Math.round(duration - remainingTime) * 1000;
         } else {
           return vast_player.getCurrentTime.call(this);
         }
@@ -17513,7 +17555,13 @@ var RmpVast = /*#__PURE__*/function () {
     value: function getAdRemainingTime() {
       if (this.adOnStage && this.creative && this.creative.isLinear) {
         if (this.isVPAID) {
-          return vpaid.getAdRemainingTime.call(this) * 1000;
+          var adRemainingTime = vpaid.getAdRemainingTime.call(this);
+
+          if (adRemainingTime > 0) {
+            adRemainingTime = adRemainingTime * 1000;
+          }
+
+          return Math.round(adRemainingTime);
         } else {
           var currentTime = vast_player.getCurrentTime.call(this);
           var duration = vast_player.getDuration.call(this);

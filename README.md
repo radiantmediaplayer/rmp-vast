@@ -245,6 +245,7 @@ Once rmp-vast is loaded on your page you can create a new rmp-vast instance as f
   - `params.omidSupport: Boolean` Enables OMID (OM Web SDK) support in rmp-vast. Default: false. Refer to the [AdVerifications OM Web SDK](#adverifications-om-web-sdk) section for more information.
   - `params.omidAllowedVendors: Array` List of allowed vendors for ad verification. Vendors not listed will be rejected. Default: [].
   - `params.omidUnderEvaluation: Boolean` When debugging set this parameter to true. Default: false.
+  - `params.omidRunValidationScript: Boolean` Allows to run OM Web SDK inside rmp-vast to run against IAB [validation-verification-script](https://interactiveadvertisingbureau.github.io/Open-Measurement-SDKJS/validation.html). Default: false.
   - `params.omidPathTo: String` Path to OM Web SDK script. Default: '../externals/omweb-v1.js'.
   - `params.omidAutoplay: Boolean` The content player will autoplay or not. The possibility of autoplay is not determined by rmp-vast, this information needs to be passed to rmp-vast ([see this script for example](https://github.com/video-dev/can-autoplay)). Default: false (means a click to play is required).
   - `params.partnerName: String` partnerName for OMID. Default: 'rmp-vast'.

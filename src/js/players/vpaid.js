@@ -166,16 +166,22 @@ const _onAdSkippableStateChange = function () {
 };
 
 const _onAdDurationChange = function () {
-  if (!this.vpaidCreative) {
-    return;
-  }
-  if (typeof this.vpaidCreative.getAdRemainingTime === 'function') {
+  if (this.vpaidCreative && typeof this.vpaidCreative.getAdRemainingTime === 'function') {
     const remainingTime = this.vpaidCreative.getAdRemainingTime();
     if (remainingTime >= 0) {
       this.vpaidRemainingTime = remainingTime;
     }
+    // AdRemainingTimeChange is deprecated in VPAID 2
+    // instead we use setInterval
+    clearInterval(this.vpaidAdRemainingTimeInterval);
+    this.vpaidAdRemainingTimeInterval = setInterval(() => {
+      const remainingTime = this.vpaidCreative.getAdRemainingTime();
+      if (remainingTime >= 0) {
+        this.vpaidRemainingTime = remainingTime;
+      }
+    }, 200);
+    Utils.createApiEvent.call(this, 'addurationchange');
   }
-  Utils.createApiEvent.call(this, 'addurationchange');
 };
 
 const _onAdVolumeChange = function () {
@@ -307,13 +313,13 @@ const _onAdExpandedChange = function () {
 };
 
 const _onAdRemainingTimeChange = function () {
-  if (!this.vpaidCreative && typeof this.vpaidCreative.getAdRemainingTime === 'function') {
+  if (this.vpaidCreative && typeof this.vpaidCreative.getAdRemainingTime === 'function') {
     const remainingTime = this.vpaidCreative.getAdRemainingTime();
     if (remainingTime >= 0) {
       this.vpaidRemainingTime = remainingTime;
     }
+    Utils.createApiEvent.call(this, 'adremainingtimechange');
   }
-  Utils.createApiEvent.call(this, 'adremainingtimechange');
 };
 
 // vpaidCreative methods
@@ -624,7 +630,7 @@ VPAID.loadCreative = function (creativeUrl, vpaidSettings) {
     this.vpaidLoadTimeout = setTimeout(() => {
       console.log(
         `${FW.consolePrepend} could not load VPAID JS Creative or getVPAIDAd in iframeWindow - resume content`,
-        FW.consoleStyle, 
+        FW.consoleStyle,
         ''
       );
       this.vpaidScript.onload = null;
@@ -653,6 +659,9 @@ VPAID.destroy = function () {
   console.log(`${FW.consolePrepend} destroy VPAID dependencies`, FW.consoleStyle, '');
   if (this.vpaidAvailableInterval) {
     clearInterval(this.vpaidAvailableInterval);
+  }
+  if (this.vpaidAdRemainingTimeInterval) {
+    clearInterval(this.vpaidAdRemainingTimeInterval);
   }
   if (this.vpaidLoadTimeout) {
     clearTimeout(this.vpaidLoadTimeout);

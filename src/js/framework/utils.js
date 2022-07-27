@@ -102,6 +102,7 @@ export default class Utils {
       omidAllowedVendors: [],
       omidPathTo: '../externals/omweb-v1.js',
       omidUnderEvaluation: false,
+      omidRunValidationScript: false,
       omidAutoplay: false,
       partnerName: 'rmp-vast',
       partnerVersion: RMP_VAST_VERSION
@@ -353,6 +354,7 @@ export default class Utils {
     this.vpaidCurrentVolume = 1;
     this.vpaidPaused = true;
     this.vpaidCreativeUrl = '';
+    this.vpaidAdRemainingTimeInterval = null;
     this.vpaidRemainingTime = -1;
     this.vpaidVersion = -1;
     this.vpaid1AdDuration = -1;

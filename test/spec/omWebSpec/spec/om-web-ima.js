@@ -10,7 +10,7 @@ describe('om-web-ima', function () {
     omidSupport: true,
     omidAutoplay: true,
     omidUnderEvaluation: true,
-    omidPathTo: 'https://cdn.radiantmediatechs.com/rmp/omsdk/omweb-v1.js'
+    omidPathTo: 'https://cdn.radiantmediatechs.com/rmp/omsdk/1.3.36/omweb-v1.js'
   };
   const rmpVast = new RmpVast(id, params);
   const env = rmpVast.getEnvironment();

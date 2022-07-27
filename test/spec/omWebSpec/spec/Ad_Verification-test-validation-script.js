@@ -1,7 +1,7 @@
-const ADTAG = 'https://www.radiantmediaplayer.com/vast/tags/iab/vast4_2/Ad_Verification_OMID-valid-test.xml';
+const ADTAG = 'https://www.radiantmediaplayer.com/vast/tags/iab/vast4_2/Ad_Verification_OMID-valid-test-2.xml';
 
 
-describe('omwebsdk', function () {
+describe('AAd_Verification-test-validation-script', function () {
 
   const id = 'rmp';
   const container = document.getElementById(id);
@@ -9,8 +9,9 @@ describe('omwebsdk', function () {
   const params = {
     omidSupport: true,
     omidAutoplay: true,
+    omidRunValidationScript: true,
     omidUnderEvaluation: true,
-    omidPathTo: 'https://cdn.radiantmediatechs.com/rmp/omsdk/omweb-v1.js'
+    omidPathTo: 'https://cdn.radiantmediatechs.com/rmp/omsdk/1.3.36/omweb-v1.js'
   };
   const rmpVast = new RmpVast(id, params);
   const env = rmpVast.getEnvironment();
@@ -21,7 +22,7 @@ describe('omwebsdk', function () {
   }
   const title = document.getElementsByTagName('title')[0];
 
-  it('should load adTag and play it', function (done) {
+  it('should Ad_Verification-test-validation-script play it', function (done) {
     let validSteps = 0;
 
     const _incrementAndLog = function (event) {

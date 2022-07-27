@@ -245,18 +245,27 @@ class OmSdkManager {
     this.VastProperties = sessionClient.VastProperties;
     const partner = new Partner(this.params.partnerName, this.params.partnerVersion);
 
-    const resources = this.adVerifications.map((verification) => {
-      return new VerificationScriptResource(
-        verification.resource,
-        verification.vendor,
-        verification.verificationParameters,
-        ACCESS_MODE
-      );
-    });
+    let resources = [];
+    if (this.params.omidRunValidationScript) {
+      // https://interactiveadvertisingbureau.github.io/Open-Measurement-SDKJS/validation.html
+      const VALIDATION_SCRIPT_URL = 'https://cdn.radiantmediatechs.com/rmp/omsdk/1.3.36/omid-validation-verification-script-v1.js';
+      const VENDOR_KEY = 'dummyVendor'; // you must use this value as is
+      const PARAMS = JSON.stringify({ 'k': 'v' });
+      resources.push(new VerificationScriptResource(VALIDATION_SCRIPT_URL, VENDOR_KEY, PARAMS));
+    } else {
+      resources = this.adVerifications.map((verification) => {
+        return new VerificationScriptResource(
+          verification.resource,
+          verification.vendor,
+          verification.parameters,
+          ACCESS_MODE
+        );
+      });
+    }
+    const context = new Context(partner, resources, CONTENT_URL);
 
     console.dir(resources);
 
-    const context = new Context(partner, resources, CONTENT_URL);
     if (this.params.omidUnderEvaluation) {
       context.underEvaluation = true;
     }
@@ -272,6 +281,8 @@ class OmSdkManager {
     }
     context.setServiceWindow(serviceWindow);
     context.setVideoElement(this.videoElement);
+
+    console.dir(context);
 
     this.adSession = new AdSession(context);
     this.adSession.setCreativeType('video');

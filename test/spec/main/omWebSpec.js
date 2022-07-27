@@ -10,7 +10,7 @@ let testUrls = [
 
 const testUrlsChromeOnly = [
   TEST.pathToTest + 'omWebSpec/Ad_Verification-test.html',
-  TEST.pathToTest + 'omWebSpec/omwebsdk.html'
+  TEST.pathToTest + 'omWebSpec/Ad_Verification-test-validation-script.html'
 ];
 
 const args = process.argv;

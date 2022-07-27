@@ -4,7 +4,7 @@
       "@babel/preset-env",
       {
         "modules": "auto",
-        "debug": true,
+        "debug": false,
         "bugfixes": true,
         "useBuiltIns": "usage",
         "corejs": 3
