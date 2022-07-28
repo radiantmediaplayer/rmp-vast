@@ -17,6 +17,7 @@ const _onNonLinearLoadSuccess = function () {
     FW.consoleStyle,
     ''
   );
+
   this.adOnStage = true;
   Utils.createApiEvent.call(this, ['adloaded', 'adimpression', 'adstarted']);
   TRACKING_EVENTS.dispatch.call(this, ['impression', 'creativeView', 'start', 'loaded']);
@@ -128,7 +129,8 @@ NON_LINEAR.update = function () {
 
 NON_LINEAR.parse = function (variations) {
   console.log(`${FW.consolePrepend} non-linear creatives follow`, FW.consoleStyle, '');
-  console.dir(variations);
+  console.log(variations);
+
   let isDimensionError = false;
   let currentVariation;
   // The video player should poll each <NonLinear> element to determine 
@@ -171,8 +173,9 @@ NON_LINEAR.parse = function (variations) {
       this.creative.width = width;
       this.creative.height = height;
       this.creative.type = currentVariation.type;
+
       console.log(`${FW.consolePrepend} selected non-linear creative`, FW.consoleStyle, '');
-      console.dir(this.creative);
+      console.log(this.creative);
       break;
     }
   }

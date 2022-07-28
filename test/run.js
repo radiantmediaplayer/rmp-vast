@@ -1,9 +1,9 @@
 const child_process = require('child_process');
 
 const desktopTestList = [
-  'node test/spec/main/adPodSpec.js',
+  /*'node test/spec/main/adPodSpec.js',
   'node test/spec/main/adPodSpec.js chrome',
-  'node test/spec/main/apiSpec.js chrome',
+  'node test/spec/main/apiSpec.js chrome',*/
   'node test/spec/main/companionSpec.js',
   'node test/spec/main/companionSpec.js chrome',
   'node test/spec/main/errorSpec.js',

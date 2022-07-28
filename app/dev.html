@@ -8,7 +8,7 @@
   <title>RmpVast - Example</title>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
   <link rel="stylesheet" href="css/app.css">
-  <script src="../dist/rmp-vast.min.js"></script>
+  <script src="../dist/rmp-vast.js"></script>
 </head>
 
 <body>
@@ -25,16 +25,17 @@
     var ADTAG;
     //var ADTAG = 'https://www.radiantmediaplayer.com/vast/tags/iab/vast4_2/Ad_Verification-test.xml';
     //var ADTAG = 'https://raw.githubusercontent.com/InteractiveAdvertisingBureau/VAST_Samples/master/VAST%204.2%20Samples/Inline_Linear_Tag-test.xml';
-    ADTAG = 'https://www.radiantmediaplayer.com/vast/tags/vpaid-3-js-linear.xml';
+    //ADTAG = 'https://www.radiantmediaplayer.com/vast/tags/vpaid-3-js-linear.xml';
     //ADTAG = 'https://pubads.g.doubleclick.net/gampad/ads?iu=/21775744923/external/single_ad_samples&sz=640x480&cust_params=sample_ct%3Dlinearvpaid2js&ciu_szs=300x250%2C728x90&gdfp_req=1&output=vast&unviewed_position_start=1&env=vp&impl=s&correlator=' + Date.now();
+    ADTAG = 'https://pubads.g.doubleclick.net/gampad/ads?iu=/21775744923/external/single_ad_samples&sz=640x480&cust_params=sample_ct%3Dlinear&ciu_szs=300x250%2C728x90&gdfp_req=1&output=vast&unviewed_position_start=1&env=vp&impl=s&correlator=' + Date.now();
     var rmpVast = new RmpVast(id);
     rmpVast.loadAds(ADTAG);
-    container.addEventListener('adstarted', function () {
+    /*container.addEventListener('adstarted', function () {
       setInterval(() => {
         console.log(rmpVast.getAdDuration());
         console.log(rmpVast.getAdCurrentTime());
         console.log(rmpVast.getAdRemainingTime());
       }, 1000);
-    });
+    });*/
   </script>
 </body>

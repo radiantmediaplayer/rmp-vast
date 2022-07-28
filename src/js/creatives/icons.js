@@ -5,6 +5,7 @@ const ICONS = {};
 
 ICONS.destroy = function () {
   console.log(`${FW.consolePrepend} Start destroying icons`, FW.consoleStyle, '');
+
   const icons = this.adContainer.querySelectorAll('.rmp-ad-container-icons');
   if (icons.length > 0) {
     icons.forEach(icon => {
@@ -15,6 +16,7 @@ ICONS.destroy = function () {
 
 ICONS.parse = function (icons) {
   console.log(`${FW.consolePrepend} Start parsing for icons`, FW.consoleStyle, '');
+
   for (let i = 0; i < icons.length; i++) {
     const currentIcon = icons[i];
     const program = currentIcon.program;
@@ -50,8 +52,9 @@ ICONS.parse = function (icons) {
     iconData.iconClickTrackingUrls = currentIcon.iconClickTrackingURLTemplates;
     this.iconsData.push(iconData);
   }
+
   console.log(`${FW.consolePrepend} Validated parsed icons follows`, FW.consoleStyle, '');
-  console.dir(this.iconsData);
+  console.log(this.iconsData);
 };
 
 const _onIconClickThrough = function (index, event) {
@@ -80,6 +83,7 @@ const _onIconLoadPingTracking = function (index) {
 
 const _onPlayingAppendIcons = function () {
   console.log(`${FW.consolePrepend} playing states has been reached - append icons`, FW.consoleStyle, '');
+
   this.vastPlayer.removeEventListener('playing', this.onPlayingAppendIcons);
   this.iconsData.forEach((iconData, index) => {
     let icon;
@@ -146,8 +150,10 @@ const _onPlayingAppendIcons = function () {
     } else {
       icon.src = src;
     }
+
     console.log(`${FW.consolePrepend} Selected icon details follow`, FW.consoleStyle, '');
-    console.dir(icon);
+    console.log(icon);
+
     this.adContainer.appendChild(icon);
   });
 };

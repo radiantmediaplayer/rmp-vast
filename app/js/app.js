@@ -130,7 +130,6 @@ container.style.height = playerHeight + 'px';
 /*** END of resizing logic ***/
 
 /*** START RmpVast instantiation  ***/
-// the following params are the default
 const params = {
   ajaxTimeout: 5000,
   creativeLoadTimeout: 8000,
@@ -155,9 +154,10 @@ const params = {
   // OM SDK params
   omidSupport: true,
   omidAllowedVendors: [],
+  omidRunValidationScript: false,
   omidPathTo: '../externals/omweb-v1.js',
   omidUnderEvaluation: true,
-  omidAutoplay: true
+  omidAutoplay: false
 };
 // new RmpVast instance - we pass id (required) and params (optional) 
 rmpVast = new RmpVast(id, params);
@@ -339,13 +339,14 @@ const _wireUI = function () {
 
   // companion ad
   container.addEventListener('adstarted', function () {
+    const companionId = document.getElementById('companion-ad');
+    companionId.innerHTML = '';
     const list = rmpVast.getCompanionAdsList();
     if (list) {
       const html = rmpVast.getCompanionAd(0);
       if (html) {
         // we get our companion ad image and we can append it to DOM now
         // VAST trackers will be called automatically when needed
-        const companionId = document.getElementById('companion-ad');
         companionId.appendChild(html);
       }
     }

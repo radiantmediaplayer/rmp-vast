@@ -147,6 +147,7 @@ const _onAdStarted = function () {
 
 const _onAdStopped = function () {
   console.log(`${FW.consolePrepend} VPAID AdStopped event`, FW.consoleStyle, '');
+
   if (this.adStoppedTimeout) {
     clearTimeout(this.adStoppedTimeout);
   }
@@ -275,6 +276,7 @@ const _onAdLog = function (message) {
 
 const _onAdError = function (message) {
   console.log(`${FW.consolePrepend} VPAID AdError event ${message}`, FW.consoleStyle, '');
+
   Utils.processVastErrors.call(this, 901, true);
 };
 
@@ -337,11 +339,13 @@ VPAID.resizeAd = function (width, height, viewMode) {
   if (viewMode === 'fullscreen') {
     validViewMode = viewMode;
   }
+
   console.log(
     `${FW.consolePrepend} VPAID resizeAd with width ${width}, height ${height}, viewMode ${viewMode}`,
     FW.consoleStyle,
     ''
   );
+
   this.vpaidCreative.resizeAd(width, height, validViewMode);
 };
 
@@ -349,7 +353,9 @@ VPAID.stopAd = function () {
   if (!this.vpaidCreative) {
     return;
   }
+
   console.log(`${FW.consolePrepend} stopAd`, FW.consoleStyle, '');
+
   // when stopAd is called we need to check a 
   // AdStopped event follows
   this.adStoppedTimeout = setTimeout(() => {
@@ -360,6 +366,7 @@ VPAID.stopAd = function () {
 
 VPAID.pauseAd = function () {
   console.log(`${FW.consolePrepend} pauseAd`, FW.consoleStyle, '');
+
   if (this.vpaidCreative && !this.vpaidPaused) {
     this.vpaidCreative.pauseAd();
   }
@@ -367,6 +374,7 @@ VPAID.pauseAd = function () {
 
 VPAID.resumeAd = function () {
   console.log(`${FW.consolePrepend} resumeAd`, FW.consoleStyle, '');
+
   if (this.vpaidCreative && this.vpaidPaused) {
     this.vpaidCreative.resumeAd();
   }
@@ -486,18 +494,21 @@ const _onVPAIDAvailable = function () {
     } catch (error) {
       console.warn(error);
       console.log(`${FW.consolePrepend} could not validate VPAID ad unit handshakeVersion`, FW.consoleStyle, '');
+
       Utils.processVastErrors.call(this, 901, true);
       return;
     }
     this.vpaidVersion = parseInt(vpaidVersion);
     if (this.vpaidVersion < 1) {
       console.log(`${FW.consolePrepend} unsupported VPAID version - exit`, FW.consoleStyle, '');
+
       Utils.processVastErrors.call(this, 901, true);
       return;
     }
     if (!_isValidVPAID(this.vpaidCreative)) {
       //The VPAID creative doesn't conform to the VPAID spec
       console.log(`${FW.consolePrepend} VPAID creative does not conform to VPAID spec - exit`, FW.consoleStyle, '');
+
       Utils.processVastErrors.call(this, 901, true);
       return;
     }
@@ -507,8 +518,10 @@ const _onVPAIDAvailable = function () {
     TRACKING_EVENTS.wire.call(this);
     const creativeData = {};
     creativeData.AdParameters = this.adParametersData;
+
     console.log(`${FW.consolePrepend} VPAID AdParameters follow`, FW.consoleStyle, '');
-    console.dir(this.adParametersData);
+    console.log(this.adParametersData);
+
     FW.show(this.adContainer);
     FW.show(this.vastPlayer);
     const environmentVars = {};
@@ -530,11 +543,14 @@ const _onVPAIDAvailable = function () {
     this.initAdTimeout = setTimeout(() => {
       if (!this.vpaidAdLoaded) {
         console.log(`${FW.consolePrepend} initAdTimeout`, FW.consoleStyle, '');
+
         VAST_PLAYER.resumeContent.call(this);
       }
       this.vpaidAdLoaded = false;
     }, this.params.creativeLoadTimeout * 10);
+
     console.log(`${FW.consolePrepend} calling initAd on VPAID creative now`, FW.consoleStyle, '');
+
     this.vpaidCreative.initAd(
       this.initialWidth,
       this.initialHeight,
@@ -548,6 +564,7 @@ const _onVPAIDAvailable = function () {
 
 const _onJSVPAIDLoaded = function () {
   console.log(`${FW.consolePrepend} VPAID JS loaded`, FW.consoleStyle, '');
+
   const iframeWindow = this.vpaidIframe.contentWindow;
   if (typeof iframeWindow.getVPAIDAd === 'function') {
     _onVPAIDAvailable.call(this);
@@ -564,6 +581,7 @@ const _onJSVPAIDLoaded = function () {
 
 const _onJSVPAIDError = function () {
   console.log(`${FW.consolePrepend} VPAID JS error loading`, FW.consoleStyle, '');
+
   Utils.processVastErrors.call(this, 901, true);
   this.vpaidScript.onload = null;
   this.vpaidScript.onerror = null;
@@ -614,6 +632,7 @@ VPAID.loadCreative = function (creativeUrl, vpaidSettings) {
   // (see https://stackoverflow.com/questions/5946607/is-an-empty-iframe-src-valid/5946631) we now use about:blank
   this.vpaidIframe.onload = function () {
     console.log(`${FW.consolePrepend} vpaidIframe.onload`, FW.consoleStyle, '');
+
     // we unwire listeners
     this.vpaidIframe.onload = this.vpaidIframe.onerror = FW.nullFn;
     if (!this.vpaidIframe.contentWindow || !this.vpaidIframe.contentWindow.document ||
@@ -633,6 +652,7 @@ VPAID.loadCreative = function (creativeUrl, vpaidSettings) {
         FW.consoleStyle,
         ''
       );
+
       this.vpaidScript.onload = null;
       this.vpaidScript.onerror = null;
       VAST_PLAYER.resumeContent.call(this);
@@ -645,6 +665,7 @@ VPAID.loadCreative = function (creativeUrl, vpaidSettings) {
 
   this.vpaidIframe.onerror = function () {
     console.log(`${FW.consolePrepend} vpaidIframe.onerror`, FW.consoleStyle, '');
+
     // we unwire listeners
     this.vpaidIframe.onload = this.vpaidIframe.onerror = FW.nullFn;
     // PING error and resume content
@@ -657,6 +678,7 @@ VPAID.loadCreative = function (creativeUrl, vpaidSettings) {
 
 VPAID.destroy = function () {
   console.log(`${FW.consolePrepend} destroy VPAID dependencies`, FW.consoleStyle, '');
+  
   if (this.vpaidAvailableInterval) {
     clearInterval(this.vpaidAvailableInterval);
   }

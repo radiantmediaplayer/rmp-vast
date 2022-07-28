@@ -1,11 +1,9 @@
 @charset 'utf-8';
 
-.margin-top-10 {
-  margin-top: 10px;
-}
-
-.margin-bottom-5 {
-  margin-top: 5px;
+@import url('https://rsms.me/inter/inter.css');
+html, body { font-family: 'Inter', sans-serif; }
+@supports (font-variation-settings: normal) {
+  html, body { font-family: 'Inter var', sans-serif; }
 }
 
 .rmp-container {

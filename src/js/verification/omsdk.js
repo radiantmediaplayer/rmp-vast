@@ -28,6 +28,7 @@ class OmSdkManager {
     this.isSkippableAd = isSkippableAd;
     this.skipTimeOffset = skipTimeOffset;
     this.videoPosition = 'preroll';
+    
     console.log(
       `${FW.consolePrepend}${FW.consolePrepend2} create new class Instance`,
       FW.consoleStyle,
@@ -69,12 +70,14 @@ class OmSdkManager {
         if (reasonPattern.test(validatedURI)) {
           validatedURI = validatedURI.replace(reasonPattern, reasonCode);
         }
+
         console.log(
           `${FW.consolePrepend}${FW.consolePrepend2} ping VerificationNotExecuted at URI ${validatedURI}`,
           FW.consoleStyle,
           FW.consoleStyle2,
           ''
         );
+
         TRACKING_EVENTS.pingURI(validatedURI);
       });
     }
@@ -85,12 +88,14 @@ class OmSdkManager {
     iframe.sandbox = 'allow-scripts allow-same-origin';
     iframe.style.display = 'none';
     iframe.srcdoc = `<script src=${this.params.omidPathTo}></script>`;
+
     console.log(
       `${FW.consolePrepend}${FW.consolePrepend2} load omweb-v1.js at URI ${this.params.omidPathTo}`,
       FW.consoleStyle,
       FW.consoleStyle2,
       ''
     );
+
     return iframe;
   }
 
@@ -188,6 +193,7 @@ class OmSdkManager {
       FW.consoleStyle2,
       ''
     );
+
     // remove executable to only have JavaScriptResource
     const validatedVerificationArray = [];
     // we only execute browserOptional="false" unless there are none 
@@ -264,7 +270,7 @@ class OmSdkManager {
     }
     const context = new Context(partner, resources, CONTENT_URL);
 
-    console.dir(resources);
+    console.log(resources);
 
     if (this.params.omidUnderEvaluation) {
       context.underEvaluation = true;
@@ -282,7 +288,7 @@ class OmSdkManager {
     context.setServiceWindow(serviceWindow);
     context.setVideoElement(this.videoElement);
 
-    console.dir(context);
+    console.log(context);
 
     this.adSession = new AdSession(context);
     this.adSession.setCreativeType('video');

@@ -100,11 +100,13 @@ const _onClickThrough = function (event) {
     event.stopPropagation();
   }
   if (!ENV.isMobile) {
+
     console.log(
       `${FW.consolePrepend} Opening clickthrough URL at ${this.creative.clickThroughUrl}`,
       FW.consoleStyle,
       ''
     );
+    
     FW.openWindow(this.creative.clickThroughUrl);
   }
   this.pause();
@@ -125,6 +127,7 @@ const _onPlaybackError = function (event) {
       if (typeof videoElement.error.message === 'string') {
         errorMessage = videoElement.error.message;
       }
+
       console.log(
         `${FW.consolePrepend} Error on video element with code ${errorCode.toString()} and message ${errorMessage}`,
         FW.consoleStyle,
@@ -135,6 +138,7 @@ const _onPlaybackError = function (event) {
         FW.consoleStyle,
         ''
       );
+
       // EDIA_ERR_SRC_NOT_SUPPORTED (numeric value 4)
       if (errorCode === 4) {
         Utils.processVastErrors.call(this, 401, true);
@@ -262,6 +266,7 @@ LINEAR.update = function (url, type) {
     FW.consoleStyle,
     ''
   );
+
   this.onDurationChange = _onDurationChange.bind(this);
   this.vastPlayer.addEventListener('durationchange', this.onDurationChange);
 
@@ -354,7 +359,9 @@ LINEAR.parse = function (icons, adParameters, mediaFiles) {
     // for VPAID we may not have a width, height or delivery
     if (this.params.enableVpaid && currentMediaFile.apiFramework &&
       VPAID_PATTERN.test(currentMediaFile.apiFramework) && JS_PATTERN.test(type)) {
+
       console.log(`${FW.consolePrepend} VPAID creative detected`, FW.consoleStyle, '');
+
       mediaFileItems = [newMediaFileItem];
       this.isVPAID = true;
       break;
@@ -445,7 +452,7 @@ LINEAR.parse = function (icons, adParameters, mediaFiles) {
   });
 
   console.log(`${FW.consolePrepend} available linear creative follows`, FW.consoleStyle, '');
-  console.dir(retainedCreatives);
+  console.log(retainedCreatives);
 
   // we have files matching device capabilities
   // select the best one based on player current width
@@ -462,7 +469,7 @@ LINEAR.parse = function (icons, adParameters, mediaFiles) {
     }
 
     console.log(`${FW.consolePrepend} validCreativesByWidth follow`, FW.consoleStyle, '');
-    console.dir(validCreativesByWidth);
+    console.log(validCreativesByWidth);
 
     // if no match by size 
     if (validCreativesByWidth.length === 0) {
@@ -471,8 +478,10 @@ LINEAR.parse = function (icons, adParameters, mediaFiles) {
 
     // filter by bitrate to provide best quality
     const rmpConnection = new RmpConnection();
-    let availableBandwidth = rmpConnection.getBandwidthEstimate();
+    let availableBandwidth = rmpConnection.bandwidthData.estimate;
+
     console.log(`${FW.consolePrepend} availableBandwidth is ${availableBandwidth} Mbps`, FW.consoleStyle, '');
+
     if (availableBandwidth > -1 && validCreativesByWidth.length > 1) {
       // sort supported creatives by bitrates
       validCreativesByWidth.sort((a, b) => {
@@ -485,7 +494,7 @@ LINEAR.parse = function (icons, adParameters, mediaFiles) {
       });
 
       console.log(`${FW.consolePrepend} validCreativesByBitrate follow`, FW.consoleStyle, '');
-      console.dir(validCreativesByBitrate);
+      console.log(validCreativesByBitrate);
 
       // pick max available bitrate
       finalCreative = validCreativesByBitrate[validCreativesByBitrate.length - 1];
@@ -505,7 +514,7 @@ LINEAR.parse = function (icons, adParameters, mediaFiles) {
   }
 
   console.log(`${FW.consolePrepend} selected linear creative follows`, FW.consoleStyle, '');
-  console.dir(finalCreative);
+  console.log(finalCreative);
 
   this.creative.mediaUrl = finalCreative.url;
   this.creative.height = finalCreative.height;

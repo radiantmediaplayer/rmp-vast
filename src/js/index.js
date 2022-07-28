@@ -87,7 +87,9 @@ export default class RmpVast {
       console.error(`Invalid DOM layout - exit`);
       return;
     }
+
     console.log(`${FW.consolePrepend} Creating new RmpVast instance`, FW.consoleStyle, '');
+
     FW.logVideoEvents(this.contentPlayer, 'content');
     // reset loadAds variables - this is reset at addestroyed 
     // so that next loadAds is cleared
@@ -96,8 +98,9 @@ export default class RmpVast {
     Utils.handleFullscreen.call(this);
     // filter input params
     Utils.filterParams.call(this, params);
+
     console.log(`${FW.consolePrepend} Filtered params follow`, FW.consoleStyle, '');
-    console.dir(this.params);
+    console.log(this.params);
   }
 
 
@@ -203,8 +206,9 @@ export default class RmpVast {
         this.validCompanionAds.push(newCompanionAds);
       }
     }
+
     console.log(`${FW.consolePrepend} Parse companion ads follow`, FW.consoleStyle, '');
-    console.dir(this.validCompanionAds);
+    console.log(this.validCompanionAds);
   }
 
   /** 
@@ -284,8 +288,10 @@ export default class RmpVast {
     for (let i = 0; i < ads.length; i++) {
       await new Promise(resolve => {
         const currentAd = ads[i];
+
         console.log(`${FW.consolePrepend} currentAd follows`, FW.consoleStyle, '');
-        console.dir(currentAd);
+        console.log(currentAd);
+
         this.ad.id = currentAd.id;
         this.ad.adServingId = currentAd.adServingId;
         this.ad.categories = currentAd.categories;
@@ -339,6 +345,7 @@ export default class RmpVast {
               }
             });
             this.adPodLength = adPodLength;
+
             console.log(`${FW.consolePrepend} AdPod detected with length ${this.adPodLength}`, FW.consoleStyle, '');
           }
         }
@@ -371,11 +378,14 @@ export default class RmpVast {
         }, { once: true });
         // parse companion
         const creatives = currentAd.creatives;
+
         console.log(`${FW.consolePrepend} Parsed creatives follow`, FW.consoleStyle, '');
-        console.dir(creatives);
+        console.log(creatives);
+
         creatives.find(creative => {
           if (creative.type === 'companion') {
             console.log(`${FW.consolePrepend} Creative type companion detected`, FW.consoleStyle, '');
+
             this._parseCompanion(creative);
             return true;
           }
@@ -461,10 +471,13 @@ export default class RmpVast {
       resolveAll: false
     };
     this.adTagUrl = vastUrl;
+
     console.log(`${FW.consolePrepend} Try to load VAST tag at: ${this.adTagUrl}`, FW.consoleStyle, '');
+
     vastClient.get(this.adTagUrl, options).then(response => {
       console.log(`${FW.consolePrepend} VAST response follows`, FW.consoleStyle, '');
-      console.dir(response);
+      console.log(response);
+
       Utils.createApiEvent.call(this, 'adtagloaded');
       // error at VAST/Error level
       if (response.errorURLTemplates.length > 0) {
@@ -501,6 +514,7 @@ export default class RmpVast {
    */
   loadAds(vastUrl, regulationsInfo, requireCategory) {
     console.log(`${FW.consolePrepend} loadAds method starts`, FW.consoleStyle, '');
+
     // if player is not initialized - this must be done now
     if (!this.rmpVastInitialized) {
       this.initialize();
@@ -530,6 +544,7 @@ export default class RmpVast {
         FW.consoleStyle,
         ''
       );
+
       const _onDestroyLoadAds = function (url) {
         this.loadAds(url);
       };
@@ -542,13 +557,17 @@ export default class RmpVast {
     const contentCurrentTime = CONTENT_PLAYER.getCurrentTime.call(this);
     if (this.useContentPlayerForAds) {
       this.currentContentSrc = this.contentPlayer.src;
+
       console.log(`${FW.consolePrepend} currentContentSrc is ${this.currentContentSrc}`, FW.consoleStyle, '');
+
       this.currentContentCurrentTime = contentCurrentTime;
+
       console.log(
         `${FW.consolePrepend} currentContentCurrentTime is ${this.currentContentCurrentTime}`,
         FW.consoleStyle,
         ''
       );
+
       // on iOS we need to prevent seeking when linear ad is on stage
       CONTENT_PLAYER.preventSeekingForCustomPlayback.call(this);
     }
@@ -753,7 +772,11 @@ export default class RmpVast {
     // <AdSystem version="2.0" ><![CDATA[AdServer]]></AdSystem>
     // {value: String, version: String}
     if (this.ad && this.ad.system) {
-      return this.ad.system;
+      return {
+        value: this.ad.system.value || '',
+        version: this.ad.system.version || ''
+
+      };
     }
     return {
       value: '',
@@ -1164,8 +1187,10 @@ export default class RmpVast {
       }
       let companionClickTrackingUrls = null;
       if (companionAd.companionClickTrackingUrls) {
+
         console.log(`${FW.consolePrepend} Companion click tracking URIs`, FW.consoleStyle, '');
-        console.dir(companionClickTrackingUrls);
+        console.log(companionClickTrackingUrls);
+
         companionClickTrackingUrls = companionAd.companionClickTrackingUrls;
       }
       const _onImgClickThrough = function (companionClickThroughUrl, companionClickTrackingUrls, event) {

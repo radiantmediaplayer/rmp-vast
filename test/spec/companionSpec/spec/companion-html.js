@@ -41,7 +41,7 @@ describe('companion-html', function () {
     container.addEventListener('adstarted', function (e) {
       const adSystem = rmpVast.getAdSystem();
       window.console.log(adSystem);
-      if (adSystem.value === 'RMP' && adSystem.version === null) {
+      if (adSystem.value === 'RMP' && adSystem.version === '') {
         const adDescription = rmpVast.getAdDescription();
         window.console.log(adDescription);
         if (adDescription === 'Test adTag for Radiant Media Player - inline linear with companion ad (HTML)') {

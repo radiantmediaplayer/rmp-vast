@@ -6,12 +6,13 @@ const webpack = require('webpack');
 const PACKAGE = require('./package.json');
 const fs = require('fs');
 const { minify } = require('terser');
+const { EOL } = require('os');
 
 const terserOptions = {
   ecma: 5,
   compress: {
     defaults: true,
-    pure_funcs: ['console.log', 'console.dir', 'console.warn']
+    pure_funcs: ['console.log', 'console.warn']
   },
   module: false,
   mangle: true,
@@ -20,8 +21,16 @@ const terserOptions = {
 
 module.exports = {
   entry: {
-    'rmp-vast': ['whatwg-fetch', 'promise-polyfill/src/polyfill', './src/js/index.js'],
-    'rmp-vast.min': ['whatwg-fetch', 'promise-polyfill/src/polyfill', './src/js/index.js']
+    'rmp-vast': [
+      'whatwg-fetch',
+      'promise-polyfill/src/polyfill',
+      './src/js/index.js'
+    ],
+    'rmp-vast.min': [
+      'whatwg-fetch',
+      'promise-polyfill/src/polyfill',
+      './src/js/index.js'
+    ]
   },
   output: {
     library: {
@@ -46,10 +55,6 @@ module.exports = {
           { loader: 'css-loader', options: { url: false } },
           'less-loader'
         ],
-      },
-      {
-        test: /omid-session-client-v1\.js/,
-        type: 'asset/source',
       },
       {
         test: /\.js$/,
@@ -82,12 +87,34 @@ module.exports = {
     }),
     {
       apply: (compiler) => {
-        compiler.hooks.afterEmit.tap('AfterEmitPlugin', async () => {
+        compiler.hooks.done.tap('AfterDonePlugin', async () => {
+          // minify omid-session-client-v1
           const result = await minify(
             fs.readFileSync('./externals/omid/omid-session-client-v1.js', 'utf8'),
             terserOptions
           );
           fs.writeFileSync('./externals/omid/omid-session-client-v1.min.js', result.code, 'utf8');
+
+          // merge omid-session-client-v1 in rmp-vast
+          const files = [
+            './dist/rmp-vast.js',
+            './externals/omid/omid-session-client-v1.js'
+          ];
+          const output = files.map((f) => {
+            return fs.readFileSync(f).toString();
+          }).join(EOL);
+          fs.writeFileSync('./dist/rmp-vast.js', output);
+
+          // merge omid-session-client-v1.min in rmp-vast.min
+          const minFiles = [
+            './dist/rmp-vast.min.js',
+            './externals/omid/omid-session-client-v1.min.js'
+          ];
+          const minOutput = minFiles.map((f) => {
+            return fs.readFileSync(f).toString();
+          }).join(EOL);
+          fs.writeFileSync('./dist/rmp-vast.min.js', minOutput);
+
         });
       }
     }

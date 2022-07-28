@@ -75,7 +75,7 @@ describe('Category-test', function () {
             }
             if (valid === 3) {
               const advertiser = rmpVast.getAdAdvertiser();
-              if (advertiser === null) {
+              if (advertiser.value === '') {
                 const universalAdIds = rmpVast.getAdUniversalAdIds();
                 window.console.log(universalAdIds);
                 if (universalAdIds[0].idRegistry === 'Ad-ID' && universalAdIds[0].value === '8465') {

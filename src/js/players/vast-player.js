@@ -12,6 +12,7 @@ const VAST_PLAYER = {};
 
 const _unwireVastPlayerEvents = function () {
   console.log(`${FW.consolePrepend} reset - unwireVastPlayerEvents`, FW.consoleStyle, '');
+
   if (this.nonLinearContainer) {
     this.nonLinearInnerElement.removeEventListener('load', this.onNonLinearLoadSuccess);
     this.nonLinearInnerElement.removeEventListener('error', this.onNonLinearLoadError);
@@ -62,6 +63,7 @@ const _unwireVastPlayerEvents = function () {
 
 VAST_PLAYER.destroy = function () {
   console.log(`${FW.consolePrepend} start destroying vast player`, FW.consoleStyle, '');
+
   // destroy icons if any 
   if (this.iconsData.length > 0) {
     ICONS.destroy.call(this);
@@ -108,11 +110,13 @@ VAST_PLAYER.destroy = function () {
             });
           }
         }
+
         console.log(
           `${FW.consolePrepend} recovering content ${this.currentContentSrc} at time ${this.currentContentCurrentTime}`,
           FW.consoleStyle,
           ''
         );
+
         this.contentPlayer.src = this.currentContentSrc;
       }
     } else {
@@ -123,6 +127,7 @@ VAST_PLAYER.destroy = function () {
           // empty buffer
           this.contentPlayer.removeAttribute('src');
           this.contentPlayer.load();
+
           console.log(`${FW.consolePrepend} flushing contentPlayer buffer after outstream ad`, FW.consoleStyle, '');
         }
       } catch (error) {
@@ -144,6 +149,7 @@ VAST_PLAYER.destroy = function () {
           this.vastPlayer.load();
         }
         FW.hide(this.vastPlayer);
+
         console.log(`${FW.consolePrepend} flushing vastPlayer buffer after ad`, FW.consoleStyle, '');
       }
       if (this.nonLinearContainer) {
@@ -251,11 +257,13 @@ VAST_PLAYER.append = function (url, type) {
     // we do not display non-linear ads with outstream ad 
     // they won't fit the format
     if (this.params.outstream) {
+
       console.log(
         `${FW.consolePrepend} non-linear creative detected for outstream ad mode - discarding creative`,
         FW.consoleStyle,
         ''
       );
+      
       Utils.processVastErrors.call(this, 201, true);
       return;
     } else {

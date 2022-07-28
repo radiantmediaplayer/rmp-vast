@@ -17,6 +17,7 @@ const MEDIA_MIME = [
 
 const _dispatch = function (event) {
   console.log(`${FW.consolePrepend} ping tracking for ${event} VAST event`, FW.consoleStyle, '');
+
   // filter trackers - may return multiple urls for same event as allowed by VAST spec
   const trackers = this.trackingTags.filter((value) => {
     return event === value.event;

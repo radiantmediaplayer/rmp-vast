@@ -1,6 +1,6 @@
 /**
- * @license Copyright (c) 2015-2021 Radiant Media Player | https://www.radiantmediaplayer.com
- * rmp-connection 1.0.0 | https://github.com/radiantmediaplayer/rmp-connection
+ * @license Copyright (c) 2015-2022 Radiant Media Player | https://www.radiantmediaplayer.com
+ * rmp-connection 2.0.0 | https://github.com/radiantmediaplayer/rmp-connection
  * rmp-connection is released under MIT | https://github.com/radiantmediaplayer/rmp-connection/blob/master/LICENSE
  */
 
@@ -14,50 +14,38 @@ export default class RmpConnection {
   /**
     * @constructor
     */
-  constructor() {
-    this.connectionType = '';
-  }
+  constructor() { }
 
-  /** 
+  /**
     * @private
     */
   _getConnectionType() {
     if (typeof navigator.connection.type === 'string' && navigator.connection.type !== '') {
-      return navigator.connection.type;
+      switch (navigator.connection.type) {
+        case 'ethernet':
+          return 'ethernet';
+        case 'wifi':
+        case 'wimax':
+          return 'wifi';
+        case 'bluetooth':
+        case 'cellular':
+          return 'cellular';
+        case 'none':
+          return 'none';
+        default:
+          break;
+      }
     }
-    return '';
+    return 'unknown';
   }
 
-  /** 
-   * @return {number}
-   */
-  getBandwidthEstimate() {
-    // we are not in a supported environment - exit
-    if (typeof window === 'undefined') {
-      return -1;
-    }
-    // we are offline - exit
-    if (typeof navigator.onLine !== 'undefined' && !navigator.onLine) {
-      return -1;
-    }
-    // we do not have navigator.connection - exit
-    // for support see https://caniuse.com/#feat=netinfo
-    if (typeof navigator.connection === 'undefined') {
-      return -1;
-    }
-    this.connectionType = this._getConnectionType();
-    // we do have navigator.connection.type but it reports no connection - exit
-    if (this.connectionType && this.connectionType === 'none') {
-      return -1;
-    }
-    // we have navigator.connection.downlink - this is our best estimate
-    // Returns the effective bandwidth estimate in megabits per second, rounded to the nearest multiple of 25 kilobits per seconds.
+  /**
+    * @private
+    */
+  _getBandwidthEstimate() {
     if (typeof navigator.connection.downlink === 'number' && navigator.connection.downlink > 0) {
       return navigator.connection.downlink;
-    }
-    // we have navigator.connection.effectiveType - this is our second best estimate
-    // we actually have indication here: http://wicg.github.io/netinfo/#effective-connection-types
-    if (typeof navigator.connection.effectiveType === 'string' && navigator.connection.effectiveType !== '') {
+    } else if (typeof navigator.connection.effectiveType === 'string' && navigator.connection.effectiveType !== '') {
       switch (navigator.connection.effectiveType) {
         case 'slow-2g':
           return 0.025;
@@ -66,32 +54,60 @@ export default class RmpConnection {
         case '3g':
           return 0.35;
         case '4g':
-          return 0.7;
-        case '5g':
-          return 1.05;
+          return 1.4;
         default:
           break;
       }
-    }
-    // finally we have navigator.connection.type - this won't help much 
-    if (this.connectionType) {
-      switch (this.connectionType) {
+    } else if (typeof navigator.connection.type === 'string' && navigator.connection.type !== '') {
+      switch (navigator.connection.type) {
         case 'ethernet':
-          return 1.05;
         case 'wifi':
         case 'wimax':
-          return 0.7;
+          return 1.4;
         case 'bluetooth':
+        case 'cellular':
           return 0.35;
+        case 'none':
+          return -1;
         default:
           break;
       }
-      // there is no point in guessing bandwidth when navigator.connection.type is cellular this can vary from 0 to 100 Mbps 
-      // better to admit we do not know and find another way to detect bandwidth, this could include:
-      // - context guess: user-agent detection (mobile vs desktop), device width or pixel ratio 
-      // - AJAX/Fetch timing: this is outside rmp-connection scope
     }
-    // nothing worked - exit
-    return -1;
+    return 0.025;
+  }
+
+  /** 
+   * @typedef {object} BandwidthData
+   * @property {number} estimate
+   * @property {string} connectionType
+   * @return {BandwidthData}
+   */
+  get bandwidthData() {
+
+    // default return values
+    const result = {
+      estimate: -1,
+      connectionType: 'none'
+    };
+
+    // we are offline - exit
+    if (typeof navigator.onLine !== 'undefined' && !navigator.onLine) {
+      return result;
+    }
+
+    // we do not have navigator.connection - exit
+    // for support see https://caniuse.com/#feat=netinfo - works everywhere but in Safari && Firefox 
+    if (typeof navigator.connection === 'undefined') {
+      return {
+        estimate: -1,
+        connectionType: 'unknown'
+      };
+    }
+
+    // we return our internal values
+    return {
+      estimate: this._getBandwidthEstimate(),
+      connectionType: this._getConnectionType()
+    };
   }
 }

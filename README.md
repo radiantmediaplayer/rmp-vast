@@ -468,7 +468,7 @@ container.addEventListener("adstarted", function () {
 
 ## AdVerifications OM Web SDK
 
-rmp-vast supports AdVerifications through the [IAB OM Web SDK](https://iabtechlab.com/standards/open-measurement-sdk/). Our implementation is based on IAB GitHub [Open-Measurement-JSClients](https://github.com/InteractiveAdvertisingBureau/Open-Measurement-JSClients) and sports OM Web SDK version 1.3.35. This feature needs to be activated through `omidSupport: true` setting. Feedback is welcome. Please see ./test/spec/vast4Spec/omwebsdk.html for an implementation example. Make sure to add ./externals/omid/omid-session-client-v1.js in your page for it work as expected as this is not bundled in rmp-vast.
+rmp-vast supports AdVerifications through the [IAB OM Web SDK](https://iabtechlab.com/standards/open-measurement-sdk/). Our implementation is based on IAB GitHub [Open-Measurement-JSClients](https://github.com/InteractiveAdvertisingBureau/Open-Measurement-JSClients) and sports OM Web SDK version 1.3.36. This feature needs to be activated through `omidSupport: true` setting. Feedback is welcome. Please see ./test/spec/omWebSpec/ for implementation examples.
 
 [Back to documentation sections](#documentation-sections)
 

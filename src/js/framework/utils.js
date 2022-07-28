@@ -147,12 +147,12 @@ export default class Utils {
     if (Array.isArray(event)) {
       event.forEach(currentEvent => {
         if (currentEvent) {
-          console.dir(currentEvent);
+          console.log(currentEvent);
           FW.createStdEvent(currentEvent, this.container);
         }
       });
     } else if (event) {
-      console.dir(event);
+      console.log(event);
       FW.createStdEvent(event, this.container);
     }
   }
@@ -177,21 +177,25 @@ export default class Utils {
       if (playPromise !== undefined) {
         playPromise.then(() => {
           if (firstPlayerPlayRequest) {
+
             console.log(
               `${FW.consolePrepend} initial play promise on ${whichPlayer} player has succeeded`,
               FW.consoleStyle,
               ''
             );
+
             Utils.createApiEvent.call(this, 'adinitialplayrequestsucceeded');
           }
         }).catch(error => {
           console.warn(error);
+
           if (firstPlayerPlayRequest && whichPlayer === 'vast' && this.creative.isLinear) {
             console.log(
               `${FW.consolePrepend} initial play promise on VAST player has been rejected`,
               FW.consoleStyle,
               ''
             );
+
             Utils.processVastErrors.call(this, 400, true);
             Utils.createApiEvent.call(this, 'adinitialplayrequestfailed');
           } else if (firstPlayerPlayRequest && whichPlayer === 'content' && !this.creative.isLinear) {
@@ -200,6 +204,7 @@ export default class Utils {
               FW.consoleStyle,
               ''
             );
+
             Utils.createApiEvent.call(this, 'adinitialplayrequestfailed');
           } else {
             console.log(
@@ -374,6 +379,7 @@ export default class Utils {
   static _onFullscreenchange(event) {
     if (event && event.type) {
       console.log(`${FW.consolePrepend} event is ${event.type}`, FW.consoleStyle, '');
+
       if (event.type === 'fullscreenchange') {
         if (this.isInFullscreen) {
           this.isInFullscreen = false;
@@ -434,6 +440,7 @@ export default class Utils {
         this.adErrorType = 'adPlayError';
       }
     }
+
     console.log(`${FW.consolePrepend} VAST error code is ${this.vastErrorCode}`, FW.consoleStyle, '');
     console.log(`${FW.consolePrepend} VAST error message is ${this.vastErrorMessage}`, FW.consoleStyle, '');
     console.log(`${FW.consolePrepend} Ad error type is ${this.adErrorType}`, FW.consoleStyle, '');
