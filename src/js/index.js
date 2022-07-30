@@ -749,17 +749,17 @@ export default class RmpVast {
         }
       }
     }
-    return null;
+    return '';
   }
 
   /** 
    * @type {() => boolean} 
    */
-  getAdLinear() {
+  getAdLinear() { 
     if (this.creative && this.creative.isLinear) {
-      return this.creative.isLinear;
+      return true;
     }
-    return true;
+    return false;
   }
 
   /** 

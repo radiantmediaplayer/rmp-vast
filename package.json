@@ -1,6 +1,6 @@
 {
   "name": "rmp-vast",
-  "version": "7.1.0",
+  "version": "7.2.1",
   "author": "Radiant Media Player <support@radiantmediaplayer.com>",
   "description": "A client-side JavaScript solution to load, parse and display VAST resources (advertising)",
   "repository": {
@@ -60,7 +60,7 @@
     "webpack-dev-server": "^4.9.3"
   },
   "dependencies": {
-    "core-js": "^3.24.0",
+    "core-js": "^3.24.1",
     "promise-polyfill": "^8.2.3",
     "regenerator-runtime": "^0.13.9",
     "whatwg-fetch": "^3.6.2"
