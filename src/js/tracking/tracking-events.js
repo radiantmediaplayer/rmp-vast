@@ -316,6 +316,13 @@ const _ping = function (url) {
       document.body.appendChild(script);
     }
   } else {
+    FW.ajax(url, this.params.ajaxTimeout, false, 'GET').
+      then(() => {
+        console.log(`${FW.consolePrepend} VAST tracker successfully loaded ${url}`, FW.consoleStyle, '');
+      }).catch((error) => {
+        console.log(`${FW.consolePrepend} VAST tracker failed loading ${url} with error ${error}`, FW.consoleStyle, '');
+      });
+    /* old way of doing it but browsers 304 cache requests when url is requested multiple times
     let img = new Image();
     img.addEventListener('load', () => {
       console.log(`${FW.consolePrepend} VAST tracker successfully loaded ${url}`, FW.consoleStyle, '');
@@ -326,6 +333,7 @@ const _ping = function (url) {
       img = null;
     });
     img.src = url;
+    */
   }
 };
 
@@ -409,13 +417,14 @@ const _onTimeupdate = function () {
 const _onPause = function () {
   if (!this.vastPlayerPaused) {
     this.vastPlayerPaused = true;
-    Utils.createApiEvent.call(this, 'adpaused');
-    // do not dispatchPingEvent for pause event here if it is already in this.trackingTags
-    for (let i = 0; i < this.trackingTags.length; i++) {
-      if (this.trackingTags[i].event === 'pause') {
-        return;
-      }
+    const currentTime = this.vastPlayer.currentTime;
+    const currentDuration = this.vastPlayer.duration;
+    // we have reached end of linear creative - a HTML5 video pause event may fire just before ended event
+    // in this case we ignore the adpaused event as adcomplete prevails
+    if (currentTime === currentDuration) {
+      return;
     }
+    Utils.createApiEvent.call(this, 'adpaused');
     TRACKING_EVENTS.dispatch.call(this, 'pause');
   }
 };

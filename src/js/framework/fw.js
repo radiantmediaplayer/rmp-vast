@@ -157,4 +157,27 @@ export default class FW {
     }
   }
 
+  static ajax(url, timeout, withCredentials) {
+    return new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      xhr.open('GET', url, true);
+      xhr.timeout = timeout;
+      if (withCredentials) {
+        xhr.withCredentials = true;
+      }
+      xhr.onloadend = function () {
+        if (typeof xhr.status === 'number' && xhr.status >= 200 && xhr.status < 300) {
+          resolve('XMLHttpRequest request succeeded');
+        } else {
+          reject('XMLHttpRequest wrong status code: ' + xhr.status);
+        }
+      };
+      xhr.ontimeout = function () {
+        reject('XMLHttpRequest timeout');
+      };
+      xhr.send(null);
+    });
+  }
+
+
 }

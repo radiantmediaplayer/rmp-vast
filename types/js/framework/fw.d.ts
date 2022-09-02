@@ -16,5 +16,6 @@ export default class FW {
     static logVideoEvents(video: any, type: any): void;
     static isNumber(n: any): boolean;
     static openWindow(link: any): void;
+    static ajax(url: any, timeout: any, withCredentials: any): Promise<any>;
 }
 //# sourceMappingURL=fw.d.ts.map
