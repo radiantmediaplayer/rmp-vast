@@ -246,7 +246,6 @@ Once rmp-vast is loaded on your page you can create a new rmp-vast instance as f
   - `params.omidAllowedVendors: Array` List of allowed vendors for ad verification. Vendors not listed will be rejected. Default: [].
   - `params.omidUnderEvaluation: Boolean` When debugging set this parameter to true. Default: false.
   - `params.omidRunValidationScript: Boolean` Allows to run OM Web SDK inside rmp-vast to run against IAB [validation-verification-script](https://interactiveadvertisingbureau.github.io/Open-Measurement-SDKJS/validation.html). Default: false.
-  - `params.omidPathTo: String` Path to OM Web SDK script. Default: '../externals/omweb-v1.js'.
   - `params.omidAutoplay: Boolean` The content player will autoplay or not. The possibility of autoplay is not determined by rmp-vast, this information needs to be passed to rmp-vast ([see this script for example](https://github.com/video-dev/can-autoplay)). Default: false (means a click to play is required).
   - `params.partnerName: String` partnerName for OMID. Default: 'rmp-vast'.
   - `params.partnerVersion: String` partnerVersion for OMID. Default: latest rmp-vast version.
@@ -468,7 +467,13 @@ container.addEventListener("adstarted", function () {
 
 ## AdVerifications OM Web SDK
 
-rmp-vast supports AdVerifications through the [IAB OM Web SDK](https://iabtechlab.com/standards/open-measurement-sdk/). Our implementation is based on IAB GitHub [Open-Measurement-JSClients](https://github.com/InteractiveAdvertisingBureau/Open-Measurement-JSClients) and sports OM Web SDK version 1.3.36. This feature needs to be activated through `omidSupport: true` setting. Feedback is welcome. Please see ./test/spec/omWebSpec/ for implementation examples.
+rmp-vast supports AdVerifications through the [IAB OM Web SDK](https://iabtechlab.com/standards/open-measurement-sdk/). Our implementation is based on IAB GitHub [Open-Measurement-JSClients](https://github.com/InteractiveAdvertisingBureau/Open-Measurement-JSClients) and sports OM Web SDK version 1.3.37 
+
+- This feature needs to be activated through `omidSupport: true` setting
+- You need to add ./externals/omweb-js-X.X.X/Service/omweb-v1.js and ./externals/omweb-js-X.X.X/Session-Client/omid-session-client-v1.js to your page through a script tag
+- Note that we currently only support Creative Access Mode (e.g. full)
+
+Feedback is welcome. Please see ./test/spec/omWebSpec/ for implementation examples.
 
 [Back to documentation sections](#documentation-sections)
 

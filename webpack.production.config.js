@@ -4,9 +4,6 @@ const StylelintPlugin = require('stylelint-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 const webpack = require('webpack');
 const PACKAGE = require('./package.json');
-const fs = require('fs');
-const { minify } = require('terser');
-const { EOL } = require('os');
 
 const terserOptions = {
   ecma: 5,
@@ -84,39 +81,6 @@ module.exports = {
     }),
     new webpack.DefinePlugin({
       RMP_VAST_VERSION: JSON.stringify(PACKAGE.version)
-    }),
-    {
-      apply: (compiler) => {
-        compiler.hooks.done.tap('AfterDonePlugin', async () => {
-          // minify omid-session-client-v1
-          const result = await minify(
-            fs.readFileSync('./externals/omid/omid-session-client-v1.js', 'utf8'),
-            terserOptions
-          );
-          fs.writeFileSync('./externals/omid/omid-session-client-v1.min.js', result.code, 'utf8');
-
-          // merge omid-session-client-v1 in rmp-vast
-          const files = [
-            './dist/rmp-vast.js',
-            './externals/omid/omid-session-client-v1.js'
-          ];
-          const output = files.map((f) => {
-            return fs.readFileSync(f).toString();
-          }).join(EOL);
-          fs.writeFileSync('./dist/rmp-vast.js', output);
-
-          // merge omid-session-client-v1.min in rmp-vast.min
-          const minFiles = [
-            './dist/rmp-vast.min.js',
-            './externals/omid/omid-session-client-v1.min.js'
-          ];
-          const minOutput = minFiles.map((f) => {
-            return fs.readFileSync(f).toString();
-          }).join(EOL);
-          fs.writeFileSync('./dist/rmp-vast.min.js', minOutput);
-
-        });
-      }
-    }
+    })
   ]
 };

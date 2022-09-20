@@ -155,7 +155,6 @@ const params = {
   omidSupport: true,
   omidAllowedVendors: [],
   omidRunValidationScript: false,
-  omidPathTo: '../externals/omweb-v1.js',
   omidUnderEvaluation: true,
   omidAutoplay: false
 };

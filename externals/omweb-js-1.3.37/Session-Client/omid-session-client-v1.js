@@ -7,7 +7,7 @@
   // global context.
   } else {
     var exports = {};
-    var versions = ['1.3.36-iab3524'];
+    var versions = ['1.3.37-iab3566'];
     var additionalVersionString = 'default';
     if (!!additionalVersionString) {
        versions.push(additionalVersionString);
@@ -657,7 +657,7 @@ function module$contents$omid$common$logger_executeLog(a, b) {
 module$exports$omid$common$logger.error = module$contents$omid$common$logger_error;
 module$exports$omid$common$logger.debug = module$contents$omid$common$logger_debug;
 var module$exports$omid$common$eventTypedefs = {};
-var module$exports$omid$common$version = {ApiVersion:"1.0", Version:"1.3.36-iab3524"};
+var module$exports$omid$common$version = {ApiVersion:"1.0", Version:"1.3.37-iab3566"};
 var module$exports$omid$common$VersionUtils = {}, module$contents$omid$common$VersionUtils_SEMVER_DIGITS_NUMBER = 3;
 function module$contents$omid$common$VersionUtils_isValidVersion(a) {
   return /\d+\.\d+\.\d+(-.*)?/.test(a);

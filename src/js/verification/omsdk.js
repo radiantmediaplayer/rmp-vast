@@ -7,28 +7,31 @@ const VIDEO_EVENT_TYPES = [
   'pause',
   'play',
   'timeupdate',
-  'volumechange'
+  'volumechange',
+  'click',
 ];
 
 const CONTENT_URL = document.location.href;
+// we support Access Modes Creative Access a.k.a full (we do not support Domain Access for now)
 const ACCESS_MODE = 'full';
+const OMSDK_SERVICE_WINDOW = window.top;
 
 class OmSdkManager {
 
-  constructor(adVerifications, videoElement, params, isSkippableAd, skipTimeOffset) {
+  constructor(adVerifications, contentPlayer, vastPlayer, params, isSkippableAd, skipTimeOffset) {
     this.adEvents = null;
     this.mediaEvents = null;
     this.adSession = null;
-    this.OMIframe = null;
     this.VastProperties = null;
     this.lastVideoTime = -1;
-    this.videoElement = videoElement;
+    this.contentPlayer = contentPlayer;
+    this.vastPlayer = vastPlayer;
     this.adVerifications = adVerifications;
     this.params = params;
     this.isSkippableAd = isSkippableAd;
     this.skipTimeOffset = skipTimeOffset;
-    this.videoPosition = 'preroll';
-    
+    this.onFullscreenChange = null;
+
     console.log(
       `${FW.consolePrepend}${FW.consolePrepend2} create new class Instance`,
       FW.consoleStyle,
@@ -38,26 +41,29 @@ class OmSdkManager {
   }
 
   init() {
-    // load omweb script
-    this.OMIframe = this._createOMIframe();
-    this.OMIframe.onload = this._onOMWebIframeLoaded.bind(this);
-    try {
-      document.body.appendChild(this.OMIframe);
-    } catch (error) {
-      console.warn(error);
-      document.head.appendChild(this.OMIframe);
-    }
+    // handle VAST player events
     VIDEO_EVENT_TYPES.forEach((eventType) => {
-      this.videoElement.addEventListener(
+      this.vastPlayer.addEventListener(
         eventType,
         (event) => this._vastPlayerDidDispatchEvent(event)
       );
     });
+    // handle fullscreenchange 
+    this.onFullscreenChange = this._onFullscreenChange.bind(this);
+    document.addEventListener('fullscreenchange', this.onFullscreenChange);
+    // Service Script To incorporate omweb-v1.js, use a <script> tag - we are assuming it is there
+    this._onOMWebLoaded();
   }
 
   destroy() {
+    document.removeEventListener('fullscreenchange', this.onFullscreenChange);
     this.adSession.finish();
-    FW.removeElement(this.OMIframe);
+  }
+
+  _onFullscreenChange() {
+    const isFullscreen = document.fullscreenElement !== null;
+    const playerState = isFullscreen ? 'fullscreen' : 'normal';
+    this.mediaEvents.playerStateChange(playerState);
   }
 
   _pingVerificationNotExecuted(verification, reasonCode) {
@@ -83,40 +89,21 @@ class OmSdkManager {
     }
   }
 
-  _createOMIframe() {
-    const iframe = document.createElement('iframe');
-    iframe.sandbox = 'allow-scripts allow-same-origin';
-    iframe.style.display = 'none';
-    iframe.srcdoc = `<script src=${this.params.omidPathTo}></script>`;
-
-    console.log(
-      `${FW.consolePrepend}${FW.consolePrepend2} load omweb-v1.js at URI ${this.params.omidPathTo}`,
-      FW.consoleStyle,
-      FW.consoleStyle2,
-      ''
-    );
-
-    return iframe;
-  }
-
   _vastPlayerDidDispatchTimeUpdate() {
-    if (!this.adEvents || !this.mediaEvents || this.videoElement.playbackRate === 0) {
+    if (!this.adEvents || !this.mediaEvents || this.vastPlayer.playbackRate === 0) {
       return;
     }
     // Check if playback has crossed a quartile threshold, and report that to
     // the OMSDK.
-    const vastPlayerCurrentTime = this.videoElement.currentTime;
-    const vastPlayerDuration = this.videoElement.duration;
+    const vastPlayerCurrentTime = this.vastPlayer.currentTime;
+    const vastPlayerDuration = this.vastPlayer.duration;
     if (vastPlayerCurrentTime > -1 && vastPlayerDuration > 0) {
-      if (vastPlayerCurrentTime >= 1 && this.videoPosition === 'preroll') {
-        this.videoPosition === 'midroll';
-      }
       const currentVideoTimePerCent = vastPlayerCurrentTime / vastPlayerDuration;
       if (this.lastVideoTime < 0 && currentVideoTimePerCent >= 0) {
         this.adEvents.impressionOccurred();
         this.mediaEvents.start(
           vastPlayerDuration,
-          this.videoElement.volume
+          this.vastPlayer.volume
         );
       } else if (this.lastVideoTime < 0.25 && currentVideoTimePerCent >= 0.25) {
         this.mediaEvents.firstQuartile();
@@ -125,7 +112,6 @@ class OmSdkManager {
       } else if (this.lastVideoTime < 0.75 && currentVideoTimePerCent >= 0.75) {
         this.mediaEvents.thirdQuartile();
       } else if (this.lastVideoTime < 1 && currentVideoTimePerCent >= 1) {
-        this.videoPosition = 'postroll';
         this.mediaEvents.complete();
         // to prevent ad pod to fire verification events
         this.adEvents = null;
@@ -144,11 +130,12 @@ class OmSdkManager {
       return;
     }
     let vastProperties, volume;
+    let videoPosition = 'preroll';
     switch (event.type) {
       case 'error':
         this.adSession.error(
           'video',
-          this.videoElement.error.message
+          this.vastPlayer.error.message
         );
         break;
       case 'loadeddata':
@@ -156,13 +143,21 @@ class OmSdkManager {
           this.skipTimeOffset = 0;
         }
         if (this.params.outstream) {
-          this.videoPosition = 'standalone';
+          videoPosition = 'standalone';
+        } else {
+          const contentPlayerCurrentTime = this.contentPlayer.currentTime;
+          const contentPlayerDuration = this.contentPlayer.duration;
+          if (contentPlayerCurrentTime > 0 && contentPlayerCurrentTime < contentPlayerDuration) {
+            videoPosition === 'midroll';
+          } else if (contentPlayerCurrentTime >= contentPlayerDuration) {
+            videoPosition = 'postroll';
+          }
         }
         vastProperties = new this.VastProperties(
           this.isSkippableAd,
           this.skipTimeOffset,
           this.params.omidAutoplay,
-          this.videoPosition
+          videoPosition
         );
         this.adEvents.loaded(vastProperties);
         break;
@@ -170,7 +165,7 @@ class OmSdkManager {
         this.mediaEvents.pause();
         break;
       case 'play':
-        if (this.videoElement.currentTime > 0) {
+        if (this.vastPlayer.currentTime > 0) {
           this.mediaEvents.resume();
         }
         break;
@@ -178,22 +173,18 @@ class OmSdkManager {
         this._vastPlayerDidDispatchTimeUpdate();
         break;
       case 'volumechange':
-        volume = this.videoElement.muted ? 0 : this.videoElement.volume;
+        volume = this.vastPlayer.muted ? 0 : this.vastPlayer.volume;
         this.mediaEvents.volumeChange(volume);
+        break;
+      case 'click':
+        this.mediaEvents.adUserInteraction('click');
         break;
       default:
         break;
     }
   }
 
-  _onOMWebIframeLoaded() {
-    console.log(
-      `${FW.consolePrepend}${FW.consolePrepend2} iframe content loaded`,
-      FW.consoleStyle,
-      FW.consoleStyle2,
-      ''
-    );
-
+  _onOMWebLoaded() {
     // remove executable to only have JavaScriptResource
     const validatedVerificationArray = [];
     // we only execute browserOptional="false" unless there are none 
@@ -254,7 +245,7 @@ class OmSdkManager {
     let resources = [];
     if (this.params.omidRunValidationScript) {
       // https://interactiveadvertisingbureau.github.io/Open-Measurement-SDKJS/validation.html
-      const VALIDATION_SCRIPT_URL = 'https://cdn.radiantmediatechs.com/rmp/omsdk/1.3.36/omid-validation-verification-script-v1.js';
+      const VALIDATION_SCRIPT_URL = 'https://cdn.radiantmediatechs.com/rmp/omsdk/1.3.37/omid-validation-verification-script-v1.js';
       const VENDOR_KEY = 'dummyVendor'; // you must use this value as is
       const PARAMS = JSON.stringify({ 'k': 'v' });
       resources.push(new VerificationScriptResource(VALIDATION_SCRIPT_URL, VENDOR_KEY, PARAMS));
@@ -275,8 +266,7 @@ class OmSdkManager {
     if (this.params.omidUnderEvaluation) {
       context.underEvaluation = true;
     }
-    const serviceWindow = this.OMIframe.contentWindow;
-    if (!serviceWindow) {
+    if (!OMSDK_SERVICE_WINDOW) {
       console.log(
         `${FW.consolePrepend}${FW.consolePrepend2} invalid serviceWindow - return`,
         FW.consoleStyle,
@@ -285,8 +275,8 @@ class OmSdkManager {
       );
       return;
     }
-    context.setServiceWindow(serviceWindow);
-    context.setVideoElement(this.videoElement);
+    context.setServiceWindow(OMSDK_SERVICE_WINDOW);
+    context.setVideoElement(this.vastPlayer);
 
     console.log(context);
 

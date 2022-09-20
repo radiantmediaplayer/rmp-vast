@@ -7,7 +7,7 @@
   // global context.
   } else {
     var exports = {};
-    var versions = ['1.3.36-iab3524'];
+    var versions = ['1.3.37-iab3566'];
     var additionalVersionString = '';
     if (!!additionalVersionString) {
        versions.push(additionalVersionString);
@@ -119,101 +119,6 @@ $jscomp.inherits = function(a, b) {
   }
   a.superClass_ = b.prototype;
 };
-$jscomp.defineProperty = $jscomp.ASSUME_ES5 || "function" == typeof Object.defineProperties ? Object.defineProperty : function(a, b, c) {
-  a != Array.prototype && a != Object.prototype && (a[b] = c.value);
-};
-$jscomp.getGlobal = function(a) {
-  a = ["object" == typeof window && window, "object" == typeof self && self, "object" == typeof global && global, a];
-  for (var b = 0; b < a.length; ++b) {
-    var c = a[b];
-    if (c && c.Math == Math) {
-      return c;
-    }
-  }
-  return globalThis;
-};
-$jscomp.global = $jscomp.getGlobal(this);
-$jscomp.SYMBOL_PREFIX = "jscomp_symbol_";
-$jscomp.initSymbol = function() {
-  $jscomp.initSymbol = function() {
-  };
-  $jscomp.global.Symbol || ($jscomp.global.Symbol = $jscomp.Symbol);
-};
-$jscomp.SymbolClass = function(a, b) {
-  this.$jscomp$symbol$id_ = a;
-  $jscomp.defineProperty(this, "description", {configurable:!0, writable:!0, value:b});
-};
-$jscomp.SymbolClass.prototype.toString = function() {
-  return this.$jscomp$symbol$id_;
-};
-$jscomp.Symbol = function() {
-  function a(c) {
-    if (this instanceof a) {
-      throw new TypeError("Symbol is not a constructor");
-    }
-    return new $jscomp.SymbolClass($jscomp.SYMBOL_PREFIX + (c || "") + "_" + b++, c);
-  }
-  var b = 0;
-  return a;
-}();
-$jscomp.initSymbolIterator = function() {
-  $jscomp.initSymbol();
-  var a = $jscomp.global.Symbol.iterator;
-  a || (a = $jscomp.global.Symbol.iterator = $jscomp.global.Symbol("Symbol.iterator"));
-  "function" != typeof Array.prototype[a] && $jscomp.defineProperty(Array.prototype, a, {configurable:!0, writable:!0, value:function() {
-    return $jscomp.iteratorPrototype($jscomp.arrayIteratorImpl(this));
-  }});
-  $jscomp.initSymbolIterator = function() {
-  };
-};
-$jscomp.initSymbolAsyncIterator = function() {
-  $jscomp.initSymbol();
-  var a = $jscomp.global.Symbol.asyncIterator;
-  a || (a = $jscomp.global.Symbol.asyncIterator = $jscomp.global.Symbol("Symbol.asyncIterator"));
-  $jscomp.initSymbolAsyncIterator = function() {
-  };
-};
-$jscomp.iteratorPrototype = function(a) {
-  $jscomp.initSymbolIterator();
-  a = {next:a};
-  a[$jscomp.global.Symbol.iterator] = function() {
-    return this;
-  };
-  return a;
-};
-$jscomp.iteratorFromArray = function(a, b) {
-  $jscomp.initSymbolIterator();
-  a instanceof String && (a += "");
-  var c = 0, d = {next:function() {
-    if (c < a.length) {
-      var e = c++;
-      return {value:b(e, a[e]), done:!1};
-    }
-    d.next = function() {
-      return {done:!0, value:void 0};
-    };
-    return d.next();
-  }};
-  d[Symbol.iterator] = function() {
-    return d;
-  };
-  return d;
-};
-$jscomp.polyfill = function(a, b, c, d) {
-  if (b) {
-    c = $jscomp.global;
-    a = a.split(".");
-    for (d = 0; d < a.length - 1; d++) {
-      var e = a[d];
-      e in c || (c[e] = {});
-      c = c[e];
-    }
-    a = a[a.length - 1];
-    d = c[a];
-    b = b(d);
-    b != d && null != b && $jscomp.defineProperty(c, a, {configurable:!0, writable:!0, value:b});
-  }
-};
 var module$exports$omid$common$constants = {AdEventType:{IMPRESSION:"impression", LOADED:"loaded", GEOMETRY_CHANGE:"geometryChange", SESSION_START:"sessionStart", SESSION_ERROR:"sessionError", SESSION_FINISH:"sessionFinish", MEDIA:"media", VIDEO:"video", START:"start", FIRST_QUARTILE:"firstQuartile", MIDPOINT:"midpoint", THIRD_QUARTILE:"thirdQuartile", COMPLETE:"complete", PAUSE:"pause", RESUME:"resume", BUFFER_START:"bufferStart", BUFFER_FINISH:"bufferFinish", SKIPPED:"skipped", VOLUME_CHANGE:"volumeChange", 
 PLAYER_STATE_CHANGE:"playerStateChange", AD_USER_INTERACTION:"adUserInteraction", STATE_CHANGE:"stateChange"}, MediaEventType:{LOADED:"loaded", START:"start", FIRST_QUARTILE:"firstQuartile", MIDPOINT:"midpoint", THIRD_QUARTILE:"thirdQuartile", COMPLETE:"complete", PAUSE:"pause", RESUME:"resume", BUFFER_START:"bufferStart", BUFFER_FINISH:"bufferFinish", SKIPPED:"skipped", VOLUME_CHANGE:"volumeChange", PLAYER_STATE_CHANGE:"playerStateChange", AD_USER_INTERACTION:"adUserInteraction"}, ImpressionType:{DEFINED_BY_JAVASCRIPT:"definedByJavaScript", 
 UNSPECIFIED:"unspecified", LOADED:"loaded", BEGIN_TO_RENDER:"beginToRender", ONE_PIXEL:"onePixel", VIEWABLE:"viewable", AUDIBLE:"audible", OTHER:"other"}, ErrorType:{GENERIC:"generic", VIDEO:"video", MEDIA:"media"}, AdSessionType:{NATIVE:"native", HTML:"html", JAVASCRIPT:"javascript"}, EventOwner:{NATIVE:"native", JAVASCRIPT:"javascript", NONE:"none"}, AccessMode:{FULL:"full", DOMAIN:"domain", LIMITED:"limited"}, AppState:{BACKGROUNDED:"backgrounded", FOREGROUNDED:"foregrounded"}, Environment:{APP:"app", 
@@ -287,7 +192,7 @@ function module$contents$omid$common$logger_executeLog(a, b) {
 module$exports$omid$common$logger.error = module$contents$omid$common$logger_error;
 module$exports$omid$common$logger.debug = module$contents$omid$common$logger_debug;
 var module$exports$omid$common$eventTypedefs = {};
-var module$exports$omid$common$version = {ApiVersion:"1.0", Version:"1.3.36-iab3524"};
+var module$exports$omid$common$version = {ApiVersion:"1.0", Version:"1.3.37-iab3566"};
 var module$exports$omid$common$argsChecker = {};
 function module$contents$omid$common$argsChecker_assertTruthyString(a, b) {
   if (!b) {
@@ -737,40 +642,49 @@ module$exports$omid$verificationClient$VerificationClient.prototype.sendMessage_
   this.communication && (e = module$contents$omid$common$guid_generateGuid(), b && (this.callbackMap_[e] = b), d = new module$exports$omid$common$InternalMessage(e, module$contents$omid$common$serviceMethodUtils_getPrefixedVerificationServiceMethod(a), module$contents$omid$verificationClient$VerificationClient_VERIFICATION_CLIENT_VERSION, module$contents$omid$common$ArgsSerDe_serializeMessageArgs(module$contents$omid$verificationClient$VerificationClient_VERIFICATION_CLIENT_VERSION, d)), this.communication.sendMessage(d));
 };
 module$contents$omid$common$exporter_packageExport("OmidVerificationClient", module$exports$omid$verificationClient$VerificationClient);
-var module$contents$omid$validationVerificationScript$ValidationVerificationClient_DefaultLogServer = "http://localhost:66/sendmessage?msg=", module$exports$omid$validationVerificationScript$ValidationVerificationClient = function(a, b) {
+var module$contents$omid$complianceVerificationScript$ComplianceVerificationClient_DefaultLogServer = "https://complianceomsdk.iabtechlab.org/omsdk/sendmessage?", module$contents$omid$complianceVerificationScript$ComplianceVerificationClient_COMPLIANCE_VERIFICATION_CLIENT_VERSION = module$exports$omid$common$version.Version, module$contents$omid$complianceVerificationScript$ComplianceVerificationClient_AdEventTypeArray = [module$exports$omid$common$constants.AdEventType.IMPRESSION, module$exports$omid$common$constants.AdEventType.GEOMETRY_CHANGE, 
+module$exports$omid$common$constants.AdEventType.LOADED, module$exports$omid$common$constants.AdEventType.START, module$exports$omid$common$constants.AdEventType.FIRST_QUARTILE, module$exports$omid$common$constants.AdEventType.MIDPOINT, module$exports$omid$common$constants.AdEventType.THIRD_QUARTILE, module$exports$omid$common$constants.AdEventType.COMPLETE, module$exports$omid$common$constants.AdEventType.PAUSE, module$exports$omid$common$constants.AdEventType.RESUME, module$exports$omid$common$constants.AdEventType.PLAYER_STATE_CHANGE, 
+module$exports$omid$common$constants.AdEventType.VOLUME_CHANGE, module$exports$omid$common$constants.AdEventType.SKIPPED, module$exports$omid$common$constants.AdEventType.AD_USER_INTERACTION, module$exports$omid$common$constants.AdEventType.BUFFER_START, module$exports$omid$common$constants.AdEventType.BUFFER_FINISH], module$exports$omid$complianceVerificationScript$ComplianceVerificationClient = function(a, b) {
   var c = this;
   this.verificationClient_ = a;
-  a = this.verificationClient_.isSupported();
-  this.logMessage_("OmidSupported[" + a + "]", (new Date).getTime());
-  a && (this.verificationClient_.registerSessionObserver(function(a) {
-    return c.sessionObserverCallback_(a);
-  }, b), Object.keys(module$exports$omid$common$constants.AdEventType).filter(function(a) {
-    return module$exports$omid$common$constants.AdEventType[a] !== module$exports$omid$common$constants.AdEventType.MEDIA && module$exports$omid$common$constants.AdEventType[a] !== module$exports$omid$common$constants.AdEventType.VIDEO;
-  }).forEach(function(a) {
-    return c.verificationClient_.addEventListener(module$exports$omid$common$constants.AdEventType[a], function(a) {
-      return c.omidEventListenerCallback_(a);
+  this.fireURL_(module$contents$omid$complianceVerificationScript$ComplianceVerificationClient_DefaultLogServer + "version=" + module$contents$omid$complianceVerificationScript$ComplianceVerificationClient_COMPLIANCE_VERIFICATION_CLIENT_VERSION);
+  a = this.verificationClient_.isSupported() ? "yes" : "no";
+  this.fireURL_(module$contents$omid$complianceVerificationScript$ComplianceVerificationClient_DefaultLogServer + "supported=" + a);
+  this.verificationClient_.registerSessionObserver(function(a) {
+    c.fireEvent_(a);
+  }, b);
+  for (b = 0; b < module$contents$omid$complianceVerificationScript$ComplianceVerificationClient_AdEventTypeArray.length; b++) {
+    this.verificationClient_.addEventListener(module$contents$omid$complianceVerificationScript$ComplianceVerificationClient_AdEventTypeArray[b], function(a) {
+      c.fireEvent_(a);
     });
-  }));
+  }
 };
-module$exports$omid$validationVerificationScript$ValidationVerificationClient.prototype.logMessage_ = function(a, b) {
-  a.hasOwnProperty("type") && "sessionStart" === a.type && (a.data.context.friendlyToTop = module$contents$omid$common$windowUtils_isTopWindowAccessible(module$contents$omid$common$windowUtils_resolveGlobalContext()));
-  a = (new Date(b)).toLocaleString() + "::" + JSON.stringify(a);
-  console.log(a);
-  this.sendUrl_(a);
+module$exports$omid$complianceVerificationScript$ComplianceVerificationClient.prototype.serialize_ = function(a, b) {
+  var c = [], d;
+  for (d in a) {
+    if (a.hasOwnProperty(d)) {
+      var e = b ? b + "[" + d + "]" : d, f = a[d];
+      Array.isArray(f) && 0 == f.length ? c.push(encodeURIComponent(e) + "=" + encodeURIComponent("[]")) : c.push(null !== f && "object" === typeof f ? this.serialize_(f, e) : encodeURIComponent(e) + "=" + encodeURIComponent(f));
+      "accessMode" === d && c.push(encodeURIComponent(b ? b + "[friendlyToTop]" : "friendlyToTop") + "=" + JSON.stringify(module$contents$omid$common$windowUtils_isTopWindowAccessible(module$contents$omid$common$windowUtils_resolveGlobalContext())));
+    }
+  }
+  return c.join("&");
 };
-module$exports$omid$validationVerificationScript$ValidationVerificationClient.prototype.sendUrl_ = function(a) {
-  a = module$contents$omid$validationVerificationScript$ValidationVerificationClient_DefaultLogServer + encodeURIComponent(a);
-  console.log(a);
+module$exports$omid$complianceVerificationScript$ComplianceVerificationClient.prototype.fireURL_ = function(a) {
   this.verificationClient_.sendUrl(a);
 };
-module$exports$omid$validationVerificationScript$ValidationVerificationClient.prototype.omidEventListenerCallback_ = function(a) {
-  this.logMessage_(a, a.timestamp);
+module$exports$omid$complianceVerificationScript$ComplianceVerificationClient.prototype.fireEvent_ = function(a) {
+  a = this.removeDomElements_(a);
+  var b = this.serialize_(a, void 0);
+  b += "&rawJSON=" + encodeURIComponent(JSON.stringify(a));
+  this.fireURL_(module$contents$omid$complianceVerificationScript$ComplianceVerificationClient_DefaultLogServer + b);
 };
-module$exports$omid$validationVerificationScript$ValidationVerificationClient.prototype.sessionObserverCallback_ = function(a) {
-  this.logMessage_(a, a.timestamp);
+module$exports$omid$complianceVerificationScript$ComplianceVerificationClient.prototype.removeDomElements_ = function(a) {
+  a.type === module$exports$omid$common$constants.AdEventType.SESSION_START && ("undefined" !== typeof a.data.context.videoElement && (a.data.context.videoElement = "DOM Video Element - Present but not parsed to avoid parse error"), "undefined" !== typeof a.data.context.slotElement && (a.data.context.slotElement = "DOM Slot Element - Present but not parsed to avoid parse error"));
+  return a;
 };
-var module$exports$validationVerificationClientMain = {};
-new module$exports$omid$validationVerificationScript$ValidationVerificationClient(new module$exports$omid$verificationClient$VerificationClient, "iabtechlab.com-omid");
+var module$exports$complianceVerificationClientMain = {};
+new module$exports$omid$complianceVerificationScript$ComplianceVerificationClient(new module$exports$omid$verificationClient$VerificationClient, "iabtechlab.com-omid");
 
 }, typeof exports === 'undefined' ? undefined : exports));
 

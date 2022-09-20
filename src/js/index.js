@@ -56,7 +56,6 @@ export default class RmpVast {
    * @property {boolean} [omidSupport] - Enables OMID (OM Web SDK) support in rmp-vast. Default: false.
    * @property {string[]} [omidAllowedVendors] - List of allowed vendors for ad verification. Vendors not listed will 
    *  be rejected. Default: [].
-   * @property {string} [omidPathTo] - Path to OM Web SDK script. Default: '../externals/omweb-v1.js'.
    * @property {boolean} [omidUnderEvaluation] - When in development/testing/staging set this to true. Default: false.
    * @property {boolean} [omidAutoplay] - The content player will autoplay or not. The possibility of autoplay is not 
    *  determined by rmp-vast, this information needs to be passed to rmp-vast (see this 
@@ -427,6 +426,7 @@ export default class RmpVast {
               if (this.params.omidSupport && currentAd.adVerifications.length > 0) {
                 const omSdkManager = new OmSdkManager(
                   currentAd.adVerifications,
+                  this.contentPlayer,
                   this.vastPlayer,
                   this.params,
                   this.getIsSkippableAd(),

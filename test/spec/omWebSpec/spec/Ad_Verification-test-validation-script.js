@@ -10,8 +10,7 @@ describe('AAd_Verification-test-validation-script', function () {
     omidSupport: true,
     omidAutoplay: true,
     omidRunValidationScript: true,
-    omidUnderEvaluation: true,
-    omidPathTo: 'https://cdn.radiantmediatechs.com/rmp/omsdk/1.3.36/omweb-v1.js'
+    omidUnderEvaluation: true
   };
   const rmpVast = new RmpVast(id, params);
   const env = rmpVast.getEnvironment();

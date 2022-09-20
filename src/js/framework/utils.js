@@ -100,7 +100,6 @@ export default class Utils {
       // OM SDK params
       omidSupport: false,
       omidAllowedVendors: [],
-      omidPathTo: '../externals/omweb-v1.js',
       omidUnderEvaluation: false,
       omidRunValidationScript: false,
       omidAutoplay: false,

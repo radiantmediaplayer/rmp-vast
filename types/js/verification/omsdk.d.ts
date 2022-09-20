@@ -1,24 +1,24 @@
 export default OmSdkManager;
 declare class OmSdkManager {
-    constructor(adVerifications: any, videoElement: any, params: any, isSkippableAd: any, skipTimeOffset: any);
+    constructor(adVerifications: any, contentPlayer: any, vastPlayer: any, params: any, isSkippableAd: any, skipTimeOffset: any);
     adEvents: any;
     mediaEvents: any;
     adSession: any;
-    OMIframe: HTMLIFrameElement;
     VastProperties: any;
     lastVideoTime: number;
-    videoElement: any;
+    contentPlayer: any;
+    vastPlayer: any;
     adVerifications: any;
     params: any;
     isSkippableAd: any;
     skipTimeOffset: any;
-    videoPosition: string;
+    onFullscreenChange: any;
     init(): void;
     destroy(): void;
+    _onFullscreenChange(): void;
     _pingVerificationNotExecuted(verification: any, reasonCode: any): void;
-    _createOMIframe(): HTMLIFrameElement;
     _vastPlayerDidDispatchTimeUpdate(): void;
     _vastPlayerDidDispatchEvent(event: any): void;
-    _onOMWebIframeLoaded(): void;
+    _onOMWebLoaded(): void;
 }
 //# sourceMappingURL=omsdk.d.ts.map

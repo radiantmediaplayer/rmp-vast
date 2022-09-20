@@ -9,8 +9,7 @@ describe('om-web-ima', function () {
   const params = {
     omidSupport: true,
     omidAutoplay: true,
-    omidUnderEvaluation: true,
-    omidPathTo: 'https://cdn.radiantmediatechs.com/rmp/omsdk/1.3.36/omweb-v1.js'
+    omidUnderEvaluation: true
   };
   const rmpVast = new RmpVast(id, params);
   const env = rmpVast.getEnvironment();

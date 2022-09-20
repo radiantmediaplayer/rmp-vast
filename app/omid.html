@@ -8,6 +8,8 @@
   <title>RmpVast - Example</title>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
   <link rel="stylesheet" href="css/app.css">
+  <script src="../externals/omweb-js-1.3.37/Service/omweb-v1.js"></script>
+  <script src="../externals/omweb-js-1.3.37/Session-Client/omid-session-client-v1.js"></script>
   <script src="../dist/rmp-vast.js"></script>
 </head>
 
@@ -32,7 +34,7 @@
       omidAutoplay: true,
       omidRunValidationScript: true,
       omidUnderEvaluation: true,
-      omidPathTo: 'https://cdn.radiantmediatechs.com/rmp/omsdk/1.3.36/omweb-v1.js'
+      showControlsForVastPlayer: true
     };
     var rmpVast = new RmpVast(id, params);
     rmpVast.loadAds(ADTAG);
