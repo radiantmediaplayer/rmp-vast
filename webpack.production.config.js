@@ -20,12 +20,10 @@ module.exports = {
   entry: {
     'rmp-vast': [
       'whatwg-fetch',
-      'promise-polyfill/src/polyfill',
       './src/js/index.js'
     ],
     'rmp-vast.min': [
       'whatwg-fetch',
-      'promise-polyfill/src/polyfill',
       './src/js/index.js'
     ]
   },

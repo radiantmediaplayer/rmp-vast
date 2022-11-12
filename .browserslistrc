@@ -1,12 +1,11 @@
 defaults
 chrome 38
-firefox 42
-opera 25
+firefox 52
+opera 26
 ios 12
-safari 10
-edge 12
+safari 11
+edge 14
 samsung 9.2
-ie 11
 not op_mini all
 not kaios 2.5
 not and_uc 12.12

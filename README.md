@@ -126,17 +126,16 @@ This example can be found live at https://www.radiantmediaplayer.com/rmp-vast/ap
 - Latest Chrome for Android 5+
 - Chrome 38+ for Desktop
 - Latest Firefox for Android 5+
-- Firefox 42+ for Desktop
-- Opera 25+ for Desktop
+- Firefox 52+ for Desktop
+- Opera 26+ for Desktop
 - Samsung Internet 9.2+ for Android 5+
-- Safari 10+ for Desktop
+- Safari 11+ for Desktop
 - Safari for iOS 12+ and iPadOS 13+
 - MS Edge 79+ for Desktop
-- MS Edge Legacy 12+ for Desktop
+- MS Edge Legacy 14+ for Desktop
 - Latest Amazon Silk for fireOS 6+
 
 Desktop means Windows 7+, macOS 10.11+, Linux (latest LTS Ubuntu).
-It could work on Internet Explorer 11 but we are not actively testing for it anymore.
 
 #### WebViews (mobile apps built with Ionic, Cordova)
 

@@ -60,8 +60,8 @@ export default class RmpVast {
    * @property {boolean} [omidAutoplay] - The content player will autoplay or not. The possibility of autoplay is not 
    *  determined by rmp-vast, this information needs to be passed to rmp-vast (see this 
    *  script for example). Default: false (means a click to play is required).
-   * @property {string} [partnerName] - partnerName for OMID. Default: 'Radiantmediaplayer'.
-   * @property {string} [partnerVersion] - partnerVersion for OMID. Default: '6.0.0'.
+   * @property {string} [partnerName] - partnerName for OMID. Default: 'rmp-vast'.
+   * @property {string} [partnerVersion] - partnerVersion for OMID. Default: current rmp-vast version 'x.x.x'.
    * @property {Labels} [labels] - Information required to properly display VPAID creatives - note that it is up to the 
    *  parent application of rmp-vast to provide those informations
    * @param {RmpVastParams} [params] - An object representing various parameters that can be passed to a rmp-vast 

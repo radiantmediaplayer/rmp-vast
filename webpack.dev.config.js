@@ -9,7 +9,6 @@ const PACKAGE = require('./package.json');
 module.exports = {
   entry: [
     'whatwg-fetch',
-    'promise-polyfill/src/polyfill',
     './src/js/index.js'
   ],
   output: {
