@@ -140,7 +140,7 @@ var STRICT_METHOD = arrayMethodIsStrict('forEach');
 // https://tc39.es/ecma262/#sec-array.prototype.foreach
 module.exports = !STRICT_METHOD ? function forEach(callbackfn /* , thisArg */) {
   return $forEach(this, callbackfn, arguments.length > 1 ? arguments[1] : undefined);
-// eslint-disable-next-line es-x/no-array-prototype-foreach -- safe
+// eslint-disable-next-line es/no-array-prototype-foreach -- safe
 } : [].forEach;
 
 
@@ -324,7 +324,7 @@ module.exports = {
 
 "use strict";
 
-/* eslint-disable es-x/no-array-prototype-lastindexof -- safe */
+/* eslint-disable es/no-array-prototype-lastindexof -- safe */
 var apply = __webpack_require__(2104);
 var toIndexedObject = __webpack_require__(5656);
 var toIntegerOrInfinity = __webpack_require__(9303);
@@ -456,7 +456,7 @@ var DESCRIPTORS = __webpack_require__(9781);
 var isArray = __webpack_require__(3157);
 
 var $TypeError = TypeError;
-// eslint-disable-next-line es-x/no-object-getownpropertydescriptor -- safe
+// eslint-disable-next-line es/no-object-getownpropertydescriptor -- safe
 var getOwnPropertyDescriptor = Object.getOwnPropertyDescriptor;
 
 // Safari < 13 does not throw an error in this case
@@ -464,7 +464,7 @@ var SILENT_ON_NON_WRITABLE_LENGTH_SET = DESCRIPTORS && !function () {
   // makes no sense without proper strict mode support
   if (this !== undefined) return true;
   try {
-    // eslint-disable-next-line es-x/no-object-defineproperty -- safe
+    // eslint-disable-next-line es/no-object-defineproperty -- safe
     Object.defineProperty([], 'length', { writable: false }).length = 1;
   } catch (error) {
     return error instanceof TypeError;
@@ -648,7 +648,7 @@ try {
   iteratorWithReturn[ITERATOR] = function () {
     return this;
   };
-  // eslint-disable-next-line es-x/no-array-from, no-throw-literal -- required for testing
+  // eslint-disable-next-line es/no-array-from, no-throw-literal -- required for testing
   Array.from(iteratorWithReturn, function () { throw 2; });
 } catch (error) { /* empty */ }
 
@@ -675,10 +675,10 @@ module.exports = function (exec, SKIP_CLOSING) {
 /***/ 4326:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var uncurryThis = __webpack_require__(1702);
+var uncurryThisRaw = __webpack_require__(84);
 
-var toString = uncurryThis({}.toString);
-var stringSlice = uncurryThis(''.slice);
+var toString = uncurryThisRaw({}.toString);
+var stringSlice = uncurryThisRaw(''.slice);
 
 module.exports = function (it) {
   return stringSlice(toString(it), 8, -1);
@@ -776,7 +776,7 @@ var fails = __webpack_require__(7293);
 module.exports = !fails(function () {
   function F() { /* empty */ }
   F.prototype.constructor = null;
-  // eslint-disable-next-line es-x/no-object-getprototypeof -- required for testing
+  // eslint-disable-next-line es/no-object-getprototypeof -- required for testing
   return Object.getPrototypeOf(new F()) !== F.prototype;
 });
 
@@ -845,6 +845,21 @@ module.exports = function (object, key, value) {
 
 /***/ }),
 
+/***/ 7045:
+/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
+
+var makeBuiltIn = __webpack_require__(6339);
+var defineProperty = __webpack_require__(3070);
+
+module.exports = function (target, name, descriptor) {
+  if (descriptor.get) makeBuiltIn(descriptor.get, name, { getter: true });
+  if (descriptor.set) makeBuiltIn(descriptor.set, name, { setter: true });
+  return defineProperty.f(target, name, descriptor);
+};
+
+
+/***/ }),
+
 /***/ 8052:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
@@ -884,7 +899,7 @@ module.exports = function (O, key, value, options) {
 
 var global = __webpack_require__(7854);
 
-// eslint-disable-next-line es-x/no-object-defineproperty -- safe
+// eslint-disable-next-line es/no-object-defineproperty -- safe
 var defineProperty = Object.defineProperty;
 
 module.exports = function (key, value) {
@@ -921,7 +936,7 @@ var fails = __webpack_require__(7293);
 
 // Detect IE8's incomplete defineProperty implementation
 module.exports = !fails(function () {
-  // eslint-disable-next-line es-x/no-object-defineproperty -- required for testing
+  // eslint-disable-next-line es/no-object-defineproperty -- required for testing
   return Object.defineProperty({}, 1, { get: function () { return 7; } })[1] != 7;
 });
 
@@ -1190,6 +1205,44 @@ module.exports = [
 
 /***/ }),
 
+/***/ 1060:
+/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
+
+var uncurryThis = __webpack_require__(1702);
+
+var $Error = Error;
+var replace = uncurryThis(''.replace);
+
+var TEST = (function (arg) { return String($Error(arg).stack); })('zxcasd');
+var V8_OR_CHAKRA_STACK_ENTRY = /\n\s*at [^:]*:[^\n]*/;
+var IS_V8_OR_CHAKRA_STACK = V8_OR_CHAKRA_STACK_ENTRY.test(TEST);
+
+module.exports = function (stack, dropEntries) {
+  if (IS_V8_OR_CHAKRA_STACK && typeof stack == 'string' && !$Error.prepareStackTrace) {
+    while (dropEntries--) stack = replace(stack, V8_OR_CHAKRA_STACK_ENTRY, '');
+  } return stack;
+};
+
+
+/***/ }),
+
+/***/ 2914:
+/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
+
+var fails = __webpack_require__(7293);
+var createPropertyDescriptor = __webpack_require__(9114);
+
+module.exports = !fails(function () {
+  var error = Error('a');
+  if (!('stack' in error)) return true;
+  // eslint-disable-next-line es/no-object-defineproperty -- safe
+  Object.defineProperty(error, 'stack', createPropertyDescriptor(1, 7));
+  return error.stack !== 7;
+});
+
+
+/***/ }),
+
 /***/ 2109:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
@@ -1356,7 +1409,7 @@ var FunctionPrototype = Function.prototype;
 var apply = FunctionPrototype.apply;
 var call = FunctionPrototype.call;
 
-// eslint-disable-next-line es-x/no-reflect -- safe
+// eslint-disable-next-line es/no-reflect -- safe
 module.exports = typeof Reflect == 'object' && Reflect.apply || (NATIVE_BIND ? call.bind(apply) : function () {
   return call.apply(apply, arguments);
 });
@@ -1390,7 +1443,7 @@ module.exports = function (fn, that) {
 var fails = __webpack_require__(7293);
 
 module.exports = !fails(function () {
-  // eslint-disable-next-line es-x/no-function-prototype-bind -- safe
+  // eslint-disable-next-line es/no-function-prototype-bind -- safe
   var test = (function () { /* empty */ }).bind();
   // eslint-disable-next-line no-prototype-builtins -- safe
   return typeof test != 'function' || test.hasOwnProperty('prototype');
@@ -1461,7 +1514,7 @@ var DESCRIPTORS = __webpack_require__(9781);
 var hasOwn = __webpack_require__(2597);
 
 var FunctionPrototype = Function.prototype;
-// eslint-disable-next-line es-x/no-object-getownpropertydescriptor -- safe
+// eslint-disable-next-line es/no-object-getownpropertydescriptor -- safe
 var getDescriptor = DESCRIPTORS && Object.getOwnPropertyDescriptor;
 
 var EXISTS = hasOwn(FunctionPrototype, 'name');
@@ -1478,22 +1531,35 @@ module.exports = {
 
 /***/ }),
 
-/***/ 1702:
+/***/ 84:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
 var NATIVE_BIND = __webpack_require__(4374);
 
 var FunctionPrototype = Function.prototype;
-var bind = FunctionPrototype.bind;
 var call = FunctionPrototype.call;
-var uncurryThis = NATIVE_BIND && bind.bind(call, call);
+var uncurryThisWithBind = NATIVE_BIND && FunctionPrototype.bind.bind(call, call);
 
-module.exports = NATIVE_BIND ? function (fn) {
-  return fn && uncurryThis(fn);
-} : function (fn) {
-  return fn && function () {
+module.exports = NATIVE_BIND ? uncurryThisWithBind : function (fn) {
+  return function () {
     return call.apply(fn, arguments);
   };
+};
+
+
+/***/ }),
+
+/***/ 1702:
+/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
+
+var classofRaw = __webpack_require__(4326);
+var uncurryThisRaw = __webpack_require__(84);
+
+module.exports = function (fn) {
+  // Nashorn bug:
+  //   https://github.com/zloirock/core-js/issues/1128
+  //   https://github.com/zloirock/core-js/issues/1130
+  if (classofRaw(fn) === 'Function') return uncurryThisRaw(fn);
 };
 
 
@@ -1632,7 +1698,7 @@ var check = function (it) {
 
 // https://github.com/zloirock/core-js/issues/86#issuecomment-115759028
 module.exports =
-  // eslint-disable-next-line es-x/no-global-this -- safe
+  // eslint-disable-next-line es/no-global-this -- safe
   check(typeof globalThis == 'object' && globalThis) ||
   check(typeof window == 'object' && window) ||
   // eslint-disable-next-line no-restricted-globals -- safe
@@ -1654,7 +1720,7 @@ var hasOwnProperty = uncurryThis({}.hasOwnProperty);
 
 // `HasOwnProperty` abstract operation
 // https://tc39.es/ecma262/#sec-hasownproperty
-// eslint-disable-next-line es-x/no-object-hasown -- safe
+// eslint-disable-next-line es/no-object-hasown -- safe
 module.exports = Object.hasOwn || function hasOwn(it, key) {
   return hasOwnProperty(toObject(it), key);
 };
@@ -1704,7 +1770,7 @@ var createElement = __webpack_require__(317);
 
 // Thanks to IE8 for its funny defineProperty
 module.exports = !DESCRIPTORS && !fails(function () {
-  // eslint-disable-next-line es-x/no-object-defineproperty -- required for testing
+  // eslint-disable-next-line es/no-object-defineproperty -- required for testing
   return Object.defineProperty(createElement('div'), 'a', {
     get: function () { return 7; }
   }).a != 7;
@@ -1781,12 +1847,28 @@ module.exports = store.inspectSource;
 
 /***/ }),
 
+/***/ 8340:
+/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
+
+var isObject = __webpack_require__(111);
+var createNonEnumerableProperty = __webpack_require__(8880);
+
+// `InstallErrorCause` abstract operation
+// https://tc39.es/proposal-error-cause/#sec-errorobjects-install-error-cause
+module.exports = function (O, options) {
+  if (isObject(options) && 'cause' in options) {
+    createNonEnumerableProperty(O, 'cause', options.cause);
+  }
+};
+
+
+/***/ }),
+
 /***/ 9909:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
 var NATIVE_WEAK_MAP = __webpack_require__(4811);
 var global = __webpack_require__(7854);
-var uncurryThis = __webpack_require__(1702);
 var isObject = __webpack_require__(111);
 var createNonEnumerableProperty = __webpack_require__(8880);
 var hasOwn = __webpack_require__(2597);
@@ -1814,20 +1896,22 @@ var getterFor = function (TYPE) {
 
 if (NATIVE_WEAK_MAP || shared.state) {
   var store = shared.state || (shared.state = new WeakMap());
-  var wmget = uncurryThis(store.get);
-  var wmhas = uncurryThis(store.has);
-  var wmset = uncurryThis(store.set);
+  /* eslint-disable no-self-assign -- prototype methods protection */
+  store.get = store.get;
+  store.has = store.has;
+  store.set = store.set;
+  /* eslint-enable no-self-assign -- prototype methods protection */
   set = function (it, metadata) {
-    if (wmhas(store, it)) throw TypeError(OBJECT_ALREADY_INITIALIZED);
+    if (store.has(it)) throw TypeError(OBJECT_ALREADY_INITIALIZED);
     metadata.facade = it;
-    wmset(store, it, metadata);
+    store.set(it, metadata);
     return metadata;
   };
   get = function (it) {
-    return wmget(store, it) || {};
+    return store.get(it) || {};
   };
   has = function (it) {
-    return wmhas(store, it);
+    return store.has(it);
   };
 } else {
   var STATE = sharedKey('state');
@@ -1881,7 +1965,7 @@ var classof = __webpack_require__(4326);
 
 // `IsArray` abstract operation
 // https://tc39.es/ecma262/#sec-isarray
-// eslint-disable-next-line es-x/no-array-isarray -- safe
+// eslint-disable-next-line es/no-array-isarray -- safe
 module.exports = Array.isArray || function isArray(argument) {
   return classof(argument) == 'Array';
 };
@@ -2328,7 +2412,7 @@ var BUGGY_SAFARI_ITERATORS = false;
 // https://tc39.es/ecma262/#sec-%iteratorprototype%-object
 var IteratorPrototype, PrototypeOfArrayIteratorPrototype, arrayIterator;
 
-/* eslint-disable es-x/no-array-prototype-keys -- safe */
+/* eslint-disable es/no-array-prototype-keys -- safe */
 if ([].keys) {
   arrayIterator = [].keys();
   // Safari 8 has buggy iterators w/o `next`
@@ -2399,7 +2483,7 @@ var InternalStateModule = __webpack_require__(9909);
 
 var enforceInternalState = InternalStateModule.enforce;
 var getInternalState = InternalStateModule.get;
-// eslint-disable-next-line es-x/no-object-defineproperty -- safe
+// eslint-disable-next-line es/no-object-defineproperty -- safe
 var defineProperty = Object.defineProperty;
 
 var CONFIGURABLE_LENGTH = DESCRIPTORS && !fails(function () {
@@ -2450,7 +2534,7 @@ var floor = Math.floor;
 
 // `Math.trunc` method
 // https://tc39.es/ecma262/#sec-math.trunc
-// eslint-disable-next-line es-x/no-math-trunc -- safe
+// eslint-disable-next-line es/no-math-trunc -- safe
 module.exports = Math.trunc || function trunc(x) {
   var n = +x;
   return (n > 0 ? floor : ceil)(n);
@@ -2580,6 +2664,18 @@ module.exports.f = function (C) {
 
 /***/ }),
 
+/***/ 6277:
+/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
+
+var toString = __webpack_require__(1340);
+
+module.exports = function (argument, $default) {
+  return argument === undefined ? arguments.length < 2 ? '' : $default : toString(argument);
+};
+
+
+/***/ }),
+
 /***/ 3929:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
@@ -2669,9 +2765,9 @@ var propertyIsEnumerableModule = __webpack_require__(5296);
 var toObject = __webpack_require__(7908);
 var IndexedObject = __webpack_require__(8361);
 
-// eslint-disable-next-line es-x/no-object-assign -- safe
+// eslint-disable-next-line es/no-object-assign -- safe
 var $assign = Object.assign;
-// eslint-disable-next-line es-x/no-object-defineproperty -- required for testing
+// eslint-disable-next-line es/no-object-defineproperty -- required for testing
 var defineProperty = Object.defineProperty;
 var concat = uncurryThis([].concat);
 
@@ -2691,7 +2787,7 @@ module.exports = !$assign || fails(function () {
   // should work with symbols and should have deterministic property order (V8 bug)
   var A = {};
   var B = {};
-  // eslint-disable-next-line es-x/no-symbol -- safe
+  // eslint-disable-next-line es/no-symbol -- safe
   var symbol = Symbol();
   var alphabet = 'abcdefghijklmnopqrst';
   A[symbol] = 7;
@@ -2793,7 +2889,7 @@ hiddenKeys[IE_PROTO] = true;
 
 // `Object.create` method
 // https://tc39.es/ecma262/#sec-object.create
-// eslint-disable-next-line es-x/no-object-create -- safe
+// eslint-disable-next-line es/no-object-create -- safe
 module.exports = Object.create || function create(O, Properties) {
   var result;
   if (O !== null) {
@@ -2821,7 +2917,7 @@ var objectKeys = __webpack_require__(1956);
 
 // `Object.defineProperties` method
 // https://tc39.es/ecma262/#sec-object.defineproperties
-// eslint-disable-next-line es-x/no-object-defineproperties -- safe
+// eslint-disable-next-line es/no-object-defineproperties -- safe
 exports.f = DESCRIPTORS && !V8_PROTOTYPE_DEFINE_BUG ? Object.defineProperties : function defineProperties(O, Properties) {
   anObject(O);
   var props = toIndexedObject(Properties);
@@ -2846,9 +2942,9 @@ var anObject = __webpack_require__(9670);
 var toPropertyKey = __webpack_require__(4948);
 
 var $TypeError = TypeError;
-// eslint-disable-next-line es-x/no-object-defineproperty -- safe
+// eslint-disable-next-line es/no-object-defineproperty -- safe
 var $defineProperty = Object.defineProperty;
-// eslint-disable-next-line es-x/no-object-getownpropertydescriptor -- safe
+// eslint-disable-next-line es/no-object-getownpropertydescriptor -- safe
 var $getOwnPropertyDescriptor = Object.getOwnPropertyDescriptor;
 var ENUMERABLE = 'enumerable';
 var CONFIGURABLE = 'configurable';
@@ -2898,7 +2994,7 @@ var toPropertyKey = __webpack_require__(4948);
 var hasOwn = __webpack_require__(2597);
 var IE8_DOM_DEFINE = __webpack_require__(4664);
 
-// eslint-disable-next-line es-x/no-object-getownpropertydescriptor -- safe
+// eslint-disable-next-line es/no-object-getownpropertydescriptor -- safe
 var $getOwnPropertyDescriptor = Object.getOwnPropertyDescriptor;
 
 // `Object.getOwnPropertyDescriptor` method
@@ -2918,7 +3014,7 @@ exports.f = DESCRIPTORS ? $getOwnPropertyDescriptor : function getOwnPropertyDes
 /***/ 1156:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-/* eslint-disable es-x/no-object-getownpropertynames -- safe */
+/* eslint-disable es/no-object-getownpropertynames -- safe */
 var classof = __webpack_require__(4326);
 var toIndexedObject = __webpack_require__(5656);
 var $getOwnPropertyNames = (__webpack_require__(8006).f);
@@ -2955,7 +3051,7 @@ var hiddenKeys = enumBugKeys.concat('length', 'prototype');
 
 // `Object.getOwnPropertyNames` method
 // https://tc39.es/ecma262/#sec-object.getownpropertynames
-// eslint-disable-next-line es-x/no-object-getownpropertynames -- safe
+// eslint-disable-next-line es/no-object-getownpropertynames -- safe
 exports.f = Object.getOwnPropertyNames || function getOwnPropertyNames(O) {
   return internalObjectKeys(O, hiddenKeys);
 };
@@ -2966,7 +3062,7 @@ exports.f = Object.getOwnPropertyNames || function getOwnPropertyNames(O) {
 /***/ 5181:
 /***/ (function(__unused_webpack_module, exports) {
 
-// eslint-disable-next-line es-x/no-object-getownpropertysymbols -- safe
+// eslint-disable-next-line es/no-object-getownpropertysymbols -- safe
 exports.f = Object.getOwnPropertySymbols;
 
 
@@ -2987,7 +3083,7 @@ var ObjectPrototype = $Object.prototype;
 
 // `Object.getPrototypeOf` method
 // https://tc39.es/ecma262/#sec-object.getprototypeof
-// eslint-disable-next-line es-x/no-object-getprototypeof -- safe
+// eslint-disable-next-line es/no-object-getprototypeof -- safe
 module.exports = CORRECT_PROTOTYPE_GETTER ? $Object.getPrototypeOf : function (O) {
   var object = toObject(O);
   if (hasOwn(object, IE_PROTO)) return object[IE_PROTO];
@@ -3045,7 +3141,7 @@ var enumBugKeys = __webpack_require__(748);
 
 // `Object.keys` method
 // https://tc39.es/ecma262/#sec-object.keys
-// eslint-disable-next-line es-x/no-object-keys -- safe
+// eslint-disable-next-line es/no-object-keys -- safe
 module.exports = Object.keys || function keys(O) {
   return internalObjectKeys(O, enumBugKeys);
 };
@@ -3059,7 +3155,7 @@ module.exports = Object.keys || function keys(O) {
 "use strict";
 
 var $propertyIsEnumerable = {}.propertyIsEnumerable;
-// eslint-disable-next-line es-x/no-object-getownpropertydescriptor -- safe
+// eslint-disable-next-line es/no-object-getownpropertydescriptor -- safe
 var getOwnPropertyDescriptor = Object.getOwnPropertyDescriptor;
 
 // Nashorn ~ JDK8 bug
@@ -3086,13 +3182,13 @@ var aPossiblePrototype = __webpack_require__(6077);
 // `Object.setPrototypeOf` method
 // https://tc39.es/ecma262/#sec-object.setprototypeof
 // Works with __proto__ only. Old v8 can't work with null proto objects.
-// eslint-disable-next-line es-x/no-object-setprototypeof -- safe
+// eslint-disable-next-line es/no-object-setprototypeof -- safe
 module.exports = Object.setPrototypeOf || ('__proto__' in {} ? function () {
   var CORRECT_SETTER = false;
   var test = {};
   var setter;
   try {
-    // eslint-disable-next-line es-x/no-object-getownpropertydescriptor -- safe
+    // eslint-disable-next-line es/no-object-getownpropertydescriptor -- safe
     setter = uncurryThis(Object.getOwnPropertyDescriptor(Object.prototype, '__proto__').set);
     setter(test, []);
     CORRECT_SETTER = test instanceof Array;
@@ -3706,10 +3802,10 @@ var store = __webpack_require__(5465);
 (module.exports = function (key, value) {
   return store[key] || (store[key] = value !== undefined ? value : {});
 })('versions', []).push({
-  version: '3.25.2',
+  version: '3.26.0',
   mode: IS_PURE ? 'pure' : 'global',
   copyright: '© 2014-2022 Denis Pushkarev (zloirock.ru)',
-  license: 'https://github.com/zloirock/core-js/blob/v3.25.2/LICENSE',
+  license: 'https://github.com/zloirock/core-js/blob/v3.26.0/LICENSE',
   source: 'https://github.com/zloirock/core-js'
 });
 
@@ -3843,11 +3939,11 @@ module.exports = {
 /***/ 6293:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-/* eslint-disable es-x/no-symbol -- required for testing */
+/* eslint-disable es/no-symbol -- required for testing */
 var V8_VERSION = __webpack_require__(7392);
 var fails = __webpack_require__(7293);
 
-// eslint-disable-next-line es-x/no-object-getownpropertysymbols -- required for testing
+// eslint-disable-next-line es/no-object-getownpropertysymbols -- required for testing
 module.exports = !!Object.getOwnPropertySymbols && !fails(function () {
   var symbol = Symbol();
   // Chrome 38 Symbol has incorrect toString conversion
@@ -3892,7 +3988,7 @@ module.exports = function () {
 
 var NATIVE_SYMBOL = __webpack_require__(6293);
 
-/* eslint-disable es-x/no-symbol -- safe */
+/* eslint-disable es/no-symbol -- safe */
 module.exports = NATIVE_SYMBOL && !!Symbol['for'] && !!Symbol.keyFor;
 
 
@@ -3924,11 +4020,11 @@ var String = global.String;
 var counter = 0;
 var queue = {};
 var ONREADYSTATECHANGE = 'onreadystatechange';
-var location, defer, channel, port;
+var $location, defer, channel, port;
 
 try {
   // Deno throws a ReferenceError on `location` access without `--location` flag
-  location = global.location;
+  $location = global.location;
 } catch (error) { /* empty */ }
 
 var run = function (id) {
@@ -3951,7 +4047,7 @@ var listener = function (event) {
 
 var post = function (id) {
   // old engines have not location.origin
-  global.postMessage(String(id), location.protocol + '//' + location.host);
+  global.postMessage(String(id), $location.protocol + '//' + $location.host);
 };
 
 // Node.js 0.9+ & IE10+ has setImmediate, otherwise:
@@ -3992,7 +4088,7 @@ if (!set || !clear) {
     global.addEventListener &&
     isCallable(global.postMessage) &&
     !global.importScripts &&
-    location && location.protocol !== 'file:' &&
+    $location && $location.protocol !== 'file:' &&
     !fails(post)
   ) {
     defer = post;
@@ -4227,7 +4323,7 @@ module.exports = function (key) {
 /***/ 3307:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-/* eslint-disable es-x/no-symbol -- required for testing */
+/* eslint-disable es/no-symbol -- required for testing */
 var NATIVE_SYMBOL = __webpack_require__(6293);
 
 module.exports = NATIVE_SYMBOL
@@ -4246,7 +4342,7 @@ var fails = __webpack_require__(7293);
 // V8 ~ Chrome 36-
 // https://bugs.chromium.org/p/v8/issues/detail?id=3334
 module.exports = DESCRIPTORS && fails(function () {
-  // eslint-disable-next-line es-x/no-object-defineproperty -- required for testing
+  // eslint-disable-next-line es/no-object-defineproperty -- required for testing
   return Object.defineProperty(function () { /* empty */ }, 'prototype', {
     value: 42,
     writable: false
@@ -4347,6 +4443,80 @@ module.exports = function (name) {
 // a string of all valid unicode whitespaces
 module.exports = '\u0009\u000A\u000B\u000C\u000D\u0020\u00A0\u1680\u2000\u2001\u2002' +
   '\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200A\u202F\u205F\u3000\u2028\u2029\uFEFF';
+
+
+/***/ }),
+
+/***/ 9191:
+/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
+
+"use strict";
+
+var getBuiltIn = __webpack_require__(5005);
+var hasOwn = __webpack_require__(2597);
+var createNonEnumerableProperty = __webpack_require__(8880);
+var isPrototypeOf = __webpack_require__(7976);
+var setPrototypeOf = __webpack_require__(7674);
+var copyConstructorProperties = __webpack_require__(9920);
+var proxyAccessor = __webpack_require__(2626);
+var inheritIfRequired = __webpack_require__(9587);
+var normalizeStringArgument = __webpack_require__(6277);
+var installErrorCause = __webpack_require__(8340);
+var clearErrorStack = __webpack_require__(1060);
+var ERROR_STACK_INSTALLABLE = __webpack_require__(2914);
+var DESCRIPTORS = __webpack_require__(9781);
+var IS_PURE = __webpack_require__(1913);
+
+module.exports = function (FULL_NAME, wrapper, FORCED, IS_AGGREGATE_ERROR) {
+  var STACK_TRACE_LIMIT = 'stackTraceLimit';
+  var OPTIONS_POSITION = IS_AGGREGATE_ERROR ? 2 : 1;
+  var path = FULL_NAME.split('.');
+  var ERROR_NAME = path[path.length - 1];
+  var OriginalError = getBuiltIn.apply(null, path);
+
+  if (!OriginalError) return;
+
+  var OriginalErrorPrototype = OriginalError.prototype;
+
+  // V8 9.3- bug https://bugs.chromium.org/p/v8/issues/detail?id=12006
+  if (!IS_PURE && hasOwn(OriginalErrorPrototype, 'cause')) delete OriginalErrorPrototype.cause;
+
+  if (!FORCED) return OriginalError;
+
+  var BaseError = getBuiltIn('Error');
+
+  var WrappedError = wrapper(function (a, b) {
+    var message = normalizeStringArgument(IS_AGGREGATE_ERROR ? b : a, undefined);
+    var result = IS_AGGREGATE_ERROR ? new OriginalError(a) : new OriginalError();
+    if (message !== undefined) createNonEnumerableProperty(result, 'message', message);
+    if (ERROR_STACK_INSTALLABLE) createNonEnumerableProperty(result, 'stack', clearErrorStack(result.stack, 2));
+    if (this && isPrototypeOf(OriginalErrorPrototype, this)) inheritIfRequired(result, this, WrappedError);
+    if (arguments.length > OPTIONS_POSITION) installErrorCause(result, arguments[OPTIONS_POSITION]);
+    return result;
+  });
+
+  WrappedError.prototype = OriginalErrorPrototype;
+
+  if (ERROR_NAME !== 'Error') {
+    if (setPrototypeOf) setPrototypeOf(WrappedError, BaseError);
+    else copyConstructorProperties(WrappedError, BaseError, { name: true });
+  } else if (DESCRIPTORS && STACK_TRACE_LIMIT in OriginalError) {
+    proxyAccessor(WrappedError, OriginalError, STACK_TRACE_LIMIT);
+    proxyAccessor(WrappedError, OriginalError, 'prepareStackTrace');
+  }
+
+  copyConstructorProperties(WrappedError, OriginalError);
+
+  if (!IS_PURE) try {
+    // Safari 13- bug: WebAssembly errors does not have a proper `.name`
+    if (OriginalErrorPrototype.name !== ERROR_NAME) {
+      createNonEnumerableProperty(OriginalErrorPrototype, 'name', ERROR_NAME);
+    }
+    OriginalErrorPrototype.constructor = WrappedError;
+  } catch (error) { /* empty */ }
+
+  return WrappedError;
+};
 
 
 /***/ }),
@@ -4479,7 +4649,7 @@ var from = __webpack_require__(8457);
 var checkCorrectnessOfIteration = __webpack_require__(7072);
 
 var INCORRECT_ITERATION = !checkCorrectnessOfIteration(function (iterable) {
-  // eslint-disable-next-line es-x/no-array-from -- required for testing
+  // eslint-disable-next-line es/no-array-from -- required for testing
   Array.from(iterable);
 });
 
@@ -4526,7 +4696,7 @@ addToUnscopables('includes');
 
 "use strict";
 
-/* eslint-disable es-x/no-array-prototype-indexof -- required for testing */
+/* eslint-disable es/no-array-prototype-indexof -- required for testing */
 var $ = __webpack_require__(2109);
 var uncurryThis = __webpack_require__(1702);
 var $indexOf = (__webpack_require__(1318).indexOf);
@@ -4630,7 +4800,7 @@ var lastIndexOf = __webpack_require__(6583);
 
 // `Array.prototype.lastIndexOf` method
 // https://tc39.es/ecma262/#sec-array.prototype.lastindexof
-// eslint-disable-next-line es-x/no-array-prototype-lastindexof -- required for testing
+// eslint-disable-next-line es/no-array-prototype-lastindexof -- required for testing
 $({ target: 'Array', proto: true, forced: lastIndexOf !== [].lastIndexOf }, {
   lastIndexOf: lastIndexOf
 });
@@ -4655,6 +4825,54 @@ var HAS_SPECIES_SUPPORT = arrayMethodHasSpeciesSupport('map');
 $({ target: 'Array', proto: true, forced: !HAS_SPECIES_SUPPORT }, {
   map: function map(callbackfn /* , thisArg */) {
     return $map(this, callbackfn, arguments.length > 1 ? arguments[1] : undefined);
+  }
+});
+
+
+/***/ }),
+
+/***/ 7658:
+/***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
+
+"use strict";
+
+var $ = __webpack_require__(2109);
+var toObject = __webpack_require__(7908);
+var lengthOfArrayLike = __webpack_require__(6244);
+var setArrayLength = __webpack_require__(3658);
+var doesNotExceedSafeInteger = __webpack_require__(7207);
+var fails = __webpack_require__(7293);
+
+var INCORRECT_TO_LENGTH = fails(function () {
+  return [].push.call({ length: 0x100000000 }, 1) !== 4294967297;
+});
+
+// V8 and Safari <= 15.4, FF < 23 throws InternalError
+// https://bugs.chromium.org/p/v8/issues/detail?id=12681
+var SILENT_ON_NON_WRITABLE_LENGTH = !function () {
+  try {
+    // eslint-disable-next-line es/no-object-defineproperty -- safe
+    Object.defineProperty([], 'length', { writable: false }).push();
+  } catch (error) {
+    return error instanceof TypeError;
+  }
+}();
+
+// `Array.prototype.push` method
+// https://tc39.es/ecma262/#sec-array.prototype.push
+$({ target: 'Array', proto: true, arity: 1, forced: INCORRECT_TO_LENGTH || SILENT_ON_NON_WRITABLE_LENGTH }, {
+  // eslint-disable-next-line no-unused-vars -- required for `.length`
+  push: function push(item) {
+    var O = toObject(this);
+    var len = lengthOfArrayLike(O);
+    var argCount = arguments.length;
+    doesNotExceedSafeInteger(len + argCount);
+    for (var i = 0; i < argCount; i++) {
+      O[len] = arguments[i];
+      len++;
+    }
+    setArrayLength(O, len);
+    return len;
   }
 });
 
@@ -4962,6 +5180,69 @@ $({ target: 'Array', proto: true, forced: !HAS_SPECIES_SUPPORT }, {
 
 /***/ }),
 
+/***/ 1703:
+/***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
+
+/* eslint-disable no-unused-vars -- required for functions `.length` */
+var $ = __webpack_require__(2109);
+var global = __webpack_require__(7854);
+var apply = __webpack_require__(2104);
+var wrapErrorConstructorWithCause = __webpack_require__(9191);
+
+var WEB_ASSEMBLY = 'WebAssembly';
+var WebAssembly = global[WEB_ASSEMBLY];
+
+var FORCED = Error('e', { cause: 7 }).cause !== 7;
+
+var exportGlobalErrorCauseWrapper = function (ERROR_NAME, wrapper) {
+  var O = {};
+  O[ERROR_NAME] = wrapErrorConstructorWithCause(ERROR_NAME, wrapper, FORCED);
+  $({ global: true, constructor: true, arity: 1, forced: FORCED }, O);
+};
+
+var exportWebAssemblyErrorCauseWrapper = function (ERROR_NAME, wrapper) {
+  if (WebAssembly && WebAssembly[ERROR_NAME]) {
+    var O = {};
+    O[ERROR_NAME] = wrapErrorConstructorWithCause(WEB_ASSEMBLY + '.' + ERROR_NAME, wrapper, FORCED);
+    $({ target: WEB_ASSEMBLY, stat: true, constructor: true, arity: 1, forced: FORCED }, O);
+  }
+};
+
+// https://github.com/tc39/proposal-error-cause
+exportGlobalErrorCauseWrapper('Error', function (init) {
+  return function Error(message) { return apply(init, this, arguments); };
+});
+exportGlobalErrorCauseWrapper('EvalError', function (init) {
+  return function EvalError(message) { return apply(init, this, arguments); };
+});
+exportGlobalErrorCauseWrapper('RangeError', function (init) {
+  return function RangeError(message) { return apply(init, this, arguments); };
+});
+exportGlobalErrorCauseWrapper('ReferenceError', function (init) {
+  return function ReferenceError(message) { return apply(init, this, arguments); };
+});
+exportGlobalErrorCauseWrapper('SyntaxError', function (init) {
+  return function SyntaxError(message) { return apply(init, this, arguments); };
+});
+exportGlobalErrorCauseWrapper('TypeError', function (init) {
+  return function TypeError(message) { return apply(init, this, arguments); };
+});
+exportGlobalErrorCauseWrapper('URIError', function (init) {
+  return function URIError(message) { return apply(init, this, arguments); };
+});
+exportWebAssemblyErrorCauseWrapper('CompileError', function (init) {
+  return function CompileError(message) { return apply(init, this, arguments); };
+});
+exportWebAssemblyErrorCauseWrapper('LinkError', function (init) {
+  return function LinkError(message) { return apply(init, this, arguments); };
+});
+exportWebAssemblyErrorCauseWrapper('RuntimeError', function (init) {
+  return function RuntimeError(message) { return apply(init, this, arguments); };
+});
+
+
+/***/ }),
+
 /***/ 8862:
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
@@ -5170,7 +5451,7 @@ var assign = __webpack_require__(1574);
 
 // `Object.assign` method
 // https://tc39.es/ecma262/#sec-object.assign
-// eslint-disable-next-line es-x/no-object-assign -- required for testing
+// eslint-disable-next-line es/no-object-assign -- required for testing
 $({ target: 'Object', stat: true, arity: 2, forced: Object.assign !== assign }, {
   assign: assign
 });
@@ -5185,7 +5466,7 @@ var $ = __webpack_require__(2109);
 var fails = __webpack_require__(7293);
 var getOwnPropertyNames = (__webpack_require__(1156).f);
 
-// eslint-disable-next-line es-x/no-object-getownpropertynames -- required for testing
+// eslint-disable-next-line es/no-object-getownpropertynames -- required for testing
 var FAILS_ON_PRIMITIVES = fails(function () { return !Object.getOwnPropertyNames(1); });
 
 // `Object.getOwnPropertyNames` method
@@ -5849,6 +6130,22 @@ $({ target: 'Reflect', stat: true, forced: FORCED, sham: FORCED }, {
 
 /***/ }),
 
+/***/ 1299:
+/***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
+
+var $ = __webpack_require__(2109);
+var global = __webpack_require__(7854);
+var setToStringTag = __webpack_require__(8003);
+
+$({ global: true }, { Reflect: {} });
+
+// Reflect[@@toStringTag] property
+// https://tc39.es/ecma262/#sec-reflect-@@tostringtag
+setToStringTag(global.Reflect, 'Reflect', true);
+
+
+/***/ }),
+
 /***/ 4603:
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
@@ -6046,6 +6343,38 @@ setSpecies('RegExp');
 
 /***/ }),
 
+/***/ 8450:
+/***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
+
+var DESCRIPTORS = __webpack_require__(9781);
+var UNSUPPORTED_DOT_ALL = __webpack_require__(9441);
+var classof = __webpack_require__(4326);
+var defineBuiltInAccessor = __webpack_require__(7045);
+var getInternalState = (__webpack_require__(9909).get);
+
+var RegExpPrototype = RegExp.prototype;
+var $TypeError = TypeError;
+
+// `RegExp.prototype.dotAll` getter
+// https://tc39.es/ecma262/#sec-get-regexp.prototype.dotall
+if (DESCRIPTORS && UNSUPPORTED_DOT_ALL) {
+  defineBuiltInAccessor(RegExpPrototype, 'dotAll', {
+    configurable: true,
+    get: function dotAll() {
+      if (this === RegExpPrototype) return undefined;
+      // We can't use InternalStateModule.getterFor because
+      // we don't add metadata for regexps created by a literal.
+      if (classof(this) === 'RegExp') {
+        return !!getInternalState(this).dotAll;
+      }
+      throw $TypeError('Incompatible receiver, RegExp required');
+    }
+  });
+}
+
+
+/***/ }),
+
 /***/ 4916:
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
@@ -6058,6 +6387,81 @@ var exec = __webpack_require__(2261);
 // https://tc39.es/ecma262/#sec-regexp.prototype.exec
 $({ target: 'RegExp', proto: true, forced: /./.exec !== exec }, {
   exec: exec
+});
+
+
+/***/ }),
+
+/***/ 8386:
+/***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
+
+var DESCRIPTORS = __webpack_require__(9781);
+var MISSED_STICKY = (__webpack_require__(2999).MISSED_STICKY);
+var classof = __webpack_require__(4326);
+var defineBuiltInAccessor = __webpack_require__(7045);
+var getInternalState = (__webpack_require__(9909).get);
+
+var RegExpPrototype = RegExp.prototype;
+var $TypeError = TypeError;
+
+// `RegExp.prototype.sticky` getter
+// https://tc39.es/ecma262/#sec-get-regexp.prototype.sticky
+if (DESCRIPTORS && MISSED_STICKY) {
+  defineBuiltInAccessor(RegExpPrototype, 'sticky', {
+    configurable: true,
+    get: function sticky() {
+      if (this === RegExpPrototype) return undefined;
+      // We can't use InternalStateModule.getterFor because
+      // we don't add metadata for regexps created by a literal.
+      if (classof(this) === 'RegExp') {
+        return !!getInternalState(this).sticky;
+      }
+      throw $TypeError('Incompatible receiver, RegExp required');
+    }
+  });
+}
+
+
+/***/ }),
+
+/***/ 7601:
+/***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
+
+"use strict";
+
+// TODO: Remove from `core-js@4` since it's moved to entry points
+__webpack_require__(4916);
+var $ = __webpack_require__(2109);
+var call = __webpack_require__(6916);
+var isCallable = __webpack_require__(614);
+var anObject = __webpack_require__(9670);
+var toString = __webpack_require__(1340);
+
+var DELEGATES_TO_EXEC = function () {
+  var execCalled = false;
+  var re = /[ac]/;
+  re.exec = function () {
+    execCalled = true;
+    return /./.exec.apply(this, arguments);
+  };
+  return re.test('abc') === true && execCalled;
+}();
+
+var nativeTest = /./.test;
+
+// `RegExp.prototype.test` method
+// https://tc39.es/ecma262/#sec-regexp.prototype.test
+$({ target: 'RegExp', proto: true, forced: !DELEGATES_TO_EXEC }, {
+  test: function (S) {
+    var R = anObject(this);
+    var string = toString(S);
+    var exec = R.exec;
+    if (!isCallable(exec)) return call(nativeTest, R, string);
+    var result = call(exec, R, string);
+    if (result === null) return false;
+    anObject(result);
+    return true;
+  }
 });
 
 
@@ -8049,6 +8453,8 @@ var es_object_keys = __webpack_require__(7941);
 var es_object_to_string = __webpack_require__(1539);
 // EXTERNAL MODULE: ./node_modules/core-js/modules/web.dom-collections.for-each.js
 var web_dom_collections_for_each = __webpack_require__(4747);
+// EXTERNAL MODULE: ./node_modules/core-js/modules/es.array.push.js
+var es_array_push = __webpack_require__(7658);
 // EXTERNAL MODULE: ./node_modules/core-js/modules/es.array.find.js
 var es_array_find = __webpack_require__(9826);
 // EXTERNAL MODULE: ./node_modules/core-js/modules/es.string.iterator.js
@@ -8067,8 +8473,12 @@ var es_symbol_description = __webpack_require__(1817);
 var es_array_concat = __webpack_require__(2222);
 // EXTERNAL MODULE: ./node_modules/core-js/modules/es.regexp.exec.js
 var es_regexp_exec = __webpack_require__(4916);
+// EXTERNAL MODULE: ./node_modules/core-js/modules/es.regexp.test.js
+var es_regexp_test = __webpack_require__(7601);
 // EXTERNAL MODULE: ./node_modules/core-js/modules/es.array.filter.js
 var es_array_filter = __webpack_require__(7327);
+// EXTERNAL MODULE: ./node_modules/core-js/modules/es.error.cause.js
+var es_error_cause = __webpack_require__(1703);
 // EXTERNAL MODULE: ./node_modules/core-js/modules/es.symbol.iterator.js
 var es_symbol_iterator = __webpack_require__(2165);
 // EXTERNAL MODULE: ./node_modules/core-js/modules/es.symbol.async-iterator.js
@@ -8108,37 +8518,29 @@ var es_number_constructor = __webpack_require__(9653);
 
 
 
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
-
 var FW = /*#__PURE__*/function () {
   function FW() {
     _classCallCheck(this, FW);
   }
-
   _createClass(FW, null, [{
     key: "_getStyleAttributeData",
     value: function _getStyleAttributeData(element, style) {
       var styleAttributeData = 0;
-
       if (element && typeof window.getComputedStyle === 'function') {
         var cs = window.getComputedStyle(element, null);
-
         if (cs) {
           styleAttributeData = cs.getPropertyValue(style);
           styleAttributeData = styleAttributeData.toString().toLowerCase();
         }
       }
-
       styleAttributeData = styleAttributeData.toString();
-
       if (styleAttributeData.indexOf('px') > -1) {
         styleAttributeData = styleAttributeData.replace('px', '');
       }
-
       return parseFloat(styleAttributeData);
     }
   }, {
@@ -8150,7 +8552,6 @@ var FW = /*#__PURE__*/function () {
     key: "createStdEvent",
     value: function createStdEvent(eventName, element) {
       var event;
-
       if (element) {
         try {
           event = new Event(eventName);
@@ -8180,7 +8581,6 @@ var FW = /*#__PURE__*/function () {
           return FW._getStyleAttributeData(element, 'width');
         }
       }
-
       return 0;
     }
   }, {
@@ -8193,7 +8593,6 @@ var FW = /*#__PURE__*/function () {
           return FW._getStyleAttributeData(element, 'height');
         }
       }
-
       return 0;
     }
   }, {
@@ -8227,7 +8626,6 @@ var FW = /*#__PURE__*/function () {
       if (obj && typeof obj === 'object' && Object.keys(obj).length === 0) {
         return true;
       }
-
       return false;
     }
   }, {
@@ -8244,24 +8642,20 @@ var FW = /*#__PURE__*/function () {
     key: "consolePrepend2",
     get: function get() {
       var CLASSIC_LOG_PATTERN = /(edge|xbox|msie|trident)/i;
-
       if (navigator && navigator.userAgent && CLASSIC_LOG_PATTERN.test(navigator.userAgent)) {
         // browsers with no console log styling capabilities
         return 'om-sdk-manager:';
       }
-
       return 'om-sdk-manager%c';
     }
   }, {
     key: "consolePrepend",
     get: function get() {
       var CLASSIC_LOG_PATTERN = /(edge|xbox|msie|trident)/i;
-
       if (navigator && navigator.userAgent && CLASSIC_LOG_PATTERN.test(navigator.userAgent)) {
         // browsers with no console log styling capabilities
         return 'RMP-VAST:';
       }
-
       return '%crmp-vast%c';
     }
   }, {
@@ -8282,7 +8676,6 @@ var FW = /*#__PURE__*/function () {
       if (typeof n === 'number' && Number.isFinite(n)) {
         return true;
       }
-
       return false;
     }
   }, {
@@ -8304,11 +8697,9 @@ var FW = /*#__PURE__*/function () {
         var xhr = new XMLHttpRequest();
         xhr.open('GET', url, true);
         xhr.timeout = timeout;
-
         if (withCredentials) {
           xhr.withCredentials = true;
         }
-
         xhr.onloadend = function () {
           if (typeof xhr.status === 'number' && xhr.status >= 200 && xhr.status < 300) {
             resolve('XMLHttpRequest request succeeded');
@@ -8316,19 +8707,15 @@ var FW = /*#__PURE__*/function () {
             reject('XMLHttpRequest wrong status code: ' + xhr.status);
           }
         };
-
         xhr.ontimeout = function () {
           reject('XMLHttpRequest timeout');
         };
-
         xhr.send(null);
       });
     }
   }]);
-
   return FW;
 }();
-
 
 // EXTERNAL MODULE: ./node_modules/core-js/modules/es.string.match.js
 var es_string_match = __webpack_require__(4723);
@@ -8339,12 +8726,10 @@ var es_parse_int = __webpack_require__(1058);
 
 
 
+
 function env_classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
 function env_defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
 function env_createClass(Constructor, protoProps, staticProps) { if (protoProps) env_defineProperties(Constructor.prototype, protoProps); if (staticProps) env_defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
-
 
 var TEST_VIDEO = document.createElement('video');
 var IOS_PATTERN = /(ipad|iphone|ipod)/i;
@@ -8357,25 +8742,22 @@ var NO_SAFARI_PATTERN = /(chrome|chromium|android|crios|fxios)/i;
 var MAC_PLATFORM_PATTERN = /macintel/i;
 var ANDROID_PATTERN = /android/i;
 var ANDROID_VERSION_PATTERN = /android\s*(\d+)\./i;
+
 /*const FIREFOX_PATTERN = /firefox\//i;
 const SEAMONKEY_PATTERN = /seamonkey\//i;*/
-
 var ENV = /*#__PURE__*/function () {
   function ENV() {
     env_classCallCheck(this, ENV);
   }
-
   env_createClass(ENV, null, [{
     key: "_filterVersion",
     value: function _filterVersion(pattern) {
       if (navigator.userAgent) {
         var versionArray = navigator.userAgent.match(pattern);
-
         if (Array.isArray(versionArray) && typeof versionArray[1] !== 'undefined') {
           return parseInt(versionArray[1], 10);
         }
       }
-
       return -1;
     }
   }, {
@@ -8384,7 +8766,6 @@ var ENV = /*#__PURE__*/function () {
       if (typeof window.ontouchstart !== 'undefined' || window.DocumentTouch && document instanceof window.DocumentTouch) {
         return true;
       }
-
       return false;
     }
   }, {
@@ -8393,18 +8774,15 @@ var ENV = /*#__PURE__*/function () {
       if (navigator.userAgent) {
         return navigator.userAgent;
       }
-
       return null;
     }
   }, {
     key: "devicePixelRatio",
     get: function get() {
       var pixelRatio = 1;
-
       if (FW.isNumber(window.devicePixelRatio) && window.devicePixelRatio > 1) {
         pixelRatio = window.devicePixelRatio;
       }
-
       return pixelRatio;
     }
   }, {
@@ -8413,18 +8791,15 @@ var ENV = /*#__PURE__*/function () {
       if (typeof navigator.maxTouchPoints === 'number') {
         return navigator.maxTouchPoints;
       }
-
       return -1;
     }
   }, {
     key: "isIos",
     get: function get() {
       var support = [false, -1];
-
       if (IOS_PATTERN.test(ENV.userAgent) && ENV.hasTouchEvents) {
         support = [true, ENV._filterVersion(IOS_VERSION_PATTERN)];
       }
-
       return support;
     }
   }, {
@@ -8433,7 +8808,6 @@ var ENV = /*#__PURE__*/function () {
       if (!ENV.isIos[0] && ENV.hasTouchEvents && MAC_PLATFORM_PATTERN.test(navigator.platform) && ENV.devicePixelRatio > 1 && ENV.maxTouchPoints > 1) {
         return true;
       }
-
       return false;
     }
   }, {
@@ -8441,12 +8815,10 @@ var ENV = /*#__PURE__*/function () {
     get: function get() {
       var isMacOS = false;
       var macOSXMinorVersion = -1;
-
       if (!ENV.isIos[0] && !ENV.isIpadOS && MACOS_PATTERN.test(ENV.userAgent)) {
         isMacOS = true;
         macOSXMinorVersion = ENV._filterVersion(MACOS_VERSION_PATTERN, true);
       }
-
       return [isMacOS, macOSXMinorVersion];
     }
   }, {
@@ -8454,12 +8826,10 @@ var ENV = /*#__PURE__*/function () {
     get: function get() {
       var isSafari = false;
       var safariVersion = -1;
-
       if (SAFARI_PATTERN.test(ENV.userAgent) && !NO_SAFARI_PATTERN.test(ENV.userAgent)) {
         isSafari = true;
         safariVersion = ENV._filterVersion(SAFARI_VERSION_PATTERN);
       }
-
       return [isSafari, safariVersion];
     }
   }, {
@@ -8471,13 +8841,12 @@ var ENV = /*#__PURE__*/function () {
     key: "isAndroid",
     get: function get() {
       var support = [false, -1];
-
       if (!ENV.isIos[0] && ENV.hasTouchEvents && ANDROID_PATTERN.test(ENV.userAgent)) {
         support = [true, ENV._filterVersion(ANDROID_VERSION_PATTERN)];
       }
-
       return support;
     }
+
     /*// from https://developer.mozilla.org/en-US/docs/Web/HTTP/Browser_detection_using_the_user_agent
     static get isFirefox() {
       if (FIREFOX_PATTERN.test(ENV.userAgent) && !SEAMONKEY_PATTERN.test(ENV.userAgent)) {
@@ -8485,27 +8854,23 @@ var ENV = /*#__PURE__*/function () {
       }
       return false;
     }*/
-
   }, {
     key: "isMobile",
     get: function get() {
       if (ENV.isIos[0] || ENV.isAndroid[0] || ENV.isIpadOS) {
         return true;
       }
-
       return false;
     }
   }, {
     key: "hasNativeFullscreenSupport",
     get: function get() {
       var doc = document.documentElement;
-
       if (doc) {
         if (typeof doc.requestFullscreen !== 'undefined' || typeof doc.webkitRequestFullscreen !== 'undefined' || typeof doc.mozRequestFullScreen !== 'undefined' || typeof doc.msRequestFullscreen !== 'undefined' || typeof TEST_VIDEO.webkitEnterFullscreen !== 'undefined') {
           return true;
         }
       }
-
       return false;
     }
   }, {
@@ -8514,66 +8879,53 @@ var ENV = /*#__PURE__*/function () {
       if (TEST_VIDEO.canPlayType !== 'undefined') {
         if (type && codec) {
           var canPlayType = TEST_VIDEO.canPlayType(type + '; codecs="' + codec + '"');
-
           if (canPlayType !== '') {
             return true;
           }
         } else if (type && !codec) {
           var _canPlayType = TEST_VIDEO.canPlayType(type);
-
           if (_canPlayType !== '') {
             return true;
           }
         }
       }
-
       return false;
     }
   }]);
-
   return ENV;
 }();
-
 
 ;// CONCATENATED MODULE: ./src/js/players/content-player.js
 
 
 var CONTENT_PLAYER = {};
-
 CONTENT_PLAYER.play = function (firstContentPlayerPlayRequest) {
   if (this.contentPlayer && this.contentPlayer.paused) {
     Utils.playPromise.call(this, 'content', firstContentPlayerPlayRequest);
   }
 };
-
 CONTENT_PLAYER.pause = function () {
   if (this.contentPlayer && !this.contentPlayer.paused) {
     this.contentPlayer.pause();
   }
 };
-
 CONTENT_PLAYER.setVolume = function (level) {
   if (this.contentPlayer) {
     this.contentPlayer.volume = level;
   }
 };
-
 CONTENT_PLAYER.getVolume = function () {
   if (this.contentPlayer) {
     return this.contentPlayer.volume;
   }
-
   return -1;
 };
-
 CONTENT_PLAYER.getMute = function () {
   if (this.contentPlayer) {
     return this.contentPlayer.muted;
   }
-
   return false;
 };
-
 CONTENT_PLAYER.setMute = function (muted) {
   if (this.contentPlayer) {
     if (muted && !this.contentPlayer.muted) {
@@ -8583,62 +8935,49 @@ CONTENT_PLAYER.setMute = function (muted) {
     }
   }
 };
-
 CONTENT_PLAYER.getDuration = function () {
   if (this.contentPlayer) {
     var duration = this.contentPlayer.duration;
-
     if (FW.isNumber(duration)) {
       return Math.round(duration * 1000);
     }
   }
-
   return -1;
 };
-
 CONTENT_PLAYER.getCurrentTime = function () {
   if (this.contentPlayer) {
     var currentTime = this.contentPlayer.currentTime;
-
     if (FW.isNumber(currentTime)) {
       return Math.round(currentTime * 1000);
     }
   }
-
   return -1;
 };
-
 CONTENT_PLAYER.seekTo = function (msSeek) {
   if (!FW.isNumber(msSeek)) {
     return;
   }
-
   if (msSeek >= 0 && this.contentPlayer) {
     var seekValue = Math.round(msSeek / 1000 * 100) / 100;
     this.contentPlayer.currentTime = seekValue;
   }
 };
-
 CONTENT_PLAYER.preventSeekingForCustomPlayback = function () {
   var _this = this;
-
   // after much poking it appears we cannot rely on seek events for iOS to 
   // set this up reliably - so interval it is
   if (this.contentPlayer) {
     this.antiSeekLogicInterval = setInterval(function () {
       if (_this.creative.isLinear && _this.adOnStage) {
         var diff = Math.abs(_this.customPlaybackCurrentTime - _this.contentPlayer.currentTime);
-
         if (diff > 1) {
           _this.contentPlayer.currentTime = _this.customPlaybackCurrentTime;
         }
-
         _this.customPlaybackCurrentTime = _this.contentPlayer.currentTime;
       }
     }, 200);
   }
 };
-
 /* harmony default export */ var content_player = (CONTENT_PLAYER);
 // EXTERNAL MODULE: ./node_modules/core-js/modules/es.array.map.js
 var es_array_map = __webpack_require__(1249);
@@ -8646,16 +8985,12 @@ var es_array_map = __webpack_require__(1249);
 var es_array_from = __webpack_require__(1038);
 ;// CONCATENATED MODULE: ./src/js/tracking/tracking-events.js
 function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
-
 function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
-
 function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
-
 function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && iter[Symbol.iterator] != null || iter["@@iterator"] != null) return Array.from(iter); }
-
 function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
-
 function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
 
 
 
@@ -8681,26 +9016,23 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 
 var TRACKING_EVENTS = {};
 var MEDIA_MIME = ['video/webm', 'video/mp4', 'video/ogg', 'video/3gpp', 'application/vnd.apple.mpegurl', 'application/dash+xml'];
-
 var _dispatch = function _dispatch(event) {
   var _this = this;
+  console.log("".concat(FW.consolePrepend, " ping tracking for ").concat(event, " VAST event"), FW.consoleStyle, '');
 
-  console.log("".concat(FW.consolePrepend, " ping tracking for ").concat(event, " VAST event"), FW.consoleStyle, ''); // filter trackers - may return multiple urls for same event as allowed by VAST spec
-
+  // filter trackers - may return multiple urls for same event as allowed by VAST spec
   var trackers = this.trackingTags.filter(function (value) {
     return event === value.event;
-  }); // send ping for each valid tracker
-
+  });
+  // send ping for each valid tracker
   if (trackers.length > 0) {
     trackers.forEach(function (element) {
       TRACKING_EVENTS.pingURI.call(_this, element.url);
     });
   }
 };
-
 TRACKING_EVENTS.dispatch = function (event) {
   var _this2 = this;
-
   if (Array.isArray(event)) {
     event.forEach(function (currentEvent) {
       _dispatch.call(_this2, currentEvent);
@@ -8709,14 +9041,12 @@ TRACKING_EVENTS.dispatch = function (event) {
     _dispatch.call(this, event);
   }
 };
-
 var _vastReadableTime = function _vastReadableTime(time) {
   if (FW.isNumber(time) && time >= 0) {
     var seconds = 0;
     var minutes = 0;
     var hours = 0;
     var ms = Math.floor(time % 1000);
-
     if (ms === 0) {
       ms = '000';
     } else if (ms < 10) {
@@ -8726,14 +9056,11 @@ var _vastReadableTime = function _vastReadableTime(time) {
     } else {
       ms = ms.toString();
     }
-
     seconds = Math.floor(time * 1.0 / 1000);
-
     if (seconds > 59) {
       minutes = Math.floor(seconds * 1.0 / 60);
       seconds = seconds - minutes * 60;
     }
-
     if (seconds === 0) {
       seconds = '00';
     } else if (seconds < 10) {
@@ -8741,12 +9068,10 @@ var _vastReadableTime = function _vastReadableTime(time) {
     } else {
       seconds = seconds.toString();
     }
-
     if (minutes > 59) {
       hours = Math.floor(minutes * 1.0 / 60);
       minutes = minutes - hours * 60;
     }
-
     if (minutes === 0) {
       minutes = '00';
     } else if (minutes < 10) {
@@ -8754,7 +9079,6 @@ var _vastReadableTime = function _vastReadableTime(time) {
     } else {
       minutes = minutes.toString();
     }
-
     if (hours === 0) {
       hours = '00';
     } else if (hours < 10) {
@@ -8766,71 +9090,52 @@ var _vastReadableTime = function _vastReadableTime(time) {
         hours = hours.toString();
       }
     }
-
     return hours + ':' + minutes + ':' + seconds + '.' + ms;
   } else {
     return '00:00:00.000';
   }
 };
-
 var _generateCacheBusting = function _generateCacheBusting() {
   var text = '';
   var possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-
   for (var i = 0; i < 8; i++) {
     text += possible.charAt(Math.floor(Math.random() * possible.length));
   }
-
   return text;
 };
-
 TRACKING_EVENTS.replaceMacros = function (url, trackingPixels) {
   var _this3 = this;
-
   var pattern0 = /\[.+?\]/i;
-
   if (!pattern0.test(url)) {
     return url;
   }
-
-  var finalString = url; // Marking Macro Values as Unknown or Unavailable 
-
+  var finalString = url;
+  // Marking Macro Values as Unknown or Unavailable 
   var pattern8 = /\[(ADCOUNT|TRANSACTIONID|PLACEMENTTYPE|BREAKMAXDURATION|BREAKMINDURATION|BREAKMAXADS|BREAKMINADLENGTH|BREAKMAXADLENGTH|IFA|IFATYPE|CLIENTUA|SERVERUA|DEVICEIP|APPBUNDLE|EXTENSIONS|VERIFICATIONVENDORS|OMIDPARTNER|INVENTORYSTATE|CONTENTID|LATLONG)\]/gi;
-
   if (pattern8.test(finalString)) {
     finalString = finalString.replace(pattern8, '-1');
   }
-
   var pattern8bis = /\[(CONTENTURI|CLICKPOS)\]/gi;
-
   if (pattern8bis.test(finalString)) {
     finalString = finalString.replace(pattern8bis, '-2');
-  } // available macros
-
-
+  }
+  // available macros
   var pattern1 = /\[TIMESTAMP\]/gi;
   var date = new Date().toISOString();
-
   if (pattern1.test(finalString)) {
     finalString = finalString.replace(pattern1, encodeURIComponent(date));
   }
-
   var pattern2 = /\[CACHEBUSTING\]/gi;
-
   if (pattern2.test(finalString)) {
     finalString = finalString.replace(pattern2, _generateCacheBusting());
   }
-
   var pattern3 = /\[(CONTENTPLAYHEAD|MEDIAPLAYHEAD)\]/gi;
   var currentContentTime = content_player.getCurrentTime.call(this);
-
   if (pattern3.test(finalString) && currentContentTime > -1) {
     finalString = finalString.replace(pattern3, encodeURIComponent(_vastReadableTime(currentContentTime)));
   }
-
   var pattern5 = /\[BREAKPOSITION\]/gi;
   var duration = vast_player.getDuration.call(this);
-
   if (pattern5.test(finalString)) {
     if (currentContentTime === 0) {
       finalString = finalString.replace(pattern5, '1');
@@ -8840,136 +9145,98 @@ TRACKING_EVENTS.replaceMacros = function (url, trackingPixels) {
       finalString = finalString.replace(pattern5, '3');
     }
   }
-
   var pattern9 = /\[ADTYPE\]/gi;
-
   if (pattern9.test(finalString) && this.ad.adType) {
     finalString = finalString.replace(pattern9, encodeURIComponent(this.ad.adType));
   }
-
   var pattern11 = /\[DEVICEUA\]/gi;
-
   if (pattern11.test(finalString) && ENV.userAgent) {
     finalString = finalString.replace(pattern11, encodeURIComponent(ENV.userAgent));
   }
-
   var pattern11bis = /\[SERVERSIDE\]/gi;
-
   if (pattern11bis.test(finalString) && ENV.userAgent) {
     finalString = finalString.replace(pattern11bis, '0');
   }
-
   var pattern13 = /\[DOMAIN\]/gi;
-
   if (pattern13.test(finalString) && window.location.hostname) {
     finalString = finalString.replace(pattern13, encodeURIComponent(window.location.hostname));
   }
-
   var pattern14 = /\[PAGEURL\]/gi;
-
   if (pattern14.test(finalString) && window.location.href) {
     finalString = finalString.replace(pattern14, encodeURIComponent(window.location.href));
   }
-
   var pattern18 = /\[PLAYERCAPABILITIES\]/gi;
-
   if (pattern18.test(finalString)) {
     finalString = finalString.replace(pattern18, 'skip,mute,autoplay,mautoplay,fullscreen,icon');
   }
-
   var pattern19 = /\[CLICKTYPE\]/gi;
-
   if (pattern19.test(finalString)) {
     var clickType = '1';
-
     if (ENV.isMobile) {
       clickType = '2';
     }
-
     finalString = finalString.replace(pattern19, clickType);
   }
-
   var pattern21 = /\[PLAYERSIZE\]/gi;
-
   if (pattern21.test(finalString)) {
     var width = parseInt(FW.getWidth(this.container));
     var height = parseInt(FW.getHeight(this.container));
     finalString = finalString.replace(pattern21, encodeURIComponent(width.toString() + ',' + height.toString()));
   }
-
   if (trackingPixels) {
     var pattern4 = /\[ADPLAYHEAD\]/gi;
     var currentVastTime = vast_player.getCurrentTime.call(this);
-
     if (pattern4.test(finalString) && currentVastTime > -1) {
       finalString = finalString.replace(pattern4, encodeURIComponent(_vastReadableTime(currentVastTime)));
     }
-
     var pattern10 = /\[UNIVERSALADID\]/gi;
-
     if (pattern10.test(finalString) && this.creative.universalAdIds.length > 0) {
       var universalAdIdString = '';
       this.creative.universalAdIds.forEach(function (universalAdId, index) {
         if (index !== 0 || index !== _this3.creative.universalAdIds.length - 1) {
           universalAdIdString += ',';
         }
-
         universalAdIdString += universalAdId.idRegistry + ' ' + universalAdId.value;
       });
       finalString = finalString.replace(pattern10, encodeURIComponent(universalAdIdString));
     }
-
     var pattern22 = /\[ASSETURI\]/gi;
     var assetUri = this.getAdMediaUrl();
-
     if (pattern22.test(finalString) && typeof assetUri === 'string' && assetUri !== '') {
       finalString = finalString.replace(pattern22, encodeURIComponent(assetUri));
     }
-
     var pattern23 = /\[PODSEQUENCE\]/gi;
-
     if (pattern23.test(finalString) && this.ad.sequence) {
       finalString = finalString.replace(pattern23, encodeURIComponent(this.ad.sequence.toString()));
     }
-
     var pattern24 = /\[ADSERVINGID\]/gi;
-
     if (pattern24.test(finalString) && this.ad.adServingId) {
       finalString = finalString.replace(pattern24, encodeURIComponent(this.ad.adServingId));
     }
   } else {
     var pattern6 = /\[ADCATEGORIES\]/gi;
-
     if (pattern6.test(finalString) && this.ad.categories.length > 0) {
       var categories = this.ad.categories.map(function (categorie) {
         return categorie.value;
       }).join(',');
       finalString = finalString.replace(pattern6, encodeURIComponent(categories));
     }
-
     var pattern7 = /\[BLOCKEDADCATEGORIES\]/gi;
-
     if (pattern7.test(finalString) && this.ad.blockedAdCategories.length > 0) {
       var blockedAdCategories = this.ad.blockedAdCategories.map(function (blockedAdCategories) {
         return blockedAdCategories.value;
       }).join(',');
       finalString = finalString.replace(pattern7, encodeURIComponent(blockedAdCategories));
     }
-
     var pattern15 = /\[VASTVERSIONS\]/gi;
-
     if (pattern15.test(finalString)) {
       finalString = finalString.replace(pattern15, '2,3,5,6,7,8,11,12,13,14');
     }
-
     var pattern16 = /\[APIFRAMEWORKS\]/gi;
-
     if (pattern16.test(finalString)) {
       finalString = finalString.replace(pattern16, '2');
     }
-
     var pattern17 = /\[MEDIAMIME\]/gi;
-
     if (pattern17.test(finalString)) {
       var mimeTyepString = '';
       MEDIA_MIME.forEach(function (value) {
@@ -8977,68 +9244,50 @@ TRACKING_EVENTS.replaceMacros = function (url, trackingPixels) {
           mimeTyepString += value + ',';
         }
       });
-
       if (mimeTyepString) {
         mimeTyepString = mimeTyepString.slice(0, -1);
         finalString = finalString.replace(pattern17, encodeURIComponent(mimeTyepString));
       }
     }
-
     var pattern20 = /\[PLAYERSTATE\]/gi;
-
     if (pattern20.test(finalString)) {
       var playerState = '';
       var muted = content_player.getMute();
-
       if (muted) {
         playerState += 'muted';
       }
-
       var fullscreen = this.getFullscreen();
-
       if (fullscreen) {
         if (playerState) {
           playerState += ',';
         }
-
         playerState += 'fullscreen';
       }
-
       finalString = finalString.replace(pattern20, playerState);
     }
   }
-
   var pattern25 = /\[LIMITADTRACKING\]/gi;
-
   if (pattern25.test(finalString) && this.regulationsInfo.limitAdTracking) {
     finalString = finalString.replace(pattern25, encodeURIComponent(this.regulationsInfo.limitAdTracking));
   }
-
   var pattern26 = /\[REGULATIONS\]/gi;
-
   if (pattern26.test(finalString) && this.regulationsInfo.regulations) {
     finalString = finalString.replace(pattern26, encodeURIComponent(this.regulationsInfo.regulations));
   }
-
   var pattern27 = /\[GDPRCONSENT\]/gi;
-
   if (pattern27.test(finalString) && this.regulationsInfo.gdprConsent) {
     finalString = finalString.replace(pattern27, encodeURIComponent(this.regulationsInfo.gdprConsent));
   }
-
   return finalString;
 };
-
 var _ping = function _ping(url) {
   // we expect an image format for the tracker (generally a 1px GIF/PNG/JPG) or JavaScript as 
   // those are the most common format in the industry 
   // other format may produce errors and the related tracker may not be requested properly
   var jsPattern = /\.js$/i;
-
   if (jsPattern.test(url)) {
     var script = document.createElement('script');
     script.src = url;
-
     try {
       document.head.appendChild(script);
     } catch (error) {
@@ -9068,38 +9317,30 @@ var _ping = function _ping(url) {
 
 TRACKING_EVENTS.pingURI = function (url) {
   var trackingUrl = TRACKING_EVENTS.replaceMacros.call(this, url, true);
-
   _ping.call(this, trackingUrl);
 };
-
 TRACKING_EVENTS.error = function (errorCode) {
   var _this4 = this;
-
   // for each Error tag within an InLine or chain of Wrapper ping error URL
   var errorTags = this.adErrorTags;
-
   if (errorCode === 303 && this.vastErrorTags.length > 0) {
     // here we ping vastErrorTags with error code 303 according to spec
     // concat array thus
     errorTags = [].concat(_toConsumableArray(errorTags), _toConsumableArray(this.vastErrorTags));
   }
-
   if (errorTags.length > 0) {
     errorTags.forEach(function (errorTag) {
       if (errorTag.url) {
         var errorUrl = errorTag.url;
         var errorRegExp = /\[ERRORCODE\]/gi;
-
         if (errorRegExp.test(errorUrl) && FW.isNumber(errorCode) && errorCode > 0 && errorCode < 1000) {
           errorUrl = errorUrl.replace(errorRegExp, errorCode);
         }
-
         _ping.call(_this4, errorUrl);
       }
     });
   }
 };
-
 var _onVolumeChange = function _onVolumeChange() {
   if (this.vastPlayer.muted || this.vastPlayer.volume === 0) {
     Utils.createApiEvent.call(this, 'advolumemuted');
@@ -9111,15 +9352,11 @@ var _onVolumeChange = function _onVolumeChange() {
       this.vastPlayerMuted = false;
     }
   }
-
   Utils.createApiEvent.call(this, 'advolumechanged');
 };
-
 var _onTimeupdate = function _onTimeupdate() {
   var _this5 = this;
-
   this.vastPlayerCurrentTime = vast_player.getCurrentTime.call(this);
-
   if (this.vastPlayerCurrentTime > 0) {
     if (this.vastPlayerDuration > 0 && this.vastPlayerDuration > this.vastPlayerCurrentTime) {
       if (this.vastPlayerCurrentTime >= this.vastPlayerDuration * 0.25 && !this.firstQuartileEventFired) {
@@ -9135,9 +9372,8 @@ var _onTimeupdate = function _onTimeupdate() {
         Utils.createApiEvent.call(this, 'adthirdquartile');
         TRACKING_EVENTS.dispatch.call(this, 'thirdQuartile');
       }
-    } // progress event
-
-
+    }
+    // progress event
     if (this.progressEvents.length > 0) {
       if (this.vastPlayerCurrentTime > this.progressEvents[0].time) {
         var filterProgressEvent = this.progressEvents.filter(function (progressEvent) {
@@ -9154,23 +9390,20 @@ var _onTimeupdate = function _onTimeupdate() {
     }
   }
 };
-
 var _onPause = function _onPause() {
   if (!this.vastPlayerPaused) {
     this.vastPlayerPaused = true;
     var currentTime = this.vastPlayer.currentTime;
-    var currentDuration = this.vastPlayer.duration; // we have reached end of linear creative - a HTML5 video pause event may fire just before ended event
+    var currentDuration = this.vastPlayer.duration;
+    // we have reached end of linear creative - a HTML5 video pause event may fire just before ended event
     // in this case we ignore the adpaused event as adcomplete prevails
-
     if (currentTime === currentDuration) {
       return;
     }
-
     Utils.createApiEvent.call(this, 'adpaused');
     TRACKING_EVENTS.dispatch.call(this, 'pause');
   }
 };
-
 var _onPlay = function _onPlay() {
   if (this.vastPlayerPaused) {
     this.vastPlayerPaused = false;
@@ -9178,20 +9411,17 @@ var _onPlay = function _onPlay() {
     TRACKING_EVENTS.dispatch.call(this, 'resume');
   }
 };
-
 var _onPlaying = function _onPlaying() {
   this.vastPlayer.removeEventListener('playing', this.onPlaying);
   Utils.createApiEvent.call(this, ['adimpression', 'adstarted']);
   TRACKING_EVENTS.dispatch.call(this, ['impression', 'creativeView', 'start']);
 };
-
 var _onEnded = function _onEnded() {
   this.vastPlayer.removeEventListener('ended', this.onEnded);
   Utils.createApiEvent.call(this, 'adcomplete');
   TRACKING_EVENTS.dispatch.call(this, 'complete');
   vast_player.resumeContent.call(this);
 };
-
 TRACKING_EVENTS.wire = function () {
   // we filter through all HTML5 video events and create new VAST events 
   if (this.vastPlayer && this.creative.isLinear && !this.isVPAID) {
@@ -9209,7 +9439,6 @@ TRACKING_EVENTS.wire = function () {
     this.vastPlayer.addEventListener('timeupdate', this.onTimeupdate);
   }
 };
-
 /* harmony default export */ var tracking_events = (TRACKING_EVENTS);
 ;// CONCATENATED MODULE: ./src/js/creatives/icons.js
 
@@ -9218,47 +9447,39 @@ TRACKING_EVENTS.wire = function () {
 
 
 
-var ICONS = {};
 
+var ICONS = {};
 ICONS.destroy = function () {
   console.log("".concat(FW.consolePrepend, " Start destroying icons"), FW.consoleStyle, '');
   var icons = this.adContainer.querySelectorAll('.rmp-ad-container-icons');
-
   if (icons.length > 0) {
     icons.forEach(function (icon) {
       FW.removeElement(icon);
     });
   }
 };
-
 ICONS.parse = function (icons) {
   console.log("".concat(FW.consolePrepend, " Start parsing for icons"), FW.consoleStyle, '');
-
   for (var i = 0; i < icons.length; i++) {
     var currentIcon = icons[i];
     var program = currentIcon.program;
-
     if (program === null) {
       continue;
     }
-
     var width = currentIcon.width;
     var height = currentIcon.height;
     var xPosition = currentIcon.xPosition;
     var yPosition = currentIcon.yPosition;
-
     if (width <= 0 || height <= 0 || xPosition < 0 || yPosition < 0) {
       continue;
     }
-
     var staticResourceUrl = currentIcon.staticResource;
     var iframeResourceUrl = currentIcon.iframeResource;
-    var htmlResource = currentIcon.htmlResource; // we only support StaticResource (HTMLResource not supported)
-
+    var htmlResource = currentIcon.htmlResource;
+    // we only support StaticResource (HTMLResource not supported)
     if (staticResourceUrl === null && iframeResourceUrl === null && htmlResource === null) {
       continue;
     }
-
     var iconData = {
       program: program,
       width: width,
@@ -9274,26 +9495,20 @@ ICONS.parse = function (icons) {
     iconData.iconClickTrackingUrls = currentIcon.iconClickTrackingURLTemplates;
     this.iconsData.push(iconData);
   }
-
   console.log("".concat(FW.consolePrepend, " Validated parsed icons follows"), FW.consoleStyle, '');
   console.log(this.iconsData);
 };
-
 var _onIconClickThrough = function _onIconClickThrough(index, event) {
   var _this = this;
-
   if (event) {
     event.stopPropagation();
-
     if (event.type === 'touchend') {
       event.preventDefault();
     }
   }
-
-  FW.openWindow(this.iconsData[index].iconClickThroughUrl); // send trackers if any for IconClickTracking
-
+  FW.openWindow(this.iconsData[index].iconClickThroughUrl);
+  // send trackers if any for IconClickTracking
   var iconClickTrackingUrls = this.iconsData[index].iconClickTrackingUrls;
-
   if (iconClickTrackingUrls.length > 0) {
     iconClickTrackingUrls.forEach(function (tracking) {
       if (tracking.url) {
@@ -9302,34 +9517,28 @@ var _onIconClickThrough = function _onIconClickThrough(index, event) {
     });
   }
 };
-
 var _onIconLoadPingTracking = function _onIconLoadPingTracking(index) {
   console.log("".concat(FW.consolePrepend, " IconViewTracking for icon at index ").concat(index), FW.consoleStyle, '');
   tracking_events.pingURI.call(this, this.iconsData[index].iconViewTrackingUrl);
 };
-
 var _onPlayingAppendIcons = function _onPlayingAppendIcons() {
   var _this2 = this;
-
   console.log("".concat(FW.consolePrepend, " playing states has been reached - append icons"), FW.consoleStyle, '');
   this.vastPlayer.removeEventListener('playing', this.onPlayingAppendIcons);
   this.iconsData.forEach(function (iconData, index) {
     var icon;
     var src;
-
     if (iconData.staticResourceUrl) {
       icon = document.createElement('img');
       src = iconData.staticResourceUrl;
     } else if (iconData.iframeResourceUrl || iconData.htmlContent) {
       icon = document.createElement('iframe');
       icon.sandbox = 'allow-scripts allow-same-origin';
-
       if (iconData.htmlContent) {
         src = iconData.htmlContent;
       } else {
         src = iconData.iframeResourceUrl;
       }
-
       FW.setStyle(icon, {
         border: 'none',
         overflow: 'hidden'
@@ -9338,14 +9547,12 @@ var _onPlayingAppendIcons = function _onPlayingAppendIcons() {
       icon.setAttribute('allow', 'autoplay; fullscreen; picture-in-picture; xr-spatial-tracking; encrypted-media');
       icon.setAttribute('sandbox', 'allow-scripts allow-presentation allow-same-origin');
     }
-
     icon.className = 'rmp-ad-container-icons';
     FW.setStyle(icon, {
       width: parseInt(iconData.width) + 'px',
       height: parseInt(iconData.height) + 'px'
     });
     var xPosition = iconData.xPosition;
-
     if (xPosition === 'left') {
       icon.style.left = '0px';
     } else if (xPosition === 'right') {
@@ -9355,9 +9562,7 @@ var _onPlayingAppendIcons = function _onPlayingAppendIcons() {
     } else {
       icon.style.left = '0px';
     }
-
     var yPosition = iconData.yPosition;
-
     if (yPosition === 'top') {
       icon.style.top = '0px';
     } else if (xPosition === 'bottom') {
@@ -9367,35 +9572,28 @@ var _onPlayingAppendIcons = function _onPlayingAppendIcons() {
     } else {
       icon.style.top = '0px';
     }
-
     if (iconData.iconViewTrackingUrl) {
       icon.onload = _onIconLoadPingTracking.bind(_this2, index);
     }
-
     if (iconData.iconClickThroughUrl) {
       icon.addEventListener('touchend', _onIconClickThrough.bind(_this2, index));
       icon.addEventListener('click', _onIconClickThrough.bind(_this2, index));
     }
-
     if (iconData.htmlContent) {
       icon.srcdoc = src;
     } else {
       icon.src = src;
     }
-
     console.log("".concat(FW.consolePrepend, " Selected icon details follow"), FW.consoleStyle, '');
     console.log(icon);
-
     _this2.adContainer.appendChild(icon);
   });
 };
-
 ICONS.append = function () {
-  this.onPlayingAppendIcons = _onPlayingAppendIcons.bind(this); // as per VAST 3 spec only append icon when ad starts playing
-
+  this.onPlayingAppendIcons = _onPlayingAppendIcons.bind(this);
+  // as per VAST 3 spec only append icon when ad starts playing
   this.vastPlayer.addEventListener('playing', this.onPlayingAppendIcons);
 };
-
 /* harmony default export */ var creatives_icons = (ICONS);
 ;// CONCATENATED MODULE: ./src/js/players/vpaid.js
 
@@ -9409,24 +9607,22 @@ ICONS.append = function () {
 
 
 
-var VPAID = {}; // vpaidCreative getters
+var VPAID = {};
+
+// vpaidCreative getters
 
 VPAID.getAdWidth = function () {
   if (this.vpaidCreative && typeof this.vpaidCreative.getAdWidth === 'function') {
     return this.vpaidCreative.getAdWidth();
   }
-
   return -1;
 };
-
 VPAID.getAdHeight = function () {
   if (this.vpaidCreative && typeof this.vpaidCreative.getAdHeight === 'function') {
     return this.vpaidCreative.getAdHeight();
   }
-
   return -1;
 };
-
 VPAID.getAdDuration = function () {
   if (this.vpaidCreative) {
     if (typeof this.vpaidCreative.getAdDuration === 'function') {
@@ -9435,180 +9631,138 @@ VPAID.getAdDuration = function () {
       return this.vpaid1AdDuration;
     }
   }
-
   return -1;
 };
-
 VPAID.getAdRemainingTime = function () {
   if (this.vpaidRemainingTime >= 0) {
     return this.vpaidRemainingTime;
   }
-
   return -1;
 };
-
 VPAID.getCreativeUrl = function () {
   if (this.vpaidCreativeUrl) {
     return this.vpaidCreativeUrl;
   }
-
   return '';
 };
-
 VPAID.getVpaidCreative = function () {
   return this.vpaidCreative;
 };
-
 VPAID.getAdVolume = function () {
   if (this.vpaidCreative && typeof this.vpaidCreative.getAdVolume === 'function') {
     return this.vpaidCreative.getAdVolume();
   }
-
   return null;
 };
-
 VPAID.getAdPaused = function () {
   return this.vpaidPaused;
 };
-
 VPAID.getAdExpanded = function () {
   if (this.vpaidCreative && typeof this.vpaidCreative.getAdExpanded === 'function') {
     return this.vpaidCreative.getAdExpanded();
   }
-
   return false;
 };
-
 VPAID.getAdSkippableState = function () {
   if (this.vpaidCreative && typeof this.vpaidCreative.getAdSkippableState === 'function') {
     return this.vpaidCreative.getAdSkippableState();
   }
-
   return false;
 };
-
 VPAID.getAdIcons = function () {
   if (this.vpaidCreative && typeof this.vpaidCreative.getAdIcons === 'function') {
     return this.vpaidCreative.getAdIcons();
   }
-
   return null;
 };
-
 VPAID.getAdCompanions = function () {
   if (this.vpaidCreative && typeof this.vpaidCreative.getAdCompanions === 'function') {
     return this.vpaidCreative.getAdCompanions();
   }
-
   return '';
-}; // VPAID creative events
+};
 
-
+// VPAID creative events
 var _onAdLoaded = function _onAdLoaded() {
   var _this = this;
-
   this.vpaidAdLoaded = true;
-
   if (!this.vpaidCreative) {
     return;
   }
-
   if (this.initAdTimeout) {
     clearTimeout(this.initAdTimeout);
   }
-
   if (this.vpaidCallbacks.AdLoaded) {
     this.vpaidCreative.unsubscribe(this.vpaidCallbacks.AdLoaded, 'AdLoaded');
-  } // when we call startAd we expect AdStarted event to follow closely
+  }
+  // when we call startAd we expect AdStarted event to follow closely
   // otherwise we need to resume content
-
-
   this.startAdTimeout = setTimeout(function () {
     if (!_this.vpaidAdStarted) {
       vast_player.resumeContent.call(_this);
     }
-
     _this.vpaidAdStarted = false;
-  }, this.params.creativeLoadTimeout); // pause content player
-
+  }, this.params.creativeLoadTimeout);
+  // pause content player
   content_player.pause.call(this);
   this.adOnStage = true;
   this.vpaidCreative.startAd();
   Utils.createApiEvent.call(this, 'adloaded');
   tracking_events.dispatch.call(this, 'loaded');
 };
-
 var _onAdStarted = function _onAdStarted() {
   this.vpaidAdStarted = true;
-
   if (!this.vpaidCreative) {
     return;
   }
-
   if (this.startAdTimeout) {
     clearTimeout(this.startAdTimeout);
   }
-
   if (this.vpaidCallbacks.AdStarted) {
     this.vpaidCreative.unsubscribe(this.vpaidCallbacks.AdStarted, 'AdStarted');
-  } // update duration for VPAID 1.*
-
-
+  }
+  // update duration for VPAID 1.*
   if (this.vpaidVersion === 1) {
     this.vpaid1AdDuration = VPAID.getAdRemainingTime.call(this);
-  } // append icons - if VPAID does not handle them
-
-
+  }
+  // append icons - if VPAID does not handle them
   if (!VPAID.getAdIcons.call(this) && !this.useContentPlayerForAds && this.iconsData.length > 0) {
     creatives_icons.append.call(this);
   }
-
   if (typeof this.vpaidCreative.getAdLinear === 'function') {
     this.creative.isLinear = this.vpaidCreative.getAdLinear();
   }
-
   tracking_events.dispatch.call(this, 'creativeView');
 };
-
 var _onAdStopped = function _onAdStopped() {
   console.log("".concat(FW.consolePrepend, " VPAID AdStopped event"), FW.consoleStyle, '');
-
   if (this.adStoppedTimeout) {
     clearTimeout(this.adStoppedTimeout);
   }
-
   vast_player.resumeContent.call(this);
 };
-
 var _onAdSkipped = function _onAdSkipped() {
   if (this.adSkippedTimeout) {
     clearTimeout(this.adSkippedTimeout);
   }
-
   Utils.createApiEvent.call(this, 'adskipped');
   tracking_events.dispatch.call(this, 'skip');
 };
-
 var _onAdSkippableStateChange = function _onAdSkippableStateChange() {
   Utils.createApiEvent.call(this, 'adskippablestatechanged');
 };
-
 var _onAdDurationChange = function _onAdDurationChange() {
   var _this2 = this;
-
   if (this.vpaidCreative && typeof this.vpaidCreative.getAdRemainingTime === 'function') {
     var remainingTime = this.vpaidCreative.getAdRemainingTime();
-
     if (remainingTime >= 0) {
       this.vpaidRemainingTime = remainingTime;
-    } // AdRemainingTimeChange is deprecated in VPAID 2
+    }
+    // AdRemainingTimeChange is deprecated in VPAID 2
     // instead we use setInterval
-
-
     clearInterval(this.vpaidAdRemainingTimeInterval);
     this.vpaidAdRemainingTimeInterval = setInterval(function () {
       var remainingTime = _this2.vpaidCreative.getAdRemainingTime();
-
       if (remainingTime >= 0) {
         _this2.vpaidRemainingTime = remainingTime;
       }
@@ -9616,81 +9770,64 @@ var _onAdDurationChange = function _onAdDurationChange() {
     Utils.createApiEvent.call(this, 'addurationchange');
   }
 };
-
 var _onAdVolumeChange = function _onAdVolumeChange() {
   var newVolume = VPAID.getAdVolume.call(this);
-
   if (newVolume === null) {
     return;
   }
-
   if (this.vpaidCurrentVolume > 0 && newVolume === 0) {
     tracking_events.dispatch.call(this, 'mute');
   } else if (this.vpaidCurrentVolume === 0 && newVolume > 0) {
     tracking_events.dispatch.call(this, 'unmute');
   }
-
   this.vpaidCurrentVolume = newVolume;
   Utils.createApiEvent.call(this, 'advolumechanged');
 };
-
 var _onAdImpression = function _onAdImpression() {
   Utils.createApiEvent.call(this, 'adimpression');
   tracking_events.dispatch.call(this, 'impression');
 };
-
 var _onAdVideoStart = function _onAdVideoStart() {
   this.vpaidPaused = false;
   var newVolume = VPAID.getAdVolume.call(this);
-
   if (newVolume === null) {
     newVolume = 1;
   }
-
   this.vpaidCurrentVolume = newVolume;
   Utils.createApiEvent.call(this, 'adstarted');
   tracking_events.dispatch.call(this, 'start');
 };
-
 var _onAdVideoFirstQuartile = function _onAdVideoFirstQuartile() {
   Utils.createApiEvent.call(this, 'adfirstquartile');
   tracking_events.dispatch.call(this, 'firstQuartile');
 };
-
 var _onAdVideoMidpoint = function _onAdVideoMidpoint() {
   Utils.createApiEvent.call(this, 'admidpoint');
   tracking_events.dispatch.call(this, 'midpoint');
 };
-
 var _onAdVideoThirdQuartile = function _onAdVideoThirdQuartile() {
   Utils.createApiEvent.call(this, 'adthirdquartile');
   tracking_events.dispatch.call(this, 'thirdQuartile');
 };
-
 var _onAdVideoComplete = function _onAdVideoComplete() {
   Utils.createApiEvent.call(this, 'adcomplete');
   tracking_events.dispatch.call(this, 'complete');
 };
-
 var _onAdClickThru = function _onAdClickThru(url, id, playerHandles) {
   Utils.createApiEvent.call(this, 'adclick');
   tracking_events.dispatch.call(this, 'clickthrough');
-
   if (typeof playerHandles !== 'boolean') {
     return;
   }
-
   if (!playerHandles) {
     return;
   } else {
     var destUrl;
-
     if (url) {
       destUrl = url;
     } else if (this.creative.clickThroughUrl) {
       destUrl = this.creative.clickThroughUrl;
     }
-
     if (destUrl) {
       // for getClickThroughUrl API method
       this.creative.clickThroughUrl = destUrl;
@@ -9698,170 +9835,136 @@ var _onAdClickThru = function _onAdClickThru(url, id, playerHandles) {
     }
   }
 };
-
 var _onAdPaused = function _onAdPaused() {
   this.vpaidPaused = true;
   Utils.createApiEvent.call(this, 'adpaused');
   tracking_events.dispatch.call(this, 'pause');
 };
-
 var _onAdPlaying = function _onAdPlaying() {
   this.vpaidPaused = false;
   Utils.createApiEvent.call(this, 'adresumed');
   tracking_events.dispatch.call(this, 'resume');
 };
-
 var _onAdLog = function _onAdLog(message) {
   console.log("".concat(FW.consolePrepend, " VPAID AdLog event ").concat(message), FW.consoleStyle, '');
 };
-
 var _onAdError = function _onAdError(message) {
   console.log("".concat(FW.consolePrepend, " VPAID AdError event ").concat(message), FW.consoleStyle, '');
   Utils.processVastErrors.call(this, 901, true);
 };
-
 var _onAdInteraction = function _onAdInteraction() {
   Utils.createApiEvent.call(this, 'adinteraction');
 };
-
 var _onAdUserAcceptInvitation = function _onAdUserAcceptInvitation() {
   Utils.createApiEvent.call(this, 'aduseracceptinvitation');
   tracking_events.dispatch.call(this, 'acceptInvitation');
 };
-
 var _onAdUserMinimize = function _onAdUserMinimize() {
   Utils.createApiEvent.call(this, 'adcollapse');
   tracking_events.dispatch.call(this, ['collapse', 'adCollapse']);
 };
-
 var _onAdUserClose = function _onAdUserClose() {
   Utils.createApiEvent.call(this, 'adclosed');
   tracking_events.dispatch.call(this, 'close');
 };
-
 var _onAdSizeChange = function _onAdSizeChange() {
   Utils.createApiEvent.call(this, 'adsizechange');
 };
-
 var _onAdLinearChange = function _onAdLinearChange() {
   if (this.vpaidCreative && typeof this.vpaidCreative.getAdLinear === 'function') {
     this.creative.isLinear = this.vpaidCreative.getAdLinear();
     Utils.createApiEvent.call(this, 'adlinearchange');
   }
 };
-
 var _onAdExpandedChange = function _onAdExpandedChange() {
   Utils.createApiEvent.call(this, 'adexpandedchange');
 };
-
 var _onAdRemainingTimeChange = function _onAdRemainingTimeChange() {
   if (this.vpaidCreative && typeof this.vpaidCreative.getAdRemainingTime === 'function') {
     var remainingTime = this.vpaidCreative.getAdRemainingTime();
-
     if (remainingTime >= 0) {
       this.vpaidRemainingTime = remainingTime;
     }
-
     Utils.createApiEvent.call(this, 'adremainingtimechange');
   }
-}; // vpaidCreative methods
+};
 
-
+// vpaidCreative methods
 VPAID.resizeAd = function (width, height, viewMode) {
   if (!this.vpaidCreative) {
     return;
   }
-
   if (!FW.isNumber(width) || !FW.isNumber(height) || typeof viewMode !== 'string') {
     return;
   }
-
   if (width <= 0 || height <= 0) {
     return;
   }
-
   var validViewMode = 'normal';
-
   if (viewMode === 'fullscreen') {
     validViewMode = viewMode;
   }
-
   console.log("".concat(FW.consolePrepend, " VPAID resizeAd with width ").concat(width, ", height ").concat(height, ", viewMode ").concat(viewMode), FW.consoleStyle, '');
   this.vpaidCreative.resizeAd(width, height, validViewMode);
 };
-
 VPAID.stopAd = function () {
   var _this3 = this;
-
   if (!this.vpaidCreative) {
     return;
   }
+  console.log("".concat(FW.consolePrepend, " stopAd"), FW.consoleStyle, '');
 
-  console.log("".concat(FW.consolePrepend, " stopAd"), FW.consoleStyle, ''); // when stopAd is called we need to check a 
+  // when stopAd is called we need to check a 
   // AdStopped event follows
-
   this.adStoppedTimeout = setTimeout(function () {
     _onAdStopped.call(_this3);
   }, this.params.creativeLoadTimeout);
   this.vpaidCreative.stopAd();
 };
-
 VPAID.pauseAd = function () {
   console.log("".concat(FW.consolePrepend, " pauseAd"), FW.consoleStyle, '');
-
   if (this.vpaidCreative && !this.vpaidPaused) {
     this.vpaidCreative.pauseAd();
   }
 };
-
 VPAID.resumeAd = function () {
   console.log("".concat(FW.consolePrepend, " resumeAd"), FW.consoleStyle, '');
-
   if (this.vpaidCreative && this.vpaidPaused) {
     this.vpaidCreative.resumeAd();
   }
 };
-
 VPAID.expandAd = function () {
   if (this.vpaidCreative) {
     this.vpaidCreative.expandAd();
   }
 };
-
 VPAID.collapseAd = function () {
   if (this.vpaidCreative) {
     this.vpaidCreative.collapseAd();
   }
 };
-
 VPAID.skipAd = function () {
   var _this4 = this;
-
   if (!this.vpaidCreative) {
     return;
-  } // when skipAd is called we need to check a 
+  }
+  // when skipAd is called we need to check a 
   // AdSkipped event follows
-
-
   this.adSkippedTimeout = setTimeout(function () {
     _onAdStopped.call(_this4);
   }, this.params.creativeLoadTimeout);
   this.vpaidCreative.skipAd();
 };
-
 VPAID.setAdVolume = function (volume) {
   if (this.vpaidCreative && FW.isNumber(volume) && volume >= 0 && volume <= 1 && typeof this.vpaidCreative.setAdVolume === 'function') {
     this.vpaidCreative.setAdVolume(volume);
   }
 };
-
 var _setCallbacksForCreative = function _setCallbacksForCreative() {
   var _this5 = this;
-
   if (!this.vpaidCreative) {
     return;
   }
-
   this.vpaidCallbacks = {
     AdLoaded: _onAdLoaded.bind(this),
     AdStarted: _onAdStarted.bind(this),
@@ -9889,53 +9992,42 @@ var _setCallbacksForCreative = function _setCallbacksForCreative() {
     AdLinearChange: _onAdLinearChange.bind(this),
     AdExpandedChange: _onAdExpandedChange.bind(this),
     AdRemainingTimeChange: _onAdRemainingTimeChange.bind(this)
-  }; // Looping through the object and registering each of the callbacks with the creative
-
+  };
+  // Looping through the object and registering each of the callbacks with the creative
   var callbacksKeys = Object.keys(this.vpaidCallbacks);
   callbacksKeys.forEach(function (key) {
     _this5.vpaidCreative.subscribe(_this5.vpaidCallbacks[key], key);
   });
 };
-
 var _unsetCallbacksForCreative = function _unsetCallbacksForCreative() {
   var _this6 = this;
-
   if (!this.vpaidCreative) {
     return;
-  } // Looping through the object and registering each of the callbacks with the creative
-
-
+  }
+  // Looping through the object and registering each of the callbacks with the creative
   var callbacksKeys = Object.keys(this.vpaidCallbacks);
   callbacksKeys.forEach(function (key) {
     _this6.vpaidCreative.unsubscribe(_this6.vpaidCallbacks[key], key);
   });
 };
-
 var _isValidVPAID = function _isValidVPAID(creative) {
   if (typeof creative.initAd === 'function' && typeof creative.startAd === 'function' && typeof creative.stopAd === 'function' && typeof creative.skipAd === 'function' && typeof creative.resizeAd === 'function' && typeof creative.pauseAd === 'function' && typeof creative.resumeAd === 'function' && typeof creative.expandAd === 'function' && typeof creative.collapseAd === 'function' && typeof creative.subscribe === 'function' && typeof creative.unsubscribe === 'function') {
     return true;
   }
-
   return false;
 };
-
 var _onVPAIDAvailable = function _onVPAIDAvailable() {
   var _this7 = this;
-
   if (this.vpaidAvailableInterval) {
     clearInterval(this.vpaidAvailableInterval);
   }
-
   if (this.vpaidLoadTimeout) {
     clearTimeout(this.vpaidLoadTimeout);
   }
-
   this.vpaidCreative = this.vpaidIframe.contentWindow.getVPAIDAd();
-
   if (this.vpaidCreative && typeof this.vpaidCreative.handshakeVersion === 'function') {
     // we need to insure handshakeVersion return
     var vpaidVersion;
-
     try {
       vpaidVersion = this.vpaidCreative.handshakeVersion('2.0');
     } catch (error) {
@@ -9944,26 +10036,21 @@ var _onVPAIDAvailable = function _onVPAIDAvailable() {
       Utils.processVastErrors.call(this, 901, true);
       return;
     }
-
     this.vpaidVersion = parseInt(vpaidVersion);
-
     if (this.vpaidVersion < 1) {
       console.log("".concat(FW.consolePrepend, " unsupported VPAID version - exit"), FW.consoleStyle, '');
       Utils.processVastErrors.call(this, 901, true);
       return;
     }
-
     if (!_isValidVPAID(this.vpaidCreative)) {
       //The VPAID creative doesn't conform to the VPAID spec
       console.log("".concat(FW.consolePrepend, " VPAID creative does not conform to VPAID spec - exit"), FW.consoleStyle, '');
       Utils.processVastErrors.call(this, 901, true);
       return;
-    } // wire callback for VPAID events
-
-
-    _setCallbacksForCreative.call(this); // wire tracking events for VAST pings
-
-
+    }
+    // wire callback for VPAID events
+    _setCallbacksForCreative.call(this);
+    // wire tracking events for VAST pings
     tracking_events.wire.call(this);
     var creativeData = {};
     creativeData.AdParameters = this.adParametersData;
@@ -9971,41 +10058,37 @@ var _onVPAIDAvailable = function _onVPAIDAvailable() {
     console.log(this.adParametersData);
     FW.show(this.adContainer);
     FW.show(this.vastPlayer);
-    var environmentVars = {}; // we create a new slot for VPAID creative - using adContainer can cause some VPAID to ill-render
+    var environmentVars = {};
+    // we create a new slot for VPAID creative - using adContainer can cause some VPAID to ill-render
     // from spec:
     // The 'environmentVars' object contains a reference, 'slot', to the HTML element
     // on the page in which the ad is to be rendered. The ad unit essentially gets
     // control of that element. 
-
     this.vpaidSlot = document.createElement('div');
     this.vpaidSlot.className = 'rmp-vpaid-container';
     this.adContainer.appendChild(this.vpaidSlot);
     environmentVars.slot = this.vpaidSlot;
-    environmentVars.videoSlot = this.vastPlayer; // we assume we can autoplay (or at least muted autoplay) because this.vastPlayer 
+    environmentVars.videoSlot = this.vastPlayer;
+    // we assume we can autoplay (or at least muted autoplay) because this.vastPlayer 
     // has been init
-
-    environmentVars.videoSlotCanAutoPlay = true; // when we call initAd we expect AdLoaded event to follow closely
+    environmentVars.videoSlotCanAutoPlay = true;
+    // when we call initAd we expect AdLoaded event to follow closely
     // if not we need to resume content
-
     this.initAdTimeout = setTimeout(function () {
       if (!_this7.vpaidAdLoaded) {
         console.log("".concat(FW.consolePrepend, " initAdTimeout"), FW.consoleStyle, '');
         vast_player.resumeContent.call(_this7);
       }
-
       _this7.vpaidAdLoaded = false;
     }, this.params.creativeLoadTimeout * 10);
     console.log("".concat(FW.consolePrepend, " calling initAd on VPAID creative now"), FW.consoleStyle, '');
     this.vpaidCreative.initAd(this.initialWidth, this.initialHeight, this.initialViewMode, this.desiredBitrate, creativeData, environmentVars);
   }
 };
-
 var _onJSVPAIDLoaded = function _onJSVPAIDLoaded() {
   var _this8 = this;
-
   console.log("".concat(FW.consolePrepend, " VPAID JS loaded"), FW.consoleStyle, '');
   var iframeWindow = this.vpaidIframe.contentWindow;
-
   if (typeof iframeWindow.getVPAIDAd === 'function') {
     _onVPAIDAvailable.call(this);
   } else {
@@ -10015,25 +10098,21 @@ var _onJSVPAIDLoaded = function _onJSVPAIDLoaded() {
       }
     }, 100);
   }
-
   this.vpaidScript.onload = null;
   this.vpaidScript.onerror = null;
 };
-
 var _onJSVPAIDError = function _onJSVPAIDError() {
   console.log("".concat(FW.consolePrepend, " VPAID JS error loading"), FW.consoleStyle, '');
   Utils.processVastErrors.call(this, 901, true);
   this.vpaidScript.onload = null;
   this.vpaidScript.onerror = null;
 };
-
 VPAID.loadCreative = function (creativeUrl, vpaidSettings) {
   this.initialWidth = vpaidSettings.width;
   this.initialHeight = vpaidSettings.height;
   this.initialViewMode = vpaidSettings.viewMode;
   this.desiredBitrate = vpaidSettings.desiredBitrate;
   this.vpaidCreativeUrl = creativeUrl;
-
   if (!this.vastPlayer) {
     if (this.useContentPlayerForAds) {
       this.vastPlayer = this.contentPlayer;
@@ -10041,36 +10120,33 @@ VPAID.loadCreative = function (creativeUrl, vpaidSettings) {
       // we use existing rmp-ad-vast-video-player as it is already 
       // available and initialized (no need for user interaction)
       var existingVastPlayer = this.adContainer.querySelector('.rmp-ad-vast-video-player');
-
       if (existingVastPlayer === null) {
         Utils.processVastErrors.call(this, 900, true);
         return;
       }
-
       this.vastPlayer = existingVastPlayer;
     }
-  } // create FiF 
-
-
+  }
+  // create FiF 
   this.vpaidIframe = document.createElement('iframe');
   this.vpaidIframe.sandbox = 'allow-scripts allow-same-origin';
-  this.vpaidIframe.id = 'vpaid-frame'; // do not use display: none;
+  this.vpaidIframe.id = 'vpaid-frame';
+  // do not use display: none;
   // https://bugzilla.mozilla.org/show_bug.cgi?id=548397
-
   FW.setStyle(this.vpaidIframe, {
     visibility: 'hidden',
     width: '0px',
     height: '0px',
     border: 'none'
-  }); // this is to adhere to Best Practices for Rich Media Ads 
+  });
+  // this is to adhere to Best Practices for Rich Media Ads 
   // in Asynchronous Ad Environments  http://www.iab.net/media/file/rich_media_ajax_best_practices.pdf
-
-  var src = 'about:blank'; // ... however this does not work in Firefox (onload is never reached)
+  var src = 'about:blank';
+  // ... however this does not work in Firefox (onload is never reached)
   // https://bugzilla.mozilla.org/show_bug.cgi?id=444165
   // about:self also causes protocol mis-match issues with iframes in iOS/macOS Safari
   // ... TL;DR iframes are troubles
   //let src = 'about:self';
-
   /*if (ENV.isFirefox || this.useContentPlayerForAds) {
     src = '';
   }*/
@@ -10079,20 +10155,17 @@ VPAID.loadCreative = function (creativeUrl, vpaidSettings) {
   // since about:blank seems to work in our testing cross browsers and is what is 
   // recommended on the web 
   // (see https://stackoverflow.com/questions/5946607/is-an-empty-iframe-src-valid/5946631) we now use about:blank
-
   this.vpaidIframe.onload = function () {
     var _this9 = this;
+    console.log("".concat(FW.consolePrepend, " vpaidIframe.onload"), FW.consoleStyle, '');
 
-    console.log("".concat(FW.consolePrepend, " vpaidIframe.onload"), FW.consoleStyle, ''); // we unwire listeners
-
+    // we unwire listeners
     this.vpaidIframe.onload = this.vpaidIframe.onerror = FW.nullFn;
-
     if (!this.vpaidIframe.contentWindow || !this.vpaidIframe.contentWindow.document || !this.vpaidIframe.contentWindow.document.body) {
       // PING error and resume content
       Utils.processVastErrors.call(this, 901, true);
       return;
     }
-
     var iframeWindow = this.vpaidIframe.contentWindow;
     var iframeDocument = iframeWindow.document;
     var iframeBody = iframeDocument.body;
@@ -10108,58 +10181,46 @@ VPAID.loadCreative = function (creativeUrl, vpaidSettings) {
     iframeBody.appendChild(this.vpaidScript);
     this.vpaidScript.src = this.vpaidCreativeUrl;
   }.bind(this);
-
   this.vpaidIframe.onerror = function () {
-    console.log("".concat(FW.consolePrepend, " vpaidIframe.onerror"), FW.consoleStyle, ''); // we unwire listeners
+    console.log("".concat(FW.consolePrepend, " vpaidIframe.onerror"), FW.consoleStyle, '');
 
-    this.vpaidIframe.onload = this.vpaidIframe.onerror = FW.nullFn; // PING error and resume content
-
+    // we unwire listeners
+    this.vpaidIframe.onload = this.vpaidIframe.onerror = FW.nullFn;
+    // PING error and resume content
     Utils.processVastErrors.call(this, 901, true);
   }.bind(this);
-
   this.vpaidIframe.src = src;
   this.adContainer.appendChild(this.vpaidIframe);
 };
-
 VPAID.destroy = function () {
   console.log("".concat(FW.consolePrepend, " destroy VPAID dependencies"), FW.consoleStyle, '');
-
   if (this.vpaidAvailableInterval) {
     clearInterval(this.vpaidAvailableInterval);
   }
-
   if (this.vpaidAdRemainingTimeInterval) {
     clearInterval(this.vpaidAdRemainingTimeInterval);
   }
-
   if (this.vpaidLoadTimeout) {
     clearTimeout(this.vpaidLoadTimeout);
   }
-
   if (this.initAdTimeout) {
     clearTimeout(this.initAdTimeout);
   }
-
   if (this.startAdTimeout) {
     clearTimeout(this.startAdTimeout);
   }
-
   _unsetCallbacksForCreative.call(this);
-
   if (this.vpaidScript) {
     this.vpaidScript.onload = null;
     this.vpaidScript.onerror = null;
   }
-
   if (this.vpaidSlot) {
     FW.removeElement(this.vpaidSlot);
   }
-
   if (this.vpaidIframe) {
     FW.removeElement(this.vpaidIframe);
   }
 };
-
 /* harmony default export */ var vpaid = (VPAID);
 ;// CONCATENATED MODULE: ./src/js/creatives/non-linear.js
 
@@ -10172,25 +10233,22 @@ VPAID.destroy = function () {
 
 
 
-var NON_LINEAR = {};
 
+var NON_LINEAR = {};
 var _onNonLinearLoadError = function _onNonLinearLoadError() {
   Utils.processVastErrors.call(this, 502, true);
 };
-
 var _onNonLinearLoadSuccess = function _onNonLinearLoadSuccess() {
   console.log("".concat(FW.consolePrepend, " success loading non-linear creative at ").concat(this.creative.mediaUrl), FW.consoleStyle, '');
   this.adOnStage = true;
   Utils.createApiEvent.call(this, ['adloaded', 'adimpression', 'adstarted']);
   tracking_events.dispatch.call(this, ['impression', 'creativeView', 'start', 'loaded']);
 };
-
 var _onNonLinearClickThrough = function _onNonLinearClickThrough(event) {
   try {
     if (event) {
       event.stopPropagation();
     }
-
     this.pause();
     Utils.createApiEvent.call(this, 'adclick');
     tracking_events.dispatch.call(this, 'clickthrough');
@@ -10198,30 +10256,24 @@ var _onNonLinearClickThrough = function _onNonLinearClickThrough(event) {
     console.warn(e);
   }
 };
-
 var _onClickCloseNonLinear = function _onClickCloseNonLinear(event) {
   if (event) {
     event.stopPropagation();
-
     if (event.type === 'touchend') {
       event.preventDefault();
     }
   }
-
   FW.setStyle(this.nonLinearContainer, {
     display: 'none'
   });
   Utils.createApiEvent.call(this, 'adclosed');
   tracking_events.dispatch.call(this, 'close');
 };
-
 var _appendCloseButton = function _appendCloseButton() {
   var _this = this;
-
   this.nonLinearClose = document.createElement('div');
   this.nonLinearClose.className = 'rmp-ad-non-linear-close';
   Utils.makeButtonAccessible(this.nonLinearClose, this.params.labels.closeAd);
-
   if (this.nonLinearMinSuggestedDuration > 0) {
     FW.setStyle(this.nonLinearClose, {
       display: 'none'
@@ -10236,13 +10288,11 @@ var _appendCloseButton = function _appendCloseButton() {
       display: 'block'
     });
   }
-
   this.onClickCloseNonLinear = _onClickCloseNonLinear.bind(this);
   this.nonLinearClose.addEventListener('touchend', this.onClickCloseNonLinear);
   this.nonLinearClose.addEventListener('click', this.onClickCloseNonLinear);
   this.nonLinearContainer.appendChild(this.nonLinearClose);
 };
-
 NON_LINEAR.update = function () {
   // non-linear ad container
   this.nonLinearContainer = document.createElement('div');
@@ -10250,24 +10300,21 @@ NON_LINEAR.update = function () {
   FW.setStyle(this.nonLinearContainer, {
     width: this.creative.width.toString() + 'px',
     height: this.creative.height.toString() + 'px'
-  }); // a tag to handle click - a tag is best for WebView support
-
+  });
+  // a tag to handle click - a tag is best for WebView support
   this.nonLinearATag = document.createElement('a');
   this.nonLinearATag.className = 'rmp-ad-non-linear-anchor';
-
   if (this.creative.clickThroughUrl) {
     this.nonLinearATag.href = this.creative.clickThroughUrl;
     this.nonLinearATag.target = '_blank';
     this.onNonLinearClickThrough = _onNonLinearClickThrough.bind(this);
-
     if (ENV.isMobile) {
       this.nonLinearATag.addEventListener('touchend', this.onNonLinearClickThrough);
     } else {
       this.nonLinearATag.addEventListener('click', this.onNonLinearClickThrough);
     }
-  } // non-linear creative image
-
-
+  }
+  // non-linear creative image
   if (this.creative.nonLinearType === 'image') {
     this.nonLinearInnerElement = document.createElement('img');
   } else {
@@ -10281,70 +10328,60 @@ NON_LINEAR.update = function () {
     this.nonLinearInnerElement.setAttribute('scrolling', 'no');
     this.nonLinearInnerElement.setAttribute('sandbox', 'allow-scripts allow-presentation allow-same-origin');
   }
-
   this.nonLinearInnerElement.className = 'rmp-ad-non-linear-creative';
   this.onNonLinearLoadError = _onNonLinearLoadError.bind(this);
   this.nonLinearInnerElement.addEventListener('error', this.onNonLinearLoadError);
   this.onNonLinearLoadSuccess = _onNonLinearLoadSuccess.bind(this);
   this.nonLinearInnerElement.addEventListener('load', this.onNonLinearLoadSuccess);
-
   if (this.creative.nonLinearType === 'html') {
     this.nonLinearInnerElement.srcdoc = this.creative.mediaUrl;
   } else {
     this.nonLinearInnerElement.src = this.creative.mediaUrl;
-  } // append to adContainer
-
-
+  }
+  // append to adContainer
   this.nonLinearATag.appendChild(this.nonLinearInnerElement);
   this.nonLinearContainer.appendChild(this.nonLinearATag);
-  this.adContainer.appendChild(this.nonLinearContainer); // display a close button when non-linear ad has reached minSuggestedDuration
-
+  this.adContainer.appendChild(this.nonLinearContainer);
+  // display a close button when non-linear ad has reached minSuggestedDuration
   _appendCloseButton.call(this);
-
   FW.show(this.adContainer);
   content_player.play.call(this, this.firstContentPlayerPlayRequest);
-
   if (this.firstContentPlayerPlayRequest) {
     this.firstContentPlayerPlayRequest = false;
   }
 };
-
 NON_LINEAR.parse = function (variations) {
   var _this2 = this;
-
   console.log("".concat(FW.consolePrepend, " non-linear creatives follow"), FW.consoleStyle, '');
   console.log(variations);
   var isDimensionError = false;
-  var currentVariation; // The video player should poll each <NonLinear> element to determine 
+  var currentVariation;
+  // The video player should poll each <NonLinear> element to determine 
   // which creative is offered in a format the video player can support.
-
   for (var i = 0; i < variations.length; i++) {
     isDimensionError = false;
     currentVariation = variations[i];
     var width = currentVariation.width;
-    var height = currentVariation.height; // width/height attribute is required
-
+    var height = currentVariation.height;
+    // width/height attribute is required
     if (width <= 0) {
       width = 300;
     }
-
     if (height <= 0) {
       height = 44;
-    } // if width of non-linear creative does not fit within current player container width 
+    }
+    // if width of non-linear creative does not fit within current player container width 
     // we should skip this creative
-
-
     if (width > FW.getWidth(this.container) || height > FW.getHeight(this.container)) {
       isDimensionError = true;
       continue;
-    } // get minSuggestedDuration (optional)
-
-
+    }
+    // get minSuggestedDuration (optional)
     this.nonLinearMinSuggestedDuration = currentVariation.minSuggestedDuration;
     var staticResource = currentVariation.staticResource;
     var iframeResource = currentVariation.iframeResource;
-    var htmlResource = currentVariation.htmlResource; // we have a valid NonLinear/StaticResource with supported creativeType - we break
-
+    var htmlResource = currentVariation.htmlResource;
+    // we have a valid NonLinear/StaticResource with supported creativeType - we break
     if (staticResource !== null || iframeResource !== null || htmlResource !== null) {
       if (staticResource) {
         this.creative.mediaUrl = staticResource;
@@ -10356,7 +10393,6 @@ NON_LINEAR.parse = function (variations) {
         this.creative.mediaUrl = htmlResource;
         this.creative.nonLinearType = 'html';
       }
-
       this.creative.width = width;
       this.creative.height = height;
       this.creative.type = currentVariation.type;
@@ -10364,22 +10400,17 @@ NON_LINEAR.parse = function (variations) {
       console.log(this.creative);
       break;
     }
-  } // if not supported NonLinear type ping for error
-
-
+  }
+  // if not supported NonLinear type ping for error
   if (!this.creative.mediaUrl || isDimensionError) {
     var vastErrorCode = 503;
-
     if (isDimensionError) {
       vastErrorCode = 501;
     }
-
     Utils.processVastErrors.call(this, vastErrorCode, true);
     return;
   }
-
   this.creative.clickThroughUrl = currentVariation.nonlinearClickThroughURLTemplate;
-
   if (currentVariation.nonlinearClickTrackingURLTemplates.length > 0) {
     currentVariation.nonlinearClickTrackingURLTemplates.forEach(function (nonlinearClickTrackingURLTemplate) {
       if (nonlinearClickTrackingURLTemplate.url) {
@@ -10390,26 +10421,21 @@ NON_LINEAR.parse = function (variations) {
       }
     });
   }
-
   vast_player.append.call(this);
 };
-
 /* harmony default export */ var non_linear = (NON_LINEAR);
 // EXTERNAL MODULE: ./node_modules/core-js/modules/es.array.sort.js
 var es_array_sort = __webpack_require__(2707);
 ;// CONCATENATED MODULE: ./src/assets/rmp-connection/rmp-connection.js
+
 function rmp_connection_classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
 function rmp_connection_defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
 function rmp_connection_createClass(Constructor, protoProps, staticProps) { if (protoProps) rmp_connection_defineProperties(Constructor.prototype, protoProps); if (staticProps) rmp_connection_defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
-
 /**
  * @license Copyright (c) 2015-2022 Radiant Media Player | https://www.radiantmediaplayer.com
  * rmp-connection 2.0.0 | https://github.com/radiantmediaplayer/rmp-connection
  * rmp-connection is released under MIT | https://github.com/radiantmediaplayer/rmp-connection/blob/master/LICENSE
  */
-
 /**
  * The class to instantiate RmpConnection
  * @export
@@ -10422,11 +10448,10 @@ var RmpConnection = /*#__PURE__*/function () {
   function RmpConnection() {
     rmp_connection_classCallCheck(this, RmpConnection);
   }
+
   /**
     * @private
     */
-
-
   rmp_connection_createClass(RmpConnection, [{
     key: "_getConnectionType",
     value: function _getConnectionType() {
@@ -10434,29 +10459,24 @@ var RmpConnection = /*#__PURE__*/function () {
         switch (navigator.connection.type) {
           case 'ethernet':
             return 'ethernet';
-
           case 'wifi':
           case 'wimax':
             return 'wifi';
-
           case 'bluetooth':
           case 'cellular':
             return 'cellular';
-
           case 'none':
             return 'none';
-
           default:
             break;
         }
       }
-
       return 'unknown';
     }
+
     /**
       * @private
       */
-
   }, {
     key: "_getBandwidthEstimate",
     value: function _getBandwidthEstimate() {
@@ -10466,16 +10486,12 @@ var RmpConnection = /*#__PURE__*/function () {
         switch (navigator.connection.effectiveType) {
           case 'slow-2g':
             return 0.025;
-
           case '2g':
             return 0.035;
-
           case '3g':
             return 0.35;
-
           case '4g':
             return 1.4;
-
           default:
             break;
         }
@@ -10485,28 +10501,24 @@ var RmpConnection = /*#__PURE__*/function () {
           case 'wifi':
           case 'wimax':
             return 1.4;
-
           case 'bluetooth':
           case 'cellular':
             return 0.35;
-
           case 'none':
             return -1;
-
           default:
             break;
         }
       }
-
       return 0.025;
     }
+
     /** 
      * @typedef {object} BandwidthData
      * @property {number} estimate
      * @property {string} connectionType
      * @return {BandwidthData}
      */
-
   }, {
     key: "bandwidthData",
     get: function get() {
@@ -10514,34 +10526,35 @@ var RmpConnection = /*#__PURE__*/function () {
       var result = {
         estimate: -1,
         connectionType: 'none'
-      }; // we are offline - exit
+      };
 
+      // we are offline - exit
       if (typeof navigator.onLine !== 'undefined' && !navigator.onLine) {
         return result;
-      } // we do not have navigator.connection - exit
+      }
+
+      // we do not have navigator.connection - exit
       // for support see https://caniuse.com/#feat=netinfo - works everywhere but in Safari && Firefox 
-
-
       if (typeof navigator.connection === 'undefined') {
         return {
           estimate: -1,
           connectionType: 'unknown'
         };
-      } // we return our internal values
+      }
 
-
+      // we return our internal values
       return {
         estimate: this._getBandwidthEstimate(),
         connectionType: this._getConnectionType()
       };
     }
   }]);
-
   return RmpConnection;
 }();
 
-
 ;// CONCATENATED MODULE: ./src/js/creatives/linear.js
+
+
 
 
 
@@ -10566,24 +10579,20 @@ var VPAID_PATTERN = /vpaid/i;
 var JS_PATTERN = /\/javascript/i;
 var HTML5_MEDIA_ERROR_TYPES = ['MEDIA_ERR_CUSTOM', 'MEDIA_ERR_ABORTED', 'MEDIA_ERR_NETWORK', 'MEDIA_ERR_DECODE', 'MEDIA_ERR_SRC_NOT_SUPPORTED', 'MEDIA_ERR_ENCRYPTED'];
 var COMMON_VIDEO_FORMATS = ['video/webm', 'video/mp4', 'video/ogg', 'video/3gpp'];
-
 var _onDurationChange = function _onDurationChange() {
   var _this = this;
-
   this.vastPlayer.removeEventListener('durationchange', this.onDurationChange);
   this.vastPlayerDuration = vast_player.getDuration.call(this);
-  Utils.createApiEvent.call(this, 'addurationchange'); // progress event
-
+  Utils.createApiEvent.call(this, 'addurationchange');
+  // progress event
   if (this.vastPlayerDuration === -1) {
     return;
   }
-
   var keys = Object.keys(this.creative.trackingEvents);
   keys.forEach(function (eventName) {
     if (/progress-/i.test(eventName)) {
       var time = eventName.split('-');
       var time_2 = time[1];
-
       if (/%/i.test(time_2)) {
         var timePerCent = time_2.slice(0, -1);
         timePerCent = _this.vastPlayerDuration * parseFloat(timePerCent) / 100;
@@ -10596,7 +10605,6 @@ var _onDurationChange = function _onDurationChange() {
         });
       } else {
         var _trackingUrls = _this.creative.trackingEvents[eventName];
-
         _trackingUrls.forEach(function (url) {
           _this.progressEvents.push({
             time: parseFloat(time_2) * 1000,
@@ -10605,59 +10613,51 @@ var _onDurationChange = function _onDurationChange() {
         });
       }
     }
-  }); // sort progress time ascending
-
+  });
+  // sort progress time ascending
   if (this.progressEvents.length > 0) {
     this.progressEvents.sort(function (a, b) {
       return a.time - b.time;
     });
   }
 };
-
 var _onLoadedmetadataPlay = function _onLoadedmetadataPlay() {
   this.vastPlayer.removeEventListener('loadedmetadata', this.onLoadedmetadataPlay);
   clearTimeout(this.creativeLoadTimeoutCallback);
   Utils.createApiEvent.call(this, 'adloaded');
   tracking_events.dispatch.call(this, 'loaded');
-  content_player.pause.call(this); // adjust volume to make sure content player volume matches vast player volume
-
+  content_player.pause.call(this);
+  // adjust volume to make sure content player volume matches vast player volume
   if (this.vastPlayer.volume !== this.contentPlayer.volume) {
     this.vastPlayer.volume = this.contentPlayer.volume;
   }
-
   if (this.contentPlayer.muted) {
     this.vastPlayer.muted = true;
   } else {
     this.vastPlayer.muted = false;
-  } // show ad container holding vast player
-
-
+  }
+  // show ad container holding vast player
   FW.show(this.adContainer);
   FW.show(this.vastPlayer);
-  this.adOnStage = true; // play VAST player
-
+  this.adOnStage = true;
+  // play VAST player
   vast_player.play.call(this, this.firstVastPlayerPlayRequest);
-
   if (this.firstVastPlayerPlayRequest) {
     this.firstVastPlayerPlayRequest = false;
   }
 };
-
 var _onClickThrough = function _onClickThrough(event) {
   if (event) {
     event.stopPropagation();
   }
-
   if (!ENV.isMobile) {
     console.log("".concat(FW.consolePrepend, " Opening clickthrough URL at ").concat(this.creative.clickThroughUrl), FW.consoleStyle, '');
     FW.openWindow(this.creative.clickThroughUrl);
   }
-
   this.pause();
   Utils.createApiEvent.call(this, 'adclick');
   tracking_events.dispatch.call(this, 'clickthrough');
 };
-
 var _onPlaybackError = function _onPlaybackError(event) {
   // https://www.w3.org/TR/html50/embedded-content-0.html#mediaerror
   // MEDIA_ERR_SRC_NOT_SUPPORTED is sign of fatal error
@@ -10665,25 +10665,22 @@ var _onPlaybackError = function _onPlaybackError(event) {
   // act upon them
   if (event && event.target) {
     var videoElement = event.target;
-
     if (videoElement.error && FW.isNumber(videoElement.error.code)) {
       var errorCode = videoElement.error.code;
       var errorMessage = '';
-
       if (typeof videoElement.error.message === 'string') {
         errorMessage = videoElement.error.message;
       }
-
       console.log("".concat(FW.consolePrepend, " Error on video element with code ").concat(errorCode.toString(), " and message ").concat(errorMessage), FW.consoleStyle, '');
-      console.log("".concat(FW.consolePrepend, " error type is ").concat(HTML5_MEDIA_ERROR_TYPES[errorCode] ? HTML5_MEDIA_ERROR_TYPES[errorCode] : 'unknown type'), FW.consoleStyle, ''); // EDIA_ERR_SRC_NOT_SUPPORTED (numeric value 4)
+      console.log("".concat(FW.consolePrepend, " error type is ").concat(HTML5_MEDIA_ERROR_TYPES[errorCode] ? HTML5_MEDIA_ERROR_TYPES[errorCode] : 'unknown type'), FW.consoleStyle, '');
 
+      // EDIA_ERR_SRC_NOT_SUPPORTED (numeric value 4)
       if (errorCode === 4) {
         Utils.processVastErrors.call(this, 401, true);
       }
     }
   }
 };
-
 var _appendClickUIOnMobile = function _appendClickUIOnMobile() {
   // we create a <a> tag rather than using window.open 
   // because it works better in standalone mode and WebView
@@ -10695,14 +10692,12 @@ var _appendClickUIOnMobile = function _appendClickUIOnMobile() {
   this.clickUIOnMobile.target = '_blank';
   this.adContainer.appendChild(this.clickUIOnMobile);
 };
-
 var _onContextMenu = function _onContextMenu(event) {
   if (event) {
     event.stopPropagation();
     event.preventDefault();
   }
 };
-
 var _setCanBeSkippedUI = function _setCanBeSkippedUI() {
   FW.setStyle(this.skipWaiting, {
     display: 'none'
@@ -10714,28 +10709,22 @@ var _setCanBeSkippedUI = function _setCanBeSkippedUI() {
     display: 'block'
   });
 };
-
 var _updateWaitingForCanBeSkippedUI = function _updateWaitingForCanBeSkippedUI(delta) {
   if (Math.round(delta) > 0) {
     this.skipWaiting.textContent = this.params.labels.skipMessage + ' ' + Math.round(delta) + 's';
   }
 };
-
 var _onTimeupdateCheckSkip = function _onTimeupdateCheckSkip() {
   if (this.skipButton.style.display === 'none') {
     FW.setStyle(this.skipButton, {
       display: 'block'
     });
   }
-
   this.vastPlayerCurrentTime = this.vastPlayer.currentTime;
-
   if (FW.isNumber(this.vastPlayerCurrentTime) && this.vastPlayerCurrentTime > 0) {
     if (this.vastPlayerCurrentTime >= this.creative.skipoffset) {
       this.vastPlayer.removeEventListener('timeupdate', this.onTimeupdateCheckSkip);
-
       _setCanBeSkippedUI.call(this);
-
       this.skippableAdCanBeSkipped = true;
       Utils.createApiEvent.call(this, 'adskippablestatechanged');
     } else if (this.creative.skipoffset - this.vastPlayerCurrentTime > 0) {
@@ -10743,26 +10732,22 @@ var _onTimeupdateCheckSkip = function _onTimeupdateCheckSkip() {
     }
   }
 };
-
 var _onClickSkip = function _onClickSkip(event) {
   if (event) {
     event.stopPropagation();
-
     if (event.type === 'touchend') {
       event.preventDefault();
     }
   }
-
   if (this.skippableAdCanBeSkipped) {
     // create API event 
-    Utils.createApiEvent.call(this, 'adskipped'); // request ping for skip event
-
-    tracking_events.dispatch.call(this, 'skip'); // resume content
-
+    Utils.createApiEvent.call(this, 'adskipped');
+    // request ping for skip event
+    tracking_events.dispatch.call(this, 'skip');
+    // resume content
     vast_player.resumeContent.call(this);
   }
 };
-
 var _appendSkip = function _appendSkip() {
   this.skipButton = document.createElement('div');
   this.skipButton.className = 'rmp-ad-container-skip';
@@ -10772,9 +10757,7 @@ var _appendSkip = function _appendSkip() {
   Utils.makeButtonAccessible(this.skipButton, this.params.labels.skipMessage);
   this.skipWaiting = document.createElement('div');
   this.skipWaiting.className = 'rmp-ad-container-skip-waiting';
-
   _updateWaitingForCanBeSkippedUI.call(this, this.creative.skipoffset);
-
   FW.setStyle(this.skipWaiting, {
     display: 'block'
   });
@@ -10799,7 +10782,6 @@ var _appendSkip = function _appendSkip() {
   this.onTimeupdateCheckSkip = _onTimeupdateCheckSkip.bind(this);
   this.vastPlayer.addEventListener('timeupdate', this.onTimeupdateCheckSkip);
 };
-
 var _onHlsJSError = function _onHlsJSError(event, data) {
   if (data.fatal) {
     switch (data.type) {
@@ -10807,36 +10789,35 @@ var _onHlsJSError = function _onHlsJSError(event, data) {
         // try to recover network error
         this.hlsJS[this.hlsJSIndex].startLoad();
         break;
-
       case Hls.ErrorTypes.MEDIA_ERROR:
         this.hlsJS[this.hlsJSIndex].recoverMediaError();
         break;
-
       default:
         Utils.processVastErrors.call(this, 900, true);
         break;
     }
   }
 };
-
 LINEAR.update = function (url, type) {
   var _this2 = this;
-
   console.log("".concat(FW.consolePrepend, " update vast player for linear creative of type ").concat(type, " located at ").concat(url), FW.consoleStyle, '');
   this.onDurationChange = _onDurationChange.bind(this);
-  this.vastPlayer.addEventListener('durationchange', this.onDurationChange); // when creative is loaded play it 
+  this.vastPlayer.addEventListener('durationchange', this.onDurationChange);
 
+  // when creative is loaded play it 
   this.onLoadedmetadataPlay = _onLoadedmetadataPlay.bind(this);
-  this.vastPlayer.addEventListener('loadedmetadata', this.onLoadedmetadataPlay); // prevent built in menu to show on right click
+  this.vastPlayer.addEventListener('loadedmetadata', this.onLoadedmetadataPlay);
 
+  // prevent built in menu to show on right click
   this.onContextMenu = _onContextMenu.bind(this);
   this.vastPlayer.addEventListener('contextmenu', this.onContextMenu);
-  this.onPlaybackError = _onPlaybackError.bind(this); // start creativeLoadTimeout
+  this.onPlaybackError = _onPlaybackError.bind(this);
 
+  // start creativeLoadTimeout
   this.creativeLoadTimeoutCallback = setTimeout(function () {
     Utils.processVastErrors.call(_this2, 402, true);
-  }, this.params.creativeLoadTimeout); // load ad asset
-
+  }, this.params.creativeLoadTimeout);
+  // load ad asset
   if (this.useContentPlayerForAds) {
     this.contentPlayer.addEventListener('error', this.onPlaybackError);
     this.contentPlayer.src = url;
@@ -10860,214 +10841,188 @@ LINEAR.update = function (url, type) {
       this.hlsJS[this.hlsJSIndex].attachMedia(this.vastPlayer);
     } else {
       this.vastPlayer.addEventListener('error', this.onPlaybackError);
-      this.vastPlayer.src = url; // we need this extra load for Chrome data saver mode in mobile or desktop
-
+      this.vastPlayer.src = url;
+      // we need this extra load for Chrome data saver mode in mobile or desktop
       this.vastPlayer.load();
     }
-  } // clickthrough interaction
+  }
 
-
+  // clickthrough interaction
   this.onClickThrough = _onClickThrough.bind(this);
-
   if (this.creative.clickThroughUrl) {
     if (ENV.isMobile) {
       _appendClickUIOnMobile.call(this);
     } else {
       this.vastPlayer.addEventListener('click', this.onClickThrough);
     }
-  } // skippable - only where vast player is different from 
+  }
+
+  // skippable - only where vast player is different from 
   // content player
-
-
   if (this.creative.isSkippableAd) {
     _appendSkip.call(this);
   }
 };
-
 LINEAR.parse = function (icons, adParameters, mediaFiles) {
   if (icons.length > 0) {
     creatives_icons.parse.call(this, icons);
-  } // check for AdParameters tag in case we have a VPAID creative
-
-
+  }
+  // check for AdParameters tag in case we have a VPAID creative
   this.adParametersData = '';
-
   if (adParameters !== null) {
     this.adParametersData = adParameters;
   }
-
   var mediaFileItems = [];
-
   for (var i = 0; i < mediaFiles.length; i++) {
     var currentMediaFile = mediaFiles[i];
     var mediaFileValue = currentMediaFile.fileURL;
     var type = currentMediaFile.mimeType;
-
     if (mediaFileValue === null || type === null) {
       continue;
     }
-
     var newMediaFileItem = {};
     newMediaFileItem.url = mediaFileValue;
     newMediaFileItem.type = type;
-
     if (currentMediaFile.codec !== null) {
       newMediaFileItem.codec = currentMediaFile.codec;
-    } // check for potential VPAID - we have a VPAID JS - we break
+    }
+    // check for potential VPAID - we have a VPAID JS - we break
     // for VPAID we may not have a width, height or delivery
-
-
     if (this.params.enableVpaid && currentMediaFile.apiFramework && VPAID_PATTERN.test(currentMediaFile.apiFramework) && JS_PATTERN.test(type)) {
       console.log("".concat(FW.consolePrepend, " VPAID creative detected"), FW.consoleStyle, '');
       mediaFileItems = [newMediaFileItem];
       this.isVPAID = true;
       break;
     }
-
     newMediaFileItem.width = currentMediaFile.width;
     newMediaFileItem.height = currentMediaFile.height;
     newMediaFileItem.bitrate = currentMediaFile.bitrate;
     mediaFileItems.push(newMediaFileItem);
-  } // we support HLS; MP4; WebM: VPAID so let us fecth for those
-
-
+  }
+  // we support HLS; MP4; WebM: VPAID so let us fecth for those
   var creatives = [];
-
   for (var j = 0; j < mediaFileItems.length; j++) {
     var currentMediaFileItem = mediaFileItems[j];
     var _type = currentMediaFileItem.type;
     var url = currentMediaFileItem.url;
-
     if (this.isVPAID && url) {
       vpaid.loadCreative.call(this, url, this.params.vpaidSettings);
       this.creative.type = _type;
       return;
-    } // we have HLS > use hls.js where no native support for HLS is available or native HLS otherwise (Apple devices mainly)
-
-
+    }
+    // we have HLS > use hls.js where no native support for HLS is available or native HLS otherwise (Apple devices mainly)
     if (_type === 'application/vnd.apple.mpegurl' && (ENV.checkCanPlayType(_type) || typeof window.Hls !== 'undefined' && Hls.isSupported())) {
       vast_player.append.call(this, url, _type);
       this.creative.type = _type;
       return;
-    } // we have DASH and DASH is natively supported > use DASH
-
-
+    }
+    // we have DASH and DASH is natively supported > use DASH
     if (ENV.checkCanPlayType('application/dash+xml')) {
       vast_player.append.call(this, url, _type);
       this.creative.type = _type;
       return;
-    } // we gather MP4, WebM, OGG and remaining files
-
-
+    }
+    // we gather MP4, WebM, OGG and remaining files
     creatives.push(currentMediaFileItem);
   }
-
-  var retainedCreatives = []; // first we check for the common formats below ... 
-
+  var retainedCreatives = [];
+  // first we check for the common formats below ... 
   var __filterCommonCreatives = function __filterCommonCreatives(i, creative) {
     if (creative.codec && creative.type === COMMON_VIDEO_FORMATS[i]) {
       return ENV.checkCanPlayType(creative.type, creative.codec);
     } else if (creative.type === COMMON_VIDEO_FORMATS[i]) {
       return ENV.checkCanPlayType(creative.type);
     }
-
     return false;
   };
-
   for (var k = 0; k < COMMON_VIDEO_FORMATS.length; k++) {
     retainedCreatives = creatives.filter(__filterCommonCreatives.bind(null, k));
-
     if (retainedCreatives.length > 0) {
       break;
     }
-  } // ... if none of the common format work, then we check for exotic format
+  }
+  // ... if none of the common format work, then we check for exotic format
   // first we check for those with codec information as it provides more accurate support indication ...
-
-
   if (retainedCreatives.length === 0) {
     var __filterCodecCreatives = function __filterCodecCreatives(codec, type, creative) {
       return creative.codec === codec && creative.type === type;
     };
-
     creatives.forEach(function (creative) {
       if (creative.codec && creative.type && ENV.checkCanPlayType(creative.type, creative.codec)) {
         retainedCreatives = creatives.filter(__filterCodecCreatives.bind(null, creative.codec, creative.type));
       }
     });
-  } // ... if codec information are not available then we go first type matching
-
-
+  }
+  // ... if codec information are not available then we go first type matching
   if (retainedCreatives.length === 0) {
     var __filterTypeCreatives = function __filterTypeCreatives(type, creative) {
       return creative.type === type;
     };
-
     creatives.forEach(function (creative) {
       if (creative.type && ENV.checkCanPlayType(creative.type)) {
         retainedCreatives = creatives.filter(__filterTypeCreatives.bind(null, creative.type));
       }
     });
-  } // still no match for supported format - we exit
+  }
 
-
+  // still no match for supported format - we exit
   if (retainedCreatives.length === 0) {
     // None of the MediaFile provided are supported by the player
     Utils.processVastErrors.call(this, 403, true);
     return;
-  } // sort supported creatives by width
+  }
 
-
+  // sort supported creatives by width
   retainedCreatives.sort(function (a, b) {
     return a.width - b.width;
   });
   console.log("".concat(FW.consolePrepend, " available linear creative follows"), FW.consoleStyle, '');
-  console.log(retainedCreatives); // we have files matching device capabilities
-  // select the best one based on player current width
+  console.log(retainedCreatives);
 
+  // we have files matching device capabilities
+  // select the best one based on player current width
   var finalCreative;
   var validCreativesByWidth = [];
   var validCreativesByBitrate = [];
-
   if (retainedCreatives.length > 1) {
     var containerWidth = FW.getWidth(this.container) * ENV.devicePixelRatio;
     var containerHeight = FW.getHeight(this.container) * ENV.devicePixelRatio;
-
     if (containerWidth > 0 && containerHeight > 0) {
       validCreativesByWidth = retainedCreatives.filter(function (creative) {
         return containerWidth >= creative.width && containerHeight >= creative.height;
       });
     }
-
     console.log("".concat(FW.consolePrepend, " validCreativesByWidth follow"), FW.consoleStyle, '');
-    console.log(validCreativesByWidth); // if no match by size 
+    console.log(validCreativesByWidth);
 
+    // if no match by size 
     if (validCreativesByWidth.length === 0) {
       validCreativesByWidth = [retainedCreatives[0]];
-    } // filter by bitrate to provide best quality
+    }
 
-
+    // filter by bitrate to provide best quality
     var rmpConnection = new RmpConnection();
     var availableBandwidth = rmpConnection.bandwidthData.estimate;
     console.log("".concat(FW.consolePrepend, " availableBandwidth is ").concat(availableBandwidth, " Mbps"), FW.consoleStyle, '');
-
     if (availableBandwidth > -1 && validCreativesByWidth.length > 1) {
       // sort supported creatives by bitrates
       validCreativesByWidth.sort(function (a, b) {
         return a.bitrate - b.bitrate;
-      }); // convert to kbps
-
+      });
+      // convert to kbps
       availableBandwidth = Math.round(availableBandwidth * 1000);
       validCreativesByBitrate = validCreativesByWidth.filter(function (creative) {
         return availableBandwidth >= creative.bitrate;
       });
       console.log("".concat(FW.consolePrepend, " validCreativesByBitrate follow"), FW.consoleStyle, '');
-      console.log(validCreativesByBitrate); // pick max available bitrate
+      console.log(validCreativesByBitrate);
 
+      // pick max available bitrate
       finalCreative = validCreativesByBitrate[validCreativesByBitrate.length - 1];
     }
-  } // if no match by bitrate 
+  }
 
-
+  // if no match by bitrate 
   if (!finalCreative) {
     if (validCreativesByWidth.length > 0) {
       finalCreative = validCreativesByWidth[validCreativesByWidth.length - 1];
@@ -11078,7 +11033,6 @@ LINEAR.parse = function (icons, adParameters, mediaFiles) {
       finalCreative = retainedCreatives[retainedCreatives.length - 1];
     }
   }
-
   console.log("".concat(FW.consolePrepend, " selected linear creative follows"), FW.consoleStyle, '');
   console.log(finalCreative);
   this.creative.mediaUrl = finalCreative.url;
@@ -11087,7 +11041,6 @@ LINEAR.parse = function (icons, adParameters, mediaFiles) {
   this.creative.type = finalCreative.type;
   vast_player.append.call(this, finalCreative.url, finalCreative.type);
 };
-
 /* harmony default export */ var linear = (LINEAR);
 ;// CONCATENATED MODULE: ./src/js/players/vast-player.js
 
@@ -11103,12 +11056,9 @@ LINEAR.parse = function (icons, adParameters, mediaFiles) {
 
 
 var VAST_PLAYER = {};
-
 var _unwireVastPlayerEvents = function _unwireVastPlayerEvents() {
   var _this = this;
-
   console.log("".concat(FW.consolePrepend, " reset - unwireVastPlayerEvents"), FW.consoleStyle, '');
-
   if (this.nonLinearContainer) {
     this.nonLinearInnerElement.removeEventListener('load', this.onNonLinearLoadSuccess);
     this.nonLinearInnerElement.removeEventListener('error', this.onNonLinearLoadError);
@@ -11120,78 +11070,68 @@ var _unwireVastPlayerEvents = function _unwireVastPlayerEvents() {
       _this.nonLinearContainer.removeEventListener(trackingTag.event, _this.onEventPingTracking);
     });
   }
-
   if (this.vastPlayer) {
-    this.vastPlayer.removeEventListener('error', this.onPlaybackError); // vastPlayer content pause/resume events
-
+    this.vastPlayer.removeEventListener('error', this.onPlaybackError);
+    // vastPlayer content pause/resume events
     this.vastPlayer.removeEventListener('durationchange', this.onDurationChange);
     this.vastPlayer.removeEventListener('loadedmetadata', this.onLoadedmetadataPlay);
-    this.vastPlayer.removeEventListener('contextmenu', this.onContextMenu); // unwire HTML5 video events
-
+    this.vastPlayer.removeEventListener('contextmenu', this.onContextMenu);
+    // unwire HTML5 video events
     this.vastPlayer.removeEventListener('pause', this.onPause);
     this.vastPlayer.removeEventListener('play', this.onPlay);
     this.vastPlayer.removeEventListener('playing', this.onPlaying);
     this.vastPlayer.removeEventListener('ended', this.onEnded);
     this.vastPlayer.removeEventListener('volumechange', this.onVolumeChange);
-    this.vastPlayer.removeEventListener('timeupdate', this.onTimeupdate); // unwire HTML5 VAST events
+    this.vastPlayer.removeEventListener('timeupdate', this.onTimeupdate);
 
+    // unwire HTML5 VAST events
     this.trackingTags.forEach(function (trackingTag) {
       _this.vastPlayer.removeEventListener(trackingTag.event, _this.onEventPingTracking);
-    }); // remove clicktrough handling
-
+    });
+    // remove clicktrough handling
     this.vastPlayer.removeEventListener('click', this.onClickThrough);
-    this.vastPlayer.removeEventListener('playing', this.onPlayingAppendIcons); // skip
-
+    this.vastPlayer.removeEventListener('playing', this.onPlayingAppendIcons);
+    // skip
     this.vastPlayer.removeEventListener('timeupdate', this.onTimeupdateCheckSkip);
   }
-
   if (this.skipButton) {
     this.skipButton.removeEventListener('click', this.onClickSkip);
     this.skipButton.removeEventListener('touchend', this.onClickSkip);
-  } // click UI on mobile
-
-
+  }
+  // click UI on mobile
   if (this.clickUIOnMobile) {
     this.clickUIOnMobile.removeEventListener('touchend', this.onClickThrough);
   }
-
   if (this.contentPlayer) {
     this.contentPlayer.removeEventListener('error', this.onPlaybackError);
   }
 };
-
 VAST_PLAYER.destroy = function () {
   var _this2 = this;
+  console.log("".concat(FW.consolePrepend, " start destroying vast player"), FW.consoleStyle, '');
 
-  console.log("".concat(FW.consolePrepend, " start destroying vast player"), FW.consoleStyle, ''); // destroy icons if any 
-
+  // destroy icons if any 
   if (this.iconsData.length > 0) {
     creatives_icons.destroy.call(this);
   }
-
   if (this.isVPAID) {
     vpaid.destroy.call(this);
-  } // unwire events
-
-
-  _unwireVastPlayerEvents.call(this); // remove clickUI on mobile
-
-
+  }
+  // unwire events
+  _unwireVastPlayerEvents.call(this);
+  // remove clickUI on mobile
   if (this.clickUIOnMobile) {
     FW.removeElement(this.clickUIOnMobile);
   }
-
   if (this.creative.isSkippableAd) {
     FW.removeElement(this.skipButton);
-  } // hide rmp-ad-container
-
-
-  FW.hide(this.adContainer); // unwire anti-seek logic (iOS)
-
-  clearInterval(this.antiSeekLogicInterval); // reset creativeLoadTimeout
-
+  }
+  // hide rmp-ad-container
+  FW.hide(this.adContainer);
+  // unwire anti-seek logic (iOS)
+  clearInterval(this.antiSeekLogicInterval);
+  // reset creativeLoadTimeout
   clearTimeout(this.creativeLoadTimeoutCallback);
-
   if (this.useContentPlayerForAds) {
     if (!this.params.outstream) {
       if (this.nonLinearContainer) {
@@ -11203,11 +11143,9 @@ VAST_PLAYER.destroy = function () {
         // what it is asked to do when post roll come into play
         if (this.currentContentCurrentTime > 4000) {
           this.needsSeekAdjust = true;
-
           if (this.contentPlayerCompleted) {
             this.needsSeekAdjust = false;
           }
-
           if (!this.seekAdjustAttached) {
             this.seekAdjustAttached = true;
             this.contentPlayer.addEventListener('playing', function () {
@@ -11218,7 +11156,6 @@ VAST_PLAYER.destroy = function () {
             });
           }
         }
-
         console.log("".concat(FW.consolePrepend, " recovering content ").concat(this.currentContentSrc, " at time ").concat(this.currentContentCurrentTime), FW.consoleStyle, '');
         this.contentPlayer.src = this.currentContentSrc;
       }
@@ -11226,8 +11163,8 @@ VAST_PLAYER.destroy = function () {
       // specific handling for outstream ad === flush buffer and do not attempt to resume content
       try {
         if (this.contentPlayer) {
-          this.contentPlayer.pause(); // empty buffer
-
+          this.contentPlayer.pause();
+          // empty buffer
           this.contentPlayer.removeAttribute('src');
           this.contentPlayer.load();
           console.log("".concat(FW.consolePrepend, " flushing contentPlayer buffer after outstream ad"), FW.consoleStyle, '');
@@ -11241,7 +11178,6 @@ VAST_PLAYER.destroy = function () {
     try {
       if (this.vastPlayer) {
         this.vastPlayer.pause();
-
         if (this.readingHlsJS) {
           this.readingHlsJS = false;
           this.hlsJS[this.hlsJSIndex].destroy();
@@ -11251,11 +11187,9 @@ VAST_PLAYER.destroy = function () {
           this.vastPlayer.removeAttribute('src');
           this.vastPlayer.load();
         }
-
         FW.hide(this.vastPlayer);
         console.log("".concat(FW.consolePrepend, " flushing vastPlayer buffer after ad"), FW.consoleStyle, '');
       }
-
       if (this.nonLinearContainer) {
         FW.removeElement(this.nonLinearContainer);
       }
@@ -11263,76 +11197,64 @@ VAST_PLAYER.destroy = function () {
       console.warn(error);
     }
   }
-
   Utils.resetVariablesForNewLoadAds.call(this);
   Utils.createApiEvent.call(this, 'addestroyed');
 };
-
 VAST_PLAYER.init = function () {
   var _this3 = this;
-
   this.adContainer = document.createElement('div');
   this.adContainer.className = 'rmp-ad-container';
   this.contentWrapper.appendChild(this.adContainer);
   FW.hide(this.adContainer);
-
   if (!this.useContentPlayerForAds) {
     this.vastPlayer = document.createElement('video');
-    FW.logVideoEvents(this.vastPlayer, 'vast'); // disable casting of video ads for Android
-
+    FW.logVideoEvents(this.vastPlayer, 'vast');
+    // disable casting of video ads for Android
     if (ENV.isAndroid[0] && typeof this.vastPlayer.disableRemotePlayback !== 'undefined') {
       this.vastPlayer.disableRemotePlayback = true;
     }
-
     this.vastPlayer.className = 'rmp-ad-vast-video-player';
-
     if (this.params.showControlsForVastPlayer) {
       this.vastPlayer.controls = true;
     } else {
       this.vastPlayer.controls = false;
-    } // this.contentPlayer.muted may not be set because of a bug in some version of Chromium
+    }
 
-
+    // this.contentPlayer.muted may not be set because of a bug in some version of Chromium
     if (this.contentPlayer.hasAttribute('muted')) {
       this.contentPlayer.muted = true;
     }
-
     if (this.contentPlayer.muted) {
       this.vastPlayer.muted = true;
-    } // black poster based 64 png
-
-
-    this.vastPlayer.poster = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII='; // note to myself: we use setAttribute for non-standard attribute (instead of . notation)
-
+    }
+    // black poster based 64 png
+    this.vastPlayer.poster = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=';
+    // note to myself: we use setAttribute for non-standard attribute (instead of . notation)
     this.vastPlayer.setAttribute('x-webkit-airplay', 'allow');
-
     if (typeof this.contentPlayer.playsInline === 'boolean' && this.contentPlayer.playsInline) {
       this.vastPlayer.playsInline = true;
     }
-
-    this.vastPlayer.defaultPlaybackRate = 1; // append to rmp-ad-container
-
+    this.vastPlayer.defaultPlaybackRate = 1;
+    // append to rmp-ad-container
     FW.hide(this.vastPlayer);
     this.adContainer.appendChild(this.vastPlayer);
   } else {
     this.vastPlayer = this.contentPlayer;
-  } // we track ended state for content player
-
-
+  }
+  // we track ended state for content player
   this.contentPlayer.addEventListener('ended', function () {
     if (_this3.adOnStage) {
       return;
     }
-
     _this3.contentPlayerCompleted = true;
-  }); // we need to preload as much creative data as possible
+  });
+  // we need to preload as much creative data as possible
   // also on macOS and iOS Safari we need to force preload to avoid 
   // playback issues
-
-  this.vastPlayer.preload = 'auto'; // we need to init the vast player video tag
+  this.vastPlayer.preload = 'auto';
+  // we need to init the vast player video tag
   // according to https://developers.google.com/interactive-media-ads/docs/sdks/html5/mobile_video
   // to initialize the content element, a call to the load() method is sufficient.
-
   if (ENV.isMobile) {
     // on Android both this.contentPlayer (to resume content)
     // and this.vastPlayer (to start ads) needs to be init
@@ -11340,7 +11262,6 @@ VAST_PLAYER.init = function () {
     if (!this.useContentPlayerForAds) {
       this.contentPlayer.load();
     }
-
     this.vastPlayer.load();
   } else {
     // due to autoplay being blocked on macOS Safari 11+
@@ -11350,10 +11271,8 @@ VAST_PLAYER.init = function () {
       this.vastPlayer.load();
     }
   }
-
   this.rmpVastInitialized = true;
 };
-
 VAST_PLAYER.append = function (url, type) {
   // in case loadAds is called several times - rmpVastInitialized is already true
   // but we still need to locate the vastPlayer
@@ -11364,16 +11283,13 @@ VAST_PLAYER.append = function (url, type) {
       // we use existing rmp-ad-vast-video-player as it is already 
       // available and initialized (no need for user interaction)
       var existingVastPlayer = this.adContainer.querySelector('.rmp-ad-vast-video-player');
-
       if (existingVastPlayer === null) {
         Utils.processVastErrors.call(this, 900, true);
         return;
       }
-
       this.vastPlayer = existingVastPlayer;
     }
   }
-
   if (!this.creative.isLinear) {
     // we do not display non-linear ads with outstream ad 
     // they won't fit the format
@@ -11388,31 +11304,27 @@ VAST_PLAYER.append = function (url, type) {
     if (url && type) {
       linear.update.call(this, url, type);
     }
-  } // wire tracking events
+  }
+  // wire tracking events
+  tracking_events.wire.call(this);
 
-
-  tracking_events.wire.call(this); // append icons - only where vast player is different from 
+  // append icons - only where vast player is different from 
   // content player
-
   if (!this.useContentPlayerForAds && this.iconsData.length > 0) {
     creatives_icons.append.call(this);
   }
 };
-
 VAST_PLAYER.setVolume = function (level) {
   if (this.vastPlayer) {
     this.vastPlayer.volume = level;
   }
 };
-
 VAST_PLAYER.getVolume = function () {
   if (this.vastPlayer) {
     return this.vastPlayer.volume;
   }
-
   return -1;
 };
-
 VAST_PLAYER.setMute = function (muted) {
   if (this.vastPlayer) {
     if (muted && !this.vastPlayer.muted) {
@@ -11422,66 +11334,53 @@ VAST_PLAYER.setMute = function (muted) {
     }
   }
 };
-
 VAST_PLAYER.getMute = function () {
   if (this.vastPlayer) {
     return this.vastPlayer.muted;
   }
-
   return false;
 };
-
 VAST_PLAYER.play = function (firstVastPlayerPlayRequest) {
   if (this.vastPlayer && this.vastPlayer.paused) {
     Utils.playPromise.call(this, 'vast', firstVastPlayerPlayRequest);
   }
 };
-
 VAST_PLAYER.pause = function () {
   if (this.vastPlayer && !this.vastPlayer.paused) {
     this.vastPlayer.pause();
   }
 };
-
 VAST_PLAYER.getDuration = function () {
   if (this.vastPlayer) {
     var duration = this.vastPlayer.duration;
-
     if (FW.isNumber(duration)) {
       return Math.round(duration * 1000);
     }
   }
-
   return -1;
 };
-
 VAST_PLAYER.getCurrentTime = function () {
   if (this.vastPlayer) {
     var currentTime = this.vastPlayer.currentTime;
-
     if (FW.isNumber(currentTime)) {
       return Math.round(currentTime * 1000);
     }
   }
-
   return -1;
 };
-
 VAST_PLAYER.resumeContent = function () {
   VAST_PLAYER.destroy.call(this);
-  this.readingHlsJS = false; // if this.contentPlayerCompleted = true - we are in a post-roll situation
+  this.readingHlsJS = false;
+  // if this.contentPlayerCompleted = true - we are in a post-roll situation
   // in that case we must not resume content once the post-roll has completed
   // you can use setContentPlayerCompleted/getContentPlayerCompleted to support 
   // custom use-cases when dynamically changing source for content
   // no need to resume content for outstream ads
-
   if (!this.contentPlayerCompleted && !this.params.outstream) {
     content_player.play.call(this);
   }
-
   this.contentPlayerCompleted = false;
 };
-
 /* harmony default export */ var vast_player = (VAST_PLAYER);
 ;// CONCATENATED MODULE: ./src/js/framework/utils.js
 
@@ -11494,21 +11393,20 @@ VAST_PLAYER.resumeContent = function () {
 
 
 function utils_classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
 function utils_defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
 function utils_createClass(Constructor, protoProps, staticProps) { if (protoProps) utils_defineProperties(Constructor.prototype, protoProps); if (staticProps) utils_defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
 
 
 
 
- // Indicates that the error was encountered when the ad was being loaded. 
+
+// Indicates that the error was encountered when the ad was being loaded. 
 // Possible causes: there was no response from the ad server, malformed ad response was returned ...
 // 300, 301, 302, 303, 304 Wrapper errors are managed in ast-client-js
+var LOAD_ERROR_LIST = [303, 900, 1001];
 
-var LOAD_ERROR_LIST = [303, 900, 1001]; // Indicates that the error was encountered after the ad loaded, during ad play. 
+// Indicates that the error was encountered after the ad loaded, during ad play. 
 // Possible causes: ad assets could not be loaded, etc.
-
 var PLAY_ERROR_LIST = [201, 204, 205, 400, 401, 402, 403, 501, 502, 503, 603, 901, 1002];
 var VAST_ERRORS_LIST = [{
   code: 201,
@@ -11559,17 +11457,14 @@ var VAST_ERRORS_LIST = [{
   code: 1002,
   description: 'Required DOMParser API is not available'
 }];
-
 var Utils = /*#__PURE__*/function () {
   function Utils() {
     utils_classCallCheck(this, Utils);
   }
-
   utils_createClass(Utils, null, [{
     key: "filterParams",
     value: function filterParams(inputParams) {
       var _this = this;
-
       var defaultParams = {
         ajaxTimeout: 5000,
         creativeLoadTimeout: 8000,
@@ -11598,10 +11493,9 @@ var Utils = /*#__PURE__*/function () {
         omidRunValidationScript: false,
         omidAutoplay: false,
         partnerName: 'rmp-vast',
-        partnerVersion: "9.0.0"
+        partnerVersion: "9.0.1"
       };
       this.params = defaultParams;
-
       if (inputParams && typeof inputParams === 'object') {
         var keys = Object.keys(inputParams);
         keys.forEach(function (key) {
@@ -11611,15 +11505,12 @@ var Utils = /*#__PURE__*/function () {
                 if (FW.isNumber(inputParams.vpaidSettings.width) && inputParams.vpaidSettings.width > 0) {
                   _this.params.vpaidSettings.width = inputParams.vpaidSettings.width;
                 }
-
                 if (FW.isNumber(inputParams.vpaidSettings.height) && inputParams.vpaidSettings.height > 0) {
                   _this.params.vpaidSettings.height = inputParams.vpaidSettings.height;
                 }
-
                 if (typeof inputParams.vpaidSettings.viewMode === 'string' && inputParams.vpaidSettings.viewMode === 'fullscreen') {
                   _this.params.vpaidSettings.viewMode = inputParams.vpaidSettings.viewMode;
                 }
-
                 if (FW.isNumber(inputParams.vpaidSettings.desiredBitrate) && inputParams.vpaidSettings.desiredBitrate > 0) {
                   _this.params.vpaidSettings.desiredBitrate = inputParams.vpaidSettings.desiredBitrate;
                 }
@@ -11635,7 +11526,6 @@ var Utils = /*#__PURE__*/function () {
     key: "createApiEvent",
     value: function createApiEvent(event) {
       var _this2 = this;
-
       // adloaded, addurationchange, adclick, adimpression, adstarted, 
       // adtagloaded, adtagstartloading, adpaused, adresumed 
       // advolumemuted, advolumechanged, adcomplete, adskipped, 
@@ -11660,27 +11550,22 @@ var Utils = /*#__PURE__*/function () {
     key: "playPromise",
     value: function playPromise(whichPlayer, firstPlayerPlayRequest) {
       var _this3 = this;
-
       var targetPlayer;
-
       switch (whichPlayer) {
         case 'content':
           targetPlayer = this.contentPlayer;
           break;
-
         case 'vast':
           targetPlayer = this.vastPlayer;
           break;
-
         default:
           break;
       }
-
       if (targetPlayer) {
-        var playPromise = targetPlayer.play(); // most modern browsers support play as a Promise
+        var playPromise = targetPlayer.play();
+        // most modern browsers support play as a Promise
         // this lets us handle autoplay rejection 
         // https://developers.google.com/web/updates/2016/03/play-returns-promise
-
         if (playPromise !== undefined) {
           playPromise.then(function () {
             if (firstPlayerPlayRequest) {
@@ -11689,7 +11574,6 @@ var Utils = /*#__PURE__*/function () {
             }
           }).catch(function (error) {
             console.warn(error);
-
             if (firstPlayerPlayRequest && whichPlayer === 'vast' && _this3.creative.isLinear) {
               console.log("".concat(FW.consolePrepend, " initial play promise on VAST player has been rejected"), FW.consoleStyle, '');
               Utils.processVastErrors.call(_this3, 400, true);
@@ -11711,15 +11595,14 @@ var Utils = /*#__PURE__*/function () {
       element.tabIndex = 0;
       element.setAttribute('role', 'button');
       element.addEventListener('keyup', function (event) {
-        var code = event.which; // 13 = Return, 32 = Space
-
+        var code = event.which;
+        // 13 = Return, 32 = Space
         if (code === 13 || code === 32) {
           event.stopPropagation();
           event.preventDefault();
           FW.createStdEvent('click', element);
         }
       });
-
       if (ariaLabel) {
         element.setAttribute('aria-label', ariaLabel);
       }
@@ -11744,14 +11627,14 @@ var Utils = /*#__PURE__*/function () {
       this.contentPlayer = null;
       this.id = null;
       this.container = null;
-      this.isInFullscreen = false; // adpod
-
+      this.isInFullscreen = false;
+      // adpod
       this.adPod = false;
       this.adPodLength = 0;
-      this.adSequence = 0; // on iOS and macOS Safari we use content player to play ads
+      this.adSequence = 0;
+      // on iOS and macOS Safari we use content player to play ads
       // to avoid issues related to fullscreen management and autoplay
       // as fullscreen on iOS is handled by the default OS player
-
       if (ENV.isIos[0] || ENV.isMacOSSafari || ENV.isIpadOS) {
         this.useContentPlayerForAds = true;
         console.log("".concat(FW.consolePrepend, " vast player will be content player"), FW.consoleStyle, '');
@@ -11760,11 +11643,11 @@ var Utils = /*#__PURE__*/function () {
   }, {
     key: "resetVariablesForNewLoadAds",
     value: function resetVariablesForNewLoadAds() {
-      this.container.removeEventListener('adstarted', this.attachViewableObserver); // init internal methods 
-
+      this.container.removeEventListener('adstarted', this.attachViewableObserver);
+      // init internal methods 
       this.onLoadedmetadataPlay = FW.nullFn;
-      this.onPlaybackError = FW.nullFn; // init internal tracking events methods
-
+      this.onPlaybackError = FW.nullFn;
+      // init internal tracking events methods
       this.onPause = FW.nullFn;
       this.onPlay = FW.nullFn;
       this.onPlaying = FW.nullFn;
@@ -11780,8 +11663,8 @@ var Utils = /*#__PURE__*/function () {
       this.onNonLinearLoadSuccess = FW.nullFn;
       this.onNonLinearLoadError = FW.nullFn;
       this.onNonLinearClickThrough = FW.nullFn;
-      this.onContextMenu = FW.nullFn; // init internal variables
-
+      this.onContextMenu = FW.nullFn;
+      // init internal variables
       this.adTagUrl = '';
       this.vastPlayer = null;
       this.vpaidSlot = null;
@@ -11798,44 +11681,44 @@ var Utils = /*#__PURE__*/function () {
       this.vastErrorCode = -1;
       this.adErrorType = '';
       this.vastErrorMessage = '';
-      this.adOnStage = false; // hls.js
-
+      this.adOnStage = false;
+      // hls.js
       this.hlsJS = [];
       this.hlsJSIndex = 0;
-      this.readingHlsJS = false; // VAST ICONS
-
-      this.iconsData = []; // players
-
+      this.readingHlsJS = false;
+      // VAST ICONS
+      this.iconsData = [];
+      // players
       this.clickUIOnMobile = null;
       this.customPlaybackCurrentTime = 0;
       this.antiSeekLogicInterval = null;
-      this.creativeLoadTimeoutCallback = null; // VAST 4
-
+      this.creativeLoadTimeoutCallback = null;
+      // VAST 4
       this.ad = {};
       this.creative = {};
       this.attachViewableObserver = null;
       this.viewableObserver = null;
       this.viewablePreviousRatio = 0.5;
       this.regulationsInfo = {};
-      this.requireCategory = false; // skip
-
+      this.requireCategory = false;
+      // skip
       this.progressEvents = [];
       this.skipButton = null;
       this.skipWaiting = null;
       this.skipMessage = null;
       this.skipIcon = null;
-      this.skippableAdCanBeSkipped = false; // non linear
-
+      this.skippableAdCanBeSkipped = false;
+      // non linear
       this.nonLinearContainer = null;
       this.nonLinearATag = null;
       this.nonLinearInnerElement = null;
       this.onClickCloseNonLinear = FW.nullFn;
-      this.nonLinearMinSuggestedDuration = 0; // companion ads
-
+      this.nonLinearMinSuggestedDuration = 0;
+      // companion ads
       this.validCompanionAds = [];
       this.companionAdsRequiredAttribute = '';
-      this.companionAdsList = []; // VPAID
-
+      this.companionAdsList = [];
+      // VPAID
       this.isVPAID = false;
       this.vpaidCreative = null;
       this.vpaidScript = null;
@@ -11861,27 +11744,25 @@ var Utils = /*#__PURE__*/function () {
       this.vpaidAdLoaded = false;
       this.vpaidAdStarted = false;
       this.vpaidCallbacks = {};
-    } // attach fullscreen states
+    }
+
+    // attach fullscreen states
     // this assumes we have a polyfill for fullscreenchange event 
     // see app/js/app.js
     // we need this to handle VAST fullscreen events
-
   }, {
     key: "_onFullscreenchange",
     value: function _onFullscreenchange(event) {
       if (event && event.type) {
         console.log("".concat(FW.consolePrepend, " event is ").concat(event.type), FW.consoleStyle, '');
-
         if (event.type === 'fullscreenchange') {
           if (this.isInFullscreen) {
             this.isInFullscreen = false;
-
             if (this.adOnStage && this.creative.isLinear) {
               tracking_events.dispatch.call(this, ['exitFullscreen', 'playerCollapse']);
             }
           } else {
             this.isInFullscreen = true;
-
             if (this.adOnStage && this.creative.isLinear) {
               tracking_events.dispatch.call(this, ['fullscreen', 'playerExpand']);
             }
@@ -11891,14 +11772,12 @@ var Utils = /*#__PURE__*/function () {
           if (this.adOnStage && this.creative.isLinear) {
             tracking_events.dispatch.call(this, ['fullscreen', 'playerExpand']);
           }
-
           this.isInFullscreen = true;
         } else if (event.type === 'webkitendfullscreen') {
           // iOS uses webkitendfullscreen
           if (this.adOnStage && this.creative.isLinear) {
             tracking_events.dispatch.call(this, ['exitFullscreen', 'playerCollapse']);
           }
-
           this.isInFullscreen = false;
         }
       }
@@ -11908,8 +11787,8 @@ var Utils = /*#__PURE__*/function () {
     value: function handleFullscreen() {
       // if we have native fullscreen support we handle fullscreen events
       if (ENV.hasNativeFullscreenSupport) {
-        this.onFullscreenchange = Utils._onFullscreenchange.bind(this); // for our beloved iOS 
-
+        this.onFullscreenchange = Utils._onFullscreenchange.bind(this);
+        // for our beloved iOS 
         if (ENV.isIos[0]) {
           this.contentPlayer.addEventListener('webkitbeginfullscreen', this.onFullscreenchange);
           this.contentPlayer.addEventListener('webkitendfullscreen', this.onFullscreenchange);
@@ -11924,7 +11803,6 @@ var Utils = /*#__PURE__*/function () {
       var error = VAST_ERRORS_LIST.filter(function (value) {
         return value.code === errorCode;
       });
-
       if (error.length > 0) {
         this.vastErrorCode = error[0].code;
         this.vastErrorMessage = error[0].description;
@@ -11932,7 +11810,6 @@ var Utils = /*#__PURE__*/function () {
         this.vastErrorCode = -1;
         this.vastErrorMessage = 'Error getting VAST error';
       }
-
       if (this.vastErrorCode > -1) {
         if (LOAD_ERROR_LIST.indexOf(this.vastErrorCode) > -1) {
           this.adErrorType = 'adLoadError';
@@ -11940,7 +11817,6 @@ var Utils = /*#__PURE__*/function () {
           this.adErrorType = 'adPlayError';
         }
       }
-
       console.log("".concat(FW.consolePrepend, " VAST error code is ").concat(this.vastErrorCode), FW.consoleStyle, '');
       console.log("".concat(FW.consolePrepend, " VAST error message is ").concat(this.vastErrorMessage), FW.consoleStyle, '');
       console.log("".concat(FW.consolePrepend, " Ad error type is ").concat(this.adErrorType), FW.consoleStyle, '');
@@ -11951,22 +11827,20 @@ var Utils = /*#__PURE__*/function () {
       if (ping) {
         tracking_events.error.call(this, errorCode);
       }
-
       Utils._updateVastError.call(this, errorCode);
-
       Utils.createApiEvent.call(this, 'aderror');
       vast_player.resumeContent.call(this);
     }
   }]);
-
   return Utils;
 }();
-
 
 // EXTERNAL MODULE: ./node_modules/core-js/modules/es.array.includes.js
 var es_array_includes = __webpack_require__(6699);
 // EXTERNAL MODULE: ./node_modules/core-js/modules/es.string.includes.js
 var es_string_includes = __webpack_require__(2023);
+// EXTERNAL MODULE: ./node_modules/core-js/modules/es.json.stringify.js
+var es_json_stringify = __webpack_require__(8862);
 ;// CONCATENATED MODULE: ./src/js/verification/omsdk.js
 
 
@@ -11977,24 +11851,22 @@ var es_string_includes = __webpack_require__(2023);
 
 
 
+
+
+
 function omsdk_classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
 function omsdk_defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
 function omsdk_createClass(Constructor, protoProps, staticProps) { if (protoProps) omsdk_defineProperties(Constructor.prototype, protoProps); if (staticProps) omsdk_defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
 
 
-
 var VIDEO_EVENT_TYPES = ['error', 'loadeddata', 'pause', 'play', 'timeupdate', 'volumechange', 'click'];
-var CONTENT_URL = document.location.href; // we support Access Modes Creative Access a.k.a full (we do not support Domain Access for now)
-
+var CONTENT_URL = document.location.href;
+// we support Access Modes Creative Access a.k.a full (we do not support Domain Access for now)
 var ACCESS_MODE = 'full';
 var OMSDK_SERVICE_WINDOW = window.top;
-
 var OmSdkManager = /*#__PURE__*/function () {
   function OmSdkManager(adVerifications, contentPlayer, vastPlayer, params, isSkippableAd, skipTimeOffset) {
     omsdk_classCallCheck(this, OmSdkManager);
-
     this.adEvents = null;
     this.mediaEvents = null;
     this.adSession = null;
@@ -12009,22 +11881,20 @@ var OmSdkManager = /*#__PURE__*/function () {
     this.onFullscreenChange = null;
     console.log("".concat(FW.consolePrepend).concat(FW.consolePrepend2, " create new class Instance"), FW.consoleStyle, FW.consoleStyle2, '');
   }
-
   omsdk_createClass(OmSdkManager, [{
     key: "init",
     value: function init() {
       var _this = this;
-
       // handle VAST player events
       VIDEO_EVENT_TYPES.forEach(function (eventType) {
         _this.vastPlayer.addEventListener(eventType, function (event) {
           return _this._vastPlayerDidDispatchEvent(event);
         });
-      }); // handle fullscreenchange 
-
+      });
+      // handle fullscreenchange 
       this.onFullscreenChange = this._onFullscreenChange.bind(this);
-      document.addEventListener('fullscreenchange', this.onFullscreenChange); // Service Script To incorporate omweb-v1.js, use a <script> tag - we are assuming it is there
-
+      document.addEventListener('fullscreenchange', this.onFullscreenChange);
+      // Service Script To incorporate omweb-v1.js, use a <script> tag - we are assuming it is there
       this._onOMWebLoaded();
     }
   }, {
@@ -12047,11 +11917,9 @@ var OmSdkManager = /*#__PURE__*/function () {
         verification.trackingEvents.verificationNotExecuted.forEach(function (verificationNotExecutedURI) {
           var validatedURI = verificationNotExecutedURI;
           var reasonPattern = /\[REASON\]/gi;
-
           if (reasonPattern.test(validatedURI)) {
             validatedURI = validatedURI.replace(reasonPattern, reasonCode);
           }
-
           console.log("".concat(FW.consolePrepend).concat(FW.consolePrepend2, " ping VerificationNotExecuted at URI ").concat(validatedURI), FW.consoleStyle, FW.consoleStyle2, '');
           tracking_events.pingURI(validatedURI);
         });
@@ -12061,19 +11929,15 @@ var OmSdkManager = /*#__PURE__*/function () {
     key: "_vastPlayerDidDispatchTimeUpdate",
     value: function _vastPlayerDidDispatchTimeUpdate() {
       var _this2 = this;
-
       if (!this.adEvents || !this.mediaEvents || this.vastPlayer.playbackRate === 0) {
         return;
-      } // Check if playback has crossed a quartile threshold, and report that to
+      }
+      // Check if playback has crossed a quartile threshold, and report that to
       // the OMSDK.
-
-
       var vastPlayerCurrentTime = this.vastPlayer.currentTime;
       var vastPlayerDuration = this.vastPlayer.duration;
-
       if (vastPlayerCurrentTime > -1 && vastPlayerDuration > 0) {
         var currentVideoTimePerCent = vastPlayerCurrentTime / vastPlayerDuration;
-
         if (this.lastVideoTime < 0 && currentVideoTimePerCent >= 0) {
           this.adEvents.impressionOccurred();
           this.mediaEvents.start(vastPlayerDuration, this.vastPlayer.volume);
@@ -12084,16 +11948,15 @@ var OmSdkManager = /*#__PURE__*/function () {
         } else if (this.lastVideoTime < 0.75 && currentVideoTimePerCent >= 0.75) {
           this.mediaEvents.thirdQuartile();
         } else if (this.lastVideoTime < 1 && currentVideoTimePerCent >= 1) {
-          this.mediaEvents.complete(); // to prevent ad pod to fire verification events
-
+          this.mediaEvents.complete();
+          // to prevent ad pod to fire verification events
           this.adEvents = null;
-          this.mediaEvents = null; // Wait 3s, then finish the session.
-
+          this.mediaEvents = null;
+          // Wait 3s, then finish the session.
           setTimeout(function () {
             _this2.destroy();
           }, 300);
         }
-
         this.lastVideoTime = currentVideoTimePerCent;
       }
     }
@@ -12103,62 +11966,48 @@ var OmSdkManager = /*#__PURE__*/function () {
       if (!this.adSession || !this.adEvents || !this.mediaEvents || !this.VastProperties) {
         return;
       }
-
       var vastProperties, volume;
       var videoPosition = 'preroll';
-
       switch (event.type) {
         case 'error':
           this.adSession.error('video', this.vastPlayer.error.message);
           break;
-
         case 'loadeddata':
           if (this.skipTimeOffset < 0) {
             this.skipTimeOffset = 0;
           }
-
           if (this.params.outstream) {
             videoPosition = 'standalone';
           } else {
             var contentPlayerCurrentTime = this.contentPlayer.currentTime;
             var contentPlayerDuration = this.contentPlayer.duration;
-
             if (contentPlayerCurrentTime > 0 && contentPlayerCurrentTime < contentPlayerDuration) {
               videoPosition === 'midroll';
             } else if (contentPlayerCurrentTime >= contentPlayerDuration) {
               videoPosition = 'postroll';
             }
           }
-
           vastProperties = new this.VastProperties(this.isSkippableAd, this.skipTimeOffset, this.params.omidAutoplay, videoPosition);
           this.adEvents.loaded(vastProperties);
           break;
-
         case 'pause':
           this.mediaEvents.pause();
           break;
-
         case 'play':
           if (this.vastPlayer.currentTime > 0) {
             this.mediaEvents.resume();
           }
-
           break;
-
         case 'timeupdate':
           this._vastPlayerDidDispatchTimeUpdate();
-
           break;
-
         case 'volumechange':
           volume = this.vastPlayer.muted ? 0 : this.vastPlayer.volume;
           this.mediaEvents.volumeChange(volume);
           break;
-
         case 'click':
           this.mediaEvents.adUserInteraction('click');
           break;
-
         default:
           break;
       }
@@ -12167,68 +12016,54 @@ var OmSdkManager = /*#__PURE__*/function () {
     key: "_onOMWebLoaded",
     value: function _onOMWebLoaded() {
       var _this3 = this;
-
       // remove executable to only have JavaScriptResource
-      var validatedVerificationArray = []; // we only execute browserOptional="false" unless there are none 
+      var validatedVerificationArray = [];
+      // we only execute browserOptional="false" unless there are none 
       // in which case we will look for browserOptional="true"
-
       var browserOptional = [];
-
       for (var i = 0; i < this.adVerifications.length; i++) {
         var verification = this.adVerifications[i];
-
         if (typeof verification.resource !== 'string' || verification.resource === '') {
           continue;
-        } // Ping rejection code 2
+        }
+        // Ping rejection code 2
         // Verification not supported. The API framework or language type of
         // verification resources provided are not implemented or supported by
         // the player/SDK
-
-
         if (typeof verification.type !== 'undefined' && verification.type === 'executable') {
           this._pingVerificationNotExecuted(verification, '2');
-
           continue;
-        } // if not OMID, we reject
-
-
+        }
+        // if not OMID, we reject
         if (typeof verification.apiFramework !== 'undefined' && verification.apiFramework !== 'omid') {
           this._pingVerificationNotExecuted(verification, '2');
-
           continue;
-        } // reject vendors not in omidAllowedVendors if omidAllowedVendors is not empty
-
-
+        }
+        // reject vendors not in omidAllowedVendors if omidAllowedVendors is not empty
         if (this.params.omidAllowedVendors.length > 0 && typeof verification.vendor !== 'undefined') {
           if (!this.params.omidAllowedVendors.includes(verification.vendor)) {
             continue;
           }
         }
-
         if (typeof verification.browserOptional !== 'undefined' && verification.browserOptional === true) {
           browserOptional.push(i);
           continue;
         }
-
         validatedVerificationArray.push(verification);
       }
-
       if (validatedVerificationArray.length === 0 && browserOptional.length > 0) {
         browserOptional.forEach(function (browserOptionalItem) {
           validatedVerificationArray.push(_this3.adVerifications[browserOptionalItem]);
         });
       }
-
       this.adVerifications = validatedVerificationArray;
       var sessionClient;
-
       try {
         sessionClient = OmidSessionClient['default'];
       } catch (error) {
         console.warn(error);
         return;
       }
-
       var AdSession = sessionClient.AdSession;
       var Partner = sessionClient.Partner;
       var Context = sessionClient.Context;
@@ -12238,12 +12073,10 @@ var OmSdkManager = /*#__PURE__*/function () {
       this.VastProperties = sessionClient.VastProperties;
       var partner = new Partner(this.params.partnerName, this.params.partnerVersion);
       var resources = [];
-
       if (this.params.omidRunValidationScript) {
         // https://interactiveadvertisingbureau.github.io/Open-Measurement-SDKJS/validation.html
         var VALIDATION_SCRIPT_URL = 'https://cdn.radiantmediatechs.com/rmp/omsdk/1.3.37/omid-validation-verification-script-v1.js';
         var VENDOR_KEY = 'dummyVendor'; // you must use this value as is
-
         var PARAMS = JSON.stringify({
           'k': 'v'
         });
@@ -12253,58 +12086,48 @@ var OmSdkManager = /*#__PURE__*/function () {
           return new VerificationScriptResource(verification.resource, verification.vendor, verification.parameters, ACCESS_MODE);
         });
       }
-
       var context = new Context(partner, resources, CONTENT_URL);
       console.log(resources);
-
       if (this.params.omidUnderEvaluation) {
         context.underEvaluation = true;
       }
-
       if (!OMSDK_SERVICE_WINDOW) {
         console.log("".concat(FW.consolePrepend).concat(FW.consolePrepend2, " invalid serviceWindow - return"), FW.consoleStyle, FW.consoleStyle2, '');
         return;
       }
-
       context.setServiceWindow(OMSDK_SERVICE_WINDOW);
       context.setVideoElement(this.vastPlayer);
       console.log(context);
       this.adSession = new AdSession(context);
       this.adSession.setCreativeType('video');
       this.adSession.setImpressionType('beginToRender');
-
       if (!this.adSession.isSupported()) {
         console.log("".concat(FW.consolePrepend).concat(FW.consolePrepend2, " invalid serviceWindow - return"), FW.consoleStyle, FW.consoleStyle2, '');
         return;
       }
-
       this.adEvents = new AdEvents(this.adSession);
       this.mediaEvents = new MediaEvents(this.adSession);
       this.adSession.start();
     }
   }]);
-
   return OmSdkManager;
 }();
-
 /* harmony default export */ var omsdk = (OmSdkManager);
 // EXTERNAL MODULE: ./node_modules/core-js/modules/es.object.assign.js
 var es_object_assign = __webpack_require__(9601);
 ;// CONCATENATED MODULE: ./src/assets/@dailymotion/vast-client/src/util/storage.js
 function storage_classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
 function storage_defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
 function storage_createClass(Constructor, protoProps, staticProps) { if (protoProps) storage_defineProperties(Constructor.prototype, protoProps); if (staticProps) storage_defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
 
 
 var storage = null;
+
 /**
  * This Object represents a default storage to be used in case no other storage is available.
  * @constant
  * @type {Object}
  */
-
 var DEFAULT_STORAGE = {
   data: {},
   length: 0,
@@ -12324,13 +12147,13 @@ var DEFAULT_STORAGE = {
     this.length = 0;
   }
 };
+
 /**
  * This class provides an wrapper interface to the a key-value storage.
  * It uses localStorage, sessionStorage or a custom storage if none of the two is available.
  * @export
  * @class Storage
  */
-
 var Storage = /*#__PURE__*/function () {
   /**
    * Creates an instance of Storage.
@@ -12338,35 +12161,31 @@ var Storage = /*#__PURE__*/function () {
    */
   function Storage() {
     storage_classCallCheck(this, Storage);
-
     this.storage = this.initStorage();
   }
+
   /**
    * Provides a singleton instance of the wrapped storage.
    * @return {Object}
    */
-
-
   storage_createClass(Storage, [{
     key: "initStorage",
     value: function initStorage() {
       if (storage) {
         return storage;
       }
-
       try {
         storage = typeof window !== 'undefined' && window !== null ? window.localStorage || window.sessionStorage : null;
       } catch (storageError) {
         storage = null;
       }
-
       if (!storage || this.isStorageDisabled(storage)) {
         storage = DEFAULT_STORAGE;
         storage.clear();
       }
-
       return storage;
     }
+
     /**
      * Check if storage is disabled (like in certain cases with private browsing).
      * In Safari (Mac + iOS) when private browsing is ON, localStorage is read only
@@ -12374,15 +12193,12 @@ var Storage = /*#__PURE__*/function () {
      * @param {Object} testStorage - The storage to check.
      * @return {Boolean}
      */
-
   }, {
     key: "isStorageDisabled",
     value: function isStorageDisabled(testStorage) {
       var testValue = '__VASTStorage__';
-
       try {
         testStorage.setItem(testValue, testValue);
-
         if (testStorage.getItem(testValue) !== testValue) {
           testStorage.removeItem(testValue);
           return true;
@@ -12390,59 +12206,59 @@ var Storage = /*#__PURE__*/function () {
       } catch (e) {
         return true;
       }
-
       testStorage.removeItem(testValue);
       return false;
     }
+
     /**
      * Returns the value for the given key. If the key does not exist, null is returned.
      * @param  {String} key - The key to retrieve the value.
      * @return {any}
      */
-
   }, {
     key: "getItem",
     value: function getItem(key) {
       return this.storage.getItem(key);
     }
+
     /**
      * Adds or updates the value for the given key.
      * @param  {String} key - The key to modify the value.
      * @param  {any} value - The value to be associated with the key.
      * @return {any}
      */
-
   }, {
     key: "setItem",
     value: function setItem(key, value) {
       return this.storage.setItem(key, value);
     }
+
     /**
      * Removes an item for the given key.
      * @param  {String} key - The key to remove the value.
      * @return {any}
      */
-
   }, {
     key: "removeItem",
     value: function removeItem(key) {
       return this.storage.removeItem(key);
     }
+
     /**
      * Removes all the items from the storage.
      */
-
   }, {
     key: "clear",
     value: function clear() {
       return this.storage.clear();
     }
   }]);
-
   return Storage;
 }();
 // EXTERNAL MODULE: ./node_modules/core-js/modules/es.array.splice.js
 var es_array_splice = __webpack_require__(561);
+// EXTERNAL MODULE: ./node_modules/core-js/modules/es.reflect.to-string-tag.js
+var es_reflect_to_string_tag = __webpack_require__(1299);
 // EXTERNAL MODULE: ./node_modules/core-js/modules/es.reflect.construct.js
 var es_reflect_construct = __webpack_require__(2419);
 ;// CONCATENATED MODULE: ./src/assets/@dailymotion/vast-client/src/ad.js
@@ -12534,13 +12350,11 @@ function createCreative() {
 
 function createCreativeCompanion() {
   var creativeAttributes = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-
   var _createCreative = createCreative(creativeAttributes),
-      id = _createCreative.id,
-      adId = _createCreative.adId,
-      sequence = _createCreative.sequence,
-      apiFramework = _createCreative.apiFramework;
-
+    id = _createCreative.id,
+    adId = _createCreative.adId,
+    sequence = _createCreative.sequence,
+    apiFramework = _createCreative.apiFramework;
   return {
     id: id,
     adId: adId,
@@ -12557,12 +12371,20 @@ var es_array_last_index_of = __webpack_require__(4986);
 var es_string_trim = __webpack_require__(3210);
 // EXTERNAL MODULE: ./node_modules/core-js/modules/es.regexp.constructor.js
 var es_regexp_constructor = __webpack_require__(4603);
+// EXTERNAL MODULE: ./node_modules/core-js/modules/es.regexp.dot-all.js
+var es_regexp_dot_all = __webpack_require__(8450);
+// EXTERNAL MODULE: ./node_modules/core-js/modules/es.regexp.sticky.js
+var es_regexp_sticky = __webpack_require__(8386);
 // EXTERNAL MODULE: ./node_modules/core-js/modules/es.object.get-own-property-names.js
 var es_object_get_own_property_names = __webpack_require__(6210);
 ;// CONCATENATED MODULE: ./src/assets/@dailymotion/vast-client/src/util/macros.js
-var supportedMacros = ['ADCATEGORIES', 'ADCOUNT', 'ADPLAYHEAD', 'ADSERVINGID', 'ADTYPE', 'APIFRAMEWORKS', 'APPBUNDLE', 'ASSETURI', 'BLOCKEDADCATEGORIES', 'BREAKMAXADLENGTH', 'BREAKMAXADS', 'BREAKMAXDURATION', 'BREAKMINADLENGTH', 'BREAKMINDURATION', 'BREAKPOSITION', 'CLICKPOS', 'CLICKTYPE', 'CLIENTUA', 'CONTENTID', 'CONTENTPLAYHEAD', // @deprecated VAST 4.1
+var supportedMacros = ['ADCATEGORIES', 'ADCOUNT', 'ADPLAYHEAD', 'ADSERVINGID', 'ADTYPE', 'APIFRAMEWORKS', 'APPBUNDLE', 'ASSETURI', 'BLOCKEDADCATEGORIES', 'BREAKMAXADLENGTH', 'BREAKMAXADS', 'BREAKMAXDURATION', 'BREAKMINADLENGTH', 'BREAKMINDURATION', 'BREAKPOSITION', 'CLICKPOS', 'CLICKTYPE', 'CLIENTUA', 'CONTENTID', 'CONTENTPLAYHEAD',
+// @deprecated VAST 4.1
 'CONTENTURI', 'DEVICEIP', 'DEVICEUA', 'DOMAIN', 'EXTENSIONS', 'GDPRCONSENT', 'IFA', 'IFATYPE', 'INVENTORYSTATE', 'LATLONG', 'LIMITADTRACKING', 'MEDIAMIME', 'MEDIAPLAYHEAD', 'OMIDPARTNER', 'PAGEURL', 'PLACEMENTTYPE', 'PLAYERCAPABILITIES', 'PLAYERSIZE', 'PLAYERSTATE', 'PODSEQUENCE', 'REGULATIONS', 'SERVERSIDE', 'SERVERUA', 'TRANSACTIONID', 'UNIVERSALADID', 'VASTVERSIONS', 'VERIFICATIONVENDORS'];
 ;// CONCATENATED MODULE: ./src/assets/@dailymotion/vast-client/src/util/util.js
+
+
+
 
 
 
@@ -12588,6 +12410,7 @@ function track(URLTemplates, macros, options) {
     }
   });
 }
+
 /**
  * Replace the provided URLTemplates with the given values
  *
@@ -12595,40 +12418,36 @@ function track(URLTemplates, macros, options) {
  * @param {Object} [macros={}] - An optional Object of parameters to be used in the tracking calls.
  * @param {Object} [options={}] - An optional Object of options to be used in the tracking calls.
  */
-
-
 function resolveURLTemplates(URLTemplates) {
   var macros = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
   var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
   var resolvedURLs = [];
-  var URLArray = extractURLsFromTemplates(URLTemplates); // Set default value for invalid ERRORCODE
+  var URLArray = extractURLsFromTemplates(URLTemplates);
 
+  // Set default value for invalid ERRORCODE
   if (macros['ERRORCODE'] && !options.isCustomCode && !/^[0-9]{3}$/.test(macros['ERRORCODE'])) {
     macros['ERRORCODE'] = 900;
-  } // Calc random/time based macros
+  }
 
-
+  // Calc random/time based macros
   macros['CACHEBUSTING'] = leftpad(Math.round(Math.random() * 1.0e8).toString());
-  macros['TIMESTAMP'] = new Date().toISOString(); // RANDOM/random is not defined in VAST 3/4 as a valid macro tho it's used by some adServer (Auditude)
+  macros['TIMESTAMP'] = new Date().toISOString();
 
+  // RANDOM/random is not defined in VAST 3/4 as a valid macro tho it's used by some adServer (Auditude)
   macros['RANDOM'] = macros['random'] = macros['CACHEBUSTING'];
-
   for (var macro in macros) {
     macros[macro] = encodeURIComponentRFC3986(macros[macro]);
   }
-
   for (var URLTemplateKey in URLArray) {
     var resolveURL = URLArray[URLTemplateKey];
-
     if (typeof resolveURL !== 'string') {
       continue;
     }
-
     resolvedURLs.push(replaceUrlMacros(resolveURL, macros));
   }
-
   return resolvedURLs;
 }
+
 /**
  * Replace the macros tracking url with their value.
  * If no value is provided for a supported macro and it exists in the url,
@@ -12637,50 +12456,42 @@ function resolveURLTemplates(URLTemplates) {
  * @param {String} url - Tracking url.
  * @param {Object} macros - Object of macros to be replaced in the tracking calls
  */
-
-
 function replaceUrlMacros(url, macros) {
-  url = replaceMacrosValues(url, macros); // match any macros from the url that was not replaced
-
+  url = replaceMacrosValues(url, macros);
+  // match any macros from the url that was not replaced
   var remainingMacros = url.match(/[^[\]]+(?=])/g);
-
   if (!remainingMacros) {
     return url;
   }
-
   var supportedRemainingMacros = remainingMacros.filter(function (macro) {
     return supportedMacros.indexOf(macro) > -1;
   });
-
   if (supportedRemainingMacros.length === 0) {
     return url;
   }
-
   supportedRemainingMacros = supportedRemainingMacros.reduce(function (accumulator, macro) {
     accumulator[macro] = -1;
     return accumulator;
   }, {});
   return replaceMacrosValues(url, supportedRemainingMacros);
 }
+
 /**
  * Replace the macros tracking url with their value.
  *
  * @param {String} url - Tracking url.
  * @param {Object} macros - Object of macros to be replaced in the tracking calls
  */
-
-
 function replaceMacrosValues(url, macros) {
   var replacedMacrosUrl = url;
-
   for (var key in macros) {
-    var value = macros[key]; // this will match [${key}] and %%${key}%% and replace it
-
+    var value = macros[key];
+    // this will match [${key}] and %%${key}%% and replace it
     replacedMacrosUrl = replacedMacrosUrl.replace(new RegExp("(?:\\[|%%)(".concat(key, ")(?:\\]|%%)"), 'g'), value);
   }
-
   return replacedMacrosUrl;
 }
+
 /**
  * Extract the url/s from the URLTemplates.
  *   If the URLTemplates is an array of urls
@@ -12689,17 +12500,15 @@ function replaceMacrosValues(url, macros) {
  *
  * @param {Array|String} URLTemplates - An array|string of url templates.
  */
-
-
 function extractURLsFromTemplates(URLTemplates) {
   if (Array.isArray(URLTemplates)) {
     return URLTemplates.map(function (URLTemplate) {
       return URLTemplate && URLTemplate.hasOwnProperty('url') ? URLTemplate.url : URLTemplate;
     });
   }
-
   return URLTemplates;
 }
+
 /**
  * Returns a boolean after checking if the object exists in the array.
  *   true - if the object exists, false otherwise
@@ -12707,17 +12516,15 @@ function extractURLsFromTemplates(URLTemplates) {
  * @param {Object} obj - The object who existence is to be checked.
  * @param {Array} list - List of objects.
  */
-
-
 function containsTemplateObject(obj, list) {
   for (var i = 0; i < list.length; i++) {
     if (isTemplateObjectEqual(list[i], obj)) {
       return true;
     }
   }
-
   return false;
 }
+
 /**
  * Returns a boolean after comparing two Template objects.
  *   true - if the objects are equivalent, false otherwise
@@ -12725,68 +12532,57 @@ function containsTemplateObject(obj, list) {
  * @param {Object} obj1
  * @param {Object} obj2
  */
-
-
 function isTemplateObjectEqual(obj1, obj2) {
   if (obj1 && obj2) {
     var obj1Properties = Object.getOwnPropertyNames(obj1);
-    var obj2Properties = Object.getOwnPropertyNames(obj2); // If number of properties is different, objects are not equivalent
+    var obj2Properties = Object.getOwnPropertyNames(obj2);
 
+    // If number of properties is different, objects are not equivalent
     if (obj1Properties.length !== obj2Properties.length) {
       return false;
     }
-
     if (obj1.id !== obj2.id || obj1.url !== obj2.url) {
       return false;
     }
-
     return true;
   }
-
   return false;
-} // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/encodeURIComponent
+}
 
-
+// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/encodeURIComponent
 function encodeURIComponentRFC3986(str) {
   return encodeURIComponent(str).replace(/[!'()*]/g, function (c) {
     return "%".concat(c.charCodeAt(0).toString(16));
   });
 }
-
 function leftpad(input) {
   var len = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 8;
   var str = String(input);
-
   if (str.length < len) {
     return range(0, len - str.length, false).map(function () {
       return '0';
     }).join('') + str;
   }
-
   return str;
 }
-
 function range(left, right, inclusive) {
   var result = [];
   var ascending = left < right;
   var end = !inclusive ? right : ascending ? right + 1 : right - 1;
-
   for (var i = left; ascending ? i < end : i > end; ascending ? i++ : i--) {
     result.push(i);
   }
-
   return result;
 }
-
 function isNumeric(n) {
   return !isNaN(parseFloat(n)) && isFinite(n);
 }
-
 function flatten(arr) {
   return arr.reduce(function (flat, toFlatten) {
     return flat.concat(Array.isArray(toFlatten) ? flatten(toFlatten) : toFlatten);
   }, []);
 }
+
 /**
  * Joins two arrays of objects without duplicates
  *
@@ -12795,8 +12591,6 @@ function flatten(arr) {
  *
  * @return {Array}
  */
-
-
 function joinArrayOfUniqueTemplateObjs() {
   var arr1 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
   var arr2 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
@@ -12807,11 +12601,9 @@ function joinArrayOfUniqueTemplateObjs() {
     if (!containsTemplateObject(val, res)) {
       res.push(val);
     }
-
     return res;
   }, []);
 }
-
 var util = {
   track: track,
   resolveURLTemplates: resolveURLTemplates,
@@ -12828,16 +12620,14 @@ var util = {
 };
 ;// CONCATENATED MODULE: ./src/assets/@dailymotion/vast-client/src/parser/parser_utils.js
 function parser_utils_toConsumableArray(arr) { return parser_utils_arrayWithoutHoles(arr) || parser_utils_iterableToArray(arr) || parser_utils_unsupportedIterableToArray(arr) || parser_utils_nonIterableSpread(); }
-
 function parser_utils_nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
-
 function parser_utils_unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return parser_utils_arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return parser_utils_arrayLikeToArray(o, minLen); }
-
 function parser_utils_iterableToArray(iter) { if (typeof Symbol !== "undefined" && iter[Symbol.iterator] != null || iter["@@iterator"] != null) return Array.from(iter); }
-
 function parser_utils_arrayWithoutHoles(arr) { if (Array.isArray(arr)) return parser_utils_arrayLikeToArray(arr); }
-
 function parser_utils_arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+
+
 
 
 
@@ -12869,236 +12659,199 @@ function parser_utils_arrayLikeToArray(arr, len) { if (len == null || len > arr.
  * @param  {String} name - The name to look for.
  * @return {Object|undefined}
  */
-
 function childByName(node, name) {
   var childNodes = node.childNodes;
-
   for (var childKey in childNodes) {
     var child = childNodes[childKey];
-
     if (child.nodeName === name) {
       return child;
     }
   }
 }
+
 /**
  * Returns all the elements of the given node which nodeName match the given name.
  * @param  {Node} node - The node to use to find the matches.
  * @param  {String} name - The name to look for.
  * @return {Array}
  */
-
-
 function childrenByName(node, name) {
   var children = [];
   var childNodes = node.childNodes;
-
   for (var childKey in childNodes) {
     var child = childNodes[childKey];
-
     if (child.nodeName === name) {
       children.push(child);
     }
   }
-
   return children;
 }
+
 /**
  * Converts relative vastAdTagUri.
  * @param  {String} vastAdTagUrl - The url to resolve.
  * @param  {String} originalUrl - The original url.
  * @return {String}
  */
-
-
 function resolveVastAdTagURI(vastAdTagUrl, originalUrl) {
   if (!originalUrl) {
     return vastAdTagUrl;
   }
-
   if (vastAdTagUrl.indexOf('//') === 0) {
     var _location = location,
-        protocol = _location.protocol;
+      protocol = _location.protocol;
     return "".concat(protocol).concat(vastAdTagUrl);
   }
-
   if (vastAdTagUrl.indexOf('://') === -1) {
     // Resolve relative URLs (mainly for unit testing)
     var baseURL = originalUrl.slice(0, originalUrl.lastIndexOf('/'));
     return "".concat(baseURL, "/").concat(vastAdTagUrl);
   }
-
   return vastAdTagUrl;
 }
+
 /**
  * Converts a boolean string into a Boolean.
  * @param  {String} booleanString - The boolean string to convert.
  * @return {Boolean}
  */
-
-
 function parseBoolean(booleanString) {
   return ['true', 'TRUE', 'True', '1'].indexOf(booleanString) !== -1;
 }
+
 /**
  * Parses a node text (for legacy support).
  * @param  {Object} node - The node to parse the text from.
  * @return {String}
  */
-
-
 function parseNodeText(node) {
   return node && (node.textContent || node.text || '').trim();
 }
+
 /**
  * Copies an attribute from a node to another.
  * @param  {String} attributeName - The name of the attribute to clone.
  * @param  {Object} nodeSource - The source node to copy the attribute from.
  * @param  {Object} nodeDestination - The destination node to copy the attribute at.
  */
-
-
 function copyNodeAttribute(attributeName, nodeSource, nodeDestination) {
   var attributeValue = nodeSource.getAttribute(attributeName);
-
   if (attributeValue) {
     nodeDestination.setAttribute(attributeName, attributeValue);
   }
 }
+
 /**
  * Converts element attributes into an object, where object key is attribute name
  * and object value is attribute value
  * @param {Element} element
  * @returns {Object}
  */
-
-
 function parseAttributes(element) {
   var nodeAttributes = element.attributes;
   var attributes = {};
-
   for (var i = 0; i < nodeAttributes.length; i++) {
     attributes[nodeAttributes[i].nodeName] = nodeAttributes[i].nodeValue;
   }
-
   return attributes;
 }
+
 /**
  * Parses a String duration into a Number.
  * @param  {String} durationString - The dureation represented as a string.
  * @return {Number}
  */
-
-
 function parseDuration(durationString) {
   if (durationString === null || typeof durationString === 'undefined') {
     return -1;
-  } // Some VAST doesn't have an HH:MM:SS duration format but instead jus the number of seconds
-
-
+  }
+  // Some VAST doesn't have an HH:MM:SS duration format but instead jus the number of seconds
   if (util.isNumeric(durationString)) {
     return parseInt(durationString);
   }
-
   var durationComponents = durationString.split(':');
-
   if (durationComponents.length !== 3) {
     return -1;
   }
-
   var secondsAndMS = durationComponents[2].split('.');
   var seconds = parseInt(secondsAndMS[0]);
-
   if (secondsAndMS.length === 2) {
     seconds += parseFloat("0.".concat(secondsAndMS[1]));
   }
-
   var minutes = parseInt(durationComponents[1] * 60);
   var hours = parseInt(durationComponents[0] * 60 * 60);
-
   if (isNaN(hours) || isNaN(minutes) || isNaN(seconds) || minutes > 60 * 60 || seconds > 60) {
     return -1;
   }
-
   return hours + minutes + seconds;
 }
+
 /**
  * Splits an Array of ads into an Array of Arrays of ads.
  * Each subarray contains either one ad or multiple ads (an AdPod)
  * @param  {Array} ads - An Array of ads to split
  * @return {Array}
  */
-
-
 function splitVAST(ads) {
   var splittedVAST = [];
   var lastAdPod = null;
   ads.forEach(function (ad, i) {
     if (ad.sequence) {
       ad.sequence = parseInt(ad.sequence, 10);
-    } // The current Ad may be the next Ad of an AdPod
-
-
+    }
+    // The current Ad may be the next Ad of an AdPod
     if (ad.sequence > 1) {
-      var lastAd = ads[i - 1]; // check if the current Ad is exactly the next one in the AdPod
-
+      var lastAd = ads[i - 1];
+      // check if the current Ad is exactly the next one in the AdPod
       if (lastAd && lastAd.sequence === ad.sequence - 1) {
         lastAdPod && lastAdPod.push(ad);
         return;
-      } // If the ad had a sequence attribute but it was not part of a correctly formed
+      }
+      // If the ad had a sequence attribute but it was not part of a correctly formed
       // AdPod, let's remove the sequence attribute
-
-
       delete ad.sequence;
     }
-
     lastAdPod = [ad];
     splittedVAST.push(lastAdPod);
   });
   return splittedVAST;
 }
+
 /**
  * Parses the attributes and assign them to object
  * @param  {Object} attributes attribute
  * @param  {Object} verificationObject with properties which can be assigned
  */
-
-
 function assignAttributes(attributes, verificationObject) {
   if (attributes) {
     for (var attrKey in attributes) {
       var attribute = attributes[attrKey];
-
       if (attribute.nodeName && attribute.nodeValue && verificationObject.hasOwnProperty(attribute.nodeName)) {
         var value = attribute.nodeValue;
-
         if (typeof verificationObject[attribute.nodeName] === 'boolean') {
           value = parseBoolean(value);
         }
-
         verificationObject[attribute.nodeName] = value;
       }
     }
   }
 }
+
 /**
  * Merges the data between an unwrapped ad and his wrapper.
  * @param  {Ad} unwrappedAd - The 'unwrapped' Ad.
  * @param  {Ad} wrapper - The wrapper Ad.
  * @return {void}
  */
-
-
 function mergeWrapperAdData(unwrappedAd, wrapper) {
   unwrappedAd.errorURLTemplates = wrapper.errorURLTemplates.concat(unwrappedAd.errorURLTemplates);
   unwrappedAd.impressionURLTemplates = wrapper.impressionURLTemplates.concat(unwrappedAd.impressionURLTemplates);
   unwrappedAd.extensions = wrapper.extensions.concat(unwrappedAd.extensions);
-
   if (wrapper.viewableImpression.length > 0) {
     unwrappedAd.viewableImpression = [].concat(parser_utils_toConsumableArray(unwrappedAd.viewableImpression), parser_utils_toConsumableArray(wrapper.viewableImpression));
-  } // values from the child wrapper will be overridden
+  }
 
-
+  // values from the child wrapper will be overridden
   unwrappedAd.followAdditionalWrappers = wrapper.followAdditionalWrappers;
   unwrappedAd.allowMultipleAds = wrapper.allowMultipleAds;
   unwrappedAd.fallbackOnNoAd = wrapper.fallbackOnNoAd;
@@ -13123,50 +12876,44 @@ function mergeWrapperAdData(unwrappedAd, wrapper) {
     if (wrapper.trackingEvents && wrapper.trackingEvents[creative.type]) {
       for (var eventName in wrapper.trackingEvents[creative.type]) {
         var urls = wrapper.trackingEvents[creative.type][eventName];
-
         if (!Array.isArray(creative.trackingEvents[eventName])) {
           creative.trackingEvents[eventName] = [];
         }
-
         creative.trackingEvents[eventName] = creative.trackingEvents[eventName].concat(urls);
       }
     }
-
     if (creative.type === 'linear') {
       // merge video click tracking url
       if (wrapperHasVideoClickTracking) {
         creative.videoClickTrackingURLTemplates = creative.videoClickTrackingURLTemplates.concat(wrapper.videoClickTrackingURLTemplates);
-      } // merge video custom click url
+      }
 
-
+      // merge video custom click url
       if (wrapperHasVideoCustomClick) {
         creative.videoCustomClickURLTemplates = creative.videoCustomClickURLTemplates.concat(wrapper.videoCustomClickURLTemplates);
-      } // VAST 2.0 support - Use Wrapper/linear/clickThrough when Inline/Linear/clickThrough is null
+      }
 
-
+      // VAST 2.0 support - Use Wrapper/linear/clickThrough when Inline/Linear/clickThrough is null
       if (wrapper.videoClickThroughURLTemplate && (creative.videoClickThroughURLTemplate === null || typeof creative.videoClickThroughURLTemplate === 'undefined')) {
         creative.videoClickThroughURLTemplate = wrapper.videoClickThroughURLTemplate;
       }
-    } // pass wrapper companion trackers to all companions
+    }
 
-
+    // pass wrapper companion trackers to all companions
     if (creative.type === 'companion' && wrapperCompanionClickTracking.length) {
       (creative.variations || []).forEach(function (variation) {
         variation.companionClickTrackingURLTemplates = util.joinArrayOfUniqueTemplateObjs(variation.companionClickTrackingURLTemplates, wrapperCompanionClickTracking);
       });
     }
   });
-
   if (wrapper.adVerifications) {
     // As specified by VAST specs unwrapped ads should contains wrapper adVerification script
     unwrappedAd.adVerifications = unwrappedAd.adVerifications.concat(wrapper.adVerifications);
   }
-
   if (wrapper.blockedAdCategories) {
     unwrappedAd.blockedAdCategories = unwrappedAd.blockedAdCategories.concat(wrapper.blockedAdCategories);
   }
 }
-
 var parserUtils = {
   childByName: childByName,
   childrenByName: childrenByName,
@@ -13189,6 +12936,8 @@ var parserUtils = {
 
 
 
+
+
 /**
  * This module provides methods to parse a VAST CompanionAd Element.
  */
@@ -13199,7 +12948,6 @@ var parserUtils = {
  * @param  {Object} creativeAttributes - The attributes of the CompanionAd (optional).
  * @return {Object} creative - The creative object.
  */
-
 function parseCreativeCompanion(creativeElement, creativeAttributes) {
   var creative = createCreativeCompanion(creativeAttributes);
   creative.required = creativeElement.getAttribute('required') || null;
@@ -13222,22 +12970,18 @@ function parseCreativeCompanion(creativeElement, creativeAttributes) {
     }, []);
     companionAd.altText = parserUtils.parseNodeText(parserUtils.childByName(companionResource, 'AltText')) || null;
     var trackingEventsElement = parserUtils.childByName(companionResource, 'TrackingEvents');
-
     if (trackingEventsElement) {
       parserUtils.childrenByName(trackingEventsElement, 'Tracking').forEach(function (trackingElement) {
         var eventName = trackingElement.getAttribute('event');
         var trackingURLTemplate = parserUtils.parseNodeText(trackingElement);
-
         if (eventName && trackingURLTemplate) {
           if (!Array.isArray(companionAd.trackingEvents[eventName])) {
             companionAd.trackingEvents[eventName] = [];
           }
-
           companionAd.trackingEvents[eventName].push(trackingURLTemplate);
         }
       });
     }
-
     companionAd.companionClickTrackingURLTemplates = parserUtils.childrenByName(companionResource, 'CompanionClickTracking').map(function (clickTrackingElement) {
       return {
         id: clickTrackingElement.getAttribute('id') || null,
@@ -13246,12 +12990,10 @@ function parseCreativeCompanion(creativeElement, creativeAttributes) {
     });
     companionAd.companionClickThroughURLTemplate = parserUtils.parseNodeText(parserUtils.childByName(companionResource, 'CompanionClickThrough')) || null;
     var adParametersElement = parserUtils.childByName(companionResource, 'AdParameters');
-
     if (adParametersElement) {
       companionAd.adParameters = parserUtils.parseNodeText(adParametersElement);
       companionAd.xmlEncoded = adParametersElement.getAttribute('xmlEncoded') || null;
     }
-
     return companionAd;
   });
   return creative;
@@ -13260,13 +13002,11 @@ function parseCreativeCompanion(creativeElement, creativeAttributes) {
 
 function createCreativeLinear() {
   var creativeAttributes = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-
   var _createCreative = createCreative(creativeAttributes),
-      id = _createCreative.id,
-      adId = _createCreative.adId,
-      sequence = _createCreative.sequence,
-      apiFramework = _createCreative.apiFramework;
-
+    id = _createCreative.id,
+    adId = _createCreative.adId,
+    sequence = _createCreative.sequence,
+    apiFramework = _createCreative.apiFramework;
   return {
     id: id,
     adId: adId,
@@ -13378,6 +13118,8 @@ function createMezzanine() {
 
 
 
+
+
 /**
  * This module provides methods to parse a VAST Linear Element.
  */
@@ -13388,13 +13130,11 @@ function createMezzanine() {
  * @param  {any} creativeAttributes - The attributes of the Linear (optional).
  * @return {Object} creative - The creativeLinear object.
  */
-
 function parseCreativeLinear(creativeElement, creativeAttributes) {
   var offset;
   var creative = createCreativeLinear(creativeAttributes);
   creative.duration = parserUtils.parseDuration(parserUtils.parseNodeText(parserUtils.childByName(creativeElement, 'Duration')));
   var skipOffset = creativeElement.getAttribute('skipoffset');
-
   if (typeof skipOffset === 'undefined' || skipOffset === null) {
     creative.skipDelay = null;
   } else if (skipOffset.charAt(skipOffset.length - 1) === '%' && creative.duration !== -1) {
@@ -13403,12 +13143,9 @@ function parseCreativeLinear(creativeElement, creativeAttributes) {
   } else {
     creative.skipDelay = parserUtils.parseDuration(skipOffset);
   }
-
   var videoClicksElement = parserUtils.childByName(creativeElement, 'VideoClicks');
-
   if (videoClicksElement) {
     var videoClickThroughElement = parserUtils.childByName(videoClicksElement, 'ClickThrough');
-
     if (videoClickThroughElement) {
       creative.videoClickThroughURLTemplate = {
         id: videoClickThroughElement.getAttribute('id') || null,
@@ -13417,7 +13154,6 @@ function parseCreativeLinear(creativeElement, creativeAttributes) {
     } else {
       creative.videoClickThroughURLTemplate = null;
     }
-
     parserUtils.childrenByName(videoClicksElement, 'ClickTracking').forEach(function (clickTrackingElement) {
       creative.videoClickTrackingURLTemplates.push({
         id: clickTrackingElement.getAttribute('id') || null,
@@ -13431,37 +13167,29 @@ function parseCreativeLinear(creativeElement, creativeAttributes) {
       });
     });
   }
-
   var adParamsElement = parserUtils.childByName(creativeElement, 'AdParameters');
-
   if (adParamsElement) {
     creative.adParameters = parserUtils.parseNodeText(adParamsElement);
   }
-
   parserUtils.childrenByName(creativeElement, 'TrackingEvents').forEach(function (trackingEventsElement) {
     parserUtils.childrenByName(trackingEventsElement, 'Tracking').forEach(function (trackingElement) {
       var eventName = trackingElement.getAttribute('event');
       var trackingURLTemplate = parserUtils.parseNodeText(trackingElement);
-
       if (eventName && trackingURLTemplate) {
         if (eventName === 'progress') {
           offset = trackingElement.getAttribute('offset');
-
           if (!offset) {
             return;
           }
-
           if (offset.charAt(offset.length - 1) === '%') {
             eventName = "progress-".concat(offset);
           } else {
             eventName = "progress-".concat(Math.round(parserUtils.parseDuration(offset)));
           }
         }
-
         if (!Array.isArray(creative.trackingEvents[eventName])) {
           creative.trackingEvents[eventName] = [];
         }
-
         creative.trackingEvents[eventName].push(trackingURLTemplate);
       }
     });
@@ -13471,13 +13199,10 @@ function parseCreativeLinear(creativeElement, creativeAttributes) {
       creative.mediaFiles.push(parseMediaFile(mediaFileElement));
     });
     var interactiveCreativeElement = parserUtils.childByName(mediaFilesElement, 'InteractiveCreativeFile');
-
     if (interactiveCreativeElement) {
       creative.interactiveCreativeFile = parseInteractiveCreativeFile(interactiveCreativeElement);
     }
-
     var closedCaptionElements = parserUtils.childByName(mediaFilesElement, 'ClosedCaptionFiles');
-
     if (closedCaptionElements) {
       parserUtils.childrenByName(closedCaptionElements, 'ClosedCaptionFile').forEach(function (closedCaptionElement) {
         var closedCaptionFile = createClosedCaptionFile(parserUtils.parseAttributes(closedCaptionElement));
@@ -13485,10 +13210,8 @@ function parseCreativeLinear(creativeElement, creativeAttributes) {
         creative.closedCaptionFiles.push(closedCaptionFile);
       });
     }
-
     var mezzanineElement = parserUtils.childByName(mediaFilesElement, 'Mezzanine');
     var requiredAttributes = getRequiredAttributes(mezzanineElement, ['delivery', 'type', 'width', 'height']);
-
     if (requiredAttributes) {
       var mezzanine = createMezzanine();
       mezzanine.id = mezzanineElement.getAttribute('id');
@@ -13504,21 +13227,19 @@ function parseCreativeLinear(creativeElement, creativeAttributes) {
     }
   });
   var iconsElement = parserUtils.childByName(creativeElement, 'Icons');
-
   if (iconsElement) {
     parserUtils.childrenByName(iconsElement, 'Icon').forEach(function (iconElement) {
       creative.icons.push(parseIcon(iconElement));
     });
   }
-
   return creative;
 }
+
 /**
  * Parses the MediaFile element from VAST.
  * @param  {Object} mediaFileElement - The VAST MediaFile element.
  * @return {Object} - Parsed mediaFile object.
  */
-
 function parseMediaFile(mediaFileElement) {
   var mediaFile = createMediaFile();
   mediaFile.id = mediaFileElement.getAttribute('id');
@@ -13535,38 +13256,32 @@ function parseMediaFile(mediaFileElement) {
   mediaFile.width = parseInt(mediaFileElement.getAttribute('width') || 0);
   mediaFile.height = parseInt(mediaFileElement.getAttribute('height') || 0);
   var scalable = mediaFileElement.getAttribute('scalable');
-
   if (scalable && typeof scalable === 'string') {
     mediaFile.scalable = parserUtils.parseBoolean(scalable);
   }
-
   var maintainAspectRatio = mediaFileElement.getAttribute('maintainAspectRatio');
-
   if (maintainAspectRatio && typeof maintainAspectRatio === 'string') {
     mediaFile.maintainAspectRatio = parserUtils.parseBoolean(maintainAspectRatio);
   }
-
   return mediaFile;
 }
+
 /**
  * Parses the InteractiveCreativeFile element from VAST MediaFiles node.
  * @param  {Object} interactiveCreativeElement - The VAST InteractiveCreativeFile element.
  * @return {Object} - Parsed interactiveCreativeFile object.
  */
-
-
 function parseInteractiveCreativeFile(interactiveCreativeElement) {
   var interactiveCreativeFile = createInteractiveCreativeFile(parserUtils.parseAttributes(interactiveCreativeElement));
   interactiveCreativeFile.fileURL = parserUtils.parseNodeText(interactiveCreativeElement);
   return interactiveCreativeFile;
 }
+
 /**
  * Parses the Icon element from VAST.
  * @param  {Object} iconElement - The VAST Icon element.
  * @return {Object} - Parsed icon object.
  */
-
-
 function parseIcon(iconElement) {
   var icon = createIcon(iconElement);
   icon.program = iconElement.getAttribute('program');
@@ -13591,7 +13306,6 @@ function parseIcon(iconElement) {
     icon.staticResource = parserUtils.parseNodeText(staticElement);
   });
   var iconClicksElement = parserUtils.childByName(iconElement, 'IconClicks');
-
   if (iconClicksElement) {
     icon.iconClickThroughURLTemplate = parserUtils.parseNodeText(parserUtils.childByName(iconClicksElement, 'IconClickThrough'));
     parserUtils.childrenByName(iconClicksElement, 'IconClickTracking').forEach(function (iconClickTrackingElement) {
@@ -13601,46 +13315,40 @@ function parseIcon(iconElement) {
       });
     });
   }
-
   icon.iconViewTrackingURLTemplate = parserUtils.parseNodeText(parserUtils.childByName(iconElement, 'IconViewTracking'));
   return icon;
 }
+
 /**
  * Parses an horizontal position into a String ('left' or 'right') or into a Number.
  * @param  {String} xPosition - The x position to parse.
  * @return {String|Number}
  */
-
-
 function parseXPosition(xPosition) {
   if (['left', 'right'].indexOf(xPosition) !== -1) {
     return xPosition;
   }
-
   return parseInt(xPosition || 0);
 }
+
 /**
  * Parses an vertical position into a String ('top' or 'bottom') or into a Number.
  * @param  {String} yPosition - The x position to parse.
  * @return {String|Number}
  */
-
-
 function parseYPosition(yPosition) {
   if (['top', 'bottom'].indexOf(yPosition) !== -1) {
     return yPosition;
   }
-
   return parseInt(yPosition || 0);
 }
+
 /**
  * Getting required attributes from element
  * @param  {Object} element - DOM element
  * @param  {Array} attributes - list of attributes
  * @return {Object|null} null if a least one element not present
  */
-
-
 function getRequiredAttributes(element, attributes) {
   var values = {};
   var error = false;
@@ -13657,13 +13365,11 @@ function getRequiredAttributes(element, attributes) {
 
 function createCreativeNonLinear() {
   var creativeAttributes = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-
   var _createCreative = createCreative(creativeAttributes),
-      id = _createCreative.id,
-      adId = _createCreative.adId,
-      sequence = _createCreative.sequence,
-      apiFramework = _createCreative.apiFramework;
-
+    id = _createCreative.id,
+    adId = _createCreative.adId,
+    sequence = _createCreative.sequence,
+    apiFramework = _createCreative.apiFramework;
   return {
     id: id,
     adId: adId,
@@ -13705,6 +13411,8 @@ function isNonLinearAd(ad) {
 
 
 
+
+
 /**
  * This module provides methods to parse a VAST NonLinear Element.
  */
@@ -13715,7 +13423,6 @@ function isNonLinearAd(ad) {
  * @param  {any} creativeAttributes - The attributes of the NonLinear (optional).
  * @return {Object} creative - The CreativeNonLinear object.
  */
-
 function parseCreativeNonLinear(creativeElement, creativeAttributes) {
   var creative = createCreativeNonLinear(creativeAttributes);
   parserUtils.childrenByName(creativeElement, 'TrackingEvents').forEach(function (trackingEventsElement) {
@@ -13723,12 +13430,10 @@ function parseCreativeNonLinear(creativeElement, creativeAttributes) {
     parserUtils.childrenByName(trackingEventsElement, 'Tracking').forEach(function (trackingElement) {
       eventName = trackingElement.getAttribute('event');
       trackingURLTemplate = parserUtils.parseNodeText(trackingElement);
-
       if (eventName && trackingURLTemplate) {
         if (!Array.isArray(creative.trackingEvents[eventName])) {
           creative.trackingEvents[eventName] = [];
         }
-
         creative.trackingEvents[eventName].push(trackingURLTemplate);
       }
     });
@@ -13757,11 +13462,9 @@ function parseCreativeNonLinear(creativeElement, creativeAttributes) {
       nonlinearAd.staticResource = parserUtils.parseNodeText(staticElement);
     });
     var adParamsElement = parserUtils.childByName(nonlinearResource, 'AdParameters');
-
     if (adParamsElement) {
       nonlinearAd.adParameters = parserUtils.parseNodeText(adParamsElement);
     }
-
     nonlinearAd.nonlinearClickThroughURLTemplate = parserUtils.parseNodeText(parserUtils.childByName(nonlinearResource, 'NonLinearClickThrough'));
     parserUtils.childrenByName(nonlinearResource, 'NonLinearClickTracking').forEach(function (clickTrackingElement) {
       nonlinearAd.nonlinearClickTrackingURLTemplates.push({
@@ -13792,81 +13495,80 @@ function isEmptyExtension(extension) {
 
 
 
+
+
 /**
  * Parses an array of Extension elements.
  * @param  {Node[]} extensions - The array of extensions to parse.
  * @param  {String} type - The type of extensions to parse.(Ad|Creative)
  * @return {AdExtension[]|CreativeExtension[]} - The nodes parsed to extensions
  */
-
 function parseExtensions(extensions) {
   var exts = [];
   extensions.forEach(function (extNode) {
     var ext = _parseExtension(extNode);
-
     if (ext) {
       exts.push(ext);
     }
   });
   return exts;
 }
+
 /**
  * Parses an extension child node
  * @param {Node} extNode - The extension node to parse
  * @return {AdExtension|CreativeExtension|null} - The node parsed to extension
  */
-
 function _parseExtension(extNode) {
   // Ignore comments
   if (extNode.nodeName === '#comment') return null;
   var ext = createExtension();
   var extNodeAttrs = extNode.attributes;
   var childNodes = extNode.childNodes;
-  ext.name = extNode.nodeName; // Parse attributes
+  ext.name = extNode.nodeName;
 
+  // Parse attributes
   if (extNode.attributes) {
     for (var extNodeAttrKey in extNodeAttrs) {
       if (extNodeAttrs.hasOwnProperty(extNodeAttrKey)) {
         var extNodeAttr = extNodeAttrs[extNodeAttrKey];
-
         if (extNodeAttr.nodeName && extNodeAttr.nodeValue) {
           ext.attributes[extNodeAttr.nodeName] = extNodeAttr.nodeValue;
         }
       }
     }
-  } // Parse all children
+  }
 
-
+  // Parse all children
   for (var childNodeKey in childNodes) {
     if (childNodes.hasOwnProperty(childNodeKey)) {
       var parsedChild = _parseExtension(childNodes[childNodeKey]);
-
       if (parsedChild) {
         ext.children.push(parsedChild);
       }
     }
   }
+
   /*
     Only parse value of Nodes with only eather no children or only a cdata or text
     to avoid useless parsing that would result to a concatenation of all children
   */
-
-
   if (ext.children.length === 0 || ext.children.length === 1 && ['#cdata-section', '#text'].indexOf(ext.children[0].name) >= 0) {
     var txt = parserUtils.parseNodeText(extNode);
-
     if (txt !== '') {
       ext.value = txt;
-    } // Remove the children if it's a cdata or simply text to avoid useless children
+    }
 
-
+    // Remove the children if it's a cdata or simply text to avoid useless children
     ext.children = [];
-  } // Only return not empty objects to not pollute extentions
+  }
 
-
+  // Only return not empty objects to not pollute extentions
   return isEmptyExtension(ext) ? null : ext;
 }
 ;// CONCATENATED MODULE: ./src/assets/@dailymotion/vast-client/src/parser/creatives_parser.js
+
+
 
 
 
@@ -13879,7 +13581,6 @@ function _parseExtension(extNode) {
  * @param  {any} creativeNodes - The creative nodes to parse.
  * @return {Array<Creative>} - An array of Creative objects.
  */
-
 function parseCreatives(creativeNodes) {
   var creatives = [];
   creativeNodes.forEach(function (creativeElement) {
@@ -13900,54 +13601,49 @@ function parseCreatives(creativeNodes) {
     });
     var creativeExtensions;
     var creativeExtensionsElement = parserUtils.childByName(creativeElement, 'CreativeExtensions');
-
     if (creativeExtensionsElement) {
       creativeExtensions = parseExtensions(parserUtils.childrenByName(creativeExtensionsElement, 'CreativeExtension'));
     }
-
     for (var creativeTypeElementKey in creativeElement.childNodes) {
       var creativeTypeElement = creativeElement.childNodes[creativeTypeElementKey];
       var parsedCreative = void 0;
-
       switch (creativeTypeElement.nodeName) {
         case 'Linear':
           parsedCreative = parseCreativeLinear(creativeTypeElement, creativeAttributes);
           break;
-
         case 'NonLinearAds':
           parsedCreative = parseCreativeNonLinear(creativeTypeElement, creativeAttributes);
           break;
-
         case 'CompanionAds':
           parsedCreative = parseCreativeCompanion(creativeTypeElement, creativeAttributes);
           break;
       }
-
       if (parsedCreative) {
         if (universalAdIds) {
           parsedCreative.universalAdIds = universalAdIds;
         }
-
         if (creativeExtensions) {
           parsedCreative.creativeExtensions = creativeExtensions;
         }
-
         creatives.push(parsedCreative);
       }
     }
   });
   return creatives;
 }
+
 /**
  * Parses the creative adId Attribute.
  * @param  {any} creativeElement - The creative element to retrieve the adId from.
  * @return {String|null}
  */
-
 function parseCreativeAdIdAttribute(creativeElement) {
-  return creativeElement.getAttribute('AdID') || // VAST 2 spec
-  creativeElement.getAttribute('adID') || // VAST 3 spec
-  creativeElement.getAttribute('adId') || // VAST 4 spec
+  return creativeElement.getAttribute('AdID') ||
+  // VAST 2 spec
+  creativeElement.getAttribute('adID') ||
+  // VAST 3 spec
+  creativeElement.getAttribute('adId') ||
+  // VAST 4 spec
   null;
 }
 ;// CONCATENATED MODULE: ./src/assets/@dailymotion/vast-client/src/util/requiredValues.js
@@ -14024,6 +13720,7 @@ var requiredValues = {
 
 
 
+
 /**
  * Verify node required values and also verify recursively all his child nodes.
  * Trigger warnings if a node required value is missing.
@@ -14032,21 +13729,16 @@ var requiredValues = {
  * @emits  VASTParser#VAST-warning
  * @param  {undefined|Boolean} [isAdInline] - Passed recursively to itself. True if the node is contained inside a inLine tag.
  */
-
 function verifyRequiredValues(node, emit, isAdInline) {
   if (!node || !node.nodeName) {
     return;
   }
-
   if (node.nodeName === 'InLine') {
     isAdInline = true;
   }
-
   verifyRequiredAttributes(node, emit);
-
   if (hasSubElements(node)) {
     verifyRequiredSubElements(node, emit, isAdInline);
-
     for (var i = 0; i < node.children.length; i++) {
       verifyRequiredValues(node.children[i], emit, isAdInline);
     }
@@ -14057,24 +13749,21 @@ function verifyRequiredValues(node, emit, isAdInline) {
     }, emit);
   }
 }
+
 /**
  * Verify and trigger warnings if node required attributes are not set.
  * @param  {Node} node - The node element.
  * @param  {Function} emit - Emit function used to trigger Warning event.
  * @emits  VASTParser#VAST-warning
  */
-
-
 function verifyRequiredAttributes(node, emit) {
   if (!requiredValues[node.nodeName] || !requiredValues[node.nodeName].attributes) {
     return;
   }
-
   var requiredAttributes = requiredValues[node.nodeName].attributes;
   var missingAttributes = requiredAttributes.filter(function (attributeName) {
     return !node.getAttribute(attributeName);
   });
-
   if (missingAttributes.length > 0) {
     emitMissingValueWarning({
       name: node.nodeName,
@@ -14083,6 +13772,7 @@ function verifyRequiredAttributes(node, emit) {
     }, emit);
   }
 }
+
 /**
  * Verify and trigger warnings if node required sub element are not set.
  * @param  {Node} node - The node element
@@ -14090,24 +13780,19 @@ function verifyRequiredAttributes(node, emit) {
  * @param  {Function} emit - Emit function used to trigger Warning event.
  * @emits  VASTParser#VAST-warning
  */
-
-
 function verifyRequiredSubElements(node, emit, isAdInline) {
-  var required = requiredValues[node.nodeName]; // Do not verify subelement if node is a child of wrapper, but verify it if node is the Wrapper itself
+  var required = requiredValues[node.nodeName];
+  // Do not verify subelement if node is a child of wrapper, but verify it if node is the Wrapper itself
   // Wrapper child have no required subElement. (Only InLine does)
-
   var isInWrapperButNotWrapperItself = !isAdInline && node.nodeName !== 'Wrapper';
-
   if (!required || isInWrapperButNotWrapperItself) {
     return;
   }
-
   if (required.subElements) {
     var requiredSubElements = required.subElements;
     var missingSubElements = requiredSubElements.filter(function (subElementName) {
       return !parserUtils.childByName(node, subElementName);
     });
-
     if (missingSubElements.length > 0) {
       emitMissingValueWarning({
         name: node.nodeName,
@@ -14115,18 +13800,16 @@ function verifyRequiredSubElements(node, emit, isAdInline) {
         subElements: missingSubElements
       }, emit);
     }
-  } // When InLine format is used some nodes (i.e <NonLinear>, <Companion>, or <Icon>)
+  }
+
+  // When InLine format is used some nodes (i.e <NonLinear>, <Companion>, or <Icon>)
   // require at least one of the following resources: StaticResource, IFrameResource, HTMLResource
-
-
   if (!isAdInline || !required.oneOfinLineResources) {
     return;
   }
-
   var resourceFound = required.oneOfinLineResources.some(function (resource) {
     return parserUtils.childByName(node, resource);
   });
-
   if (!resourceFound) {
     emitMissingValueWarning({
       name: node.nodeName,
@@ -14135,16 +13818,16 @@ function verifyRequiredSubElements(node, emit, isAdInline) {
     }, emit);
   }
 }
+
 /**
  * Check if a node has sub elements.
  * @param  {Node} node - The node element.
  * @returns {Boolean}
  */
-
-
 function hasSubElements(node) {
   return node.children && node.children.length !== 0;
 }
+
 /**
  * Trigger Warning if a element is empty or has missing attributes/subelements/resources
  * @param  {Object} missingElement - Object containing missing elements and values
@@ -14156,16 +13839,13 @@ function hasSubElements(node) {
  * @param  {Function} emit - Emit function used to trigger Warning event.
  * @emits  VastParser#VAST-warning
  */
-
-
 function emitMissingValueWarning(_ref, emit) {
   var name = _ref.name,
-      parentName = _ref.parentName,
-      attributes = _ref.attributes,
-      subElements = _ref.subElements,
-      oneOfResources = _ref.oneOfResources;
+    parentName = _ref.parentName,
+    attributes = _ref.attributes,
+    subElements = _ref.subElements,
+    oneOfResources = _ref.oneOfResources;
   var message = "Element '".concat(name, "'");
-
   if (attributes) {
     message += " missing required attribute(s) '".concat(attributes.join(', '), "' ");
   } else if (subElements) {
@@ -14175,14 +13855,12 @@ function emitMissingValueWarning(_ref, emit) {
   } else {
     message += " is empty";
   }
-
   emit('VAST-warning', {
     message: message,
     parentElement: parentName,
     specVersion: 4.1
   });
 }
-
 var parserVerification = {
   verifyRequiredValues: verifyRequiredValues,
   hasSubElements: hasSubElements,
@@ -14191,6 +13869,8 @@ var parserVerification = {
   verifyRequiredSubElements: verifyRequiredSubElements
 };
 ;// CONCATENATED MODULE: ./src/assets/@dailymotion/vast-client/src/parser/ad_parser.js
+
+
 
 
 
@@ -14216,29 +13896,22 @@ var parserVerification = {
  * @emits  VASTParser#VAST-warning
  * @return {Object|undefined} - Object containing the ad and if it is wrapper/inline
  */
-
 function parseAd(adElement, emit) {
   var _ref = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {},
-      allowMultipleAds = _ref.allowMultipleAds,
-      followAdditionalWrappers = _ref.followAdditionalWrappers;
-
+    allowMultipleAds = _ref.allowMultipleAds,
+    followAdditionalWrappers = _ref.followAdditionalWrappers;
   var childNodes = adElement.childNodes;
-
   for (var adTypeElementKey in childNodes) {
     var adTypeElement = childNodes[adTypeElementKey];
-
     if (['Wrapper', 'InLine'].indexOf(adTypeElement.nodeName) === -1) {
       continue;
     }
-
     if (adTypeElement.nodeName === 'Wrapper' && followAdditionalWrappers === false) {
       continue;
     }
-
     parserUtils.copyNodeAttribute('id', adElement, adTypeElement);
     parserUtils.copyNodeAttribute('sequence', adElement, adTypeElement);
     parserUtils.copyNodeAttribute('adType', adElement, adTypeElement);
-
     if (adTypeElement.nodeName === 'Wrapper') {
       return {
         ad: parseWrapper(adTypeElement, emit),
@@ -14254,6 +13927,7 @@ function parseAd(adElement, emit) {
     }
   }
 }
+
 /**
  * Parses an Inline
  * @param  {Object} adElement Element - The VAST Inline element to parse.
@@ -14262,20 +13936,18 @@ function parseAd(adElement, emit) {
  * @emits  VASTParser#VAST-warning
  * @return {Object} ad - The ad object.
  */
-
 function parseInLine(adElement, emit) {
   var _ref2 = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {},
-      allowMultipleAds = _ref2.allowMultipleAds;
-
+    allowMultipleAds = _ref2.allowMultipleAds;
   // if allowMultipleAds is set to false by wrapper attribute
   // only the first stand-alone Ad (with no sequence values) in the
   // requested VAST response is allowed so we won't parse ads with sequence
   if (allowMultipleAds === false && adElement.getAttribute('sequence')) {
     return null;
   }
-
   return parseAdElement(adElement, emit);
 }
+
 /**
  * Parses an ad type (Inline or Wrapper)
  * @param  {Object} adTypeElement - The VAST Inline or Wrapper element to parse.
@@ -14283,99 +13955,79 @@ function parseInLine(adElement, emit) {
  * @emits  VASTParser#VAST-warning
  * @return {Object} ad - The ad object.
  */
-
-
 function parseAdElement(adTypeElement, emit) {
   var adVerificationsFromExtensions = [];
-
   if (emit) {
     parserVerification.verifyRequiredValues(adTypeElement, emit);
   }
-
   var childNodes = adTypeElement.childNodes;
   var ad = createAd(parserUtils.parseAttributes(adTypeElement));
-
   for (var nodeKey in childNodes) {
     var node = childNodes[nodeKey];
-
     switch (node.nodeName) {
       case 'Error':
         ad.errorURLTemplates.push(parserUtils.parseNodeText(node));
         break;
-
       case 'Impression':
         ad.impressionURLTemplates.push({
           id: node.getAttribute('id') || null,
           url: parserUtils.parseNodeText(node)
         });
         break;
-
       case 'Creatives':
         ad.creatives = parseCreatives(parserUtils.childrenByName(node, 'Creative'));
         break;
-
       case 'Extensions':
         {
           var extNodes = parserUtils.childrenByName(node, 'Extension');
           ad.extensions = parseExtensions(extNodes);
+
           /*
             OMID specify adVerifications should be in extensions for VAST < 4.0
             To avoid to put them on two different places in two different format we reparse it
             from extensions the same way than for an AdVerifications node.
           */
-
           if (!ad.adVerifications.length) {
             adVerificationsFromExtensions = _parseAdVerificationsFromExtensions(extNodes);
           }
-
           break;
         }
-
       case 'AdVerifications':
         ad.adVerifications = _parseAdVerifications(parserUtils.childrenByName(node, 'Verification'));
         break;
-
       case 'AdSystem':
         ad.system = {
           value: parserUtils.parseNodeText(node),
           version: node.getAttribute('version') || null
         };
         break;
-
       case 'AdTitle':
         ad.title = parserUtils.parseNodeText(node);
         break;
-
       case 'AdServingId':
         ad.adServingId = parserUtils.parseNodeText(node);
         break;
-
       case 'Category':
         ad.categories.push({
           authority: node.getAttribute('authority') || null,
           value: parserUtils.parseNodeText(node)
         });
         break;
-
       case 'Expires':
         ad.expires = parseInt(parserUtils.parseNodeText(node), 10);
         break;
-
       case 'ViewableImpression':
         ad.viewableImpression.push(_parseViewableImpression(node));
         break;
-
       case 'Description':
         ad.description = parserUtils.parseNodeText(node);
         break;
-
       case 'Advertiser':
         ad.advertiser = {
           id: node.getAttribute('id') || null,
           value: parserUtils.parseNodeText(node)
         };
         break;
-
       case 'Pricing':
         ad.pricing = {
           value: parserUtils.parseNodeText(node),
@@ -14383,11 +14035,9 @@ function parseAdElement(adTypeElement, emit) {
           currency: node.getAttribute('currency') || null
         };
         break;
-
       case 'Survey':
         ad.survey = parserUtils.parseNodeText(node);
         break;
-
       case 'BlockedAdCategories':
         ad.blockedAdCategories.push({
           authority: node.getAttribute('authority') || null,
@@ -14396,13 +14046,12 @@ function parseAdElement(adTypeElement, emit) {
         break;
     }
   }
-
   if (adVerificationsFromExtensions.length) {
     ad.adVerifications = ad.adVerifications.concat(adVerificationsFromExtensions);
   }
-
   return ad;
 }
+
 /**
  * Parses a Wrapper element without resolving the wrapped urls.
  * @param  {Object} wrapperElement - The VAST Wrapper element to be parsed.
@@ -14410,8 +14059,6 @@ function parseAdElement(adTypeElement, emit) {
  * @emits  VASTParser#VAST-warning
  * @return {Ad}
  */
-
-
 function parseWrapper(wrapperElement, emit) {
   var ad = parseAdElement(wrapperElement, emit);
   var followAdditionalWrappersValue = wrapperElement.getAttribute('followAdditionalWrappers');
@@ -14421,17 +14068,14 @@ function parseWrapper(wrapperElement, emit) {
   ad.allowMultipleAds = allowMultipleAdsValue ? parserUtils.parseBoolean(allowMultipleAdsValue) : false;
   ad.fallbackOnNoAd = fallbackOnNoAdValue ? parserUtils.parseBoolean(fallbackOnNoAdValue) : null;
   var wrapperURLElement = parserUtils.childByName(wrapperElement, 'VASTAdTagURI');
-
   if (wrapperURLElement) {
     ad.nextWrapperURL = parserUtils.parseNodeText(wrapperURLElement);
   } else {
     wrapperURLElement = parserUtils.childByName(wrapperElement, 'VASTAdTagURL');
-
     if (wrapperURLElement) {
       ad.nextWrapperURL = parserUtils.parseNodeText(parserUtils.childByName(wrapperURLElement, 'URL'));
     }
   }
-
   ad.creatives.forEach(function (wrapperCreativeElement) {
     if (['linear', 'nonlinear'].indexOf(wrapperCreativeElement.type) !== -1) {
       // TrackingEvents Linear / NonLinear
@@ -14439,163 +14083,137 @@ function parseWrapper(wrapperElement, emit) {
         if (!ad.trackingEvents) {
           ad.trackingEvents = {};
         }
-
         if (!ad.trackingEvents[wrapperCreativeElement.type]) {
           ad.trackingEvents[wrapperCreativeElement.type] = {};
         }
-
         var _loop = function _loop(eventName) {
           var urls = wrapperCreativeElement.trackingEvents[eventName];
-
           if (!Array.isArray(ad.trackingEvents[wrapperCreativeElement.type][eventName])) {
             ad.trackingEvents[wrapperCreativeElement.type][eventName] = [];
           }
-
           urls.forEach(function (url) {
             ad.trackingEvents[wrapperCreativeElement.type][eventName].push(url);
           });
         };
-
         for (var eventName in wrapperCreativeElement.trackingEvents) {
           _loop(eventName);
         }
-      } // ClickTracking
-
-
+      }
+      // ClickTracking
       if (wrapperCreativeElement.videoClickTrackingURLTemplates) {
         if (!Array.isArray(ad.videoClickTrackingURLTemplates)) {
           ad.videoClickTrackingURLTemplates = [];
         } // tmp property to save wrapper tracking URLs until they are merged
-
-
         wrapperCreativeElement.videoClickTrackingURLTemplates.forEach(function (item) {
           ad.videoClickTrackingURLTemplates.push(item);
         });
-      } // ClickThrough
-
-
+      }
+      // ClickThrough
       if (wrapperCreativeElement.videoClickThroughURLTemplate) {
         ad.videoClickThroughURLTemplate = wrapperCreativeElement.videoClickThroughURLTemplate;
-      } // CustomClick
-
-
+      }
+      // CustomClick
       if (wrapperCreativeElement.videoCustomClickURLTemplates) {
         if (!Array.isArray(ad.videoCustomClickURLTemplates)) {
           ad.videoCustomClickURLTemplates = [];
         } // tmp property to save wrapper tracking URLs until they are merged
-
-
         wrapperCreativeElement.videoCustomClickURLTemplates.forEach(function (item) {
           ad.videoCustomClickURLTemplates.push(item);
         });
       }
     }
   });
-
   if (ad.nextWrapperURL) {
     return ad;
   }
 }
+
 /**
  * Parses the AdVerifications Element.
  * @param  {Array} verifications - The array of verifications to parse.
  * @return {Array<Object>}
  */
-
-
 function _parseAdVerifications(verifications) {
   var ver = [];
   verifications.forEach(function (verificationNode) {
     var verification = createAdVerification();
     var childNodes = verificationNode.childNodes;
     parserUtils.assignAttributes(verificationNode.attributes, verification);
-
     for (var nodeKey in childNodes) {
       var node = childNodes[nodeKey];
-
       switch (node.nodeName) {
         case 'JavaScriptResource':
         case 'ExecutableResource':
           verification.resource = parserUtils.parseNodeText(node);
           parserUtils.assignAttributes(node.attributes, verification);
           break;
-
         case 'VerificationParameters':
           verification.parameters = parserUtils.parseNodeText(node);
           break;
       }
     }
-
     var trackingEventsElement = parserUtils.childByName(verificationNode, 'TrackingEvents');
-
     if (trackingEventsElement) {
       parserUtils.childrenByName(trackingEventsElement, 'Tracking').forEach(function (trackingElement) {
         var eventName = trackingElement.getAttribute('event');
         var trackingURLTemplate = parserUtils.parseNodeText(trackingElement);
-
         if (eventName && trackingURLTemplate) {
           if (!Array.isArray(verification.trackingEvents[eventName])) {
             verification.trackingEvents[eventName] = [];
           }
-
           verification.trackingEvents[eventName].push(trackingURLTemplate);
         }
       });
     }
-
     ver.push(verification);
   });
   return ver;
 }
+
 /**
  * Parses the AdVerifications Element from extension for versions < 4.0
  * @param  {Array<Node>} extensions - The array of extensions to parse.
  * @return {Array<Object>}
  */
-
 function _parseAdVerificationsFromExtensions(extensions) {
   var adVerificationsNode = null,
-      adVerifications = []; // Find the first (and only) AdVerifications node from extensions
+    adVerifications = [];
 
+  // Find the first (and only) AdVerifications node from extensions
   extensions.some(function (extension) {
     return adVerificationsNode = parserUtils.childByName(extension, 'AdVerifications');
-  }); // Parse it if we get it
+  });
 
+  // Parse it if we get it
   if (adVerificationsNode) {
     adVerifications = _parseAdVerifications(parserUtils.childrenByName(adVerificationsNode, 'Verification'));
   }
-
   return adVerifications;
 }
+
 /**
  * Parses the ViewableImpression Element.
  * @param  {Object} viewableImpressionNode - The ViewableImpression node element.
  * @return {Object} viewableImpression - The viewableImpression object
  */
-
 function _parseViewableImpression(viewableImpressionNode) {
   var viewableImpression = {};
   viewableImpression.id = viewableImpressionNode.getAttribute('id') || null;
   var viewableImpressionChildNodes = viewableImpressionNode.childNodes;
-
   for (var viewableImpressionElementKey in viewableImpressionChildNodes) {
     var viewableImpressionElement = viewableImpressionChildNodes[viewableImpressionElementKey];
     var viewableImpressionNodeName = viewableImpressionElement.nodeName;
     var viewableImpressionNodeValue = parserUtils.parseNodeText(viewableImpressionElement);
-
     if (viewableImpressionNodeName !== 'Viewable' && viewableImpressionNodeName !== 'NotViewable' && viewableImpressionNodeName !== 'ViewUndetermined' || !viewableImpressionNodeValue) {
       continue;
     } else {
       var viewableImpressionNodeNameLower = viewableImpressionNodeName.toLowerCase();
-
       if (!Array.isArray(viewableImpression[viewableImpressionNodeNameLower])) {
         viewableImpression[viewableImpressionNodeNameLower] = [];
       }
-
       viewableImpression[viewableImpressionNodeNameLower].push(viewableImpressionNodeValue);
     }
   }
-
   return viewableImpression;
 }
 ;// CONCATENATED MODULE: ./src/assets/@dailymotion/vast-client/src/util/event_emitter.js
@@ -14606,18 +14224,16 @@ function _parseViewableImpression(viewableImpressionNode) {
 
 
 
+
 function event_emitter_classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
 function event_emitter_defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
 function event_emitter_createClass(Constructor, protoProps, staticProps) { if (protoProps) event_emitter_defineProperties(Constructor.prototype, protoProps); if (staticProps) event_emitter_defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
-
 var EventEmitter = /*#__PURE__*/function () {
   function EventEmitter() {
     event_emitter_classCallCheck(this, EventEmitter);
-
     this._handlers = [];
   }
+
   /**
    * Adds the event name and handler function to the end of the handlers array.
    * No checks are made to see if the handler has already been added.
@@ -14627,26 +14243,22 @@ var EventEmitter = /*#__PURE__*/function () {
    * @param {Function} handler
    * @returns {EventEmitter}
    */
-
-
   event_emitter_createClass(EventEmitter, [{
     key: "on",
     value: function on(event, handler) {
       if (typeof handler !== 'function') {
         throw new TypeError("The handler argument must be of type Function. Received type ".concat(typeof handler));
       }
-
       if (!event) {
         throw new TypeError("The event argument must be of type String. Received type ".concat(typeof event));
       }
-
       this._handlers.push({
         event: event,
         handler: handler
       });
-
       return this;
     }
+
     /**
      * Adds a one-time handler function for the named event.
      * The next time event is triggered, this handler is removed and then invoked.
@@ -14654,19 +14266,18 @@ var EventEmitter = /*#__PURE__*/function () {
      * @param {Function} handler
      * @returns {EventEmitter}
      */
-
   }, {
     key: "once",
     value: function once(event, handler) {
       return this.on(event, onceWrap(this, event, handler));
     }
+
     /**
      * Removes all instances for the specified handler from the handler array for the named event.
      * @param {String} event
      * @param {Function} handler
      * @returns {EventEmitter}
      */
-
   }, {
     key: "off",
     value: function off(event, handler) {
@@ -14675,6 +14286,7 @@ var EventEmitter = /*#__PURE__*/function () {
       });
       return this;
     }
+
     /**
      * Synchronously calls each of the handlers registered for the named event,
      * in the order they were registered, passing the supplied arguments to each.
@@ -14682,36 +14294,31 @@ var EventEmitter = /*#__PURE__*/function () {
      * @param  {any[]} args
      * @returns {Boolean} true if the event had handlers, false otherwise.
      */
-
   }, {
     key: "emit",
     value: function emit(event) {
       for (var _len = arguments.length, args = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
         args[_key - 1] = arguments[_key];
       }
-
       var called = false;
-
       this._handlers.forEach(function (item) {
         if (item.event === '*') {
           called = true;
           item.handler.apply(item, [event].concat(args));
         }
-
         if (item.event === event) {
           called = true;
           item.handler.apply(item, args);
         }
       });
-
       return called;
     }
+
     /**
      * Removes all listeners, or those of the specified named event.
      * @param {String} event
      * @returns {EventEmitter}
      */
-
   }, {
     key: "removeAllListeners",
     value: function removeAllListeners(event) {
@@ -14719,18 +14326,17 @@ var EventEmitter = /*#__PURE__*/function () {
         this._handlers = [];
         return this;
       }
-
       this._handlers = this._handlers.filter(function (item) {
         return item.event !== event;
       });
       return this;
     }
+
     /**
      * Returns the number of listeners listening to the named event.
      * @param {String} event
      * @returns {Number}
      */
-
   }, {
     key: "listenerCount",
     value: function listenerCount(event) {
@@ -14738,12 +14344,12 @@ var EventEmitter = /*#__PURE__*/function () {
         return item.event === event;
       }).length;
     }
+
     /**
      * Returns a copy of the array of listeners for the named event including those created by .once().
      * @param {String} event
      * @returns {Function[]}
      */
-
   }, {
     key: "listeners",
     value: function listeners(event) {
@@ -14751,15 +14357,14 @@ var EventEmitter = /*#__PURE__*/function () {
         if (item.event === event) {
           listeners.push(item.handler);
         }
-
         return listeners;
       }, []);
     }
+
     /**
      * Returns an array listing the events for which the emitter has registered handlers.
      * @returns {String[]}
      */
-
   }, {
     key: "eventNames",
     value: function eventNames() {
@@ -14768,16 +14373,13 @@ var EventEmitter = /*#__PURE__*/function () {
       });
     }
   }]);
-
   return EventEmitter;
 }();
-
 function onceWrap(target, event, handler) {
   var state = {
     fired: false,
     wrapFn: undefined
   };
-
   function onceWrapper() {
     if (!state.fired) {
       target.off(event, state.wrapFn);
@@ -14785,18 +14387,17 @@ function onceWrap(target, event, handler) {
       handler.bind(target).apply(void 0, arguments);
     }
   }
-
   state.wrapFn = onceWrapper;
   return onceWrapper;
 }
 ;// CONCATENATED MODULE: ./src/assets/@dailymotion/vast-client/src/urlhandlers/mock_node_url_handler.js
+
 // This mock module is loaded in stead of the original NodeURLHandler module
 // when bundling the library for environments which are not node.
 // This allows us to avoid bundling useless node components and have a smaller build.
 function get(url, options, cb) {
   cb(new Error('Please bundle the library for node to use the node urlHandler'));
 }
-
 var nodeURLHandler = {
   get: get
 };
@@ -14810,22 +14411,18 @@ var DEFAULT_TIMEOUT = 120000;
 function xhr() {
   try {
     var request = new window.XMLHttpRequest();
-
     if ('withCredentials' in request) {
       // check CORS support
       return request;
     }
-
     return null;
   } catch (err) {
     return null;
   }
 }
-
 function supported() {
   return !!xhr();
 }
-
 function handleLoad(request, cb) {
   if (request.status === 200) {
     cb(null, request.responseXML, {
@@ -14836,50 +14433,40 @@ function handleLoad(request, cb) {
     handleFail(request, cb, false);
   }
 }
-
 function handleFail(request, cb, isTimeout) {
   var statusCode = !isTimeout ? request.status : 408; // Request timeout
-
   var msg = isTimeout ? "XHRURLHandler: Request timed out after ".concat(request.timeout, " ms (").concat(statusCode, ")") : "XHRURLHandler: ".concat(request.statusText, " (").concat(statusCode, ")");
   cb(new Error(msg), null, {
     statusCode: statusCode
   });
 }
-
 function xhr_url_handler_get(url, options, cb) {
   if (window.location.protocol === 'https:' && url.indexOf('http://') === 0) {
     return cb(new Error('XHRURLHandler: Cannot go from HTTPS to HTTP.'));
   }
-
   try {
     var request = xhr();
     request.open('GET', url);
     request.timeout = options.timeout || DEFAULT_TIMEOUT;
     request.withCredentials = options.withCredentials || false;
     request.overrideMimeType && request.overrideMimeType('text/xml');
-
     request.onload = function () {
       return handleLoad(request, cb);
     };
-
     request.onerror = function () {
       return handleFail(request, cb, false);
     };
-
     request.onabort = function () {
       return handleFail(request, cb, false);
     };
-
     request.ontimeout = function () {
       return handleFail(request, cb, true);
     };
-
     request.send();
   } catch (error) {
     cb(new Error('XHRURLHandler: Unexpected error'));
   }
 }
-
 var XHRURLHandler = {
   get: xhr_url_handler_get,
   supported: supported
@@ -14894,27 +14481,23 @@ function url_handler_get(url, options, cb) {
     if (typeof options === 'function') {
       cb = options;
     }
-
     options = {};
   }
-
   if (typeof window === 'undefined' || window === null) {
     return nodeURLHandler.get(url, options, cb);
   } else if (XHRURLHandler.supported()) {
     return XHRURLHandler.get(url, options, cb);
   }
-
   return cb(new Error('Current context is not supported by any of the default URLHandlers. Please provide a custom URLHandler'));
 }
-
 var urlHandler = {
   get: url_handler_get
 };
 ;// CONCATENATED MODULE: ./src/assets/@dailymotion/vast-client/src/vast_response.js
 function createVASTResponse(_ref) {
   var ads = _ref.ads,
-      errorURLTemplates = _ref.errorURLTemplates,
-      version = _ref.version;
+    errorURLTemplates = _ref.errorURLTemplates,
+    version = _ref.version;
   return {
     ads: ads || [],
     errorURLTemplates: errorURLTemplates || [],
@@ -14925,20 +14508,21 @@ function createVASTResponse(_ref) {
 /*
   We decided to put the estimated bitrate separated from classes to persist it between different instances of vast client/parser
 */
+
 var estimatedBitrateCount = 0;
 var estimatedBitrate = 0;
+
 /**
  * Calculate average estimated bitrate from the previous values and new entries
  * @param {Number} byteLength - The length of the response in bytes.
  * @param {Number} duration - The duration of the request in ms.
  */
-
 var updateEstimatedBitrate = function updateEstimatedBitrate(byteLength, duration) {
   if (!byteLength || !duration || byteLength <= 0 || duration <= 0) {
     return;
-  } // We want the bitrate in kb/s, byteLength are in bytes and duration in ms, just need to convert the byteLength because kb/s = b/ms
+  }
 
-
+  // We want the bitrate in kb/s, byteLength are in bytes and duration in ms, just need to convert the byteLength because kb/s = b/ms
   var bitrate = byteLength * 8 / duration;
   estimatedBitrate = (estimatedBitrate * estimatedBitrateCount + bitrate) / ++estimatedBitrateCount;
 };
@@ -14957,26 +14541,18 @@ var updateEstimatedBitrate = function updateEstimatedBitrate(byteLength, duratio
 
 
 
+
+
 function vast_parser_classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
 function vast_parser_defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
 function vast_parser_createClass(Constructor, protoProps, staticProps) { if (protoProps) vast_parser_defineProperties(Constructor.prototype, protoProps); if (staticProps) vast_parser_defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
-
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); Object.defineProperty(subClass, "prototype", { writable: false }); if (superClass) _setPrototypeOf(subClass, superClass); }
-
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
-
 function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
-
 function _possibleConstructorReturn(self, call) { if (call && (typeof call === "object" || typeof call === "function")) { return call; } else if (call !== void 0) { throw new TypeError("Derived constructors may only return object or undefined"); } return _assertThisInitialized(self); }
-
 function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
-
 function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
-
 function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
-
 
 
 
@@ -14990,27 +14566,23 @@ var DEFAULT_EVENT_DATA = {
   ERRORCODE: 900,
   extensions: []
 };
+
 /**
  * This class provides methods to fetch and parse a VAST document.
  * @export
  * @class VASTParser
  * @extends EventEmitter
  */
-
 var VASTParser = /*#__PURE__*/function (_EventEmitter) {
   _inherits(VASTParser, _EventEmitter);
-
   var _super = _createSuper(VASTParser);
-
   /**
    * Creates an instance of VASTParser.
    * @constructor
    */
   function VASTParser() {
     var _this;
-
     vast_parser_classCallCheck(this, VASTParser);
-
     _this = _super.call(this);
     _this.remainingAds = [];
     _this.parentURLs = [];
@@ -15022,13 +14594,12 @@ var VASTParser = /*#__PURE__*/function (_EventEmitter) {
     _this.parsingOptions = {};
     return _this;
   }
+
   /**
    * Adds a filter function to the array of filters which are called before fetching a VAST document.
    * @param  {function} filter - The filter function to be added at the end of the array.
    * @return {void}
    */
-
-
   vast_parser_createClass(VASTParser, [{
     key: "addURLTemplateFilter",
     value: function addURLTemplateFilter(filter) {
@@ -15036,36 +14607,37 @@ var VASTParser = /*#__PURE__*/function (_EventEmitter) {
         this.URLTemplateFilters.push(filter);
       }
     }
+
     /**
      * Removes the last element of the url templates filters array.
      * @return {void}
      */
-
   }, {
     key: "removeURLTemplateFilter",
     value: function removeURLTemplateFilter() {
       this.URLTemplateFilters.pop();
     }
+
     /**
      * Returns the number of filters of the url templates filters array.
      * @return {Number}
      */
-
   }, {
     key: "countURLTemplateFilters",
     value: function countURLTemplateFilters() {
       return this.URLTemplateFilters.length;
     }
+
     /**
      * Removes all the filter functions from the url templates filters array.
      * @return {void}
      */
-
   }, {
     key: "clearURLTemplateFilters",
     value: function clearURLTemplateFilters() {
       this.URLTemplateFilters = [];
     }
+
     /**
      * Tracks the error provided in the errorCode parameter and emits a VAST-error event for the given error.
      * @param  {Array} urlTemplates - An Array of url templates to use to make the tracking call.
@@ -15074,37 +14646,36 @@ var VASTParser = /*#__PURE__*/function (_EventEmitter) {
      * @emits  VASTParser#VAST-error
      * @return {void}
      */
-
   }, {
     key: "trackVastError",
     value: function trackVastError(urlTemplates, errorCode) {
       for (var _len = arguments.length, data = new Array(_len > 2 ? _len - 2 : 0), _key = 2; _key < _len; _key++) {
         data[_key - 2] = arguments[_key];
       }
-
       this.emit('VAST-error', Object.assign.apply(Object, [{}, DEFAULT_EVENT_DATA, errorCode].concat(data)));
       util.track(urlTemplates, errorCode);
     }
+
     /**
      * Returns an array of errorURLTemplates for the VAST being parsed.
      * @return {Array}
      */
-
   }, {
     key: "getErrorURLTemplates",
     value: function getErrorURLTemplates() {
       return this.rootErrorURLTemplates.concat(this.errorURLTemplates);
     }
+
     /**
      * Returns the estimated bitrate calculated from all previous requests
      * @returns The average of all estimated bitrates in kb/s.
      */
-
   }, {
     key: "getEstimatedBitrate",
     value: function getEstimatedBitrate() {
       return estimatedBitrate;
     }
+
     /**
      * Fetches a VAST document for the given url.
      * Returns a Promise which resolves,rejects according to the result of the request.
@@ -15116,12 +14687,10 @@ var VASTParser = /*#__PURE__*/function (_EventEmitter) {
      * @emits  VASTParser#VAST-resolved
      * @return {Promise}
      */
-
   }, {
     key: "fetchVAST",
     value: function fetchVAST(url) {
       var _this2 = this;
-
       var wrapperDepth = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
       var previousUrl = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
       var wrapperAd = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : null;
@@ -15130,11 +14699,8 @@ var VASTParser = /*#__PURE__*/function (_EventEmitter) {
         _this2.URLTemplateFilters.forEach(function (filter) {
           url = filter(url);
         });
-
         _this2.parentURLs.push(url);
-
         var timeBeforeGet = Date.now();
-
         _this2.emit('VAST-resolving', {
           url: url,
           previousUrl: previousUrl,
@@ -15143,7 +14709,6 @@ var VASTParser = /*#__PURE__*/function (_EventEmitter) {
           timeout: _this2.fetchingOptions.timeout,
           wrapperAd: wrapperAd
         });
-
         _this2.urlHandler.get(url, _this2.fetchingOptions, function (error, xml) {
           var details = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
           var deltaTime = Math.round(Date.now() - timeBeforeGet);
@@ -15154,11 +14719,8 @@ var VASTParser = /*#__PURE__*/function (_EventEmitter) {
             error: error,
             duration: deltaTime
           }, details);
-
           _this2.emit('VAST-resolved', info);
-
           updateEstimatedBitrate(details.byteLength, deltaTime);
-
           if (error) {
             reject(error);
           } else {
@@ -15167,11 +14729,11 @@ var VASTParser = /*#__PURE__*/function (_EventEmitter) {
         });
       });
     }
+
     /**
      * Inits the parsing properties of the class with the custom values provided as options.
      * @param {Object} options - The options to initialize a parsing sequence
      */
-
   }, {
     key: "initParsingStatus",
     value: function initParsingStatus() {
@@ -15193,21 +14755,19 @@ var VASTParser = /*#__PURE__*/function (_EventEmitter) {
       this.vastVersion = null;
       updateEstimatedBitrate(options.byteLength, options.requestDuration);
     }
+
     /**
      * Resolves the next group of ads. If all is true resolves all the remaining ads.
      * @param  {Boolean} all - If true all the remaining ads are resolved
      * @return {Promise}
      */
-
   }, {
     key: "getRemainingAds",
     value: function getRemainingAds(all) {
       var _this3 = this;
-
       if (this.remainingAds.length === 0) {
         return Promise.reject(new Error('No more ads are available for the given VAST'));
       }
-
       var ads = all ? util.flatten(this.remainingAds) : this.remainingAds.shift();
       this.errorURLTemplates = [];
       this.parentURLs = [];
@@ -15218,6 +14778,7 @@ var VASTParser = /*#__PURE__*/function (_EventEmitter) {
         return _this3.buildVASTResponse(resolvedAds);
       });
     }
+
     /**
      * Fetches and parses a VAST for the given url.
      * Returns a Promise which resolves with a fully parsed VASTResponse or rejects with an Error.
@@ -15228,12 +14789,10 @@ var VASTParser = /*#__PURE__*/function (_EventEmitter) {
      * @emits  VASTParser#VAST-warning
      * @return {Promise}
      */
-
   }, {
     key: "getAndParseVAST",
     value: function getAndParseVAST(url) {
       var _this4 = this;
-
       var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
       this.initParsingStatus(options);
       this.URLTemplateFilters.forEach(function (filter) {
@@ -15249,6 +14808,7 @@ var VASTParser = /*#__PURE__*/function (_EventEmitter) {
         });
       });
     }
+
     /**
      * Parses the given xml Object into a VASTResponse.
      * Returns a Promise which resolves with a fully parsed VASTResponse or rejects with an Error.
@@ -15259,12 +14819,10 @@ var VASTParser = /*#__PURE__*/function (_EventEmitter) {
      * @emits  VASTParser#VAST-warning
      * @return {Promise}
      */
-
   }, {
     key: "parseVAST",
     value: function parseVAST(vastXml) {
       var _this5 = this;
-
       var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
       this.initParsingStatus(options);
       options.isRootVAST = true;
@@ -15272,12 +14830,12 @@ var VASTParser = /*#__PURE__*/function (_EventEmitter) {
         return _this5.buildVASTResponse(ads);
       });
     }
+
     /**
      * Builds a VASTResponse which can be returned.
      * @param  {Array} ads - An Array of unwrapped ads
      * @return {Object}
      */
-
   }, {
     key: "buildVASTResponse",
     value: function buildVASTResponse(ads) {
@@ -15289,6 +14847,7 @@ var VASTParser = /*#__PURE__*/function (_EventEmitter) {
       this.completeWrapperResolving(response);
       return response;
     }
+
     /**
      * Parses the given xml Object into an array of ads
      * Returns the array or throws an `Error` if an invalid VAST XML is provided
@@ -15299,19 +14858,17 @@ var VASTParser = /*#__PURE__*/function (_EventEmitter) {
      * @return {Array}
      * @throws {Error} `vastXml` must be a valid VAST XMLDocument
      */
-
   }, {
     key: "parseVastXml",
     value: function parseVastXml(vastXml, _ref) {
       var _ref$isRootVAST = _ref.isRootVAST,
-          isRootVAST = _ref$isRootVAST === void 0 ? false : _ref$isRootVAST,
-          _ref$url = _ref.url,
-          url = _ref$url === void 0 ? null : _ref$url,
-          _ref$wrapperDepth = _ref.wrapperDepth,
-          wrapperDepth = _ref$wrapperDepth === void 0 ? 0 : _ref$wrapperDepth,
-          allowMultipleAds = _ref.allowMultipleAds,
-          followAdditionalWrappers = _ref.followAdditionalWrappers;
-
+        isRootVAST = _ref$isRootVAST === void 0 ? false : _ref$isRootVAST,
+        _ref$url = _ref.url,
+        url = _ref$url === void 0 ? null : _ref$url,
+        _ref$wrapperDepth = _ref.wrapperDepth,
+        wrapperDepth = _ref$wrapperDepth === void 0 ? 0 : _ref$wrapperDepth,
+        allowMultipleAds = _ref.allowMultipleAds,
+        followAdditionalWrappers = _ref.followAdditionalWrappers;
       // check if is a valid VAST document
       if (!vastXml || !vastXml.documentElement || vastXml.documentElement.nodeName !== 'VAST') {
         this.emit('VAST-ad-parsed', {
@@ -15321,26 +14878,24 @@ var VASTParser = /*#__PURE__*/function (_EventEmitter) {
         });
         throw new Error('Invalid VAST XMLDocument');
       }
-
       var ads = [];
       var childNodes = vastXml.documentElement.childNodes;
+
       /* Only parse the version of the Root VAST for now because we don't know yet how to
        * handle some cases like multiple wrappers in the same vast
        */
-
       var vastVersion = vastXml.documentElement.getAttribute('version');
-
       if (isRootVAST) {
         if (vastVersion) this.vastVersion = vastVersion;
-      } // Fill the VASTResponse object with ads and errorURLTemplates
+      }
 
-
+      // Fill the VASTResponse object with ads and errorURLTemplates
       for (var nodeKey in childNodes) {
         var node = childNodes[nodeKey];
-
         if (node.nodeName === 'Error') {
-          var errorURLTemplate = parserUtils.parseNodeText(node); // Distinguish root VAST url templates from ad specific ones
+          var errorURLTemplate = parserUtils.parseNodeText(node);
 
+          // Distinguish root VAST url templates from ad specific ones
           isRootVAST ? this.rootErrorURLTemplates.push(errorURLTemplate) : this.errorURLTemplates.push(errorURLTemplate);
         } else if (node.nodeName === 'Ad') {
           // allowMultipleAds was introduced in VAST 3
@@ -15352,12 +14907,10 @@ var VASTParser = /*#__PURE__*/function (_EventEmitter) {
             // (with no sequence values) in the requested VAST response is allowed
             break;
           }
-
           var result = parseAd(node, this.emit.bind(this), {
             allowMultipleAds: allowMultipleAds,
             followAdditionalWrappers: followAdditionalWrappers
           });
-
           if (result.ad) {
             ads.push(result.ad);
             this.emit('VAST-ad-parsed', {
@@ -15375,9 +14928,9 @@ var VASTParser = /*#__PURE__*/function (_EventEmitter) {
           }
         }
       }
-
       return ads;
     }
+
     /**
      * Parses the given xml Object into an array of unwrapped ads.
      * Returns a Promise which resolves with the array or rejects with an error according to the result of the parsing.
@@ -15388,33 +14941,30 @@ var VASTParser = /*#__PURE__*/function (_EventEmitter) {
      * @emits VASTParser#VAST-warning
      * @return {Promise}
      */
-
   }, {
     key: "parse",
     value: function parse(vastXml) {
       var _ref2 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
-          _ref2$url = _ref2.url,
-          url = _ref2$url === void 0 ? null : _ref2$url,
-          _ref2$resolveAll = _ref2.resolveAll,
-          resolveAll = _ref2$resolveAll === void 0 ? true : _ref2$resolveAll,
-          _ref2$wrapperSequence = _ref2.wrapperSequence,
-          wrapperSequence = _ref2$wrapperSequence === void 0 ? null : _ref2$wrapperSequence,
-          _ref2$previousUrl = _ref2.previousUrl,
-          previousUrl = _ref2$previousUrl === void 0 ? null : _ref2$previousUrl,
-          _ref2$wrapperDepth = _ref2.wrapperDepth,
-          wrapperDepth = _ref2$wrapperDepth === void 0 ? 0 : _ref2$wrapperDepth,
-          _ref2$isRootVAST = _ref2.isRootVAST,
-          isRootVAST = _ref2$isRootVAST === void 0 ? false : _ref2$isRootVAST,
-          followAdditionalWrappers = _ref2.followAdditionalWrappers,
-          allowMultipleAds = _ref2.allowMultipleAds;
-
-      var ads = []; // allowMultipleAds was introduced in VAST 3 as wrapper attribute
+        _ref2$url = _ref2.url,
+        url = _ref2$url === void 0 ? null : _ref2$url,
+        _ref2$resolveAll = _ref2.resolveAll,
+        resolveAll = _ref2$resolveAll === void 0 ? true : _ref2$resolveAll,
+        _ref2$wrapperSequence = _ref2.wrapperSequence,
+        wrapperSequence = _ref2$wrapperSequence === void 0 ? null : _ref2$wrapperSequence,
+        _ref2$previousUrl = _ref2.previousUrl,
+        previousUrl = _ref2$previousUrl === void 0 ? null : _ref2$previousUrl,
+        _ref2$wrapperDepth = _ref2.wrapperDepth,
+        wrapperDepth = _ref2$wrapperDepth === void 0 ? 0 : _ref2$wrapperDepth,
+        _ref2$isRootVAST = _ref2.isRootVAST,
+        isRootVAST = _ref2$isRootVAST === void 0 ? false : _ref2$isRootVAST,
+        followAdditionalWrappers = _ref2.followAdditionalWrappers,
+        allowMultipleAds = _ref2.allowMultipleAds;
+      var ads = [];
+      // allowMultipleAds was introduced in VAST 3 as wrapper attribute
       // for retrocompatibility set it to true for vast pre-version 3
-
       if (this.vastVersion && parseFloat(this.vastVersion) < 3 && isRootVAST) {
         allowMultipleAds = true;
       }
-
       try {
         ads = this.parseVastXml(vastXml, {
           isRootVAST: isRootVAST,
@@ -15426,6 +14976,7 @@ var VASTParser = /*#__PURE__*/function (_EventEmitter) {
       } catch (e) {
         return Promise.reject(e);
       }
+
       /* Keep wrapper sequence value to not break AdPod when wrapper contain only one Ad.
       e.g,for a AdPod containing :
       - Inline with sequence=1
@@ -15436,25 +14987,23 @@ var VASTParser = /*#__PURE__*/function (_EventEmitter) {
       - Inline sequence 2,
       - Inline sequence 3
       */
-
-
       if (ads.length === 1 && wrapperSequence !== undefined && wrapperSequence !== null) {
         ads[0].sequence = wrapperSequence;
-      } // Split the VAST in case we don't want to resolve everything at the first time
-
-
-      if (resolveAll === false) {
-        this.remainingAds = parserUtils.splitVAST(ads); // Remove the first element from the remaining ads array, since we're going to resolve that element
-
-        ads = this.remainingAds.shift();
       }
 
+      // Split the VAST in case we don't want to resolve everything at the first time
+      if (resolveAll === false) {
+        this.remainingAds = parserUtils.splitVAST(ads);
+        // Remove the first element from the remaining ads array, since we're going to resolve that element
+        ads = this.remainingAds.shift();
+      }
       return this.resolveAds(ads, {
         wrapperDepth: wrapperDepth,
         previousUrl: previousUrl,
         url: url
       });
     }
+
     /**
      * Resolves an Array of ads, recursively calling itself with the remaining ads if a no ad
      * response is returned for the given array.
@@ -15462,42 +15011,35 @@ var VASTParser = /*#__PURE__*/function (_EventEmitter) {
      * @param {Object} options - An options Object containing resolving parameters
      * @return {Promise}
      */
-
   }, {
     key: "resolveAds",
     value: function resolveAds() {
       var _this6 = this;
-
       var ads = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
-
       var _ref3 = arguments.length > 1 ? arguments[1] : undefined,
-          wrapperDepth = _ref3.wrapperDepth,
-          previousUrl = _ref3.previousUrl,
-          url = _ref3.url;
-
+        wrapperDepth = _ref3.wrapperDepth,
+        previousUrl = _ref3.previousUrl,
+        url = _ref3.url;
       var resolveWrappersPromises = [];
       previousUrl = url;
       ads.forEach(function (ad) {
         var resolveWrappersPromise = _this6.resolveWrappers(ad, wrapperDepth, previousUrl);
-
         resolveWrappersPromises.push(resolveWrappersPromise);
       });
       return Promise.all(resolveWrappersPromises).then(function (unwrappedAds) {
         var resolvedAds = util.flatten(unwrappedAds);
-
         if (!resolvedAds && _this6.remainingAds.length > 0) {
           var remainingAdsToResolve = _this6.remainingAds.shift();
-
           return _this6.resolveAds(remainingAdsToResolve, {
             wrapperDepth: wrapperDepth,
             previousUrl: previousUrl,
             url: url
           });
         }
-
         return resolvedAds;
       });
     }
+
     /**
      * Resolves the wrappers for the given ad in a recursive way.
      * Returns a Promise which resolves with the unwrapped ad or rejects with an error.
@@ -15506,44 +15048,38 @@ var VASTParser = /*#__PURE__*/function (_EventEmitter) {
      * @param {String} previousUrl - The previous vast url.
      * @return {Promise}
      */
-
   }, {
     key: "resolveWrappers",
     value: function resolveWrappers(ad, wrapperDepth, previousUrl) {
       var _this7 = this;
-
       return new Promise(function (resolve) {
         var _this7$parsingOptions;
-
         // Going one level deeper in the wrapper chain
-        wrapperDepth++; // We already have a resolved VAST ad, no need to resolve wrapper
-
+        wrapperDepth++;
+        // We already have a resolved VAST ad, no need to resolve wrapper
         if (!ad.nextWrapperURL) {
           delete ad.nextWrapperURL;
           return resolve(ad);
         }
-
         if (wrapperDepth >= _this7.maxWrapperDepth || _this7.parentURLs.indexOf(ad.nextWrapperURL) !== -1) {
           // Wrapper limit reached, as defined by the video player.
           // Too many Wrapper responses have been received with no InLine response.
           ad.errorCode = 302;
           delete ad.nextWrapperURL;
           return resolve(ad);
-        } // Get full URL
+        }
 
-
+        // Get full URL
         ad.nextWrapperURL = parserUtils.resolveVastAdTagURI(ad.nextWrapperURL, previousUrl);
-
         _this7.URLTemplateFilters.forEach(function (filter) {
           ad.nextWrapperURL = filter(ad.nextWrapperURL);
-        }); // If allowMultipleAds is set inside the parameter 'option' of public method
+        });
+
+        // If allowMultipleAds is set inside the parameter 'option' of public method
         // override the vast value by the one provided
-
-
-        var allowMultipleAds = (_this7$parsingOptions = _this7.parsingOptions.allowMultipleAds) !== null && _this7$parsingOptions !== void 0 ? _this7$parsingOptions : ad.allowMultipleAds; // sequence doesn't carry over in wrapper element
-
+        var allowMultipleAds = (_this7$parsingOptions = _this7.parsingOptions.allowMultipleAds) !== null && _this7$parsingOptions !== void 0 ? _this7$parsingOptions : ad.allowMultipleAds;
+        // sequence doesn't carry over in wrapper element
         var wrapperSequence = ad.sequence;
-
         _this7.fetchVAST(ad.nextWrapperURL, wrapperDepth, previousUrl, ad).then(function (xml) {
           return _this7.parse(xml, {
             url: ad.nextWrapperURL,
@@ -15554,13 +15090,11 @@ var VASTParser = /*#__PURE__*/function (_EventEmitter) {
             allowMultipleAds: allowMultipleAds
           }).then(function (unwrappedAds) {
             delete ad.nextWrapperURL;
-
             if (unwrappedAds.length === 0) {
               // No ads returned by the wrappedResponse, discard current <Ad><Wrapper> creatives
               ad.creatives = [];
               return resolve(ad);
             }
-
             unwrappedAds.forEach(function (unwrappedAd) {
               if (unwrappedAd) {
                 parserUtils.mergeWrapperAdData(unwrappedAd, ad);
@@ -15577,17 +15111,18 @@ var VASTParser = /*#__PURE__*/function (_EventEmitter) {
         });
       });
     }
+
     /**
      * Takes care of handling errors when the wrappers are resolved.
      * @param {Object} vastResponse - A resolved VASTResponse.
      */
-
   }, {
     key: "completeWrapperResolving",
     value: function completeWrapperResolving(vastResponse) {
       // We've to wait for all <Ad> elements to be parsed before handling error so we can:
       // - Send computed extensions data
       // - Ping all <Error> URIs defined across VAST files
+
       // No Ad case - The parser never bump into an <Ad> element
       if (vastResponse.ads.length === 0) {
         this.trackVastError(vastResponse.errorURLTemplates, {
@@ -15599,7 +15134,6 @@ var VASTParser = /*#__PURE__*/function (_EventEmitter) {
           // - No Creative case - The parser has dealt with soma <Ad><Wrapper> or/and an <Ad><Inline> elements
           // but no creative was found
           var ad = vastResponse.ads[index];
-
           if (ad.errorCode || ad.creatives.length === 0) {
             this.trackVastError(ad.errorURLTemplates.concat(vastResponse.errorURLTemplates), {
               ERRORCODE: ad.errorCode || 303
@@ -15616,7 +15150,6 @@ var VASTParser = /*#__PURE__*/function (_EventEmitter) {
       }
     }
   }]);
-
   return VASTParser;
 }(EventEmitter);
 ;// CONCATENATED MODULE: ./src/assets/@dailymotion/vast-client/src/vast_client.js
@@ -15626,9 +15159,7 @@ var VASTParser = /*#__PURE__*/function (_EventEmitter) {
 
 
 function vast_client_classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
 function vast_client_defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
 function vast_client_createClass(Constructor, protoProps, staticProps) { if (protoProps) vast_client_defineProperties(Constructor.prototype, protoProps); if (staticProps) vast_client_defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
 
 
@@ -15639,7 +15170,6 @@ function vast_client_createClass(Constructor, protoProps, staticProps) { if (pro
  * @export
  * @class VASTClient
  */
-
 var VASTClient = /*#__PURE__*/function () {
   /**
    * Creates an instance of VASTClient.
@@ -15650,7 +15180,6 @@ var VASTClient = /*#__PURE__*/function () {
    */
   function VASTClient(cappingFreeLunch, cappingMinimumTimeInterval, customStorage) {
     vast_client_classCallCheck(this, VASTClient);
-
     this.cappingFreeLunch = cappingFreeLunch || 0;
     this.cappingMinimumTimeInterval = cappingMinimumTimeInterval || 0;
     this.defaultOptions = {
@@ -15658,21 +15187,19 @@ var VASTClient = /*#__PURE__*/function () {
       timeout: 0
     };
     this.vastParser = new VASTParser();
-    this.storage = customStorage || new Storage(); // Init values if not already set
+    this.storage = customStorage || new Storage();
 
+    // Init values if not already set
     if (this.lastSuccessfulAd === undefined) {
       this.lastSuccessfulAd = 0;
     }
-
     if (this.totalCalls === undefined) {
       this.totalCalls = 0;
     }
-
     if (this.totalCallsTimeout === undefined) {
       this.totalCallsTimeout = 0;
     }
   }
-
   vast_client_createClass(VASTClient, [{
     key: "getParser",
     value: function getParser() {
@@ -15702,27 +15229,28 @@ var VASTClient = /*#__PURE__*/function () {
     set: function set(value) {
       this.storage.setItem('vast-client-total-calls-timeout', value);
     }
+
     /**
      * Returns a boolean indicating if there are more ads to resolve for the current parsing.
      * @return {Boolean}
      */
-
   }, {
     key: "hasRemainingAds",
     value: function hasRemainingAds() {
       return this.vastParser.remainingAds.length > 0;
     }
+
     /**
      * Resolves the next group of ads. If all is true resolves all the remaining ads.
      * @param  {Boolean} all - If true all the remaining ads are resolved
      * @return {Promise}
      */
-
   }, {
     key: "getNextAds",
     value: function getNextAds(all) {
       return this.vastParser.getRemainingAds(all);
     }
+
     /**
      * Gets a parsed VAST document for the given url, applying the skipping rules defined.
      * Returns a Promise which resolves with a fully parsed VASTResponse or rejects with an Error.
@@ -15730,44 +15258,41 @@ var VASTClient = /*#__PURE__*/function () {
      * @param  {Object} options - An optional Object of parameters to be applied in the process.
      * @return {Promise}
      */
-
   }, {
     key: "get",
     value: function get(url) {
       var _this = this;
-
       var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
       var now = Date.now();
-      options = Object.assign({}, this.defaultOptions, options); // By default the client resolves only the first Ad or AdPod
+      options = Object.assign({}, this.defaultOptions, options);
 
+      // By default the client resolves only the first Ad or AdPod
       if (!options.hasOwnProperty('resolveAll')) {
         options.resolveAll = false;
-      } // Check totalCallsTimeout (first call + 1 hour), if older than now,
+      }
+
+      // Check totalCallsTimeout (first call + 1 hour), if older than now,
       // reset totalCalls number, by this way the client will be eligible again
       // for freelunch capping
-
-
       if (this.totalCallsTimeout < now) {
         this.totalCalls = 1;
         this.totalCallsTimeout = now + 60 * 60 * 1000;
       } else {
         this.totalCalls++;
       }
-
       return new Promise(function (resolve, reject) {
         if (_this.cappingFreeLunch >= _this.totalCalls) {
           return reject(new Error("VAST call canceled \u2013 FreeLunch capping not reached yet ".concat(_this.totalCalls, "/").concat(_this.cappingFreeLunch)));
         }
+        var timeSinceLastCall = now - _this.lastSuccessfulAd;
 
-        var timeSinceLastCall = now - _this.lastSuccessfulAd; // Check timeSinceLastCall to be a positive number. If not, this mean the
+        // Check timeSinceLastCall to be a positive number. If not, this mean the
         // previous was made in the future. We reset lastSuccessfulAd value
-
         if (timeSinceLastCall < 0) {
           _this.lastSuccessfulAd = 0;
         } else if (timeSinceLastCall < _this.cappingMinimumTimeInterval) {
           return reject(new Error("VAST call canceled \u2013 (".concat(_this.cappingMinimumTimeInterval, ")ms minimum interval reached")));
         }
-
         _this.vastParser.getAndParseVAST(url, options).then(function (response) {
           return resolve(response);
         }).catch(function (err) {
@@ -15776,7 +15301,6 @@ var VASTClient = /*#__PURE__*/function () {
       });
     }
   }]);
-
   return VASTClient;
 }();
 // EXTERNAL MODULE: ./node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js
@@ -15829,10 +15353,8 @@ var update = injectStylesIntoStyleTag_default()(rmp_vast/* default */.Z, options
        /* harmony default export */ var less_rmp_vast = (rmp_vast/* default */.Z && rmp_vast/* default.locals */.Z.locals ? rmp_vast/* default.locals */.Z.locals : undefined);
 
 ;// CONCATENATED MODULE: ./src/js/index.js
-function _regeneratorRuntime() { "use strict"; /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/facebook/regenerator/blob/main/LICENSE */ _regeneratorRuntime = function _regeneratorRuntime() { return exports; }; var exports = {}, Op = Object.prototype, hasOwn = Op.hasOwnProperty, $Symbol = "function" == typeof Symbol ? Symbol : {}, iteratorSymbol = $Symbol.iterator || "@@iterator", asyncIteratorSymbol = $Symbol.asyncIterator || "@@asyncIterator", toStringTagSymbol = $Symbol.toStringTag || "@@toStringTag"; function define(obj, key, value) { return Object.defineProperty(obj, key, { value: value, enumerable: !0, configurable: !0, writable: !0 }), obj[key]; } try { define({}, ""); } catch (err) { define = function define(obj, key, value) { return obj[key] = value; }; } function wrap(innerFn, outerFn, self, tryLocsList) { var protoGenerator = outerFn && outerFn.prototype instanceof Generator ? outerFn : Generator, generator = Object.create(protoGenerator.prototype), context = new Context(tryLocsList || []); return generator._invoke = function (innerFn, self, context) { var state = "suspendedStart"; return function (method, arg) { if ("executing" === state) throw new Error("Generator is already running"); if ("completed" === state) { if ("throw" === method) throw arg; return doneResult(); } for (context.method = method, context.arg = arg;;) { var delegate = context.delegate; if (delegate) { var delegateResult = maybeInvokeDelegate(delegate, context); if (delegateResult) { if (delegateResult === ContinueSentinel) continue; return delegateResult; } } if ("next" === context.method) context.sent = context._sent = context.arg;else if ("throw" === context.method) { if ("suspendedStart" === state) throw state = "completed", context.arg; context.dispatchException(context.arg); } else "return" === context.method && context.abrupt("return", context.arg); state = "executing"; var record = tryCatch(innerFn, self, context); if ("normal" === record.type) { if (state = context.done ? "completed" : "suspendedYield", record.arg === ContinueSentinel) continue; return { value: record.arg, done: context.done }; } "throw" === record.type && (state = "completed", context.method = "throw", context.arg = record.arg); } }; }(innerFn, self, context), generator; } function tryCatch(fn, obj, arg) { try { return { type: "normal", arg: fn.call(obj, arg) }; } catch (err) { return { type: "throw", arg: err }; } } exports.wrap = wrap; var ContinueSentinel = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} var IteratorPrototype = {}; define(IteratorPrototype, iteratorSymbol, function () { return this; }); var getProto = Object.getPrototypeOf, NativeIteratorPrototype = getProto && getProto(getProto(values([]))); NativeIteratorPrototype && NativeIteratorPrototype !== Op && hasOwn.call(NativeIteratorPrototype, iteratorSymbol) && (IteratorPrototype = NativeIteratorPrototype); var Gp = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(IteratorPrototype); function defineIteratorMethods(prototype) { ["next", "throw", "return"].forEach(function (method) { define(prototype, method, function (arg) { return this._invoke(method, arg); }); }); } function AsyncIterator(generator, PromiseImpl) { function invoke(method, arg, resolve, reject) { var record = tryCatch(generator[method], generator, arg); if ("throw" !== record.type) { var result = record.arg, value = result.value; return value && "object" == typeof value && hasOwn.call(value, "__await") ? PromiseImpl.resolve(value.__await).then(function (value) { invoke("next", value, resolve, reject); }, function (err) { invoke("throw", err, resolve, reject); }) : PromiseImpl.resolve(value).then(function (unwrapped) { result.value = unwrapped, resolve(result); }, function (error) { return invoke("throw", error, resolve, reject); }); } reject(record.arg); } var previousPromise; this._invoke = function (method, arg) { function callInvokeWithMethodAndArg() { return new PromiseImpl(function (resolve, reject) { invoke(method, arg, resolve, reject); }); } return previousPromise = previousPromise ? previousPromise.then(callInvokeWithMethodAndArg, callInvokeWithMethodAndArg) : callInvokeWithMethodAndArg(); }; } function maybeInvokeDelegate(delegate, context) { var method = delegate.iterator[context.method]; if (undefined === method) { if (context.delegate = null, "throw" === context.method) { if (delegate.iterator.return && (context.method = "return", context.arg = undefined, maybeInvokeDelegate(delegate, context), "throw" === context.method)) return ContinueSentinel; context.method = "throw", context.arg = new TypeError("The iterator does not provide a 'throw' method"); } return ContinueSentinel; } var record = tryCatch(method, delegate.iterator, context.arg); if ("throw" === record.type) return context.method = "throw", context.arg = record.arg, context.delegate = null, ContinueSentinel; var info = record.arg; return info ? info.done ? (context[delegate.resultName] = info.value, context.next = delegate.nextLoc, "return" !== context.method && (context.method = "next", context.arg = undefined), context.delegate = null, ContinueSentinel) : info : (context.method = "throw", context.arg = new TypeError("iterator result is not an object"), context.delegate = null, ContinueSentinel); } function pushTryEntry(locs) { var entry = { tryLoc: locs[0] }; 1 in locs && (entry.catchLoc = locs[1]), 2 in locs && (entry.finallyLoc = locs[2], entry.afterLoc = locs[3]), this.tryEntries.push(entry); } function resetTryEntry(entry) { var record = entry.completion || {}; record.type = "normal", delete record.arg, entry.completion = record; } function Context(tryLocsList) { this.tryEntries = [{ tryLoc: "root" }], tryLocsList.forEach(pushTryEntry, this), this.reset(!0); } function values(iterable) { if (iterable) { var iteratorMethod = iterable[iteratorSymbol]; if (iteratorMethod) return iteratorMethod.call(iterable); if ("function" == typeof iterable.next) return iterable; if (!isNaN(iterable.length)) { var i = -1, next = function next() { for (; ++i < iterable.length;) { if (hasOwn.call(iterable, i)) return next.value = iterable[i], next.done = !1, next; } return next.value = undefined, next.done = !0, next; }; return next.next = next; } } return { next: doneResult }; } function doneResult() { return { value: undefined, done: !0 }; } return GeneratorFunction.prototype = GeneratorFunctionPrototype, define(Gp, "constructor", GeneratorFunctionPrototype), define(GeneratorFunctionPrototype, "constructor", GeneratorFunction), GeneratorFunction.displayName = define(GeneratorFunctionPrototype, toStringTagSymbol, "GeneratorFunction"), exports.isGeneratorFunction = function (genFun) { var ctor = "function" == typeof genFun && genFun.constructor; return !!ctor && (ctor === GeneratorFunction || "GeneratorFunction" === (ctor.displayName || ctor.name)); }, exports.mark = function (genFun) { return Object.setPrototypeOf ? Object.setPrototypeOf(genFun, GeneratorFunctionPrototype) : (genFun.__proto__ = GeneratorFunctionPrototype, define(genFun, toStringTagSymbol, "GeneratorFunction")), genFun.prototype = Object.create(Gp), genFun; }, exports.awrap = function (arg) { return { __await: arg }; }, defineIteratorMethods(AsyncIterator.prototype), define(AsyncIterator.prototype, asyncIteratorSymbol, function () { return this; }), exports.AsyncIterator = AsyncIterator, exports.async = function (innerFn, outerFn, self, tryLocsList, PromiseImpl) { void 0 === PromiseImpl && (PromiseImpl = Promise); var iter = new AsyncIterator(wrap(innerFn, outerFn, self, tryLocsList), PromiseImpl); return exports.isGeneratorFunction(outerFn) ? iter : iter.next().then(function (result) { return result.done ? result.value : iter.next(); }); }, defineIteratorMethods(Gp), define(Gp, toStringTagSymbol, "Generator"), define(Gp, iteratorSymbol, function () { return this; }), define(Gp, "toString", function () { return "[object Generator]"; }), exports.keys = function (object) { var keys = []; for (var key in object) { keys.push(key); } return keys.reverse(), function next() { for (; keys.length;) { var key = keys.pop(); if (key in object) return next.value = key, next.done = !1, next; } return next.done = !0, next; }; }, exports.values = values, Context.prototype = { constructor: Context, reset: function reset(skipTempReset) { if (this.prev = 0, this.next = 0, this.sent = this._sent = undefined, this.done = !1, this.delegate = null, this.method = "next", this.arg = undefined, this.tryEntries.forEach(resetTryEntry), !skipTempReset) for (var name in this) { "t" === name.charAt(0) && hasOwn.call(this, name) && !isNaN(+name.slice(1)) && (this[name] = undefined); } }, stop: function stop() { this.done = !0; var rootRecord = this.tryEntries[0].completion; if ("throw" === rootRecord.type) throw rootRecord.arg; return this.rval; }, dispatchException: function dispatchException(exception) { if (this.done) throw exception; var context = this; function handle(loc, caught) { return record.type = "throw", record.arg = exception, context.next = loc, caught && (context.method = "next", context.arg = undefined), !!caught; } for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i], record = entry.completion; if ("root" === entry.tryLoc) return handle("end"); if (entry.tryLoc <= this.prev) { var hasCatch = hasOwn.call(entry, "catchLoc"), hasFinally = hasOwn.call(entry, "finallyLoc"); if (hasCatch && hasFinally) { if (this.prev < entry.catchLoc) return handle(entry.catchLoc, !0); if (this.prev < entry.finallyLoc) return handle(entry.finallyLoc); } else if (hasCatch) { if (this.prev < entry.catchLoc) return handle(entry.catchLoc, !0); } else { if (!hasFinally) throw new Error("try statement without catch or finally"); if (this.prev < entry.finallyLoc) return handle(entry.finallyLoc); } } } }, abrupt: function abrupt(type, arg) { for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i]; if (entry.tryLoc <= this.prev && hasOwn.call(entry, "finallyLoc") && this.prev < entry.finallyLoc) { var finallyEntry = entry; break; } } finallyEntry && ("break" === type || "continue" === type) && finallyEntry.tryLoc <= arg && arg <= finallyEntry.finallyLoc && (finallyEntry = null); var record = finallyEntry ? finallyEntry.completion : {}; return record.type = type, record.arg = arg, finallyEntry ? (this.method = "next", this.next = finallyEntry.finallyLoc, ContinueSentinel) : this.complete(record); }, complete: function complete(record, afterLoc) { if ("throw" === record.type) throw record.arg; return "break" === record.type || "continue" === record.type ? this.next = record.arg : "return" === record.type ? (this.rval = this.arg = record.arg, this.method = "return", this.next = "end") : "normal" === record.type && afterLoc && (this.next = afterLoc), ContinueSentinel; }, finish: function finish(finallyLoc) { for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i]; if (entry.finallyLoc === finallyLoc) return this.complete(entry.completion, entry.afterLoc), resetTryEntry(entry), ContinueSentinel; } }, catch: function _catch(tryLoc) { for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i]; if (entry.tryLoc === tryLoc) { var record = entry.completion; if ("throw" === record.type) { var thrown = record.arg; resetTryEntry(entry); } return thrown; } } throw new Error("illegal catch attempt"); }, delegateYield: function delegateYield(iterable, resultName, nextLoc) { return this.delegate = { iterator: values(iterable), resultName: resultName, nextLoc: nextLoc }, "next" === this.method && (this.arg = undefined), ContinueSentinel; } }, exports; }
-
+function _regeneratorRuntime() { "use strict"; /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/facebook/regenerator/blob/main/LICENSE */ _regeneratorRuntime = function _regeneratorRuntime() { return exports; }; var exports = {}, Op = Object.prototype, hasOwn = Op.hasOwnProperty, defineProperty = Object.defineProperty || function (obj, key, desc) { obj[key] = desc.value; }, $Symbol = "function" == typeof Symbol ? Symbol : {}, iteratorSymbol = $Symbol.iterator || "@@iterator", asyncIteratorSymbol = $Symbol.asyncIterator || "@@asyncIterator", toStringTagSymbol = $Symbol.toStringTag || "@@toStringTag"; function define(obj, key, value) { return Object.defineProperty(obj, key, { value: value, enumerable: !0, configurable: !0, writable: !0 }), obj[key]; } try { define({}, ""); } catch (err) { define = function define(obj, key, value) { return obj[key] = value; }; } function wrap(innerFn, outerFn, self, tryLocsList) { var protoGenerator = outerFn && outerFn.prototype instanceof Generator ? outerFn : Generator, generator = Object.create(protoGenerator.prototype), context = new Context(tryLocsList || []); return defineProperty(generator, "_invoke", { value: makeInvokeMethod(innerFn, self, context) }), generator; } function tryCatch(fn, obj, arg) { try { return { type: "normal", arg: fn.call(obj, arg) }; } catch (err) { return { type: "throw", arg: err }; } } exports.wrap = wrap; var ContinueSentinel = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} var IteratorPrototype = {}; define(IteratorPrototype, iteratorSymbol, function () { return this; }); var getProto = Object.getPrototypeOf, NativeIteratorPrototype = getProto && getProto(getProto(values([]))); NativeIteratorPrototype && NativeIteratorPrototype !== Op && hasOwn.call(NativeIteratorPrototype, iteratorSymbol) && (IteratorPrototype = NativeIteratorPrototype); var Gp = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(IteratorPrototype); function defineIteratorMethods(prototype) { ["next", "throw", "return"].forEach(function (method) { define(prototype, method, function (arg) { return this._invoke(method, arg); }); }); } function AsyncIterator(generator, PromiseImpl) { function invoke(method, arg, resolve, reject) { var record = tryCatch(generator[method], generator, arg); if ("throw" !== record.type) { var result = record.arg, value = result.value; return value && "object" == typeof value && hasOwn.call(value, "__await") ? PromiseImpl.resolve(value.__await).then(function (value) { invoke("next", value, resolve, reject); }, function (err) { invoke("throw", err, resolve, reject); }) : PromiseImpl.resolve(value).then(function (unwrapped) { result.value = unwrapped, resolve(result); }, function (error) { return invoke("throw", error, resolve, reject); }); } reject(record.arg); } var previousPromise; defineProperty(this, "_invoke", { value: function value(method, arg) { function callInvokeWithMethodAndArg() { return new PromiseImpl(function (resolve, reject) { invoke(method, arg, resolve, reject); }); } return previousPromise = previousPromise ? previousPromise.then(callInvokeWithMethodAndArg, callInvokeWithMethodAndArg) : callInvokeWithMethodAndArg(); } }); } function makeInvokeMethod(innerFn, self, context) { var state = "suspendedStart"; return function (method, arg) { if ("executing" === state) throw new Error("Generator is already running"); if ("completed" === state) { if ("throw" === method) throw arg; return doneResult(); } for (context.method = method, context.arg = arg;;) { var delegate = context.delegate; if (delegate) { var delegateResult = maybeInvokeDelegate(delegate, context); if (delegateResult) { if (delegateResult === ContinueSentinel) continue; return delegateResult; } } if ("next" === context.method) context.sent = context._sent = context.arg;else if ("throw" === context.method) { if ("suspendedStart" === state) throw state = "completed", context.arg; context.dispatchException(context.arg); } else "return" === context.method && context.abrupt("return", context.arg); state = "executing"; var record = tryCatch(innerFn, self, context); if ("normal" === record.type) { if (state = context.done ? "completed" : "suspendedYield", record.arg === ContinueSentinel) continue; return { value: record.arg, done: context.done }; } "throw" === record.type && (state = "completed", context.method = "throw", context.arg = record.arg); } }; } function maybeInvokeDelegate(delegate, context) { var method = delegate.iterator[context.method]; if (undefined === method) { if (context.delegate = null, "throw" === context.method) { if (delegate.iterator.return && (context.method = "return", context.arg = undefined, maybeInvokeDelegate(delegate, context), "throw" === context.method)) return ContinueSentinel; context.method = "throw", context.arg = new TypeError("The iterator does not provide a 'throw' method"); } return ContinueSentinel; } var record = tryCatch(method, delegate.iterator, context.arg); if ("throw" === record.type) return context.method = "throw", context.arg = record.arg, context.delegate = null, ContinueSentinel; var info = record.arg; return info ? info.done ? (context[delegate.resultName] = info.value, context.next = delegate.nextLoc, "return" !== context.method && (context.method = "next", context.arg = undefined), context.delegate = null, ContinueSentinel) : info : (context.method = "throw", context.arg = new TypeError("iterator result is not an object"), context.delegate = null, ContinueSentinel); } function pushTryEntry(locs) { var entry = { tryLoc: locs[0] }; 1 in locs && (entry.catchLoc = locs[1]), 2 in locs && (entry.finallyLoc = locs[2], entry.afterLoc = locs[3]), this.tryEntries.push(entry); } function resetTryEntry(entry) { var record = entry.completion || {}; record.type = "normal", delete record.arg, entry.completion = record; } function Context(tryLocsList) { this.tryEntries = [{ tryLoc: "root" }], tryLocsList.forEach(pushTryEntry, this), this.reset(!0); } function values(iterable) { if (iterable) { var iteratorMethod = iterable[iteratorSymbol]; if (iteratorMethod) return iteratorMethod.call(iterable); if ("function" == typeof iterable.next) return iterable; if (!isNaN(iterable.length)) { var i = -1, next = function next() { for (; ++i < iterable.length;) { if (hasOwn.call(iterable, i)) return next.value = iterable[i], next.done = !1, next; } return next.value = undefined, next.done = !0, next; }; return next.next = next; } } return { next: doneResult }; } function doneResult() { return { value: undefined, done: !0 }; } return GeneratorFunction.prototype = GeneratorFunctionPrototype, defineProperty(Gp, "constructor", { value: GeneratorFunctionPrototype, configurable: !0 }), defineProperty(GeneratorFunctionPrototype, "constructor", { value: GeneratorFunction, configurable: !0 }), GeneratorFunction.displayName = define(GeneratorFunctionPrototype, toStringTagSymbol, "GeneratorFunction"), exports.isGeneratorFunction = function (genFun) { var ctor = "function" == typeof genFun && genFun.constructor; return !!ctor && (ctor === GeneratorFunction || "GeneratorFunction" === (ctor.displayName || ctor.name)); }, exports.mark = function (genFun) { return Object.setPrototypeOf ? Object.setPrototypeOf(genFun, GeneratorFunctionPrototype) : (genFun.__proto__ = GeneratorFunctionPrototype, define(genFun, toStringTagSymbol, "GeneratorFunction")), genFun.prototype = Object.create(Gp), genFun; }, exports.awrap = function (arg) { return { __await: arg }; }, defineIteratorMethods(AsyncIterator.prototype), define(AsyncIterator.prototype, asyncIteratorSymbol, function () { return this; }), exports.AsyncIterator = AsyncIterator, exports.async = function (innerFn, outerFn, self, tryLocsList, PromiseImpl) { void 0 === PromiseImpl && (PromiseImpl = Promise); var iter = new AsyncIterator(wrap(innerFn, outerFn, self, tryLocsList), PromiseImpl); return exports.isGeneratorFunction(outerFn) ? iter : iter.next().then(function (result) { return result.done ? result.value : iter.next(); }); }, defineIteratorMethods(Gp), define(Gp, toStringTagSymbol, "Generator"), define(Gp, iteratorSymbol, function () { return this; }), define(Gp, "toString", function () { return "[object Generator]"; }), exports.keys = function (val) { var object = Object(val), keys = []; for (var key in object) { keys.push(key); } return keys.reverse(), function next() { for (; keys.length;) { var key = keys.pop(); if (key in object) return next.value = key, next.done = !1, next; } return next.done = !0, next; }; }, exports.values = values, Context.prototype = { constructor: Context, reset: function reset(skipTempReset) { if (this.prev = 0, this.next = 0, this.sent = this._sent = undefined, this.done = !1, this.delegate = null, this.method = "next", this.arg = undefined, this.tryEntries.forEach(resetTryEntry), !skipTempReset) for (var name in this) { "t" === name.charAt(0) && hasOwn.call(this, name) && !isNaN(+name.slice(1)) && (this[name] = undefined); } }, stop: function stop() { this.done = !0; var rootRecord = this.tryEntries[0].completion; if ("throw" === rootRecord.type) throw rootRecord.arg; return this.rval; }, dispatchException: function dispatchException(exception) { if (this.done) throw exception; var context = this; function handle(loc, caught) { return record.type = "throw", record.arg = exception, context.next = loc, caught && (context.method = "next", context.arg = undefined), !!caught; } for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i], record = entry.completion; if ("root" === entry.tryLoc) return handle("end"); if (entry.tryLoc <= this.prev) { var hasCatch = hasOwn.call(entry, "catchLoc"), hasFinally = hasOwn.call(entry, "finallyLoc"); if (hasCatch && hasFinally) { if (this.prev < entry.catchLoc) return handle(entry.catchLoc, !0); if (this.prev < entry.finallyLoc) return handle(entry.finallyLoc); } else if (hasCatch) { if (this.prev < entry.catchLoc) return handle(entry.catchLoc, !0); } else { if (!hasFinally) throw new Error("try statement without catch or finally"); if (this.prev < entry.finallyLoc) return handle(entry.finallyLoc); } } } }, abrupt: function abrupt(type, arg) { for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i]; if (entry.tryLoc <= this.prev && hasOwn.call(entry, "finallyLoc") && this.prev < entry.finallyLoc) { var finallyEntry = entry; break; } } finallyEntry && ("break" === type || "continue" === type) && finallyEntry.tryLoc <= arg && arg <= finallyEntry.finallyLoc && (finallyEntry = null); var record = finallyEntry ? finallyEntry.completion : {}; return record.type = type, record.arg = arg, finallyEntry ? (this.method = "next", this.next = finallyEntry.finallyLoc, ContinueSentinel) : this.complete(record); }, complete: function complete(record, afterLoc) { if ("throw" === record.type) throw record.arg; return "break" === record.type || "continue" === record.type ? this.next = record.arg : "return" === record.type ? (this.rval = this.arg = record.arg, this.method = "return", this.next = "end") : "normal" === record.type && afterLoc && (this.next = afterLoc), ContinueSentinel; }, finish: function finish(finallyLoc) { for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i]; if (entry.finallyLoc === finallyLoc) return this.complete(entry.completion, entry.afterLoc), resetTryEntry(entry), ContinueSentinel; } }, catch: function _catch(tryLoc) { for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i]; if (entry.tryLoc === tryLoc) { var record = entry.completion; if ("throw" === record.type) { var thrown = record.arg; resetTryEntry(entry); } return thrown; } } throw new Error("illegal catch attempt"); }, delegateYield: function delegateYield(iterable, resultName, nextLoc) { return this.delegate = { iterator: values(iterable), resultName: resultName, nextLoc: nextLoc }, "next" === this.method && (this.arg = undefined), ContinueSentinel; } }, exports; }
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
-
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
 
 
@@ -15857,12 +15379,10 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
 
 
+
 function js_classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
 function js_defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
 function js_createClass(Constructor, protoProps, staticProps) { if (protoProps) js_defineProperties(Constructor.prototype, protoProps); if (staticProps) js_defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
-
 /**
  * @license Copyright (c) 2015-2022 Radiant Media Player | https://www.radiantmediaplayer.com
  * rmp-vast
@@ -15881,12 +15401,13 @@ function js_createClass(Constructor, protoProps, staticProps) { if (protoProps) 
 
 
 
+
+
 /**
  * The class to instantiate RmpVast
  * @export
  * @class RmpVast
 */
-
 var RmpVast = /*#__PURE__*/function () {
   /**
    * @constructor
@@ -15932,43 +15453,37 @@ var RmpVast = /*#__PURE__*/function () {
    */
   function RmpVast(id, params) {
     js_classCallCheck(this, RmpVast);
-
     // reset instance variables - once per session
     Utils.initInstanceVariables.call(this);
-
     if (typeof id !== 'string' || id === '') {
       console.error("Invalid id to create new instance - exit");
       return;
     }
-
     this.id = id;
     this.container = document.getElementById(this.id);
-
     if (this.container === null) {
       console.error("Invalid DOM layout - exit");
       return;
     }
-
     this.contentWrapper = this.container.querySelector('.rmp-content');
     this.contentPlayer = this.container.querySelector('.rmp-video');
-
     if (this.contentWrapper === null || this.contentPlayer === null) {
       console.error("Invalid DOM layout - exit");
       return;
     }
-
     console.log("".concat(FW.consolePrepend, " Creating new RmpVast instance"), FW.consoleStyle, '');
-    FW.logVideoEvents(this.contentPlayer, 'content'); // reset loadAds variables - this is reset at addestroyed 
+    FW.logVideoEvents(this.contentPlayer, 'content');
+    // reset loadAds variables - this is reset at addestroyed 
     // so that next loadAds is cleared
-
-    Utils.resetVariablesForNewLoadAds.call(this); // handle fullscreen events
-
-    Utils.handleFullscreen.call(this); // filter input params
-
+    Utils.resetVariablesForNewLoadAds.call(this);
+    // handle fullscreen events
+    Utils.handleFullscreen.call(this);
+    // filter input params
     Utils.filterParams.call(this, params);
     console.log("".concat(FW.consolePrepend, " Filtered params follow"), FW.consoleStyle, '');
     console.log(this.params);
   }
+
   /** 
    * @typedef {object} Environment
    * @property {number} devicePixelRatio
@@ -15982,22 +15497,19 @@ var RmpVast = /*#__PURE__*/function () {
    * @property {boolean} hasNativeFullscreenSupport
    * @return {Environment}
    */
-
-
   js_createClass(RmpVast, [{
     key: "getEnvironment",
     value: function getEnvironment() {
       return ENV;
     }
+
     /** 
      * @private
      */
-
   }, {
     key: "_addTrackingEvents",
     value: function _addTrackingEvents(trackingEvents) {
       var _this = this;
-
       var keys = Object.keys(trackingEvents);
       keys.forEach(function (key) {
         trackingEvents[key].forEach(function (url) {
@@ -16008,25 +15520,22 @@ var RmpVast = /*#__PURE__*/function () {
         });
       });
     }
+
     /** 
      * @private
      */
-
   }, {
     key: "_parseCompanion",
     value: function _parseCompanion(creative) {
       var _this2 = this;
-
       // reset variables in case wrapper
       this.validCompanionAds = [];
       this.companionAdsRequiredAttribute = '';
-
       if (creative.required) {
         this.companionAdsRequiredAttribute = creative.required;
       }
-
-      var companions = creative.variations; // at least 1 Companion is expected to continue
-
+      var companions = creative.variations;
+      // at least 1 Companion is expected to continue
       if (companions.length > 0) {
         var _loop = function _loop(i) {
           var companion = companions[i];
@@ -16049,90 +15558,72 @@ var RmpVast = /*#__PURE__*/function () {
               return true;
             }
           });
-
           if (staticResourceFound && staticResourceFound.url) {
             newCompanionAds.imageUrl = staticResourceFound.url;
           }
-
           if (iframeResourceFound && iframeResourceFound.length > 0) {
             newCompanionAds.iframeUrl = iframeResourceFound[0];
           }
-
           if (htmlResourceFound && htmlResourceFound.length > 0) {
             newCompanionAds.htmlContent = htmlResourceFound[0];
-          } // if no companion content for this <Companion> then move on to the next
-
-
+          }
+          // if no companion content for this <Companion> then move on to the next
           if (typeof staticResourceFound === 'undefined' && typeof iframeResourceFound === 'undefined' && typeof htmlResourceFound === 'undefined') {
             return "continue";
           }
-
           if (companion.companionClickThroughURLTemplate) {
             newCompanionAds.companionClickThroughUrl = companion.companionClickThroughURLTemplate;
           }
-
           if (companion.companionClickTrackingURLTemplates.length > 0) {
             newCompanionAds.companionClickTrackingUrls = companion.companionClickTrackingURLTemplates;
           }
-
           if (companion.altText) {
             newCompanionAds.altText = companion.altText;
           }
-
           if (companion.adSlotID) {
             newCompanionAds.adSlotID = companion.adSlotID;
           }
-
           newCompanionAds.trackingEventsUrls = [];
-
           if (companion.trackingEvents && companion.trackingEvents.creativeView) {
             companion.trackingEvents.creativeView.forEach(function (creativeView) {
               newCompanionAds.trackingEventsUrls.push(creativeView);
             });
           }
-
           _this2.validCompanionAds.push(newCompanionAds);
         };
-
         for (var i = 0; i < companions.length; i++) {
           var _ret = _loop(i);
-
           if (_ret === "continue") continue;
         }
       }
-
       console.log("".concat(FW.consolePrepend, " Parse companion ads follow"), FW.consoleStyle, '');
       console.log(this.validCompanionAds);
     }
+
     /** 
      * @private
      */
-
   }, {
     key: "_handleIntersect",
     value: function _handleIntersect(entries) {
       var _this3 = this;
-
       entries.forEach(function (entry) {
         if (entry.intersectionRatio > _this3.viewablePreviousRatio) {
           _this3.viewableObserver.unobserve(_this3.container);
-
           Utils.createApiEvent.call(_this3, 'adviewable');
           tracking_events.dispatch.call(_this3, 'viewable');
         }
-
         _this3.viewablePreviousRatio = entry.intersectionRatio;
       });
     }
+
     /** 
      * @private
      */
-
   }, {
     key: "_attachViewableObserver",
     value: function _attachViewableObserver() {
       this.container.removeEventListener('adstarted', this.attachViewableObserver);
-
       if (typeof window.IntersectionObserver !== 'undefined') {
         var options = {
           root: null,
@@ -16146,19 +15637,17 @@ var RmpVast = /*#__PURE__*/function () {
         tracking_events.dispatch.call(this, 'viewundetermined');
       }
     }
+
     /** 
      * @private
      */
-
   }, {
     key: "_initViewableImpression",
     value: function _initViewableImpression() {
       var _this4 = this;
-
       if (this.viewableObserver) {
         this.viewableObserver.unobserve(this.container);
       }
-
       this.ad.viewableImpression.forEach(function (viewableImpression) {
         if (viewableImpression.viewable.length > 0) {
           viewableImpression.viewable.forEach(function (url) {
@@ -16168,7 +15657,6 @@ var RmpVast = /*#__PURE__*/function () {
             });
           });
         }
-
         if (viewableImpression.notviewable.length > 0) {
           viewableImpression.notviewable.forEach(function (url) {
             _this4.trackingTags.push({
@@ -16177,7 +15665,6 @@ var RmpVast = /*#__PURE__*/function () {
             });
           });
         }
-
         if (viewableImpression.viewundetermined.length > 0) {
           viewableImpression.viewundetermined.forEach(function (url) {
             _this4.trackingTags.push({
@@ -16190,18 +15677,16 @@ var RmpVast = /*#__PURE__*/function () {
       this.attachViewableObserver = this._attachViewableObserver.bind(this);
       this.container.addEventListener('adstarted', this.attachViewableObserver);
     }
+
     /** 
      * @private
      */
-
   }, {
     key: "_loopAds",
     value: function () {
       var _loopAds2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee(ads) {
         var _this5 = this;
-
         var _loop2, i;
-
         return _regeneratorRuntime().wrap(function _callee$(_context2) {
           while (1) {
             switch (_context2.prev = _context2.next) {
@@ -16219,39 +15704,31 @@ var RmpVast = /*#__PURE__*/function () {
                             _this5.ad.id = currentAd.id;
                             _this5.ad.adServingId = currentAd.adServingId;
                             _this5.ad.categories = currentAd.categories;
-
                             if (_this5.requireCategory) {
                               if (_this5.ad.categories.length === 0 || !_this5.ad.categories[0].authority) {
                                 Utils.processVastErrors.call(_this5, 204, true);
                                 resolve();
                               }
                             }
-
                             _this5.ad.blockedAdCategories = currentAd.blockedAdCategories;
-
                             if (_this5.requireCategory) {
                               var haltDueToBlockedAdCategories = false;
-
                               _this5.ad.blockedAdCategories.forEach(function (blockedAdCategory) {
                                 var blockedAdCategoryAuthority = blockedAdCategory.authority;
                                 var blockedAdCategoryValue = blockedAdCategory.value;
-
                                 _this5.ad.categories.forEach(function (category) {
                                   var categoriesAuthority = category.authority;
                                   var categoriesValue = category.value;
-
                                   if (blockedAdCategoryAuthority === categoriesAuthority && blockedAdCategoryValue === categoriesValue) {
                                     Utils.processVastErrors.call(_this5, 205, true);
                                     haltDueToBlockedAdCategories = true;
                                   }
                                 });
                               });
-
                               if (haltDueToBlockedAdCategories) {
                                 resolve();
                               }
                             }
-
                             _this5.ad.adType = currentAd.adType;
                             _this5.ad.title = currentAd.title;
                             _this5.ad.description = currentAd.description;
@@ -16262,16 +15739,13 @@ var RmpVast = /*#__PURE__*/function () {
                             _this5.ad.sequence = currentAd.sequence;
                             ads.find(function (ad) {
                               _this5.adPod = false;
-
                               if (ad.sequence && ad.sequence > 1) {
                                 _this5.adPod = true;
                                 return true;
                               }
                             });
-
                             if (_this5.adPod) {
                               _this5.adSequence++;
-
                               if (_this5.adPodLength === 0) {
                                 var adPodLength = 0;
                                 ads.forEach(function (ad) {
@@ -16283,13 +15757,10 @@ var RmpVast = /*#__PURE__*/function () {
                                 console.log("".concat(FW.consolePrepend, " AdPod detected with length ").concat(_this5.adPodLength), FW.consoleStyle, '');
                               }
                             }
-
                             _this5.ad.viewableImpression = currentAd.viewableImpression;
-
                             if (_this5.ad.viewableImpression.length > 0) {
                               _this5._initViewableImpression();
                             }
-
                             currentAd.errorURLTemplates.forEach(function (errorURLTemplate) {
                               _this5.adErrorTags.push({
                                 event: 'error',
@@ -16304,7 +15775,6 @@ var RmpVast = /*#__PURE__*/function () {
                                 });
                               }
                             });
-
                             _this5.container.addEventListener('addestroyed', function () {
                               if (_this5.adPod && _this5.adSequence === _this5.adPodLength) {
                                 _this5.adPodLength = 0;
@@ -16312,52 +15782,42 @@ var RmpVast = /*#__PURE__*/function () {
                                 _this5.adPod = false;
                                 Utils.createApiEvent.call(_this5, 'adpodcompleted');
                               }
-
                               resolve();
                             }, {
                               once: true
-                            }); // parse companion
-
-
+                            });
+                            // parse companion
                             var creatives = currentAd.creatives;
                             console.log("".concat(FW.consolePrepend, " Parsed creatives follow"), FW.consoleStyle, '');
                             console.log(creatives);
                             creatives.find(function (creative) {
                               if (creative.type === 'companion') {
                                 console.log("".concat(FW.consolePrepend, " Creative type companion detected"), FW.consoleStyle, '');
-
                                 _this5._parseCompanion(creative);
-
                                 return true;
                               }
                             });
-
                             for (var k = 0; k < creatives.length; k++) {
-                              var creative = creatives[k]; // companion >> continue
-
+                              var creative = creatives[k];
+                              // companion >> continue
                               if (creative.type === 'companion') {
                                 continue;
                               }
-
                               _this5.creative.id = creative.id;
                               _this5.creative.universalAdIds = creative.universalAdIds;
                               _this5.creative.adId = creative.adId;
                               _this5.creative.trackingEvents = creative.trackingEvents;
-
                               switch (creative.type) {
                                 case 'linear':
                                   _this5.creative.duration = creative.duration;
                                   _this5.creative.skipDelay = creative.skipDelay;
-
                                   if (_this5.creative.skipDelay) {
                                     _this5.creative.skipoffset = creative.skipDelay;
                                     _this5.creative.isSkippableAd = true;
                                   }
-
                                   if (creative.videoClickThroughURLTemplate && creative.videoClickThroughURLTemplate.url) {
                                     _this5.creative.clickThroughUrl = creative.videoClickThroughURLTemplate.url;
                                   }
-
                                   if (creative.videoClickTrackingURLTemplates.length > 0) {
                                     creative.videoClickTrackingURLTemplates.forEach(function (videoClickTrackingURLTemplate) {
                                       if (videoClickTrackingURLTemplate.url) {
@@ -16368,34 +15828,24 @@ var RmpVast = /*#__PURE__*/function () {
                                       }
                                     });
                                   }
-
                                   _this5.creative.isLinear = true;
-
                                   _this5._addTrackingEvents(creative.trackingEvents);
-
                                   linear.parse.call(_this5, creative.icons, creative.adParameters, creative.mediaFiles);
-
                                   if (_this5.params.omidSupport && currentAd.adVerifications.length > 0) {
                                     var omSdkManager = new omsdk(currentAd.adVerifications, _this5.contentPlayer, _this5.vastPlayer, _this5.params, _this5.getIsSkippableAd(), _this5.getSkipTimeOffset());
                                     omSdkManager.init();
                                   }
-
                                   break;
-
                                 case 'nonlinear':
                                   _this5.creative.isLinear = false;
-
                                   _this5._addTrackingEvents(creative.trackingEvents);
-
                                   non_linear.parse.call(_this5, creative.variations);
                                   break;
-
                                 default:
                                   break;
                               }
                             }
                           });
-
                         case 2:
                         case "end":
                           return _context.stop();
@@ -16404,20 +15854,16 @@ var RmpVast = /*#__PURE__*/function () {
                   }, _loop2);
                 });
                 i = 0;
-
               case 2:
                 if (!(i < ads.length)) {
                   _context2.next = 7;
                   break;
                 }
-
                 return _context2.delegateYield(_loop2(i), "t0", 4);
-
               case 4:
                 i++;
                 _context2.next = 2;
                 break;
-
               case 7:
               case "end":
                 return _context2.stop();
@@ -16425,34 +15871,28 @@ var RmpVast = /*#__PURE__*/function () {
           }
         }, _callee);
       }));
-
       function _loopAds(_x) {
         return _loopAds2.apply(this, arguments);
       }
-
       return _loopAds;
     }()
     /** 
      * @private
      */
-
   }, {
     key: "_getVastTag",
     value: function _getVastTag(vastUrl) {
       var _this6 = this;
-
       // we check for required VAST URL and API here
       // as we need to have this.currentContentSrc available for iOS
       if (typeof vastUrl !== 'string' || vastUrl === '') {
         Utils.processVastErrors.call(this, 1001, false);
         return;
       }
-
       if (typeof DOMParser === 'undefined') {
         Utils.processVastErrors.call(this, 1002, false);
         return;
       }
-
       Utils.createApiEvent.call(this, 'adtagstartloading');
       var vastClient = new VASTClient();
       var options = {
@@ -16466,8 +15906,8 @@ var RmpVast = /*#__PURE__*/function () {
       vastClient.get(this.adTagUrl, options).then(function (response) {
         console.log("".concat(FW.consolePrepend, " VAST response follows"), FW.consoleStyle, '');
         console.log(response);
-        Utils.createApiEvent.call(_this6, 'adtagloaded'); // error at VAST/Error level
-
+        Utils.createApiEvent.call(_this6, 'adtagloaded');
+        // error at VAST/Error level
         if (response.errorURLTemplates.length > 0) {
           response.errorURLTemplates.forEach(function (errorURLTemplate) {
             _this6.vastErrorTags.push({
@@ -16475,9 +15915,8 @@ var RmpVast = /*#__PURE__*/function () {
               url: errorURLTemplate
             });
           });
-        } // VAST/Ad 
-
-
+        }
+        // VAST/Ad 
         if (response.ads.length === 0) {
           Utils.processVastErrors.call(_this6, 303, true);
           return;
@@ -16485,11 +15924,12 @@ var RmpVast = /*#__PURE__*/function () {
           _this6._loopAds(response.ads);
         }
       }).catch(function (error) {
-        console.warn(error); // PING 900 Undefined Error.
-
+        console.warn(error);
+        // PING 900 Undefined Error.
         Utils.processVastErrors.call(_this6, 900, true);
       });
     }
+
     /** 
      * @param {string} vastUrl - the URI to the VAST resource to be loaded
      * @param {object} [regulationsInfo] - data for regulations as
@@ -16500,74 +15940,63 @@ var RmpVast = /*#__PURE__*/function () {
      * @param {boolean} [requireCategory] - for enforcement of VAST 4 Ad Categories
      * @return {void}
      */
-
   }, {
     key: "loadAds",
     value: function loadAds(vastUrl, regulationsInfo, requireCategory) {
-      console.log("".concat(FW.consolePrepend, " loadAds method starts"), FW.consoleStyle, ''); // if player is not initialized - this must be done now
+      console.log("".concat(FW.consolePrepend, " loadAds method starts"), FW.consoleStyle, '');
 
+      // if player is not initialized - this must be done now
       if (!this.rmpVastInitialized) {
         this.initialize();
       }
-
       if (typeof regulationsInfo === 'object') {
         var regulationRegExp = /coppa|gdpr/ig;
-
         if (regulationsInfo.regulations && regulationRegExp.test(regulationsInfo.regulations)) {
           this.regulationsInfo.regulations = regulationsInfo.regulations;
         }
-
         var limitAdTrackingRegExp = /0|1/ig;
-
         if (regulationsInfo.limitAdTracking && limitAdTrackingRegExp.test(regulationsInfo.limitAdTracking)) {
           this.regulationsInfo.limitAdTracking = regulationsInfo.limitAdTracking;
-        } // Base64-encoded Cookie Value of IAB GDPR consent info
-
-
+        }
+        // Base64-encoded Cookie Value of IAB GDPR consent info
         if (regulationsInfo.gdprConsent) {
           this.regulationsInfo.gdprConsent = regulationsInfo.gdprConsent;
         }
       }
-
       if (requireCategory) {
         this.requireCategory = true;
       }
-
-      var finalUrl = tracking_events.replaceMacros.call(this, vastUrl, false); // if an ad is already on stage we need to clear it first before we can accept another ad request
-
+      var finalUrl = tracking_events.replaceMacros.call(this, vastUrl, false);
+      // if an ad is already on stage we need to clear it first before we can accept another ad request
       if (this.getAdOnStage()) {
         console.log("".concat(FW.consolePrepend, " Creative already on stage calling stopAds before loading new ad"), FW.consoleStyle, '');
-
         var _onDestroyLoadAds = function _onDestroyLoadAds(url) {
           this.loadAds(url);
         };
-
         this.container.addEventListener('addestroyed', _onDestroyLoadAds.bind(this, finalUrl), {
           once: true
         });
         this.stopAds();
         return;
-      } // for useContentPlayerForAds we need to know early what is the content src
+      }
+      // for useContentPlayerForAds we need to know early what is the content src
       // so that we can resume content when ad finishes or on aderror
-
-
       var contentCurrentTime = content_player.getCurrentTime.call(this);
-
       if (this.useContentPlayerForAds) {
         this.currentContentSrc = this.contentPlayer.src;
         console.log("".concat(FW.consolePrepend, " currentContentSrc is ").concat(this.currentContentSrc), FW.consoleStyle, '');
         this.currentContentCurrentTime = contentCurrentTime;
-        console.log("".concat(FW.consolePrepend, " currentContentCurrentTime is ").concat(this.currentContentCurrentTime), FW.consoleStyle, ''); // on iOS we need to prevent seeking when linear ad is on stage
+        console.log("".concat(FW.consolePrepend, " currentContentCurrentTime is ").concat(this.currentContentCurrentTime), FW.consoleStyle, '');
 
+        // on iOS we need to prevent seeking when linear ad is on stage
         content_player.preventSeekingForCustomPlayback.call(this);
       }
-
       this._getVastTag(finalUrl);
     }
+
     /** 
      * @type {() => void} 
      */
-
   }, {
     key: "play",
     value: function play() {
@@ -16581,10 +16010,10 @@ var RmpVast = /*#__PURE__*/function () {
         content_player.play.call(this);
       }
     }
+
     /** 
      * @type {() => void} 
      */
-
   }, {
     key: "pause",
     value: function pause() {
@@ -16598,10 +16027,10 @@ var RmpVast = /*#__PURE__*/function () {
         content_player.pause.call(this);
       }
     }
+
     /** 
      * @type {() => boolean} 
      */
-
   }, {
     key: "getAdPaused",
     value: function getAdPaused() {
@@ -16612,22 +16041,19 @@ var RmpVast = /*#__PURE__*/function () {
           return this.vastPlayerPaused;
         }
       }
-
       return false;
     }
+
     /** 
      * @type {(level: number) => void} 
      */
-
   }, {
     key: "setVolume",
     value: function setVolume(level) {
       if (!FW.isNumber(level)) {
         return;
       }
-
       var validatedLevel = 0;
-
       if (level < 0) {
         validatedLevel = 0;
       } else if (level > 1) {
@@ -16635,21 +16061,18 @@ var RmpVast = /*#__PURE__*/function () {
       } else {
         validatedLevel = level;
       }
-
       if (this.adOnStage && this.creative && this.creative.isLinear) {
         if (this.isVPAID) {
           vpaid.setAdVolume.call(this, validatedLevel);
         }
-
         vast_player.setVolume.call(this, validatedLevel);
       }
-
       content_player.setVolume.call(this, validatedLevel);
     }
+
     /** 
      * @type {() => number} 
      */
-
   }, {
     key: "getVolume",
     value: function getVolume() {
@@ -16660,20 +16083,18 @@ var RmpVast = /*#__PURE__*/function () {
           return vast_player.getVolume.call(this);
         }
       }
-
       return content_player.getVolume.call(this);
     }
+
     /** 
      * @type {(muted: boolean) => void} 
      */
-
   }, {
     key: "setMute",
     value: function setMute(muted) {
       if (typeof muted !== 'boolean') {
         return;
       }
-
       if (this.adOnStage && this.creative && this.creative.isLinear) {
         if (this.isVPAID) {
           if (muted) {
@@ -16685,13 +16106,12 @@ var RmpVast = /*#__PURE__*/function () {
           vast_player.setMute.call(this, muted);
         }
       }
-
       content_player.setMute.call(this, muted);
     }
+
     /** 
      * @type {() => boolean} 
      */
-
   }, {
     key: "getMute",
     value: function getMute() {
@@ -16700,28 +16120,26 @@ var RmpVast = /*#__PURE__*/function () {
           if (vpaid.getAdVolume.call(this) === 0) {
             return true;
           }
-
           return false;
         } else {
           return vast_player.getMute.call(this);
         }
       }
-
       return content_player.getMute.call(this);
     }
+
     /** 
      * @type {() => boolean} 
      */
-
   }, {
     key: "getFullscreen",
     value: function getFullscreen() {
       return this.isInFullscreen;
     }
+
     /** 
      * @type {() => void} 
      */
-
   }, {
     key: "stopAds",
     value: function stopAds() {
@@ -16734,10 +16152,10 @@ var RmpVast = /*#__PURE__*/function () {
         }
       }
     }
+
     /** 
      * @type {() => void} 
      */
-
   }, {
     key: "skipAd",
     value: function skipAd() {
@@ -16750,19 +16168,19 @@ var RmpVast = /*#__PURE__*/function () {
         }
       }
     }
+
     /** 
      * @type {() => string} 
      */
-
   }, {
     key: "getAdTagUrl",
     value: function getAdTagUrl() {
       return this.adTagUrl;
     }
+
     /** 
      * @type {() => string} 
      */
-
   }, {
     key: "getAdMediaUrl",
     value: function getAdMediaUrl() {
@@ -16775,29 +16193,27 @@ var RmpVast = /*#__PURE__*/function () {
           }
         }
       }
-
       return '';
     }
+
     /** 
      * @type {() => boolean} 
      */
-
   }, {
     key: "getAdLinear",
     value: function getAdLinear() {
       if (this.creative && this.creative.isLinear) {
         return true;
       }
-
       return false;
     }
+
     /** 
      * @typedef {object} AdSystem
      * @property {string} value
      * @property {string} version
      * @return {AdSystem}
      */
-
   }, {
     key: "getAdSystem",
     value: function getAdSystem() {
@@ -16809,19 +16225,18 @@ var RmpVast = /*#__PURE__*/function () {
           version: this.ad.system.version || ''
         };
       }
-
       return {
         value: '',
         version: ''
       };
     }
+
     /** 
      * @typedef {object} universalAdId
      * @property {string} idRegistry
      * @property {string} value
      * @return {universalAdId[]}
      */
-
   }, {
     key: "getAdUniversalAdIds",
     value: function getAdUniversalAdIds() {
@@ -16830,55 +16245,51 @@ var RmpVast = /*#__PURE__*/function () {
       if (this.creative && this.creative.universalAdIds) {
         return this.creative.universalAdIds;
       }
-
       return [];
     }
+
     /** 
      * @type {() => string} 
      */
-
   }, {
     key: "getAdContentType",
     value: function getAdContentType() {
       if (this.creative && this.creative.type) {
         return this.creative.type;
       }
-
       return '';
     }
+
     /** 
      * @type {() => string} 
      */
-
   }, {
     key: "getAdTitle",
     value: function getAdTitle() {
       if (this.ad && this.ad.title) {
         return this.ad.title;
       }
-
       return '';
     }
+
     /** 
      * @type {() => string} 
      */
-
   }, {
     key: "getAdDescription",
     value: function getAdDescription() {
       if (this.ad && this.ad.description) {
         return this.ad.description;
       }
-
       return '';
     }
+
     /** 
      * @typedef {object} Advertiser
      * @property {string} id
      * @property {string} value
      * @return {Advertiser}
      */
-
   }, {
     key: "getAdAdvertiser",
     value: function getAdAdvertiser() {
@@ -16887,12 +16298,12 @@ var RmpVast = /*#__PURE__*/function () {
       if (this.ad && this.ad.advertiser && this.ad.advertiser !== null) {
         return this.ad.advertiser;
       }
-
       return {
         id: '',
         value: ''
       };
     }
+
     /** 
      * @typedef {object} Pricing
      * @property {string} value
@@ -16900,7 +16311,6 @@ var RmpVast = /*#__PURE__*/function () {
      * @property {string} currency
      * @return {Pricing}
      */
-
   }, {
     key: "getAdPricing",
     value: function getAdPricing() {
@@ -16909,46 +16319,43 @@ var RmpVast = /*#__PURE__*/function () {
       if (this.ad && this.ad.pricing && this.ad.pricing !== null) {
         return this.ad.pricing;
       }
-
       return {
         value: '',
         model: '',
         currency: ''
       };
     }
+
     /** 
      * @type {() => string} 
      */
-
   }, {
     key: "getAdSurvey",
     value: function getAdSurvey() {
       if (this.ad && this.ad.survey) {
         return this.ad.survey;
       }
-
       return '';
     }
+
     /** 
      * @type {() => string} 
      */
-
   }, {
     key: "getAdAdServingId",
     value: function getAdAdServingId() {
       if (this.ad && this.ad.adServingId) {
         return this.ad.adServingId;
       }
-
       return '';
     }
+
     /** 
      * @typedef {object} Category
      * @property {string} authority
      * @property {string} value
      * @return {Category[]}
      */
-
   }, {
     key: "getAdCategories",
     value: function getAdCategories() {
@@ -16956,16 +16363,15 @@ var RmpVast = /*#__PURE__*/function () {
       if (this.ad && this.ad.categories && this.ad.categories.length > 0) {
         return this.ad.categories;
       }
-
       return [];
     }
+
     /** 
      * @typedef {object} BlockedAdCategory
      * @property {string} authority
      * @property {string} value
      * @return {BlockedAdCategory[]}
      */
-
   }, {
     key: "getAdBlockedAdCategories",
     value: function getAdBlockedAdCategories() {
@@ -16973,36 +16379,32 @@ var RmpVast = /*#__PURE__*/function () {
       if (this.ad && this.ad.blockedAdCategories && this.ad.blockedAdCategories.length > 0) {
         return this.ad.blockedAdCategories;
       }
-
       return [];
     }
+
     /** 
      * @type {() => number} 
      */
-
   }, {
     key: "getAdDuration",
     value: function getAdDuration() {
       if (this.adOnStage && this.creative && this.creative.isLinear) {
         if (this.isVPAID) {
           var duration = vpaid.getAdDuration.call(this);
-
           if (duration > 0) {
             duration = duration * 1000;
           }
-
           return Math.round(duration);
         } else {
           return vast_player.getDuration.call(this);
         }
       }
-
       return -1;
     }
+
     /** 
      * @type {() => number} 
      */
-
   }, {
     key: "getAdCurrentTime",
     value: function getAdCurrentTime() {
@@ -17010,62 +16412,54 @@ var RmpVast = /*#__PURE__*/function () {
         if (this.isVPAID) {
           var remainingTime = vpaid.getAdRemainingTime.call(this);
           var duration = vpaid.getAdDuration.call(this);
-
           if (remainingTime === -1 || duration === -1 || remainingTime > duration) {
             return -1;
           }
-
           return Math.round(duration - remainingTime) * 1000;
         } else {
           return vast_player.getCurrentTime.call(this);
         }
       }
-
       return -1;
     }
+
     /** 
      * @type {() => number} 
      */
-
   }, {
     key: "getAdRemainingTime",
     value: function getAdRemainingTime() {
       if (this.adOnStage && this.creative && this.creative.isLinear) {
         if (this.isVPAID) {
           var adRemainingTime = vpaid.getAdRemainingTime.call(this);
-
           if (adRemainingTime > 0) {
             adRemainingTime = adRemainingTime * 1000;
           }
-
           return Math.round(adRemainingTime);
         } else {
           var currentTime = vast_player.getCurrentTime.call(this);
           var duration = vast_player.getDuration.call(this);
-
           if (currentTime === -1 || duration === -1 || currentTime > duration) {
             return -1;
           }
-
           return duration - currentTime;
         }
       }
-
       return -1;
     }
+
     /** 
      * @type {() => boolean} 
      */
-
   }, {
     key: "getAdOnStage",
     value: function getAdOnStage() {
       return this.adOnStage;
     }
+
     /** 
      * @type {() => number} 
      */
-
   }, {
     key: "getAdMediaWidth",
     value: function getAdMediaWidth() {
@@ -17076,13 +16470,12 @@ var RmpVast = /*#__PURE__*/function () {
           return this.creative.width;
         }
       }
-
       return -1;
     }
+
     /** 
      * @type {() => number} 
      */
-
   }, {
     key: "getAdMediaHeight",
     value: function getAdMediaHeight() {
@@ -17093,62 +16486,58 @@ var RmpVast = /*#__PURE__*/function () {
           return this.creative.height;
         }
       }
-
       return -1;
     }
+
     /** 
      * @type {() => string} 
      */
-
   }, {
     key: "getClickThroughUrl",
     value: function getClickThroughUrl() {
       if (this.creative && this.creative.clickThroughUrl) {
         return this.creative.clickThroughUrl;
       }
-
       return '';
     }
+
     /** 
      * @type {() => number} 
      */
-
   }, {
     key: "getSkipTimeOffset",
     value: function getSkipTimeOffset() {
       if (this.creative && this.creative.skipoffset) {
         return this.creative.skipoffset;
       }
-
       return -1;
     }
+
     /** 
      * @type {() => boolean} 
      */
-
   }, {
     key: "getIsSkippableAd",
     value: function getIsSkippableAd() {
       if (this.creative && this.creative.isSkippableAd) {
         return true;
       }
-
       return false;
     }
+
     /** 
      * @type {() => boolean} 
      */
-
   }, {
     key: "getContentPlayerCompleted",
     value: function getContentPlayerCompleted() {
       return this.contentPlayerCompleted;
     }
+
     /** 
      * @param {boolean} value
      * @return {void}
      */
-
   }, {
     key: "setContentPlayerCompleted",
     value: function setContentPlayerCompleted(value) {
@@ -17156,46 +16545,46 @@ var RmpVast = /*#__PURE__*/function () {
         this.contentPlayerCompleted = value;
       }
     }
+
     /** 
      * @type {() => string} 
      */
-
   }, {
     key: "getAdErrorMessage",
     value: function getAdErrorMessage() {
       return this.vastErrorMessage;
     }
+
     /** 
      * @type {() => number} 
      */
-
   }, {
     key: "getAdVastErrorCode",
     value: function getAdVastErrorCode() {
       return this.vastErrorCode;
     }
+
     /** 
      * @type {() => string} 
      */
-
   }, {
     key: "getAdErrorType",
     value: function getAdErrorType() {
       return this.adErrorType;
     }
+
     /** 
      * @type {() => boolean} 
      */
-
   }, {
     key: "getIsUsingContentPlayerForAds",
     value: function getIsUsingContentPlayerForAds() {
       return this.useContentPlayerForAds;
     }
+
     /** 
      * @type {() => boolean} 
      */
-
   }, {
     key: "getAdSkippableState",
     value: function getAdSkippableState() {
@@ -17208,27 +16597,27 @@ var RmpVast = /*#__PURE__*/function () {
           }
         }
       }
-
       return false;
     }
+
     /** 
      * @return {HTMLMediaElement|null}
      */
-
   }, {
     key: "getVastPlayer",
     value: function getVastPlayer() {
       return this.vastPlayer;
     }
+
     /** 
      * @return {HTMLMediaElement|null}
      */
-
   }, {
     key: "getContentPlayer",
     value: function getContentPlayer() {
       return this.contentPlayer;
     }
+
     /** 
      * @param {number} inputWidth
      * @param {number} inputHeight
@@ -17243,13 +16632,11 @@ var RmpVast = /*#__PURE__*/function () {
      * @property {string[]} trackingEventsUri
      * @return {Companion[]}
      */
-
   }, {
     key: "getCompanionAdsList",
     value: function getCompanionAdsList(inputWidth, inputHeight) {
       if (this.validCompanionAds.length > 0) {
         var availableCompanionAds;
-
         if (typeof inputWidth === 'number' && inputWidth > 0 && typeof inputHeight === 'number' && inputHeight > 0) {
           availableCompanionAds = this.validCompanionAds.filter(function (companionAds) {
             return inputWidth >= companionAds.width && inputHeight >= companionAds.height;
@@ -17257,32 +16644,27 @@ var RmpVast = /*#__PURE__*/function () {
         } else {
           availableCompanionAds = this.validCompanionAds;
         }
-
         if (availableCompanionAds.length > 0) {
           this.companionAdsList = availableCompanionAds;
           return this.companionAdsList;
         }
       }
-
       return [];
     }
+
     /** 
      * @param {number} index
      * @return {HTMLElement|null}
      */
-
   }, {
     key: "getCompanionAd",
     value: function getCompanionAd(index) {
       var _this7 = this;
-
       if (typeof this.companionAdsList[index] === 'undefined') {
         return null;
       }
-
       var companionAd = this.companionAdsList[index];
       var html;
-
       if (companionAd.imageUrl || companionAd.iframeUrl) {
         if (companionAd.imageUrl) {
           html = document.createElement('img');
@@ -17290,52 +16672,41 @@ var RmpVast = /*#__PURE__*/function () {
           html = document.createElement('iframe');
           html.sandbox = 'allow-scripts allow-same-origin';
         }
-
         if (companionAd.altText) {
           html.alt = companionAd.altText;
         }
-
         html.width = companionAd.width;
         html.height = companionAd.height;
         html.style.cursor = 'pointer';
       } else if (companionAd.htmlContent) {
         html = companionAd.htmlContent;
       }
-
       if (companionAd.imageUrl || companionAd.iframeUrl) {
         var trackingEventsUrls = companionAd.trackingEventsUrls;
-
         if (trackingEventsUrls.length > 0) {
           html.onload = function () {
             trackingEventsUrls.forEach(function (trackingEventsUrl) {
               tracking_events.pingURI.call(_this7, trackingEventsUrl);
             });
           };
-
           html.onerror = function () {
             tracking_events.error.call(_this7, 603);
           };
         }
-
         var companionClickTrackingUrls = null;
-
         if (companionAd.companionClickTrackingUrls) {
           console.log("".concat(FW.consolePrepend, " Companion click tracking URIs"), FW.consoleStyle, '');
           console.log(companionClickTrackingUrls);
           companionClickTrackingUrls = companionAd.companionClickTrackingUrls;
         }
-
         var _onImgClickThrough = function _onImgClickThrough(companionClickThroughUrl, companionClickTrackingUrls, event) {
           var _this8 = this;
-
           if (event) {
             event.stopPropagation();
-
             if (event.type === 'touchend') {
               event.preventDefault();
             }
           }
-
           if (companionClickTrackingUrls) {
             companionClickTrackingUrls.forEach(function (companionClickTrackingUrl) {
               if (companionClickTrackingUrl.url) {
@@ -17343,16 +16714,13 @@ var RmpVast = /*#__PURE__*/function () {
               }
             });
           }
-
           FW.openWindow(companionClickThroughUrl);
         };
-
         if (companionAd.companionClickThroughUrl) {
           html.addEventListener('touchend', _onImgClickThrough.bind(this, companionAd.companionClickThroughUrl, companionClickTrackingUrls));
           html.addEventListener('click', _onImgClickThrough.bind(this, companionAd.companionClickThroughUrl, companionClickTrackingUrls));
         }
       }
-
       if (companionAd.imageUrl) {
         html.src = companionAd.imageUrl;
       } else if (companionAd.iframeUrl) {
@@ -17365,26 +16733,24 @@ var RmpVast = /*#__PURE__*/function () {
           return null;
         }
       }
-
       return html;
     }
+
     /** 
      * @type {() => string} 
      */
-
   }, {
     key: "getCompanionAdsRequiredAttribute",
     value: function getCompanionAdsRequiredAttribute() {
       if (this.adOnStage) {
         return this.companionAdsRequiredAttribute;
       }
-
       return '';
     }
+
     /** 
      * @type {() => void} 
      */
-
   }, {
     key: "initialize",
     value: function initialize() {
@@ -17393,19 +16759,19 @@ var RmpVast = /*#__PURE__*/function () {
         vast_player.init.call(this);
       }
     }
+
     /** 
      * @type {() => boolean} 
      */
-
   }, {
     key: "getInitialized",
     value: function getInitialized() {
       return this.rmpVastInitialized;
     }
+
     /** 
      * @type {() => void} 
      */
-
   }, {
     key: "destroy",
     value: function destroy() {
@@ -17415,17 +16781,16 @@ var RmpVast = /*#__PURE__*/function () {
       } else {
         document.removeEventListener('fullscreenchange', this.onFullscreenchange);
       }
-
       vast_player.destroy.call(this);
       Utils.initInstanceVariables.call(this);
     }
+
     /** 
      * @typedef {object} AdPod
      * @property {number} adPodCurrentIndex
      * @property {number} adPodLength
      * @return {AdPod}
      */
-
   }, {
     key: "getAdPodInfo",
     value: function getAdPodInfo() {
@@ -17435,17 +16800,16 @@ var RmpVast = /*#__PURE__*/function () {
         result.adPodLength = this.adPodLength;
         return result;
       }
-
       return {
         adPodCurrentIndex: -1,
         adPodLength: 0
       };
-    } // VPAID methods
+    }
 
+    // VPAID methods
     /** 
      * @type {(width: number, height: number, viewMode: string) => void} 
      */
-
   }, {
     key: "resizeAd",
     value: function resizeAd(width, height, viewMode) {
@@ -17453,10 +16817,10 @@ var RmpVast = /*#__PURE__*/function () {
         vpaid.resizeAd.call(this, width, height, viewMode);
       }
     }
+
     /** 
      * @type {() => void} 
      */
-
   }, {
     key: "expandAd",
     value: function expandAd() {
@@ -17464,10 +16828,10 @@ var RmpVast = /*#__PURE__*/function () {
         vpaid.expandAd.call(this);
       }
     }
+
     /** 
      * @type {() => void} 
      */
-
   }, {
     key: "collapseAd",
     value: function collapseAd() {
@@ -17475,37 +16839,33 @@ var RmpVast = /*#__PURE__*/function () {
         vpaid.collapseAd.call(this);
       }
     }
+
     /** 
      * @type {() => boolean} 
      */
-
   }, {
     key: "getAdExpanded",
     value: function getAdExpanded() {
       if (this.adOnStage && this.isVPAID) {
         vpaid.getAdExpanded.call(this);
       }
-
       return false;
     }
+
     /** 
      * @type {() => string} 
      */
-
   }, {
     key: "getVPAIDCompanionAds",
     value: function getVPAIDCompanionAds() {
       if (this.adOnStage && this.isVPAID) {
         vpaid.getAdCompanions.call(this);
       }
-
       return '';
     }
   }]);
-
   return RmpVast;
 }();
-
 
 }();
 window.RmpVast = __webpack_exports__["default"];
