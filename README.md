@@ -124,13 +124,13 @@ This example can be found live at https://www.radiantmediaplayer.com/rmp-vast/ap
 #### Browsers
 
 - Latest Chrome for Android 5+
-- Chrome 38+ for Desktop
+- Chrome 36+ for Desktop
 - Latest Firefox for Android 5+
-- Firefox 52+ for Desktop
-- Opera 26+ for Desktop
+- Firefox 39+ for Desktop
+- Opera 23+ for Desktop
 - Samsung Internet 9.2+ for Android 5+
-- Safari 11+ for Desktop
-- Safari for iOS 12+ and iPadOS 13+
+- Safari 10+ for Desktop
+- Safari for iOS 10+ and iPadOS 13+
 - MS Edge 79+ for Desktop
 - MS Edge Legacy 14+ for Desktop
 - Latest Amazon Silk for fireOS 6+
