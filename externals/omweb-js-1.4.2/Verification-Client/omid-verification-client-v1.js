@@ -7,7 +7,7 @@
   // global context.
   } else {
     var exports = {};
-    var versions = ['1.3.37-iab3566'];
+    var versions = ['1.4.2-iab3703'];
     var additionalVersionString = '';
     if (!!additionalVersionString) {
        versions.push(additionalVersionString);
@@ -122,9 +122,9 @@ $jscomp.inherits = function(a, b) {
 var module$exports$omid$common$constants = {AdEventType:{IMPRESSION:"impression", LOADED:"loaded", GEOMETRY_CHANGE:"geometryChange", SESSION_START:"sessionStart", SESSION_ERROR:"sessionError", SESSION_FINISH:"sessionFinish", MEDIA:"media", VIDEO:"video", START:"start", FIRST_QUARTILE:"firstQuartile", MIDPOINT:"midpoint", THIRD_QUARTILE:"thirdQuartile", COMPLETE:"complete", PAUSE:"pause", RESUME:"resume", BUFFER_START:"bufferStart", BUFFER_FINISH:"bufferFinish", SKIPPED:"skipped", VOLUME_CHANGE:"volumeChange", 
 PLAYER_STATE_CHANGE:"playerStateChange", AD_USER_INTERACTION:"adUserInteraction", STATE_CHANGE:"stateChange"}, MediaEventType:{LOADED:"loaded", START:"start", FIRST_QUARTILE:"firstQuartile", MIDPOINT:"midpoint", THIRD_QUARTILE:"thirdQuartile", COMPLETE:"complete", PAUSE:"pause", RESUME:"resume", BUFFER_START:"bufferStart", BUFFER_FINISH:"bufferFinish", SKIPPED:"skipped", VOLUME_CHANGE:"volumeChange", PLAYER_STATE_CHANGE:"playerStateChange", AD_USER_INTERACTION:"adUserInteraction"}, ImpressionType:{DEFINED_BY_JAVASCRIPT:"definedByJavaScript", 
 UNSPECIFIED:"unspecified", LOADED:"loaded", BEGIN_TO_RENDER:"beginToRender", ONE_PIXEL:"onePixel", VIEWABLE:"viewable", AUDIBLE:"audible", OTHER:"other"}, ErrorType:{GENERIC:"generic", VIDEO:"video", MEDIA:"media"}, AdSessionType:{NATIVE:"native", HTML:"html", JAVASCRIPT:"javascript"}, EventOwner:{NATIVE:"native", JAVASCRIPT:"javascript", NONE:"none"}, AccessMode:{FULL:"full", DOMAIN:"domain", LIMITED:"limited"}, AppState:{BACKGROUNDED:"backgrounded", FOREGROUNDED:"foregrounded"}, Environment:{APP:"app", 
-WEB:"web"}, InteractionType:{CLICK:"click", INVITATION_ACCEPT:"invitationAccept"}, CreativeType:{DEFINED_BY_JAVASCRIPT:"definedByJavaScript", HTML_DISPLAY:"htmlDisplay", NATIVE_DISPLAY:"nativeDisplay", VIDEO:"video", AUDIO:"audio"}, MediaType:{DISPLAY:"display", VIDEO:"video"}, Reason:{NOT_FOUND:"notFound", HIDDEN:"hidden", BACKGROUNDED:"backgrounded", VIEWPORT:"viewport", OBSTRUCTED:"obstructed", CLIPPED:"clipped", UNMEASURABLE:"unmeasurable", NO_WINDOW_FOCUS:"noWindowFocus"}, SupportedFeatures:{CONTAINER:"clid", 
-VIDEO:"vlid"}, VideoPosition:{PREROLL:"preroll", MIDROLL:"midroll", POSTROLL:"postroll", STANDALONE:"standalone"}, VideoPlayerState:{MINIMIZED:"minimized", COLLAPSED:"collapsed", NORMAL:"normal", EXPANDED:"expanded", FULLSCREEN:"fullscreen"}, NativeViewKeys:{X:"x", LEFT:"left", Y:"y", TOP:"top", WIDTH:"width", HEIGHT:"height", AD_SESSION_ID:"adSessionId", IS_FRIENDLY_OBSTRUCTION_FOR:"isFriendlyObstructionFor", CLIPS_TO_BOUNDS:"clipsToBounds", CHILD_VIEWS:"childViews", END_X:"endX", END_Y:"endY", 
-OBSTRUCTIONS:"obstructions", OBSTRUCTION_CLASS:"obstructionClass", OBSTRUCTION_PURPOSE:"obstructionPurpose", OBSTRUCTION_REASON:"obstructionReason", PIXELS:"pixels", HAS_WINDOW_FOCUS:"hasWindowFocus"}, MeasurementStateChangeSource:{CONTAINER:"container", CREATIVE:"creative"}, ElementMarkup:{OMID_ELEMENT_CLASS_NAME:"omid-element"}, CommunicationType:{NONE:"NONE", DIRECT:"DIRECT", POST_MESSAGE:"POST_MESSAGE"}, OmidImplementer:{OMSDK:"omsdk"}};
+WEB:"web"}, DeviceCategory:{CTV:"ctv", DESKTOP:"desktop", MOBILE:"mobile", OTHER:"other"}, InteractionType:{CLICK:"click", INVITATION_ACCEPT:"invitationAccept"}, CreativeType:{DEFINED_BY_JAVASCRIPT:"definedByJavaScript", HTML_DISPLAY:"htmlDisplay", NATIVE_DISPLAY:"nativeDisplay", VIDEO:"video", AUDIO:"audio"}, MediaType:{DISPLAY:"display", VIDEO:"video"}, Reason:{NOT_FOUND:"notFound", HIDDEN:"hidden", BACKGROUNDED:"backgrounded", VIEWPORT:"viewport", OBSTRUCTED:"obstructed", CLIPPED:"clipped", UNMEASURABLE:"unmeasurable", 
+NO_WINDOW_FOCUS:"noWindowFocus", NO_OUTPUT_DEVICE:"noOutputDevice"}, SupportedFeatures:{CONTAINER:"clid", VIDEO:"vlid"}, VideoPosition:{PREROLL:"preroll", MIDROLL:"midroll", POSTROLL:"postroll", STANDALONE:"standalone"}, VideoPlayerState:{MINIMIZED:"minimized", COLLAPSED:"collapsed", NORMAL:"normal", EXPANDED:"expanded", FULLSCREEN:"fullscreen"}, NativeViewKeys:{X:"x", LEFT:"left", Y:"y", TOP:"top", WIDTH:"width", HEIGHT:"height", AD_SESSION_ID:"adSessionId", IS_FRIENDLY_OBSTRUCTION_FOR:"isFriendlyObstructionFor", 
+CLIPS_TO_BOUNDS:"clipsToBounds", CHILD_VIEWS:"childViews", END_X:"endX", END_Y:"endY", OBSTRUCTIONS:"obstructions", OBSTRUCTION_CLASS:"obstructionClass", OBSTRUCTION_PURPOSE:"obstructionPurpose", OBSTRUCTION_REASON:"obstructionReason", PIXELS:"pixels", HAS_WINDOW_FOCUS:"hasWindowFocus"}, MeasurementStateChangeSource:{CONTAINER:"container", CREATIVE:"creative"}, ElementMarkup:{OMID_ELEMENT_CLASS_NAME:"omid-element"}, CommunicationType:{NONE:"NONE", DIRECT:"DIRECT", POST_MESSAGE:"POST_MESSAGE"}, OmidImplementer:{OMSDK:"omsdk"}};
 var module$contents$omid$common$InternalMessage_GUID_KEY = "omid_message_guid", module$contents$omid$common$InternalMessage_METHOD_KEY = "omid_message_method", module$contents$omid$common$InternalMessage_VERSION_KEY = "omid_message_version", module$contents$omid$common$InternalMessage_ARGS_KEY = "omid_message_args", module$exports$omid$common$InternalMessage = function(a, b, c, d) {
   this.guid = a;
   this.method = b;
@@ -192,7 +192,7 @@ function module$contents$omid$common$logger_executeLog(a, b) {
 module$exports$omid$common$logger.error = module$contents$omid$common$logger_error;
 module$exports$omid$common$logger.debug = module$contents$omid$common$logger_debug;
 var module$exports$omid$common$eventTypedefs = {};
-var module$exports$omid$common$version = {ApiVersion:"1.0", Version:"1.3.37-iab3566"};
+var module$exports$omid$common$version = {ApiVersion:"1.0", Version:"1.4.2-iab3703"};
 var module$exports$omid$common$argsChecker = {};
 function module$contents$omid$common$argsChecker_assertTruthyString(a, b) {
   if (!b) {
@@ -380,6 +380,10 @@ function module$contents$omid$common$windowUtils_isTopWindowAccessible(a) {
     return !1;
   }
 }
+function module$contents$omid$common$windowUtils_removeDomElements(a) {
+  a.type === module$exports$omid$common$constants.AdEventType.SESSION_START && ("undefined" !== typeof a.data.context.videoElement && (a.data.context.videoElement = "DOM Video Element - Present but not parsed to avoid parse error"), "undefined" !== typeof a.data.context.slotElement && (a.data.context.slotElement = "DOM Slot Element - Present but not parsed to avoid parse error"));
+  return a;
+}
 function module$contents$omid$common$windowUtils_evaluatePageUrl(a) {
   if (!module$contents$omid$common$windowUtils_isValidWindow(a)) {
     return null;
@@ -393,6 +397,7 @@ function module$contents$omid$common$windowUtils_evaluatePageUrl(a) {
 }
 module$exports$omid$common$windowUtils.evaluatePageUrl = module$contents$omid$common$windowUtils_evaluatePageUrl;
 module$exports$omid$common$windowUtils.isCrossOrigin = module$contents$omid$common$windowUtils_isCrossOrigin;
+module$exports$omid$common$windowUtils.removeDomElements = module$contents$omid$common$windowUtils_removeDomElements;
 module$exports$omid$common$windowUtils.resolveGlobalContext = module$contents$omid$common$windowUtils_resolveGlobalContext;
 module$exports$omid$common$windowUtils.resolveTopWindowContext = module$contents$omid$common$windowUtils_resolveTopWindowContext;
 module$exports$omid$common$windowUtils.isTopWindowAccessible = module$contents$omid$common$windowUtils_isTopWindowAccessible;
@@ -542,7 +547,7 @@ module$exports$omid$verificationClient$VerificationClient.prototype.registerSess
 module$exports$omid$verificationClient$VerificationClient.prototype.addEventListener = function(a, b) {
   module$contents$omid$common$argsChecker_assertTruthyString("eventType", a);
   module$contents$omid$common$argsChecker_assertFunction("functionToExecute", b);
-  this.omid3p ? this.omid3p.addEventListener(a, b) : this.sendMessage_("addEventListener", b, a);
+  this.omid3p ? this.omid3p.addEventListener(a, b, this.injectionId_) : this.sendMessage_("addEventListener", b, a, this.injectionId_);
 };
 module$exports$omid$verificationClient$VerificationClient.prototype.sendUrl = function(a, b, c) {
   module$contents$omid$common$argsChecker_assertTruthyString("url", a);
@@ -642,49 +647,6 @@ module$exports$omid$verificationClient$VerificationClient.prototype.sendMessage_
   this.communication && (e = module$contents$omid$common$guid_generateGuid(), b && (this.callbackMap_[e] = b), d = new module$exports$omid$common$InternalMessage(e, module$contents$omid$common$serviceMethodUtils_getPrefixedVerificationServiceMethod(a), module$contents$omid$verificationClient$VerificationClient_VERIFICATION_CLIENT_VERSION, module$contents$omid$common$ArgsSerDe_serializeMessageArgs(module$contents$omid$verificationClient$VerificationClient_VERIFICATION_CLIENT_VERSION, d)), this.communication.sendMessage(d));
 };
 module$contents$omid$common$exporter_packageExport("OmidVerificationClient", module$exports$omid$verificationClient$VerificationClient);
-var module$contents$omid$complianceVerificationScript$ComplianceVerificationClient_DefaultLogServer = "https://complianceomsdk.iabtechlab.org/omsdk/sendmessage?", module$contents$omid$complianceVerificationScript$ComplianceVerificationClient_COMPLIANCE_VERIFICATION_CLIENT_VERSION = module$exports$omid$common$version.Version, module$contents$omid$complianceVerificationScript$ComplianceVerificationClient_AdEventTypeArray = [module$exports$omid$common$constants.AdEventType.IMPRESSION, module$exports$omid$common$constants.AdEventType.GEOMETRY_CHANGE, 
-module$exports$omid$common$constants.AdEventType.LOADED, module$exports$omid$common$constants.AdEventType.START, module$exports$omid$common$constants.AdEventType.FIRST_QUARTILE, module$exports$omid$common$constants.AdEventType.MIDPOINT, module$exports$omid$common$constants.AdEventType.THIRD_QUARTILE, module$exports$omid$common$constants.AdEventType.COMPLETE, module$exports$omid$common$constants.AdEventType.PAUSE, module$exports$omid$common$constants.AdEventType.RESUME, module$exports$omid$common$constants.AdEventType.PLAYER_STATE_CHANGE, 
-module$exports$omid$common$constants.AdEventType.VOLUME_CHANGE, module$exports$omid$common$constants.AdEventType.SKIPPED, module$exports$omid$common$constants.AdEventType.AD_USER_INTERACTION, module$exports$omid$common$constants.AdEventType.BUFFER_START, module$exports$omid$common$constants.AdEventType.BUFFER_FINISH], module$exports$omid$complianceVerificationScript$ComplianceVerificationClient = function(a, b) {
-  var c = this;
-  this.verificationClient_ = a;
-  this.fireURL_(module$contents$omid$complianceVerificationScript$ComplianceVerificationClient_DefaultLogServer + "version=" + module$contents$omid$complianceVerificationScript$ComplianceVerificationClient_COMPLIANCE_VERIFICATION_CLIENT_VERSION);
-  a = this.verificationClient_.isSupported() ? "yes" : "no";
-  this.fireURL_(module$contents$omid$complianceVerificationScript$ComplianceVerificationClient_DefaultLogServer + "supported=" + a);
-  this.verificationClient_.registerSessionObserver(function(a) {
-    c.fireEvent_(a);
-  }, b);
-  for (b = 0; b < module$contents$omid$complianceVerificationScript$ComplianceVerificationClient_AdEventTypeArray.length; b++) {
-    this.verificationClient_.addEventListener(module$contents$omid$complianceVerificationScript$ComplianceVerificationClient_AdEventTypeArray[b], function(a) {
-      c.fireEvent_(a);
-    });
-  }
-};
-module$exports$omid$complianceVerificationScript$ComplianceVerificationClient.prototype.serialize_ = function(a, b) {
-  var c = [], d;
-  for (d in a) {
-    if (a.hasOwnProperty(d)) {
-      var e = b ? b + "[" + d + "]" : d, f = a[d];
-      Array.isArray(f) && 0 == f.length ? c.push(encodeURIComponent(e) + "=" + encodeURIComponent("[]")) : c.push(null !== f && "object" === typeof f ? this.serialize_(f, e) : encodeURIComponent(e) + "=" + encodeURIComponent(f));
-      "accessMode" === d && c.push(encodeURIComponent(b ? b + "[friendlyToTop]" : "friendlyToTop") + "=" + JSON.stringify(module$contents$omid$common$windowUtils_isTopWindowAccessible(module$contents$omid$common$windowUtils_resolveGlobalContext())));
-    }
-  }
-  return c.join("&");
-};
-module$exports$omid$complianceVerificationScript$ComplianceVerificationClient.prototype.fireURL_ = function(a) {
-  this.verificationClient_.sendUrl(a);
-};
-module$exports$omid$complianceVerificationScript$ComplianceVerificationClient.prototype.fireEvent_ = function(a) {
-  a = this.removeDomElements_(a);
-  var b = this.serialize_(a, void 0);
-  b += "&rawJSON=" + encodeURIComponent(JSON.stringify(a));
-  this.fireURL_(module$contents$omid$complianceVerificationScript$ComplianceVerificationClient_DefaultLogServer + b);
-};
-module$exports$omid$complianceVerificationScript$ComplianceVerificationClient.prototype.removeDomElements_ = function(a) {
-  a.type === module$exports$omid$common$constants.AdEventType.SESSION_START && ("undefined" !== typeof a.data.context.videoElement && (a.data.context.videoElement = "DOM Video Element - Present but not parsed to avoid parse error"), "undefined" !== typeof a.data.context.slotElement && (a.data.context.slotElement = "DOM Slot Element - Present but not parsed to avoid parse error"));
-  return a;
-};
-var module$exports$complianceVerificationClientMain = {};
-new module$exports$omid$complianceVerificationScript$ComplianceVerificationClient(new module$exports$omid$verificationClient$VerificationClient, "iabtechlab.com-omid");
 
 }, typeof exports === 'undefined' ? undefined : exports));
 

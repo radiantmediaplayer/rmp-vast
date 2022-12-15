@@ -99,7 +99,7 @@ This example can be found live at https://www.radiantmediaplayer.com/rmp-vast/ap
 - Linear creatives in HLS format on all supported devices (with hls.js) - BETA
 - Non Linear Ads (image/iframe/HTML)
 - Companion Ads (image/iframe/HTML)
-- Tracking Events (tracking URLs must return an image - typically a 1px GIF/PNG/JPG)
+- Tracking Events (tracking URLs must return an image - typically a 1px GIF/PNG/JPG/AVIF)
 - Error Reporting
 - Industry Icons (image/iframe/HTML)
 - VAST 4.2 Macros

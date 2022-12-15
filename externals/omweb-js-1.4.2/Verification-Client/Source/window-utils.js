@@ -5,6 +5,7 @@
 goog.module('omid.common.windowUtils');
 
 const {omidGlobal} = goog.require('omid.common.OmidGlobalProvider');
+const {AdEventType} = goog.require('omid.common.constants');
 
 /**
  * Detects if the given window exists in a DOM and is not null or undefined.
@@ -121,6 +122,23 @@ function isTopWindowAccessible(win) {
 }
 
 /**
+ * Simple helper function to avoid serialize error for videoElement and slotElement.
+ * @param {!Object} event with DOM elements.
+ * @return {!Object} event after removing DOM elements.
+ */
+function removeDomElements(event) {
+  if (event['type'] === AdEventType.SESSION_START) {
+    if (typeof event['data']['context']['videoElement'] !== 'undefined') {
+      event['data']['context']['videoElement'] = 'DOM Video Element - Present but not parsed to avoid parse error';
+    }
+    if (typeof event['data']['context']['slotElement'] !== 'undefined') {
+      event['data']['context']['slotElement'] = 'DOM Slot Element - Present but not parsed to avoid parse error';
+    }
+  }
+  return event;
+}
+
+/**
  * Returns the URL of the top-level web page as determined by
  * the OMSDK JS service. Returns null when service is running
  * in cross-domain iframe.
@@ -145,6 +163,7 @@ function evaluatePageUrl(globalObject) {
 exports = {
   evaluatePageUrl,
   isCrossOrigin,
+  removeDomElements,
   resolveGlobalContext,
   resolveTopWindowContext,
   isTopWindowAccessible,

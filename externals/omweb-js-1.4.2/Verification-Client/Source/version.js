@@ -10,4 +10,4 @@ exports.ApiVersion = '1.0';
  * The version of the OMID service code.
  * @const {string}
  */
-exports.Version = '1.3.37-iab3566';
+exports.Version = '1.4.2-iab3703';

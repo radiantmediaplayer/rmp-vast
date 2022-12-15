@@ -2,7 +2,7 @@ goog.module('omid.validationVerificationScript.ValidationVerificationClient');
 const {packageExport} = goog.require('omid.common.exporter');
 const {AdEventType} = goog.require('omid.common.constants');
 const VerificationClient = goog.require('omid.verificationClient.VerificationClient');
-const {isTopWindowAccessible, resolveGlobalContext} = goog.require('omid.common.windowUtils');
+const {isTopWindowAccessible, removeDomElements, resolveGlobalContext} = goog.require('omid.common.windowUtils');
 /** @const {string} the default address for the logs.*/
 const DefaultLogServer = 'http://localhost:66/sendmessage?msg=';
 
@@ -73,6 +73,7 @@ class ValidationVerificationClient {
      * @param {Object} event data
      */
     omidEventListenerCallback_(event) {
+        event = removeDomElements(event);
         this.logMessage_(event, event.timestamp);
     }
 
@@ -82,6 +83,7 @@ class ValidationVerificationClient {
      * @param {Object} event data
      */
     sessionObserverCallback_(event) {
+        event = removeDomElements(event);
         this.logMessage_(event, event.timestamp);
     }
 }

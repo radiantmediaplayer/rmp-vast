@@ -1,4 +1,4 @@
-const ADTAG = 'https://www.radiantmediaplayer.com/vast/tags/empty.xml';
+const ADTAG = 'https://www.radiantmediaplayer.com/vast/tags/empty-1.xml';
 
 
 describe('Test for EmptySpec', function () {

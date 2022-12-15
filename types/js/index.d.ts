@@ -217,57 +217,18 @@ export default class RmpVast {
     requireCategory: boolean;
     currentContentSrc: any;
     currentContentCurrentTime: any;
-    /**
-     * @type {() => void}
-     */
     play(): void;
-    /**
-     * @type {() => void}
-     */
     pause(): void;
-    /**
-     * @type {() => boolean}
-     */
     getAdPaused(): boolean;
-    /**
-     * @type {(level: number) => void}
-     */
     setVolume(level: number): void;
-    /**
-     * @type {() => number}
-     */
     getVolume(): number;
-    /**
-     * @type {(muted: boolean) => void}
-     */
     setMute(muted: boolean): void;
-    /**
-     * @type {() => boolean}
-     */
     getMute(): boolean;
-    /**
-     * @type {() => boolean}
-     */
     getFullscreen(): boolean;
-    /**
-     * @type {() => void}
-     */
     stopAds(): void;
-    /**
-     * @type {() => void}
-     */
     skipAd(): void;
-    /**
-     * @type {() => string}
-     */
     getAdTagUrl(): string;
-    /**
-     * @type {() => string}
-     */
     getAdMediaUrl(): string;
-    /**
-     * @type {() => boolean}
-     */
     getAdLinear(): boolean;
     /**
      * @typedef {object} AdSystem
@@ -289,17 +250,8 @@ export default class RmpVast {
         idRegistry: string;
         value: string;
     }[];
-    /**
-     * @type {() => string}
-     */
     getAdContentType(): string;
-    /**
-     * @type {() => string}
-     */
     getAdTitle(): string;
-    /**
-     * @type {() => string}
-     */
     getAdDescription(): string;
     /**
      * @typedef {object} Advertiser
@@ -323,13 +275,7 @@ export default class RmpVast {
         model: string;
         currency: string;
     };
-    /**
-     * @type {() => string}
-     */
     getAdSurvey(): string;
-    /**
-     * @type {() => string}
-     */
     getAdAdServingId(): string;
     /**
      * @typedef {object} Category
@@ -351,45 +297,15 @@ export default class RmpVast {
         authority: string;
         value: string;
     }[];
-    /**
-     * @type {() => number}
-     */
     getAdDuration(): number;
-    /**
-     * @type {() => number}
-     */
     getAdCurrentTime(): number;
-    /**
-     * @type {() => number}
-     */
     getAdRemainingTime(): number;
-    /**
-     * @type {() => boolean}
-     */
     getAdOnStage(): boolean;
-    /**
-     * @type {() => number}
-     */
     getAdMediaWidth(): number;
-    /**
-     * @type {() => number}
-     */
     getAdMediaHeight(): number;
-    /**
-     * @type {() => string}
-     */
     getClickThroughUrl(): string;
-    /**
-     * @type {() => number}
-     */
     getSkipTimeOffset(): number;
-    /**
-     * @type {() => boolean}
-     */
     getIsSkippableAd(): boolean;
-    /**
-     * @type {() => boolean}
-     */
     getContentPlayerCompleted(): boolean;
     /**
      * @param {boolean} value
@@ -397,25 +313,10 @@ export default class RmpVast {
      */
     setContentPlayerCompleted(value: boolean): void;
     contentPlayerCompleted: boolean;
-    /**
-     * @type {() => string}
-     */
     getAdErrorMessage(): string;
-    /**
-     * @type {() => number}
-     */
     getAdVastErrorCode(): number;
-    /**
-     * @type {() => string}
-     */
     getAdErrorType(): string;
-    /**
-     * @type {() => boolean}
-     */
     getIsUsingContentPlayerForAds(): boolean;
-    /**
-     * @type {() => boolean}
-     */
     getAdSkippableState(): boolean;
     /**
      * @return {HTMLMediaElement|null}
@@ -455,21 +356,9 @@ export default class RmpVast {
      * @return {HTMLElement|null}
      */
     getCompanionAd(index: number): HTMLElement | null;
-    /**
-     * @type {() => string}
-     */
     getCompanionAdsRequiredAttribute(): string;
-    /**
-     * @type {() => void}
-     */
     initialize(): void;
-    /**
-     * @type {() => boolean}
-     */
     getInitialized(): boolean;
-    /**
-     * @type {() => void}
-     */
     destroy(): void;
     /**
      * @typedef {object} AdPod
@@ -481,25 +370,10 @@ export default class RmpVast {
         adPodCurrentIndex: number;
         adPodLength: number;
     };
-    /**
-     * @type {(width: number, height: number, viewMode: string) => void}
-     */
     resizeAd(width: number, height: number, viewMode: string): void;
-    /**
-     * @type {() => void}
-     */
     expandAd(): void;
-    /**
-     * @type {() => void}
-     */
     collapseAd(): void;
-    /**
-     * @type {() => boolean}
-     */
     getAdExpanded(): boolean;
-    /**
-     * @type {() => string}
-     */
     getVPAIDCompanionAds(): string;
 }
 //# sourceMappingURL=index.d.ts.map

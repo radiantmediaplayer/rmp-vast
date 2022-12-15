@@ -6,7 +6,6 @@ const webpack = require('webpack');
 const PACKAGE = require('./package.json');
 
 const terserOptions = {
-  ecma: 5,
   compress: {
     defaults: true,
     pure_funcs: ['console.log', 'console.warn']

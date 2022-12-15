@@ -152,6 +152,8 @@ class VerificationClient {
   registerSessionObserver(functionToExecute, vendorKey = undefined) {
     assertFunction('functionToExecute', functionToExecute);
     if (this.omid3p) {
+      // The `injectionId` argument may or may not be used by the omid3p
+      // implementation; always pass it in case it is used.
       this.omid3p['registerSessionObserver'](
           functionToExecute, vendorKey, this.injectionId_);
       return;
@@ -180,10 +182,14 @@ class VerificationClient {
     assertTruthyString('eventType', eventType);
     assertFunction('functionToExecute', functionToExecute);
     if (this.omid3p) {
-      this.omid3p['addEventListener'](eventType, functionToExecute);
+      // The `injectionId` argument may or may not be used by the omid3p
+      // implementation; always pass it in case it is used.
+      this.omid3p['addEventListener'](
+          eventType, functionToExecute, this.injectionId_);
       return;
     }
-    this.sendMessage_('addEventListener', functionToExecute, eventType);
+    this.sendMessage_(
+        'addEventListener', functionToExecute, eventType, this.injectionId_);
   }
 
   /**

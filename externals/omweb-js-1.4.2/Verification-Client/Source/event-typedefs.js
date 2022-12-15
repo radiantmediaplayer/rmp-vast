@@ -21,7 +21,6 @@ let Event;
  * @typedef {{
  *   libraryVersion: string,
  *   appId: string,
- *   adId: (string|undefined),
  * }}
  */
 let App;
@@ -70,6 +69,7 @@ let OmidNativeInfo;
  *   omidJsInfo: !OmidJsInfo,
  *   app: (!App|undefined),
  *   deviceInfo: (!DeviceInfo|undefined),
+ *   deviceCategory: (!constants.DeviceCategory|undefined),
  *   customReferenceData: (?Object|undefined),
  *   canMeasureVisibility: (boolean|undefined),
  *   underEvaluation: (boolean|undefined),
@@ -142,6 +142,13 @@ let OnScreenGeometry;
 
 /**
  * @typedef {{
+ *   timestamp: number,
+ * }}
+ */
+let ActivityEventData;
+
+/**
+ * @typedef {{
  *   context: !Context,
  *   verificationParameters: (string|undefined),
  *   supportsLoadedEvent: (boolean|undefined),
@@ -150,6 +157,7 @@ let OnScreenGeometry;
  *   mediaType: !constants.MediaType,
  *   pageUrl: ?string,
  *   contentUrl: ?string,
+ *   lastActivity: ?ActivityEventData
  * }}
  */
 let SessionStartEventData;
@@ -383,4 +391,5 @@ exports = {
   VideoEvent,
   EventData,
   VerificationScriptResource,
+  ActivityEventData,
 };

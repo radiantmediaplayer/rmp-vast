@@ -302,7 +302,7 @@ TRACKING_EVENTS.replaceMacros = function (url, trackingPixels) {
 };
 
 const _ping = function (url) {
-  // we expect an image format for the tracker (generally a 1px GIF/PNG/JPG) or JavaScript as 
+  // we expect an image format for the tracker (generally a 1px GIF/PNG/JPG/AVIF) or JavaScript as 
   // those are the most common format in the industry 
   // other format may produce errors and the related tracker may not be requested properly
   const jsPattern = /\.js$/i;

@@ -1,5 +1,31 @@
 # Changelog for Open Measurement SDK JavaScript service
 
+## 1.4.2 - 2022-11-11
+- Fix incompatibility between JS 1.4.1 and native <1.4.0.
+
+## 1.4.1 - 2022-10-25
+- [CTV] Enable Last Activity for native display.
+- Set access mode to LIMITED for natively injected resources.
+- Prevent late-registering scripts from getting next session's events.
+- Fix bug causing video element to be wrongly included in some events.
+- Update License, V 1.1
+- Update docs for video ad impression. 
+
+## 1.4.0 - 2022-09-30
+OM SDK 1.4.0 is a significant update. It adds support for CTV.
+[Implement CTV-related features](https://iabtechlab.com/wp-content/uploads/2022/08/OMSDK_What-is-new-in-1.4_master.pdf)
+
+### CTV Update
+- Add DeviceCategory to Context definitions.
+- Last Activity signal for CTV.
+- Handled user activity signal in omsdk service.
+- Added lastActivityTime to verification event schema & event-typedfs.
+- Add noOutputDevice to list of reasons in schema.
+- Factor noOutputDevice connected into viewability.
+### Other Update
+- Remove unused adId field.
+- Update web video doc with audio ads info.
+
 ## 1.3.37 - 2022-08-22
 - Update chromedriver and pixel data for Chrome 104.
 - Update reference urls in Access Mode Guidance.

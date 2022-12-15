@@ -3034,7 +3034,23 @@ var BaseStreamController = /*#__PURE__*/function (_TaskLoop) {
     // rationale is that in case there are any buffered ranges after, it means that there are unbuffered portion in between
     // so we should not switch to ENDED in that case, to be able to buffer them
 
-    if (!levelDetails.live && fragCurrent && fragCurrent.sn === levelDetails.endSN && !bufferInfo.nextStart) {
+    if (!levelDetails.live && fragCurrent && // NOTE: Because of the way parts are currently parsed/represented in the playlist, we can end up
+    // in situations where the current fragment is actually greater than levelDetails.endSN. While
+    // this feels like the "wrong place" to account for that, this is a narrower/safer change than
+    // updating e.g. M3U8Parser::parseLevelPlaylist().
+    fragCurrent.sn >= levelDetails.endSN && !bufferInfo.nextStart) {
+      var partList = levelDetails.partList; // Since the last part isn't guaranteed to correspond to fragCurrent for ll-hls, check instead if the last part is buffered.
+
+      if (partList !== null && partList !== void 0 && partList.length) {
+        var lastPart = partList[partList.length - 1]; // Checking the midpoint of the part for potential margin of error and related issues.
+        // NOTE: Technically I believe parts could yield content that is < the computed duration (including potential a duration of 0)
+        // and still be spec-compliant, so there may still be edge cases here. Likewise, there could be issues in end of stream
+        // part mismatches for independent audio and video playlists/segments.
+
+        var lastPartBuffered = _utils_buffer_helper__WEBPACK_IMPORTED_MODULE_3__["BufferHelper"].isBuffered(this.media, lastPart.start + lastPart.duration / 2);
+        return lastPartBuffered;
+      }
+
       var fragState = fragmentTracker.getState(fragCurrent);
       return fragState === _fragment_tracker__WEBPACK_IMPORTED_MODULE_2__["FragmentState"].PARTIAL || fragState === _fragment_tracker__WEBPACK_IMPORTED_MODULE_2__["FragmentState"].OK;
     }
@@ -10575,15 +10591,14 @@ var StreamController = /*#__PURE__*/function (_BaseStreamController) {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SubtitleStreamController", function() { return SubtitleStreamController; });
 /* harmony import */ var _events__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../events */ "./src/events.ts");
-/* harmony import */ var _utils_logger__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../utils/logger */ "./src/utils/logger.ts");
-/* harmony import */ var _utils_buffer_helper__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../utils/buffer-helper */ "./src/utils/buffer-helper.ts");
-/* harmony import */ var _fragment_finders__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./fragment-finders */ "./src/controller/fragment-finders.ts");
-/* harmony import */ var _utils_discontinuities__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../utils/discontinuities */ "./src/utils/discontinuities.ts");
-/* harmony import */ var _level_helper__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./level-helper */ "./src/controller/level-helper.ts");
-/* harmony import */ var _fragment_tracker__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./fragment-tracker */ "./src/controller/fragment-tracker.ts");
-/* harmony import */ var _base_stream_controller__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./base-stream-controller */ "./src/controller/base-stream-controller.ts");
-/* harmony import */ var _types_loader__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../types/loader */ "./src/types/loader.ts");
-/* harmony import */ var _types_level__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../types/level */ "./src/types/level.ts");
+/* harmony import */ var _utils_buffer_helper__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../utils/buffer-helper */ "./src/utils/buffer-helper.ts");
+/* harmony import */ var _fragment_finders__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./fragment-finders */ "./src/controller/fragment-finders.ts");
+/* harmony import */ var _utils_discontinuities__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../utils/discontinuities */ "./src/utils/discontinuities.ts");
+/* harmony import */ var _level_helper__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./level-helper */ "./src/controller/level-helper.ts");
+/* harmony import */ var _fragment_tracker__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./fragment-tracker */ "./src/controller/fragment-tracker.ts");
+/* harmony import */ var _base_stream_controller__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./base-stream-controller */ "./src/controller/base-stream-controller.ts");
+/* harmony import */ var _types_loader__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../types/loader */ "./src/types/loader.ts");
+/* harmony import */ var _types_level__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../types/level */ "./src/types/level.ts");
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
 
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
@@ -10591,7 +10606,6 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.create(superClass.prototype); subClass.prototype.constructor = subClass; _setPrototypeOf(subClass, superClass); }
 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
-
 
 
 
@@ -10659,7 +10673,7 @@ var SubtitleStreamController = /*#__PURE__*/function (_BaseStreamController) {
 
   _proto.startLoad = function startLoad() {
     this.stopLoad();
-    this.state = _base_stream_controller__WEBPACK_IMPORTED_MODULE_7__["State"].IDLE;
+    this.state = _base_stream_controller__WEBPACK_IMPORTED_MODULE_6__["State"].IDLE;
     this.setInterval(TICK_INTERVAL);
     this.tick();
   };
@@ -10677,7 +10691,7 @@ var SubtitleStreamController = /*#__PURE__*/function (_BaseStreamController) {
     var frag = data.frag,
         success = data.success;
     this.fragPrevious = frag;
-    this.state = _base_stream_controller__WEBPACK_IMPORTED_MODULE_7__["State"].IDLE;
+    this.state = _base_stream_controller__WEBPACK_IMPORTED_MODULE_6__["State"].IDLE;
 
     if (!success) {
       return;
@@ -10751,7 +10765,7 @@ var SubtitleStreamController = /*#__PURE__*/function (_BaseStreamController) {
           i++;
         }
       });
-      this.fragmentTracker.removeFragmentsInRange(startOffset, endOffsetSubtitles, _types_loader__WEBPACK_IMPORTED_MODULE_8__["PlaylistLevelType"].SUBTITLE);
+      this.fragmentTracker.removeFragmentsInRange(startOffset, endOffsetSubtitles, _types_loader__WEBPACK_IMPORTED_MODULE_7__["PlaylistLevelType"].SUBTITLE);
     }
   } // If something goes wrong, proceed to next frag, if we were processing one.
   ;
@@ -10761,7 +10775,7 @@ var SubtitleStreamController = /*#__PURE__*/function (_BaseStreamController) {
 
     var frag = data.frag; // don't handle error not related to subtitle fragment
 
-    if (!frag || frag.type !== _types_loader__WEBPACK_IMPORTED_MODULE_8__["PlaylistLevelType"].SUBTITLE) {
+    if (!frag || frag.type !== _types_loader__WEBPACK_IMPORTED_MODULE_7__["PlaylistLevelType"].SUBTITLE) {
       return;
     }
 
@@ -10769,7 +10783,7 @@ var SubtitleStreamController = /*#__PURE__*/function (_BaseStreamController) {
       this.fragCurrent.loader.abort();
     }
 
-    this.state = _base_stream_controller__WEBPACK_IMPORTED_MODULE_7__["State"].IDLE;
+    this.state = _base_stream_controller__WEBPACK_IMPORTED_MODULE_6__["State"].IDLE;
   } // Got all new subtitle levels.
   ;
 
@@ -10779,7 +10793,7 @@ var SubtitleStreamController = /*#__PURE__*/function (_BaseStreamController) {
     var subtitleTracks = _ref.subtitleTracks;
     this.tracksBuffered = [];
     this.levels = subtitleTracks.map(function (mediaPlaylist) {
-      return new _types_level__WEBPACK_IMPORTED_MODULE_9__["Level"](mediaPlaylist);
+      return new _types_level__WEBPACK_IMPORTED_MODULE_8__["Level"](mediaPlaylist);
     });
     this.fragmentTracker.removeAllFragments();
     this.fragPrevious = null;
@@ -10843,17 +10857,17 @@ var SubtitleStreamController = /*#__PURE__*/function (_BaseStreamController) {
 
       if (!track.details) {
         if (newDetails.hasProgramDateTime && mainDetails.hasProgramDateTime) {
-          Object(_utils_discontinuities__WEBPACK_IMPORTED_MODULE_4__["alignMediaPlaylistByPDT"])(newDetails, mainDetails);
+          Object(_utils_discontinuities__WEBPACK_IMPORTED_MODULE_3__["alignMediaPlaylistByPDT"])(newDetails, mainDetails);
         } else if (mainSlidingStartFragment) {
           // line up live playlist with main so that fragments in range are loaded
-          Object(_level_helper__WEBPACK_IMPORTED_MODULE_5__["addSliding"])(newDetails, mainSlidingStartFragment.start);
+          Object(_level_helper__WEBPACK_IMPORTED_MODULE_4__["addSliding"])(newDetails, mainSlidingStartFragment.start);
         }
       } else {
         var sliding = this.alignPlaylists(newDetails, track.details);
 
         if (sliding === 0 && mainSlidingStartFragment) {
           // realign with main when there is no overlap with last refresh
-          Object(_level_helper__WEBPACK_IMPORTED_MODULE_5__["addSliding"])(newDetails, mainSlidingStartFragment.start);
+          Object(_level_helper__WEBPACK_IMPORTED_MODULE_4__["addSliding"])(newDetails, mainSlidingStartFragment.start);
         }
       }
     }
@@ -10863,8 +10877,8 @@ var SubtitleStreamController = /*#__PURE__*/function (_BaseStreamController) {
 
     this.tick(); // If playlist is misaligned because of bad PDT or drift, delete details to resync with main on reload
 
-    if (newDetails.live && !this.fragCurrent && this.media && this.state === _base_stream_controller__WEBPACK_IMPORTED_MODULE_7__["State"].IDLE) {
-      var foundFrag = Object(_fragment_finders__WEBPACK_IMPORTED_MODULE_3__["findFragmentByPTS"])(null, newDetails.fragments, this.media.currentTime, 0);
+    if (newDetails.live && !this.fragCurrent && this.media && this.state === _base_stream_controller__WEBPACK_IMPORTED_MODULE_6__["State"].IDLE) {
+      var foundFrag = Object(_fragment_finders__WEBPACK_IMPORTED_MODULE_2__["findFragmentByPTS"])(null, newDetails.fragments, this.media.currentTime, 0);
 
       if (!foundFrag) {
         this.warn('Subtitle playlist not aligned with playback');
@@ -10903,11 +10917,11 @@ var SubtitleStreamController = /*#__PURE__*/function (_BaseStreamController) {
 
   _proto.doTick = function doTick() {
     if (!this.media) {
-      this.state = _base_stream_controller__WEBPACK_IMPORTED_MODULE_7__["State"].IDLE;
+      this.state = _base_stream_controller__WEBPACK_IMPORTED_MODULE_6__["State"].IDLE;
       return;
     }
 
-    if (this.state === _base_stream_controller__WEBPACK_IMPORTED_MODULE_7__["State"].IDLE) {
+    if (this.state === _base_stream_controller__WEBPACK_IMPORTED_MODULE_6__["State"].IDLE) {
       var _foundFrag;
 
       var currentTrackId = this.currentTrackId,
@@ -10922,7 +10936,7 @@ var SubtitleStreamController = /*#__PURE__*/function (_BaseStreamController) {
       var targetDuration = trackDetails.targetduration;
       var config = this.config,
           media = this.media;
-      var bufferedInfo = _utils_buffer_helper__WEBPACK_IMPORTED_MODULE_2__["BufferHelper"].bufferedInfo(this.mediaBufferTimeRanges, media.currentTime - targetDuration, config.maxBufferHole);
+      var bufferedInfo = _utils_buffer_helper__WEBPACK_IMPORTED_MODULE_1__["BufferHelper"].bufferedInfo(this.mediaBufferTimeRanges, media.currentTime - targetDuration, config.maxBufferHole);
       var targetBufferTime = bufferedInfo.end,
           bufferLen = bufferedInfo.len;
       var maxBufLen = this.getMaxBufferLength() + targetDuration;
@@ -10940,7 +10954,7 @@ var SubtitleStreamController = /*#__PURE__*/function (_BaseStreamController) {
 
       if (targetBufferTime < end) {
         var maxFragLookUpTolerance = config.maxFragLookUpTolerance;
-        foundFrag = Object(_fragment_finders__WEBPACK_IMPORTED_MODULE_3__["findFragmentByPTS"])(fragPrevious, fragments, targetBufferTime, maxFragLookUpTolerance);
+        foundFrag = Object(_fragment_finders__WEBPACK_IMPORTED_MODULE_2__["findFragmentByPTS"])(fragPrevious, fragments, targetBufferTime, maxFragLookUpTolerance);
 
         if (!foundFrag && fragPrevious && fragPrevious.start < fragments[0].start) {
           foundFrag = fragments[0];
@@ -10950,12 +10964,8 @@ var SubtitleStreamController = /*#__PURE__*/function (_BaseStreamController) {
       }
 
       if ((_foundFrag = foundFrag) !== null && _foundFrag !== void 0 && _foundFrag.encrypted) {
-        _utils_logger__WEBPACK_IMPORTED_MODULE_1__["logger"].log("Loading key for " + foundFrag.sn);
-        this.state = _base_stream_controller__WEBPACK_IMPORTED_MODULE_7__["State"].KEY_LOADING;
-        this.hls.trigger(_events__WEBPACK_IMPORTED_MODULE_0__["Events"].KEY_LOADING, {
-          frag: foundFrag
-        });
-      } else if (foundFrag && this.fragmentTracker.getState(foundFrag) === _fragment_tracker__WEBPACK_IMPORTED_MODULE_6__["FragmentState"].NOT_LOADED) {
+        this.loadKey(foundFrag, trackDetails);
+      } else if (foundFrag && this.fragmentTracker.getState(foundFrag) === _fragment_tracker__WEBPACK_IMPORTED_MODULE_5__["FragmentState"].NOT_LOADED) {
         // only load if fragment is not loaded
         this.loadFragment(foundFrag, trackDetails, targetBufferTime);
       }
@@ -10976,7 +10986,7 @@ var SubtitleStreamController = /*#__PURE__*/function (_BaseStreamController) {
   }]);
 
   return SubtitleStreamController;
-}(_base_stream_controller__WEBPACK_IMPORTED_MODULE_7__["default"]);
+}(_base_stream_controller__WEBPACK_IMPORTED_MODULE_6__["default"]);
 
 /***/ }),
 
@@ -11889,9 +11899,11 @@ var TimelineController = /*#__PURE__*/function () {
           return;
         }
 
-        var decryptData = frag.decryptdata; // If the subtitles are not encrypted, parse VTTs now. Otherwise, we need to wait.
+        var decryptData = frag.decryptdata; // fragment after decryption has a stats object
 
-        if (decryptData == null || decryptData.key == null || decryptData.method !== 'AES-128') {
+        var decrypted = ('stats' in data); // If the subtitles are not encrypted, parse VTTs now. Otherwise, we need to wait.
+
+        if (decryptData == null || decryptData.key == null || decryptData.method !== 'AES-128' || decrypted) {
           var trackPlaylistMedia = this.tracks[frag.level];
           var vttCCs = this.vttCCs;
 
@@ -17888,7 +17900,7 @@ var Hls = /*#__PURE__*/function () {
   }], [{
     key: "version",
     get: function get() {
-      return "1.1.3";
+      return "1.1.5";
     }
   }, {
     key: "Events",
@@ -27834,3 +27846,4 @@ var XhrLoader = /*#__PURE__*/function () {
 
 /******/ })["default"];
 });
+//# sourceMappingURL=hls.js.map

@@ -359,6 +359,17 @@ const Environment = {
 };
 
 /**
+ * Enum for category of device OM SDK is running on.
+ * @enum {string}
+ */
+const DeviceCategory = {
+  CTV: 'ctv',
+  DESKTOP: 'desktop',
+  MOBILE: 'mobile',
+  OTHER: 'other',
+};
+
+/**
  * The types of user interactions with ads in a media player.
  * @enum {string}
  * @public
@@ -441,6 +452,7 @@ const Reason = {
   CLIPPED: 'clipped',
   UNMEASURABLE: 'unmeasurable',
   NO_WINDOW_FOCUS: 'noWindowFocus',
+  NO_OUTPUT_DEVICE: 'noOutputDevice',
 };
 
 /**
@@ -579,6 +591,7 @@ exports = {
   AppState,
   CommunicationType,
   CreativeType,
+  DeviceCategory,
   ElementMarkup,
   Environment,
   EventOwner,
