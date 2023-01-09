@@ -97,6 +97,7 @@ export default class Utils {
       },
       useHlsJS: false,
       debugHlsJS: false,
+      forceUseContentPlayerForAds: false,
       // OM SDK params
       omidSupport: false,
       omidAllowedVendors: [],
@@ -258,10 +259,10 @@ export default class Utils {
     this.adPod = false;
     this.adPodLength = 0;
     this.adSequence = 0;
-    // on iOS and macOS Safari we use content player to play ads
+    // on iOS we use content player to play ads
     // to avoid issues related to fullscreen management and autoplay
     // as fullscreen on iOS is handled by the default OS player
-    if (ENV.isIos[0] || ENV.isMacOSSafari || ENV.isIpadOS) {
+    if (ENV.isIos[0]) {
       this.useContentPlayerForAds = true;
       console.log(`${FW.consolePrepend} vast player will be content player`, FW.consoleStyle, '');
     }

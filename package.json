@@ -1,6 +1,6 @@
 {
   "name": "rmp-vast",
-  "version": "9.1.0",
+  "version": "9.1.1",
   "author": "Radiant Media Player <support@radiantmediaplayer.com>",
   "description": "A client-side JavaScript solution to load, parse and display VAST resources (advertising)",
   "repository": {
@@ -33,13 +33,13 @@
   },
   "homepage": "https://www.radiantmediaplayer.com/rmp-vast/app/",
   "devDependencies": {
-    "@babel/core": "^7.20.5",
+    "@babel/core": "^7.20.12",
     "@babel/preset-env": "^7.20.2",
     "@dailymotion/vast-client": "^4.0.1",
-    "babel-loader": "^9.1.0",
+    "babel-loader": "^9.1.2",
     "clean-webpack-plugin": "^4.0.0",
     "css-loader": "^6.7.3",
-    "eslint": "^8.29.0",
+    "eslint": "^8.31.0",
     "eslint-webpack-plugin": "^3.2.0",
     "handlebars": "^4.7.7",
     "handlebars-loader": "^1.7.3",
@@ -49,7 +49,7 @@
     "postcss-less": "^6.0.0",
     "selenium-webdriver": "^4.7.1",
     "style-loader": "^3.3.1",
-    "stylelint": "^14.16.0",
+    "stylelint": "^14.16.1",
     "stylelint-config-standard": "^29.0.0",
     "stylelint-webpack-plugin": "^3.3.0",
     "terser": "^5.16.1",
@@ -60,8 +60,8 @@
     "webpack-dev-server": "^4.11.1"
   },
   "dependencies": {
-    "@types/node": "^18.11.15",
-    "core-js": "^3.26.1",
+    "@types/node": "^18.11.18",
+    "core-js": "^3.27.1",
     "regenerator-runtime": "^0.13.11",
     "whatwg-fetch": "^3.6.2"
   }

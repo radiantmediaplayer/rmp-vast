@@ -70,7 +70,7 @@ const adTag =
   "https://www.radiantmediaplayer.com/vast/tags/inline-linear-1.xml";
 const id = "rmp";
 const params = {
-  ajaxTimeout: 8000
+  ajaxTimeout: 8000,
 };
 // create RmpVast instance
 const rmpVast = new RmpVast(id, params);
@@ -182,7 +182,7 @@ const adTag =
   "https://www.radiantmediaplayer.com/vast/tags/inline-linear-1.xml";
 const id = "rmp";
 const params = {
-  ajaxTimeout: 8000
+  ajaxTimeout: 8000,
 };
 // create RmpVast instance
 const rmpVast = new RmpVast(id, params);
@@ -241,6 +241,7 @@ Once rmp-vast is loaded on your page you can create a new rmp-vast instance as f
     - `params.vpaidSettings.desiredBitrate: Number` Default: 500. In kbps.
   - `params.useHlsJS: Boolean` Enables rendering of HLS creatives with hls.js in rmp-vast. Default: false.
   - `params.debugHlsJS: Boolean` Enables debugging of HLS creatives with hls.js in rmp-vast. Default: false.
+  - `params.forceUseContentPlayerForAds: Boolean` Forces player to use content player for ads - on Apple devices we may have a need to set useContentPlayerForAds differently based on content playback type (native vs. MSE playback). Default: false.
   - `params.omidSupport: Boolean` Enables OMID (OM Web SDK) support in rmp-vast. Default: false. Refer to the [AdVerifications OM Web SDK](#adverifications-om-web-sdk) section for more information.
   - `params.omidAllowedVendors: Array` List of allowed vendors for ad verification. Vendors not listed will be rejected. Default: [].
   - `params.omidUnderEvaluation: Boolean` When debugging set this parameter to true. Default: false.
@@ -466,7 +467,7 @@ container.addEventListener("adstarted", function () {
 
 ## AdVerifications OM Web SDK
 
-rmp-vast supports AdVerifications through the [IAB OM Web SDK](https://iabtechlab.com/standards/open-measurement-sdk/). Our implementation is based on IAB GitHub [Open-Measurement-JSClients](https://github.com/InteractiveAdvertisingBureau/Open-Measurement-JSClients) and sports OM Web SDK version 1.3.37 
+rmp-vast supports AdVerifications through the [IAB OM Web SDK](https://iabtechlab.com/standards/open-measurement-sdk/). Our implementation is based on IAB GitHub [Open-Measurement-JSClients](https://github.com/InteractiveAdvertisingBureau/Open-Measurement-JSClients) and sports OM Web SDK version 1.3.37
 
 - This feature needs to be activated through `omidSupport: true` setting
 - You need to add ./externals/omweb-js-X.X.X/Service/omweb-v1.js and ./externals/omweb-js-X.X.X/Session-Client/omid-session-client-v1.js to your page through a script tag

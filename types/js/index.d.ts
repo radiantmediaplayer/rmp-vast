@@ -32,6 +32,7 @@ export default class RmpVast {
      *  to the parent application of rmp-vast to provide those informations
      * @property {boolean} [useHlsJS] - Enables hls.js usage to display creatives delivered in HLS format on all devices. Include hls.js library (./externals/hls/hls.min.js) in your page before usage. Default: false.
      * @property {boolean} [debugHlsJS] - Enables debug log when hls.js is used to stream creatives. Default: false.
+     * @property {boolean} [forceUseContentPlayerForAds] - Forces player to use content player for ads - on Apple devices we may have a need to set useContentPlayerForAds differently based on content playback type (native vs. MSE playback) Default: false.
      * @property {boolean} [omidSupport] - Enables OMID (OM Web SDK) support in rmp-vast. Default: false.
      * @property {string[]} [omidAllowedVendors] - List of allowed vendors for ad verification. Vendors not listed will
      *  be rejected. Default: [].
@@ -98,6 +99,10 @@ export default class RmpVast {
          */
         debugHlsJS?: boolean;
         /**
+         * - Forces player to use content player for ads - on Apple devices we may have a need to set useContentPlayerForAds differently based on content playback type (native vs. MSE playback) Default: false.
+         */
+        forceUseContentPlayerForAds?: boolean;
+        /**
          * - Enables OMID (OM Web SDK) support in rmp-vast. Default: false.
          */
         omidSupport?: boolean;
@@ -138,6 +143,7 @@ export default class RmpVast {
     container: HTMLElement;
     contentWrapper: Element;
     contentPlayer: Element;
+    useContentPlayerForAds: boolean;
     /**
      * @typedef {object} Environment
      * @property {number} devicePixelRatio
