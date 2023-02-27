@@ -43,7 +43,7 @@ describe('Test for initialize', function () {
       }, 2000);
     });
 
-    container.addEventListener('addestroyed', function (e) {
+    window.rmpVast.on('addestroyed', function (e) {
       if (window.rmpVast.getMute()) {
         _incrementAndLog(e);
         expect(eventsSteps).toBe(5);

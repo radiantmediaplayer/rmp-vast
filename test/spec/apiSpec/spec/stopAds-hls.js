@@ -33,19 +33,19 @@ describe('Test for stopAds-hls', function () {
       }
     };
 
-    container.addEventListener('adloaded', function (e) {
+    rmpVast.on('adloaded', function (e) {
       _incrementAndLog(e);
     });
-    container.addEventListener('adstarted', function (e) {
+    rmpVast.on('adstarted', function (e) {
       _incrementAndLog(e);
     });
-    container.addEventListener('adtagstartloading', function (e) {
+    rmpVast.on('adtagstartloading', function (e) {
       _incrementAndLog(e);
     });
-    container.addEventListener('adtagloaded', function (e) {
+    rmpVast.on('adtagloaded', function (e) {
       _incrementAndLog(e);
     });
-    container.addEventListener('addestroyed', function (e) {
+    rmpVast.on('addestroyed', function (e) {
       _incrementAndLog(e);
       expect(validSteps).toBe(5);
       if (validSteps === 5) {

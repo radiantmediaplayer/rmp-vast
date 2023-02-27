@@ -26,17 +26,17 @@ describe('Test for ErrorMediaSpec', function () {
       }
     };
 
-    container.addEventListener('adtagloaded', function (e) {
+    rmpVast.on('adtagloaded', function (e) {
       _incrementAndLog(e);
     });
 
-    container.addEventListener('aderror', function (e) {
+    rmpVast.on('aderror', function (e) {
       if (rmpVast.getAdVastErrorCode() === 401 && rmpVast.getAdErrorType() === 'adPlayError' && rmpVast.getAdErrorMessage() === 'File not found. Unable to find Linear/MediaFile from URI.') {
         _incrementAndLog(e);
       }
     });
 
-    container.addEventListener('addestroyed', function (e) {
+    rmpVast.on('addestroyed', function (e) {
       _incrementAndLog(e);
       let timeupdateCount = 0;
       video.addEventListener('timeupdate', function (e) {

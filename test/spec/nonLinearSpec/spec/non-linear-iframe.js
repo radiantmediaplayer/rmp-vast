@@ -36,15 +36,15 @@ describe('Test for non-linear-iframe', function () {
       }
     };
 
-    container.addEventListener('adloaded', function (e) {
+    rmpVast.on('adloaded', function (e) {
       _incrementAndLog(e);
     });
 
-    container.addEventListener('adimpression', function (e) {
+    rmpVast.on('adimpression', function (e) {
       _incrementAndLog(e);
     });
 
-    container.addEventListener('adstarted', function (e) {
+    rmpVast.on('adstarted', function (e) {
       _incrementAndLog(e);
       setTimeout(function () {
         const close = document.getElementsByClassName('rmp-ad-non-linear-close')[0];
@@ -53,15 +53,15 @@ describe('Test for non-linear-iframe', function () {
       }, 7000);
     });
 
-    container.addEventListener('adtagstartloading', function (e) {
+    rmpVast.on('adtagstartloading', function (e) {
       _incrementAndLog(e);
     });
 
-    container.addEventListener('adtagloaded', function (e) {
+    rmpVast.on('adtagloaded', function (e) {
       _incrementAndLog(e);
     });
 
-    container.addEventListener('adclosed', function (e) {
+    rmpVast.on('adclosed', function (e) {
       _incrementAndLog(e);
       let timeupdateCount = 0;
       video.addEventListener('timeupdate', function (e) {

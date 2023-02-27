@@ -25,11 +25,11 @@ describe('Test for VMAPSpec', function () {
       }
     };
 
-    container.addEventListener('aderror', function (e) {
+    rmpVast.on('aderror', function (e) {
       _incrementAndLog(e);
     });
 
-    container.addEventListener('addestroyed', function (e) {
+    rmpVast.on('addestroyed', function (e) {
       _incrementAndLog(e);
       let timeupdateCount = 0;
       video.addEventListener('timeupdate', function (e) {

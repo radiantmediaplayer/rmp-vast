@@ -31,19 +31,19 @@ describe('om-web-ima', function () {
       }
     };
 
-    container.addEventListener('adloaded', function (e) {
+    rmpVast.on('adloaded', function (e) {
       _incrementAndLog(e);
     });
 
-    container.addEventListener('adimpression', function (e) {
+    rmpVast.on('adimpression', function (e) {
       _incrementAndLog(e);
     });
 
-    container.addEventListener('adstarted', function (e) {
+    rmpVast.on('adstarted', function (e) {
       _incrementAndLog(e);
     });
 
-    container.addEventListener('addestroyed', function (e) {
+    rmpVast.on('addestroyed', function (e) {
       _incrementAndLog(e);
       let timeupdateCount = 0;
       video.addEventListener('timeupdate', function (e) {

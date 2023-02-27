@@ -27,17 +27,10 @@
     //var ADTAG = 'https://raw.githubusercontent.com/InteractiveAdvertisingBureau/VAST_Samples/master/VAST%204.2%20Samples/Inline_Linear_Tag-test.xml';
     //ADTAG = 'https://www.radiantmediaplayer.com/vast/tags/vpaid-3-js-linear.xml';
     //ADTAG = 'https://pubads.g.doubleclick.net/gampad/ads?iu=/21775744923/external/single_ad_samples&sz=640x480&cust_params=sample_ct%3Dlinearvpaid2js&ciu_szs=300x250%2C728x90&gdfp_req=1&output=vast&unviewed_position_start=1&env=vp&impl=s&correlator=' + Date.now();
-    ADTAG = 'https://www.radiantmediaplayer.com/vast/tags/inline-linear-all-kind-trackers.xml';
+    ADTAG = 'https://www.radiantmediaplayer.com/vast/tags/inline-linear-companion-html.xml';
     /*ADTAG = 'https://pubads.g.doubleclick.net/gampad/ads?sz=640x480&iu=/124319096/external/single_ad_samples&ciu_szs=300x250&impl=s&gdfp_req=1&env=vp&output=vast&unviewed_position_start=1&cust_params=deployment%3Ddevsite%26sample_ct%3Dlinear&correlator=' + Date.now();
     ADTAG = 'https://playertest.longtailvideo.com/vast-30s-ad.xml';*/
-    var rmpVast = new RmpVast(id, { showControlsForVastPlayer: true, forceUseContentPlayerForAds: true });
+    var rmpVast = new RmpVast(id, { showControlsForVastPlayer: true });
     rmpVast.loadAds(ADTAG);
-    /*container.addEventListener('adstarted', function () {
-      setInterval(() => {
-        console.log(rmpVast.getAdDuration());
-        console.log(rmpVast.getAdCurrentTime());
-        console.log(rmpVast.getAdRemainingTime());
-      }, 1000);
-    });*/
   </script>
 </body>

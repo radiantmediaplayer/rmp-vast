@@ -25,28 +25,28 @@ describe('Test for Inline Linear ad (IAB VAST2)', function () {
       }
     };
 
-    container.addEventListener('adloaded', function (e) {
+    rmpVast.on('adloaded', function (e) {
       _incrementAndLog(e);
     });
-    container.addEventListener('addurationchange', function (e) {
+    rmpVast.on('addurationchange', function (e) {
       _incrementAndLog(e);
     });
-    container.addEventListener('adimpression', function (e) {
+    rmpVast.on('adimpression', function (e) {
       _incrementAndLog(e);
     });
-    container.addEventListener('adstarted', function (e) {
+    rmpVast.on('adstarted', function (e) {
       _incrementAndLog(e);
       setTimeout(function () {
         rmpVast.stopAds();
       }, 3000);
     });
-    container.addEventListener('adtagstartloading', function (e) {
+    rmpVast.on('adtagstartloading', function (e) {
       _incrementAndLog(e);
     });
-    container.addEventListener('adtagloaded', function (e) {
+    rmpVast.on('adtagloaded', function (e) {
       _incrementAndLog(e);
     });
-    container.addEventListener('addestroyed', function (e) {
+    rmpVast.on('addestroyed', function (e) {
       _incrementAndLog(e);
       let timeupdateCount = 0;
       video.addEventListener('timeupdate', function (e) {

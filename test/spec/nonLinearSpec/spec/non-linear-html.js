@@ -24,15 +24,15 @@ describe('Test for non-linear-html', function () {
       }
     };
 
-    container.addEventListener('adloaded', function (e) {
+    rmpVast.on('adloaded', function (e) {
       _incrementAndLog(e);
     });
 
-    container.addEventListener('adimpression', function (e) {
+    rmpVast.on('adimpression', function (e) {
       _incrementAndLog(e);
     });
 
-    container.addEventListener('adstarted', function (e) {
+    rmpVast.on('adstarted', function (e) {
       _incrementAndLog(e);
       setTimeout(function () {
         _incrementAndLog(e);
@@ -44,11 +44,11 @@ describe('Test for non-linear-html', function () {
       }, 5000);
     });
 
-    container.addEventListener('adtagstartloading', function (e) {
+    rmpVast.on('adtagstartloading', function (e) {
       _incrementAndLog(e);
     });
 
-    container.addEventListener('adtagloaded', function (e) {
+    rmpVast.on('adtagloaded', function (e) {
       _incrementAndLog(e);
     });
 

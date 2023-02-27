@@ -26,19 +26,19 @@ describe('Category-test', function () {
       }
     };
 
-    container.addEventListener('adloaded', function (e) {
+    rmpVast.on('adloaded', function (e) {
       _incrementAndLog(e);
     });
 
-    container.addEventListener('addurationchange', function (e) {
+    rmpVast.on('addurationchange', function (e) {
       _incrementAndLog(e);
     });
 
-    container.addEventListener('adimpression', function (e) {
+    rmpVast.on('adimpression', function (e) {
       _incrementAndLog(e);
     });
 
-    container.addEventListener('adstarted', function (e) {
+    rmpVast.on('adstarted', function (e) {
       const adSystem = rmpVast.getAdSystem();
       window.console.log(adSystem);
       if (adSystem.value === 'iabtechlab' && adSystem.version === '1') {
@@ -91,35 +91,35 @@ describe('Category-test', function () {
       }
     });
 
-    container.addEventListener('adtagstartloading', function (e) {
+    rmpVast.on('adtagstartloading', function (e) {
       _incrementAndLog(e);
     });
 
-    container.addEventListener('adtagloaded', function (e) {
+    rmpVast.on('adtagloaded', function (e) {
       _incrementAndLog(e);
     });
 
-    container.addEventListener('adcomplete', function (e) {
+    rmpVast.on('adcomplete', function (e) {
       _incrementAndLog(e);
     });
 
-    container.addEventListener('adfirstquartile', function (e) {
+    rmpVast.on('adfirstquartile', function (e) {
       _incrementAndLog(e);
     });
 
-    container.addEventListener('admidpoint', function (e) {
+    rmpVast.on('admidpoint', function (e) {
       _incrementAndLog(e);
     });
 
-    container.addEventListener('adprogress', function (e) {
+    rmpVast.on('adprogress', function (e) {
       _incrementAndLog(e);
     });
 
-    container.addEventListener('adthirdquartile', function (e) {
+    rmpVast.on('adthirdquartile', function (e) {
       _incrementAndLog(e);
     });
 
-    container.addEventListener('addestroyed', function (e) {
+    rmpVast.on('addestroyed', function (e) {
       _incrementAndLog(e);
       let timeupdateCount = 0;
       video.addEventListener('timeupdate', function (e) {

@@ -25,15 +25,15 @@ describe('Test for AdPodWithStandaloneSpec', function () {
       }
     };
 
-    container.addEventListener('adstarted', function (e) {
+    rmpVast.on('adstarted', function (e) {
       _incrementAndLog(e);
     });
 
-    container.addEventListener('addestroyed', function (e) {
+    rmpVast.on('addestroyed', function (e) {
       _incrementAndLog(e);
     });
 
-    container.addEventListener('adpodcompleted', function (e) {
+    rmpVast.on('adpodcompleted', function (e) {
       _incrementAndLog(e);
       let timeupdateCount = 0;
       video.addEventListener('timeupdate', function (e) {

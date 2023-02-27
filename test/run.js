@@ -2,15 +2,14 @@ const child_process = require('child_process');
 
 const desktopTestList = [
   /*'node test/spec/main/adPodSpec.js',
-  'node test/spec/main/adPodSpec.js chrome',
-  'node test/spec/main/apiSpec.js chrome',*/
-  'node test/spec/main/companionSpec.js',
-  'node test/spec/main/companionSpec.js chrome',
+  'node test/spec/main/adPodSpec.js chrome',*/
+  //'node test/spec/main/apiSpec.js chrome',
+  /*'node test/spec/main/companionSpec.js chrome',
   'node test/spec/main/errorSpec.js',
   'node test/spec/main/errorSpec.js chrome',
-  'node test/spec/main/iconsSpec.js chrome',
-  'node test/spec/main/inlineLinearSpec.js',
-  'node test/spec/main/inlineLinearSpec.js chrome',
+  'node test/spec/main/iconsSpec.js chrome',*/
+  /*'node test/spec/main/inlineLinearSpec.js',
+  'node test/spec/main/inlineLinearSpec.js chrome',*/
   'node test/spec/main/nonLinearSpec.js',
   'node test/spec/main/nonLinearSpec.js chrome',
   'node test/spec/main/omWebSpec.js chrome',

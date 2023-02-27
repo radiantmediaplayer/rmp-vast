@@ -39,10 +39,10 @@ describe('Test for vpaid-js-linear-3', function () {
       }
     };
 
-    container.addEventListener('adloaded', function (e) {
+    rmpVast.on('adloaded', function (e) {
       _incrementAndLog(e);
     });
-    container.addEventListener('adstarted', function (e) {
+    rmpVast.on('adstarted', function (e) {
       if (env.isAndroid[0]) {
         rmpVast.resizeAd(320, 180, 'normal');
       }
@@ -53,7 +53,7 @@ describe('Test for vpaid-js-linear-3', function () {
         }
       }, 1500);
     });
-    container.addEventListener('advolumechanged', function (e) {
+    rmpVast.on('advolumechanged', function (e) {
       if (rmpVast.getMute()) {
         setTimeout(function () {
           _incrementAndLog(e);
@@ -87,13 +87,13 @@ describe('Test for vpaid-js-linear-3', function () {
         }, 1500);
       }
     });
-    container.addEventListener('adtagstartloading', function (e) {
+    rmpVast.on('adtagstartloading', function (e) {
       _incrementAndLog(e);
     });
-    container.addEventListener('adtagloaded', function (e) {
+    rmpVast.on('adtagloaded', function (e) {
       _incrementAndLog(e);
     });
-    container.addEventListener('addestroyed', function (e) {
+    rmpVast.on('addestroyed', function (e) {
       _incrementAndLog(e);
       if (mutedAutoplay) {
         video.addEventListener('timeupdate', function (e) {

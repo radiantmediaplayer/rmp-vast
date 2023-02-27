@@ -1117,9 +1117,8 @@ module.exports = /MSIE|Trident/.test(UA);
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
 var userAgent = __webpack_require__(8113);
-var global = __webpack_require__(7854);
 
-module.exports = /ipad|iphone|ipod/i.test(userAgent) && global.Pebble !== undefined;
+module.exports = /ipad|iphone|ipod/i.test(userAgent) && typeof Pebble != 'undefined';
 
 
 /***/ }),
@@ -1129,6 +1128,7 @@ module.exports = /ipad|iphone|ipod/i.test(userAgent) && global.Pebble !== undefi
 
 var userAgent = __webpack_require__(8113);
 
+// eslint-disable-next-line redos/no-vulnerable -- safe
 module.exports = /(?:ipad|iphone|ipod).*applewebkit/i.test(userAgent);
 
 
@@ -1138,9 +1138,8 @@ module.exports = /(?:ipad|iphone|ipod).*applewebkit/i.test(userAgent);
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
 var classof = __webpack_require__(4326);
-var global = __webpack_require__(7854);
 
-module.exports = classof(global.process) == 'process';
+module.exports = typeof process != 'undefined' && classof(process) == 'process';
 
 
 /***/ }),
@@ -1156,11 +1155,9 @@ module.exports = /web0s(?!.*chrome)/i.test(userAgent);
 /***/ }),
 
 /***/ 8113:
-/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
+/***/ (function(module) {
 
-var getBuiltIn = __webpack_require__(5005);
-
-module.exports = getBuiltIn('navigator', 'userAgent') || '';
+module.exports = typeof navigator != 'undefined' && String(navigator.userAgent) || '';
 
 
 /***/ }),
@@ -1237,6 +1234,7 @@ var $Error = Error;
 var replace = uncurryThis(''.replace);
 
 var TEST = (function (arg) { return String($Error(arg).stack); })('zxcasd');
+// eslint-disable-next-line redos/no-vulnerable -- safe
 var V8_OR_CHAKRA_STACK_ENTRY = /\n\s*at [^:]*:[^\n]*/;
 var IS_V8_OR_CHAKRA_STACK = V8_OR_CHAKRA_STACK_ENTRY.test(TEST);
 
@@ -1244,6 +1242,26 @@ module.exports = function (stack, dropEntries) {
   if (IS_V8_OR_CHAKRA_STACK && typeof stack == 'string' && !$Error.prepareStackTrace) {
     while (dropEntries--) stack = replace(stack, V8_OR_CHAKRA_STACK_ENTRY, '');
   } return stack;
+};
+
+
+/***/ }),
+
+/***/ 5392:
+/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
+
+var createNonEnumerableProperty = __webpack_require__(8880);
+var clearErrorStack = __webpack_require__(1060);
+var ERROR_STACK_INSTALLABLE = __webpack_require__(2914);
+
+// non-standard V8
+var captureStackTrace = Error.captureStackTrace;
+
+module.exports = function (error, C, stack, dropEntries) {
+  if (ERROR_STACK_INSTALLABLE) {
+    if (captureStackTrace) captureStackTrace(error, C);
+    else createNonEnumerableProperty(error, 'stack', clearErrorStack(stack, dropEntries));
+  }
 };
 
 
@@ -1501,6 +1519,7 @@ var construct = function (C, argsLength, args) {
 
 // `Function.prototype.bind` method implementation
 // https://tc39.es/ecma262/#sec-function.prototype.bind
+// eslint-disable-next-line es/no-function-prototype-bind -- detection
 module.exports = NATIVE_BIND ? $Function.bind : function bind(that /* , ...args */) {
   var F = aCallable(this);
   var Prototype = F.prototype;
@@ -1549,6 +1568,22 @@ module.exports = {
   EXISTS: EXISTS,
   PROPER: PROPER,
   CONFIGURABLE: CONFIGURABLE
+};
+
+
+/***/ }),
+
+/***/ 5668:
+/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
+
+var uncurryThis = __webpack_require__(1702);
+var aCallable = __webpack_require__(9662);
+
+module.exports = function (object, key, method) {
+  try {
+    // eslint-disable-next-line es/no-object-getownpropertydescriptor -- safe
+    return uncurryThis(aCallable(Object.getOwnPropertyDescriptor(object, key)[method]));
+  } catch (error) { /* empty */ }
 };
 
 
@@ -1645,6 +1680,42 @@ module.exports = function (argument, usingIterator) {
 
 /***/ }),
 
+/***/ 8044:
+/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
+
+var uncurryThis = __webpack_require__(1702);
+var isArray = __webpack_require__(3157);
+var isCallable = __webpack_require__(614);
+var classof = __webpack_require__(4326);
+var toString = __webpack_require__(1340);
+
+var push = uncurryThis([].push);
+
+module.exports = function (replacer) {
+  if (isCallable(replacer)) return replacer;
+  if (!isArray(replacer)) return;
+  var rawLength = replacer.length;
+  var keys = [];
+  for (var i = 0; i < rawLength; i++) {
+    var element = replacer[i];
+    if (typeof element == 'string') push(keys, element);
+    else if (typeof element == 'number' || classof(element) == 'Number' || classof(element) == 'String') push(keys, toString(element));
+  }
+  var keysLength = keys.length;
+  var root = true;
+  return function (key, value) {
+    if (root) {
+      root = false;
+      return value;
+    }
+    if (isArray(this)) return value;
+    for (var j = 0; j < keysLength; j++) if (keys[j] === key) return value;
+  };
+};
+
+
+/***/ }),
+
 /***/ 8173:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
@@ -1671,6 +1742,7 @@ var floor = Math.floor;
 var charAt = uncurryThis(''.charAt);
 var replace = uncurryThis(''.replace);
 var stringSlice = uncurryThis(''.slice);
+// eslint-disable-next-line redos/no-vulnerable -- safe
 var SUBSTITUTION_SYMBOLS = /\$([$&'`]|\d{1,2}|<[^>]*>)/g;
 var SUBSTITUTION_SYMBOLS_NO_NAMED = /\$([$&'`]|\d{1,2})/g;
 
@@ -1760,15 +1832,13 @@ module.exports = {};
 /***/ }),
 
 /***/ 842:
-/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
-
-var global = __webpack_require__(7854);
+/***/ (function(module) {
 
 module.exports = function (a, b) {
-  var console = global.console;
-  if (console && console.error) {
+  try {
+    // eslint-disable-next-line no-console -- safe
     arguments.length == 1 ? console.error(a) : console.error(a, b);
-  }
+  } catch (error) { /* empty */ }
 };
 
 
@@ -2496,6 +2566,7 @@ module.exports = function (obj) {
 /***/ 6339:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
+var uncurryThis = __webpack_require__(1702);
 var fails = __webpack_require__(7293);
 var isCallable = __webpack_require__(614);
 var hasOwn = __webpack_require__(2597);
@@ -2506,8 +2577,12 @@ var InternalStateModule = __webpack_require__(9909);
 
 var enforceInternalState = InternalStateModule.enforce;
 var getInternalState = InternalStateModule.get;
+var $String = String;
 // eslint-disable-next-line es/no-object-defineproperty -- safe
 var defineProperty = Object.defineProperty;
+var stringSlice = uncurryThis(''.slice);
+var replace = uncurryThis(''.replace);
+var join = uncurryThis([].join);
 
 var CONFIGURABLE_LENGTH = DESCRIPTORS && !fails(function () {
   return defineProperty(function () { /* empty */ }, 'length', { value: 8 }).length !== 8;
@@ -2516,8 +2591,8 @@ var CONFIGURABLE_LENGTH = DESCRIPTORS && !fails(function () {
 var TEMPLATE = String(String).split('String');
 
 var makeBuiltIn = module.exports = function (value, name, options) {
-  if (String(name).slice(0, 7) === 'Symbol(') {
-    name = '[' + String(name).replace(/^Symbol\(([^)]*)\)/, '$1') + ']';
+  if (stringSlice($String(name), 0, 7) === 'Symbol(') {
+    name = '[' + replace($String(name), /^Symbol\(([^)]*)\)/, '$1') + ']';
   }
   if (options && options.getter) name = 'get ' + name;
   if (options && options.setter) name = 'set ' + name;
@@ -2536,7 +2611,7 @@ var makeBuiltIn = module.exports = function (value, name, options) {
   } catch (error) { /* empty */ }
   var state = enforceInternalState(value);
   if (!hasOwn(state, 'source')) {
-    state.source = TEMPLATE.join(typeof name == 'string' ? name : '');
+    state.source = join(TEMPLATE, typeof name == 'string' ? name : '');
   } return value;
 };
 
@@ -2573,6 +2648,7 @@ var global = __webpack_require__(7854);
 var bind = __webpack_require__(9974);
 var getOwnPropertyDescriptor = (__webpack_require__(1236).f);
 var macrotask = (__webpack_require__(261).set);
+var Queue = __webpack_require__(8572);
 var IS_IOS = __webpack_require__(6833);
 var IS_IOS_PEBBLE = __webpack_require__(1528);
 var IS_WEBOS_WEBKIT = __webpack_require__(1036);
@@ -2584,26 +2660,22 @@ var process = global.process;
 var Promise = global.Promise;
 // Node.js 11 shows ExperimentalWarning on getting `queueMicrotask`
 var queueMicrotaskDescriptor = getOwnPropertyDescriptor(global, 'queueMicrotask');
-var queueMicrotask = queueMicrotaskDescriptor && queueMicrotaskDescriptor.value;
-
-var flush, head, last, notify, toggle, node, promise, then;
+var microtask = queueMicrotaskDescriptor && queueMicrotaskDescriptor.value;
+var notify, toggle, node, promise, then;
 
 // modern engines have queueMicrotask method
-if (!queueMicrotask) {
-  flush = function () {
+if (!microtask) {
+  var queue = new Queue();
+
+  var flush = function () {
     var parent, fn;
     if (IS_NODE && (parent = process.domain)) parent.exit();
-    while (head) {
-      fn = head.fn;
-      head = head.next;
-      try {
-        fn();
-      } catch (error) {
-        if (head) notify();
-        else last = undefined;
-        throw error;
-      }
-    } last = undefined;
+    while (fn = queue.get()) try {
+      fn();
+    } catch (error) {
+      if (queue.head) notify();
+      throw error;
+    }
     if (parent) parent.enter();
   };
 
@@ -2638,22 +2710,20 @@ if (!queueMicrotask) {
   // - onreadystatechange
   // - setTimeout
   } else {
-    // strange IE + webpack dev server bug - use .bind(global)
+    // `webpack` dev server bug on IE global methods - use bind(fn, global)
     macrotask = bind(macrotask, global);
     notify = function () {
       macrotask(flush);
     };
   }
+
+  microtask = function (fn) {
+    if (!queue.head) notify();
+    queue.add(fn);
+  };
 }
 
-module.exports = queueMicrotask || function (fn) {
-  var task = { fn: fn, next: undefined };
-  if (last) last.next = task;
-  if (!head) {
-    head = task;
-    notify();
-  } last = task;
-};
+module.exports = microtask;
 
 
 /***/ }),
@@ -3198,7 +3268,7 @@ exports.f = NASHORN_BUG ? function propertyIsEnumerable(V) {
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
 /* eslint-disable no-proto -- safe */
-var uncurryThis = __webpack_require__(1702);
+var uncurryThisAccessor = __webpack_require__(5668);
 var anObject = __webpack_require__(9670);
 var aPossiblePrototype = __webpack_require__(6077);
 
@@ -3211,8 +3281,7 @@ module.exports = Object.setPrototypeOf || ('__proto__' in {} ? function () {
   var test = {};
   var setter;
   try {
-    // eslint-disable-next-line es/no-object-getownpropertydescriptor -- safe
-    setter = uncurryThis(Object.getOwnPropertyDescriptor(Object.prototype, '__proto__').set);
+    setter = uncurryThisAccessor(Object.prototype, '__proto__', 'set');
     setter(test, []);
     CORRECT_SETTER = test instanceof Array;
   } catch (error) { /* empty */ }
@@ -3436,15 +3505,16 @@ var Queue = function () {
 Queue.prototype = {
   add: function (item) {
     var entry = { item: item, next: null };
-    if (this.head) this.tail.next = entry;
+    var tail = this.tail;
+    if (tail) tail.next = entry;
     else this.head = entry;
     this.tail = entry;
   },
   get: function () {
     var entry = this.head;
     if (entry) {
-      this.head = entry.next;
-      if (this.tail === entry) this.tail = null;
+      var next = this.head = entry.next;
+      if (next === null) this.tail = null;
       return entry.item;
     }
   }
@@ -3747,7 +3817,7 @@ module.exports = function (it) {
 "use strict";
 
 var getBuiltIn = __webpack_require__(5005);
-var definePropertyModule = __webpack_require__(3070);
+var defineBuiltInAccessor = __webpack_require__(7045);
 var wellKnownSymbol = __webpack_require__(5112);
 var DESCRIPTORS = __webpack_require__(9781);
 
@@ -3755,10 +3825,9 @@ var SPECIES = wellKnownSymbol('species');
 
 module.exports = function (CONSTRUCTOR_NAME) {
   var Constructor = getBuiltIn(CONSTRUCTOR_NAME);
-  var defineProperty = definePropertyModule.f;
 
   if (DESCRIPTORS && Constructor && !Constructor[SPECIES]) {
-    defineProperty(Constructor, SPECIES, {
+    defineBuiltInAccessor(Constructor, SPECIES, {
       configurable: true,
       get: function () { return this; }
     });
@@ -3825,10 +3894,10 @@ var store = __webpack_require__(5465);
 (module.exports = function (key, value) {
   return store[key] || (store[key] = value !== undefined ? value : {});
 })('versions', []).push({
-  version: '3.27.1',
+  version: '3.29.0',
   mode: IS_PURE ? 'pure' : 'global',
-  copyright: '© 2014-2022 Denis Pushkarev (zloirock.ru)',
-  license: 'https://github.com/zloirock/core-js/blob/v3.27.1/LICENSE',
+  copyright: '© 2014-2023 Denis Pushkarev (zloirock.ru)',
+  license: 'https://github.com/zloirock/core-js/blob/v3.29.0/LICENSE',
   source: 'https://github.com/zloirock/core-js'
 });
 
@@ -3930,16 +3999,15 @@ var toString = __webpack_require__(1340);
 var whitespaces = __webpack_require__(1361);
 
 var replace = uncurryThis(''.replace);
-var whitespace = '[' + whitespaces + ']';
-var ltrim = RegExp('^' + whitespace + whitespace + '*');
-var rtrim = RegExp(whitespace + whitespace + '*$');
+var ltrim = RegExp('^[' + whitespaces + ']+');
+var rtrim = RegExp('(^|[^' + whitespaces + '])[' + whitespaces + ']+$');
 
 // `String.prototype.{ trim, trimStart, trimEnd, trimLeft, trimRight }` methods implementation
 var createMethod = function (TYPE) {
   return function ($this) {
     var string = toString(requireObjectCoercible($this));
     if (TYPE & 1) string = replace(string, ltrim, '');
-    if (TYPE & 2) string = replace(string, rtrim, '');
+    if (TYPE & 2) string = replace(string, rtrim, '$1');
     return string;
   };
 };
@@ -4045,10 +4113,10 @@ var queue = {};
 var ONREADYSTATECHANGE = 'onreadystatechange';
 var $location, defer, channel, port;
 
-try {
+fails(function () {
   // Deno throws a ReferenceError on `location` access without `--location` flag
   $location = global.location;
-} catch (error) { /* empty */ }
+});
 
 var run = function (id) {
   if (hasOwn(queue, id)) {
@@ -4064,11 +4132,11 @@ var runner = function (id) {
   };
 };
 
-var listener = function (event) {
+var eventListener = function (event) {
   run(event.data);
 };
 
-var post = function (id) {
+var globalPostMessageDefer = function (id) {
   // old engines have not location.origin
   global.postMessage(String(id), $location.protocol + '//' + $location.host);
 };
@@ -4103,7 +4171,7 @@ if (!set || !clear) {
   } else if (MessageChannel && !IS_IOS) {
     channel = new MessageChannel();
     port = channel.port2;
-    channel.port1.onmessage = listener;
+    channel.port1.onmessage = eventListener;
     defer = bind(port.postMessage, port);
   // Browsers with postMessage, skip WebWorkers
   // IE8 has postMessage, but it's sync & typeof its postMessage is 'object'
@@ -4112,10 +4180,10 @@ if (!set || !clear) {
     isCallable(global.postMessage) &&
     !global.importScripts &&
     $location && $location.protocol !== 'file:' &&
-    !fails(post)
+    !fails(globalPostMessageDefer)
   ) {
-    defer = post;
-    global.addEventListener('message', listener, false);
+    defer = globalPostMessageDefer;
+    global.addEventListener('message', eventListener, false);
   // IE8-
   } else if (ONREADYSTATECHANGE in createElement('script')) {
     defer = function (id) {
@@ -4439,21 +4507,15 @@ var uid = __webpack_require__(9711);
 var NATIVE_SYMBOL = __webpack_require__(6293);
 var USE_SYMBOL_AS_UID = __webpack_require__(3307);
 
-var WellKnownSymbolsStore = shared('wks');
 var Symbol = global.Symbol;
-var symbolFor = Symbol && Symbol['for'];
-var createWellKnownSymbol = USE_SYMBOL_AS_UID ? Symbol : Symbol && Symbol.withoutSetter || uid;
+var WellKnownSymbolsStore = shared('wks');
+var createWellKnownSymbol = USE_SYMBOL_AS_UID ? Symbol['for'] || Symbol : Symbol && Symbol.withoutSetter || uid;
 
 module.exports = function (name) {
-  if (!hasOwn(WellKnownSymbolsStore, name) || !(NATIVE_SYMBOL || typeof WellKnownSymbolsStore[name] == 'string')) {
-    var description = 'Symbol.' + name;
-    if (NATIVE_SYMBOL && hasOwn(Symbol, name)) {
-      WellKnownSymbolsStore[name] = Symbol[name];
-    } else if (USE_SYMBOL_AS_UID && symbolFor) {
-      WellKnownSymbolsStore[name] = symbolFor(description);
-    } else {
-      WellKnownSymbolsStore[name] = createWellKnownSymbol(description);
-    }
+  if (!hasOwn(WellKnownSymbolsStore, name)) {
+    WellKnownSymbolsStore[name] = NATIVE_SYMBOL && hasOwn(Symbol, name)
+      ? Symbol[name]
+      : createWellKnownSymbol('Symbol.' + name);
   } return WellKnownSymbolsStore[name];
 };
 
@@ -4485,8 +4547,7 @@ var proxyAccessor = __webpack_require__(2626);
 var inheritIfRequired = __webpack_require__(9587);
 var normalizeStringArgument = __webpack_require__(6277);
 var installErrorCause = __webpack_require__(8340);
-var clearErrorStack = __webpack_require__(1060);
-var ERROR_STACK_INSTALLABLE = __webpack_require__(2914);
+var installErrorStack = __webpack_require__(5392);
 var DESCRIPTORS = __webpack_require__(9781);
 var IS_PURE = __webpack_require__(1913);
 
@@ -4512,7 +4573,7 @@ module.exports = function (FULL_NAME, wrapper, FORCED, IS_AGGREGATE_ERROR) {
     var message = normalizeStringArgument(IS_AGGREGATE_ERROR ? b : a, undefined);
     var result = IS_AGGREGATE_ERROR ? new OriginalError(a) : new OriginalError();
     if (message !== undefined) createNonEnumerableProperty(result, 'message', message);
-    if (ERROR_STACK_INSTALLABLE) createNonEnumerableProperty(result, 'stack', clearErrorStack(result.stack, 2));
+    installErrorStack(result, WrappedError, result.stack, 2);
     if (this && isPrototypeOf(OriginalErrorPrototype, this)) inheritIfRequired(result, this, WrappedError);
     if (arguments.length > OPTIONS_POSITION) installErrorCause(result, arguments[OPTIONS_POSITION]);
     return result;
@@ -4573,15 +4634,13 @@ var IS_CONCAT_SPREADABLE_SUPPORT = V8_VERSION >= 51 || !fails(function () {
   return array.concat()[0] !== array;
 });
 
-var SPECIES_SUPPORT = arrayMethodHasSpeciesSupport('concat');
-
 var isConcatSpreadable = function (O) {
   if (!isObject(O)) return false;
   var spreadable = O[IS_CONCAT_SPREADABLE];
   return spreadable !== undefined ? !!spreadable : isArray(O);
 };
 
-var FORCED = !IS_CONCAT_SPREADABLE_SUPPORT || !SPECIES_SUPPORT;
+var FORCED = !IS_CONCAT_SPREADABLE_SUPPORT || !arrayMethodHasSpeciesSupport('concat');
 
 // `Array.prototype.concat` method
 // https://tc39.es/ecma262/#sec-array.prototype.concat
@@ -4697,6 +4756,7 @@ var addToUnscopables = __webpack_require__(1223);
 
 // FF99+ bug
 var BROKEN_ON_SPARSE = fails(function () {
+  // eslint-disable-next-line es/no-array-prototype-includes -- detection
   return !Array(1).includes();
 });
 
@@ -4728,11 +4788,11 @@ var arrayMethodIsStrict = __webpack_require__(9341);
 var nativeIndexOf = uncurryThis([].indexOf);
 
 var NEGATIVE_ZERO = !!nativeIndexOf && 1 / nativeIndexOf([1], 1, -0) < 0;
-var STRICT_METHOD = arrayMethodIsStrict('indexOf');
+var FORCED = NEGATIVE_ZERO || !arrayMethodIsStrict('indexOf');
 
 // `Array.prototype.indexOf` method
 // https://tc39.es/ecma262/#sec-array.prototype.indexof
-$({ target: 'Array', proto: true, forced: NEGATIVE_ZERO || !STRICT_METHOD }, {
+$({ target: 'Array', proto: true, forced: FORCED }, {
   indexOf: function indexOf(searchElement /* , fromIndex = 0 */) {
     var fromIndex = arguments.length > 1 ? arguments[1] : undefined;
     return NEGATIVE_ZERO
@@ -4872,18 +4932,20 @@ var INCORRECT_TO_LENGTH = fails(function () {
 
 // V8 and Safari <= 15.4, FF < 23 throws InternalError
 // https://bugs.chromium.org/p/v8/issues/detail?id=12681
-var SILENT_ON_NON_WRITABLE_LENGTH = !function () {
+var properErrorOnNonWritableLength = function () {
   try {
     // eslint-disable-next-line es/no-object-defineproperty -- safe
     Object.defineProperty([], 'length', { writable: false }).push();
   } catch (error) {
     return error instanceof TypeError;
   }
-}();
+};
+
+var FORCED = INCORRECT_TO_LENGTH || !properErrorOnNonWritableLength();
 
 // `Array.prototype.push` method
 // https://tc39.es/ecma262/#sec-array.prototype.push
-$({ target: 'Array', proto: true, arity: 1, forced: INCORRECT_TO_LENGTH || SILENT_ON_NON_WRITABLE_LENGTH }, {
+$({ target: 'Array', proto: true, arity: 1, forced: FORCED }, {
   // eslint-disable-next-line no-unused-vars -- required for `.length`
   push: function push(item) {
     var O = toObject(this);
@@ -4913,14 +4975,14 @@ var arrayMethodIsStrict = __webpack_require__(9341);
 var CHROME_VERSION = __webpack_require__(7392);
 var IS_NODE = __webpack_require__(5268);
 
-var STRICT_METHOD = arrayMethodIsStrict('reduce');
 // Chrome 80-82 has a critical bug
 // https://bugs.chromium.org/p/chromium/issues/detail?id=1049982
 var CHROME_BUG = !IS_NODE && CHROME_VERSION > 79 && CHROME_VERSION < 83;
+var FORCED = CHROME_BUG || !arrayMethodIsStrict('reduce');
 
 // `Array.prototype.reduce` method
 // https://tc39.es/ecma262/#sec-array.prototype.reduce
-$({ target: 'Array', proto: true, forced: !STRICT_METHOD || CHROME_BUG }, {
+$({ target: 'Array', proto: true, forced: FORCED }, {
   reduce: function reduce(callbackfn /* , initialValue */) {
     var length = arguments.length;
     return $reduce(this, callbackfn, length, length > 1 ? arguments[1] : undefined);
@@ -5251,6 +5313,7 @@ var exportWebAssemblyErrorCauseWrapper = function (ERROR_NAME, wrapper) {
   }
 };
 
+// https://tc39.es/ecma262/#sec-nativeerror
 // https://github.com/tc39/proposal-error-cause
 exportGlobalErrorCauseWrapper('Error', function (init) {
   return function Error(message) { return apply(init, this, arguments); };
@@ -5295,13 +5358,13 @@ var apply = __webpack_require__(2104);
 var call = __webpack_require__(6916);
 var uncurryThis = __webpack_require__(1702);
 var fails = __webpack_require__(7293);
-var isArray = __webpack_require__(3157);
 var isCallable = __webpack_require__(614);
-var isObject = __webpack_require__(111);
 var isSymbol = __webpack_require__(2190);
 var arraySlice = __webpack_require__(206);
+var getReplacerFunction = __webpack_require__(8044);
 var NATIVE_SYMBOL = __webpack_require__(6293);
 
+var $String = String;
 var $stringify = getBuiltIn('JSON', 'stringify');
 var exec = uncurryThis(/./.exec);
 var charAt = uncurryThis(''.charAt);
@@ -5331,13 +5394,13 @@ var ILL_FORMED_UNICODE = fails(function () {
 
 var stringifyWithSymbolsFix = function (it, replacer) {
   var args = arraySlice(arguments);
-  var $replacer = replacer;
-  if (!isObject(replacer) && it === undefined || isSymbol(it)) return; // IE8 returns string on undefined
-  if (!isArray(replacer)) replacer = function (key, value) {
-    if (isCallable($replacer)) value = call($replacer, this, key, value);
+  var $replacer = getReplacerFunction(replacer);
+  if (!isCallable($replacer) && (it === undefined || isSymbol(it))) return; // IE8 returns string on undefined
+  args[1] = function (key, value) {
+    // some old implementations (like WebKit) could pass numbers as keys
+    if (isCallable($replacer)) value = call($replacer, this, $String(key), value);
     if (!isSymbol(value)) return value;
   };
-  args[1] = replacer;
   return apply($stringify, null, args);
 };
 
@@ -6486,7 +6549,7 @@ if (DESCRIPTORS && MISSED_STICKY) {
   defineBuiltInAccessor(RegExpPrototype, 'sticky', {
     configurable: true,
     get: function sticky() {
-      if (this === RegExpPrototype) return undefined;
+      if (this === RegExpPrototype) return;
       // We can't use InternalStateModule.getterFor because
       // we don't add metadata for regexps created by a literal.
       if (classof(this) === 'RegExp') {
@@ -6908,6 +6971,7 @@ var definePropertyModule = __webpack_require__(3070);
 var definePropertiesModule = __webpack_require__(6048);
 var propertyIsEnumerableModule = __webpack_require__(5296);
 var defineBuiltIn = __webpack_require__(8052);
+var defineBuiltInAccessor = __webpack_require__(7045);
 var shared = __webpack_require__(2309);
 var sharedKey = __webpack_require__(6200);
 var hiddenKeys = __webpack_require__(3501);
@@ -7079,7 +7143,7 @@ if (!NATIVE_SYMBOL) {
 
   if (DESCRIPTORS) {
     // https://github.com/tc39/proposal-Symbol-description
-    nativeDefineProperty(SymbolPrototype, 'description', {
+    defineBuiltInAccessor(SymbolPrototype, 'description', {
       configurable: true,
       get: function description() {
         return getInternalState(this).description;
@@ -7153,7 +7217,7 @@ var hasOwn = __webpack_require__(2597);
 var isCallable = __webpack_require__(614);
 var isPrototypeOf = __webpack_require__(7976);
 var toString = __webpack_require__(1340);
-var defineProperty = (__webpack_require__(3070).f);
+var defineBuiltInAccessor = __webpack_require__(7045);
 var copyConstructorProperties = __webpack_require__(9920);
 
 var NativeSymbol = global.Symbol;
@@ -7186,7 +7250,7 @@ if (DESCRIPTORS && isCallable(NativeSymbol) && (!('description' in SymbolPrototy
   var replace = uncurryThis(''.replace);
   var stringSlice = uncurryThis(''.slice);
 
-  defineProperty(SymbolPrototype, 'description', {
+  defineBuiltInAccessor(SymbolPrototype, 'description', {
     configurable: true,
     get: function description() {
       var symbol = thisSymbolValue(this);
@@ -8517,12 +8581,14 @@ __webpack_require__.d(__webpack_exports__, {
   "default": function() { return /* binding */ RmpVast; }
 });
 
-// EXTERNAL MODULE: ./node_modules/core-js/modules/es.object.keys.js
-var es_object_keys = __webpack_require__(7941);
 // EXTERNAL MODULE: ./node_modules/core-js/modules/es.object.to-string.js
 var es_object_to_string = __webpack_require__(1539);
 // EXTERNAL MODULE: ./node_modules/core-js/modules/web.dom-collections.for-each.js
 var web_dom_collections_for_each = __webpack_require__(4747);
+// EXTERNAL MODULE: ./node_modules/core-js/modules/es.array.index-of.js
+var es_array_index_of = __webpack_require__(2772);
+// EXTERNAL MODULE: ./node_modules/core-js/modules/es.object.keys.js
+var es_object_keys = __webpack_require__(7941);
 // EXTERNAL MODULE: ./node_modules/core-js/modules/es.array.push.js
 var es_array_push = __webpack_require__(7658);
 // EXTERNAL MODULE: ./node_modules/core-js/modules/es.array.find.js
@@ -8575,8 +8641,6 @@ var es_array_reverse = __webpack_require__(5069);
 var es_array_slice = __webpack_require__(7042);
 // EXTERNAL MODULE: ./node_modules/core-js/modules/es.regexp.to-string.js
 var es_regexp_to_string = __webpack_require__(9714);
-// EXTERNAL MODULE: ./node_modules/core-js/modules/es.array.index-of.js
-var es_array_index_of = __webpack_require__(2772);
 // EXTERNAL MODULE: ./node_modules/core-js/modules/es.string.replace.js
 var es_string_replace = __webpack_require__(5306);
 // EXTERNAL MODULE: ./node_modules/core-js/modules/es.parse-float.js
@@ -8637,8 +8701,8 @@ var FW = /*#__PURE__*/function () {
       return null;
     }
   }, {
-    key: "createStdEvent",
-    value: function createStdEvent(eventName, element) {
+    key: "createSyntheticEvent",
+    value: function createSyntheticEvent(eventName, element) {
       var event;
       if (element) {
         try {
@@ -11621,7 +11685,7 @@ var Utils = /*#__PURE__*/function () {
         omidRunValidationScript: false,
         omidAutoplay: false,
         partnerName: 'rmp-vast',
-        partnerVersion: "9.1.1"
+        partnerVersion: "10.0.0"
       };
       this.params = defaultParams;
       if (inputParams && utils_typeof(inputParams) === 'object') {
@@ -11666,12 +11730,12 @@ var Utils = /*#__PURE__*/function () {
         event.forEach(function (currentEvent) {
           if (currentEvent) {
             console.log(currentEvent);
-            FW.createStdEvent(currentEvent, _this2.container);
+            _this2.dispatch(currentEvent);
           }
         });
       } else if (event) {
         console.log(event);
-        FW.createStdEvent(event, this.container);
+        this.dispatch(event);
       }
     }
   }, {
@@ -11728,7 +11792,7 @@ var Utils = /*#__PURE__*/function () {
         if (code === 13 || code === 32) {
           event.stopPropagation();
           event.preventDefault();
-          FW.createStdEvent('click', element);
+          FW.createSyntheticEvent('click', element);
         }
       });
       if (ariaLabel) {
@@ -11750,6 +11814,7 @@ var Utils = /*#__PURE__*/function () {
       this.firstVastPlayerPlayRequest = true;
       this.firstContentPlayerPlayRequest = true;
       this.params = {};
+      this.events = {};
       this.onFullscreenchange = FW.nullFn;
       this.contentWrapper = null;
       this.contentPlayer = null;
@@ -11771,7 +11836,7 @@ var Utils = /*#__PURE__*/function () {
   }, {
     key: "resetVariablesForNewLoadAds",
     value: function resetVariablesForNewLoadAds() {
-      this.container.removeEventListener('adstarted', this.attachViewableObserver);
+      this.off('adstarted', this.attachViewableObserver);
       // init internal methods 
       this.onLoadedmetadataPlay = FW.nullFn;
       this.onPlaybackError = FW.nullFn;
@@ -12254,6 +12319,63 @@ var OmSdkManager = /*#__PURE__*/function () {
   return OmSdkManager;
 }();
 /* harmony default export */ var omsdk = (OmSdkManager);
+// EXTERNAL MODULE: ./node_modules/core-js/modules/es.array.splice.js
+var es_array_splice = __webpack_require__(561);
+;// CONCATENATED MODULE: ./src/js/framework/dispatcher-event.js
+function dispatcher_event_typeof(obj) { "@babel/helpers - typeof"; return dispatcher_event_typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, dispatcher_event_typeof(obj); }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function dispatcher_event_classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+function dispatcher_event_defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, dispatcher_event_toPropertyKey(descriptor.key), descriptor); } }
+function dispatcher_event_createClass(Constructor, protoProps, staticProps) { if (protoProps) dispatcher_event_defineProperties(Constructor.prototype, protoProps); if (staticProps) dispatcher_event_defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
+function dispatcher_event_toPropertyKey(arg) { var key = dispatcher_event_toPrimitive(arg, "string"); return dispatcher_event_typeof(key) === "symbol" ? key : String(key); }
+function dispatcher_event_toPrimitive(input, hint) { if (dispatcher_event_typeof(input) !== "object" || input === null) return input; var prim = input[Symbol.toPrimitive]; if (prim !== undefined) { var res = prim.call(input, hint || "default"); if (dispatcher_event_typeof(res) !== "object") return res; throw new TypeError("@@toPrimitive must return a primitive value."); } return (hint === "string" ? String : Number)(input); }
+var DispatcherEvent = /*#__PURE__*/function () {
+  function DispatcherEvent(eventName) {
+    dispatcher_event_classCallCheck(this, DispatcherEvent);
+    this.eventName = eventName;
+    this.callbacks = [];
+  }
+  dispatcher_event_createClass(DispatcherEvent, [{
+    key: "registerCallback",
+    value: function registerCallback(callback) {
+      this.callbacks.push(callback);
+    }
+  }, {
+    key: "unregisterCallback",
+    value: function unregisterCallback(callback) {
+      var index = this.callbacks.indexOf(callback);
+      if (index > -1) {
+        this.callbacks.splice(index, 1);
+      }
+    }
+  }, {
+    key: "fire",
+    value: function fire(data) {
+      var callbacks = this.callbacks.slice(0);
+      callbacks.forEach(function (callback) {
+        callback(data);
+      });
+    }
+  }]);
+  return DispatcherEvent;
+}();
+/* harmony default export */ var dispatcher_event = (DispatcherEvent);
 // EXTERNAL MODULE: ./node_modules/core-js/modules/es.object.assign.js
 var es_object_assign = __webpack_require__(9601);
 ;// CONCATENATED MODULE: ./src/assets/@dailymotion/vast-client/src/util/storage.js
@@ -12410,8 +12532,6 @@ var Storage = /*#__PURE__*/function () {
   }]);
   return Storage;
 }();
-// EXTERNAL MODULE: ./node_modules/core-js/modules/es.array.splice.js
-var es_array_splice = __webpack_require__(561);
 // EXTERNAL MODULE: ./node_modules/core-js/modules/es.reflect.to-string-tag.js
 var es_reflect_to_string_tag = __webpack_require__(1299);
 // EXTERNAL MODULE: ./node_modules/core-js/modules/es.reflect.construct.js
@@ -15576,6 +15696,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
 
 
+
 function js_classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 function js_defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, js_toPropertyKey(descriptor.key), descriptor); } }
 function js_createClass(Constructor, protoProps, staticProps) { if (protoProps) js_defineProperties(Constructor.prototype, protoProps); if (staticProps) js_defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
@@ -15587,6 +15708,7 @@ function js_toPrimitive(input, hint) { if (js_typeof(input) !== "object" || inpu
  * GitHub: https://github.com/radiantmediaplayer/rmp-vast
  * MIT License: https://github.com/radiantmediaplayer/rmp-vast/blob/master/LICENSE
  */
+
 
 
 
@@ -15635,7 +15757,7 @@ var RmpVast = /*#__PURE__*/function () {
    *  to the parent application of rmp-vast to provide those informations
    * @property {boolean} [useHlsJS] - Enables hls.js usage to display creatives delivered in HLS format on all devices. Include hls.js library (./externals/hls/hls.min.js) in your page before usage. Default: false.
    * @property {boolean} [debugHlsJS] - Enables debug log when hls.js is used to stream creatives. Default: false.
-   * @property {boolean} [forceUseContentPlayerForAds] - Forces player to use content player for ads - on Apple devices we may have a need to set useContentPlayerForAds differently based on content playback type (native vs. MSE playback) Default: false.
+   * @property {boolean} [forceUseContentPlayerForAds] - Forces player to use content player for ads - on Apple devices we may have a need to set useContentPlayerForAds differently based on content playback type (native vs. MSE playback). Default: false.
    * @property {boolean} [omidSupport] - Enables OMID (OM Web SDK) support in rmp-vast. Default: false.
    * @property {string[]} [omidAllowedVendors] - List of allowed vendors for ad verification. Vendors not listed will 
    *  be rejected. Default: [].
@@ -15690,19 +15812,138 @@ var RmpVast = /*#__PURE__*/function () {
   }
 
   /** 
-   * @typedef {object} Environment
-   * @property {number} devicePixelRatio
-   * @property {number} maxTouchPoints
-   * @property {boolean} isIpadOS
-   * @property {array} isIos
-   * @property {array} isAndroid
-   * @property {boolean} isMacOSSafari
-   * @property {boolean} isFirefox
-   * @property {boolean} isMobile
-   * @property {boolean} hasNativeFullscreenSupport
-   * @return {Environment}
+   * Dispatch an event to the custom event system
+   * @type {(eventName: string, data: object) => void} 
    */
   js_createClass(RmpVast, [{
+    key: "dispatch",
+    value: function dispatch(eventName, data) {
+      var event = this.events[eventName];
+      if (event) {
+        var validatedData = {
+          type: eventName
+        };
+        if (data) {
+          validatedData.data = data;
+        }
+        event.fire(validatedData);
+      }
+    }
+
+    /** 
+     * @private
+     */
+  }, {
+    key: "_on",
+    value: function _on(eventName, callback) {
+      // First we grab the event from this.events
+      var event = this.events[eventName];
+      // If the event does not exist then we should create it!
+      if (!event) {
+        event = new dispatcher_event(eventName);
+        this.events[eventName] = event;
+      }
+      // Now we add the callback to the event
+      event.registerCallback(callback);
+    }
+
+    /** 
+     * Listen to an event from the custom event system
+     * @type {(eventName: string, callback: function) => void} 
+     */
+  }, {
+    key: "on",
+    value: function on(eventName, callback) {
+      var _this = this;
+      if (typeof eventName !== 'string' || eventName === '' || typeof callback !== 'function') {
+        return;
+      }
+      var split = eventName.split(' ');
+      split.forEach(function (eventItem) {
+        _this._on(eventItem, callback);
+      });
+    }
+
+    /** 
+     * @private
+     */
+  }, {
+    key: "_one",
+    value: function _one(eventName, callback) {
+      var newCallback = function (e) {
+        this.off(eventName, newCallback);
+        callback(e);
+      }.bind(this);
+      this.on(eventName, newCallback);
+    }
+
+    /** 
+     * Listen once to an event from the custom event system
+     * @type {(eventName: string, callback: function) => void} 
+     */
+  }, {
+    key: "one",
+    value: function one(eventName, callback) {
+      var _this2 = this;
+      if (typeof eventName !== 'string' || eventName === '' || typeof callback !== 'function') {
+        return;
+      }
+      var split = eventName.split(' ');
+      split.forEach(function (eventItem) {
+        _this2._one(eventItem, callback);
+      });
+    }
+
+    /** 
+     * @private
+     */
+  }, {
+    key: "_off",
+    value: function _off(eventName, callback) {
+      // First get the correct event
+      var event = this.events[eventName];
+      // Check that the event exists and it has the callback registered
+      if (event && event.callbacks.indexOf(callback) > -1) {
+        // if it is registered then unregister it!
+        event.unregisterCallback(callback);
+        // if the event has no callbacks left, delete the event
+        if (event.callbacks.length === 0) {
+          delete this.events[eventName];
+        }
+      }
+    }
+
+    /** 
+     * Unregister an event from the custom event system
+     * @type {(eventName: string, callback: function) => void} 
+     */
+  }, {
+    key: "off",
+    value: function off(eventName, callback) {
+      var _this3 = this;
+      if (typeof eventName !== 'string' || eventName === '' || typeof callback !== 'function') {
+        return;
+      }
+      var split = eventName.split(' ');
+      split.forEach(function (eventItem) {
+        _this3._off(eventItem, callback);
+      });
+    }
+
+    /** 
+     * @typedef {object} Environment
+     * @property {number} devicePixelRatio
+     * @property {number} maxTouchPoints
+     * @property {boolean} isIpadOS
+     * @property {array} isIos
+     * @property {array} isAndroid
+     * @property {boolean} isMacOSSafari
+     * @property {boolean} isFirefox
+     * @property {boolean} isMobile
+     * @property {boolean} hasNativeFullscreenSupport
+     * @return {Environment}
+     */
+  }, {
     key: "getEnvironment",
     value: function getEnvironment() {
       return ENV;
@@ -15714,11 +15955,11 @@ var RmpVast = /*#__PURE__*/function () {
   }, {
     key: "_addTrackingEvents",
     value: function _addTrackingEvents(trackingEvents) {
-      var _this = this;
+      var _this4 = this;
       var keys = Object.keys(trackingEvents);
       keys.forEach(function (key) {
         trackingEvents[key].forEach(function (url) {
-          _this.trackingTags.push({
+          _this4.trackingTags.push({
             event: key,
             url: url
           });
@@ -15732,7 +15973,7 @@ var RmpVast = /*#__PURE__*/function () {
   }, {
     key: "_parseCompanion",
     value: function _parseCompanion(creative) {
-      var _this2 = this;
+      var _this5 = this;
       // reset variables in case wrapper
       this.validCompanionAds = [];
       this.companionAdsRequiredAttribute = '';
@@ -15767,10 +16008,10 @@ var RmpVast = /*#__PURE__*/function () {
             newCompanionAds.imageUrl = staticResourceFound.url;
           }
           if (iframeResourceFound && iframeResourceFound.length > 0) {
-            newCompanionAds.iframeUrl = iframeResourceFound[0];
+            newCompanionAds.iframeUrl = iframeResourceFound;
           }
           if (htmlResourceFound && htmlResourceFound.length > 0) {
-            newCompanionAds.htmlContent = htmlResourceFound[0];
+            newCompanionAds.htmlContent = htmlResourceFound;
           }
           // if no companion content for this <Companion> then move on to the next
           if (typeof staticResourceFound === 'undefined' && typeof iframeResourceFound === 'undefined' && typeof htmlResourceFound === 'undefined') {
@@ -15794,7 +16035,7 @@ var RmpVast = /*#__PURE__*/function () {
               newCompanionAds.trackingEventsUrls.push(creativeView);
             });
           }
-          _this2.validCompanionAds.push(newCompanionAds);
+          _this5.validCompanionAds.push(newCompanionAds);
         };
         for (var i = 0; i < companions.length; i++) {
           var _ret = _loop(i);
@@ -15811,14 +16052,14 @@ var RmpVast = /*#__PURE__*/function () {
   }, {
     key: "_handleIntersect",
     value: function _handleIntersect(entries) {
-      var _this3 = this;
+      var _this6 = this;
       entries.forEach(function (entry) {
-        if (entry.intersectionRatio > _this3.viewablePreviousRatio) {
-          _this3.viewableObserver.unobserve(_this3.container);
-          Utils.createApiEvent.call(_this3, 'adviewable');
-          tracking_events.dispatch.call(_this3, 'viewable');
+        if (entry.intersectionRatio > _this6.viewablePreviousRatio) {
+          _this6.viewableObserver.unobserve(_this6.container);
+          Utils.createApiEvent.call(_this6, 'adviewable');
+          tracking_events.dispatch.call(_this6, 'viewable');
         }
-        _this3.viewablePreviousRatio = entry.intersectionRatio;
+        _this6.viewablePreviousRatio = entry.intersectionRatio;
       });
     }
 
@@ -15828,7 +16069,7 @@ var RmpVast = /*#__PURE__*/function () {
   }, {
     key: "_attachViewableObserver",
     value: function _attachViewableObserver() {
-      this.container.removeEventListener('adstarted', this.attachViewableObserver);
+      this.off('adstarted', this.attachViewableObserver);
       if (typeof window.IntersectionObserver !== 'undefined') {
         var options = {
           root: null,
@@ -15849,14 +16090,14 @@ var RmpVast = /*#__PURE__*/function () {
   }, {
     key: "_initViewableImpression",
     value: function _initViewableImpression() {
-      var _this4 = this;
+      var _this7 = this;
       if (this.viewableObserver) {
         this.viewableObserver.unobserve(this.container);
       }
       this.ad.viewableImpression.forEach(function (viewableImpression) {
         if (viewableImpression.viewable.length > 0) {
           viewableImpression.viewable.forEach(function (url) {
-            _this4.trackingTags.push({
+            _this7.trackingTags.push({
               event: 'viewable',
               url: url
             });
@@ -15864,7 +16105,7 @@ var RmpVast = /*#__PURE__*/function () {
         }
         if (viewableImpression.notviewable.length > 0) {
           viewableImpression.notviewable.forEach(function (url) {
-            _this4.trackingTags.push({
+            _this7.trackingTags.push({
               event: 'notviewable',
               url: url
             });
@@ -15872,7 +16113,7 @@ var RmpVast = /*#__PURE__*/function () {
         }
         if (viewableImpression.viewundetermined.length > 0) {
           viewableImpression.viewundetermined.forEach(function (url) {
-            _this4.trackingTags.push({
+            _this7.trackingTags.push({
               event: 'viewundetermined',
               url: url
             });
@@ -15880,7 +16121,7 @@ var RmpVast = /*#__PURE__*/function () {
         }
       });
       this.attachViewableObserver = this._attachViewableObserver.bind(this);
-      this.container.addEventListener('adstarted', this.attachViewableObserver);
+      this.on('adstarted', this.attachViewableObserver);
     }
 
     /** 
@@ -15890,7 +16131,7 @@ var RmpVast = /*#__PURE__*/function () {
     key: "_loopAds",
     value: function () {
       var _loopAds2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee(ads) {
-        var _this5 = this;
+        var _this8 = this;
         var _loop2, i;
         return _regeneratorRuntime().wrap(function _callee$(_context2) {
           while (1) {
@@ -15906,26 +16147,26 @@ var RmpVast = /*#__PURE__*/function () {
                             var currentAd = ads[i];
                             console.log("".concat(FW.consolePrepend, " currentAd follows"), FW.consoleStyle, '');
                             console.log(currentAd);
-                            _this5.ad.id = currentAd.id;
-                            _this5.ad.adServingId = currentAd.adServingId;
-                            _this5.ad.categories = currentAd.categories;
-                            if (_this5.requireCategory) {
-                              if (_this5.ad.categories.length === 0 || !_this5.ad.categories[0].authority) {
-                                Utils.processVastErrors.call(_this5, 204, true);
+                            _this8.ad.id = currentAd.id;
+                            _this8.ad.adServingId = currentAd.adServingId;
+                            _this8.ad.categories = currentAd.categories;
+                            if (_this8.requireCategory) {
+                              if (_this8.ad.categories.length === 0 || !_this8.ad.categories[0].authority) {
+                                Utils.processVastErrors.call(_this8, 204, true);
                                 resolve();
                               }
                             }
-                            _this5.ad.blockedAdCategories = currentAd.blockedAdCategories;
-                            if (_this5.requireCategory) {
+                            _this8.ad.blockedAdCategories = currentAd.blockedAdCategories;
+                            if (_this8.requireCategory) {
                               var haltDueToBlockedAdCategories = false;
-                              _this5.ad.blockedAdCategories.forEach(function (blockedAdCategory) {
+                              _this8.ad.blockedAdCategories.forEach(function (blockedAdCategory) {
                                 var blockedAdCategoryAuthority = blockedAdCategory.authority;
                                 var blockedAdCategoryValue = blockedAdCategory.value;
-                                _this5.ad.categories.forEach(function (category) {
+                                _this8.ad.categories.forEach(function (category) {
                                   var categoriesAuthority = category.authority;
                                   var categoriesValue = category.value;
                                   if (blockedAdCategoryAuthority === categoriesAuthority && blockedAdCategoryValue === categoriesValue) {
-                                    Utils.processVastErrors.call(_this5, 205, true);
+                                    Utils.processVastErrors.call(_this8, 205, true);
                                     haltDueToBlockedAdCategories = true;
                                   }
                                 });
@@ -15934,62 +16175,60 @@ var RmpVast = /*#__PURE__*/function () {
                                 resolve();
                               }
                             }
-                            _this5.ad.adType = currentAd.adType;
-                            _this5.ad.title = currentAd.title;
-                            _this5.ad.description = currentAd.description;
-                            _this5.ad.system = currentAd.system;
-                            _this5.ad.advertiser = currentAd.advertiser;
-                            _this5.ad.pricing = currentAd.pricing;
-                            _this5.ad.survey = currentAd.survey;
-                            _this5.ad.sequence = currentAd.sequence;
+                            _this8.ad.adType = currentAd.adType;
+                            _this8.ad.title = currentAd.title;
+                            _this8.ad.description = currentAd.description;
+                            _this8.ad.system = currentAd.system;
+                            _this8.ad.advertiser = currentAd.advertiser;
+                            _this8.ad.pricing = currentAd.pricing;
+                            _this8.ad.survey = currentAd.survey;
+                            _this8.ad.sequence = currentAd.sequence;
                             ads.find(function (ad) {
-                              _this5.adPod = false;
+                              _this8.adPod = false;
                               if (ad.sequence && ad.sequence > 1) {
-                                _this5.adPod = true;
+                                _this8.adPod = true;
                                 return true;
                               }
                             });
-                            if (_this5.adPod) {
-                              _this5.adSequence++;
-                              if (_this5.adPodLength === 0) {
+                            if (_this8.adPod) {
+                              _this8.adSequence++;
+                              if (_this8.adPodLength === 0) {
                                 var adPodLength = 0;
                                 ads.forEach(function (ad) {
                                   if (ad.sequence) {
                                     adPodLength++;
                                   }
                                 });
-                                _this5.adPodLength = adPodLength;
-                                console.log("".concat(FW.consolePrepend, " AdPod detected with length ").concat(_this5.adPodLength), FW.consoleStyle, '');
+                                _this8.adPodLength = adPodLength;
+                                console.log("".concat(FW.consolePrepend, " AdPod detected with length ").concat(_this8.adPodLength), FW.consoleStyle, '');
                               }
                             }
-                            _this5.ad.viewableImpression = currentAd.viewableImpression;
-                            if (_this5.ad.viewableImpression.length > 0) {
-                              _this5._initViewableImpression();
+                            _this8.ad.viewableImpression = currentAd.viewableImpression;
+                            if (_this8.ad.viewableImpression.length > 0) {
+                              _this8._initViewableImpression();
                             }
                             currentAd.errorURLTemplates.forEach(function (errorURLTemplate) {
-                              _this5.adErrorTags.push({
+                              _this8.adErrorTags.push({
                                 event: 'error',
                                 url: errorURLTemplate
                               });
                             });
                             currentAd.impressionURLTemplates.forEach(function (impression) {
                               if (impression.url) {
-                                _this5.trackingTags.push({
+                                _this8.trackingTags.push({
                                   event: 'impression',
                                   url: impression.url
                                 });
                               }
                             });
-                            _this5.container.addEventListener('addestroyed', function () {
-                              if (_this5.adPod && _this5.adSequence === _this5.adPodLength) {
-                                _this5.adPodLength = 0;
-                                _this5.adSequence = 0;
-                                _this5.adPod = false;
-                                Utils.createApiEvent.call(_this5, 'adpodcompleted');
+                            _this8.one('addestroyed', function () {
+                              if (_this8.adPod && _this8.adSequence === _this8.adPodLength) {
+                                _this8.adPodLength = 0;
+                                _this8.adSequence = 0;
+                                _this8.adPod = false;
+                                Utils.createApiEvent.call(_this8, 'adpodcompleted');
                               }
                               resolve();
-                            }, {
-                              once: true
                             });
                             // parse companion
                             var creatives = currentAd.creatives;
@@ -15998,7 +16237,7 @@ var RmpVast = /*#__PURE__*/function () {
                             creatives.find(function (creative) {
                               if (creative.type === 'companion') {
                                 console.log("".concat(FW.consolePrepend, " Creative type companion detected"), FW.consoleStyle, '');
-                                _this5._parseCompanion(creative);
+                                _this8._parseCompanion(creative);
                                 return true;
                               }
                             });
@@ -16008,43 +16247,43 @@ var RmpVast = /*#__PURE__*/function () {
                               if (creative.type === 'companion') {
                                 continue;
                               }
-                              _this5.creative.id = creative.id;
-                              _this5.creative.universalAdIds = creative.universalAdIds;
-                              _this5.creative.adId = creative.adId;
-                              _this5.creative.trackingEvents = creative.trackingEvents;
+                              _this8.creative.id = creative.id;
+                              _this8.creative.universalAdIds = creative.universalAdIds;
+                              _this8.creative.adId = creative.adId;
+                              _this8.creative.trackingEvents = creative.trackingEvents;
                               switch (creative.type) {
                                 case 'linear':
-                                  _this5.creative.duration = creative.duration;
-                                  _this5.creative.skipDelay = creative.skipDelay;
-                                  if (_this5.creative.skipDelay) {
-                                    _this5.creative.skipoffset = creative.skipDelay;
-                                    _this5.creative.isSkippableAd = true;
+                                  _this8.creative.duration = creative.duration;
+                                  _this8.creative.skipDelay = creative.skipDelay;
+                                  if (_this8.creative.skipDelay) {
+                                    _this8.creative.skipoffset = creative.skipDelay;
+                                    _this8.creative.isSkippableAd = true;
                                   }
                                   if (creative.videoClickThroughURLTemplate && creative.videoClickThroughURLTemplate.url) {
-                                    _this5.creative.clickThroughUrl = creative.videoClickThroughURLTemplate.url;
+                                    _this8.creative.clickThroughUrl = creative.videoClickThroughURLTemplate.url;
                                   }
                                   if (creative.videoClickTrackingURLTemplates.length > 0) {
                                     creative.videoClickTrackingURLTemplates.forEach(function (videoClickTrackingURLTemplate) {
                                       if (videoClickTrackingURLTemplate.url) {
-                                        _this5.trackingTags.push({
+                                        _this8.trackingTags.push({
                                           event: 'clickthrough',
                                           url: videoClickTrackingURLTemplate.url
                                         });
                                       }
                                     });
                                   }
-                                  _this5.creative.isLinear = true;
-                                  _this5._addTrackingEvents(creative.trackingEvents);
-                                  linear.parse.call(_this5, creative.icons, creative.adParameters, creative.mediaFiles);
-                                  if (_this5.params.omidSupport && currentAd.adVerifications.length > 0) {
-                                    var omSdkManager = new omsdk(currentAd.adVerifications, _this5.contentPlayer, _this5.vastPlayer, _this5.params, _this5.getIsSkippableAd(), _this5.getSkipTimeOffset());
+                                  _this8.creative.isLinear = true;
+                                  _this8._addTrackingEvents(creative.trackingEvents);
+                                  linear.parse.call(_this8, creative.icons, creative.adParameters, creative.mediaFiles);
+                                  if (_this8.params.omidSupport && currentAd.adVerifications.length > 0) {
+                                    var omSdkManager = new omsdk(currentAd.adVerifications, _this8.contentPlayer, _this8.vastPlayer, _this8.params, _this8.getIsSkippableAd(), _this8.getSkipTimeOffset());
                                     omSdkManager.init();
                                   }
                                   break;
                                 case 'nonlinear':
-                                  _this5.creative.isLinear = false;
-                                  _this5._addTrackingEvents(creative.trackingEvents);
-                                  non_linear.parse.call(_this5, creative.variations);
+                                  _this8.creative.isLinear = false;
+                                  _this8._addTrackingEvents(creative.trackingEvents);
+                                  non_linear.parse.call(_this8, creative.variations);
                                   break;
                                 default:
                                   break;
@@ -16087,7 +16326,7 @@ var RmpVast = /*#__PURE__*/function () {
   }, {
     key: "_getVastTag",
     value: function _getVastTag(vastUrl) {
-      var _this6 = this;
+      var _this9 = this;
       // we check for required VAST URL and API here
       // as we need to have this.currentContentSrc available for iOS
       if (typeof vastUrl !== 'string' || vastUrl === '') {
@@ -16111,11 +16350,11 @@ var RmpVast = /*#__PURE__*/function () {
       vastClient.get(this.adTagUrl, options).then(function (response) {
         console.log("".concat(FW.consolePrepend, " VAST response follows"), FW.consoleStyle, '');
         console.log(response);
-        Utils.createApiEvent.call(_this6, 'adtagloaded');
+        Utils.createApiEvent.call(_this9, 'adtagloaded');
         // error at VAST/Error level
         if (response.errorURLTemplates.length > 0) {
           response.errorURLTemplates.forEach(function (errorURLTemplate) {
-            _this6.vastErrorTags.push({
+            _this9.vastErrorTags.push({
               event: 'error',
               url: errorURLTemplate
             });
@@ -16123,15 +16362,15 @@ var RmpVast = /*#__PURE__*/function () {
         }
         // VAST/Ad 
         if (response.ads.length === 0) {
-          Utils.processVastErrors.call(_this6, 303, true);
+          Utils.processVastErrors.call(_this9, 303, true);
           return;
         } else {
-          _this6._loopAds(response.ads);
+          _this9._loopAds(response.ads);
         }
       }).catch(function (error) {
         console.warn(error);
         // PING 900 Undefined Error.
-        Utils.processVastErrors.call(_this6, 900, true);
+        Utils.processVastErrors.call(_this9, 900, true);
       });
     }
 
@@ -16178,9 +16417,7 @@ var RmpVast = /*#__PURE__*/function () {
         var _onDestroyLoadAds = function _onDestroyLoadAds(url) {
           this.loadAds(url);
         };
-        this.container.addEventListener('addestroyed', _onDestroyLoadAds.bind(this, finalUrl), {
-          once: true
-        });
+        this.one('addestroyed', _onDestroyLoadAds.bind(this, finalUrl));
         this.stopAds();
         return;
       }
@@ -16864,7 +17101,7 @@ var RmpVast = /*#__PURE__*/function () {
   }, {
     key: "getCompanionAd",
     value: function getCompanionAd(index) {
-      var _this7 = this;
+      var _this10 = this;
       if (typeof this.companionAdsList[index] === 'undefined') {
         return null;
       }
@@ -16891,11 +17128,11 @@ var RmpVast = /*#__PURE__*/function () {
         if (trackingEventsUrls.length > 0) {
           html.onload = function () {
             trackingEventsUrls.forEach(function (trackingEventsUrl) {
-              tracking_events.pingURI.call(_this7, trackingEventsUrl);
+              tracking_events.pingURI.call(_this10, trackingEventsUrl);
             });
           };
           html.onerror = function () {
-            tracking_events.error.call(_this7, 603);
+            tracking_events.error.call(_this10, 603);
           };
         }
         var companionClickTrackingUrls = null;
@@ -16905,7 +17142,7 @@ var RmpVast = /*#__PURE__*/function () {
           companionClickTrackingUrls = companionAd.companionClickTrackingUrls;
         }
         var _onImgClickThrough = function _onImgClickThrough(companionClickThroughUrl, companionClickTrackingUrls, event) {
-          var _this8 = this;
+          var _this11 = this;
           if (event) {
             event.stopPropagation();
             if (event.type === 'touchend') {
@@ -16915,7 +17152,7 @@ var RmpVast = /*#__PURE__*/function () {
           if (companionClickTrackingUrls) {
             companionClickTrackingUrls.forEach(function (companionClickTrackingUrl) {
               if (companionClickTrackingUrl.url) {
-                tracking_events.pingURI.call(_this8, companionClickTrackingUrl.url);
+                tracking_events.pingURI.call(_this11, companionClickTrackingUrl.url);
               }
             });
           }
@@ -16934,6 +17171,7 @@ var RmpVast = /*#__PURE__*/function () {
         try {
           var parser = new DOMParser();
           html = parser.parseFromString(companionAd.htmlContent, 'text/html');
+          html = html.documentElement;
         } catch (e) {
           return null;
         }

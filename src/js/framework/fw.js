@@ -20,7 +20,7 @@ export default class FW {
     return null;
   }
 
-  static createStdEvent(eventName, element) {
+  static createSyntheticEvent(eventName, element) {
     let event;
     if (element) {
       try {

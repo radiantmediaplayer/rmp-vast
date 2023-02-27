@@ -148,12 +148,12 @@ export default class Utils {
       event.forEach(currentEvent => {
         if (currentEvent) {
           console.log(currentEvent);
-          FW.createStdEvent(currentEvent, this.container);
+          this.dispatch(currentEvent);
         }
       });
     } else if (event) {
       console.log(event);
-      FW.createStdEvent(event, this.container);
+      this.dispatch(event);
     }
   }
 
@@ -228,7 +228,7 @@ export default class Utils {
       if ((code === 13) || (code === 32)) {
         event.stopPropagation();
         event.preventDefault();
-        FW.createStdEvent('click', element);
+        FW.createSyntheticEvent('click', element);
       }
     });
     if (ariaLabel) {
@@ -249,6 +249,7 @@ export default class Utils {
     this.firstVastPlayerPlayRequest = true;
     this.firstContentPlayerPlayRequest = true;
     this.params = {};
+    this.events = {};
     this.onFullscreenchange = FW.nullFn;
     this.contentWrapper = null;
     this.contentPlayer = null;
@@ -269,7 +270,7 @@ export default class Utils {
   }
 
   static resetVariablesForNewLoadAds() {
-    this.container.removeEventListener('adstarted', this.attachViewableObserver);
+    this.off('adstarted', this.attachViewableObserver);
     // init internal methods 
     this.onLoadedmetadataPlay = FW.nullFn;
     this.onPlaybackError = FW.nullFn;

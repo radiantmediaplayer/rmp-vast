@@ -4,7 +4,6 @@ const ADTAG1 = 'https://pubads.g.doubleclick.net/gampad/ads?iu=/21775744923/exte
 describe('Test for API events', function () {
 
   const id = 'rmp';
-  const container = document.getElementById(id);
   const video = document.querySelector('.rmp-video');
   const rmpVast = new RmpVast(id, {
     showControlsForVastPlayer: true
@@ -48,22 +47,22 @@ describe('Test for API events', function () {
     };
 
     events.forEach((event) => {
-      container.addEventListener(event, function (e) {
+      rmpVast.one(event, function (e) {
         _incrementAndLogEvents(e);
       });
     });
 
-    container.addEventListener('adstarted', function (e) {
+    rmpVast.on('adstarted', function (e) {
       _incrementAndLogEvents(e);
       setTimeout(() => {
         rmpVast.pause();
       }, 3000);
     });
 
-    container.addEventListener('addestroyed', function (e) {
+    rmpVast.on('addestroyed', function (e) {
       _incrementAndLogEvents(e);
-      expect(eventsSteps).toBe(19);
-      if (eventsSteps === 19) {
+      expect(eventsSteps).toBe(18);
+      if (eventsSteps === 18) {
         title.textContent = 'Test completed';
         done();
       }

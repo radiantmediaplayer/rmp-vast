@@ -24,14 +24,14 @@ describe('Test for AdPodNoStandaloneSpec', function () {
       }
     };
 
-    container.addEventListener('adstarted', function (e) {
+    rmpVast.on('adstarted', function (e) {
       const adPodInfo = rmpVast.getAdPodInfo();
       if (adPodInfo && adPodInfo.adPodLength === 3) {
         _incrementAndLog(e);
       }
     });
 
-    container.addEventListener('adpodcompleted', function (e) {
+    rmpVast.on('adpodcompleted', function (e) {
       _incrementAndLog(e);
       let timeupdateCount = 0;
       video.addEventListener('timeupdate', function (e) {

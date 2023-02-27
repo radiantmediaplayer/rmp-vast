@@ -36,19 +36,19 @@ describe('Test for Inline Skippable Linear ad', function () {
       }
     };
 
-    container.addEventListener('adloaded', function (e) {
+    rmpVast.on('adloaded', function (e) {
       _incrementAndLog(e);
     });
 
-    container.addEventListener('addurationchange', function (e) {
+    rmpVast.on('addurationchange', function (e) {
       _incrementAndLog(e);
     });
 
-    container.addEventListener('adimpression', function (e) {
+    rmpVast.on('adimpression', function (e) {
       _incrementAndLog(e);
     });
 
-    container.addEventListener('adstarted', function (e) {
+    rmpVast.on('adstarted', function (e) {
       _incrementAndLog(e);
       setTimeout(function () {
         const skip = document.getElementsByClassName('rmp-ad-container-skip')[0];
@@ -57,23 +57,23 @@ describe('Test for Inline Skippable Linear ad', function () {
       }, 6500);
     });
 
-    container.addEventListener('adtagstartloading', function (e) {
+    rmpVast.on('adtagstartloading', function (e) {
       _incrementAndLog(e);
     });
 
-    container.addEventListener('adtagloaded', function (e) {
+    rmpVast.on('adtagloaded', function (e) {
       _incrementAndLog(e);
     });
 
-    container.addEventListener('adskipped', function (e) {
+    rmpVast.on('adskipped', function (e) {
       _incrementAndLog(e);
     });
 
-    container.addEventListener('adskippablestatechanged', function (e) {
+    rmpVast.on('adskippablestatechanged', function (e) {
       _incrementAndLog(e);
     });
 
-    container.addEventListener('addestroyed', function (e) {
+    rmpVast.on('addestroyed', function (e) {
       _incrementAndLog(e);
       let timeupdateCount = 0;
       video.addEventListener('timeupdate', function (e) {

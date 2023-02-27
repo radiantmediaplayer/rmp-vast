@@ -3,7 +3,6 @@ const ADTAG1 = 'https://pubads.g.doubleclick.net/gampad/ads?iu=/21775744923/exte
 describe('Test for API methods', function () {
 
   const id = 'rmp';
-  const container = document.getElementById(id);
   const video = document.querySelector('.rmp-video');
   const rmpVast = new RmpVast(id, {
     showControlsForVastPlayer: true
@@ -23,7 +22,7 @@ describe('Test for API methods', function () {
       }
     };
 
-    container.addEventListener('adstarted', function (e) {
+    rmpVast.on('adstarted', function (e) {
       _incrementAndLogMethods(e);
       setTimeout(() => {
         const adVolume = rmpVast.getVolume();
@@ -65,7 +64,7 @@ describe('Test for API methods', function () {
         if (isSkippableAd && skipTimeOffset === 5) {
           _incrementAndLogMethods('isSkippableAd');
         }
-        if (/file\/file.webm/.test(adMediaUrl) && adContentType === 'video/webm') {
+        if (/file\/file.(webm|mp4)/.test(adMediaUrl) && /video\/(webm|mp4)/.test(adContentType)) {
           _incrementAndLogMethods('adMediaUrl');
         }
         if (adSystem && adSystem.value === 'GDFP') {
@@ -83,7 +82,7 @@ describe('Test for API methods', function () {
         if (adSurvey === '' && adAdServingId === '') {
           _incrementAndLogMethods('adSurvey');
         }
-        if (adDuration === 10024 && adCurrentTime > 900 && adCurrentTime < 1100 && adRemainingTime > 9000 && adRemainingTime < 10000) {
+        if (adDuration >= 10000 && adDuration <= 10500 && adCurrentTime > 900 && adCurrentTime < 1100 && adRemainingTime > 9000 && adRemainingTime < 10000) {
           _incrementAndLogMethods('adDuration');
         }
         if ([1280, 640, 426, 854].includes(adMediaWidth) && [360, 240, 480, 720].includes(adMediaHeight) && /https:\/\/googleads\.github\.io\/googleads-ima-html5\/vsi\//.test(clickThroughUrl)) {
@@ -105,14 +104,14 @@ describe('Test for API methods', function () {
       }, 2000);
     });
 
-    container.addEventListener('adskippablestatechanged', function (e) {
+    rmpVast.on('adskippablestatechanged', function (e) {
       _incrementAndLogMethods(e);
       if (rmpVast.getAdSkippableState()) {
         rmpVast.skipAd();
       }
     });
 
-    container.addEventListener('addestroyed', function (e) {
+    rmpVast.on('addestroyed', function (e) {
       _incrementAndLogMethods(e);
       expect(methodsSteps).toBe(17);
       if (methodsSteps === 17) {

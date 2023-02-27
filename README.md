@@ -266,17 +266,51 @@ If you do not want to call `loadAds()` method directly - call `initialize()` met
 
 ### API events
 
-rmp-vast will fire VAST-related events on the player container as they occur. It will also ping VAST trackers when needed but this section refers to events emitted by rmp-vast and that can be hooked to with JavaScript.
-
-Events are registered and unregistered with the addEventListener and removeEventListener JavaScript methods set on the player container. Example:
+rmp-vast will fire VAST-related events on the rmp-vast instance as they occur. Events are registered with the `on` method applied to the rmp-vast instance (`rmpVast` as shown above). They are unregistered with the `off` method. Example:
 
 ```javascript
-const id = 'rmp';
-const container = document.getElementById(id);
-...
-container.addEventListener('adloaded', function() {
-  console.log('adloaded event');
-});
+const rmpVast = new RmpVast(id, params);
+rmpVast.on('adloaded', callbackA);
+rmpVast.loadAds(adTag);
+```
+
+You can register multiple events for the same callback, example:
+
+```javascript
+const rmpVast = new RmpVast(id, params);
+rmpVast.on('adloaded adstarted', callbackA);
+rmpVast.loadAds(adTag);
+```
+
+You can access the name of the event being fired:
+
+```javascript
+function callbackA (event) {
+  console.log(event.type); // name of the event being fired
+}
+const rmpVast = new RmpVast(id, params);
+rmpVast.on('adloaded adstarted adclick', callbackA);
+rmpVast.loadAds(adTag);
+```
+
+You can unregister an event with the off method:
+
+```javascript
+rmpVast.off('adloaded', callbackA);
+```
+
+You can unregister multiple events for the same callback as well:
+
+```javascript
+rmpVast.off('adloaded adstarted adclick', callbackA);
+```
+
+You can also register an event where the callback is only executed once:
+
+```javascript
+const rmpVast = new RmpVast(id, params);
+rmpVast.one('adloaded', callbackA);
+rmpVast.loadAds(adTag);
 ```
 
 Available events are:
@@ -444,7 +478,7 @@ Not all fields may be available, so check availability before usage.
 - `getCompanionAd(index: Number)`: return `HTMLElement|null` representing the companion ad. It takes a `Number` index parameter which represents the index of the wanted companion ad in the Array returned from `getCompanionAdsList` method. This method automates the required pinging for companion ads. Usage example:
 
 ```javascript
-container.addEventListener("adstarted", function () {
+rmpVast.on("adstarted", function () {
   // we need to call getCompanionAdsList BEFORE calling getCompanionAd so that
   // rmp-vast can first create a collection of available companion ads based on getCompanionAdsList
   // input parameters

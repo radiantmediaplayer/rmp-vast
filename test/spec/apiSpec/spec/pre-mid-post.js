@@ -36,37 +36,37 @@ describe('Test for pre-mid-post', function () {
       }
     };
 
-    container.addEventListener('adloaded', function (e) {
+    rmpVast.on('adloaded', function (e) {
       _incrementAndLog(e);
     });
-    container.addEventListener('adstarted', function (e) {
+    rmpVast.on('adstarted', function (e) {
       if (env.isAndroid[0]) {
         rmpVast.resizeAd(320, 180, 'normal');
       }
       _incrementAndLog(e);
     });
-    container.addEventListener('adtagstartloading', function (e) {
+    rmpVast.on('adtagstartloading', function (e) {
       _incrementAndLog(e);
     });
-    container.addEventListener('adtagloaded', function (e) {
+    rmpVast.on('adtagloaded', function (e) {
       _incrementAndLog(e);
     });
-    container.addEventListener('adcomplete', function (e) {
+    rmpVast.on('adcomplete', function (e) {
       _incrementAndLog(e);
     });
-    container.addEventListener('adfirstquartile', function (e) {
+    rmpVast.on('adfirstquartile', function (e) {
       _incrementAndLog(e);
     });
-    container.addEventListener('admidpoint', function (e) {
+    rmpVast.on('admidpoint', function (e) {
       _incrementAndLog(e);
     });
-    container.addEventListener('adthirdquartile', function (e) {
+    rmpVast.on('adthirdquartile', function (e) {
       _incrementAndLog(e);
     });
     let addestroyedCount = 0;
     const contentPlayer = document.querySelector('.rmp-video');
     let loadPostRoll = true;
-    container.addEventListener('addestroyed', function (e) {
+    rmpVast.on('addestroyed', function (e) {
       _incrementAndLog(e);
       addestroyedCount++;
       if (addestroyedCount === 1) {

@@ -333,11 +333,11 @@ const _wireUI = function () {
     }
   };
   for (let j = 0, lenJ = events.length; j < lenJ; j++) {
-    container.addEventListener(events[j], _logEvent);
+    rmpVast.on(events[j], _logEvent);
   }
 
   // companion ad
-  container.addEventListener('adstarted', function () {
+  rmpVast.on('adstarted', function () {
     const companionId = document.getElementById('companion-ad');
     companionId.innerHTML = '';
     const list = rmpVast.getCompanionAdsList();

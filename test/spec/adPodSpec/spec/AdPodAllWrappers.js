@@ -28,12 +28,12 @@ describe('Test for AdPodAllWrappers', function () {
       }
     };
 
-    container.addEventListener('adstarted', function (e) {
+    rmpVast.on('adstarted', function (e) {
       _incrementAndLog(e);
     });
 
     let timeupdateCount = 0;
-    container.addEventListener('addestroyed', function (e) {
+    rmpVast.on('addestroyed', function (e) {
       _incrementAndLog(e);
       video.addEventListener('timeupdate', function (e) {
         timeupdateCount++;

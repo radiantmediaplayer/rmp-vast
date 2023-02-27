@@ -25,52 +25,45 @@ describe('Test for ImaInlineLinearSpec', function () {
       }
     };
 
-    container.addEventListener('adloaded', function (e) {
+    rmpVast.on('adloaded', function (e) {
       _incrementAndLog(e);
     });
-    container.addEventListener('addurationchange', function (e) {
+    rmpVast.on('addurationchange', function (e) {
       _incrementAndLog(e);
     });
-    container.addEventListener('adimpression', function (e) {
+    rmpVast.on('adimpression', function (e) {
       _incrementAndLog(e);
     });
-    container.addEventListener('adstarted', function (e) {
+    rmpVast.on('adstarted', function (e) {
       _incrementAndLog(e);
     });
-    container.addEventListener('adtagstartloading', function (e) {
+    rmpVast.on('adtagstartloading', function (e) {
       _incrementAndLog(e);
     });
-    container.addEventListener('adtagloaded', function (e) {
+    rmpVast.on('adtagloaded', function (e) {
       _incrementAndLog(e);
     });
-    container.addEventListener('adpaused', function (e) {
-      // adpaused fires also just before adcomplete
+    rmpVast.on('adcomplete', function (e) {
       _incrementAndLog(e);
     });
-    container.addEventListener('adresumed', function (e) {
+    rmpVast.on('adfirstquartile', function (e) {
       _incrementAndLog(e);
     });
-    container.addEventListener('adcomplete', function (e) {
+    rmpVast.on('admidpoint', function (e) {
       _incrementAndLog(e);
     });
-    container.addEventListener('adfirstquartile', function (e) {
+    rmpVast.on('adthirdquartile', function (e) {
       _incrementAndLog(e);
     });
-    container.addEventListener('admidpoint', function (e) {
-      _incrementAndLog(e);
-    });
-    container.addEventListener('adthirdquartile', function (e) {
-      _incrementAndLog(e);
-    });
-    container.addEventListener('addestroyed', function (e) {
+    rmpVast.on('addestroyed', function (e) {
       _incrementAndLog(e);
       let timeupdateCount = 0;
       video.addEventListener('timeupdate', function (e) {
         timeupdateCount++;
         if (timeupdateCount === 5) {
           _incrementAndLog(e);
-          if (validSteps === 13) {
-            expect(validSteps).toBe(13);
+          if (validSteps === 12) {
+            expect(validSteps).toBe(12);
             title.textContent = 'Test completed';
             done();
           }

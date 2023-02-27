@@ -15,6 +15,7 @@ import VAST_PLAYER from './players/vast-player';
 import CONTENT_PLAYER from './players/content-player';
 import TRACKING_EVENTS from './tracking/tracking-events';
 import OmSdkManager from './verification/omsdk';
+import DispatcherEvent from './framework/dispatcher-event';
 import { VASTClient } from '../assets/@dailymotion/vast-client/src/vast_client';
 import '../less/rmp-vast.less';
 
@@ -109,6 +110,107 @@ export default class RmpVast {
     console.log(this.params);
   }
 
+  /** 
+   * Dispatch an event to the custom event system
+   * @type {(eventName: string, data: object) => void} 
+   */
+  dispatch(eventName, data) {
+    const event = this.events[eventName];
+    if (event) {
+      const validatedData = {
+        type: eventName
+      };
+      if (data) {
+        validatedData.data = data;
+      }
+      event.fire(validatedData);
+    }
+  }
+
+  /** 
+   * @private
+   */
+  _on(eventName, callback) {
+    // First we grab the event from this.events
+    let event = this.events[eventName];
+    // If the event does not exist then we should create it!
+    if (!event) {
+      event = new DispatcherEvent(eventName);
+      this.events[eventName] = event;
+    }
+    // Now we add the callback to the event
+    event.registerCallback(callback);
+  }
+
+  /** 
+   * Listen to an event from the custom event system
+   * @type {(eventName: string, callback: function) => void} 
+   */
+  on(eventName, callback) {
+    if (typeof eventName !== 'string' || eventName === '' || typeof callback !== 'function') {
+      return;
+    }
+    const split = eventName.split(' ');
+    split.forEach(eventItem => {
+      this._on(eventItem, callback);
+    });
+  }
+
+  /** 
+   * @private
+   */
+  _one(eventName, callback) {
+    const newCallback = function (e) {
+      this.off(eventName, newCallback);
+      callback(e);
+    }.bind(this);
+    this.on(eventName, newCallback);
+  }
+
+  /** 
+   * Listen once to an event from the custom event system
+   * @type {(eventName: string, callback: function) => void} 
+   */
+  one(eventName, callback) {
+    if (typeof eventName !== 'string' || eventName === '' || typeof callback !== 'function') {
+      return;
+    }
+    const split = eventName.split(' ');
+    split.forEach(eventItem => {
+      this._one(eventItem, callback);
+    });
+  }
+
+  /** 
+   * @private
+   */
+  _off(eventName, callback) {
+    // First get the correct event
+    const event = this.events[eventName];
+    // Check that the event exists and it has the callback registered
+    if (event && event.callbacks.indexOf(callback) > -1) {
+      // if it is registered then unregister it!
+      event.unregisterCallback(callback);
+      // if the event has no callbacks left, delete the event
+      if (event.callbacks.length === 0) {
+        delete this.events[eventName];
+      }
+    }
+  }
+
+  /** 
+   * Unregister an event from the custom event system
+   * @type {(eventName: string, callback: function) => void} 
+   */
+  off(eventName, callback) {
+    if (typeof eventName !== 'string' || eventName === '' || typeof callback !== 'function') {
+      return;
+    }
+    const split = eventName.split(' ');
+    split.forEach(eventItem => {
+      this._off(eventItem, callback);
+    });
+  }
 
   /** 
    * @typedef {object} Environment
@@ -180,10 +282,10 @@ export default class RmpVast {
           newCompanionAds.imageUrl = staticResourceFound.url;
         }
         if (iframeResourceFound && iframeResourceFound.length > 0) {
-          newCompanionAds.iframeUrl = iframeResourceFound[0];
+          newCompanionAds.iframeUrl = iframeResourceFound;
         }
         if (htmlResourceFound && htmlResourceFound.length > 0) {
-          newCompanionAds.htmlContent = htmlResourceFound[0];
+          newCompanionAds.htmlContent = htmlResourceFound;
         }
         // if no companion content for this <Companion> then move on to the next
         if (typeof staticResourceFound === 'undefined' &&
@@ -235,7 +337,7 @@ export default class RmpVast {
    * @private
    */
   _attachViewableObserver() {
-    this.container.removeEventListener('adstarted', this.attachViewableObserver);
+    this.off('adstarted', this.attachViewableObserver);
     if (typeof window.IntersectionObserver !== 'undefined') {
       const options = {
         root: null,
@@ -284,7 +386,7 @@ export default class RmpVast {
       }
     });
     this.attachViewableObserver = this._attachViewableObserver.bind(this);
-    this.container.addEventListener('adstarted', this.attachViewableObserver);
+    this.on('adstarted', this.attachViewableObserver);
   }
 
   /** 
@@ -373,7 +475,7 @@ export default class RmpVast {
             });
           }
         });
-        this.container.addEventListener('addestroyed', () => {
+        this.one('addestroyed', () => {
           if (this.adPod && this.adSequence === this.adPodLength) {
             this.adPodLength = 0;
             this.adSequence = 0;
@@ -381,7 +483,7 @@ export default class RmpVast {
             Utils.createApiEvent.call(this, 'adpodcompleted');
           }
           resolve();
-        }, { once: true });
+        });
         // parse companion
         const creatives = currentAd.creatives;
 
@@ -555,7 +657,7 @@ export default class RmpVast {
       const _onDestroyLoadAds = function (url) {
         this.loadAds(url);
       };
-      this.container.addEventListener('addestroyed', _onDestroyLoadAds.bind(this, finalUrl), { once: true });
+      this.one('addestroyed', _onDestroyLoadAds.bind(this, finalUrl));
       this.stopAds();
       return;
     }
@@ -1235,6 +1337,7 @@ export default class RmpVast {
       try {
         const parser = new DOMParser();
         html = parser.parseFromString(companionAd.htmlContent, 'text/html');
+        html = html.documentElement;
       } catch (e) {
         return null;
       }

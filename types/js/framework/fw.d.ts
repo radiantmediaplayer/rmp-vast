@@ -1,7 +1,7 @@
 export default class FW {
     static _getStyleAttributeData(element: any, style: any): number;
     static nullFn(): any;
-    static createStdEvent(eventName: any, element: any): void;
+    static createSyntheticEvent(eventName: any, element: any): void;
     static setStyle(element: any, styleObject: any): void;
     static getWidth(element: any): any;
     static getHeight(element: any): any;
