@@ -263,7 +263,7 @@ VAST_PLAYER.append = function (url, type) {
         FW.consoleStyle,
         ''
       );
-      
+
       Utils.processVastErrors.call(this, 201, true);
       return;
     } else {
@@ -347,6 +347,9 @@ VAST_PLAYER.getCurrentTime = function () {
 };
 
 VAST_PLAYER.resumeContent = function () {
+
+  console.log(`${FW.consolePrepend} VAST_PLAYER.resumeContent requested`, FW.consoleStyle, '');
+
   VAST_PLAYER.destroy.call(this);
   this.readingHlsJS = false;
   // if this.contentPlayerCompleted = true - we are in a post-roll situation
@@ -355,6 +358,11 @@ VAST_PLAYER.resumeContent = function () {
   // custom use-cases when dynamically changing source for content
   // no need to resume content for outstream ads
   if (!this.contentPlayerCompleted && !this.params.outstream) {
+    console.log(
+      `${FW.consolePrepend} CONTENT_PLAYER.play requested after VAST_PLAYER.resumeContent`,
+      FW.consoleStyle,
+      ''
+    );
     CONTENT_PLAYER.play.call(this);
   }
   this.contentPlayerCompleted = false;

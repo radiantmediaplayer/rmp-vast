@@ -176,14 +176,14 @@ export default class Utils {
       // https://developers.google.com/web/updates/2016/03/play-returns-promise
       if (playPromise !== undefined) {
         playPromise.then(() => {
+
+          console.log(
+            `${FW.consolePrepend} playPromise on ${whichPlayer} player has succeeded`,
+            FW.consoleStyle,
+            ''
+          );
+
           if (firstPlayerPlayRequest) {
-
-            console.log(
-              `${FW.consolePrepend} initial play promise on ${whichPlayer} player has succeeded`,
-              FW.consoleStyle,
-              ''
-            );
-
             Utils.createApiEvent.call(this, 'adinitialplayrequestsucceeded');
           }
         }).catch(error => {

@@ -11549,6 +11549,7 @@ VAST_PLAYER.getCurrentTime = function () {
   return -1;
 };
 VAST_PLAYER.resumeContent = function () {
+  console.log("".concat(FW.consolePrepend, " VAST_PLAYER.resumeContent requested"), FW.consoleStyle, '');
   VAST_PLAYER.destroy.call(this);
   this.readingHlsJS = false;
   // if this.contentPlayerCompleted = true - we are in a post-roll situation
@@ -11557,6 +11558,7 @@ VAST_PLAYER.resumeContent = function () {
   // custom use-cases when dynamically changing source for content
   // no need to resume content for outstream ads
   if (!this.contentPlayerCompleted && !this.params.outstream) {
+    console.log("".concat(FW.consolePrepend, " CONTENT_PLAYER.play requested after VAST_PLAYER.resumeContent"), FW.consoleStyle, '');
     content_player.play.call(this);
   }
   this.contentPlayerCompleted = false;
@@ -11685,7 +11687,7 @@ var Utils = /*#__PURE__*/function () {
         omidRunValidationScript: false,
         omidAutoplay: false,
         partnerName: 'rmp-vast',
-        partnerVersion: "10.0.0"
+        partnerVersion: "10.0.1"
       };
       this.params = defaultParams;
       if (inputParams && utils_typeof(inputParams) === 'object') {
@@ -11760,8 +11762,8 @@ var Utils = /*#__PURE__*/function () {
         // https://developers.google.com/web/updates/2016/03/play-returns-promise
         if (playPromise !== undefined) {
           playPromise.then(function () {
+            console.log("".concat(FW.consolePrepend, " playPromise on ").concat(whichPlayer, " player has succeeded"), FW.consoleStyle, '');
             if (firstPlayerPlayRequest) {
-              console.log("".concat(FW.consolePrepend, " initial play promise on ").concat(whichPlayer, " player has succeeded"), FW.consoleStyle, '');
               Utils.createApiEvent.call(_this3, 'adinitialplayrequestsucceeded');
             }
           }).catch(function (error) {
