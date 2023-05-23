@@ -599,7 +599,10 @@ VPAID.loadCreative = function (creativeUrl, vpaidSettings) {
     } else {
       // we use existing rmp-ad-vast-video-player as it is already 
       // available and initialized (no need for user interaction)
-      const existingVastPlayer = this.adContainer.querySelector('.rmp-ad-vast-video-player');
+      let existingVastPlayer = null;
+      if (this.adContainer) {
+        existingVastPlayer = this.adContainer.querySelector('.rmp-ad-vast-video-player');
+      }
       if (existingVastPlayer === null) {
         Utils.processVastErrors.call(this, 900, true);
         return;
@@ -678,7 +681,7 @@ VPAID.loadCreative = function (creativeUrl, vpaidSettings) {
 
 VPAID.destroy = function () {
   console.log(`${FW.consolePrepend} destroy VPAID dependencies`, FW.consoleStyle, '');
-  
+
   if (this.vpaidAvailableInterval) {
     clearInterval(this.vpaidAvailableInterval);
   }

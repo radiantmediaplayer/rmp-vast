@@ -17,6 +17,7 @@ import TRACKING_EVENTS from './tracking/tracking-events';
 import OmSdkManager from './verification/omsdk';
 import DispatcherEvent from './framework/dispatcher-event';
 import { VASTClient } from '../assets/@dailymotion/vast-client/src/vast_client';
+import { VASTParser } from '../assets/@dailymotion/vast-client/src/parser/vast_parser';
 import '../less/rmp-vast.less';
 
 /**
@@ -49,6 +50,7 @@ export default class RmpVast {
    *  error. Default: 4. Capped at 30 to avoid infinite wrapper loops.
    * @property {boolean} [outstream] - Enables outstream ad mode. Default: false.
    * @property {boolean} [showControlsForVastPlayer] - Shows VAST player HTML5 default video controls. Default: false.
+   * @property {boolean} [vastXmlInput] - Instead of a VAST URI, we provide directly to rmp-vast VAST XML. Default: false.
    * @property {boolean} [enableVpaid] - Enables VPAID support or not. Default: true.
    * @property {VpaidSettings} [vpaidSettings] - Information required to display VPAID creatives - note that it is up 
    *  to the parent application of rmp-vast to provide those informations
@@ -560,10 +562,35 @@ export default class RmpVast {
   /** 
    * @private
    */
-  _getVastTag(vastUrl) {
-    // we check for required VAST URL and API here
+  _handleParsedVast(response) {
+    console.log(`${FW.consolePrepend} VAST response follows`, FW.consoleStyle, '');
+    console.log(response);
+
+    // error at VAST/Error level
+    if (response.errorURLTemplates.length > 0) {
+      response.errorURLTemplates.forEach(errorURLTemplate => {
+        this.vastErrorTags.push({
+          event: 'error',
+          url: errorURLTemplate
+        });
+      });
+    }
+    // VAST/Ad 
+    if (response.ads.length === 0) {
+      Utils.processVastErrors.call(this, 303, true);
+      return;
+    } else {
+      this._loopAds(response.ads);
+    }
+  }
+
+  /** 
+   * @private
+   */
+  _getVastTag(vastData) {
+    // we check for required VAST input and API here
     // as we need to have this.currentContentSrc available for iOS
-    if (typeof vastUrl !== 'string' || vastUrl === '') {
+    if (typeof vastData !== 'string' || vastData === '') {
       Utils.processVastErrors.call(this, 1001, false);
       return;
     }
@@ -571,48 +598,51 @@ export default class RmpVast {
       Utils.processVastErrors.call(this, 1002, false);
       return;
     }
-    Utils.createApiEvent.call(this, 'adtagstartloading');
-    const vastClient = new VASTClient();
-    const options = {
-      timeout: this.params.ajaxTimeout,
-      withCredentials: this.params.ajaxWithCredentials,
-      wrapperLimit: this.params.maxNumRedirects,
-      resolveAll: false
-    };
-    this.adTagUrl = vastUrl;
+    if (!this.params.vastXmlInput) {
+      Utils.createApiEvent.call(this, 'adtagstartloading');
+      const vastClient = new VASTClient();
+      const options = {
+        timeout: this.params.ajaxTimeout,
+        withCredentials: this.params.ajaxWithCredentials,
+        wrapperLimit: this.params.maxNumRedirects,
+        resolveAll: false
+      };
+      this.adTagUrl = vastData;
 
-    console.log(`${FW.consolePrepend} Try to load VAST tag at: ${this.adTagUrl}`, FW.consoleStyle, '');
+      console.log(`${FW.consolePrepend} Try to load VAST tag at: ${this.adTagUrl}`, FW.consoleStyle, '');
 
-    vastClient.get(this.adTagUrl, options).then(response => {
-      console.log(`${FW.consolePrepend} VAST response follows`, FW.consoleStyle, '');
-      console.log(response);
-
-      Utils.createApiEvent.call(this, 'adtagloaded');
-      // error at VAST/Error level
-      if (response.errorURLTemplates.length > 0) {
-        response.errorURLTemplates.forEach(errorURLTemplate => {
-          this.vastErrorTags.push({
-            event: 'error',
-            url: errorURLTemplate
-          });
-        });
-      }
-      // VAST/Ad 
-      if (response.ads.length === 0) {
-        Utils.processVastErrors.call(this, 303, true);
+      vastClient.get(this.adTagUrl, options).then(response => {
+        Utils.createApiEvent.call(this, 'adtagloaded');
+        this._handleParsedVast(response);
+      }).catch(error => {
+        console.warn(error);
+        // PING 900 Undefined Error.
+        Utils.processVastErrors.call(this, 900, true);
+      });
+    } else {
+      // input is not a VAST URI but raw VAST XML -> we parse it and proceed
+      let vastXml;
+      try {
+        vastXml = (new DOMParser()).parseFromString(vastData, 'text/xml');
+      } catch (error) {
+        console.warn(error);
+        // PING 900 Undefined Error.
+        Utils.processVastErrors.call(this, 900, true);
         return;
-      } else {
-        this._loopAds(response.ads);
       }
-    }).catch(error => {
-      console.warn(error);
-      // PING 900 Undefined Error.
-      Utils.processVastErrors.call(this, 900, true);
-    });
+      const vastParser = new VASTParser();
+      vastParser.parseVAST(vastXml).then(response => {
+        this._handleParsedVast(response);
+      }).catch(error => {
+        console.warn(error);
+        // PING 900 Undefined Error.
+        Utils.processVastErrors.call(this, 900, true);
+      });
+    }
   }
 
   /** 
-   * @param {string} vastUrl - the URI to the VAST resource to be loaded
+   * @param {string} vastData - the URI to the VAST resource to be loaded - or raw VAST XML if params.vastXmlInput is true
    * @param {object} [regulationsInfo] - data for regulations as
    * @param {string} [regulationsInfo.regulations] - coppa|gdpr for REGULATIONS macro
    * @param {string} [regulationsInfo.limitAdTracking] - 0|1 for LIMITADTRACKING macro
@@ -621,7 +651,7 @@ export default class RmpVast {
    * @param {boolean} [requireCategory] - for enforcement of VAST 4 Ad Categories
    * @return {void}
    */
-  loadAds(vastUrl, regulationsInfo, requireCategory) {
+  loadAds(vastData, regulationsInfo, requireCategory) {
     console.log(`${FW.consolePrepend} loadAds method starts`, FW.consoleStyle, '');
 
     // if player is not initialized - this must be done now
@@ -645,7 +675,12 @@ export default class RmpVast {
     if (requireCategory) {
       this.requireCategory = true;
     }
-    const finalUrl = TRACKING_EVENTS.replaceMacros.call(this, vastUrl, false);
+    let finalVastData = vastData;
+    if (!this.params.vastXmlInput) {
+      // we have a VAST URI replaceMacros
+      finalVastData = TRACKING_EVENTS.replaceMacros.call(this, vastData, false);
+    }
+
     // if an ad is already on stage we need to clear it first before we can accept another ad request
     if (this.getAdOnStage()) {
       console.log(
@@ -654,10 +689,10 @@ export default class RmpVast {
         ''
       );
 
-      const _onDestroyLoadAds = function (url) {
-        this.loadAds(url);
+      const _onDestroyLoadAds = function (vastData) {
+        this.loadAds(vastData);
       };
-      this.one('addestroyed', _onDestroyLoadAds.bind(this, finalUrl));
+      this.one('addestroyed', _onDestroyLoadAds.bind(this, finalVastData));
       this.stopAds();
       return;
     }
@@ -680,7 +715,7 @@ export default class RmpVast {
       // on iOS we need to prevent seeking when linear ad is on stage
       CONTENT_PLAYER.preventSeekingForCustomPlayback.call(this);
     }
-    this._getVastTag(finalUrl);
+    this._getVastTag(finalVastData);
   }
 
   /** 
@@ -822,6 +857,22 @@ export default class RmpVast {
         VAST_PLAYER.resumeContent.call(this);
       }
     }
+  }
+
+  /** 
+   * The difference between stopAds and destroy is that after calling destroy you may not call loadAds again
+   * You will need to create a new RmpVast instance. 
+   * @type {() => void} 
+   */
+  destroy() {
+    if (this.contentPlayer) {
+      this.contentPlayer.removeEventListener('webkitbeginfullscreen', this.onFullscreenchange);
+      this.contentPlayer.removeEventListener('webkitendfullscreen', this.onFullscreenchange);
+    } else {
+      document.removeEventListener('fullscreenchange', this.onFullscreenchange);
+    }
+    VAST_PLAYER.destroy.call(this);
+    Utils.initInstanceVariables.call(this);
   }
 
   /** 
@@ -1370,20 +1421,6 @@ export default class RmpVast {
    */
   getInitialized() {
     return this.rmpVastInitialized;
-  }
-
-  /** 
-   * @type {() => void} 
-   */
-  destroy() {
-    if (this.contentPlayer) {
-      this.contentPlayer.removeEventListener('webkitbeginfullscreen', this.onFullscreenchange);
-      this.contentPlayer.removeEventListener('webkitendfullscreen', this.onFullscreenchange);
-    } else {
-      document.removeEventListener('fullscreenchange', this.onFullscreenchange);
-    }
-    VAST_PLAYER.destroy.call(this);
-    Utils.initInstanceVariables.call(this);
   }
 
   /** 

@@ -28,7 +28,6 @@ const COMMON_VIDEO_FORMATS = [
 ];
 
 const _onDurationChange = function () {
-  this.vastPlayer.removeEventListener('durationchange', this.onDurationChange);
   this.vastPlayerDuration = VAST_PLAYER.getDuration.call(this);
   Utils.createApiEvent.call(this, 'addurationchange');
   // progress event
@@ -70,19 +69,18 @@ const _onDurationChange = function () {
 };
 
 const _onLoadedmetadataPlay = function () {
-  this.vastPlayer.removeEventListener('loadedmetadata', this.onLoadedmetadataPlay);
   clearTimeout(this.creativeLoadTimeoutCallback);
-  Utils.createApiEvent.call(this, 'adloaded');
-  TRACKING_EVENTS.dispatch.call(this, 'loaded');
   CONTENT_PLAYER.pause.call(this);
   // adjust volume to make sure content player volume matches vast player volume
-  if (this.vastPlayer.volume !== this.contentPlayer.volume) {
-    this.vastPlayer.volume = this.contentPlayer.volume;
-  }
-  if (this.contentPlayer.muted) {
-    this.vastPlayer.muted = true;
-  } else {
-    this.vastPlayer.muted = false;
+  if (this.vastPlayer) {
+    if (this.vastPlayer.volume !== this.contentPlayer.volume) {
+      this.vastPlayer.volume = this.contentPlayer.volume;
+    }
+    if (this.contentPlayer.muted) {
+      this.vastPlayer.muted = true;
+    } else {
+      this.vastPlayer.muted = false;
+    }
   }
   // show ad container holding vast player
   FW.show(this.adContainer);
@@ -93,6 +91,8 @@ const _onLoadedmetadataPlay = function () {
   if (this.firstVastPlayerPlayRequest) {
     this.firstVastPlayerPlayRequest = false;
   }
+  Utils.createApiEvent.call(this, 'adloaded');
+  TRACKING_EVENTS.dispatch.call(this, 'loaded');
 };
 
 const _onClickThrough = function (event) {
@@ -106,7 +106,7 @@ const _onClickThrough = function (event) {
       FW.consoleStyle,
       ''
     );
-    
+
     FW.openWindow(this.creative.clickThroughUrl);
   }
   this.pause();
@@ -268,11 +268,11 @@ LINEAR.update = function (url, type) {
   );
 
   this.onDurationChange = _onDurationChange.bind(this);
-  this.vastPlayer.addEventListener('durationchange', this.onDurationChange);
+  this.vastPlayer.addEventListener('durationchange', this.onDurationChange, { once: true });
 
   // when creative is loaded play it 
   this.onLoadedmetadataPlay = _onLoadedmetadataPlay.bind(this);
-  this.vastPlayer.addEventListener('loadedmetadata', this.onLoadedmetadataPlay);
+  this.vastPlayer.addEventListener('loadedmetadata', this.onLoadedmetadataPlay, { once: true });
 
   // prevent built in menu to show on right click
   this.onContextMenu = _onContextMenu.bind(this);

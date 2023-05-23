@@ -152,5 +152,5 @@ export class VASTParser extends EventEmitter {
      */
     completeWrapperResolving(vastResponse: any): void;
 }
-import { EventEmitter } from "../util/event_emitter";
+import { EventEmitter } from '../util/event_emitter';
 //# sourceMappingURL=vast_parser.d.ts.map

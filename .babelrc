@@ -3,11 +3,22 @@
     [
       "@babel/preset-env",
       {
-        "modules": "auto",
-        "debug": false,
-        "bugfixes": true,
-        "useBuiltIns": "usage",
-        "corejs": "3.27"
+        "debug": true,
+        "bugfixes": true
+        //"useBuiltIns": false,
+        //"corejs": "3.30"
+      }
+    ]
+  ],
+  "plugins": [
+    [
+      "@babel/plugin-transform-runtime",
+      {
+        "absoluteRuntime": false,
+        "corejs": 3,
+        "helpers": true,
+        "regenerator": true,
+        "version": "^7.21.4"
       }
     ]
   ]

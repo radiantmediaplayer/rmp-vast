@@ -88,6 +88,7 @@ export default class Utils {
       },
       outstream: false,
       showControlsForVastPlayer: false,
+      vastXmlInput: false,
       enableVpaid: true,
       vpaidSettings: {
         width: 640,

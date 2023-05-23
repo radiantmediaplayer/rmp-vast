@@ -233,6 +233,7 @@ Once rmp-vast is loaded on your page you can create a new rmp-vast instance as f
   - `params.labels.textForClickUIOnMobile: String` on mobile devices the click-through URL for a linear ad is provided in a box located at the top right corner of the player. This setting set the text for this box. Default: 'Learn more'.
   - `params.outstream: Boolean` Enables outstream ad mode. Default: false.
   - `params.showControlsForVastPlayer: Boolean` Shows VAST player HTML5 default video controls. Default: false.
+  - `params.vastXmlInput: Boolean` Instead of a VAST URI, we provide directly to rmp-vast VAST XML. Default: false. See test/spec/inlineLinearSpec/raw-xml-input.html for an example.
   - `params.enableVpaid: Boolean` Enables VPAID support or not. Default: true.
   - `params.vpaidSettings: Object` information required to properly display VPAID creatives - note that it is up to the parent application of rmp-vast to provide those informations - below values are default (see test/spec/vpaidSpec/ for examples):
     - `params.vpaidSettings.width: Number` Default: 640.
@@ -270,7 +271,7 @@ rmp-vast will fire VAST-related events on the rmp-vast instance as they occur. E
 
 ```javascript
 const rmpVast = new RmpVast(id, params);
-rmpVast.on('adloaded', callbackA);
+rmpVast.on('adstarted', callbackA);
 rmpVast.loadAds(adTag);
 ```
 
@@ -296,7 +297,7 @@ rmpVast.loadAds(adTag);
 You can unregister an event with the off method:
 
 ```javascript
-rmpVast.off('adloaded', callbackA);
+rmpVast.off('adstarted', callbackA);
 ```
 
 You can unregister multiple events for the same callback as well:
@@ -309,7 +310,7 @@ You can also register an event where the callback is only executed once:
 
 ```javascript
 const rmpVast = new RmpVast(id, params);
-rmpVast.one('adloaded', callbackA);
+rmpVast.one('adstarted', callbackA);
 rmpVast.loadAds(adTag);
 ```
 
@@ -386,7 +387,8 @@ For linear ads rmp-vast exposes 2 players: a content player (for the actual cont
 - `getVolume()`: return `Number`, the volume of (content|vast) player depending on what is on stage. Returned value is a number between 0 and 1. -1 is returned if this value is not available.
 - `setMute(muted: Boolean)`: set mute state of (content|vast) player depending on what is on stage.
 - `getMute()`: return `Boolean`, the mute state of (content|vast) player depending on what is on stage. Returned value is a Boolean.
-- `stopAds()`: stop playing the ad on stage.
+- `stopAds()`: stop playing the ad on stage. You may call loadAds again after invoking stopAds.
+- `destroy()`: stop playing the ad on stage and destroy the current RmpVast instance. You may not call loadAds again after invoking destroy, you will need to create a new RmpVast instance.
 - `skipAd()`: skips the creative on stage - this method only has effects if the creative on stage is a skippable ad and can be skipped (e.g. `getAdSkippableState` returns true).
 - `getAdTagUrl()`: return `String`, representing the current VAST tag URL.
 - `getAdOnStage()`: return `Boolean`, stating if an ad is currently on stage.

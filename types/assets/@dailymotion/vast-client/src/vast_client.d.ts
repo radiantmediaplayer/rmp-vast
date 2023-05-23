@@ -48,6 +48,6 @@ export class VASTClient {
      */
     get(url: string, options?: any): Promise<any>;
 }
-import { VASTParser } from "./parser/vast_parser";
-import { Storage } from "./util/storage";
+import { VASTParser } from './parser/vast_parser';
+import { Storage } from './util/storage';
 //# sourceMappingURL=vast_client.d.ts.map

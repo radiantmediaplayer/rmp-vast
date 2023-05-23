@@ -27,6 +27,7 @@ export default class RmpVast {
      *  error. Default: 4. Capped at 30 to avoid infinite wrapper loops.
      * @property {boolean} [outstream] - Enables outstream ad mode. Default: false.
      * @property {boolean} [showControlsForVastPlayer] - Shows VAST player HTML5 default video controls. Default: false.
+     * @property {boolean} [vastXmlInput] - Instead of a VAST URI, we provide directly to rmp-vast VAST XML. Default: false.
      * @property {boolean} [enableVpaid] - Enables VPAID support or not. Default: true.
      * @property {VpaidSettings} [vpaidSettings] - Information required to display VPAID creatives - note that it is up
      *  to the parent application of rmp-vast to provide those informations
@@ -76,6 +77,10 @@ export default class RmpVast {
          * - Shows VAST player HTML5 default video controls. Default: false.
          */
         showControlsForVastPlayer?: boolean;
+        /**
+         * - Instead of a VAST URI, we provide directly to rmp-vast VAST XML. Default: false.
+         */
+        vastXmlInput?: boolean;
         /**
          * - Enables VPAID support or not. Default: true.
          */
@@ -219,10 +224,14 @@ export default class RmpVast {
     /**
      * @private
      */
+    private _handleParsedVast;
+    /**
+     * @private
+     */
     private _getVastTag;
     adTagUrl: string;
     /**
-     * @param {string} vastUrl - the URI to the VAST resource to be loaded
+     * @param {string} vastData - the URI to the VAST resource to be loaded - or raw VAST XML if params.vastXmlInput is true
      * @param {object} [regulationsInfo] - data for regulations as
      * @param {string} [regulationsInfo.regulations] - coppa|gdpr for REGULATIONS macro
      * @param {string} [regulationsInfo.limitAdTracking] - 0|1 for LIMITADTRACKING macro
@@ -231,7 +240,7 @@ export default class RmpVast {
      * @param {boolean} [requireCategory] - for enforcement of VAST 4 Ad Categories
      * @return {void}
      */
-    loadAds(vastUrl: string, regulationsInfo?: {
+    loadAds(vastData: string, regulationsInfo?: {
         regulations?: string;
         limitAdTracking?: string;
         gdprConsent?: string;
@@ -248,6 +257,7 @@ export default class RmpVast {
     getMute(): boolean;
     getFullscreen(): boolean;
     stopAds(): void;
+    destroy(): void;
     skipAd(): void;
     getAdTagUrl(): string;
     getAdMediaUrl(): string;
@@ -381,7 +391,6 @@ export default class RmpVast {
     getCompanionAdsRequiredAttribute(): string;
     initialize(): void;
     getInitialized(): boolean;
-    destroy(): void;
     /**
      * @typedef {object} AdPod
      * @property {number} adPodCurrentIndex
