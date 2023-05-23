@@ -16,8 +16,8 @@ import CONTENT_PLAYER from './players/content-player';
 import TRACKING_EVENTS from './tracking/tracking-events';
 import OmSdkManager from './verification/omsdk';
 import DispatcherEvent from './framework/dispatcher-event';
-import { VASTClient } from '../assets/@dailymotion/vast-client/src/vast_client';
 import '../less/rmp-vast.less';
+import { VASTParser } from '../assets/@dailymotion/vast-client/src/parser/vast_parser';
 
 /**
  * The class to instantiate RmpVast
@@ -560,30 +560,19 @@ export default class RmpVast {
   /** 
    * @private
    */
-  _getVastTag(vastUrl) {
+  _getVastTag(vast) {
     // we check for required VAST URL and API here
     // as we need to have this.currentContentSrc available for iOS
-    if (typeof vastUrl !== 'string' || vastUrl === '') {
-      Utils.processVastErrors.call(this, 1001, false);
-      return;
-    }
     if (typeof DOMParser === 'undefined') {
       Utils.processVastErrors.call(this, 1002, false);
       return;
     }
     Utils.createApiEvent.call(this, 'adtagstartloading');
-    const vastClient = new VASTClient();
-    const options = {
-      timeout: this.params.ajaxTimeout,
-      withCredentials: this.params.ajaxWithCredentials,
-      wrapperLimit: this.params.maxNumRedirects,
-      resolveAll: false
-    };
-    this.adTagUrl = vastUrl;
-
-    console.log(`${FW.consolePrepend} Try to load VAST tag at: ${this.adTagUrl}`, FW.consoleStyle, '');
-
-    vastClient.get(this.adTagUrl, options).then(response => {
+    const vastParser = new VASTParser();
+    let parser = new DOMParser();
+    let xmlDoc = parser.parseFromString(vast, 'text/xml');
+    console.log(`${FW.consolePrepend} Try to load VAST tag`, FW.consoleStyle, '');
+    vastParser.parseVAST(xmlDoc).then(response => {
       console.log(`${FW.consolePrepend} VAST response follows`, FW.consoleStyle, '');
       console.log(response);
 
