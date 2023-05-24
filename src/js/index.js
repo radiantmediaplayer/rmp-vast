@@ -598,8 +598,8 @@ export default class RmpVast {
       Utils.processVastErrors.call(this, 1002, false);
       return;
     }
+    Utils.createApiEvent.call(this, 'adtagstartloading');
     if (!this.params.vastXmlInput) {
-      Utils.createApiEvent.call(this, 'adtagstartloading');
       const vastClient = new VASTClient();
       const options = {
         timeout: this.params.ajaxTimeout,
@@ -632,6 +632,7 @@ export default class RmpVast {
       }
       const vastParser = new VASTParser();
       vastParser.parseVAST(vastXml).then(response => {
+        Utils.createApiEvent.call(this, 'adtagloaded');
         this._handleParsedVast(response);
       }).catch(error => {
         console.warn(error);

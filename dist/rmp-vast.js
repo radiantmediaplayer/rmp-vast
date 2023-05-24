@@ -12838,7 +12838,7 @@ var Utils = /*#__PURE__*/function () {
         omidRunValidationScript: false,
         omidAutoplay: false,
         partnerName: 'rmp-vast',
-        partnerVersion: "11.0.0"
+        partnerVersion: "11.0.1"
       };
       this.params = defaultParams;
       if (inputParams && _typeof(inputParams) === 'object') {
@@ -17460,9 +17460,9 @@ var RmpVast = /*#__PURE__*/function () {
         Utils.processVastErrors.call(this, 1002, false);
         return;
       }
+      Utils.createApiEvent.call(this, 'adtagstartloading');
       if (!this.params.vastXmlInput) {
         var _context8;
-        Utils.createApiEvent.call(this, 'adtagstartloading');
         var vastClient = new VASTClient();
         var options = {
           timeout: this.params.ajaxTimeout,
@@ -17493,6 +17493,7 @@ var RmpVast = /*#__PURE__*/function () {
         }
         var vastParser = new VASTParser();
         vastParser.parseVAST(vastXml).then(function (response) {
+          Utils.createApiEvent.call(_this10, 'adtagloaded');
           _this10._handleParsedVast(response);
         }).catch(function (error) {
           console.warn(error);
