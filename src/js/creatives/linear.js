@@ -2,7 +2,6 @@ import FW from '../framework/fw';
 import ENV from '../framework/env';
 import Utils from '../framework/utils';
 import TRACKING_EVENTS from '../tracking/tracking-events';
-import CONTENT_PLAYER from '../players/content-player';
 import VAST_PLAYER from '../players/vast-player';
 import VPAID from '../players/vpaid';
 import ICONS from './icons';
@@ -70,7 +69,6 @@ const _onDurationChange = function () {
 
 const _onLoadedmetadataPlay = function () {
   clearTimeout(this.creativeLoadTimeoutCallback);
-  CONTENT_PLAYER.pause.call(this);
   // adjust volume to make sure content player volume matches vast player volume
   if (this.vastPlayer) {
     if (this.vastPlayer.volume !== this.contentPlayer.volume) {

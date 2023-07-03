@@ -9,7 +9,7 @@ describe('Test for raw-xml-input', function () {
   const rmpVast = new RmpVast(id, { vastXmlInput: true });
   const env = rmpVast.getEnvironment();
   video.muted = true;
-  if (env.isAndroid[0]) {
+  if (env.isAndroid[0] || env.isIos[0]) {
     container.style.width = '320px';
     container.style.height = '180px';
   }

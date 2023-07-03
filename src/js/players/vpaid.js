@@ -112,8 +112,6 @@ const _onAdLoaded = function () {
     }
     this.vpaidAdStarted = false;
   }, this.params.creativeLoadTimeout);
-  // pause content player
-  CONTENT_PLAYER.pause.call(this);
   this.adOnStage = true;
   this.vpaidCreative.startAd();
   Utils.createApiEvent.call(this, 'adloaded');
@@ -610,6 +608,8 @@ VPAID.loadCreative = function (creativeUrl, vpaidSettings) {
       this.vastPlayer = existingVastPlayer;
     }
   }
+  // pause content player
+  CONTENT_PLAYER.pause.call(this);
   // create FiF 
   this.vpaidIframe = document.createElement('iframe');
   this.vpaidIframe.sandbox = 'allow-scripts allow-same-origin';

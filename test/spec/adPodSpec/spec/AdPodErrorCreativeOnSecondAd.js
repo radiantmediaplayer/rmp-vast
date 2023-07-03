@@ -8,7 +8,7 @@ describe('Test for AdPodErrorCreativeOnSecondAd', function () {
   video.muted = true;
   const rmpVast = new RmpVast(id);
   const env = rmpVast.getEnvironment();
-  if (env.isAndroid[0]) {
+  if (env.isAndroid[0] || env.isIos[0]) {
     container.style.width = '320px';
     container.style.height = '180px';
   }

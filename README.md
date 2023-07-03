@@ -444,7 +444,7 @@ The following methods provide context information for the rmp-vast instance:
 - `getEnvironment()`: return `Object`, data about the environment that rmp-vast runs into.
 - `getVastPlayer()`: return `HTMLMediaElement|null`, the VAST player video tag.
 - `getContentPlayer()`: return `HTMLMediaElement|null`, the content player video tag.
-- `getIsUsingContentPlayerForAds()`: return `Boolean`, on iOS and macOS Safari the VAST player is the content player. This is to avoid fullscreen management and autoplay issues and to provide a consistent user experience. This method will return true for iOS and macOS Safari, false otherwise.
+- `getIsUsingContentPlayerForAds()`: return `Boolean`, on iOS Safari the VAST player is the content player. This is to avoid fullscreen management and autoplay issues and to provide a consistent user experience. This method will return true for iOS Safari, false otherwise.
 
 [Back to documentation sections](#documentation-sections)
 

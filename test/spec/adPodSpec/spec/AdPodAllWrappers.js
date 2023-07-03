@@ -11,7 +11,7 @@ describe('Test for AdPodAllWrappers', function () {
   video.muted = true;
   const rmpVast = new RmpVast(id);
   const env = rmpVast.getEnvironment();
-  if (env.isAndroid[0]) {
+  if (env.isAndroid[0] || env.isIos[0]) {
     container.style.width = '320px';
     container.style.height = '180px';
   }
@@ -33,14 +33,14 @@ describe('Test for AdPodAllWrappers', function () {
     });
 
     let timeupdateCount = 0;
-    rmpVast.on('addestroyed', function (e) {
+    rmpVast.on('adpodcompleted', function (e) {
       _incrementAndLog(e);
       video.addEventListener('timeupdate', function (e) {
         timeupdateCount++;
         if (timeupdateCount === 5) {
           _incrementAndLog(e);
-          if (validSteps === 3) {
-            expect(validSteps).toBe(3);
+          if (validSteps === 5) {
+            expect(validSteps).toBe(5);
             title.textContent = 'Test completed';
             done();
           }

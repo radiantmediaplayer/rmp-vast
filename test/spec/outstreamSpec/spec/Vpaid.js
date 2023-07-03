@@ -18,7 +18,7 @@ describe('Test for outstream/Vpaid', function () {
   const rmpVast = new RmpVast(id, params);
   const env = rmpVast.getEnvironment();
   video.muted = true;
-  if (env.isAndroid[0]) {
+  if (env.isAndroid[0] || env.isIos[0]) {
     container.style.width = '320px';
     container.style.height = '180px';
   }
@@ -39,7 +39,7 @@ describe('Test for outstream/Vpaid', function () {
       _incrementAndLog(e);
     });
     rmpVast.on('adstarted', function (e) {
-      if (env.isAndroid[0]) {
+      if (env.isAndroid[0] || env.isIos[0]) {
         rmpVast.resizeAd(320, 180, 'normal');
       }
       _incrementAndLog(e);

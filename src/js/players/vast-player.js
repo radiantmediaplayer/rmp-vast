@@ -256,6 +256,7 @@ VAST_PLAYER.append = function (url, type) {
       this.vastPlayer = existingVastPlayer;
     }
   }
+  CONTENT_PLAYER.pause.call(this);
   if (!this.creative.isLinear) {
     // we do not display non-linear ads with outstream ad 
     // they won't fit the format

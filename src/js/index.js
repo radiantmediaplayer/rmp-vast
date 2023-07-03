@@ -605,7 +605,8 @@ export default class RmpVast {
         timeout: this.params.ajaxTimeout,
         withCredentials: this.params.ajaxWithCredentials,
         wrapperLimit: this.params.maxNumRedirects,
-        resolveAll: false
+        resolveAll: false,
+        allowMultipleAds: true
       };
       this.adTagUrl = vastData;
 

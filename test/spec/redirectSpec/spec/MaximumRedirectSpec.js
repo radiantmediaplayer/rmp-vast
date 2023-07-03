@@ -11,7 +11,7 @@ describe('Test for MaximumRedirectSpec', function () {
   const rmpVast = new RmpVast(id, params);
   const env = rmpVast.getEnvironment();
   video.muted = true;
-  if (env.isAndroid[0]) {
+  if (env.isAndroid[0] || env.isIos[0]) {
     container.style.width = '320px';
     container.style.height = '180px';
   }

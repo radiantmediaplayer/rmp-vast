@@ -20,7 +20,7 @@ describe('Test for NonLinearSpecIABVAST3Spec', function () {
   const rmpVast = new RmpVast(id);
   const env = rmpVast.getEnvironment();
   video.muted = true;
-  if (env.isAndroid[0]) {
+  if (env.isAndroid[0] || env.isIos[0]) {
     container.style.width = '320px';
     container.style.height = '180px';
   }
@@ -42,7 +42,7 @@ describe('Test for NonLinearSpecIABVAST3Spec', function () {
 
     rmpVast.on('aderror', function (e) {
       const errorCode = rmpVast.getAdVastErrorCode();
-      if (env.isAndroid[0] && errorCode === 501) {
+      if ((env.isAndroid[0] || env.isIos[0]) && errorCode === 501) {
         _incrementAndLog(e);
         let timeupdateCount = 0;
         video.addEventListener('timeupdate', function (e) {
