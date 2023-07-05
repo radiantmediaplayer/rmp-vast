@@ -445,6 +445,19 @@ export default class RmpVast {
             return true;
           }
         });
+        // this is to fix a weird bug in vast-client-js - sometimes it returns sequence === null for some items when
+        // adpod is made of redirects
+        if (this.adPod) {
+          let max = ads.reduce(function (prev, current) {
+            return (prev.sequence > current.sequence) ? prev : current;
+          }).sequence;
+          ads.forEach(ad => {
+            if (ad.sequence === null) {
+              ad.sequence = max + 1;
+              max++;
+            }
+          });
+        }
         if (this.adPod) {
           this.adSequence++;
           if (this.adPodLength === 0) {

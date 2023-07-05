@@ -9681,6 +9681,9 @@ var find_default = /*#__PURE__*/__webpack_require__.n(find);
 // EXTERNAL MODULE: ./node_modules/@babel/runtime-corejs3/core-js-stable/promise.js
 var core_js_stable_promise = __webpack_require__(6226);
 var core_js_stable_promise_default = /*#__PURE__*/__webpack_require__.n(core_js_stable_promise);
+// EXTERNAL MODULE: ./node_modules/@babel/runtime-corejs3/core-js-stable/instance/reduce.js
+var reduce = __webpack_require__(4282);
+var reduce_default = /*#__PURE__*/__webpack_require__.n(reduce);
 // EXTERNAL MODULE: ./node_modules/@babel/runtime-corejs3/core-js-stable/instance/concat.js
 var concat = __webpack_require__(9022);
 var concat_default = /*#__PURE__*/__webpack_require__.n(concat);
@@ -12708,7 +12711,7 @@ var Utils = /*#__PURE__*/function () {
         omidRunValidationScript: false,
         omidAutoplay: false,
         partnerName: 'rmp-vast',
-        partnerVersion: "11.0.2"
+        partnerVersion: "11.0.3"
       };
       this.params = defaultParams;
       if (inputParams && _typeof(inputParams) === 'object') {
@@ -13651,9 +13654,6 @@ function createAdVerification() {
     trackingEvents: {}
   };
 }
-// EXTERNAL MODULE: ./node_modules/@babel/runtime-corejs3/core-js-stable/instance/reduce.js
-var reduce = __webpack_require__(4282);
-var reduce_default = /*#__PURE__*/__webpack_require__.n(reduce);
 ;// CONCATENATED MODULE: ./src/assets/@dailymotion/vast-client/src/companion_ad.js
 function createCompanionAd() {
   var creativeAttributes = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
@@ -16666,6 +16666,7 @@ var update = injectStylesIntoStyleTag_default()(rmp_vast/* default */.Z, options
 
 
 
+
 /**
  * @license Copyright (c) 2015-2022 Radiant Media Player | https://www.radiantmediaplayer.com
  * rmp-vast
@@ -17156,6 +17157,19 @@ var RmpVast = /*#__PURE__*/function () {
                             return true;
                           }
                         });
+                        // this is to fix a weird bug in vast-client-js - sometimes it returns sequence === null for some items when
+                        // adpod is made of redirects
+                        if (_this8.adPod) {
+                          var max = reduce_default()(ads).call(ads, function (prev, current) {
+                            return prev.sequence > current.sequence ? prev : current;
+                          }).sequence;
+                          ads.forEach(function (ad) {
+                            if (ad.sequence === null) {
+                              ad.sequence = max + 1;
+                              max++;
+                            }
+                          });
+                        }
                         if (_this8.adPod) {
                           _this8.adSequence++;
                           if (_this8.adPodLength === 0) {

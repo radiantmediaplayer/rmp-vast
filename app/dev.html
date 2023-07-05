@@ -12,7 +12,7 @@
 </head>
 
 <body>
-  <div class="rmp-container" id="rmp" style="width: 320px; height: 180px;">
+  <div class="rmp-container" id="rmp">
     <div class="rmp-content">
       <video class="rmp-video" src="https://www.rmp-streaming.com/media/big-buck-bunny-360p.mp4" playsinline muted
         controls>
@@ -23,12 +23,9 @@
     var id = 'rmp';
     var container = document.getElementById(id);
     var ADTAG;
-    ADTAG = 'https://www.radiantmediaplayer.com/vast/tags/inline-linear-1.xml';
+    ADTAG = 'https://www.radiantmediaplayer.com/vast/tags/test2.xml';
 
     var rmpVast = new RmpVast(id);
-    //rmpVast.loadAds(ADTAG);
+    rmpVast.loadAds(ADTAG);
   </script>
-
-  <video src="https://www.rmp-streaming.com/media/big-buck-bunny-360p.mp4" playsinline muted controls autoplay>
-  </video>
 </body>
