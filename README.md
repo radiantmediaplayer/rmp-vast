@@ -21,7 +21,7 @@ rmp-vast is used and maintained by [Radiant Media Player](https://www.radiantmed
 - [Parameters, API events and methods](#parameters-api-events-and-methods)
 - [Companion ads support](#companion-ads-support)
 - [AdVerifications OM Web SDK](#adverifications-om-web-sdk)
-- [SIMID support](#simid-support)
+- [SIMID support (BETA)](#simid-support)
 - [VPAID support (DEPRECATED)](#vpaid-support)
 - [HLS creatives support](#hls-creatives-support)
 - [Autoplay support](#autoplay-support)
