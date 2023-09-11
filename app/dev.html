@@ -21,11 +21,27 @@
   </div>
   <script>
     var id = 'rmp';
+    const params = {
+      showControlsForVastPlayer: true,
+      enableSimid: true
+    };
     var container = document.getElementById(id);
     var ADTAG;
-    ADTAG = 'https://www.radiantmediaplayer.com/vast/tags/test2.xml';
+    /*ADTAG = 'https://pubads.g.doubleclick.net/gampad/ads?iu=/21775744923/external/simid&description_url=https%3A%2F%2Fdevelopers.google.com%2Finteractive-media-ads&sz=640x480&gdfp_req=1&output=vast&unviewed_position_start=1&env=vp&impl=s&correlator=' + Date.now();*/
 
-    var rmpVast = new RmpVast(id);
+    /*ADTAG = 'https://pubads.g.doubleclick.net/gampad/ads?iu=/21775744923/external/single_ad_samples&sz=640x480&cust_params=sample_ct%3Dlinearvpaid2js&ciu_szs=300x250%2C728x90&gdfp_req=1&output=vast&unviewed_position_start=1&env=vp&impl=s&correlator='+ Date.now()*/
+
+    //ADTAG = 'https://www.radiantmediaplayer.com/vast/tags/simid.xml';
+    //ADTAG = 'https://www.radiantmediaplayer.com/vast/tags/simid-error-interactive-creative-file.xml';
+    //ADTAG = 'https://www.radiantmediaplayer.com/vast/tags/simid-survey.xml';
+    //ADTAG = 'https://www.radiantmediaplayer.com/vast/tags/simid-selector.xml';
+    //ADTAG = 'https://www.radiantmediaplayer.com/vast/tags/simid-error-interactive-media-file.xml';
+    //ADTAG = 'https://www.radiantmediaplayer.com/vast/tags/simid-extender.xml';
+    //ADTAG = 'https://www.radiantmediaplayer.com/vast/tags/simid-map.xml';
+    //ADTAG = 'https://www.radiantmediaplayer.com/vast/tags/simid-non-linear.xml';
+    //ADTAG = 'https://pubads.g.doubleclick.net/gampad/ads?iu=/21775744923/external/simid&description_url=https%3A%2F%2Fdevelopers.google.com%2Finteractive-media-ads&sz=640x480&gdfp_req=1&output=vast&unviewed_position_start=1&env=vp&impl=s&correlator=' + Date.now();
+
+    var rmpVast = new RmpVast(id, params);
     rmpVast.loadAds(ADTAG);
   </script>
 </body>

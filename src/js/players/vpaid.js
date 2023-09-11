@@ -635,12 +635,10 @@ VPAID.loadCreative = function (creativeUrl, vpaidSettings) {
   // (see https://stackoverflow.com/questions/5946607/is-an-empty-iframe-src-valid/5946631) we now use about:blank
   this.vpaidIframe.onload = function () {
     console.log(`${FW.consolePrepend} vpaidIframe.onload`, FW.consoleStyle, '');
-
-    // we unwire listeners
-    this.vpaidIframe.onload = this.vpaidIframe.onerror = FW.nullFn;
     if (!this.vpaidIframe.contentWindow || !this.vpaidIframe.contentWindow.document ||
       !this.vpaidIframe.contentWindow.document.body) {
       // PING error and resume content
+
       Utils.processVastErrors.call(this, 901, true);
       return;
     }
@@ -664,15 +662,6 @@ VPAID.loadCreative = function (creativeUrl, vpaidSettings) {
     this.vpaidScript.onerror = _onJSVPAIDError.bind(this);
     iframeBody.appendChild(this.vpaidScript);
     this.vpaidScript.src = this.vpaidCreativeUrl;
-  }.bind(this);
-
-  this.vpaidIframe.onerror = function () {
-    console.log(`${FW.consolePrepend} vpaidIframe.onerror`, FW.consoleStyle, '');
-
-    // we unwire listeners
-    this.vpaidIframe.onload = this.vpaidIframe.onerror = FW.nullFn;
-    // PING error and resume content
-    Utils.processVastErrors.call(this, 901, true);
   }.bind(this);
 
   this.vpaidIframe.src = src;

@@ -142,6 +142,7 @@ const params = {
   },
   outstream: false,
   showControlsForVastPlayer: true,
+  enableSimid: true,
   enableVpaid: true,
   vpaidSettings: {
     width: 640,

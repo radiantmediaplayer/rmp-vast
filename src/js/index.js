@@ -545,6 +545,15 @@ export default class RmpVast {
                 });
               }
               this.creative.isLinear = true;
+              if (creative.interactiveCreativeFile &&
+                /simid/i.test(creative.interactiveCreativeFile.apiFramework) &&
+                /text\/html/i.test(creative.interactiveCreativeFile.type)) {
+                this.creative.simid = {
+                  fileURL: creative.interactiveCreativeFile.fileURL,
+                  variableDuration: creative.interactiveCreativeFile.variableDuration,
+                  adParameters: creative.adParameters
+                };
+              }
               this._addTrackingEvents(creative.trackingEvents);
               LINEAR.parse.call(this, creative.icons, creative.adParameters, creative.mediaFiles);
               if (this.params.omidSupport && currentAd.adVerifications.length > 0) {
@@ -867,6 +876,8 @@ export default class RmpVast {
     if (this.adOnStage) {
       if (this.isVPAID) {
         VPAID.stopAd.call(this);
+      } else if (this.simidPlayer) {
+        this.simidPlayer.stopAd();
       } else {
         // this will destroy ad
         VAST_PLAYER.resumeContent.call(this);
@@ -897,6 +908,8 @@ export default class RmpVast {
     if (this.adOnStage && this.getAdSkippableState()) {
       if (this.isVPAID) {
         VPAID.skipAd.call(this);
+      } else if (this.simidPlayer) {
+        this.simidPlayer.skipAd();
       } else {
         // this will destroy ad
         VAST_PLAYER.resumeContent.call(this);
@@ -1267,6 +1280,8 @@ export default class RmpVast {
     if (this.adOnStage) {
       if (this.isVPAID) {
         return VPAID.getAdSkippableState.call(this);
+      } else if (this.simidPlayer) {
+        return true;
       } else {
         if (this.getIsSkippableAd()) {
           return this.skippableAdCanBeSkipped;

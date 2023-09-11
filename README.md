@@ -21,7 +21,8 @@ rmp-vast is used and maintained by [Radiant Media Player](https://www.radiantmed
 - [Parameters, API events and methods](#parameters-api-events-and-methods)
 - [Companion ads support](#companion-ads-support)
 - [AdVerifications OM Web SDK](#adverifications-om-web-sdk)
-- [VPAID support](#vpaid-support)
+- [SIMID support](#simid-support)
+- [VPAID support (DEPRECATED)](#vpaid-support)
 - [HLS creatives support](#hls-creatives-support)
 - [Autoplay support](#autoplay-support)
 - [Fullscreen management](#fullscreen-management)
@@ -234,6 +235,7 @@ Once rmp-vast is loaded on your page you can create a new rmp-vast instance as f
   - `params.outstream: Boolean` Enables outstream ad mode. Default: false.
   - `params.showControlsForVastPlayer: Boolean` Shows VAST player HTML5 default video controls. Default: false.
   - `params.vastXmlInput: Boolean` Instead of a VAST URI, we provide directly to rmp-vast VAST XML. Default: false. See test/spec/inlineLinearSpec/raw-xml-input.html for an example.
+  - `params.enableSimid: Boolean` Enables SIMID support or not. This feature is currently in BETA. Default: false.
   - `params.enableVpaid: Boolean` Enables VPAID support or not. Default: true.
   - `params.vpaidSettings: Object` information required to properly display VPAID creatives - note that it is up to the parent application of rmp-vast to provide those informations - below values are default (see test/spec/vpaidSpec/ for examples):
     - `params.vpaidSettings.width: Number` Default: 640.
@@ -271,7 +273,7 @@ rmp-vast will fire VAST-related events on the rmp-vast instance as they occur. E
 
 ```javascript
 const rmpVast = new RmpVast(id, params);
-rmpVast.on('adstarted', callbackA);
+rmpVast.on("adstarted", callbackA);
 rmpVast.loadAds(adTag);
 ```
 
@@ -279,38 +281,38 @@ You can register multiple events for the same callback, example:
 
 ```javascript
 const rmpVast = new RmpVast(id, params);
-rmpVast.on('adloaded adstarted', callbackA);
+rmpVast.on("adloaded adstarted", callbackA);
 rmpVast.loadAds(adTag);
 ```
 
 You can access the name of the event being fired:
 
 ```javascript
-function callbackA (event) {
+function callbackA(event) {
   console.log(event.type); // name of the event being fired
 }
 const rmpVast = new RmpVast(id, params);
-rmpVast.on('adloaded adstarted adclick', callbackA);
+rmpVast.on("adloaded adstarted adclick", callbackA);
 rmpVast.loadAds(adTag);
 ```
 
 You can unregister an event with the off method:
 
 ```javascript
-rmpVast.off('adstarted', callbackA);
+rmpVast.off("adstarted", callbackA);
 ```
 
 You can unregister multiple events for the same callback as well:
 
 ```javascript
-rmpVast.off('adloaded adstarted adclick', callbackA);
+rmpVast.off("adloaded adstarted adclick", callbackA);
 ```
 
 You can also register an event where the callback is only executed once:
 
 ```javascript
 const rmpVast = new RmpVast(id, params);
-rmpVast.one('adstarted', callbackA);
+rmpVast.one("adstarted", callbackA);
 rmpVast.loadAds(adTag);
 ```
 
@@ -513,11 +515,15 @@ Feedback is welcome. Please see ./test/spec/omWebSpec/ for implementation exampl
 
 [Back to documentation sections](#documentation-sections)
 
+## SIMID support
+
+### This is a BETA feature - open an issue for bugs and improvements
+
+[SIMID](https://interactiveadvertisingbureau.github.io/SIMID/simid-1.1.0.html) replaces VPAID for interactive creatives. With rmp-vast 12 we support SIMID as a BETA feature. We only support linear SIMID creatives for the moment. See test/simidSpec/ for an implementation example. This feature needs to be enabled with `enableSimid: true` setting.
+
 ## VPAID support
 
 ### --- DEPRECATED with rmp-vast 7 ---
-
-### --- SIMID is meant to replace VPAID. SIMID is not yet implemented in rmp-vast. Contributions are welcomed ---
 
 It is no secret that VPAID in the industry is a jungle and we need your help to best implement it.
 Any feedback and test adTags that can improve VPAID support in rmp-vast are welcome - open an issue when needed.

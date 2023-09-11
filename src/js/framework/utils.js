@@ -71,6 +71,78 @@ const VAST_ERRORS_LIST = [{
 }, {
   code: 1002,
   description: 'Required DOMParser API is not available'
+}, {
+  code: 1100,
+  description: 'SIMID error: UNSPECIFIED_CREATIVE_ERROR'
+}, {
+  code: 1101,
+  description: 'SIMID error: CANNOT_LOAD_RESOURCE'
+}, {
+  code: 1102,
+  description: 'SIMID error: PLAYBACK_AREA_UNUSABLE'
+}, {
+  code: 1103,
+  description: 'SIMID error: INCORRECT_VERSION'
+}, {
+  code: 1104,
+  description: 'SIMID error: TECHNICAL_ERROR'
+}, {
+  code: 1105,
+  description: 'SIMID error: EXPAND_NOT_POSSIBLE'
+}, {
+  code: 1106,
+  description: 'SIMID error: PAUSE_NOT_HONORED'
+}, {
+  code: 1107,
+  description: 'SIMID error: PLAYMODE_NOT_ADEQUATE'
+}, {
+  code: 1108,
+  description: 'SIMID error: CREATIVE_INTERNAL_ERROR'
+}, {
+  code: 1109,
+  description: 'SIMID error: DEVICE_NOT_SUPPORTED'
+}, {
+  code: 1110,
+  description: 'SIMID error: MESSAGES_NOT_FOLLOWING_SPEC'
+}, {
+  code: 1111,
+  description: 'SIMID error: PLAYER_RESPONSE_TIMEOUT'
+}, {
+  code: 1200,
+  description: 'SIMID error: UNSPECIFIED_PLAYER_ERROR'
+}, {
+  code: 1201,
+  description: 'SIMID error: WRONG_VERSION'
+}, {
+  code: 1202,
+  description: 'SIMID error: UNSUPPORTED_TIME'
+}, {
+  code: 1203,
+  description: 'SIMID error: UNSUPPORTED_FUNCTIONALITY_REQUEST'
+}, {
+  code: 1204,
+  description: 'SIMID error: UNSUPPORTED_ACTIONS'
+}, {
+  code: 1205,
+  description: 'SIMID error: POSTMESSAGE_CHANNEL_OVERLOADED'
+}, {
+  code: 1206,
+  description: 'SIMID error: VIDEO_COULD_NOT_LOAD'
+}, {
+  code: 1207,
+  description: 'SIMID error: VIDEO_TIME_OUT'
+}, {
+  code: 1208,
+  description: 'SIMID error: RESPONSE_TIMEOUT'
+}, {
+  code: 1209,
+  description: 'SIMID error: MEDIA_NOT_SUPPORTED'
+}, {
+  code: 1210,
+  description: 'SIMID error: SPEC_NOT_FOLLOWED_ON_INIT'
+}, {
+  code: 1211,
+  description: 'SIMID error: SPEC_NOT_FOLLOWED_ON_MESSAGES'
 }];
 
 export default class Utils {
@@ -90,6 +162,7 @@ export default class Utils {
       showControlsForVastPlayer: false,
       vastXmlInput: false,
       enableVpaid: true,
+      enableSimid: false,
       vpaidSettings: {
         width: 640,
         height: 360,
@@ -239,7 +312,6 @@ export default class Utils {
 
   static initInstanceVariables() {
     this.adContainer = null;
-    this.debug = false;
     this.rmpVastInitialized = false;
     this.useContentPlayerForAds = false;
     this.contentPlayerCompleted = false;
@@ -372,6 +444,8 @@ export default class Utils {
     this.vpaidAdLoaded = false;
     this.vpaidAdStarted = false;
     this.vpaidCallbacks = {};
+    // SIMID
+    this.simidPlayer = null;
   }
 
   // attach fullscreen states

@@ -262,6 +262,18 @@ module.exports = entryVirtual('Array').indexOf;
 
 /***/ }),
 
+/***/ 5909:
+/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
+
+__webpack_require__(6274);
+__webpack_require__(5967);
+var entryVirtual = __webpack_require__(5703);
+
+module.exports = entryVirtual('Array').keys;
+
+
+/***/ }),
+
 /***/ 6442:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
@@ -602,6 +614,23 @@ module.exports = function (it) {
 
 /***/ }),
 
+/***/ 1611:
+/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
+
+var isPrototypeOf = __webpack_require__(7046);
+var method = __webpack_require__(3269);
+
+var StringPrototype = String.prototype;
+
+module.exports = function (it) {
+  var own = it.startsWith;
+  return typeof it == 'string' || it === StringPrototype
+    || (isPrototypeOf(StringPrototype, it) && own === StringPrototype.startsWith) ? method : own;
+};
+
+
+/***/ }),
+
 /***/ 2774:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
@@ -633,6 +662,20 @@ if (!path.JSON) path.JSON = { stringify: JSON.stringify };
 module.exports = function stringify(it, replacer, space) {
   return apply(path.JSON.stringify, null, arguments);
 };
+
+
+/***/ }),
+
+/***/ 1018:
+/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
+
+__webpack_require__(6274);
+__webpack_require__(7501);
+__webpack_require__(5967);
+__webpack_require__(7971);
+var path = __webpack_require__(4058);
+
+module.exports = path.Map;
 
 
 /***/ }),
@@ -728,6 +771,17 @@ module.exports = path.Object.setPrototypeOf;
 
 /***/ }),
 
+/***/ 8430:
+/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
+
+__webpack_require__(6614);
+var path = __webpack_require__(4058);
+
+module.exports = path.Object.values;
+
+
+/***/ }),
+
 /***/ 7579:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
@@ -786,6 +840,17 @@ __webpack_require__(1035);
 var entryVirtual = __webpack_require__(5703);
 
 module.exports = entryVirtual('String').includes;
+
+
+/***/ }),
+
+/***/ 3269:
+/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
+
+__webpack_require__(4761);
+var entryVirtual = __webpack_require__(5703);
+
+module.exports = entryVirtual('String').startsWith;
 
 
 /***/ }),
@@ -1128,6 +1193,23 @@ module.exports = function (argument) {
   if (isObject(argument)) return argument;
   throw $TypeError($String(argument) + ' is not an object');
 };
+
+
+/***/ }),
+
+/***/ 7135:
+/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
+
+// FF26- bug: ArrayBuffers are non-extensible, but Object.isExtensible does not report it
+var fails = __webpack_require__(5981);
+
+module.exports = fails(function () {
+  if (typeof ArrayBuffer == 'function') {
+    var buffer = new ArrayBuffer(8);
+    // eslint-disable-next-line es/no-object-isextensible, es/no-object-defineproperty -- safe
+    if (Object.isExtensible(buffer)) Object.defineProperty(buffer, 'a', { value: 8 });
+  }
+});
 
 
 /***/ }),
@@ -1729,6 +1811,305 @@ module.exports = TO_STRING_TAG_SUPPORT ? classofRaw : function (it) {
 
 /***/ }),
 
+/***/ 5616:
+/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
+
+"use strict";
+
+var create = __webpack_require__(9290);
+var defineBuiltInAccessor = __webpack_require__(9202);
+var defineBuiltIns = __webpack_require__(4380);
+var bind = __webpack_require__(6843);
+var anInstance = __webpack_require__(5743);
+var isNullOrUndefined = __webpack_require__(2119);
+var iterate = __webpack_require__(3091);
+var defineIterator = __webpack_require__(5105);
+var createIterResultObject = __webpack_require__(3538);
+var setSpecies = __webpack_require__(4431);
+var DESCRIPTORS = __webpack_require__(5746);
+var fastKey = (__webpack_require__(1647).fastKey);
+var InternalStateModule = __webpack_require__(5402);
+
+var setInternalState = InternalStateModule.set;
+var internalStateGetterFor = InternalStateModule.getterFor;
+
+module.exports = {
+  getConstructor: function (wrapper, CONSTRUCTOR_NAME, IS_MAP, ADDER) {
+    var Constructor = wrapper(function (that, iterable) {
+      anInstance(that, Prototype);
+      setInternalState(that, {
+        type: CONSTRUCTOR_NAME,
+        index: create(null),
+        first: undefined,
+        last: undefined,
+        size: 0
+      });
+      if (!DESCRIPTORS) that.size = 0;
+      if (!isNullOrUndefined(iterable)) iterate(iterable, that[ADDER], { that: that, AS_ENTRIES: IS_MAP });
+    });
+
+    var Prototype = Constructor.prototype;
+
+    var getInternalState = internalStateGetterFor(CONSTRUCTOR_NAME);
+
+    var define = function (that, key, value) {
+      var state = getInternalState(that);
+      var entry = getEntry(that, key);
+      var previous, index;
+      // change existing entry
+      if (entry) {
+        entry.value = value;
+      // create new entry
+      } else {
+        state.last = entry = {
+          index: index = fastKey(key, true),
+          key: key,
+          value: value,
+          previous: previous = state.last,
+          next: undefined,
+          removed: false
+        };
+        if (!state.first) state.first = entry;
+        if (previous) previous.next = entry;
+        if (DESCRIPTORS) state.size++;
+        else that.size++;
+        // add to index
+        if (index !== 'F') state.index[index] = entry;
+      } return that;
+    };
+
+    var getEntry = function (that, key) {
+      var state = getInternalState(that);
+      // fast case
+      var index = fastKey(key);
+      var entry;
+      if (index !== 'F') return state.index[index];
+      // frozen object case
+      for (entry = state.first; entry; entry = entry.next) {
+        if (entry.key == key) return entry;
+      }
+    };
+
+    defineBuiltIns(Prototype, {
+      // `{ Map, Set }.prototype.clear()` methods
+      // https://tc39.es/ecma262/#sec-map.prototype.clear
+      // https://tc39.es/ecma262/#sec-set.prototype.clear
+      clear: function clear() {
+        var that = this;
+        var state = getInternalState(that);
+        var data = state.index;
+        var entry = state.first;
+        while (entry) {
+          entry.removed = true;
+          if (entry.previous) entry.previous = entry.previous.next = undefined;
+          delete data[entry.index];
+          entry = entry.next;
+        }
+        state.first = state.last = undefined;
+        if (DESCRIPTORS) state.size = 0;
+        else that.size = 0;
+      },
+      // `{ Map, Set }.prototype.delete(key)` methods
+      // https://tc39.es/ecma262/#sec-map.prototype.delete
+      // https://tc39.es/ecma262/#sec-set.prototype.delete
+      'delete': function (key) {
+        var that = this;
+        var state = getInternalState(that);
+        var entry = getEntry(that, key);
+        if (entry) {
+          var next = entry.next;
+          var prev = entry.previous;
+          delete state.index[entry.index];
+          entry.removed = true;
+          if (prev) prev.next = next;
+          if (next) next.previous = prev;
+          if (state.first == entry) state.first = next;
+          if (state.last == entry) state.last = prev;
+          if (DESCRIPTORS) state.size--;
+          else that.size--;
+        } return !!entry;
+      },
+      // `{ Map, Set }.prototype.forEach(callbackfn, thisArg = undefined)` methods
+      // https://tc39.es/ecma262/#sec-map.prototype.foreach
+      // https://tc39.es/ecma262/#sec-set.prototype.foreach
+      forEach: function forEach(callbackfn /* , that = undefined */) {
+        var state = getInternalState(this);
+        var boundFunction = bind(callbackfn, arguments.length > 1 ? arguments[1] : undefined);
+        var entry;
+        while (entry = entry ? entry.next : state.first) {
+          boundFunction(entry.value, entry.key, this);
+          // revert to the last existing entry
+          while (entry && entry.removed) entry = entry.previous;
+        }
+      },
+      // `{ Map, Set}.prototype.has(key)` methods
+      // https://tc39.es/ecma262/#sec-map.prototype.has
+      // https://tc39.es/ecma262/#sec-set.prototype.has
+      has: function has(key) {
+        return !!getEntry(this, key);
+      }
+    });
+
+    defineBuiltIns(Prototype, IS_MAP ? {
+      // `Map.prototype.get(key)` method
+      // https://tc39.es/ecma262/#sec-map.prototype.get
+      get: function get(key) {
+        var entry = getEntry(this, key);
+        return entry && entry.value;
+      },
+      // `Map.prototype.set(key, value)` method
+      // https://tc39.es/ecma262/#sec-map.prototype.set
+      set: function set(key, value) {
+        return define(this, key === 0 ? 0 : key, value);
+      }
+    } : {
+      // `Set.prototype.add(value)` method
+      // https://tc39.es/ecma262/#sec-set.prototype.add
+      add: function add(value) {
+        return define(this, value = value === 0 ? 0 : value, value);
+      }
+    });
+    if (DESCRIPTORS) defineBuiltInAccessor(Prototype, 'size', {
+      configurable: true,
+      get: function () {
+        return getInternalState(this).size;
+      }
+    });
+    return Constructor;
+  },
+  setStrong: function (Constructor, CONSTRUCTOR_NAME, IS_MAP) {
+    var ITERATOR_NAME = CONSTRUCTOR_NAME + ' Iterator';
+    var getInternalCollectionState = internalStateGetterFor(CONSTRUCTOR_NAME);
+    var getInternalIteratorState = internalStateGetterFor(ITERATOR_NAME);
+    // `{ Map, Set }.prototype.{ keys, values, entries, @@iterator }()` methods
+    // https://tc39.es/ecma262/#sec-map.prototype.entries
+    // https://tc39.es/ecma262/#sec-map.prototype.keys
+    // https://tc39.es/ecma262/#sec-map.prototype.values
+    // https://tc39.es/ecma262/#sec-map.prototype-@@iterator
+    // https://tc39.es/ecma262/#sec-set.prototype.entries
+    // https://tc39.es/ecma262/#sec-set.prototype.keys
+    // https://tc39.es/ecma262/#sec-set.prototype.values
+    // https://tc39.es/ecma262/#sec-set.prototype-@@iterator
+    defineIterator(Constructor, CONSTRUCTOR_NAME, function (iterated, kind) {
+      setInternalState(this, {
+        type: ITERATOR_NAME,
+        target: iterated,
+        state: getInternalCollectionState(iterated),
+        kind: kind,
+        last: undefined
+      });
+    }, function () {
+      var state = getInternalIteratorState(this);
+      var kind = state.kind;
+      var entry = state.last;
+      // revert to the last existing entry
+      while (entry && entry.removed) entry = entry.previous;
+      // get next entry
+      if (!state.target || !(state.last = entry = entry ? entry.next : state.state.first)) {
+        // or finish the iteration
+        state.target = undefined;
+        return createIterResultObject(undefined, true);
+      }
+      // return step by kind
+      if (kind == 'keys') return createIterResultObject(entry.key, false);
+      if (kind == 'values') return createIterResultObject(entry.value, false);
+      return createIterResultObject([entry.key, entry.value], false);
+    }, IS_MAP ? 'entries' : 'values', !IS_MAP, true);
+
+    // `{ Map, Set }.prototype[@@species]` accessors
+    // https://tc39.es/ecma262/#sec-get-map-@@species
+    // https://tc39.es/ecma262/#sec-get-set-@@species
+    setSpecies(CONSTRUCTOR_NAME);
+  }
+};
+
+
+/***/ }),
+
+/***/ 4683:
+/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
+
+"use strict";
+
+var $ = __webpack_require__(6887);
+var global = __webpack_require__(1899);
+var InternalMetadataModule = __webpack_require__(1647);
+var fails = __webpack_require__(5981);
+var createNonEnumerableProperty = __webpack_require__(2029);
+var iterate = __webpack_require__(3091);
+var anInstance = __webpack_require__(5743);
+var isCallable = __webpack_require__(7475);
+var isObject = __webpack_require__(941);
+var setToStringTag = __webpack_require__(904);
+var defineProperty = (__webpack_require__(5988).f);
+var forEach = (__webpack_require__(3610).forEach);
+var DESCRIPTORS = __webpack_require__(5746);
+var InternalStateModule = __webpack_require__(5402);
+
+var setInternalState = InternalStateModule.set;
+var internalStateGetterFor = InternalStateModule.getterFor;
+
+module.exports = function (CONSTRUCTOR_NAME, wrapper, common) {
+  var IS_MAP = CONSTRUCTOR_NAME.indexOf('Map') !== -1;
+  var IS_WEAK = CONSTRUCTOR_NAME.indexOf('Weak') !== -1;
+  var ADDER = IS_MAP ? 'set' : 'add';
+  var NativeConstructor = global[CONSTRUCTOR_NAME];
+  var NativePrototype = NativeConstructor && NativeConstructor.prototype;
+  var exported = {};
+  var Constructor;
+
+  if (!DESCRIPTORS || !isCallable(NativeConstructor)
+    || !(IS_WEAK || NativePrototype.forEach && !fails(function () { new NativeConstructor().entries().next(); }))
+  ) {
+    // create collection constructor
+    Constructor = common.getConstructor(wrapper, CONSTRUCTOR_NAME, IS_MAP, ADDER);
+    InternalMetadataModule.enable();
+  } else {
+    Constructor = wrapper(function (target, iterable) {
+      setInternalState(anInstance(target, Prototype), {
+        type: CONSTRUCTOR_NAME,
+        collection: new NativeConstructor()
+      });
+      if (iterable != undefined) iterate(iterable, target[ADDER], { that: target, AS_ENTRIES: IS_MAP });
+    });
+
+    var Prototype = Constructor.prototype;
+
+    var getInternalState = internalStateGetterFor(CONSTRUCTOR_NAME);
+
+    forEach(['add', 'clear', 'delete', 'forEach', 'get', 'has', 'set', 'keys', 'values', 'entries'], function (KEY) {
+      var IS_ADDER = KEY == 'add' || KEY == 'set';
+      if (KEY in NativePrototype && !(IS_WEAK && KEY == 'clear')) {
+        createNonEnumerableProperty(Prototype, KEY, function (a, b) {
+          var collection = getInternalState(this).collection;
+          if (!IS_ADDER && IS_WEAK && !isObject(a)) return KEY == 'get' ? undefined : false;
+          var result = collection[KEY](a === 0 ? 0 : a, b);
+          return IS_ADDER ? this : result;
+        });
+      }
+    });
+
+    IS_WEAK || defineProperty(Prototype, 'size', {
+      configurable: true,
+      get: function () {
+        return getInternalState(this).collection.size;
+      }
+    });
+  }
+
+  setToStringTag(Constructor, CONSTRUCTOR_NAME, false, true);
+
+  exported[CONSTRUCTOR_NAME] = Constructor;
+  $({ global: true, forced: true }, exported);
+
+  if (!IS_WEAK) common.setStrong(Constructor, CONSTRUCTOR_NAME, IS_MAP);
+
+  return Constructor;
+};
+
+
+/***/ }),
+
 /***/ 3489:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
@@ -1872,6 +2253,21 @@ module.exports = function (target, key, value, options) {
   if (options && options.enumerable) target[key] = value;
   else createNonEnumerableProperty(target, key, value);
   return target;
+};
+
+
+/***/ }),
+
+/***/ 4380:
+/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
+
+var defineBuiltIn = __webpack_require__(5929);
+
+module.exports = function (target, src, options) {
+  for (var key in src) {
+    if (options && options.unsafe && target[key]) target[key] = src[key];
+    else defineBuiltIn(target, key, src[key], options);
+  } return target;
 };
 
 
@@ -2367,6 +2763,19 @@ module.exports = function (exec) {
 
 /***/ }),
 
+/***/ 5602:
+/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
+
+var fails = __webpack_require__(5981);
+
+module.exports = !fails(function () {
+  // eslint-disable-next-line es/no-object-isextensible, es/no-object-preventextensions -- required for testing
+  return Object.isExtensible(Object.preventExtensions({}));
+});
+
+
+/***/ }),
+
 /***/ 9730:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
@@ -2804,6 +3213,102 @@ module.exports = function (O, options) {
     createNonEnumerableProperty(O, 'cause', options.cause);
   }
 };
+
+
+/***/ }),
+
+/***/ 1647:
+/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
+
+var $ = __webpack_require__(6887);
+var uncurryThis = __webpack_require__(5329);
+var hiddenKeys = __webpack_require__(7748);
+var isObject = __webpack_require__(941);
+var hasOwn = __webpack_require__(953);
+var defineProperty = (__webpack_require__(5988).f);
+var getOwnPropertyNamesModule = __webpack_require__(946);
+var getOwnPropertyNamesExternalModule = __webpack_require__(684);
+var isExtensible = __webpack_require__(1584);
+var uid = __webpack_require__(9418);
+var FREEZING = __webpack_require__(5602);
+
+var REQUIRED = false;
+var METADATA = uid('meta');
+var id = 0;
+
+var setMetadata = function (it) {
+  defineProperty(it, METADATA, { value: {
+    objectID: 'O' + id++, // object ID
+    weakData: {}          // weak collections IDs
+  } });
+};
+
+var fastKey = function (it, create) {
+  // return a primitive with prefix
+  if (!isObject(it)) return typeof it == 'symbol' ? it : (typeof it == 'string' ? 'S' : 'P') + it;
+  if (!hasOwn(it, METADATA)) {
+    // can't set metadata to uncaught frozen object
+    if (!isExtensible(it)) return 'F';
+    // not necessary to add metadata
+    if (!create) return 'E';
+    // add missing metadata
+    setMetadata(it);
+  // return object ID
+  } return it[METADATA].objectID;
+};
+
+var getWeakData = function (it, create) {
+  if (!hasOwn(it, METADATA)) {
+    // can't set metadata to uncaught frozen object
+    if (!isExtensible(it)) return true;
+    // not necessary to add metadata
+    if (!create) return false;
+    // add missing metadata
+    setMetadata(it);
+  // return the store of weak collections IDs
+  } return it[METADATA].weakData;
+};
+
+// add metadata on freeze-family methods calling
+var onFreeze = function (it) {
+  if (FREEZING && REQUIRED && isExtensible(it) && !hasOwn(it, METADATA)) setMetadata(it);
+  return it;
+};
+
+var enable = function () {
+  meta.enable = function () { /* empty */ };
+  REQUIRED = true;
+  var getOwnPropertyNames = getOwnPropertyNamesModule.f;
+  var splice = uncurryThis([].splice);
+  var test = {};
+  test[METADATA] = 1;
+
+  // prevent exposing of metadata key
+  if (getOwnPropertyNames(test).length) {
+    getOwnPropertyNamesModule.f = function (it) {
+      var result = getOwnPropertyNames(it);
+      for (var i = 0, length = result.length; i < length; i++) {
+        if (result[i] === METADATA) {
+          splice(result, i, 1);
+          break;
+        }
+      } return result;
+    };
+
+    $({ target: 'Object', stat: true, forced: true }, {
+      getOwnPropertyNames: getOwnPropertyNamesExternalModule.f
+    });
+  }
+};
+
+var meta = module.exports = {
+  enable: enable,
+  fastKey: fastKey,
+  getWeakData: getWeakData,
+  onFreeze: onFreeze
+};
+
+hiddenKeys[METADATA] = true;
 
 
 /***/ }),
@@ -3979,6 +4484,29 @@ module.exports = CORRECT_PROTOTYPE_GETTER ? $Object.getPrototypeOf : function (O
 
 /***/ }),
 
+/***/ 1584:
+/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
+
+var fails = __webpack_require__(5981);
+var isObject = __webpack_require__(941);
+var classof = __webpack_require__(2532);
+var ARRAY_BUFFER_NON_EXTENSIBLE = __webpack_require__(7135);
+
+// eslint-disable-next-line es/no-object-isextensible -- safe
+var $isExtensible = Object.isExtensible;
+var FAILS_ON_PRIMITIVES = fails(function () { $isExtensible(1); });
+
+// `Object.isExtensible` method
+// https://tc39.es/ecma262/#sec-object.isextensible
+module.exports = (FAILS_ON_PRIMITIVES || ARRAY_BUFFER_NON_EXTENSIBLE) ? function isExtensible(it) {
+  if (!isObject(it)) return false;
+  if (ARRAY_BUFFER_NON_EXTENSIBLE && classof(it) == 'ArrayBuffer') return false;
+  return $isExtensible ? $isExtensible(it) : true;
+} : $isExtensible;
+
+
+/***/ }),
+
 /***/ 7046:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
@@ -4083,6 +4611,49 @@ module.exports = Object.setPrototypeOf || ('__proto__' in {} ? function () {
     return O;
   };
 }() : undefined);
+
+
+/***/ }),
+
+/***/ 8810:
+/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
+
+var DESCRIPTORS = __webpack_require__(5746);
+var uncurryThis = __webpack_require__(5329);
+var objectKeys = __webpack_require__(4771);
+var toIndexedObject = __webpack_require__(4529);
+var $propertyIsEnumerable = (__webpack_require__(6760).f);
+
+var propertyIsEnumerable = uncurryThis($propertyIsEnumerable);
+var push = uncurryThis([].push);
+
+// `Object.{ entries, values }` methods implementation
+var createMethod = function (TO_ENTRIES) {
+  return function (it) {
+    var O = toIndexedObject(it);
+    var keys = objectKeys(O);
+    var length = keys.length;
+    var i = 0;
+    var result = [];
+    var key;
+    while (length > i) {
+      key = keys[i++];
+      if (!DESCRIPTORS || propertyIsEnumerable(O, key)) {
+        push(result, TO_ENTRIES ? [key, O[key]] : O[key]);
+      }
+    }
+    return result;
+  };
+};
+
+module.exports = {
+  // `Object.entries` method
+  // https://tc39.es/ecma262/#sec-object.entries
+  entries: createMethod(true),
+  // `Object.values` method
+  // https://tc39.es/ecma262/#sec-object.values
+  values: createMethod(false)
+};
 
 
 /***/ }),
@@ -5915,6 +6486,32 @@ setToStringTag(global.JSON, 'JSON', true);
 
 /***/ }),
 
+/***/ 3112:
+/***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
+
+"use strict";
+
+var collection = __webpack_require__(4683);
+var collectionStrong = __webpack_require__(5616);
+
+// `Map` constructor
+// https://tc39.es/ecma262/#sec-map-objects
+collection('Map', function (init) {
+  return function Map() { return init(this, arguments.length ? arguments[0] : undefined); };
+}, collectionStrong);
+
+
+/***/ }),
+
+/***/ 7501:
+/***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
+
+// TODO: Remove this module from `core-js@4` since it's replaced to module below
+__webpack_require__(3112);
+
+
+/***/ }),
+
 /***/ 5327:
 /***/ (function() {
 
@@ -6080,6 +6677,23 @@ $({ target: 'Object', stat: true }, {
 /***/ (function() {
 
 // empty
+
+
+/***/ }),
+
+/***/ 6614:
+/***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
+
+var $ = __webpack_require__(6887);
+var $values = (__webpack_require__(8810).values);
+
+// `Object.values` method
+// https://tc39.es/ecma262/#sec-object.values
+$({ target: 'Object', stat: true }, {
+  values: function values(O) {
+    return $values(O);
+  }
+});
 
 
 /***/ }),
@@ -6886,6 +7500,50 @@ defineIterator(String, 'String', function (iterated) {
 
 /***/ }),
 
+/***/ 4761:
+/***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
+
+"use strict";
+
+var $ = __webpack_require__(6887);
+var uncurryThis = __webpack_require__(7484);
+var getOwnPropertyDescriptor = (__webpack_require__(9677).f);
+var toLength = __webpack_require__(3057);
+var toString = __webpack_require__(5803);
+var notARegExp = __webpack_require__(344);
+var requireObjectCoercible = __webpack_require__(8219);
+var correctIsRegExpLogic = __webpack_require__(7772);
+var IS_PURE = __webpack_require__(2529);
+
+// eslint-disable-next-line es/no-string-prototype-startswith -- safe
+var nativeStartsWith = uncurryThis(''.startsWith);
+var stringSlice = uncurryThis(''.slice);
+var min = Math.min;
+
+var CORRECT_IS_REGEXP_LOGIC = correctIsRegExpLogic('startsWith');
+// https://github.com/zloirock/core-js/pull/702
+var MDN_POLYFILL_BUG = !IS_PURE && !CORRECT_IS_REGEXP_LOGIC && !!function () {
+  var descriptor = getOwnPropertyDescriptor(String.prototype, 'startsWith');
+  return descriptor && !descriptor.writable;
+}();
+
+// `String.prototype.startsWith` method
+// https://tc39.es/ecma262/#sec-string.prototype.startswith
+$({ target: 'String', proto: true, forced: !MDN_POLYFILL_BUG && !CORRECT_IS_REGEXP_LOGIC }, {
+  startsWith: function startsWith(searchString /* , position = 0 */) {
+    var that = toString(requireObjectCoercible(this));
+    notARegExp(searchString);
+    var index = toLength(min(arguments.length > 1 ? arguments[1] : undefined, that.length));
+    var search = toString(searchString);
+    return nativeStartsWith
+      ? nativeStartsWith(that, search, index)
+      : stringSlice(that, index, index + search.length) === search;
+  }
+});
+
+
+/***/ }),
+
 /***/ 6371:
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
@@ -7680,6 +8338,16 @@ module.exports = parent;
 
 /***/ }),
 
+/***/ 6668:
+/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
+
+var parent = __webpack_require__(5909);
+
+module.exports = parent;
+
+
+/***/ }),
+
 /***/ 6243:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
@@ -7776,6 +8444,31 @@ module.exports = parent;
 
 /***/ }),
 
+/***/ 3819:
+/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
+
+__webpack_require__(7634);
+var classof = __webpack_require__(9697);
+var hasOwn = __webpack_require__(953);
+var isPrototypeOf = __webpack_require__(7046);
+var method = __webpack_require__(6668);
+
+var ArrayPrototype = Array.prototype;
+
+var DOMIterables = {
+  DOMTokenList: true,
+  NodeList: true
+};
+
+module.exports = function (it) {
+  var own = it.keys;
+  return it === ArrayPrototype || (isPrototypeOf(ArrayPrototype, it) && own === ArrayPrototype.keys)
+    || hasOwn(DOMIterables, classof(it)) ? method : own;
+};
+
+
+/***/ }),
+
 /***/ 1022:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
@@ -7856,6 +8549,16 @@ module.exports = parent;
 
 /***/ }),
 
+/***/ 5178:
+/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
+
+var parent = __webpack_require__(1611);
+
+module.exports = parent;
+
+
+/***/ }),
+
 /***/ 6361:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
@@ -7870,6 +8573,17 @@ module.exports = parent;
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
 var parent = __webpack_require__(4426);
+
+module.exports = parent;
+
+
+/***/ }),
+
+/***/ 5868:
+/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
+
+var parent = __webpack_require__(1018);
+__webpack_require__(7634);
 
 module.exports = parent;
 
@@ -7940,6 +8654,16 @@ module.exports = parent;
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
 var parent = __webpack_require__(3065);
+
+module.exports = parent;
+
+
+/***/ }),
+
+/***/ 7795:
+/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
+
+var parent = __webpack_require__(8430);
 
 module.exports = parent;
 
@@ -8032,7 +8756,7 @@ module.exports = parent;
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default()((_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default()));
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "@charset \"UTF-8\";\n.rmp-container {\n  position: relative;\n  text-align: center;\n  outline: none;\n  background: #000000;\n  padding: 0;\n  border: none;\n  display: block;\n  font-size: 14px;\n  max-width: none;\n  max-height: none;\n  overflow: hidden;\n  line-height: 1;\n  box-sizing: border-box;\n  font-family: Arial, Helvetica, sans-serif;\n}\n.rmp-container * {\n  box-sizing: border-box;\n}\n.rmp-video,\n.rmp-content {\n  width: 100%;\n  height: 100%;\n  position: absolute;\n  left: 0;\n  top: 0;\n  margin: 0;\n  padding: 0;\n  outline: none;\n  display: block;\n}\n.rmp-ad-container {\n  position: absolute;\n  top: 0;\n  left: 0;\n  margin: 0;\n  padding: 0;\n  width: 100%;\n  height: 100%;\n  outline: none;\n  display: block;\n  text-align: initial;\n}\n.rmp-fullscreen-on {\n  position: fixed !important;\n  width: 100% !important;\n  height: 100% !important;\n  background: #000000 !important;\n  overflow: hidden !important;\n  z-index: 9999 !important;\n  top: 0;\n  left: 0;\n}\n.rmp-vpaid-container {\n  position: absolute;\n  top: 0;\n  left: 0;\n  margin: 0;\n  padding: 0;\n  width: 100%;\n  height: 100%;\n  outline: none;\n  display: block;\n  text-align: initial;\n}\n.rmp-ad-vast-video-player {\n  width: 100%;\n  height: 100%;\n  position: absolute;\n  left: 0;\n  top: 0;\n  margin: 0;\n  padding: 0;\n  outline: none;\n  display: block;\n  cursor: pointer;\n}\n.rmp-ad-container-icons {\n  position: absolute;\n  display: block;\n  cursor: pointer;\n}\n.rmp-ad-container-skip {\n  position: absolute;\n  right: 0;\n  bottom: 44px;\n  width: 160px;\n  height: 40px;\n  line-height: 38px;\n  text-align: center;\n  cursor: pointer;\n  background-color: #333;\n  border: 1px solid #333;\n  transition-property: border-color;\n  transition-duration: 0.4s;\n  transition-timing-function: ease-in;\n}\n.rmp-ad-container-skip:hover {\n  border-color: #000000;\n}\n.rmp-ad-container-skip-waiting {\n  width: 100%;\n  position: absolute;\n  padding: 0 2px;\n  color: #cfcfcf;\n  white-space: nowrap;\n  overflow: hidden;\n  text-overflow: ellipsis;\n}\n.rmp-ad-container-skip-message {\n  width: 65%;\n  position: absolute;\n  left: 5%;\n  color: #ffffff;\n  white-space: nowrap;\n  overflow: hidden;\n  text-overflow: ellipsis;\n}\n.rmp-ad-container-skip-icon {\n  position: absolute;\n  left: 75%;\n  width: 20%;\n  background-image: url(\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAQJJREFUeNpi/P//PwMUNADxXyBuZsAPcoA4CIjfA/EuIJ4JFgUZBMU3/kNAMZIYNnz8PwIcgokzIdl0A0r3AHEbHhf9RGJ/hjGQDWJFYlcC8SQgZibgzf/YDEIHuUC8CIi58ahhJMYgEIgC4mVALIFNMzIgZBAI+AHxRiCWRfcOqQaBgBkQrwRiMSB+iE0BCwPxwBKIDwLxH0pcBAMPkKOcXIPmALEnED+lxKDJQJwKZUuQa1AVEOch8f+SE9hZQDydGCcjG/QPif0H6pUF+LIFriwCy1dvgTgChyEMaPmPBZuLVKA2RALxbjy+IGjQCiD+RcAQEFgF9fpHIN4GEwQIMACnXWgupdnzwwAAAABJRU5ErkJggg==\");\n  height: 100%;\n  background-repeat: no-repeat;\n  background-position: center;\n  opacity: 0.7;\n  transition-property: opacity;\n  transition-duration: 0.4s;\n  transition-timing-function: ease-in;\n}\n.rmp-ad-container-skip:hover .rmp-ad-container-skip-icon {\n  opacity: 1;\n}\n.rmp-ad-non-linear-container {\n  position: absolute;\n  text-align: center;\n  left: 50%;\n  bottom: 0;\n  transform: translate(-50%, 0);\n}\n.rmp-ad-non-linear-anchor:link,\n.rmp-ad-non-linear-anchor:visited,\n.rmp-ad-non-linear-anchor:hover,\n.rmp-ad-non-linear-anchor:active {\n  text-decoration: none;\n}\n.rmp-ad-non-linear-creative {\n  position: relative;\n  cursor: pointer;\n  text-align: center;\n  width: 100%;\n  height: 100%;\n  bottom: 0;\n}\n.rmp-ad-non-linear-close {\n  right: 0;\n  top: 0;\n  position: absolute;\n  cursor: pointer;\n  width: 20px;\n  height: 20px;\n  background-color: #000000;\n  background-image: url(\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAHdJREFUeNqUk9EKwCAIRaX9/9MgEAZ9amsPsWVXdxV8Ec+B1Ep/o40UMuuEpK/RMvAUnEZysfAIlYRkg5/6tyGSQNgKPIkLIwGSuLAn8CSKeovgOMiaMKtKPQENjB5i1Pi7xkoMzD0kBg5PmYVnqv1MGXiT3AIMACNQPFnn5xfHAAAAAElFTkSuQmCC\");\n  background-size: cover;\n  border: 4px solid #000000;\n}\n.rmp-ad-click-ui-mobile {\n  border: 2px solid #ffffff;\n  background: rgba(0, 0, 0, 0.4);\n  color: #ffffff;\n  display: block;\n  position: absolute;\n  right: 8px;\n  top: 8px;\n  font-size: 18px;\n  width: 112px;\n  height: 34px;\n  text-decoration: none;\n  text-align: center;\n  line-height: 30px;\n  box-shadow: 0 0 2px rgba(0, 0, 0, 0.6);\n}\n.rmp-ad-click-ui-mobile:visited,\n.rmp-ad-click-ui-mobile:hover,\n.rmp-ad-click-ui-mobile:active {\n  color: #ffffff;\n  text-decoration: none;\n}\n", "",{"version":3,"sources":["webpack://./src/less/rmp-vast.less"],"names":[],"mappings":"AAAA,gBAAS;AA0BT;EACE,kBAAA;EACA,kBAAA;EACA,aAAA;EACA,mBAAA;EACA,UAAA;EACA,YAAA;EACA,cAAA;EACA,eAAA;EACA,eAAA;EACA,gBAAA;EACA,gBAAA;EACA,cAAA;EACA,sBAAA;EACA,yCAAA;AAxBF;AA2BA;EACE,sBAAA;AAzBF;AA4BA;;EAEE,WAAA;EACA,YAAA;EACA,kBAAA;EACA,OAAA;EACA,MAAA;EACA,SAAA;EACA,UAAA;EACA,aAAA;EACA,cAAA;AA1BF;AA6BA;EACE,kBAAA;EACA,MAAA;EACA,OAAA;EACA,SAAA;EACA,UAAA;EACA,WAAA;EACA,YAAA;EACA,aAAA;EACA,cAAA;EACA,mBAAA;AA3BF;AA8BA;EACE,0BAAA;EACA,sBAAA;EACA,uBAAA;EACA,8BAAA;EACA,2BAAA;EACA,wBAAA;EACA,MAAA;EACA,OAAA;AA5BF;AAgCA;EACE,kBAAA;EACA,MAAA;EACA,OAAA;EACA,SAAA;EACA,UAAA;EACA,WAAA;EACA,YAAA;EACA,aAAA;EACA,cAAA;EACA,mBAAA;AA9BF;AAiCA;EACE,WAAA;EACA,YAAA;EACA,kBAAA;EACA,OAAA;EACA,MAAA;EACA,SAAA;EACA,UAAA;EACA,aAAA;EACA,cAAA;EACA,eAAA;AA/BF;AAkCA;EACE,kBAAA;EACA,cAAA;EACA,eAAA;AAhCF;AAmCA;EACE,kBAAA;EACA,QAAA;EACA,YAAA;EACA,YAAA;EACA,YAAA;EACA,iBAAA;EACA,kBAAA;EACA,eAAA;EACA,sBAAA;EACA,sBAAA;EAjHA,iCAAA;EACA,yBAAA;EACA,mCAAA;AAiFF;AAkCA;EACE,qBAAA;AAhCF;AAmCA;EACE,WAAA;EACA,kBAAA;EACA,cAAA;EACA,cAAA;EAvHA,mBAAA;EACA,gBAAA;EACA,uBAAA;AAuFF;AAkCA;EACE,UAAA;EACA,kBAAA;EACA,QAAA;EACA,cAAA;EA/HA,mBAAA;EACA,gBAAA;EACA,uBAAA;AAgGF;AAiCA;EACE,kBAAA;EACA,SAAA;EACA,UAAA;EACA,ugBAAA;EACA,YAAA;EACA,4BAAA;EACA,2BAAA;EACA,YAAA;EAjJA,4BAAA;EACA,yBAAA;EACA,mCAAA;AAmHF;AAgCA;EACE,UAAA;AA9BF;AAiCA;EACE,kBAAA;EACA,kBAAA;EACA,SAAA;EACA,SAAA;EACA,6BAAA;AA/BF;AAkCA;;;;EAIE,qBAAA;AAhCF;AAmCA;EACE,kBAAA;EACA,eAAA;EACA,kBAAA;EACA,WAAA;EACA,YAAA;EACA,SAAA;AAjCF;AAoCA;EACE,QAAA;EACA,MAAA;EACA,kBAAA;EACA,eAAA;EACA,WAAA;EACA,YAAA;EACA,yBAAA;EACA,2UAAA;EACA,sBAAA;EACA,yBAAA;AAlCF;AAqCA;EACE,yBAAA;EACA,8BAAA;EACA,cAAA;EACA,cAAA;EACA,kBAAA;EACA,UAAA;EACA,QAAA;EACA,eAAA;EACA,YAAA;EACA,YAAA;EACA,qBAAA;EACA,kBAAA;EACA,iBAAA;EACA,sCAAA;AAnCF;AAsCA;;;EAGE,cAAA;EACA,qBAAA;AApCF","sourcesContent":["@charset \"UTF-8\";\n\n// colors\n@black: rgba(0, 0, 0, 1);\n@grey: #333;\n@light-grey: #cfcfcf;\n@white: rgba(255, 255, 255, 1);\n@shadow-1: rgba(0, 0, 0, 0.8);\n@shadow-2: rgba(0, 0, 0, 0.6);\n@shadow-3: rgba(0, 0, 0, 0.5);\n@shadow-4: rgba(0, 0, 0, 0.4);\n\n// mixins\n.transition(@property: background; @duration: 0.4s; @timing: ease-in) {\n  transition-property: @property;\n  transition-duration: @duration;\n  transition-timing-function: @timing;\n}\n\n.text-ellipsis() {\n  white-space: nowrap;\n  overflow: hidden;\n  text-overflow: ellipsis;\n}\n\n// shared CSS with RMP\n.rmp-container {\n  position: relative;\n  text-align: center;\n  outline: none;\n  background: @black;\n  padding: 0;\n  border: none;\n  display: block;\n  font-size: 14px;\n  max-width: none;\n  max-height: none;\n  overflow: hidden;\n  line-height: 1;\n  box-sizing: border-box;\n  font-family: Arial, Helvetica, sans-serif;\n}\n\n.rmp-container * {\n  box-sizing: border-box;\n}\n\n.rmp-video,\n.rmp-content {\n  width: 100%;\n  height: 100%;\n  position: absolute;\n  left: 0;\n  top: 0;\n  margin: 0;\n  padding: 0;\n  outline: none;\n  display: block;\n}\n\n.rmp-ad-container {\n  position: absolute;\n  top: 0;\n  left: 0;\n  margin: 0;\n  padding: 0;\n  width: 100%;\n  height: 100%;\n  outline: none;\n  display: block;\n  text-align: initial;\n}\n\n.rmp-fullscreen-on {\n  position: fixed !important;\n  width: 100% !important;\n  height: 100% !important;\n  background: @black !important;\n  overflow: hidden !important;\n  z-index: 9999 !important;\n  top: 0;\n  left: 0;\n}\n\n// specific CSS to rmp-vast\n.rmp-vpaid-container {\n  position: absolute;\n  top: 0;\n  left: 0;\n  margin: 0;\n  padding: 0;\n  width: 100%;\n  height: 100%;\n  outline: none;\n  display: block;\n  text-align: initial;\n}\n\n.rmp-ad-vast-video-player {\n  width: 100%;\n  height: 100%;\n  position: absolute;\n  left: 0;\n  top: 0;\n  margin: 0;\n  padding: 0;\n  outline: none;\n  display: block;\n  cursor: pointer;\n}\n\n.rmp-ad-container-icons {\n  position: absolute;\n  display: block;\n  cursor: pointer;\n}\n\n.rmp-ad-container-skip {\n  position: absolute;\n  right: 0;\n  bottom: 44px;\n  width: 160px;\n  height: 40px;\n  line-height: 38px;\n  text-align: center;\n  cursor: pointer;\n  background-color: @grey;\n  border: 1px solid @grey;\n  .transition(border-color, 0.4s);\n}\n\n.rmp-ad-container-skip:hover {\n  border-color: @black;\n}\n\n.rmp-ad-container-skip-waiting {\n  width: 100%;\n  position: absolute;\n  padding: 0 2px;\n  color: @light-grey;\n  .text-ellipsis();\n}\n\n.rmp-ad-container-skip-message {\n  width: 65%;\n  position: absolute;\n  left: 5%;\n  color: @white;\n  .text-ellipsis();\n}\n\n.rmp-ad-container-skip-icon {\n  position: absolute;\n  left: 75%;\n  width: 20%;\n  background-image: url(\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAQJJREFUeNpi/P//PwMUNADxXyBuZsAPcoA4CIjfA/EuIJ4JFgUZBMU3/kNAMZIYNnz8PwIcgokzIdl0A0r3AHEbHhf9RGJ/hjGQDWJFYlcC8SQgZibgzf/YDEIHuUC8CIi58ahhJMYgEIgC4mVALIFNMzIgZBAI+AHxRiCWRfcOqQaBgBkQrwRiMSB+iE0BCwPxwBKIDwLxH0pcBAMPkKOcXIPmALEnED+lxKDJQJwKZUuQa1AVEOch8f+SE9hZQDydGCcjG/QPif0H6pUF+LIFriwCy1dvgTgChyEMaPmPBZuLVKA2RALxbjy+IGjQCiD+RcAQEFgF9fpHIN4GEwQIMACnXWgupdnzwwAAAABJRU5ErkJggg==\");\n  height: 100%;\n  background-repeat: no-repeat;\n  background-position: center;\n  opacity: 0.7;\n  .transition(opacity, 0.4s);\n}\n\n.rmp-ad-container-skip:hover .rmp-ad-container-skip-icon {\n  opacity: 1;\n}\n\n.rmp-ad-non-linear-container {\n  position: absolute;\n  text-align: center;\n  left: 50%;\n  bottom: 0;\n  transform: translate(-50%, 0);\n}\n\n.rmp-ad-non-linear-anchor:link,\n.rmp-ad-non-linear-anchor:visited,\n.rmp-ad-non-linear-anchor:hover,\n.rmp-ad-non-linear-anchor:active {\n  text-decoration: none;\n}\n\n.rmp-ad-non-linear-creative {\n  position: relative;\n  cursor: pointer;\n  text-align: center;\n  width: 100%;\n  height: 100%;\n  bottom: 0;\n}\n\n.rmp-ad-non-linear-close {\n  right: 0;\n  top: 0;\n  position: absolute;\n  cursor: pointer;\n  width: 20px;\n  height: 20px;\n  background-color: @black;\n  background-image: url(\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAHdJREFUeNqUk9EKwCAIRaX9/9MgEAZ9amsPsWVXdxV8Ec+B1Ep/o40UMuuEpK/RMvAUnEZysfAIlYRkg5/6tyGSQNgKPIkLIwGSuLAn8CSKeovgOMiaMKtKPQENjB5i1Pi7xkoMzD0kBg5PmYVnqv1MGXiT3AIMACNQPFnn5xfHAAAAAElFTkSuQmCC\");\n  background-size: cover;\n  border: 4px solid @black;\n}\n\n.rmp-ad-click-ui-mobile {\n  border: 2px solid @white;\n  background: @shadow-4;\n  color: @white;\n  display: block;\n  position: absolute;\n  right: 8px;\n  top: 8px;\n  font-size: 18px;\n  width: 112px;\n  height: 34px;\n  text-decoration: none;\n  text-align: center;\n  line-height: 30px;\n  box-shadow: 0 0 2px @shadow-2;\n}\n\n.rmp-ad-click-ui-mobile:visited,\n.rmp-ad-click-ui-mobile:hover,\n.rmp-ad-click-ui-mobile:active {\n  color: @white;\n  text-decoration: none;\n}\n"],"sourceRoot":""}]);
+___CSS_LOADER_EXPORT___.push([module.id, "@charset \"UTF-8\";\n.rmp-container {\n  position: relative;\n  text-align: center;\n  outline: none;\n  background: #000000;\n  padding: 0;\n  border: none;\n  display: block;\n  font-size: 14px;\n  max-width: none;\n  max-height: none;\n  overflow: hidden;\n  line-height: 1;\n  box-sizing: border-box;\n  font-family: Arial, Helvetica, sans-serif;\n}\n.rmp-container * {\n  box-sizing: border-box;\n}\n.rmp-video,\n.rmp-content {\n  width: 100%;\n  height: 100%;\n  position: absolute;\n  left: 0;\n  top: 0;\n  margin: 0;\n  padding: 0;\n  outline: none;\n  display: block;\n}\n.rmp-ad-container {\n  position: absolute;\n  top: 0;\n  left: 0;\n  margin: 0;\n  padding: 0;\n  width: 100%;\n  height: 100%;\n  outline: none;\n  display: block;\n  text-align: initial;\n}\n.rmp-fullscreen-on {\n  position: fixed !important;\n  width: 100% !important;\n  height: 100% !important;\n  background: #000000 !important;\n  overflow: hidden !important;\n  z-index: 9999 !important;\n  top: 0;\n  left: 0;\n}\n.rmp-vpaid-container {\n  position: absolute;\n  top: 0;\n  left: 0;\n  margin: 0;\n  padding: 0;\n  width: 100%;\n  height: 100%;\n  outline: none;\n  display: block;\n  text-align: initial;\n}\n.rmp-ad-vast-video-player {\n  width: 100%;\n  height: 100%;\n  position: absolute;\n  left: 0;\n  top: 0;\n  margin: 0;\n  padding: 0;\n  outline: none;\n  display: block;\n  cursor: pointer;\n}\n.rmp-ad-container-icons {\n  position: absolute;\n  display: block;\n  cursor: pointer;\n}\n.rmp-ad-container-skip {\n  position: absolute;\n  right: 0;\n  bottom: 44px;\n  width: 160px;\n  height: 40px;\n  line-height: 38px;\n  text-align: center;\n  cursor: pointer;\n  background-color: #333;\n  border: 1px solid #333;\n  transition-property: border-color;\n  transition-duration: 0.4s;\n  transition-timing-function: ease-in;\n}\n.rmp-ad-container-skip:hover {\n  border-color: #000000;\n}\n.rmp-ad-container-skip-waiting {\n  width: 100%;\n  position: absolute;\n  padding: 0 2px;\n  color: #cfcfcf;\n  white-space: nowrap;\n  overflow: hidden;\n  text-overflow: ellipsis;\n}\n.rmp-ad-container-skip-message {\n  width: 65%;\n  position: absolute;\n  left: 5%;\n  color: #ffffff;\n  white-space: nowrap;\n  overflow: hidden;\n  text-overflow: ellipsis;\n}\n.rmp-ad-container-skip-icon {\n  position: absolute;\n  left: 75%;\n  width: 20%;\n  background-image: url(\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAQJJREFUeNpi/P//PwMUNADxXyBuZsAPcoA4CIjfA/EuIJ4JFgUZBMU3/kNAMZIYNnz8PwIcgokzIdl0A0r3AHEbHhf9RGJ/hjGQDWJFYlcC8SQgZibgzf/YDEIHuUC8CIi58ahhJMYgEIgC4mVALIFNMzIgZBAI+AHxRiCWRfcOqQaBgBkQrwRiMSB+iE0BCwPxwBKIDwLxH0pcBAMPkKOcXIPmALEnED+lxKDJQJwKZUuQa1AVEOch8f+SE9hZQDydGCcjG/QPif0H6pUF+LIFriwCy1dvgTgChyEMaPmPBZuLVKA2RALxbjy+IGjQCiD+RcAQEFgF9fpHIN4GEwQIMACnXWgupdnzwwAAAABJRU5ErkJggg==\");\n  height: 100%;\n  background-repeat: no-repeat;\n  background-position: center;\n  opacity: 0.7;\n  transition-property: opacity;\n  transition-duration: 0.4s;\n  transition-timing-function: ease-in;\n}\n.rmp-ad-container-skip:hover .rmp-ad-container-skip-icon {\n  opacity: 1;\n}\n.rmp-ad-non-linear-container {\n  position: absolute;\n  text-align: center;\n  left: 50%;\n  bottom: 0;\n  transform: translate(-50%, 0);\n}\n.rmp-ad-non-linear-anchor:link,\n.rmp-ad-non-linear-anchor:visited,\n.rmp-ad-non-linear-anchor:hover,\n.rmp-ad-non-linear-anchor:active {\n  text-decoration: none;\n}\n.rmp-ad-non-linear-creative {\n  position: relative;\n  cursor: pointer;\n  text-align: center;\n  width: 100%;\n  height: 100%;\n  bottom: 0;\n}\n.rmp-ad-non-linear-close {\n  right: 0;\n  top: 0;\n  position: absolute;\n  cursor: pointer;\n  width: 20px;\n  height: 20px;\n  background-color: #000000;\n  background-image: url(\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAHdJREFUeNqUk9EKwCAIRaX9/9MgEAZ9amsPsWVXdxV8Ec+B1Ep/o40UMuuEpK/RMvAUnEZysfAIlYRkg5/6tyGSQNgKPIkLIwGSuLAn8CSKeovgOMiaMKtKPQENjB5i1Pi7xkoMzD0kBg5PmYVnqv1MGXiT3AIMACNQPFnn5xfHAAAAAElFTkSuQmCC\");\n  background-size: cover;\n  border: 4px solid #000000;\n}\n.rmp-ad-click-ui-mobile {\n  border: 2px solid #ffffff;\n  background: rgba(0, 0, 0, 0.4);\n  color: #ffffff;\n  display: block;\n  position: absolute;\n  right: 8px;\n  top: 8px;\n  font-size: 18px;\n  width: 112px;\n  height: 34px;\n  text-decoration: none;\n  text-align: center;\n  line-height: 30px;\n  box-shadow: 0 0 2px rgba(0, 0, 0, 0.6);\n}\n.rmp-ad-click-ui-mobile:visited,\n.rmp-ad-click-ui-mobile:hover,\n.rmp-ad-click-ui-mobile:active {\n  color: #ffffff;\n  text-decoration: none;\n}\n.rmp-linear-simid-creative {\n  position: absolute;\n  top: 0;\n  border-width: 0;\n  width: 100%;\n  height: 100%;\n}\n.overlayed {\n  position: absolute;\n  top: 0;\n  width: 640px;\n  height: 480px;\n}\n.content {\n  width: 640px;\n  height: 480px;\n}\n.hidden {\n  display: none;\n}\n", "",{"version":3,"sources":["webpack://./src/less/rmp-vast.less"],"names":[],"mappings":"AAAA,gBAAS;AA0BT;EACE,kBAAA;EACA,kBAAA;EACA,aAAA;EACA,mBAAA;EACA,UAAA;EACA,YAAA;EACA,cAAA;EACA,eAAA;EACA,eAAA;EACA,gBAAA;EACA,gBAAA;EACA,cAAA;EACA,sBAAA;EACA,yCAAA;AAxBF;AA2BA;EACE,sBAAA;AAzBF;AA4BA;;EAEE,WAAA;EACA,YAAA;EACA,kBAAA;EACA,OAAA;EACA,MAAA;EACA,SAAA;EACA,UAAA;EACA,aAAA;EACA,cAAA;AA1BF;AA6BA;EACE,kBAAA;EACA,MAAA;EACA,OAAA;EACA,SAAA;EACA,UAAA;EACA,WAAA;EACA,YAAA;EACA,aAAA;EACA,cAAA;EACA,mBAAA;AA3BF;AA8BA;EACE,0BAAA;EACA,sBAAA;EACA,uBAAA;EACA,8BAAA;EACA,2BAAA;EACA,wBAAA;EACA,MAAA;EACA,OAAA;AA5BF;AAgCA;EACE,kBAAA;EACA,MAAA;EACA,OAAA;EACA,SAAA;EACA,UAAA;EACA,WAAA;EACA,YAAA;EACA,aAAA;EACA,cAAA;EACA,mBAAA;AA9BF;AAiCA;EACE,WAAA;EACA,YAAA;EACA,kBAAA;EACA,OAAA;EACA,MAAA;EACA,SAAA;EACA,UAAA;EACA,aAAA;EACA,cAAA;EACA,eAAA;AA/BF;AAkCA;EACE,kBAAA;EACA,cAAA;EACA,eAAA;AAhCF;AAmCA;EACE,kBAAA;EACA,QAAA;EACA,YAAA;EACA,YAAA;EACA,YAAA;EACA,iBAAA;EACA,kBAAA;EACA,eAAA;EACA,sBAAA;EACA,sBAAA;EAjHA,iCAAA;EACA,yBAAA;EACA,mCAAA;AAiFF;AAkCA;EACE,qBAAA;AAhCF;AAmCA;EACE,WAAA;EACA,kBAAA;EACA,cAAA;EACA,cAAA;EAvHA,mBAAA;EACA,gBAAA;EACA,uBAAA;AAuFF;AAkCA;EACE,UAAA;EACA,kBAAA;EACA,QAAA;EACA,cAAA;EA/HA,mBAAA;EACA,gBAAA;EACA,uBAAA;AAgGF;AAiCA;EACE,kBAAA;EACA,SAAA;EACA,UAAA;EACA,ugBAAA;EACA,YAAA;EACA,4BAAA;EACA,2BAAA;EACA,YAAA;EAjJA,4BAAA;EACA,yBAAA;EACA,mCAAA;AAmHF;AAgCA;EACE,UAAA;AA9BF;AAiCA;EACE,kBAAA;EACA,kBAAA;EACA,SAAA;EACA,SAAA;EACA,6BAAA;AA/BF;AAkCA;;;;EAIE,qBAAA;AAhCF;AAmCA;EACE,kBAAA;EACA,eAAA;EACA,kBAAA;EACA,WAAA;EACA,YAAA;EACA,SAAA;AAjCF;AAoCA;EACE,QAAA;EACA,MAAA;EACA,kBAAA;EACA,eAAA;EACA,WAAA;EACA,YAAA;EACA,yBAAA;EACA,2UAAA;EACA,sBAAA;EACA,yBAAA;AAlCF;AAqCA;EACE,yBAAA;EACA,8BAAA;EACA,cAAA;EACA,cAAA;EACA,kBAAA;EACA,UAAA;EACA,QAAA;EACA,eAAA;EACA,YAAA;EACA,YAAA;EACA,qBAAA;EACA,kBAAA;EACA,iBAAA;EACA,sCAAA;AAnCF;AAsCA;;;EAGE,cAAA;EACA,qBAAA;AApCF;AAuCA;EACE,kBAAA;EACA,MAAA;EACA,eAAA;EACA,WAAA;EACA,YAAA;AArCF;AAwCA;EACE,kBAAA;EACA,MAAA;EACA,YAAA;EACA,aAAA;AAtCF;AAyCA;EACE,YAAA;EACA,aAAA;AAvCF;AA0CA;EACE,aAAA;AAxCF","sourcesContent":["@charset \"UTF-8\";\n\n// colors\n@black: rgba(0, 0, 0, 1);\n@grey: #333;\n@light-grey: #cfcfcf;\n@white: rgba(255, 255, 255, 1);\n@shadow-1: rgba(0, 0, 0, 0.8);\n@shadow-2: rgba(0, 0, 0, 0.6);\n@shadow-3: rgba(0, 0, 0, 0.5);\n@shadow-4: rgba(0, 0, 0, 0.4);\n\n// mixins\n.transition(@property: background; @duration: 0.4s; @timing: ease-in) {\n  transition-property: @property;\n  transition-duration: @duration;\n  transition-timing-function: @timing;\n}\n\n.text-ellipsis() {\n  white-space: nowrap;\n  overflow: hidden;\n  text-overflow: ellipsis;\n}\n\n// shared CSS with RMP\n.rmp-container {\n  position: relative;\n  text-align: center;\n  outline: none;\n  background: @black;\n  padding: 0;\n  border: none;\n  display: block;\n  font-size: 14px;\n  max-width: none;\n  max-height: none;\n  overflow: hidden;\n  line-height: 1;\n  box-sizing: border-box;\n  font-family: Arial, Helvetica, sans-serif;\n}\n\n.rmp-container * {\n  box-sizing: border-box;\n}\n\n.rmp-video,\n.rmp-content {\n  width: 100%;\n  height: 100%;\n  position: absolute;\n  left: 0;\n  top: 0;\n  margin: 0;\n  padding: 0;\n  outline: none;\n  display: block;\n}\n\n.rmp-ad-container {\n  position: absolute;\n  top: 0;\n  left: 0;\n  margin: 0;\n  padding: 0;\n  width: 100%;\n  height: 100%;\n  outline: none;\n  display: block;\n  text-align: initial;\n}\n\n.rmp-fullscreen-on {\n  position: fixed !important;\n  width: 100% !important;\n  height: 100% !important;\n  background: @black !important;\n  overflow: hidden !important;\n  z-index: 9999 !important;\n  top: 0;\n  left: 0;\n}\n\n// specific CSS to rmp-vast\n.rmp-vpaid-container {\n  position: absolute;\n  top: 0;\n  left: 0;\n  margin: 0;\n  padding: 0;\n  width: 100%;\n  height: 100%;\n  outline: none;\n  display: block;\n  text-align: initial;\n}\n\n.rmp-ad-vast-video-player {\n  width: 100%;\n  height: 100%;\n  position: absolute;\n  left: 0;\n  top: 0;\n  margin: 0;\n  padding: 0;\n  outline: none;\n  display: block;\n  cursor: pointer;\n}\n\n.rmp-ad-container-icons {\n  position: absolute;\n  display: block;\n  cursor: pointer;\n}\n\n.rmp-ad-container-skip {\n  position: absolute;\n  right: 0;\n  bottom: 44px;\n  width: 160px;\n  height: 40px;\n  line-height: 38px;\n  text-align: center;\n  cursor: pointer;\n  background-color: @grey;\n  border: 1px solid @grey;\n  .transition(border-color, 0.4s);\n}\n\n.rmp-ad-container-skip:hover {\n  border-color: @black;\n}\n\n.rmp-ad-container-skip-waiting {\n  width: 100%;\n  position: absolute;\n  padding: 0 2px;\n  color: @light-grey;\n  .text-ellipsis();\n}\n\n.rmp-ad-container-skip-message {\n  width: 65%;\n  position: absolute;\n  left: 5%;\n  color: @white;\n  .text-ellipsis();\n}\n\n.rmp-ad-container-skip-icon {\n  position: absolute;\n  left: 75%;\n  width: 20%;\n  background-image: url(\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAQJJREFUeNpi/P//PwMUNADxXyBuZsAPcoA4CIjfA/EuIJ4JFgUZBMU3/kNAMZIYNnz8PwIcgokzIdl0A0r3AHEbHhf9RGJ/hjGQDWJFYlcC8SQgZibgzf/YDEIHuUC8CIi58ahhJMYgEIgC4mVALIFNMzIgZBAI+AHxRiCWRfcOqQaBgBkQrwRiMSB+iE0BCwPxwBKIDwLxH0pcBAMPkKOcXIPmALEnED+lxKDJQJwKZUuQa1AVEOch8f+SE9hZQDydGCcjG/QPif0H6pUF+LIFriwCy1dvgTgChyEMaPmPBZuLVKA2RALxbjy+IGjQCiD+RcAQEFgF9fpHIN4GEwQIMACnXWgupdnzwwAAAABJRU5ErkJggg==\");\n  height: 100%;\n  background-repeat: no-repeat;\n  background-position: center;\n  opacity: 0.7;\n  .transition(opacity, 0.4s);\n}\n\n.rmp-ad-container-skip:hover .rmp-ad-container-skip-icon {\n  opacity: 1;\n}\n\n.rmp-ad-non-linear-container {\n  position: absolute;\n  text-align: center;\n  left: 50%;\n  bottom: 0;\n  transform: translate(-50%, 0);\n}\n\n.rmp-ad-non-linear-anchor:link,\n.rmp-ad-non-linear-anchor:visited,\n.rmp-ad-non-linear-anchor:hover,\n.rmp-ad-non-linear-anchor:active {\n  text-decoration: none;\n}\n\n.rmp-ad-non-linear-creative {\n  position: relative;\n  cursor: pointer;\n  text-align: center;\n  width: 100%;\n  height: 100%;\n  bottom: 0;\n}\n\n.rmp-ad-non-linear-close {\n  right: 0;\n  top: 0;\n  position: absolute;\n  cursor: pointer;\n  width: 20px;\n  height: 20px;\n  background-color: @black;\n  background-image: url(\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAHdJREFUeNqUk9EKwCAIRaX9/9MgEAZ9amsPsWVXdxV8Ec+B1Ep/o40UMuuEpK/RMvAUnEZysfAIlYRkg5/6tyGSQNgKPIkLIwGSuLAn8CSKeovgOMiaMKtKPQENjB5i1Pi7xkoMzD0kBg5PmYVnqv1MGXiT3AIMACNQPFnn5xfHAAAAAElFTkSuQmCC\");\n  background-size: cover;\n  border: 4px solid @black;\n}\n\n.rmp-ad-click-ui-mobile {\n  border: 2px solid @white;\n  background: @shadow-4;\n  color: @white;\n  display: block;\n  position: absolute;\n  right: 8px;\n  top: 8px;\n  font-size: 18px;\n  width: 112px;\n  height: 34px;\n  text-decoration: none;\n  text-align: center;\n  line-height: 30px;\n  box-shadow: 0 0 2px @shadow-2;\n}\n\n.rmp-ad-click-ui-mobile:visited,\n.rmp-ad-click-ui-mobile:hover,\n.rmp-ad-click-ui-mobile:active {\n  color: @white;\n  text-decoration: none;\n}\n\n.rmp-linear-simid-creative {\n  position: absolute;\n  top: 0;\n  border-width: 0;\n  width: 100%;\n  height: 100%;\n}\n\n.overlayed {\n  position: absolute;\n  top: 0;\n  width: 640px;\n  height: 480px;\n}\n\n.content {\n  width: 640px;\n  height: 480px;\n}\n\n.hidden {\n  display: none;\n}   \n"],"sourceRoot":""}]);
 // Exports
 /* harmony default export */ __webpack_exports__.Z = (___CSS_LOADER_EXPORT___);
 
@@ -8320,7 +9044,7 @@ module.exports = setAttributesWithoutAttributes;
 
 /***/ }),
 
-/***/ 7795:
+/***/ 3380:
 /***/ (function(module) {
 
 "use strict";
@@ -8409,6 +9133,13 @@ module.exports = styleTagTransform;
 
 /***/ }),
 
+/***/ 5110:
+/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
+
+module.exports = __webpack_require__(7698);
+
+/***/ }),
+
 /***/ 9022:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
@@ -8441,6 +9172,13 @@ module.exports = __webpack_require__(3778);
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
 module.exports = __webpack_require__(9373);
+
+/***/ }),
+
+/***/ 8712:
+/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
+
+module.exports = __webpack_require__(3819);
 
 /***/ }),
 
@@ -8486,6 +9224,13 @@ module.exports = __webpack_require__(2348);
 
 /***/ }),
 
+/***/ 7043:
+/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
+
+module.exports = __webpack_require__(5178);
+
+/***/ }),
+
 /***/ 1607:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
@@ -8497,6 +9242,13 @@ module.exports = __webpack_require__(6361);
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
 module.exports = __webpack_require__(8933);
+
+/***/ }),
+
+/***/ 8492:
+/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
+
+module.exports = __webpack_require__(5868);
 
 /***/ }),
 
@@ -8518,6 +9270,13 @@ module.exports = __webpack_require__(4477);
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
 module.exports = __webpack_require__(3059);
+
+/***/ }),
+
+/***/ 3665:
+/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
+
+module.exports = __webpack_require__(7795);
 
 /***/ }),
 
@@ -8622,17 +9381,20 @@ var __webpack_exports__ = {};
 "use strict";
 var __webpack_exports__ = {};
 /* unused harmony exports Headers, Request, Response, DOMException, fetch */
-var global =
+/* eslint-disable no-prototype-builtins */
+var g =
   (typeof globalThis !== 'undefined' && globalThis) ||
   (typeof self !== 'undefined' && self) ||
-  (typeof global !== 'undefined' && global)
+  // eslint-disable-next-line no-undef
+  (typeof __webpack_require__.g !== 'undefined' && __webpack_require__.g) ||
+  {}
 
 var support = {
-  searchParams: 'URLSearchParams' in global,
-  iterable: 'Symbol' in global && 'iterator' in Symbol,
+  searchParams: 'URLSearchParams' in g,
+  iterable: 'Symbol' in g && 'iterator' in Symbol,
   blob:
-    'FileReader' in global &&
-    'Blob' in global &&
+    'FileReader' in g &&
+    'Blob' in g &&
     (function() {
       try {
         new Blob()
@@ -8641,8 +9403,8 @@ var support = {
         return false
       }
     })(),
-  formData: 'FormData' in global,
-  arrayBuffer: 'ArrayBuffer' in global
+  formData: 'FormData' in g,
+  arrayBuffer: 'ArrayBuffer' in g
 }
 
 function isDataView(obj) {
@@ -8713,6 +9475,9 @@ function Headers(headers) {
     }, this)
   } else if (Array.isArray(headers)) {
     headers.forEach(function(header) {
+      if (header.length != 2) {
+        throw new TypeError('Headers constructor: expected name/value pair to be length 2, found' + header.length)
+      }
       this.append(header[0], header[1])
     }, this)
   } else if (headers) {
@@ -8783,6 +9548,7 @@ if (support.iterable) {
 }
 
 function consumed(body) {
+  if (body._noBody) return
   if (body.bodyUsed) {
     return Promise.reject(new TypeError('Already read'))
   }
@@ -8810,7 +9576,9 @@ function readBlobAsArrayBuffer(blob) {
 function readBlobAsText(blob) {
   var reader = new FileReader()
   var promise = fileReaderReady(reader)
-  reader.readAsText(blob)
+  var match = /charset=([A-Za-z0-9_-]+)/.exec(blob.type)
+  var encoding = match ? match[1] : 'utf-8'
+  reader.readAsText(blob, encoding)
   return promise
 }
 
@@ -8848,9 +9616,11 @@ function Body() {
       semantic of setting Request.bodyUsed in the constructor before
       _initBody is called.
     */
+    // eslint-disable-next-line no-self-assign
     this.bodyUsed = this.bodyUsed
     this._bodyInit = body
     if (!body) {
+      this._noBody = true;
       this._bodyText = ''
     } else if (typeof body === 'string') {
       this._bodyText = body
@@ -8898,26 +9668,27 @@ function Body() {
         return Promise.resolve(new Blob([this._bodyText]))
       }
     }
+  }
 
-    this.arrayBuffer = function() {
-      if (this._bodyArrayBuffer) {
-        var isConsumed = consumed(this)
-        if (isConsumed) {
-          return isConsumed
-        }
-        if (ArrayBuffer.isView(this._bodyArrayBuffer)) {
-          return Promise.resolve(
-            this._bodyArrayBuffer.buffer.slice(
-              this._bodyArrayBuffer.byteOffset,
-              this._bodyArrayBuffer.byteOffset + this._bodyArrayBuffer.byteLength
-            )
+  this.arrayBuffer = function() {
+    if (this._bodyArrayBuffer) {
+      var isConsumed = consumed(this)
+      if (isConsumed) {
+        return isConsumed
+      } else if (ArrayBuffer.isView(this._bodyArrayBuffer)) {
+        return Promise.resolve(
+          this._bodyArrayBuffer.buffer.slice(
+            this._bodyArrayBuffer.byteOffset,
+            this._bodyArrayBuffer.byteOffset + this._bodyArrayBuffer.byteLength
           )
-        } else {
-          return Promise.resolve(this._bodyArrayBuffer)
-        }
+        )
       } else {
-        return this.blob().then(readBlobAsArrayBuffer)
+        return Promise.resolve(this._bodyArrayBuffer)
       }
+    } else if (support.blob) {
+      return this.blob().then(readBlobAsArrayBuffer)
+    } else {
+      throw new Error('could not read as ArrayBuffer')
     }
   }
 
@@ -8952,7 +9723,7 @@ function Body() {
 }
 
 // HTTP methods whose capitalization should be normalized
-var methods = ['DELETE', 'GET', 'HEAD', 'OPTIONS', 'POST', 'PUT']
+var methods = ['CONNECT', 'DELETE', 'GET', 'HEAD', 'OPTIONS', 'PATCH', 'POST', 'PUT', 'TRACE']
 
 function normalizeMethod(method) {
   var upcased = method.toUpperCase()
@@ -8993,7 +9764,12 @@ function Request(input, options) {
   }
   this.method = normalizeMethod(options.method || this.method || 'GET')
   this.mode = options.mode || this.mode || null
-  this.signal = options.signal || this.signal
+  this.signal = options.signal || this.signal || (function () {
+    if ('AbortController' in g) {
+      var ctrl = new AbortController();
+      return ctrl.signal;
+    }
+  }());
   this.referrer = null
 
   if ((this.method === 'GET' || this.method === 'HEAD') && body) {
@@ -9055,7 +9831,11 @@ function parseHeaders(rawHeaders) {
       var key = parts.shift().trim()
       if (key) {
         var value = parts.join(':').trim()
-        headers.append(key, value)
+        try {
+          headers.append(key, value)
+        } catch (error) {
+          console.warn('Response ' + error.message)
+        }
       }
     })
   return headers
@@ -9073,6 +9853,9 @@ function Response(bodyInit, options) {
 
   this.type = 'default'
   this.status = options.status === undefined ? 200 : options.status
+  if (this.status < 200 || this.status > 599) {
+    throw new RangeError("Failed to construct 'Response': The status provided (0) is outside the range [200, 599].")
+  }
   this.ok = this.status >= 200 && this.status < 300
   this.statusText = options.statusText === undefined ? '' : '' + options.statusText
   this.headers = new Headers(options.headers)
@@ -9092,7 +9875,8 @@ Response.prototype.clone = function() {
 }
 
 Response.error = function() {
-  var response = new Response(null, {status: 0, statusText: ''})
+  var response = new Response(null, {status: 200, statusText: ''})
+  response.status = 0
   response.type = 'error'
   return response
 }
@@ -9107,7 +9891,7 @@ Response.redirect = function(url, status) {
   return new Response(null, {status: status, headers: {location: url}})
 }
 
-var DOMException = global.DOMException
+var DOMException = g.DOMException
 try {
   new DOMException()
 } catch (err) {
@@ -9137,9 +9921,15 @@ function fetch(input, init) {
 
     xhr.onload = function() {
       var options = {
-        status: xhr.status,
         statusText: xhr.statusText,
         headers: parseHeaders(xhr.getAllResponseHeaders() || '')
+      }
+      // This check if specifically for when a user fetches a file locally from the file system
+      // Only if the status is out of a normal range
+      if (request.url.startsWith('file://') && (xhr.status < 200 || xhr.status > 599)) {
+        options.status = 200;
+      } else {
+        options.status = xhr.status;
       }
       options.url = 'responseURL' in xhr ? xhr.responseURL : options.headers.get('X-Request-URL')
       var body = 'response' in xhr ? xhr.response : xhr.responseText
@@ -9168,7 +9958,7 @@ function fetch(input, init) {
 
     function fixUrl(url) {
       try {
-        return url === '' && global.location.href ? global.location.href : url
+        return url === '' && g.location.href ? g.location.href : url
       } catch (e) {
         return url
       }
@@ -9186,17 +9976,22 @@ function fetch(input, init) {
       if (support.blob) {
         xhr.responseType = 'blob'
       } else if (
-        support.arrayBuffer &&
-        request.headers.get('Content-Type') &&
-        request.headers.get('Content-Type').indexOf('application/octet-stream') !== -1
+        support.arrayBuffer
       ) {
         xhr.responseType = 'arraybuffer'
       }
     }
 
-    if (init && typeof init.headers === 'object' && !(init.headers instanceof Headers)) {
+    if (init && typeof init.headers === 'object' && !(init.headers instanceof Headers || (g.Headers && init.headers instanceof g.Headers))) {
+      var names = [];
       Object.getOwnPropertyNames(init.headers).forEach(function(name) {
+        names.push(normalizeName(name))
         xhr.setRequestHeader(name, normalizeValue(init.headers[name]))
+      })
+      request.headers.forEach(function(value, name) {
+        if (names.indexOf(name) === -1) {
+          xhr.setRequestHeader(name, value)
+        }
       })
     } else {
       request.headers.forEach(function(value, name) {
@@ -9221,13 +10016,12 @@ function fetch(input, init) {
 
 fetch.polyfill = true
 
-if (!global.fetch) {
-  global.fetch = fetch
-  global.Headers = Headers
-  global.Request = Request
-  global.Response = Response
+if (!g.fetch) {
+  g.fetch = fetch
+  g.Headers = Headers
+  g.Request = Request
+  g.Response = Response
 }
-
 }();
 // This entry need to be wrapped in an IIFE because it need to be in strict mode.
 !function() {
@@ -9245,14 +10039,14 @@ var iterator = __webpack_require__(7398);
 ;// CONCATENATED MODULE: ./node_modules/@babel/runtime-corejs3/helpers/esm/typeof.js
 
 
-function _typeof(obj) {
+function _typeof(o) {
   "@babel/helpers - typeof";
 
-  return _typeof = "function" == typeof symbol && "symbol" == typeof iterator ? function (obj) {
-    return typeof obj;
-  } : function (obj) {
-    return obj && "function" == typeof symbol && obj.constructor === symbol && obj !== symbol.prototype ? "symbol" : typeof obj;
-  }, _typeof(obj);
+  return _typeof = "function" == typeof symbol && "symbol" == typeof iterator ? function (o) {
+    return typeof o;
+  } : function (o) {
+    return o && "function" == typeof symbol && o.constructor === symbol && o !== symbol.prototype ? "symbol" : typeof o;
+  }, _typeof(o);
 }
 // EXTERNAL MODULE: ./node_modules/core-js-pure/full/object/define-property.js
 var define_property = __webpack_require__(621);
@@ -9287,307 +10081,307 @@ var slice = __webpack_require__(7088);
 function _regeneratorRuntime() {
   "use strict"; /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/facebook/regenerator/blob/main/LICENSE */
   _regeneratorRuntime = function _regeneratorRuntime() {
-    return exports;
+    return e;
   };
-  var exports = {},
-    Op = Object.prototype,
-    hasOwn = Op.hasOwnProperty,
-    defineProperty = define_property || function (obj, key, desc) {
-      obj[key] = desc.value;
+  var t,
+    e = {},
+    r = Object.prototype,
+    n = r.hasOwnProperty,
+    o = define_property || function (t, e, r) {
+      t[e] = r.value;
     },
-    $Symbol = "function" == typeof symbol ? symbol : {},
-    iteratorSymbol = $Symbol.iterator || "@@iterator",
-    asyncIteratorSymbol = $Symbol.asyncIterator || "@@asyncIterator",
-    toStringTagSymbol = $Symbol.toStringTag || "@@toStringTag";
-  function define(obj, key, value) {
-    return define_property(obj, key, {
-      value: value,
+    i = "function" == typeof symbol ? symbol : {},
+    a = i.iterator || "@@iterator",
+    c = i.asyncIterator || "@@asyncIterator",
+    u = i.toStringTag || "@@toStringTag";
+  function define(t, e, r) {
+    return define_property(t, e, {
+      value: r,
       enumerable: !0,
       configurable: !0,
       writable: !0
-    }), obj[key];
+    }), t[e];
   }
   try {
     define({}, "");
-  } catch (err) {
-    define = function define(obj, key, value) {
-      return obj[key] = value;
+  } catch (t) {
+    define = function define(t, e, r) {
+      return t[e] = r;
     };
   }
-  function wrap(innerFn, outerFn, self, tryLocsList) {
-    var protoGenerator = outerFn && outerFn.prototype instanceof Generator ? outerFn : Generator,
-      generator = create(protoGenerator.prototype),
-      context = new Context(tryLocsList || []);
-    return defineProperty(generator, "_invoke", {
-      value: makeInvokeMethod(innerFn, self, context)
-    }), generator;
+  function wrap(t, e, r, n) {
+    var i = e && e.prototype instanceof Generator ? e : Generator,
+      a = create(i.prototype),
+      c = new Context(n || []);
+    return o(a, "_invoke", {
+      value: makeInvokeMethod(t, r, c)
+    }), a;
   }
-  function tryCatch(fn, obj, arg) {
+  function tryCatch(t, e, r) {
     try {
       return {
         type: "normal",
-        arg: fn.call(obj, arg)
+        arg: t.call(e, r)
       };
-    } catch (err) {
+    } catch (t) {
       return {
         type: "throw",
-        arg: err
+        arg: t
       };
     }
   }
-  exports.wrap = wrap;
-  var ContinueSentinel = {};
+  e.wrap = wrap;
+  var h = "suspendedStart",
+    l = "suspendedYield",
+    f = "executing",
+    s = "completed",
+    y = {};
   function Generator() {}
   function GeneratorFunction() {}
   function GeneratorFunctionPrototype() {}
-  var IteratorPrototype = {};
-  define(IteratorPrototype, iteratorSymbol, function () {
+  var p = {};
+  define(p, a, function () {
     return this;
   });
-  var getProto = get_prototype_of,
-    NativeIteratorPrototype = getProto && getProto(getProto(values([])));
-  NativeIteratorPrototype && NativeIteratorPrototype !== Op && hasOwn.call(NativeIteratorPrototype, iteratorSymbol) && (IteratorPrototype = NativeIteratorPrototype);
-  var Gp = GeneratorFunctionPrototype.prototype = Generator.prototype = create(IteratorPrototype);
-  function defineIteratorMethods(prototype) {
+  var d = get_prototype_of,
+    v = d && d(d(values([])));
+  v && v !== r && n.call(v, a) && (p = v);
+  var g = GeneratorFunctionPrototype.prototype = Generator.prototype = create(p);
+  function defineIteratorMethods(t) {
     var _context;
-    for_each(_context = ["next", "throw", "return"]).call(_context, function (method) {
-      define(prototype, method, function (arg) {
-        return this._invoke(method, arg);
+    for_each(_context = ["next", "throw", "return"]).call(_context, function (e) {
+      define(t, e, function (t) {
+        return this._invoke(e, t);
       });
     });
   }
-  function AsyncIterator(generator, PromiseImpl) {
-    function invoke(method, arg, resolve, reject) {
-      var record = tryCatch(generator[method], generator, arg);
-      if ("throw" !== record.type) {
-        var result = record.arg,
-          value = result.value;
-        return value && "object" == _typeof(value) && hasOwn.call(value, "__await") ? PromiseImpl.resolve(value.__await).then(function (value) {
-          invoke("next", value, resolve, reject);
-        }, function (err) {
-          invoke("throw", err, resolve, reject);
-        }) : PromiseImpl.resolve(value).then(function (unwrapped) {
-          result.value = unwrapped, resolve(result);
-        }, function (error) {
-          return invoke("throw", error, resolve, reject);
+  function AsyncIterator(t, e) {
+    function invoke(r, o, i, a) {
+      var c = tryCatch(t[r], t, o);
+      if ("throw" !== c.type) {
+        var u = c.arg,
+          h = u.value;
+        return h && "object" == _typeof(h) && n.call(h, "__await") ? e.resolve(h.__await).then(function (t) {
+          invoke("next", t, i, a);
+        }, function (t) {
+          invoke("throw", t, i, a);
+        }) : e.resolve(h).then(function (t) {
+          u.value = t, i(u);
+        }, function (t) {
+          return invoke("throw", t, i, a);
         });
       }
-      reject(record.arg);
+      a(c.arg);
     }
-    var previousPromise;
-    defineProperty(this, "_invoke", {
-      value: function value(method, arg) {
+    var r;
+    o(this, "_invoke", {
+      value: function value(t, n) {
         function callInvokeWithMethodAndArg() {
-          return new PromiseImpl(function (resolve, reject) {
-            invoke(method, arg, resolve, reject);
+          return new e(function (e, r) {
+            invoke(t, n, e, r);
           });
         }
-        return previousPromise = previousPromise ? previousPromise.then(callInvokeWithMethodAndArg, callInvokeWithMethodAndArg) : callInvokeWithMethodAndArg();
+        return r = r ? r.then(callInvokeWithMethodAndArg, callInvokeWithMethodAndArg) : callInvokeWithMethodAndArg();
       }
     });
   }
-  function makeInvokeMethod(innerFn, self, context) {
-    var state = "suspendedStart";
-    return function (method, arg) {
-      if ("executing" === state) throw new Error("Generator is already running");
-      if ("completed" === state) {
-        if ("throw" === method) throw arg;
-        return doneResult();
+  function makeInvokeMethod(e, r, n) {
+    var o = h;
+    return function (i, a) {
+      if (o === f) throw new Error("Generator is already running");
+      if (o === s) {
+        if ("throw" === i) throw a;
+        return {
+          value: t,
+          done: !0
+        };
       }
-      for (context.method = method, context.arg = arg;;) {
-        var delegate = context.delegate;
-        if (delegate) {
-          var delegateResult = maybeInvokeDelegate(delegate, context);
-          if (delegateResult) {
-            if (delegateResult === ContinueSentinel) continue;
-            return delegateResult;
+      for (n.method = i, n.arg = a;;) {
+        var c = n.delegate;
+        if (c) {
+          var u = maybeInvokeDelegate(c, n);
+          if (u) {
+            if (u === y) continue;
+            return u;
           }
         }
-        if ("next" === context.method) context.sent = context._sent = context.arg;else if ("throw" === context.method) {
-          if ("suspendedStart" === state) throw state = "completed", context.arg;
-          context.dispatchException(context.arg);
-        } else "return" === context.method && context.abrupt("return", context.arg);
-        state = "executing";
-        var record = tryCatch(innerFn, self, context);
-        if ("normal" === record.type) {
-          if (state = context.done ? "completed" : "suspendedYield", record.arg === ContinueSentinel) continue;
+        if ("next" === n.method) n.sent = n._sent = n.arg;else if ("throw" === n.method) {
+          if (o === h) throw o = s, n.arg;
+          n.dispatchException(n.arg);
+        } else "return" === n.method && n.abrupt("return", n.arg);
+        o = f;
+        var p = tryCatch(e, r, n);
+        if ("normal" === p.type) {
+          if (o = n.done ? s : l, p.arg === y) continue;
           return {
-            value: record.arg,
-            done: context.done
+            value: p.arg,
+            done: n.done
           };
         }
-        "throw" === record.type && (state = "completed", context.method = "throw", context.arg = record.arg);
+        "throw" === p.type && (o = s, n.method = "throw", n.arg = p.arg);
       }
     };
   }
-  function maybeInvokeDelegate(delegate, context) {
-    var methodName = context.method,
-      method = delegate.iterator[methodName];
-    if (undefined === method) return context.delegate = null, "throw" === methodName && delegate.iterator["return"] && (context.method = "return", context.arg = undefined, maybeInvokeDelegate(delegate, context), "throw" === context.method) || "return" !== methodName && (context.method = "throw", context.arg = new TypeError("The iterator does not provide a '" + methodName + "' method")), ContinueSentinel;
-    var record = tryCatch(method, delegate.iterator, context.arg);
-    if ("throw" === record.type) return context.method = "throw", context.arg = record.arg, context.delegate = null, ContinueSentinel;
-    var info = record.arg;
-    return info ? info.done ? (context[delegate.resultName] = info.value, context.next = delegate.nextLoc, "return" !== context.method && (context.method = "next", context.arg = undefined), context.delegate = null, ContinueSentinel) : info : (context.method = "throw", context.arg = new TypeError("iterator result is not an object"), context.delegate = null, ContinueSentinel);
+  function maybeInvokeDelegate(e, r) {
+    var n = r.method,
+      o = e.iterator[n];
+    if (o === t) return r.delegate = null, "throw" === n && e.iterator["return"] && (r.method = "return", r.arg = t, maybeInvokeDelegate(e, r), "throw" === r.method) || "return" !== n && (r.method = "throw", r.arg = new TypeError("The iterator does not provide a '" + n + "' method")), y;
+    var i = tryCatch(o, e.iterator, r.arg);
+    if ("throw" === i.type) return r.method = "throw", r.arg = i.arg, r.delegate = null, y;
+    var a = i.arg;
+    return a ? a.done ? (r[e.resultName] = a.value, r.next = e.nextLoc, "return" !== r.method && (r.method = "next", r.arg = t), r.delegate = null, y) : a : (r.method = "throw", r.arg = new TypeError("iterator result is not an object"), r.delegate = null, y);
   }
-  function pushTryEntry(locs) {
+  function pushTryEntry(t) {
     var _context2;
-    var entry = {
-      tryLoc: locs[0]
+    var e = {
+      tryLoc: t[0]
     };
-    1 in locs && (entry.catchLoc = locs[1]), 2 in locs && (entry.finallyLoc = locs[2], entry.afterLoc = locs[3]), push(_context2 = this.tryEntries).call(_context2, entry);
+    1 in t && (e.catchLoc = t[1]), 2 in t && (e.finallyLoc = t[2], e.afterLoc = t[3]), push(_context2 = this.tryEntries).call(_context2, e);
   }
-  function resetTryEntry(entry) {
-    var record = entry.completion || {};
-    record.type = "normal", delete record.arg, entry.completion = record;
+  function resetTryEntry(t) {
+    var e = t.completion || {};
+    e.type = "normal", delete e.arg, t.completion = e;
   }
-  function Context(tryLocsList) {
+  function Context(t) {
     this.tryEntries = [{
       tryLoc: "root"
-    }], for_each(tryLocsList).call(tryLocsList, pushTryEntry, this), this.reset(!0);
+    }], for_each(t).call(t, pushTryEntry, this), this.reset(!0);
   }
-  function values(iterable) {
-    if (iterable) {
-      var iteratorMethod = iterable[iteratorSymbol];
-      if (iteratorMethod) return iteratorMethod.call(iterable);
-      if ("function" == typeof iterable.next) return iterable;
-      if (!isNaN(iterable.length)) {
-        var i = -1,
-          next = function next() {
-            for (; ++i < iterable.length;) if (hasOwn.call(iterable, i)) return next.value = iterable[i], next.done = !1, next;
-            return next.value = undefined, next.done = !0, next;
+  function values(e) {
+    if (e || "" === e) {
+      var r = e[a];
+      if (r) return r.call(e);
+      if ("function" == typeof e.next) return e;
+      if (!isNaN(e.length)) {
+        var o = -1,
+          i = function next() {
+            for (; ++o < e.length;) if (n.call(e, o)) return next.value = e[o], next.done = !1, next;
+            return next.value = t, next.done = !0, next;
           };
-        return next.next = next;
+        return i.next = i;
       }
     }
-    return {
-      next: doneResult
-    };
+    throw new TypeError(_typeof(e) + " is not iterable");
   }
-  function doneResult() {
-    return {
-      value: undefined,
-      done: !0
-    };
-  }
-  return GeneratorFunction.prototype = GeneratorFunctionPrototype, defineProperty(Gp, "constructor", {
+  return GeneratorFunction.prototype = GeneratorFunctionPrototype, o(g, "constructor", {
     value: GeneratorFunctionPrototype,
     configurable: !0
-  }), defineProperty(GeneratorFunctionPrototype, "constructor", {
+  }), o(GeneratorFunctionPrototype, "constructor", {
     value: GeneratorFunction,
     configurable: !0
-  }), GeneratorFunction.displayName = define(GeneratorFunctionPrototype, toStringTagSymbol, "GeneratorFunction"), exports.isGeneratorFunction = function (genFun) {
-    var ctor = "function" == typeof genFun && genFun.constructor;
-    return !!ctor && (ctor === GeneratorFunction || "GeneratorFunction" === (ctor.displayName || ctor.name));
-  }, exports.mark = function (genFun) {
-    return set_prototype_of ? set_prototype_of(genFun, GeneratorFunctionPrototype) : (genFun.__proto__ = GeneratorFunctionPrototype, define(genFun, toStringTagSymbol, "GeneratorFunction")), genFun.prototype = create(Gp), genFun;
-  }, exports.awrap = function (arg) {
+  }), GeneratorFunction.displayName = define(GeneratorFunctionPrototype, u, "GeneratorFunction"), e.isGeneratorFunction = function (t) {
+    var e = "function" == typeof t && t.constructor;
+    return !!e && (e === GeneratorFunction || "GeneratorFunction" === (e.displayName || e.name));
+  }, e.mark = function (t) {
+    return set_prototype_of ? set_prototype_of(t, GeneratorFunctionPrototype) : (t.__proto__ = GeneratorFunctionPrototype, define(t, u, "GeneratorFunction")), t.prototype = create(g), t;
+  }, e.awrap = function (t) {
     return {
-      __await: arg
+      __await: t
     };
-  }, defineIteratorMethods(AsyncIterator.prototype), define(AsyncIterator.prototype, asyncIteratorSymbol, function () {
+  }, defineIteratorMethods(AsyncIterator.prototype), define(AsyncIterator.prototype, c, function () {
     return this;
-  }), exports.AsyncIterator = AsyncIterator, exports.async = function (innerFn, outerFn, self, tryLocsList, PromiseImpl) {
-    void 0 === PromiseImpl && (PromiseImpl = promise);
-    var iter = new AsyncIterator(wrap(innerFn, outerFn, self, tryLocsList), PromiseImpl);
-    return exports.isGeneratorFunction(outerFn) ? iter : iter.next().then(function (result) {
-      return result.done ? result.value : iter.next();
+  }), e.AsyncIterator = AsyncIterator, e.async = function (t, r, n, o, i) {
+    void 0 === i && (i = promise);
+    var a = new AsyncIterator(wrap(t, r, n, o), i);
+    return e.isGeneratorFunction(r) ? a : a.next().then(function (t) {
+      return t.done ? t.value : a.next();
     });
-  }, defineIteratorMethods(Gp), define(Gp, toStringTagSymbol, "Generator"), define(Gp, iteratorSymbol, function () {
+  }, defineIteratorMethods(g), define(g, u, "Generator"), define(g, a, function () {
     return this;
-  }), define(Gp, "toString", function () {
+  }), define(g, "toString", function () {
     return "[object Generator]";
-  }), exports.keys = function (val) {
-    var object = Object(val),
-      keys = [];
-    for (var key in object) push(keys).call(keys, key);
-    return reverse(keys).call(keys), function next() {
-      for (; keys.length;) {
-        var key = keys.pop();
-        if (key in object) return next.value = key, next.done = !1, next;
+  }), e.keys = function (t) {
+    var e = Object(t),
+      r = [];
+    for (var n in e) push(r).call(r, n);
+    return reverse(r).call(r), function next() {
+      for (; r.length;) {
+        var t = r.pop();
+        if (t in e) return next.value = t, next.done = !1, next;
       }
       return next.done = !0, next;
     };
-  }, exports.values = values, Context.prototype = {
+  }, e.values = values, Context.prototype = {
     constructor: Context,
-    reset: function reset(skipTempReset) {
+    reset: function reset(e) {
       var _context3;
-      if (this.prev = 0, this.next = 0, this.sent = this._sent = undefined, this.done = !1, this.delegate = null, this.method = "next", this.arg = undefined, for_each(_context3 = this.tryEntries).call(_context3, resetTryEntry), !skipTempReset) for (var name in this) "t" === name.charAt(0) && hasOwn.call(this, name) && !isNaN(+slice(name).call(name, 1)) && (this[name] = undefined);
+      if (this.prev = 0, this.next = 0, this.sent = this._sent = t, this.done = !1, this.delegate = null, this.method = "next", this.arg = t, for_each(_context3 = this.tryEntries).call(_context3, resetTryEntry), !e) for (var r in this) "t" === r.charAt(0) && n.call(this, r) && !isNaN(+slice(r).call(r, 1)) && (this[r] = t);
     },
     stop: function stop() {
       this.done = !0;
-      var rootRecord = this.tryEntries[0].completion;
-      if ("throw" === rootRecord.type) throw rootRecord.arg;
+      var t = this.tryEntries[0].completion;
+      if ("throw" === t.type) throw t.arg;
       return this.rval;
     },
-    dispatchException: function dispatchException(exception) {
-      if (this.done) throw exception;
-      var context = this;
-      function handle(loc, caught) {
-        return record.type = "throw", record.arg = exception, context.next = loc, caught && (context.method = "next", context.arg = undefined), !!caught;
+    dispatchException: function dispatchException(e) {
+      if (this.done) throw e;
+      var r = this;
+      function handle(n, o) {
+        return a.type = "throw", a.arg = e, r.next = n, o && (r.method = "next", r.arg = t), !!o;
       }
-      for (var i = this.tryEntries.length - 1; i >= 0; --i) {
-        var entry = this.tryEntries[i],
-          record = entry.completion;
-        if ("root" === entry.tryLoc) return handle("end");
-        if (entry.tryLoc <= this.prev) {
-          var hasCatch = hasOwn.call(entry, "catchLoc"),
-            hasFinally = hasOwn.call(entry, "finallyLoc");
-          if (hasCatch && hasFinally) {
-            if (this.prev < entry.catchLoc) return handle(entry.catchLoc, !0);
-            if (this.prev < entry.finallyLoc) return handle(entry.finallyLoc);
-          } else if (hasCatch) {
-            if (this.prev < entry.catchLoc) return handle(entry.catchLoc, !0);
+      for (var o = this.tryEntries.length - 1; o >= 0; --o) {
+        var i = this.tryEntries[o],
+          a = i.completion;
+        if ("root" === i.tryLoc) return handle("end");
+        if (i.tryLoc <= this.prev) {
+          var c = n.call(i, "catchLoc"),
+            u = n.call(i, "finallyLoc");
+          if (c && u) {
+            if (this.prev < i.catchLoc) return handle(i.catchLoc, !0);
+            if (this.prev < i.finallyLoc) return handle(i.finallyLoc);
+          } else if (c) {
+            if (this.prev < i.catchLoc) return handle(i.catchLoc, !0);
           } else {
-            if (!hasFinally) throw new Error("try statement without catch or finally");
-            if (this.prev < entry.finallyLoc) return handle(entry.finallyLoc);
+            if (!u) throw new Error("try statement without catch or finally");
+            if (this.prev < i.finallyLoc) return handle(i.finallyLoc);
           }
         }
       }
     },
-    abrupt: function abrupt(type, arg) {
-      for (var i = this.tryEntries.length - 1; i >= 0; --i) {
-        var entry = this.tryEntries[i];
-        if (entry.tryLoc <= this.prev && hasOwn.call(entry, "finallyLoc") && this.prev < entry.finallyLoc) {
-          var finallyEntry = entry;
+    abrupt: function abrupt(t, e) {
+      for (var r = this.tryEntries.length - 1; r >= 0; --r) {
+        var o = this.tryEntries[r];
+        if (o.tryLoc <= this.prev && n.call(o, "finallyLoc") && this.prev < o.finallyLoc) {
+          var i = o;
           break;
         }
       }
-      finallyEntry && ("break" === type || "continue" === type) && finallyEntry.tryLoc <= arg && arg <= finallyEntry.finallyLoc && (finallyEntry = null);
-      var record = finallyEntry ? finallyEntry.completion : {};
-      return record.type = type, record.arg = arg, finallyEntry ? (this.method = "next", this.next = finallyEntry.finallyLoc, ContinueSentinel) : this.complete(record);
+      i && ("break" === t || "continue" === t) && i.tryLoc <= e && e <= i.finallyLoc && (i = null);
+      var a = i ? i.completion : {};
+      return a.type = t, a.arg = e, i ? (this.method = "next", this.next = i.finallyLoc, y) : this.complete(a);
     },
-    complete: function complete(record, afterLoc) {
-      if ("throw" === record.type) throw record.arg;
-      return "break" === record.type || "continue" === record.type ? this.next = record.arg : "return" === record.type ? (this.rval = this.arg = record.arg, this.method = "return", this.next = "end") : "normal" === record.type && afterLoc && (this.next = afterLoc), ContinueSentinel;
+    complete: function complete(t, e) {
+      if ("throw" === t.type) throw t.arg;
+      return "break" === t.type || "continue" === t.type ? this.next = t.arg : "return" === t.type ? (this.rval = this.arg = t.arg, this.method = "return", this.next = "end") : "normal" === t.type && e && (this.next = e), y;
     },
-    finish: function finish(finallyLoc) {
-      for (var i = this.tryEntries.length - 1; i >= 0; --i) {
-        var entry = this.tryEntries[i];
-        if (entry.finallyLoc === finallyLoc) return this.complete(entry.completion, entry.afterLoc), resetTryEntry(entry), ContinueSentinel;
+    finish: function finish(t) {
+      for (var e = this.tryEntries.length - 1; e >= 0; --e) {
+        var r = this.tryEntries[e];
+        if (r.finallyLoc === t) return this.complete(r.completion, r.afterLoc), resetTryEntry(r), y;
       }
     },
-    "catch": function _catch(tryLoc) {
-      for (var i = this.tryEntries.length - 1; i >= 0; --i) {
-        var entry = this.tryEntries[i];
-        if (entry.tryLoc === tryLoc) {
-          var record = entry.completion;
-          if ("throw" === record.type) {
-            var thrown = record.arg;
-            resetTryEntry(entry);
+    "catch": function _catch(t) {
+      for (var e = this.tryEntries.length - 1; e >= 0; --e) {
+        var r = this.tryEntries[e];
+        if (r.tryLoc === t) {
+          var n = r.completion;
+          if ("throw" === n.type) {
+            var o = n.arg;
+            resetTryEntry(r);
           }
-          return thrown;
+          return o;
         }
       }
       throw new Error("illegal catch attempt");
     },
-    delegateYield: function delegateYield(iterable, resultName, nextLoc) {
+    delegateYield: function delegateYield(e, r, n) {
       return this.delegate = {
-        iterator: values(iterable),
-        resultName: resultName,
-        nextLoc: nextLoc
-      }, "next" === this.method && (this.arg = undefined), ContinueSentinel;
+        iterator: values(e),
+        resultName: r,
+        nextLoc: n
+      }, "next" === this.method && (this.arg = t), y;
     }
-  }, exports;
+  }, e;
 }
 ;// CONCATENATED MODULE: ./node_modules/@babel/runtime-corejs3/helpers/esm/asyncToGenerator.js
 
@@ -11376,11 +12170,9 @@ VPAID.loadCreative = function (creativeUrl, vpaidSettings) {
   this.vpaidIframe.onload = function () {
     var _this9 = this;
     console.log("".concat(FW.consolePrepend, " vpaidIframe.onload"), FW.consoleStyle, '');
-
-    // we unwire listeners
-    this.vpaidIframe.onload = this.vpaidIframe.onerror = FW.nullFn;
     if (!this.vpaidIframe.contentWindow || !this.vpaidIframe.contentWindow.document || !this.vpaidIframe.contentWindow.document.body) {
       // PING error and resume content
+
       Utils.processVastErrors.call(this, 901, true);
       return;
     }
@@ -11398,14 +12190,6 @@ VPAID.loadCreative = function (creativeUrl, vpaidSettings) {
     this.vpaidScript.onerror = _onJSVPAIDError.bind(this);
     iframeBody.appendChild(this.vpaidScript);
     this.vpaidScript.src = this.vpaidCreativeUrl;
-  }.bind(this);
-  this.vpaidIframe.onerror = function () {
-    console.log("".concat(FW.consolePrepend, " vpaidIframe.onerror"), FW.consoleStyle, '');
-
-    // we unwire listeners
-    this.vpaidIframe.onload = this.vpaidIframe.onerror = FW.nullFn;
-    // PING error and resume content
-    Utils.processVastErrors.call(this, 901, true);
   }.bind(this);
   this.vpaidIframe.src = src;
   this.adContainer.appendChild(this.vpaidIframe);
@@ -11766,7 +12550,1558 @@ var RmpConnection = /*#__PURE__*/function () {
   return RmpConnection;
 }();
 
+;// CONCATENATED MODULE: ./node_modules/@babel/runtime-corejs3/helpers/esm/arrayWithHoles.js
+
+function _arrayWithHoles(arr) {
+  if (is_array(arr)) return arr;
+}
+;// CONCATENATED MODULE: ./node_modules/@babel/runtime-corejs3/helpers/esm/iterableToArrayLimit.js
+
+
+
+function _iterableToArrayLimit(r, l) {
+  var t = null == r ? null : "undefined" != typeof symbol && get_iterator_method(r) || r["@@iterator"];
+  if (null != t) {
+    var e,
+      n,
+      i,
+      u,
+      a = [],
+      f = !0,
+      o = !1;
+    try {
+      if (i = (t = t.call(r)).next, 0 === l) {
+        if (Object(t) !== t) return;
+        f = !1;
+      } else for (; !(f = (e = i.call(t)).done) && (push(a).call(a, e.value), a.length !== l); f = !0);
+    } catch (r) {
+      o = !0, n = r;
+    } finally {
+      try {
+        if (!f && null != t["return"] && (u = t["return"](), Object(u) !== u)) return;
+      } finally {
+        if (o) throw n;
+      }
+    }
+    return a;
+  }
+}
+;// CONCATENATED MODULE: ./node_modules/@babel/runtime-corejs3/helpers/esm/nonIterableRest.js
+function _nonIterableRest() {
+  throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
+}
+;// CONCATENATED MODULE: ./node_modules/@babel/runtime-corejs3/helpers/esm/slicedToArray.js
+
+
+
+
+function _slicedToArray(arr, i) {
+  return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest();
+}
+;// CONCATENATED MODULE: ./node_modules/@babel/runtime-corejs3/helpers/esm/createForOfIteratorHelper.js
+
+
+
+
+function _createForOfIteratorHelper(o, allowArrayLike) {
+  var it = typeof symbol !== "undefined" && get_iterator_method(o) || o["@@iterator"];
+  if (!it) {
+    if (is_array(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") {
+      if (it) o = it;
+      var i = 0;
+      var F = function F() {};
+      return {
+        s: F,
+        n: function n() {
+          if (i >= o.length) return {
+            done: true
+          };
+          return {
+            done: false,
+            value: o[i++]
+          };
+        },
+        e: function e(_e) {
+          throw _e;
+        },
+        f: F
+      };
+    }
+    throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
+  }
+  var normalCompletion = true,
+    didErr = false,
+    err;
+  return {
+    s: function s() {
+      it = it.call(o);
+    },
+    n: function n() {
+      var step = it.next();
+      normalCompletion = step.done;
+      return step;
+    },
+    e: function e(_e2) {
+      didErr = true;
+      err = _e2;
+    },
+    f: function f() {
+      try {
+        if (!normalCompletion && it["return"] != null) it["return"]();
+      } finally {
+        if (didErr) throw err;
+      }
+    }
+  };
+}
+// EXTERNAL MODULE: ./node_modules/@babel/runtime-corejs3/core-js-stable/map.js
+var core_js_stable_map = __webpack_require__(8492);
+var core_js_stable_map_default = /*#__PURE__*/__webpack_require__.n(core_js_stable_map);
+// EXTERNAL MODULE: ./node_modules/@babel/runtime-corejs3/core-js-stable/json/stringify.js
+var stringify = __webpack_require__(5627);
+var stringify_default = /*#__PURE__*/__webpack_require__.n(stringify);
+// EXTERNAL MODULE: ./node_modules/@babel/runtime-corejs3/core-js-stable/instance/includes.js
+var includes = __webpack_require__(8118);
+var includes_default = /*#__PURE__*/__webpack_require__.n(includes);
+// EXTERNAL MODULE: ./node_modules/@babel/runtime-corejs3/core-js-stable/object/values.js
+var values = __webpack_require__(3665);
+var values_default = /*#__PURE__*/__webpack_require__.n(values);
+// EXTERNAL MODULE: ./node_modules/@babel/runtime-corejs3/core-js-stable/instance/starts-with.js
+var starts_with = __webpack_require__(7043);
+var starts_with_default = /*#__PURE__*/__webpack_require__.n(starts_with);
+// EXTERNAL MODULE: ./node_modules/@babel/runtime-corejs3/core-js-stable/array/from.js
+var array_from = __webpack_require__(5110);
+var array_from_default = /*#__PURE__*/__webpack_require__.n(array_from);
+// EXTERNAL MODULE: ./node_modules/@babel/runtime-corejs3/core-js-stable/instance/keys.js
+var keys = __webpack_require__(8712);
+var instance_keys_default = /*#__PURE__*/__webpack_require__.n(keys);
+;// CONCATENATED MODULE: ./src/js/players/simid/simid_protocol.js
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * Contains logic for sending mesages between the SIMID creative and the player.
+ * Note: Some browsers do not support promises and a more complete implementation
+ *       should consider using a polyfill.
+ */
+
+/** Contains all constants common across SIMID */
+
+var ProtocolMessage = {
+  CREATE_SESSION: 'createSession',
+  RESOLVE: 'resolve',
+  REJECT: 'reject'
+};
+var MediaMessage = {
+  DURATION_CHANGE: 'Media:durationchange',
+  ENDED: 'Media:ended',
+  ERROR: 'Media:error',
+  PAUSE: 'Media:pause',
+  PLAY: 'Media:play',
+  PLAYING: 'Media:playing',
+  SEEKED: 'Media:seeked',
+  SEEKING: 'Media:seeking',
+  TIME_UPDATE: 'Media:timeupdate',
+  VOLUME_CHANGE: 'Media:volumechange'
+};
+var PlayerMessage = {
+  RESIZE: 'Player:resize',
+  INIT: 'Player:init',
+  LOG: 'Player:log',
+  START_CREATIVE: 'Player:startCreative',
+  AD_SKIPPED: 'Player:adSkipped',
+  AD_STOPPED: 'Player:adStopped',
+  FATAL_ERROR: 'Player:fatalError'
+};
+
+/** Messages from the creative */
+var CreativeMessage = {
+  CLICK_THRU: 'Creative:clickThru',
+  EXPAND_NONLINEAR: 'Creative:expandNonlinear',
+  COLLAPSE_NONLINEAR: 'Creative:collapseNonlinear',
+  FATAL_ERROR: 'Creative:fatalError',
+  GET_MEDIA_STATE: 'Creative:getMediaState',
+  LOG: 'Creative:log',
+  REQUEST_FULL_SCREEN: 'Creative:requestFullScreen',
+  REQUEST_SKIP: 'Creative:requestSkip',
+  REQUEST_STOP: 'Creative:requestStop',
+  REQUEST_PAUSE: 'Creative:requestPause',
+  REQUEST_PLAY: 'Creative:requestPlay',
+  REQUEST_RESIZE: 'Creative:requestResize',
+  REQUEST_VOLUME: 'Creative:requestVolume',
+  REQUEST_TRACKING: 'Creative:reportTracking',
+  REQUEST_CHANGE_AD_DURATION: 'Creative:requestChangeAdDuration'
+};
+
+/**
+ * These messages require a response (either resolve or reject).
+ * All other messages do not require a response and are information only.
+ */
+var EventsThatRequireResponse = [CreativeMessage.GET_MEDIA_STATE, CreativeMessage.REQUEST_VIDEO_LOCATION, CreativeMessage.READY, CreativeMessage.CLICK_THRU, CreativeMessage.REQUEST_SKIP, CreativeMessage.REQUEST_STOP, CreativeMessage.REQUEST_PAUSE, CreativeMessage.REQUEST_PLAY, CreativeMessage.REQUEST_FULL_SCREEN, CreativeMessage.REQUEST_VOLUME, CreativeMessage.REQUEST_RESIZE, CreativeMessage.REQUEST_CHANGE_AD_DURATION, CreativeMessage.REPORT_TRACKING, PlayerMessage.INIT, PlayerMessage.START_CREATIVE, PlayerMessage.AD_SKIPPED, PlayerMessage.AD_STOPPED, PlayerMessage.FATAL_ERROR, ProtocolMessage.CREATE_SESSION];
+
+// A list of errors the creative might send to the player.
+var CreativeErrorCode = {
+  UNSPECIFIED: 1100,
+  CANNOT_LOAD_RESOURCE: 1101,
+  PLAYBACK_AREA_UNUSABLE: 1102,
+  INCORRECT_VERSION: 1103,
+  TECHNICAL_ERROR: 1104,
+  EXPAND_NOT_POSSIBLE: 1105,
+  PAUSE_NOT_HONORED: 1106,
+  PLAYMODE_NOT_ADEQUATE: 1107,
+  CREATIVE_INTERNAL_ERROR: 1108,
+  DEVICE_NOT_SUPPORTED: 1109,
+  MESSAGES_NOT_FOLLOWING_SPEC: 1110,
+  PLAYER_RESPONSE_TIMEOUT: 1111
+};
+
+// A list of errors the player might send to the creative.
+var PlayerErrorCode = {
+  UNSPECIFIED: 1200,
+  WRONG_VERSION: 1201,
+  UNSUPPORTED_TIME: 1202,
+  UNSUPPORTED_FUNCTIONALITY_REQUEST: 1203,
+  UNSUPPORTED_ACTIONS: 1204,
+  POSTMESSAGE_CHANNEL_OVERLOADED: 1205,
+  VIDEO_COULD_NOT_LOAD: 1206,
+  VIDEO_TIME_OUT: 1207,
+  RESPONSE_TIMEOUT: 1208,
+  MEDIA_NOT_SUPPORTED: 1209,
+  SPEC_NOT_FOLLOWED_ON_INIT: 1210,
+  SPEC_NOT_FOLLOWED_ON_MESSAGES: 1211
+};
+
+// A list of reasons a player could stop the ad.
+var StopCode = {
+  UNSPECIFIED: 0,
+  USER_INITIATED: 1,
+  MEDIA_PLAYBACK_COMPLETE: 2,
+  PLAYER_INITATED: 3,
+  CREATIVE_INITIATED: 4,
+  NON_LINEAR_DURATION_COMPLETE: 5
+};
+var SimidProtocol = /*#__PURE__*/function () {
+  function SimidProtocol() {
+    _classCallCheck(this, SimidProtocol);
+    /*
+     * A map of messsage type to an array of callbacks.
+     * @private {Map<String, Array<Function>>}
+     */
+    this.listeners_ = {};
+
+    /*
+     * The session ID for this protocol.
+     * @private {String}
+     */
+    this.sessionId_ = '';
+
+    /**
+     * The next message ID to use when sending a message.
+     * @private {number}
+     */
+    this.nextMessageId_ = 1;
+
+    /**
+     * The window where the message should be posted to.
+     * @private {!Element}
+     */
+    this.target_ = window.parent;
+    this.resolutionListeners_ = {};
+    window.addEventListener('message', this.receiveMessage.bind(this), false);
+  }
+
+  /* Reverts this protocol to its original state */
+  _createClass(SimidProtocol, [{
+    key: "reset",
+    value: function reset() {
+      this.listeners_ = {};
+      this.sessionId_ = '';
+      this.nextMessageId_ = 1;
+      // TODO: Perhaps we should reject all associated promises.
+      this.resolutionListeners_ = {};
+    }
+
+    /**
+     * Sends a message using post message.  Returns a promise
+     * that will resolve or reject after the message receives a response.
+     * @param {string} messageType The name of the message
+     * @param {?Object} messageArgs The arguments for the message, may be null.
+     * @return {!Promise} Promise that will be fulfilled when client resolves or rejects.
+     */
+  }, {
+    key: "sendMessage",
+    value: function sendMessage(messageType, messageArgs) {
+      var _this = this;
+      // Incrementing between messages keeps each message id unique.
+      var messageId = this.nextMessageId_++;
+      // Only create session does not need to be in the SIMID name space
+      // because it is part of the protocol.
+      var nameSpacedMessage = messageType == ProtocolMessage.CREATE_SESSION ? messageType : 'SIMID:' + messageType;
+      // The message object as defined by the SIMID spec.
+      var message = {
+        'sessionId': this.sessionId_,
+        'messageId': messageId,
+        'type': nameSpacedMessage,
+        'timestamp': Date.now(),
+        'args': messageArgs
+      };
+      if (includes_default()(EventsThatRequireResponse).call(EventsThatRequireResponse, messageType)) {
+        // If the message requires a callback this code will set
+        // up a promise that will call resolve or reject with its parameters.
+        return new (core_js_stable_promise_default())(function (resolve, reject) {
+          _this.addResolveRejectListener_(messageId, resolve, reject);
+          _this.target_.postMessage(stringify_default()(message), '*');
+        });
+      }
+      // A default promise will just resolve immediately.
+      // It is assumed no one would listen to these promises, but if they do
+      // it will "just work".
+      return new (core_js_stable_promise_default())(function (resolve) {
+        _this.target_.postMessage(stringify_default()(message), '*');
+        resolve();
+      });
+    }
+
+    /**
+     * Adds a listener for a given message.
+     */
+  }, {
+    key: "addListener",
+    value: function addListener(messageType, callback) {
+      if (!this.listeners_[messageType]) {
+        this.listeners_[messageType] = [callback];
+      } else {
+        this.listeners_[messageType].push(callback);
+      }
+    }
+
+    /**
+     * Sets up a listener for resolve/reject messages.
+     * @private
+     */
+  }, {
+    key: "addResolveRejectListener_",
+    value: function addResolveRejectListener_(messageId, resolve, reject) {
+      var listener = function listener(data) {
+        var type = data['type'];
+        var args = data['args']['value'];
+        if (type == 'resolve') {
+          resolve(args);
+        } else if (type == 'reject') {
+          reject(args);
+        }
+      };
+      this.resolutionListeners_[messageId] = listener.bind(this);
+    }
+
+    /**
+     * Recieves messages from either the player or creative.
+     */
+  }, {
+    key: "receiveMessage",
+    value: function receiveMessage(event) {
+      var _context;
+      if (!event || !event.data) {
+        return;
+      }
+      var data;
+      try {
+        data = JSON.parse(event.data);
+      } catch (e) {
+        console.log("".concat(FW.consolePrepend, " receiveMessage failed at decoding message"), FW.consoleStyle, '');
+        console.log(e);
+        return;
+      }
+      if (!data) {
+        // If there is no data in the event this is not a SIMID message.
+        return;
+      }
+      var sessionId = data['sessionId'];
+      var type = data['type'];
+      // A sessionId is valid in one of two cases:
+      // 1. It is not set and the message type is createSession.
+      // 2. The session ids match exactly.
+      var isCreatingSession = this.sessionId_ == '' && type == ProtocolMessage.CREATE_SESSION;
+      var isSessionIdMatch = this.sessionId_ == sessionId;
+      var validSessionId = isCreatingSession || isSessionIdMatch;
+      if (!validSessionId || type == null) {
+        // Ignore invalid messages.
+        return;
+      }
+
+      // There are 2 types of messages to handle:
+      // 1. Protocol messages (like resolve, reject and createSession)
+      // 2. Messages starting with SIMID:
+      // All other messages are ignored.
+      if (includes_default()(_context = values_default()(ProtocolMessage)).call(_context, type)) {
+        this.handleProtocolMessage_(data);
+      } else if (starts_with_default()(type).call(type, 'SIMID:')) {
+        // Remove SIMID: from the front of the message so we can compare them with the map.
+        var specificType = type.substr(6);
+        var listeners = this.listeners_[specificType];
+        if (listeners) {
+          listeners.forEach(function (listener) {
+            return listener(data);
+          });
+        }
+      }
+    }
+
+    /**
+     * Handles incoming messages specifically for the protocol
+     * @param {!Object} data Data passed back from the message
+     * @private
+     */
+  }, {
+    key: "handleProtocolMessage_",
+    value: function handleProtocolMessage_(data) {
+      var type = data['type'];
+      var listeners, args, correlatingId, resolutionFunction;
+      switch (type) {
+        case ProtocolMessage.CREATE_SESSION:
+          this.sessionId_ = data['sessionId'];
+          this.resolve(data);
+          listeners = this.listeners_[type];
+          if (listeners) {
+            // calls each of the listeners with the data.
+            listeners.forEach(function (listener) {
+              return listener(data);
+            });
+          }
+          break;
+        case ProtocolMessage.RESOLVE:
+        // intentional fallthrough
+        case ProtocolMessage.REJECT:
+          args = data['args'];
+          correlatingId = args['messageId'];
+          resolutionFunction = this.resolutionListeners_[correlatingId];
+          if (resolutionFunction) {
+            // If the listener exists call it once only.
+            resolutionFunction(data);
+            delete this.resolutionListeners_[correlatingId];
+          }
+          break;
+      }
+    }
+
+    /**
+     * Resolves an incoming message.
+     * @param {!Object} incomingMessage the message that is being resolved.
+     * @param {!Object} outgoingArgs Any arguments that are part of the resolution.
+     */
+  }, {
+    key: "resolve",
+    value: function resolve(incomingMessage, outgoingArgs) {
+      var messageId = this.nextMessageId_++;
+      var resolveMessageArgs = {
+        'messageId': incomingMessage['messageId'],
+        'value': outgoingArgs
+      };
+      var message = {
+        'sessionId': this.sessionId_,
+        'messageId': messageId,
+        'type': ProtocolMessage.RESOLVE,
+        'timestamp': Date.now(),
+        'args': resolveMessageArgs
+      };
+      this.target_.postMessage(stringify_default()(message), '*');
+    }
+
+    /**
+     * Rejects an incoming message.
+     * @param {!Object} incomingMessage the message that is being resolved.
+     * @param {!Object} outgoingArgs Any arguments that are part of the resolution.
+     */
+  }, {
+    key: "reject",
+    value: function reject(incomingMessage, outgoingArgs) {
+      var messageId = this.nextMessageId_++;
+      var rejectMessageArgs = {
+        'messageId': incomingMessage['messageId'],
+        'value': outgoingArgs
+      };
+      var message = {
+        'sessionId': this.sessionId_,
+        'messageId': messageId,
+        'type': ProtocolMessage.REJECT,
+        'timestamp': Date.now(),
+        'args': rejectMessageArgs
+      };
+      this.target_.postMessage(stringify_default()(message), '*');
+    }
+
+    /**
+     * Creates a new session.
+     * @param {String} sessionId
+     * @return {!Promise} The promise from the create session message.
+     */
+  }, {
+    key: "createSession",
+    value: function createSession() {
+      var sessionCreationResolved = function sessionCreationResolved() {
+        console.log("".concat(FW.consolePrepend, " SIMID: Session created"), FW.consoleStyle, '');
+      };
+      var sessionCreationRejected = function sessionCreationRejected() {
+        // If this ever happens, it may be impossible for the ad
+        // to ever communicate with the player.
+        console.log("".concat(FW.consolePrepend, " SIMID: Session creation was rejected"), FW.consoleStyle, '');
+      };
+      this.generateSessionId_();
+      this.sendMessage(ProtocolMessage.CREATE_SESSION).then(sessionCreationResolved, sessionCreationRejected);
+    }
+
+    /**
+     * Sets the session ID, this should only be used on session creation.
+     * @private
+     */
+  }, {
+    key: "generateSessionId_",
+    value: function generateSessionId_() {
+      var _context2, _context3;
+      // This function generates a random v4 UUID. In a v4 UUID, of the format
+      // xxxxxxxx-xxxx-Mxxx-Nxxx-xxxxxxxxxxxx, all bits are selected randomly,
+      // except the bits of 'M', which must be equal to 4, and 'N', whose first 2
+      // most significant bits must be set to 10b. So in total only 122 of the 128
+      // bits are random. See
+      // https://en.wikipedia.org/wiki/Universally_unique_identifier for more.
+
+      // crypto.getRandomValues is preferred over crypto.randomUUID since it
+      // supports much older browsers including IE, and doesn't require a secure
+      // context.
+
+      // Create 128 random bits (8-bit * 16).
+      var random16Uint8s = new Uint8Array(16);
+      window.crypto.getRandomValues(random16Uint8s);
+      // Split each 8-bit int into two 4-bit ints (4-bit * 32).
+      var random32Uint4s = map_default()(_context2 = array_from_default()(instance_keys_default()(_context3 = Array(32)).call(_context3))).call(_context2, function (index) {
+        var isEven = index % 2 == 0;
+        var randomUint8 = random16Uint8s[Math.floor(index / 2)];
+        // Pick the high 4 bits for even indices, the low 4 bits for odd.
+        return isEven ? randomUint8 >> 4 : randomUint8 & 15;
+      });
+
+      // Fix the 12th digit to 4 for the UUID version.
+      random32Uint4s[12] = 4;
+      // Fix the 16th digit's 2 high bits to 10b for UUID variant 1.
+      random32Uint4s[16] = 8 | random32Uint4s[16] & 3;
+      var hexDigits = map_default()(random32Uint4s).call(random32Uint4s, function (v) {
+        return v.toString(16);
+      });
+      var uuidComponents = [instance_slice_default()(hexDigits).call(hexDigits, 0, 8).join(''), instance_slice_default()(hexDigits).call(hexDigits, 8, 12).join(''), instance_slice_default()(hexDigits).call(hexDigits, 12, 16).join(''), instance_slice_default()(hexDigits).call(hexDigits, 16, 20).join(''), instance_slice_default()(hexDigits).call(hexDigits, 20).join('')];
+      var uuid = uuidComponents.join('-');
+      this.sessionId_ = uuid;
+    }
+  }, {
+    key: "setMessageTarget",
+    value: function setMessageTarget(target) {
+      this.target_ = target;
+    }
+  }]);
+  return SimidProtocol;
+}();
+
+;// CONCATENATED MODULE: ./src/js/players/simid/simid_player.js
+
+
+
+
+
+
+
+
+
+// TODO
+// Check fullscreen management
+// Check common error and error code reporting
+// Add non-linear support
+// Check mid-post-roll/adpod support
+// Evalaute iOS support
+
+
+
+
+
+
+var NO_REQUESTED_DURATION = 0;
+var UNLIMITED_DURATION = -2;
+
+/** 
+ * All the logic for a simple SIMID player
+ */
+var SimidPlayer = /*#__PURE__*/function () {
+  /**
+   * Sets up the creative iframe and starts listening for messages
+   * from the creative.
+   */
+  function SimidPlayer(isLinearAd, simidData, url, adId, creativeId, adServingId, clickThroughUrl, rmpVast) {
+    var _this = this;
+    _classCallCheck(this, SimidPlayer);
+    /**
+     * The protocol for sending and receiving messages.
+     * @protected {!SimidProtocol}
+     */
+    this.simidProtocol = new SimidProtocol();
+    this.addListeners_();
+    this.rmpVast_ = rmpVast;
+    this.simidData_ = simidData;
+    this.adContainer_ = this.rmpVast_.adContainer;
+    this.playerDiv_ = this.rmpVast_.contentWrapper;
+    this.vastPlayerUrl_ = url;
+    this.adParameters_ = simidData.adParameters;
+    this.adId_ = adId;
+    this.creativeId_ = creativeId;
+    this.adServingId_ = adServingId;
+    this.clickThroughUrl_ = clickThroughUrl;
+
+    /**
+     * A reference to the video player on the players main page
+     * @private {!Element}
+     */
+    this.contentVideoElement_ = this.rmpVast_.contentPlayer;
+
+    /**
+     * A reference to a video player for playing ads.
+     * @private {!Element}
+     */
+    this.adVideoElement_ = this.rmpVast_.vastPlayer;
+
+    /**
+     * A reference to the iframe holding the SIMID creative.
+     * @private {?Element}
+     */
+    this.simidIframe_ = null;
+
+    /**
+     * A reference to the promise returned when initialization was called.
+     * @private {?Promise}
+     */
+    this.initializationPromise_ = null;
+
+    /**
+     * A map of events tracked on the ad video element.
+     * @private {!Map}
+     */
+    this.adVideoTrackingEvents_ = new (core_js_stable_map_default())();
+
+    /**
+     * A map of events tracked on the content video element.
+     * @private {!Map}
+     */
+    this.contentVideoTrackingEvents_ = new (core_js_stable_map_default())();
+
+    /**
+     * A boolean indicating what type of creative ad is.
+     * @const @private {boolean}
+     */
+    this.isLinearAd_ = isLinearAd;
+
+    /**
+     * A number indicating when the non linear ad started.
+     * @private {?number}
+     */
+    this.nonLinearStartTime_ = null;
+
+    /**
+     * The duration requested by the ad.
+     * @private {number}
+     */
+    this.requestedDuration_ = NO_REQUESTED_DURATION;
+
+    /**
+     * Resolution function for the session created message
+     * @private {?Function}
+     */
+    this.resolveSessionCreatedPromise_ = null;
+
+    /**
+     * A promise that resolves once the creative creates a session.
+     * @private {!Promise}
+     */
+    this.sessionCreatedPromise_ = new (core_js_stable_promise_default())(function (resolve) {
+      _this.resolveSessionCreatedPromise_ = resolve;
+    });
+
+    /**
+     * Resolution function for the ad being initialized.
+     * @private {?Function}
+     */
+    this.resolveInitializationPromise_ = null;
+
+    /**
+     * Reject function for the ad being initialized.
+     * @private {?Function}
+     */
+    this.rejectInitializationPromise_ = null;
+
+    /**
+     * An object containing the resized nonlinear creative's dimensions.
+     * @private {?Object}
+     */
+    this.nonLinearDimensions_ = null;
+
+    /** The unique ID for the interval used to compares the requested change 
+     *  duration and the current ad time.
+     * @private {number}
+     */
+    this.durationInterval_ = null;
+
+    /**
+     * A promise that resolves once the creative responds to initialization with resolve.
+     * @private {!Promise}
+     */
+    this.initializationPromise_ = new (core_js_stable_promise_default())(function (resolve, reject) {
+      _this.resolveInitializationPromise_ = resolve;
+      _this.rejectInitializationPromise_ = reject;
+    });
+    this.trackEventsOnAdVideoElement_();
+    this.trackEventsOnContentVideoElement_();
+    this.hideAdPlayer_();
+    console.log("".concat(FW.consolePrepend, " SIMID: player created"), FW.consoleStyle, '');
+  }
+
+  /**
+   * Initializes an ad. This should be called before an ad plays.
+   * Creates an iframe with the creative in it, then uses a promise
+   * to call init on the creative as soon as the creative initializes
+   * a session.
+   */
+  _createClass(SimidPlayer, [{
+    key: "initializeAd",
+    value: function initializeAd() {
+      var _this2 = this;
+      if (!this.isLinearAd_ && !this.isValidDimensions_(this.getNonlinearDimensions_())) {
+        console.log("".concat(FW.consolePrepend, " SIMID: Unable to play a non-linear ad with dimensions bigger than the player. Please modify dimensions to a smaller size."), FW.consoleStyle, '');
+        return;
+      }
+
+      // After the iframe is created the player will wait until the ad
+      // initializes the communication channel. Then it will call
+      // sendInitMessage.
+      this.simidIframe_ = this.createSimidIframe_();
+      if (!this.isLinearAd_) {
+        this.displayNonlinearCreative_();
+      }
+      this.requestDuration_ = NO_REQUESTED_DURATION;
+
+      // Prepare for the case that init fails before sending
+      // the init message. Initialization failing means abandoning
+      // the ad.
+      this.initializationPromise_.catch(function (e) {
+        _this2.onAdInitializedFailed_(e);
+      });
+
+      // Using a promise means that the init message will
+      // send as soon as the session is created. If the session
+      // is already created this will send the init message immediately.
+      this.sessionCreatedPromise_.then(function () {
+        _this2.sendInitMessage_();
+      });
+      console.log("".concat(FW.consolePrepend, " SIMID: initializeAd"), FW.consoleStyle, '');
+    }
+
+    /**
+     * Plays a SIMID  creative once it has responded to the initialize ad message.
+     */
+  }, {
+    key: "playAd",
+    value: function playAd() {
+      var _this3 = this;
+      // This example waits for the ad to be initialized, before playing video.
+      // NOTE: Not all players will wait for session creation and initialization
+      // before they start playback.
+      this.initializationPromise_.then(function () {
+        _this3.startCreativePlayback_();
+      }).catch(function (e) {
+        console.log("".concat(FW.consolePrepend, " SIMID: playAd failed with following error"), FW.consoleStyle, '');
+        console.log(e);
+      });
+    }
+
+    /** Plays the video ad element. */
+  }, {
+    key: "playAdVideo",
+    value: function playAdVideo() {
+      this.adVideoElement_.play();
+    }
+
+    /**
+     * Sets up an iframe for holding the simid element.
+     *
+     * @return {!Element} The iframe where the simid element lives.
+     * @private
+     */
+  }, {
+    key: "createSimidIframe_",
+    value: function createSimidIframe_() {
+      var simidIframe = document.createElement('iframe');
+      simidIframe.style.display = 'none';
+      // The target of the player to send messages to is the newly
+      // created iframe.
+      this.playerDiv_.appendChild(simidIframe);
+      if (this.isLinearAd_) {
+        // Set up css to overlay the SIMID iframe over the entire video creative
+        // only if linear. Non-linear ads will have dimension inputs for placement
+        simidIframe.classList.add('rmp-linear-simid-creative');
+      }
+      this.simidProtocol.setMessageTarget(simidIframe.contentWindow);
+      simidIframe.setAttribute('allowFullScreen', '');
+      simidIframe.setAttribute('allow', 'geolocation');
+      simidIframe.src = this.simidData_.fileURL;
+      return simidIframe;
+    }
+
+    /**
+     * Listens to all relevant messages from the SIMID add.
+     * @private
+     */
+  }, {
+    key: "addListeners_",
+    value: function addListeners_() {
+      this.simidProtocol.addListener(ProtocolMessage.CREATE_SESSION, this.onSessionCreated_.bind(this));
+      this.simidProtocol.addListener(CreativeMessage.REQUEST_FULL_SCREEN, this.onRequestFullScreen.bind(this));
+      this.simidProtocol.addListener(CreativeMessage.REQUEST_PLAY, this.onRequestPlay.bind(this));
+      this.simidProtocol.addListener(CreativeMessage.REQUEST_PAUSE, this.onRequestPause.bind(this));
+      this.simidProtocol.addListener(CreativeMessage.FATAL_ERROR, this.onCreativeFatalError.bind(this));
+      this.simidProtocol.addListener(CreativeMessage.REQUEST_SKIP, this.onRequestSkip.bind(this));
+      this.simidProtocol.addListener(CreativeMessage.REQUEST_STOP, this.onRequestStop.bind(this));
+      this.simidProtocol.addListener(CreativeMessage.REQUEST_CHANGE_AD_DURATION, this.onRequestChangeAdDuration.bind(this));
+      this.simidProtocol.addListener(CreativeMessage.GET_MEDIA_STATE, this.onGetMediaState.bind(this));
+      this.simidProtocol.addListener(CreativeMessage.LOG, this.onReceiveCreativeLog.bind(this));
+      this.simidProtocol.addListener(CreativeMessage.EXPAND_NONLINEAR, this.onExpandResize.bind(this));
+      this.simidProtocol.addListener(CreativeMessage.COLLAPSE_NONLINEAR, this.onCollapse.bind(this));
+      this.simidProtocol.addListener(CreativeMessage.REQUEST_RESIZE, this.onRequestResize.bind(this));
+    }
+
+    /**
+     * Resolves the session created promise.
+     * @private
+     */
+  }, {
+    key: "onSessionCreated_",
+    value: function onSessionCreated_() {
+      // Anything that must happen after the session is created can now happen
+      // since this promise is resolved.
+      this.resolveSessionCreatedPromise_();
+    }
+
+    /**
+     * Destroys the existing simid iframe.
+     * @private
+     */
+  }, {
+    key: "destroySimidIframe_",
+    value: function destroySimidIframe_() {
+      if (this.simidIframe_) {
+        this.simidIframe_.remove();
+        this.simidIframe_ = null;
+        this.simidProtocol.reset();
+      }
+      var _iterator = _createForOfIteratorHelper(this.adVideoTrackingEvents_),
+        _step;
+      try {
+        for (_iterator.s(); !(_step = _iterator.n()).done;) {
+          var _step$value = _slicedToArray(_step.value, 2),
+            key = _step$value[0],
+            func = _step$value[1];
+          this.adVideoElement_.removeEventListener(key, func, true);
+        }
+      } catch (err) {
+        _iterator.e(err);
+      } finally {
+        _iterator.f();
+      }
+      var _iterator2 = _createForOfIteratorHelper(this.contentVideoTrackingEvents_),
+        _step2;
+      try {
+        for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
+          var _step2$value = _slicedToArray(_step2.value, 2),
+            _key = _step2$value[0],
+            _func = _step2$value[1];
+          this.contentVideoElement_.removeEventListener(_key, _func, true);
+        }
+      } catch (err) {
+        _iterator2.e(err);
+      } finally {
+        _iterator2.f();
+      }
+      this.adVideoTrackingEvents_.clear();
+      this.contentVideoTrackingEvents_.clear();
+    }
+
+    /**
+     * Returns the full dimensions of an element within the player div.
+     * @private
+     * @return {!Object}
+     */
+  }, {
+    key: "getFullDimensions_",
+    value: function getFullDimensions_(elem) {
+      var videoRect = elem.getBoundingClientRect();
+      return {
+        'x': 0,
+        'y': 0,
+        'width': videoRect.width,
+        'height': videoRect.height
+      };
+    }
+
+    /**
+     * Checks whether the input dimensions are valid and fit in the player window.
+     * @private
+     * @param {!Object} dimensions A dimension that contains x, y, width & height fields.
+     * @return {boolean}
+     */
+  }, {
+    key: "isValidDimensions_",
+    value: function isValidDimensions_(dimensions) {
+      var playerRect = this.playerDiv_.getBoundingClientRect();
+      var heightFits = parse_int_default()(dimensions.y) + parse_int_default()(dimensions.height) <= parse_int_default()(playerRect.height);
+      var widthFits = parse_int_default()(dimensions.x) + parse_int_default()(dimensions.width) <= parse_int_default()(playerRect.width);
+      return heightFits && widthFits;
+    }
+
+    /**
+     * Returns the specified dimensions of the non-linear creative.
+     * @private
+     * @return {!Object}
+     */
+  }, {
+    key: "getNonlinearDimensions_",
+    value: function getNonlinearDimensions_() {
+      if (this.nonLinearDimensions_) {
+        return this.nonLinearDimensions_;
+      }
+      var newDimensions = {};
+      newDimensions.x = document.getElementById('x_val').value;
+      newDimensions.y = document.getElementById('y_val').value;
+      newDimensions.width = document.getElementById('width').value;
+      newDimensions.height = document.getElementById('height').value;
+      return newDimensions;
+    }
+
+    /** 
+     * Validates and displays the non-linear creative.
+     * @private
+     */
+  }, {
+    key: "displayNonlinearCreative_",
+    value: function displayNonlinearCreative_() {
+      var newDimensions = this.getNonlinearDimensions_();
+      if (!this.isValidDimensions_(newDimensions)) {
+        console.log("".concat(FW.consolePrepend, " SIMID: Unable to play a non-linear ad with dimensions bigger than the player. Please modify dimensions to a smaller size."), FW.consoleStyle, '');
+        return;
+      } else {
+        this.setSimidIframeDimensions_(newDimensions);
+        this.simidIframe_.style.position = 'absolute';
+        this.contentVideoElement_.play();
+        var nonLinearDuration = document.getElementById('duration').value;
+        this.requestedDuration_ = nonLinearDuration;
+      }
+    }
+
+    /**
+     * Changes the simid iframe dimensions to the given dimensions.
+     * @private
+     * @param {!Object} resizeDimensions A dimension that contains an x,y,width & height fields.
+     */
+  }, {
+    key: "setSimidIframeDimensions_",
+    value: function setSimidIframeDimensions_(resizeDimensions) {
+      this.simidIframe_.style.height = resizeDimensions.height;
+      this.simidIframe_.style.width = resizeDimensions.width;
+      this.simidIframe_.style.left = "".concat(resizeDimensions.x, "px");
+      this.simidIframe_.style.top = "".concat(resizeDimensions.y, "px");
+    }
+
+    /** 
+     * The creative wants to expand the ad.
+     * @param {!Object} incomingMessage Message sent from the creative to the player
+     */
+  }, {
+    key: "onExpandResize",
+    value: function onExpandResize(incomingMessage) {
+      if (this.isLinearAd_) {
+        var _context;
+        var errorMessage = {
+          errorCode: CreativeErrorCode.EXPAND_NOT_POSSIBLE,
+          message: 'Linear resize not yet supported.'
+        };
+        this.simidProtocol.reject(incomingMessage, errorMessage);
+        console.log(concat_default()(_context = "".concat(FW.consolePrepend, " SIMID: ")).call(_context, errorMessage.message), FW.consoleStyle, '');
+      } else {
+        var fullDimensions = this.getFullDimensions_(this.contentVideoElement_);
+        this.setSimidIframeDimensions_(fullDimensions);
+        this.contentVideoElement_.pause();
+        this.simidProtocol.resolve(incomingMessage);
+      }
+    }
+
+    /** 
+     * The creative wants to collapse the ad. 
+     * @param {!Object} incomingMessage Message sent from the creative to the player
+     */
+  }, {
+    key: "onCollapse",
+    value: function onCollapse(incomingMessage) {
+      var newDimensions = this.getNonlinearDimensions_();
+      if (this.isLinearAd_) {
+        var _context2;
+        var errorMessage = {
+          message: 'Cannot collapse linear ads.'
+        };
+        this.simidProtocol.reject(incomingMessage, errorMessage);
+        console.log(concat_default()(_context2 = "".concat(FW.consolePrepend, " SIMID: ")).call(_context2, errorMessage.message), FW.consoleStyle, '');
+      } else if (!this.isValidDimensions_(newDimensions)) {
+        var _context3;
+        var _errorMessage = {
+          message: 'Unable to collapse to dimensions bigger than the player. Please modify dimensions to a smaller size.'
+        };
+        this.simidProtocol.reject(incomingMessage, _errorMessage);
+        console.log(concat_default()(_context3 = "".concat(FW.consolePrepend, " SIMID: ")).call(_context3, _errorMessage.message), FW.consoleStyle, '');
+      } else {
+        this.setSimidIframeDimensions_(newDimensions);
+        this.simidIframe_.style.position = 'absolute';
+        this.contentVideoElement_.play();
+        this.simidProtocol.resolve(incomingMessage);
+      }
+    }
+
+    /**
+     * The creative wants to resize the ad.
+     * @param {!Object} incomingMessage Message sent from the creative to the player.
+     */
+  }, {
+    key: "onRequestResize",
+    value: function onRequestResize(incomingMessage) {
+      if (this.isLinearAd_) {
+        var _context4;
+        var errorMessage = {
+          errorCode: CreativeErrorCode.EXPAND_NOT_POSSIBLE,
+          message: 'Linear resize not yet supported.'
+        };
+        this.simidProtocol.reject(incomingMessage, errorMessage);
+        console.log(concat_default()(_context4 = "".concat(FW.consolePrepend, " SIMID: ")).call(_context4, errorMessage.message), FW.consoleStyle, '');
+      } else if (!this.isValidDimensions_(incomingMessage.args.creativeDimensions)) {
+        var _context5;
+        var _errorMessage2 = {
+          errorCode: CreativeErrorCode.EXPAND_NOT_POSSIBLE,
+          message: 'Unable to resize a non-linear ad with dimensions bigger than the player. Please modify dimensions to a smaller size.'
+        };
+        this.simidProtocol.reject(incomingMessage, _errorMessage2);
+        console.log(concat_default()(_context5 = "".concat(FW.consolePrepend, " SIMID: ")).call(_context5, _errorMessage2.message), FW.consoleStyle, '');
+      } else {
+        this.nonLinearDimensions_ = incomingMessage.args.creativeDimensions;
+        this.setSimidIframeDimensions_(incomingMessage.args.creativeDimensions);
+        this.simidProtocol.resolve(incomingMessage);
+      }
+    }
+
+    /**
+     * Initializes the SIMID creative with all data it needs.
+     * @private
+     */
+  }, {
+    key: "sendInitMessage_",
+    value: function sendInitMessage_() {
+      var _this4 = this;
+      var videoDimensions = this.getFullDimensions_(this.contentVideoElement_);
+      // Since the creative starts as hidden it will take on the
+      // video element dimensions, so tell the ad about those dimensions.
+      var creativeDimensions = this.isLinearAd_ ? this.getFullDimensions_(this.contentVideoElement_) : this.getNonlinearDimensions_();
+      var environmentData = {
+        'videoDimensions': videoDimensions,
+        'creativeDimensions': creativeDimensions,
+        'fullscreen': false,
+        'fullscreenAllowed': true,
+        'variableDurationAllowed': true,
+        'skippableState': 'adHandles',
+        // This player does not render a skip button.
+        'siteUrl': document.location.host,
+        'appId': '',
+        // This is not relevant on desktop
+        'useragent': window.navigator.userAgent,
+        // This should be filled in for sdks and players
+        'deviceId': '',
+        // This should be filled in on mobile
+        'muted': this.adVideoElement_.muted,
+        'volume': this.adVideoElement_.volume
+      };
+      var creativeData = {
+        'adParameters': this.adParameters_,
+        // These values should be populated from the VAST response.
+        'adId': this.adId_,
+        'creativeId': this.creativeId_,
+        'adServingId': this.adServingId_,
+        'clickThroughUrl': this.clickThroughUrl_
+      };
+      if (!this.isLinearAd_) {
+        creativeData['duration'] = document.getElementById('duration').value;
+      }
+      var initMessage = {
+        'environmentData': environmentData,
+        'creativeData': creativeData
+      };
+      var initPromise = this.simidProtocol.sendMessage(PlayerMessage.INIT, initMessage);
+      initPromise.then(function (args) {
+        _this4.resolveInitializationPromise_(args);
+      }).catch(function (args) {
+        _this4.rejectInitializationPromise_(args);
+      });
+    }
+
+    /**
+     * Called once the creative responds positively to being initialized.
+     * @private
+     */
+  }, {
+    key: "startCreativePlayback_",
+    value: function startCreativePlayback_() {
+      // Once the ad is successfully initialized it can start.
+      // If the ad is not visible it must be made visible here.
+      this.showSimidIFrame_();
+      if (this.isLinearAd_) {
+        this.playLinearVideoAd_();
+      } else {
+        this.nonLinearStartTime_ = this.contentVideoElement_.currentTime;
+        this.contentVideoElement_.play();
+      }
+      this.simidProtocol.sendMessage(PlayerMessage.START_CREATIVE);
+      // TODO: handle creative rejecting startCreative message.
+    }
+
+    /** 
+     * Pauses content video and plays linear ad.
+     * @private 
+     */
+  }, {
+    key: "playLinearVideoAd_",
+    value: function playLinearVideoAd_() {
+      this.contentVideoElement_.pause();
+      this.showAdPlayer_();
+      this.adVideoElement_.src = this.vastPlayerUrl_;
+      // we need this extra load for Chrome data saver mode in mobile or desktop
+      this.adVideoElement_.load();
+      this.adVideoElement_.play();
+    }
+
+    /**
+     * Called if the creative responds with reject after the player
+     * initializes the ad.
+     * @param {!Object} data
+     * @private
+     */
+  }, {
+    key: "onAdInitializedFailed_",
+    value: function onAdInitializedFailed_(data) {
+      var _context6;
+      var errorData = stringify_default()(data);
+      console.log(concat_default()(_context6 = "".concat(FW.consolePrepend, " SIMID: Ad init failed. ")).call(_context6, errorData), FW.consoleStyle, '');
+      this.destroyIframeAndResumeContent_(true, errorData.errorCode);
+    }
+
+    /** @private */
+  }, {
+    key: "hideSimidIFrame_",
+    value: function hideSimidIFrame_() {
+      this.simidIframe_.style.display = 'none';
+    }
+
+    /** @private */
+  }, {
+    key: "showSimidIFrame_",
+    value: function showSimidIFrame_() {
+      this.simidIframe_.style.display = 'block';
+    }
+
+    /** @private */
+  }, {
+    key: "showAdPlayer_",
+    value: function showAdPlayer_() {
+      // show the ad video element
+      this.adVideoElement_.style.display = 'block';
+      this.adContainer_.style.display = 'block';
+    }
+
+    /** @private */
+  }, {
+    key: "hideAdPlayer_",
+    value: function hideAdPlayer_() {
+      // Unload the video
+      this.adVideoElement_.style.display = 'none';
+      this.adContainer_.style.display = 'none';
+    }
+
+    /**
+     * Tracks the events on the ad video element specified by the simid spec
+     * @private
+     */
+  }, {
+    key: "trackEventsOnAdVideoElement_",
+    value: function trackEventsOnAdVideoElement_() {
+      var _this5 = this;
+      this.adVideoTrackingEvents_.set('durationchange', function () {
+        _this5.simidProtocol.sendMessage(MediaMessage.DURATION_CHANGE, {
+          'duration': _this5.adVideoElement_.duration
+        });
+      });
+      this.adVideoTrackingEvents_.set('ended', this.videoComplete.bind(this));
+      this.adVideoTrackingEvents_.set('error', function () {
+        _this5.simidProtocol.sendMessage(MediaMessage.ERROR, {
+          'error': '',
+          // TODO fill in these values correctly
+          'message': ''
+        });
+      });
+      this.adVideoTrackingEvents_.set('pause', function () {
+        _this5.simidProtocol.sendMessage(MediaMessage.PAUSE);
+      });
+      this.adVideoTrackingEvents_.set('play', function () {
+        _this5.simidProtocol.sendMessage(MediaMessage.PLAY);
+      });
+      this.adVideoTrackingEvents_.set('playing', function () {
+        _this5.simidProtocol.sendMessage(MediaMessage.PLAYING);
+      });
+      this.adVideoTrackingEvents_.set('seeked', function () {
+        _this5.simidProtocol.sendMessage(MediaMessage.SEEKED);
+      });
+      this.adVideoTrackingEvents_.set('seeking', function () {
+        _this5.simidProtocol.sendMessage(MediaMessage.SEEKING);
+      });
+      this.adVideoTrackingEvents_.set('timeupdate', function () {
+        _this5.simidProtocol.sendMessage(MediaMessage.TIME_UPDATE, {
+          'currentTime': _this5.adVideoElement_.currentTime
+        });
+        _this5.compareAdAndRequestedDurations_();
+      });
+      this.adVideoTrackingEvents_.set('volumechange', function () {
+        _this5.simidProtocol.sendMessage(MediaMessage.VOLUME_CHANGE, {
+          'volume': _this5.adVideoElement_.volume
+        });
+      });
+      var _iterator3 = _createForOfIteratorHelper(this.adVideoTrackingEvents_),
+        _step3;
+      try {
+        for (_iterator3.s(); !(_step3 = _iterator3.n()).done;) {
+          var _step3$value = _slicedToArray(_step3.value, 2),
+            key = _step3$value[0],
+            func = _step3$value[1];
+          this.adVideoElement_.addEventListener(key, func, true);
+        }
+      } catch (err) {
+        _iterator3.e(err);
+      } finally {
+        _iterator3.f();
+      }
+    }
+
+    /**
+     * Tracks the events on the content video element.
+     * @private
+     */
+  }, {
+    key: "trackEventsOnContentVideoElement_",
+    value: function trackEventsOnContentVideoElement_() {
+      var _this6 = this;
+      this.contentVideoTrackingEvents_.set('timeupdate', function () {
+        if (_this6.nonLinearStartTime_ !== null && _this6.contentVideoElement_.currentTime - _this6.nonLinearStartTime_ > _this6.requestedDuration_) {
+          _this6.stopAd(StopCode.NON_LINEAR_DURATION_COMPLETE);
+        }
+      });
+      var _iterator4 = _createForOfIteratorHelper(this.contentVideoTrackingEvents_),
+        _step4;
+      try {
+        for (_iterator4.s(); !(_step4 = _iterator4.n()).done;) {
+          var _step4$value = _slicedToArray(_step4.value, 2),
+            key = _step4$value[0],
+            func = _step4$value[1];
+          this.contentVideoElement_.addEventListener(key, func, true);
+        }
+      } catch (err) {
+        _iterator4.e(err);
+      } finally {
+        _iterator4.f();
+      }
+    }
+
+    /**
+     * Stops the ad and destroys the ad iframe.
+     * @param {StopCode} reason The reason the ad will stop.
+     */
+  }, {
+    key: "stopAd",
+    value: function stopAd() {
+      var _this7 = this;
+      var reason = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : StopCode.PLAYER_INITATED;
+      var error = arguments.length > 1 ? arguments[1] : undefined;
+      var errorCode = arguments.length > 2 ? arguments[2] : undefined;
+      // The iframe is only hidden on ad stoppage. The ad might still request
+      // tracking pixels before it is cleaned up.
+      if (this.simidIframe_) {
+        var _context7;
+        this.hideSimidIFrame_();
+        /*const closeMessage = {
+          'code': reason,
+        };*/
+        // Wait for the SIMID creative to acknowledge stop and then clean
+        // up the iframe.
+        console.log(concat_default()(_context7 = "".concat(FW.consolePrepend, " SIMID: stopAd ")).call(_context7, reason), FW.consoleStyle, '');
+        this.simidProtocol.sendMessage(PlayerMessage.AD_STOPPED).then(function () {
+          return _this7.destroyIframeAndResumeContent_(error, errorCode);
+        });
+      }
+    }
+
+    /**
+     * Skips the ad and destroys the ad iframe.
+     */
+  }, {
+    key: "skipAd",
+    value: function skipAd() {
+      var _this8 = this;
+      // The iframe is only hidden on ad skipped. The ad might still request
+      // tracking pixels before it is cleaned up.
+      this.hideSimidIFrame_();
+      // Wait for the SIMID creative to acknowledge skip and then clean
+      // up the iframe.
+      this.simidProtocol.sendMessage(PlayerMessage.AD_SKIPPED).then(function () {
+        return _this8.destroyIframeAndResumeContent_();
+      });
+    }
+
+    /**
+     * Removes the simid ad entirely and resumes video playback.
+     * @private
+     */
+  }, {
+    key: "destroyIframeAndResumeContent_",
+    value: function destroyIframeAndResumeContent_(error, errorCode) {
+      //this.hideAdPlayer_();
+      //this.adVideoElement_.src = '';
+      this.destroySimidIframe_();
+      //this.contentVideoElement_.play();
+      if (error) {
+        Utils.processVastErrors.call(this.rmpVast_, errorCode, true);
+      } else {
+        vast_player.resumeContent.call(this.rmpVast_);
+      }
+    }
+
+    /** The creative wants to go full screen. */
+  }, {
+    key: "onRequestFullScreen",
+    value: function onRequestFullScreen(incomingMessage) {
+      var _this9 = this;
+      // The spec currently says to only request fullscreen for the iframe.
+      var promise = null;
+      if (this.simidIframe_.requestFullscreen) {
+        promise = this.simidIframe_.requestFullscreen();
+      } else if (this.simidIframe_.mozRequestFullScreen) {
+        // Our tests indicate firefox will probably not respect the request.
+        promise = this.simidIframe_.mozRequestFullScreen();
+      } else if (this.simidIframe_.webkitRequestFullscreen) {
+        promise = this.simidIframe_.webkitRequestFullscreen();
+      } else if (this.simidIframe_.msRequestFullscreen) {
+        // Our tests indicate IE will probably not respect the request.
+        promise = this.simidIframe_.msRequestFullscreen();
+      }
+      if (promise) {
+        promise.then(function () {
+          return _this9.simidProtocol.resolve(incomingMessage);
+        });
+      } else {
+        // TODO: Many browsers are not returning promises but are still
+        // going full screen. Assuming resolve (bad).
+        this.simidProtocol.resolve(incomingMessage);
+      }
+    }
+
+    /** The creative wants to play video. */
+  }, {
+    key: "onRequestPlay",
+    value: function onRequestPlay(incomingMessage) {
+      var _this10 = this;
+      if (this.isLinearAd_) {
+        this.adVideoElement_.play().then(function () {
+          return _this10.simidProtocol.resolve(incomingMessage);
+        }).catch(function () {
+          var errorMessage = {
+            errorCode: PlayerErrorCode.VIDEO_COULD_NOT_LOAD,
+            message: 'The SIMID media could not be loaded.'
+          };
+          _this10.simidProtocol.reject(incomingMessage, errorMessage);
+        });
+      } else {
+        var errorMessage = {
+          errorCode: CreativeErrorCode.PLAYBACK_AREA_UNUSABLE,
+          message: 'Non linear ads do not play video.'
+        };
+        this.simidProtocol.reject(incomingMessage, errorMessage);
+      }
+    }
+
+    /** The creative wants to pause video. */
+  }, {
+    key: "onRequestPause",
+    value: function onRequestPause(incomingMessage) {
+      this.adVideoElement_.pause();
+      this.simidProtocol.resolve(incomingMessage);
+    }
+
+    /** Pauses the video ad element. */
+  }, {
+    key: "pauseAd",
+    value: function pauseAd() {
+      this.adVideoElement_.pause();
+    }
+
+    /** The creative wants to stop with a fatal error. */
+  }, {
+    key: "onCreativeFatalError",
+    value: function onCreativeFatalError(incomingMessage) {
+      this.simidProtocol.resolve(incomingMessage);
+      this.stopAd(StopCode.CREATIVE_INITIATED, true, 1100);
+    }
+
+    /** The creative wants to skip this ad. */
+  }, {
+    key: "onRequestSkip",
+    value: function onRequestSkip(incomingMessage) {
+      this.simidProtocol.resolve(incomingMessage);
+      this.skipAd();
+    }
+
+    /** The creative wants to stop the ad early. */
+  }, {
+    key: "onRequestStop",
+    value: function onRequestStop(incomingMessage) {
+      this.simidProtocol.resolve(incomingMessage);
+      this.stopAd(StopCode.CREATIVE_INITIATED);
+    }
+
+    /**
+     * The player must implement sending tracking pixels from the creative.
+     * This sample implementation does not show how to send tracking pixels or
+     * replace macros. That should be done using the players standard workflow.
+     */
+  }, {
+    key: "onReportTracking",
+    value: function onReportTracking(incomingMessage) {
+      var _this11 = this,
+        _context8;
+      var requestedUrlArray = incomingMessage.args['trackingUrls'];
+      requestedUrlArray.forEach(function (url) {
+        tracking_events.pingURI.call(_this11, url);
+      });
+      console.log(concat_default()(_context8 = "".concat(FW.consolePrepend, " SIMID: The creative has asked for the player to ping ")).call(_context8, requestedUrlArray), FW.consoleStyle, '');
+    }
+
+    /**
+     * Called when video playback is complete.
+     * @private
+     */
+  }, {
+    key: "videoComplete",
+    value: function videoComplete() {
+      var _this12 = this;
+      this.simidProtocol.sendMessage(MediaMessage.ENDED);
+      if (this.requestedDuration_ == NO_REQUESTED_DURATION) {
+        this.stopAd(StopCode.MEDIA_PLAYBACK_COMPLETE);
+      }
+
+      //If the request duration is longer than the ad duration, the ad extends for the requested amount of time
+      else if (this.requestedDuration_ != UNLIMITED_DURATION) {
+        var durationChangeMs = (this.requestedDuration_ - this.adVideoElement_.duration) * 1000;
+        setTimeout(function () {
+          _this12.stopAd(StopCode.CREATIVE_INITIATED);
+        }, durationChangeMs);
+      }
+    }
+
+    /**
+     * Called when creative requests a change in duration of ad.
+     * @private
+     */
+  }, {
+    key: "onRequestChangeAdDuration",
+    value: function onRequestChangeAdDuration(incomingMessage) {
+      var newRequestedDuration = incomingMessage.args['duration'];
+      if (newRequestedDuration != UNLIMITED_DURATION && newRequestedDuration < 0) {
+        var durationErrorMessage = {
+          errorCode: PlayerErrorCode.UNSUPPORTED_TIME,
+          message: 'A negative duration is not valid.'
+        };
+        this.simidProtocol.reject(incomingMessage, durationErrorMessage);
+      } else {
+        this.requestedDuration_ = newRequestedDuration;
+        //If requested duration is any other acceptable value
+        this.compareAdAndRequestedDurations_();
+        this.simidProtocol.resolve(incomingMessage);
+      }
+    }
+
+    /**
+     * Compares the duration of the ad with the requested change duration.
+     * If request duration is the same as the ad duration, ad ends as normal.
+     * If request duration is unlimited, ad stays on screen until user closes ad.
+     * If request duration is shorter, the ad stops early. 
+     * @private
+     */
+  }, {
+    key: "compareAdAndRequestedDurations_",
+    value: function compareAdAndRequestedDurations_() {
+      if (this.requestedDuration_ == NO_REQUESTED_DURATION || this.requestedDuration_ == UNLIMITED_DURATION) {
+        //Note: Users can end the ad with unlimited duration with
+        // the close ad button on the player
+        return;
+      } else if (this.adVideoElement_.currentTime >= this.requestedDuration_) {
+        //Creative requested a duration shorter than the ad
+        this.stopAd(StopCode.CREATIVE_INITATED);
+      }
+    }
+  }, {
+    key: "onGetMediaState",
+    value: function onGetMediaState(incomingMessage) {
+      var mediaState = {
+        'currentSrc': this.adVideoElement_.currentSrc,
+        'currentTime': this.adVideoElement_.currentTime,
+        'duration': this.adVideoElement_.duration,
+        'ended': this.adVideoElement_.ended,
+        'muted': this.adVideoElement_.muted,
+        'paused': this.adVideoElement_.paused,
+        'volume': this.adVideoElement_.volume,
+        'fullscreen': this.adVideoElement_.fullscreen
+      };
+      this.simidProtocol.resolve(incomingMessage, mediaState);
+    }
+  }, {
+    key: "onReceiveCreativeLog",
+    value: function onReceiveCreativeLog(incomingMessage) {
+      var _context9;
+      var logMessage = incomingMessage.args['message'];
+      console.log(concat_default()(_context9 = "".concat(FW.consolePrepend, " SIMID: Received message from creative: ")).call(_context9, logMessage), FW.consoleStyle, '');
+    }
+  }, {
+    key: "sendLog",
+    value: function sendLog(outgoingMessage) {
+      var logMessage = {
+        'message': outgoingMessage
+      };
+      this.simidProtocol.sendMessage(PlayerMessage.LOG, logMessage);
+    }
+  }]);
+  return SimidPlayer;
+}();
+
 ;// CONCATENATED MODULE: ./src/js/creatives/linear.js
+
 
 
 
@@ -12055,10 +14390,19 @@ LINEAR.update = function (url, type) {
       this.hlsJS[this.hlsJSIndex].loadSource(url);
       this.hlsJS[this.hlsJSIndex].attachMedia(this.vastPlayer);
     } else {
-      this.vastPlayer.addEventListener('error', this.onPlaybackError);
-      this.vastPlayer.src = url;
-      // we need this extra load for Chrome data saver mode in mobile or desktop
-      this.vastPlayer.load();
+      if (typeof this.creative.simid === 'undefined' || this.creative.simid && !this.params.enableSimid) {
+        this.vastPlayer.addEventListener('error', this.onPlaybackError);
+        this.vastPlayer.src = url;
+        // we need this extra load for Chrome data saver mode in mobile or desktop
+        this.vastPlayer.load();
+      } else {
+        if (this.simidPlayer) {
+          this.simidPlayer.stopAd();
+        }
+        this.simidPlayer = new SimidPlayer(this.creative.isLinear, this.creative.simid, url, this.creative.adId, this.creative.id, this.ad.adServingId, this.creative.clickThroughUrl, this);
+        this.simidPlayer.initializeAd();
+        this.simidPlayer.playAd();
+      }
     }
   }
 
@@ -12672,6 +15016,78 @@ var VAST_ERRORS_LIST = [{
 }, {
   code: 1002,
   description: 'Required DOMParser API is not available'
+}, {
+  code: 1100,
+  description: 'SIMID error: UNSPECIFIED_CREATIVE_ERROR'
+}, {
+  code: 1101,
+  description: 'SIMID error: CANNOT_LOAD_RESOURCE'
+}, {
+  code: 1102,
+  description: 'SIMID error: PLAYBACK_AREA_UNUSABLE'
+}, {
+  code: 1103,
+  description: 'SIMID error: INCORRECT_VERSION'
+}, {
+  code: 1104,
+  description: 'SIMID error: TECHNICAL_ERROR'
+}, {
+  code: 1105,
+  description: 'SIMID error: EXPAND_NOT_POSSIBLE'
+}, {
+  code: 1106,
+  description: 'SIMID error: PAUSE_NOT_HONORED'
+}, {
+  code: 1107,
+  description: 'SIMID error: PLAYMODE_NOT_ADEQUATE'
+}, {
+  code: 1108,
+  description: 'SIMID error: CREATIVE_INTERNAL_ERROR'
+}, {
+  code: 1109,
+  description: 'SIMID error: DEVICE_NOT_SUPPORTED'
+}, {
+  code: 1110,
+  description: 'SIMID error: MESSAGES_NOT_FOLLOWING_SPEC'
+}, {
+  code: 1111,
+  description: 'SIMID error: PLAYER_RESPONSE_TIMEOUT'
+}, {
+  code: 1200,
+  description: 'SIMID error: UNSPECIFIED_PLAYER_ERROR'
+}, {
+  code: 1201,
+  description: 'SIMID error: WRONG_VERSION'
+}, {
+  code: 1202,
+  description: 'SIMID error: UNSUPPORTED_TIME'
+}, {
+  code: 1203,
+  description: 'SIMID error: UNSUPPORTED_FUNCTIONALITY_REQUEST'
+}, {
+  code: 1204,
+  description: 'SIMID error: UNSUPPORTED_ACTIONS'
+}, {
+  code: 1205,
+  description: 'SIMID error: POSTMESSAGE_CHANNEL_OVERLOADED'
+}, {
+  code: 1206,
+  description: 'SIMID error: VIDEO_COULD_NOT_LOAD'
+}, {
+  code: 1207,
+  description: 'SIMID error: VIDEO_TIME_OUT'
+}, {
+  code: 1208,
+  description: 'SIMID error: RESPONSE_TIMEOUT'
+}, {
+  code: 1209,
+  description: 'SIMID error: MEDIA_NOT_SUPPORTED'
+}, {
+  code: 1210,
+  description: 'SIMID error: SPEC_NOT_FOLLOWED_ON_INIT'
+}, {
+  code: 1211,
+  description: 'SIMID error: SPEC_NOT_FOLLOWED_ON_MESSAGES'
 }];
 var Utils = /*#__PURE__*/function () {
   function Utils() {
@@ -12695,6 +15111,7 @@ var Utils = /*#__PURE__*/function () {
         showControlsForVastPlayer: false,
         vastXmlInput: false,
         enableVpaid: true,
+        enableSimid: false,
         vpaidSettings: {
           width: 640,
           height: 360,
@@ -12711,7 +15128,7 @@ var Utils = /*#__PURE__*/function () {
         omidRunValidationScript: false,
         omidAutoplay: false,
         partnerName: 'rmp-vast',
-        partnerVersion: "11.0.3"
+        partnerVersion: "12.0.0"
       };
       this.params = defaultParams;
       if (inputParams && _typeof(inputParams) === 'object') {
@@ -12831,7 +15248,6 @@ var Utils = /*#__PURE__*/function () {
     key: "initInstanceVariables",
     value: function initInstanceVariables() {
       this.adContainer = null;
-      this.debug = false;
       this.rmpVastInitialized = false;
       this.useContentPlayerForAds = false;
       this.contentPlayerCompleted = false;
@@ -12965,6 +15381,8 @@ var Utils = /*#__PURE__*/function () {
       this.vpaidAdLoaded = false;
       this.vpaidAdStarted = false;
       this.vpaidCallbacks = {};
+      // SIMID
+      this.simidPlayer = null;
     }
 
     // attach fullscreen states
@@ -13058,12 +15476,6 @@ var Utils = /*#__PURE__*/function () {
   return Utils;
 }();
 
-// EXTERNAL MODULE: ./node_modules/@babel/runtime-corejs3/core-js-stable/instance/includes.js
-var includes = __webpack_require__(8118);
-var includes_default = /*#__PURE__*/__webpack_require__.n(includes);
-// EXTERNAL MODULE: ./node_modules/@babel/runtime-corejs3/core-js-stable/json/stringify.js
-var stringify = __webpack_require__(5627);
-var stringify_default = /*#__PURE__*/__webpack_require__.n(stringify);
 ;// CONCATENATED MODULE: ./src/js/verification/omsdk.js
 
 
@@ -16609,7 +19021,7 @@ var VASTClient = /*#__PURE__*/function () {
 var injectStylesIntoStyleTag = __webpack_require__(3379);
 var injectStylesIntoStyleTag_default = /*#__PURE__*/__webpack_require__.n(injectStylesIntoStyleTag);
 // EXTERNAL MODULE: ./node_modules/style-loader/dist/runtime/styleDomAPI.js
-var styleDomAPI = __webpack_require__(7795);
+var styleDomAPI = __webpack_require__(3380);
 var styleDomAPI_default = /*#__PURE__*/__webpack_require__.n(styleDomAPI);
 // EXTERNAL MODULE: ./node_modules/style-loader/dist/runtime/insertBySelector.js
 var insertBySelector = __webpack_require__(569);
@@ -16984,7 +19396,7 @@ var RmpVast = /*#__PURE__*/function () {
           }
           // if no companion content for this <Companion> then move on to the next
           if (typeof staticResourceFound === 'undefined' && typeof iframeResourceFound === 'undefined' && typeof htmlResourceFound === 'undefined') {
-            return "continue";
+            return 1; // continue
           }
           if (companion.companionClickThroughURLTemplate) {
             newCompanionAds.companionClickThroughUrl = companion.companionClickThroughURLTemplate;
@@ -17007,8 +19419,7 @@ var RmpVast = /*#__PURE__*/function () {
           _this5.validCompanionAds.push(newCompanionAds);
         };
         for (var i = 0; i < companions.length; i++) {
-          var _ret = _loop();
-          if (_ret === "continue") continue;
+          if (_loop()) continue;
         }
       }
       console.log("".concat(FW.consolePrepend, " Parse companion ads follow"), FW.consoleStyle, '');
@@ -17254,6 +19665,13 @@ var RmpVast = /*#__PURE__*/function () {
                                 });
                               }
                               _this8.creative.isLinear = true;
+                              if (creative.interactiveCreativeFile && /simid/i.test(creative.interactiveCreativeFile.apiFramework) && /text\/html/i.test(creative.interactiveCreativeFile.type)) {
+                                _this8.creative.simid = {
+                                  fileURL: creative.interactiveCreativeFile.fileURL,
+                                  variableDuration: creative.interactiveCreativeFile.variableDuration,
+                                  adParameters: creative.adParameters
+                                };
+                              }
                               _this8._addTrackingEvents(creative.trackingEvents);
                               linear.parse.call(_this8, creative.icons, creative.adParameters, creative.mediaFiles);
                               if (_this8.params.omidSupport && currentAd.adVerifications.length > 0) {
@@ -17608,6 +20026,8 @@ var RmpVast = /*#__PURE__*/function () {
       if (this.adOnStage) {
         if (this.isVPAID) {
           vpaid.stopAd.call(this);
+        } else if (this.simidPlayer) {
+          this.simidPlayer.stopAd();
         } else {
           // this will destroy ad
           vast_player.resumeContent.call(this);
@@ -17642,6 +20062,8 @@ var RmpVast = /*#__PURE__*/function () {
       if (this.adOnStage && this.getAdSkippableState()) {
         if (this.isVPAID) {
           vpaid.skipAd.call(this);
+        } else if (this.simidPlayer) {
+          this.simidPlayer.skipAd();
         } else {
           // this will destroy ad
           vast_player.resumeContent.call(this);
@@ -18071,6 +20493,8 @@ var RmpVast = /*#__PURE__*/function () {
       if (this.adOnStage) {
         if (this.isVPAID) {
           return vpaid.getAdSkippableState.call(this);
+        } else if (this.simidPlayer) {
+          return true;
         } else {
           if (this.getIsSkippableAd()) {
             return this.skippableAdCanBeSkipped;

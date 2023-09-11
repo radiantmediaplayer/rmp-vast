@@ -6,6 +6,7 @@ import VAST_PLAYER from '../players/vast-player';
 import VPAID from '../players/vpaid';
 import ICONS from './icons';
 import RmpConnection from '../../assets/rmp-connection/rmp-connection';
+import SimidPlayer from '../players/simid/simid_player';
 
 const LINEAR = {};
 
@@ -306,10 +307,28 @@ LINEAR.update = function (url, type) {
       this.hlsJS[this.hlsJSIndex].loadSource(url);
       this.hlsJS[this.hlsJSIndex].attachMedia(this.vastPlayer);
     } else {
-      this.vastPlayer.addEventListener('error', this.onPlaybackError);
-      this.vastPlayer.src = url;
-      // we need this extra load for Chrome data saver mode in mobile or desktop
-      this.vastPlayer.load();
+      if (typeof this.creative.simid === 'undefined' || (this.creative.simid && !this.params.enableSimid)) {
+        this.vastPlayer.addEventListener('error', this.onPlaybackError);
+        this.vastPlayer.src = url;
+        // we need this extra load for Chrome data saver mode in mobile or desktop
+        this.vastPlayer.load();
+      } else {
+        if (this.simidPlayer) {
+          this.simidPlayer.stopAd();
+        }
+        this.simidPlayer = new SimidPlayer(
+          this.creative.isLinear,
+          this.creative.simid,
+          url,
+          this.creative.adId,
+          this.creative.id,
+          this.ad.adServingId,
+          this.creative.clickThroughUrl,
+          this
+        );
+        this.simidPlayer.initializeAd();
+        this.simidPlayer.playAd();
+      }
     }
   }
 

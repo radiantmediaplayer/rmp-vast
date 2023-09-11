@@ -3,7 +3,127 @@
  * Note: Some browsers do not support promises and a more complete implementation
  *       should consider using a polyfill.
  */
-export default class SimidProtocol {
+import FW from '../../framework/fw';
+/** Contains all constants common across SIMID */
+
+const ProtocolMessage = {
+  CREATE_SESSION: 'createSession',
+  RESOLVE: 'resolve',
+  REJECT: 'reject'
+};
+
+const MediaMessage = {
+  DURATION_CHANGE: 'Media:durationchange',
+  ENDED: 'Media:ended',
+  ERROR: 'Media:error',
+  PAUSE: 'Media:pause',
+  PLAY: 'Media:play',
+  PLAYING: 'Media:playing',
+  SEEKED: 'Media:seeked',
+  SEEKING: 'Media:seeking',
+  TIME_UPDATE: 'Media:timeupdate',
+  VOLUME_CHANGE: 'Media:volumechange',
+};
+
+const PlayerMessage = {
+  RESIZE: 'Player:resize',
+  INIT: 'Player:init',
+  LOG: 'Player:log',
+  START_CREATIVE: 'Player:startCreative',
+  AD_SKIPPED: 'Player:adSkipped',
+  AD_STOPPED: 'Player:adStopped',
+  FATAL_ERROR: 'Player:fatalError',
+};
+
+/** Messages from the creative */
+const CreativeMessage = {
+  CLICK_THRU: 'Creative:clickThru',
+  EXPAND_NONLINEAR: 'Creative:expandNonlinear',
+  COLLAPSE_NONLINEAR: 'Creative:collapseNonlinear',
+  FATAL_ERROR: 'Creative:fatalError',
+  GET_MEDIA_STATE: 'Creative:getMediaState',
+  LOG: 'Creative:log',
+  REQUEST_FULL_SCREEN: 'Creative:requestFullScreen',
+  REQUEST_SKIP: 'Creative:requestSkip',
+  REQUEST_STOP: 'Creative:requestStop',
+  REQUEST_PAUSE: 'Creative:requestPause',
+  REQUEST_PLAY: 'Creative:requestPlay',
+  REQUEST_RESIZE: 'Creative:requestResize',
+  REQUEST_VOLUME: 'Creative:requestVolume',
+  REQUEST_TRACKING: 'Creative:reportTracking',
+  REQUEST_CHANGE_AD_DURATION: 'Creative:requestChangeAdDuration'
+};
+
+/**
+ * These messages require a response (either resolve or reject).
+ * All other messages do not require a response and are information only.
+ */
+const EventsThatRequireResponse = [
+  CreativeMessage.GET_MEDIA_STATE,
+  CreativeMessage.REQUEST_VIDEO_LOCATION,
+  CreativeMessage.READY,
+  CreativeMessage.CLICK_THRU,
+  CreativeMessage.REQUEST_SKIP,
+  CreativeMessage.REQUEST_STOP,
+  CreativeMessage.REQUEST_PAUSE,
+  CreativeMessage.REQUEST_PLAY,
+  CreativeMessage.REQUEST_FULL_SCREEN,
+  CreativeMessage.REQUEST_VOLUME,
+  CreativeMessage.REQUEST_RESIZE,
+  CreativeMessage.REQUEST_CHANGE_AD_DURATION,
+  CreativeMessage.REPORT_TRACKING,
+  PlayerMessage.INIT,
+  PlayerMessage.START_CREATIVE,
+  PlayerMessage.AD_SKIPPED,
+  PlayerMessage.AD_STOPPED,
+  PlayerMessage.FATAL_ERROR,
+  ProtocolMessage.CREATE_SESSION,
+];
+
+// A list of errors the creative might send to the player.
+const CreativeErrorCode = {
+  UNSPECIFIED: 1100,
+  CANNOT_LOAD_RESOURCE: 1101,
+  PLAYBACK_AREA_UNUSABLE: 1102,
+  INCORRECT_VERSION: 1103,
+  TECHNICAL_ERROR: 1104,
+  EXPAND_NOT_POSSIBLE: 1105,
+  PAUSE_NOT_HONORED: 1106,
+  PLAYMODE_NOT_ADEQUATE: 1107,
+  CREATIVE_INTERNAL_ERROR: 1108,
+  DEVICE_NOT_SUPPORTED: 1109,
+  MESSAGES_NOT_FOLLOWING_SPEC: 1110,
+  PLAYER_RESPONSE_TIMEOUT: 1111,
+};
+
+// A list of errors the player might send to the creative.
+const PlayerErrorCode = {
+  UNSPECIFIED: 1200,
+  WRONG_VERSION: 1201,
+  UNSUPPORTED_TIME: 1202,
+  UNSUPPORTED_FUNCTIONALITY_REQUEST: 1203,
+  UNSUPPORTED_ACTIONS: 1204,
+  POSTMESSAGE_CHANNEL_OVERLOADED: 1205,
+  VIDEO_COULD_NOT_LOAD: 1206,
+  VIDEO_TIME_OUT: 1207,
+  RESPONSE_TIMEOUT: 1208,
+  MEDIA_NOT_SUPPORTED: 1209,
+  SPEC_NOT_FOLLOWED_ON_INIT: 1210,
+  SPEC_NOT_FOLLOWED_ON_MESSAGES: 1211,
+};
+
+// A list of reasons a player could stop the ad.
+const StopCode = {
+  UNSPECIFIED: 0,
+  USER_INITIATED: 1,
+  MEDIA_PLAYBACK_COMPLETE: 2,
+  PLAYER_INITATED: 3,
+  CREATIVE_INITIATED: 4,
+  NON_LINEAR_DURATION_COMPLETE: 5,
+};
+
+
+class SimidProtocol {
 
   constructor() {
     /*
@@ -32,8 +152,7 @@ export default class SimidProtocol {
 
     this.resolutionListeners_ = {};
 
-    window.addEventListener('message',
-      this.receiveMessage.bind(this), false);
+    window.addEventListener('message', this.receiveMessage.bind(this), false);
   }
 
   /* Reverts this protocol to its original state */
@@ -67,7 +186,7 @@ export default class SimidProtocol {
       'type': nameSpacedMessage,
       'timestamp': Date.now(),
       'args': messageArgs
-    }
+    };
 
     if (EventsThatRequireResponse.includes(messageType)) {
       // If the message requires a callback this code will set
@@ -80,7 +199,7 @@ export default class SimidProtocol {
     // A default promise will just resolve immediately.
     // It is assumed no one would listen to these promises, but if they do
     // it will "just work".
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       this.target_.postMessage(JSON.stringify(message), '*');
       resolve();
     });
@@ -121,7 +240,14 @@ export default class SimidProtocol {
     if (!event || !event.data) {
       return;
     }
-    const data = JSON.parse(event.data);
+    let data;
+    try {
+      data = JSON.parse(event.data);
+    } catch (e) {
+      console.log(`${FW.consolePrepend} receiveMessage failed at decoding message`, FW.consoleStyle, '');
+      console.log(e);
+      return;
+    }
     if (!data) {
       // If there is no data in the event this is not a SIMID message.
       return;
@@ -164,11 +290,12 @@ export default class SimidProtocol {
    */
   handleProtocolMessage_(data) {
     const type = data['type'];
+    let listeners, args, correlatingId, resolutionFunction;
     switch (type) {
       case ProtocolMessage.CREATE_SESSION:
         this.sessionId_ = data['sessionId'];
         this.resolve(data);
-        const listeners = this.listeners_[type];
+        listeners = this.listeners_[type];
         if (listeners) {
           // calls each of the listeners with the data.
           listeners.forEach((listener) => listener(data));
@@ -177,9 +304,9 @@ export default class SimidProtocol {
       case ProtocolMessage.RESOLVE:
       // intentional fallthrough
       case ProtocolMessage.REJECT:
-        const args = data['args'];
-        const correlatingId = args['messageId'];
-        const resolutionFunction = this.resolutionListeners_[correlatingId];
+        args = data['args'];
+        correlatingId = args['messageId'];
+        resolutionFunction = this.resolutionListeners_[correlatingId];
         if (resolutionFunction) {
           // If the listener exists call it once only.
           resolutionFunction(data);
@@ -188,6 +315,7 @@ export default class SimidProtocol {
         break;
     }
   }
+
 
   /**
    * Resolves an incoming message.
@@ -206,7 +334,7 @@ export default class SimidProtocol {
       'type': ProtocolMessage.RESOLVE,
       'timestamp': Date.now(),
       'args': resolveMessageArgs
-    }
+    };
     this.target_.postMessage(JSON.stringify(message), '*');
   }
 
@@ -238,12 +366,12 @@ export default class SimidProtocol {
    */
   createSession() {
     const sessionCreationResolved = () => {
-      console.log('Session created.');
+      console.log(`${FW.consolePrepend} SIMID: Session created`, FW.consoleStyle, '');
     };
     const sessionCreationRejected = () => {
       // If this ever happens, it may be impossible for the ad
       // to ever communicate with the player.
-      console.log('Session creation was rejected.');
+      console.log(`${FW.consolePrepend} SIMID: Session creation was rejected`, FW.consoleStyle, '');
     };
     this.generateSessionId_();
     this.sendMessage(ProtocolMessage.CREATE_SESSION).then(
@@ -299,121 +427,13 @@ export default class SimidProtocol {
   }
 }
 
-
-window.ProtocolMessage = {
-  CREATE_SESSION: 'createSession',
-  RESOLVE: 'resolve',
-  REJECT: 'reject'
-};
-
-/** Contains all constants common across SIMID */
-
-window.MediaMessage = {
-  DURATION_CHANGE: 'Media:durationchange',
-  ENDED: 'Media:ended',
-  ERROR: 'Media:error',
-  PAUSE: 'Media:pause',
-  PLAY: 'Media:play',
-  PLAYING: 'Media:playing',
-  SEEKED: 'Media:seeked',
-  SEEKING: 'Media:seeking',
-  TIME_UPDATE: 'Media:timeupdate',
-  VOLUME_CHANGE: 'Media:volumechange',
-};
-
-window.PlayerMessage = {
-  RESIZE: 'Player:resize',
-  INIT: 'Player:init',
-  LOG: 'Player:log',
-  START_CREATIVE: 'Player:startCreative',
-  AD_SKIPPED: 'Player:adSkipped',
-  AD_STOPPED: 'Player:adStopped',
-  FATAL_ERROR: 'Player:fatalError',
-};
-
-/** Messages from the creative */
-window.CreativeMessage = {
-  CLICK_THRU: 'Creative:clickThru',
-  EXPAND_NONLINEAR: 'Creative:expandNonlinear',
-  COLLAPSE_NONLINEAR: 'Creative:collapseNonlinear',
-  FATAL_ERROR: 'Creative:fatalError',
-  GET_MEDIA_STATE: 'Creative:getMediaState',
-  LOG: 'Creative:log',
-  REQUEST_FULL_SCREEN: 'Creative:requestFullScreen',
-  REQUEST_SKIP: 'Creative:requestSkip',
-  REQUEST_STOP: 'Creative:requestStop',
-  REQUEST_PAUSE: 'Creative:requestPause',
-  REQUEST_PLAY: 'Creative:requestPlay',
-  REQUEST_RESIZE: 'Creative:requestResize',
-  REQUEST_VOLUME: 'Creative:requestVolume',
-  REQUEST_TRACKING: 'Creative:reportTracking',
-  REQUEST_CHANGE_AD_DURATION: 'Creative:requestChangeAdDuration'
-};
-
-/**
- * These messages require a response (either resolve or reject).
- * All other messages do not require a response and are information only.
- */
-window.EventsThatRequireResponse = [
-  CreativeMessage.GET_MEDIA_STATE,
-  CreativeMessage.REQUEST_VIDEO_LOCATION,
-  CreativeMessage.READY,
-  CreativeMessage.CLICK_THRU,
-  CreativeMessage.REQUEST_SKIP,
-  CreativeMessage.REQUEST_STOP,
-  CreativeMessage.REQUEST_PAUSE,
-  CreativeMessage.REQUEST_PLAY,
-  CreativeMessage.REQUEST_FULL_SCREEN,
-  CreativeMessage.REQUEST_VOLUME,
-  CreativeMessage.REQUEST_RESIZE,
-  CreativeMessage.REQUEST_CHANGE_AD_DURATION,
-  CreativeMessage.REPORT_TRACKING,
-  PlayerMessage.INIT,
-  PlayerMessage.START_CREATIVE,
-  PlayerMessage.AD_SKIPPED,
-  PlayerMessage.AD_STOPPED,
-  PlayerMessage.FATAL_ERROR,
-  ProtocolMessage.CREATE_SESSION,
-];
-
-// A list of errors the creative might send to the player.
-window.CreativeErrorCode = {
-  UNSPECIFIED: 1100,
-  CANNOT_LOAD_RESOURCE: 1101,
-  PLAYBACK_AREA_UNUSABLE: 1102,
-  INCORRECT_VERSION: 1103,
-  TECHNICAL_ERROR: 1104,
-  EXPAND_NOT_POSSIBLE: 1105,
-  PAUSE_NOT_HONORED: 1106,
-  PLAYMODE_NOT_ADEQUATE: 1107,
-  CREATIVE_INTERNAL_ERROR: 1108,
-  DEVICE_NOT_SUPPORTED: 1109,
-  MESSAGES_NOT_FOLLOWING_SPEC: 1110,
-  PLAYER_RESPONSE_TIMEOUT: 1111,
-};
-
-// A list of errors the player might send to the creative.
-window.PlayerErrorCode = {
-  UNSPECIFIED: 1200,
-  WRONG_VERSION: 1201,
-  UNSUPPORTED_TIME: 1202,
-  UNSUPPORTED_FUNCTIONALITY_REQUEST: 1203,
-  UNSUPPORTED_ACTIONS: 1204,
-  POSTMESSAGE_CHANNEL_OVERLOADED: 1205,
-  VIDEO_COULD_NOT_LOAD: 1206,
-  VIDEO_TIME_OUT: 1207,
-  RESPONSE_TIMEOUT: 1208,
-  MEDIA_NOT_SUPPORTED: 1209,
-  SPEC_NOT_FOLLOWED_ON_INIT: 1210,
-  SPEC_NOT_FOLLOWED_ON_MESSAGES: 1211,
-};
-
-// A list of reasons a player could stop the ad.
-window.StopCode = {
-  UNSPECIFIED: 0,
-  USER_INITIATED: 1,
-  MEDIA_PLAYBACK_COMPLETE: 2,
-  PLAYER_INITATED: 3,
-  CREATIVE_INITIATED: 4,
-  NON_LINEAR_DURATION_COMPLETE: 5,
+export {
+  SimidProtocol,
+  ProtocolMessage,
+  MediaMessage,
+  PlayerMessage,
+  CreativeMessage,
+  CreativeErrorCode,
+  PlayerErrorCode,
+  StopCode
 };
