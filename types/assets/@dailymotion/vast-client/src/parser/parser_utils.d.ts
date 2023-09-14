@@ -1,3 +1,9 @@
+/**
+ * Parses a String duration into a Number.
+ * @param  {String} durationString - The dureation represented as a string.
+ * @return {Number}
+ */
+export function parseDuration(durationString: string): number;
 export namespace parserUtils {
     export { childByName };
     export { childrenByName };
@@ -61,12 +67,6 @@ declare function copyNodeAttribute(attributeName: string, nodeSource: any, nodeD
  * @returns {Object}
  */
 declare function parseAttributes(element: Element): any;
-/**
- * Parses a String duration into a Number.
- * @param  {String} durationString - The dureation represented as a string.
- * @return {Number}
- */
-declare function parseDuration(durationString: string): number;
 /**
  * Splits an Array of ads into an Array of Arrays of ads.
  * Each subarray contains either one ad or multiple ads (an AdPod)

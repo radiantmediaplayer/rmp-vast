@@ -362,7 +362,7 @@ export default class RmpVast {
      * @param {number} inputWidth
      * @param {number} inputHeight
      * @typedef {object} Companion
-     * @property {string} adSlotID
+     * @property {string} adSlotId
      * @property {string} altText
      * @property {string} companionClickThroughUrl
      * @property {string} companionClickTrackingUrl
@@ -373,7 +373,7 @@ export default class RmpVast {
      * @return {Companion[]}
      */
     getCompanionAdsList(inputWidth: number, inputHeight: number): {
-        adSlotID: string;
+        adSlotId: string;
         altText: string;
         companionClickThroughUrl: string;
         companionClickTrackingUrl: string;

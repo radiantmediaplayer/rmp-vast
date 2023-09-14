@@ -2,15 +2,16 @@ export namespace util {
     export { track };
     export { resolveURLTemplates };
     export { extractURLsFromTemplates };
+    export { filterValidUrlTemplates };
     export { containsTemplateObject };
     export { isTemplateObjectEqual };
     export { encodeURIComponentRFC3986 };
     export { replaceUrlMacros };
-    export { leftpad };
-    export { range };
     export { isNumeric };
     export { flatten };
     export { joinArrayOfUniqueTemplateObjs };
+    export { isValidTimeValue };
+    export { addLeadingZeros };
 }
 declare function track(URLTemplates: any, macros: any, options: any): void;
 /**
@@ -30,6 +31,16 @@ declare function resolveURLTemplates(URLTemplates: any[], macros?: any, options?
  * @param {Array|String} URLTemplates - An array|string of url templates.
  */
 declare function extractURLsFromTemplates(URLTemplates: any[] | string): string | any[];
+/**
+ * Filter URLTemplates elements to keep only valid and safe URL templates.
+ *   To be valid, urls should:
+ *   - have the same protocol as the client
+ *   or
+ *   - be protocol-relative urls
+ *
+ * @param {Array} URLTemplates - A Array of string/object containing urls templates.
+ */
+declare function filterValidUrlTemplates(URLTemplates: any[]): boolean | any[];
 /**
  * Returns a boolean after checking if the object exists in the array.
  *   true - if the object exists, false otherwise
@@ -56,8 +67,6 @@ declare function encodeURIComponentRFC3986(str: any): string;
  * @param {Object} macros - Object of macros to be replaced in the tracking calls
  */
 declare function replaceUrlMacros(url: string, macros: any): string;
-declare function leftpad(input: any, len?: number): string;
-declare function range(left: any, right: any, inclusive: any): any[];
 declare function isNumeric(n: any): boolean;
 declare function flatten(arr: any): any;
 /**
@@ -69,5 +78,23 @@ declare function flatten(arr: any): any;
  * @return {Array}
  */
 declare function joinArrayOfUniqueTemplateObjs(arr1?: any[], arr2?: any[]): any[];
+/**
+ * Check if a provided value is a valid time value according to the IAB definition
+ * Check if a provided value is a valid time value according to the IAB definition: Must be a positive number or -1.
+ * if not implemented by ad unit or -2 if value is unknown.
+ * @param {Number} time
+ *
+ * @return {Boolean}
+ */
+declare function isValidTimeValue(time: number): boolean;
+/**
+ * Return a string of the input number with leading zeros defined by the length param
+ *
+ * @param {Number} input - number to convert
+ * @param {Number} length - length of the desired string
+ *
+ * @return {String}
+ */
+declare function addLeadingZeros(input: number, length?: number): string;
 export {};
 //# sourceMappingURL=util.d.ts.map

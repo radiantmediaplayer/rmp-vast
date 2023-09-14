@@ -178,7 +178,10 @@ function parseAdElement(adTypeElement, emit) {
         break;
 
       case 'Survey':
-        ad.survey = parserUtils.parseNodeText(node);
+        ad.survey = {
+          value: parserUtils.parseNodeText(node),
+          type: node.getAttribute('type') || null,
+        };
         break;
 
       case 'BlockedAdCategories':
@@ -385,35 +388,21 @@ export function _parseAdVerificationsFromExtensions(extensions) {
  * @return {Object} viewableImpression - The viewableImpression object
  */
 export function _parseViewableImpression(viewableImpressionNode) {
-  const viewableImpression = {};
-  viewableImpression.id = viewableImpressionNode.getAttribute('id') || null;
-  const viewableImpressionChildNodes = viewableImpressionNode.childNodes;
-  for (const viewableImpressionElementKey in viewableImpressionChildNodes) {
-    const viewableImpressionElement =
-      viewableImpressionChildNodes[viewableImpressionElementKey];
-    const viewableImpressionNodeName = viewableImpressionElement.nodeName;
-    const viewableImpressionNodeValue = parserUtils.parseNodeText(
-      viewableImpressionElement
-    );
-
-    if (
-      (viewableImpressionNodeName !== 'Viewable' &&
-        viewableImpressionNodeName !== 'NotViewable' &&
-        viewableImpressionNodeName !== 'ViewUndetermined') ||
-      !viewableImpressionNodeValue
-    ) {
-      continue;
-    } else {
-      const viewableImpressionNodeNameLower =
-        viewableImpressionNodeName.toLowerCase();
-      if (!Array.isArray(viewableImpression[viewableImpressionNodeNameLower])) {
-        viewableImpression[viewableImpressionNodeNameLower] = [];
-      }
-      viewableImpression[viewableImpressionNodeNameLower].push(
-        viewableImpressionNodeValue
-      );
-    }
-  }
-
-  return viewableImpression;
+  const regroupNodesUrl = (urls, node) => {
+    const url = parserUtils.parseNodeText(node);
+    url && urls.push(url);
+    return urls;
+  };
+  return {
+    id: viewableImpressionNode.getAttribute('id') || null,
+    viewable: parserUtils
+      .childrenByName(viewableImpressionNode, 'Viewable')
+      .reduce(regroupNodesUrl, []),
+    notViewable: parserUtils
+      .childrenByName(viewableImpressionNode, 'NotViewable')
+      .reduce(regroupNodesUrl, []),
+    viewUndetermined: parserUtils
+      .childrenByName(viewableImpressionNode, 'ViewUndetermined')
+      .reduce(regroupNodesUrl, []),
+  };
 }

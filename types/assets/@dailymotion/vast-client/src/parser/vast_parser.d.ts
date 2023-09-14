@@ -6,7 +6,6 @@
  */
 export class VASTParser extends EventEmitter {
     remainingAds: any[];
-    parentURLs: any[];
     errorURLTemplates: any[];
     rootErrorURLTemplates: any[];
     maxWrapperDepth: any;

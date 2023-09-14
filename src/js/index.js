@@ -304,8 +304,8 @@ export default class RmpVast {
         if (companion.altText) {
           newCompanionAds.altText = companion.altText;
         }
-        if (companion.adSlotID) {
-          newCompanionAds.adSlotID = companion.adSlotID;
+        if (companion.adSlotId) {
+          newCompanionAds.adSlotId = companion.adSlotId;
         }
         newCompanionAds.trackingEventsUrls = [];
         if (companion.trackingEvents && companion.trackingEvents.creativeView) {
@@ -370,16 +370,16 @@ export default class RmpVast {
           });
         });
       }
-      if (viewableImpression.notviewable.length > 0) {
-        viewableImpression.notviewable.forEach(url => {
+      if (viewableImpression.notViewable.length > 0) {
+        viewableImpression.notViewable.forEach(url => {
           this.trackingTags.push({
             event: 'notviewable',
             url: url
           });
         });
       }
-      if (viewableImpression.viewundetermined.length > 0) {
-        viewableImpression.viewundetermined.forEach(url => {
+      if (viewableImpression.viewUndetermined.length > 0) {
+        viewableImpression.viewUndetermined.forEach(url => {
           this.trackingTags.push({
             event: 'viewundetermined',
             url: url
@@ -551,8 +551,10 @@ export default class RmpVast {
                 this.creative.simid = {
                   fileURL: creative.interactiveCreativeFile.fileURL,
                   variableDuration: creative.interactiveCreativeFile.variableDuration,
-                  adParameters: creative.adParameters
                 };
+                if (creative.adParameters && creative.adParameters.value) {
+                  this.creative.simid.adParameters = creative.adParameters.value;
+                }
               }
               this._addTrackingEvents(creative.trackingEvents);
               LINEAR.parse.call(this, creative.icons, creative.adParameters, creative.mediaFiles);
@@ -1062,7 +1064,10 @@ export default class RmpVast {
     if (this.ad && this.ad.survey) {
       return this.ad.survey;
     }
-    return '';
+    return {
+      value: '',
+      type: ''
+    };
   }
 
   /** 
@@ -1309,7 +1314,7 @@ export default class RmpVast {
    * @param {number} inputWidth
    * @param {number} inputHeight
    * @typedef {object} Companion
-   * @property {string} adSlotID
+   * @property {string} adSlotId
    * @property {string} altText
    * @property {string} companionClickThroughUrl
    * @property {string} companionClickTrackingUrl

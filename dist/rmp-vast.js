@@ -518,6 +518,23 @@ module.exports = function (it) {
 
 /***/ }),
 
+/***/ 1337:
+/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
+
+var isPrototypeOf = __webpack_require__(7046);
+var method = __webpack_require__(9335);
+
+var StringPrototype = String.prototype;
+
+module.exports = function (it) {
+  var own = it.padStart;
+  return typeof it == 'string' || it === StringPrototype
+    || (isPrototypeOf(StringPrototype, it) && own === StringPrototype.padStart) ? method : own;
+};
+
+
+/***/ }),
+
 /***/ 3993:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
@@ -840,6 +857,17 @@ __webpack_require__(1035);
 var entryVirtual = __webpack_require__(5703);
 
 module.exports = entryVirtual('String').includes;
+
+
+/***/ }),
+
+/***/ 9335:
+/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
+
+__webpack_require__(2075);
+var entryVirtual = __webpack_require__(5703);
+
+module.exports = entryVirtual('String').padStart;
 
 
 /***/ }),
@@ -5050,6 +5078,84 @@ module.exports = {
 
 /***/ }),
 
+/***/ 4887:
+/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
+
+// https://github.com/zloirock/core-js/issues/280
+var userAgent = __webpack_require__(2861);
+
+module.exports = /Version\/10(?:\.\d+){1,2}(?: [\w./]+)?(?: Mobile\/\w+)? Safari\//.test(userAgent);
+
+
+/***/ }),
+
+/***/ 6930:
+/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
+
+// https://github.com/tc39/proposal-string-pad-start-end
+var uncurryThis = __webpack_require__(5329);
+var toLength = __webpack_require__(3057);
+var toString = __webpack_require__(5803);
+var $repeat = __webpack_require__(6178);
+var requireObjectCoercible = __webpack_require__(8219);
+
+var repeat = uncurryThis($repeat);
+var stringSlice = uncurryThis(''.slice);
+var ceil = Math.ceil;
+
+// `String.prototype.{ padStart, padEnd }` methods implementation
+var createMethod = function (IS_END) {
+  return function ($this, maxLength, fillString) {
+    var S = toString(requireObjectCoercible($this));
+    var intMaxLength = toLength(maxLength);
+    var stringLength = S.length;
+    var fillStr = fillString === undefined ? ' ' : toString(fillString);
+    var fillLen, stringFiller;
+    if (intMaxLength <= stringLength || fillStr == '') return S;
+    fillLen = intMaxLength - stringLength;
+    stringFiller = repeat(fillStr, ceil(fillLen / fillStr.length));
+    if (stringFiller.length > fillLen) stringFiller = stringSlice(stringFiller, 0, fillLen);
+    return IS_END ? S + stringFiller : stringFiller + S;
+  };
+};
+
+module.exports = {
+  // `String.prototype.padStart` method
+  // https://tc39.es/ecma262/#sec-string.prototype.padstart
+  start: createMethod(false),
+  // `String.prototype.padEnd` method
+  // https://tc39.es/ecma262/#sec-string.prototype.padend
+  end: createMethod(true)
+};
+
+
+/***/ }),
+
+/***/ 6178:
+/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
+
+"use strict";
+
+var toIntegerOrInfinity = __webpack_require__(2435);
+var toString = __webpack_require__(5803);
+var requireObjectCoercible = __webpack_require__(8219);
+
+var $RangeError = RangeError;
+
+// `String.prototype.repeat` method implementation
+// https://tc39.es/ecma262/#sec-string.prototype.repeat
+module.exports = function repeat(count) {
+  var str = toString(requireObjectCoercible(this));
+  var result = '';
+  var n = toIntegerOrInfinity(count);
+  if (n < 0 || n == Infinity) throw $RangeError('Wrong number of repetitions');
+  for (;n > 0; (n >>>= 1) && (str += str)) if (n & 1) result += str;
+  return result;
+};
+
+
+/***/ }),
+
 /***/ 3093:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
@@ -7500,6 +7606,26 @@ defineIterator(String, 'String', function (iterated) {
 
 /***/ }),
 
+/***/ 2075:
+/***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
+
+"use strict";
+
+var $ = __webpack_require__(6887);
+var $padStart = (__webpack_require__(6930).start);
+var WEBKIT_BUG = __webpack_require__(4887);
+
+// `String.prototype.padStart` method
+// https://tc39.es/ecma262/#sec-string.prototype.padstart
+$({ target: 'String', proto: true, forced: WEBKIT_BUG }, {
+  padStart: function padStart(maxLength /* , fillString = ' ' */) {
+    return $padStart(this, maxLength, arguments.length > 1 ? arguments[1] : undefined);
+  }
+});
+
+
+/***/ }),
+
 /***/ 4761:
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
@@ -8489,6 +8615,16 @@ module.exports = parent;
 
 /***/ }),
 
+/***/ 8906:
+/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
+
+var parent = __webpack_require__(1337);
+
+module.exports = parent;
+
+
+/***/ }),
+
 /***/ 2759:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
@@ -9193,6 +9329,13 @@ module.exports = __webpack_require__(1022);
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
 module.exports = __webpack_require__(1798);
+
+/***/ }),
+
+/***/ 9982:
+/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
+
+module.exports = __webpack_require__(8906);
 
 /***/ }),
 
@@ -9946,7 +10089,7 @@ function fetch(input, init) {
 
     xhr.ontimeout = function() {
       setTimeout(function() {
-        reject(new TypeError('Network request failed'))
+        reject(new TypeError('Network request timed out'))
       }, 0)
     }
 
@@ -10022,6 +10165,7 @@ if (!g.fetch) {
   g.Request = Request
   g.Response = Response
 }
+
 }();
 // This entry need to be wrapped in an IIFE because it need to be in strict mode.
 !function() {
@@ -14428,8 +14572,8 @@ LINEAR.parse = function (icons, adParameters, mediaFiles) {
   }
   // check for AdParameters tag in case we have a VPAID creative
   this.adParametersData = '';
-  if (adParameters !== null) {
-    this.adParametersData = adParameters;
+  if (adParameters && adParameters.value) {
+    this.adParametersData = adParameters.value;
   }
   var mediaFileItems = [];
   for (var i = 0; i < mediaFiles.length; i++) {
@@ -15128,7 +15272,7 @@ var Utils = /*#__PURE__*/function () {
         omidRunValidationScript: false,
         omidAutoplay: false,
         partnerName: 'rmp-vast',
-        partnerVersion: "12.0.0"
+        partnerVersion: "13.0.0"
       };
       this.params = defaultParams;
       if (inputParams && _typeof(inputParams) === 'object') {
@@ -16079,14 +16223,13 @@ function createCompanionAd() {
     expandedWidth: creativeAttributes.expandedWidth || null,
     expandedHeight: creativeAttributes.expandedHeight || null,
     apiFramework: creativeAttributes.apiFramework || null,
-    adSlotID: creativeAttributes.adSlotID || null,
+    adSlotId: creativeAttributes.adSlotId || null,
     pxratio: creativeAttributes.pxratio || '1',
     renderingMode: creativeAttributes.renderingMode || 'default',
     staticResources: [],
     htmlResources: [],
     iframeResources: [],
     adParameters: null,
-    xmlEncoded: null,
     altText: null,
     companionClickThroughURLTemplate: null,
     companionClickTrackingURLTemplates: [],
@@ -16136,11 +16279,15 @@ var trim_default = /*#__PURE__*/__webpack_require__.n(trim);
 // EXTERNAL MODULE: ./node_modules/@babel/runtime-corejs3/core-js-stable/object/get-own-property-names.js
 var get_own_property_names = __webpack_require__(3750);
 var get_own_property_names_default = /*#__PURE__*/__webpack_require__.n(get_own_property_names);
+// EXTERNAL MODULE: ./node_modules/@babel/runtime-corejs3/core-js-stable/instance/pad-start.js
+var pad_start = __webpack_require__(9982);
+var pad_start_default = /*#__PURE__*/__webpack_require__.n(pad_start);
 ;// CONCATENATED MODULE: ./src/assets/@dailymotion/vast-client/src/util/macros.js
 var supportedMacros = ['ADCATEGORIES', 'ADCOUNT', 'ADPLAYHEAD', 'ADSERVINGID', 'ADTYPE', 'APIFRAMEWORKS', 'APPBUNDLE', 'ASSETURI', 'BLOCKEDADCATEGORIES', 'BREAKMAXADLENGTH', 'BREAKMAXADS', 'BREAKMAXDURATION', 'BREAKMINADLENGTH', 'BREAKMINDURATION', 'BREAKPOSITION', 'CLICKPOS', 'CLICKTYPE', 'CLIENTUA', 'CONTENTID', 'CONTENTPLAYHEAD',
 // @deprecated VAST 4.1
 'CONTENTURI', 'DEVICEIP', 'DEVICEUA', 'DOMAIN', 'EXTENSIONS', 'GDPRCONSENT', 'IFA', 'IFATYPE', 'INVENTORYSTATE', 'LATLONG', 'LIMITADTRACKING', 'MEDIAMIME', 'MEDIAPLAYHEAD', 'OMIDPARTNER', 'PAGEURL', 'PLACEMENTTYPE', 'PLAYERCAPABILITIES', 'PLAYERSIZE', 'PLAYERSTATE', 'PODSEQUENCE', 'REGULATIONS', 'SERVERSIDE', 'SERVERUA', 'TRANSACTIONID', 'UNIVERSALADID', 'VASTVERSIONS', 'VERIFICATIONVENDORS'];
 ;// CONCATENATED MODULE: ./src/assets/@dailymotion/vast-client/src/util/util.js
+
 
 
 
@@ -16178,7 +16325,7 @@ function resolveURLTemplates(URLTemplates) {
   }
 
   // Calc random/time based macros
-  macros['CACHEBUSTING'] = leftpad(Math.round(Math.random() * 1.0e8).toString());
+  macros['CACHEBUSTING'] = addLeadingZeros(Math.round(Math.random() * 1.0e8));
   macros['TIMESTAMP'] = new Date().toISOString();
 
   // RANDOM/random is not defined in VAST 3/4 as a valid macro tho it's used by some adServer (Auditude)
@@ -16258,6 +16405,29 @@ function extractURLsFromTemplates(URLTemplates) {
 }
 
 /**
+ * Filter URLTemplates elements to keep only valid and safe URL templates.
+ *   To be valid, urls should:
+ *   - have the same protocol as the client
+ *   or
+ *   - be protocol-relative urls
+ *
+ * @param {Array} URLTemplates - A Array of string/object containing urls templates.
+ */
+function filterValidUrlTemplates(URLTemplates) {
+  if (Array.isArray(URLTemplates)) {
+    return filter_default()(URLTemplates).call(URLTemplates, function (urlTemplate) {
+      var url = urlTemplate.hasOwnProperty('url') ? urlTemplate.url : urlTemplate;
+      return isValidUrl(url);
+    });
+  }
+  return isValidUrl(URLTemplates);
+}
+function isValidUrl(url) {
+  var regex = /^(https?:\/\/|\/\/)/;
+  return regex.test(url);
+}
+
+/**
  * Returns a boolean after checking if the object exists in the array.
  *   true - if the object exists, false otherwise
  *
@@ -16303,25 +16473,19 @@ function encodeURIComponentRFC3986(str) {
     return "%".concat(c.charCodeAt(0).toString(16));
   });
 }
-function leftpad(input) {
-  var len = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 8;
-  var str = String(input);
-  if (str.length < len) {
-    var _context;
-    return map_default()(_context = range(0, len - str.length, false)).call(_context, function () {
-      return '0';
-    }).join('') + str;
-  }
-  return str;
-}
-function range(left, right, inclusive) {
-  var result = [];
-  var ascending = left < right;
-  var end = !inclusive ? right : ascending ? right + 1 : right - 1;
-  for (var i = left; ascending ? i < end : i > end; ascending ? i++ : i--) {
-    result.push(i);
-  }
-  return result;
+
+/**
+ * Return a string of the input number with leading zeros defined by the length param
+ *
+ * @param {Number} input - number to convert
+ * @param {Number} length - length of the desired string
+ *
+ * @return {String}
+ */
+function addLeadingZeros(input) {
+  var _context;
+  var length = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 8;
+  return pad_start_default()(_context = input.toString()).call(_context, length, '0');
 }
 function isNumeric(n) {
   return !isNaN(parse_float_default()(n)) && isFinite(n);
@@ -16353,19 +16517,32 @@ function joinArrayOfUniqueTemplateObjs() {
     return res;
   }, []);
 }
+
+/**
+ * Check if a provided value is a valid time value according to the IAB definition
+ * Check if a provided value is a valid time value according to the IAB definition: Must be a positive number or -1.
+ * if not implemented by ad unit or -2 if value is unknown.
+ * @param {Number} time
+ *
+ * @return {Boolean}
+ */
+function isValidTimeValue(time) {
+  return Number.isFinite(time) && time >= -2;
+}
 var util = {
   track: track,
   resolveURLTemplates: resolveURLTemplates,
   extractURLsFromTemplates: extractURLsFromTemplates,
+  filterValidUrlTemplates: filterValidUrlTemplates,
   containsTemplateObject: containsTemplateObject,
   isTemplateObjectEqual: isTemplateObjectEqual,
   encodeURIComponentRFC3986: encodeURIComponentRFC3986,
   replaceUrlMacros: replaceUrlMacros,
-  leftpad: leftpad,
-  range: range,
   isNumeric: isNumeric,
   flatten: flatten,
-  joinArrayOfUniqueTemplateObjs: joinArrayOfUniqueTemplateObjs
+  joinArrayOfUniqueTemplateObjs: joinArrayOfUniqueTemplateObjs,
+  isValidTimeValue: isValidTimeValue,
+  addLeadingZeros: addLeadingZeros
 };
 ;// CONCATENATED MODULE: ./src/assets/@dailymotion/vast-client/src/parser/parser_utils.js
 
@@ -16579,7 +16756,7 @@ function assignAttributes(attributes, verificationObject) {
  * @return {void}
  */
 function mergeWrapperAdData(unwrappedAd, wrapper) {
-  var _context5, _context6, _context7, _context9;
+  var _context5, _context6, _context7, _context9, _wrapper$creatives;
   unwrappedAd.errorURLTemplates = concat_default()(_context5 = wrapper.errorURLTemplates).call(_context5, unwrappedAd.errorURLTemplates);
   unwrappedAd.impressionURLTemplates = concat_default()(_context6 = wrapper.impressionURLTemplates).call(_context6, unwrappedAd.impressionURLTemplates);
   unwrappedAd.extensions = concat_default()(_context7 = wrapper.extensions).call(_context7, unwrappedAd.extensions);
@@ -16654,6 +16831,20 @@ function mergeWrapperAdData(unwrappedAd, wrapper) {
   if (wrapper.blockedAdCategories) {
     var _context14;
     unwrappedAd.blockedAdCategories = concat_default()(_context14 = unwrappedAd.blockedAdCategories).call(_context14, wrapper.blockedAdCategories);
+  }
+
+  // Merge Wrapper's creatives containing icon elements
+  if ((_wrapper$creatives = wrapper.creatives) !== null && _wrapper$creatives !== void 0 && _wrapper$creatives.length) {
+    var _context15;
+    // As specified by VAST specs, wrapper should not contain any mediafiles
+    var wrapperCreativesWithIconsNode = filter_default()(_context15 = wrapper.creatives).call(_context15, function (creative) {
+      var _creative$icons;
+      return ((_creative$icons = creative.icons) === null || _creative$icons === void 0 ? void 0 : _creative$icons.length) && !creative.mediaFiles.length;
+    });
+    if (wrapperCreativesWithIconsNode.length) {
+      var _context16;
+      unwrappedAd.creatives = concat_default()(_context16 = unwrappedAd.creatives).call(_context16, wrapperCreativesWithIconsNode);
+    }
   }
 }
 var parserUtils = {
@@ -16732,8 +16923,10 @@ function parseCreativeCompanion(creativeElement, creativeAttributes) {
     companionAd.companionClickThroughURLTemplate = parserUtils.parseNodeText(parserUtils.childByName(companionResource, 'CompanionClickThrough')) || null;
     var adParametersElement = parserUtils.childByName(companionResource, 'AdParameters');
     if (adParametersElement) {
-      companionAd.adParameters = parserUtils.parseNodeText(adParametersElement);
-      companionAd.xmlEncoded = adParametersElement.getAttribute('xmlEncoded') || null;
+      companionAd.adParameters = {
+        value: parserUtils.parseNodeText(adParametersElement),
+        xmlEncoded: adParametersElement.getAttribute('xmlEncoded') || null
+      };
     }
     return companionAd;
   });
@@ -16798,7 +16991,8 @@ function createIcon() {
     pxratio: '1',
     iconClickThroughURLTemplate: null,
     iconClickTrackingURLTemplates: [],
-    iconViewTrackingURLTemplate: null
+    iconViewTrackingURLTemplate: null,
+    iconClickFallbackImages: []
   };
 }
 ;// CONCATENATED MODULE: ./src/assets/@dailymotion/vast-client/src/interactive_creative_file.js
@@ -16907,7 +17101,10 @@ function parseCreativeLinear(creativeElement, creativeAttributes) {
   }
   var adParamsElement = parserUtils.childByName(creativeElement, 'AdParameters');
   if (adParamsElement) {
-    creative.adParameters = parserUtils.parseNodeText(adParamsElement);
+    creative.adParameters = {
+      value: parserUtils.parseNodeText(adParamsElement),
+      xmlEncoded: adParamsElement.getAttribute('xmlEncoded') || null
+    };
   }
   parserUtils.childrenByName(creativeElement, 'TrackingEvents').forEach(function (trackingEventsElement) {
     parserUtils.childrenByName(trackingEventsElement, 'Tracking').forEach(function (trackingElement) {
@@ -17052,6 +17249,16 @@ function parseIcon(iconElement) {
         url: parserUtils.parseNodeText(iconClickTrackingElement)
       });
     });
+    var iconClickFallbackImagesElement = parserUtils.childByName(iconClicksElement, 'IconClickFallbackImages');
+    if (iconClickFallbackImagesElement) {
+      parserUtils.childrenByName(iconClickFallbackImagesElement, 'IconClickFallbackImage').forEach(function (iconClickFallbackImageElement) {
+        icon.iconClickFallbackImages.push({
+          url: parserUtils.parseNodeText(iconClickFallbackImageElement) || null,
+          width: iconClickFallbackImageElement.getAttribute('width') || null,
+          height: iconClickFallbackImageElement.getAttribute('height') || null
+        });
+      });
+    }
   }
   icon.iconViewTrackingURLTemplate = parserUtils.parseNodeText(parserUtils.childByName(iconElement, 'IconViewTracking'));
   return icon;
@@ -17200,7 +17407,10 @@ function parseCreativeNonLinear(creativeElement, creativeAttributes) {
     });
     var adParamsElement = parserUtils.childByName(nonlinearResource, 'AdParameters');
     if (adParamsElement) {
-      nonlinearAd.adParameters = parserUtils.parseNodeText(adParamsElement);
+      nonlinearAd.adParameters = {
+        value: parserUtils.parseNodeText(adParamsElement),
+        xmlEncoded: adParamsElement.getAttribute('xmlEncoded') || null
+      };
     }
     nonlinearAd.nonlinearClickThroughURLTemplate = parserUtils.parseNodeText(parserUtils.childByName(nonlinearResource, 'NonLinearClickThrough'));
     parserUtils.childrenByName(nonlinearResource, 'NonLinearClickTracking').forEach(function (clickTrackingElement) {
@@ -17610,6 +17820,7 @@ var parserVerification = {
 
 
 
+
 /**
  * This module provides methods to parse a VAST Ad Element.
  */
@@ -17763,7 +17974,10 @@ function parseAdElement(adTypeElement, emit) {
         };
         break;
       case 'Survey':
-        ad.survey = parserUtils.parseNodeText(node);
+        ad.survey = {
+          value: parserUtils.parseNodeText(node),
+          type: node.getAttribute('type') || null
+        };
         break;
       case 'BlockedAdCategories':
         ad.blockedAdCategories.push({
@@ -17926,24 +18140,18 @@ function _parseAdVerificationsFromExtensions(extensions) {
  * @return {Object} viewableImpression - The viewableImpression object
  */
 function _parseViewableImpression(viewableImpressionNode) {
-  var viewableImpression = {};
-  viewableImpression.id = viewableImpressionNode.getAttribute('id') || null;
-  var viewableImpressionChildNodes = viewableImpressionNode.childNodes;
-  for (var viewableImpressionElementKey in viewableImpressionChildNodes) {
-    var viewableImpressionElement = viewableImpressionChildNodes[viewableImpressionElementKey];
-    var viewableImpressionNodeName = viewableImpressionElement.nodeName;
-    var viewableImpressionNodeValue = parserUtils.parseNodeText(viewableImpressionElement);
-    if (viewableImpressionNodeName !== 'Viewable' && viewableImpressionNodeName !== 'NotViewable' && viewableImpressionNodeName !== 'ViewUndetermined' || !viewableImpressionNodeValue) {
-      continue;
-    } else {
-      var viewableImpressionNodeNameLower = viewableImpressionNodeName.toLowerCase();
-      if (!Array.isArray(viewableImpression[viewableImpressionNodeNameLower])) {
-        viewableImpression[viewableImpressionNodeNameLower] = [];
-      }
-      viewableImpression[viewableImpressionNodeNameLower].push(viewableImpressionNodeValue);
-    }
-  }
-  return viewableImpression;
+  var _context4, _context5, _context6;
+  var regroupNodesUrl = function regroupNodesUrl(urls, node) {
+    var url = parserUtils.parseNodeText(node);
+    url && urls.push(url);
+    return urls;
+  };
+  return {
+    id: viewableImpressionNode.getAttribute('id') || null,
+    viewable: reduce_default()(_context4 = parserUtils.childrenByName(viewableImpressionNode, 'Viewable')).call(_context4, regroupNodesUrl, []),
+    notViewable: reduce_default()(_context5 = parserUtils.childrenByName(viewableImpressionNode, 'NotViewable')).call(_context5, regroupNodesUrl, []),
+    viewUndetermined: reduce_default()(_context6 = parserUtils.childrenByName(viewableImpressionNode, 'ViewUndetermined')).call(_context6, regroupNodesUrl, [])
+  };
 }
 ;// CONCATENATED MODULE: ./src/assets/@dailymotion/vast-client/src/util/event_emitter.js
 
@@ -18017,7 +18225,7 @@ var EventEmitter = /*#__PURE__*/function () {
      * Synchronously calls each of the handlers registered for the named event,
      * in the order they were registered, passing the supplied arguments to each.
      * @param {String} event
-     * @param  {any[]} args
+     * @param  {...any} args list of arguments that will be used by the event handler
      * @returns {Boolean} true if the event had handlers, false otherwise.
      */
   }, {
@@ -18273,7 +18481,6 @@ var updateEstimatedBitrate = function updateEstimatedBitrate(byteLength, duratio
 
 
 
-
 var DEFAULT_MAX_WRAPPER_DEPTH = 10;
 var DEFAULT_EVENT_DATA = {
   ERRORCODE: 900,
@@ -18298,7 +18505,6 @@ var VASTParser = /*#__PURE__*/function (_EventEmitter) {
     _classCallCheck(this, VASTParser);
     _this = _super.call(this);
     _this.remainingAds = [];
-    _this.parentURLs = [];
     _this.errorURLTemplates = [];
     _this.rootErrorURLTemplates = [];
     _this.maxWrapperDepth = null;
@@ -18414,7 +18620,6 @@ var VASTParser = /*#__PURE__*/function (_EventEmitter) {
         _this2.URLTemplateFilters.forEach(function (filter) {
           url = filter(url);
         });
-        _this2.parentURLs.push(url);
         var timeBeforeGet = Date.now();
         _this2.emit('VAST-resolving', {
           url: url,
@@ -18459,7 +18664,6 @@ var VASTParser = /*#__PURE__*/function (_EventEmitter) {
         withCredentials: options.withCredentials
       };
       this.maxWrapperDepth = options.wrapperLimit || DEFAULT_MAX_WRAPPER_DEPTH;
-      this.parentURLs = [];
       this.parsingOptions = {
         allowMultipleAds: options.allowMultipleAds
       };
@@ -18485,7 +18689,6 @@ var VASTParser = /*#__PURE__*/function (_EventEmitter) {
       }
       var ads = all ? util.flatten(this.remainingAds) : this.remainingAds.shift();
       this.errorURLTemplates = [];
-      this.parentURLs = [];
       return this.resolveAds(ads, {
         wrapperDepth: 0,
         url: this.rootURL
@@ -18768,7 +18971,7 @@ var VASTParser = /*#__PURE__*/function (_EventEmitter) {
     value: function resolveWrappers(ad, wrapperDepth, previousUrl) {
       var _this7 = this;
       return new (core_js_stable_promise_default())(function (resolve) {
-        var _context3, _this7$parsingOptions;
+        var _this7$parsingOptions;
         // Going one level deeper in the wrapper chain
         wrapperDepth++;
         // We already have a resolved VAST ad, no need to resolve wrapper
@@ -18776,7 +18979,7 @@ var VASTParser = /*#__PURE__*/function (_EventEmitter) {
           delete ad.nextWrapperURL;
           return resolve(ad);
         }
-        if (wrapperDepth >= _this7.maxWrapperDepth || index_of_default()(_context3 = _this7.parentURLs).call(_context3, ad.nextWrapperURL) !== -1) {
+        if (wrapperDepth >= _this7.maxWrapperDepth) {
           // Wrapper limit reached, as defined by the video player.
           // Too many Wrapper responses have been received with no InLine response.
           ad.errorCode = 302;
@@ -18850,8 +19053,8 @@ var VASTParser = /*#__PURE__*/function (_EventEmitter) {
           // but no creative was found
           var ad = vastResponse.ads[index];
           if (ad.errorCode || ad.creatives.length === 0) {
-            var _context4, _context5;
-            this.trackVastError(concat_default()(_context4 = ad.errorURLTemplates).call(_context4, vastResponse.errorURLTemplates), {
+            var _context3, _context4;
+            this.trackVastError(concat_default()(_context3 = ad.errorURLTemplates).call(_context3, vastResponse.errorURLTemplates), {
               ERRORCODE: ad.errorCode || 303
             }, {
               ERRORMESSAGE: ad.errorMessage || ''
@@ -18860,7 +19063,7 @@ var VASTParser = /*#__PURE__*/function (_EventEmitter) {
             }, {
               system: ad.system
             });
-            splice_default()(_context5 = vastResponse.ads).call(_context5, index, 1);
+            splice_default()(_context4 = vastResponse.ads).call(_context4, index, 1);
           }
         }
       }
@@ -19407,8 +19610,8 @@ var RmpVast = /*#__PURE__*/function () {
           if (companion.altText) {
             newCompanionAds.altText = companion.altText;
           }
-          if (companion.adSlotID) {
-            newCompanionAds.adSlotID = companion.adSlotID;
+          if (companion.adSlotId) {
+            newCompanionAds.adSlotId = companion.adSlotId;
           }
           newCompanionAds.trackingEventsUrls = [];
           if (companion.trackingEvents && companion.trackingEvents.creativeView) {
@@ -19483,16 +19686,16 @@ var RmpVast = /*#__PURE__*/function () {
             });
           });
         }
-        if (viewableImpression.notviewable.length > 0) {
-          viewableImpression.notviewable.forEach(function (url) {
+        if (viewableImpression.notViewable.length > 0) {
+          viewableImpression.notViewable.forEach(function (url) {
             _this7.trackingTags.push({
               event: 'notviewable',
               url: url
             });
           });
         }
-        if (viewableImpression.viewundetermined.length > 0) {
-          viewableImpression.viewundetermined.forEach(function (url) {
+        if (viewableImpression.viewUndetermined.length > 0) {
+          viewableImpression.viewUndetermined.forEach(function (url) {
             _this7.trackingTags.push({
               event: 'viewundetermined',
               url: url
@@ -19668,9 +19871,11 @@ var RmpVast = /*#__PURE__*/function () {
                               if (creative.interactiveCreativeFile && /simid/i.test(creative.interactiveCreativeFile.apiFramework) && /text\/html/i.test(creative.interactiveCreativeFile.type)) {
                                 _this8.creative.simid = {
                                   fileURL: creative.interactiveCreativeFile.fileURL,
-                                  variableDuration: creative.interactiveCreativeFile.variableDuration,
-                                  adParameters: creative.adParameters
+                                  variableDuration: creative.interactiveCreativeFile.variableDuration
                                 };
+                                if (creative.adParameters && creative.adParameters.value) {
+                                  _this8.creative.simid.adParameters = creative.adParameters.value;
+                                }
                               }
                               _this8._addTrackingEvents(creative.trackingEvents);
                               linear.parse.call(_this8, creative.icons, creative.adParameters, creative.mediaFiles);
@@ -20237,7 +20442,10 @@ var RmpVast = /*#__PURE__*/function () {
       if (this.ad && this.ad.survey) {
         return this.ad.survey;
       }
-      return '';
+      return {
+        value: '',
+        type: ''
+      };
     }
 
     /** 
@@ -20526,7 +20734,7 @@ var RmpVast = /*#__PURE__*/function () {
      * @param {number} inputWidth
      * @param {number} inputHeight
      * @typedef {object} Companion
-     * @property {string} adSlotID
+     * @property {string} adSlotId
      * @property {string} altText
      * @property {string} companionClickThroughUrl
      * @property {string} companionClickTrackingUrl

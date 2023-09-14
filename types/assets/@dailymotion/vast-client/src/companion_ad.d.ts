@@ -8,14 +8,13 @@ export function createCompanionAd(creativeAttributes?: {}): {
     expandedWidth: any;
     expandedHeight: any;
     apiFramework: any;
-    adSlotID: any;
+    adSlotId: any;
     pxratio: any;
     renderingMode: any;
     staticResources: any[];
     htmlResources: any[];
     iframeResources: any[];
     adParameters: any;
-    xmlEncoded: any;
     altText: any;
     companionClickThroughURLTemplate: any;
     companionClickTrackingURLTemplates: any[];

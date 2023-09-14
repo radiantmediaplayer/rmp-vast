@@ -355,8 +355,8 @@ LINEAR.parse = function (icons, adParameters, mediaFiles) {
   }
   // check for AdParameters tag in case we have a VPAID creative
   this.adParametersData = '';
-  if (adParameters !== null) {
-    this.adParametersData = adParameters;
+  if (adParameters && adParameters.value) {
+    this.adParametersData = adParameters.value;
   }
   let mediaFileItems = [];
   for (let i = 0; i < mediaFiles.length; i++) {

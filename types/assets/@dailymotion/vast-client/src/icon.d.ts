@@ -15,5 +15,6 @@ export function createIcon(): {
     iconClickThroughURLTemplate: any;
     iconClickTrackingURLTemplates: any[];
     iconViewTrackingURLTemplate: any;
+    iconClickFallbackImages: any[];
 };
 //# sourceMappingURL=icon.d.ts.map

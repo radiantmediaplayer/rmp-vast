@@ -23,7 +23,7 @@ rmp-vast is used and maintained by [Radiant Media Player](https://www.radiantmed
 - [AdVerifications OM Web SDK](#adverifications-om-web-sdk)
 - [SIMID support (BETA)](#simid-support)
 - [VPAID support (DEPRECATED)](#vpaid-support)
-- [HLS creatives support](#hls-creatives-support)
+- [HLS creatives support (BETA)](#hls-creatives-support)
 - [Autoplay support](#autoplay-support)
 - [Fullscreen management](#fullscreen-management)
 - [Pre, mid and post rolls](#pre-mid-and-post-rolls)
@@ -105,7 +105,8 @@ This example can be found live at https://www.radiantmediaplayer.com/rmp-vast/ap
 - Industry Icons (image/iframe/HTML)
 - VAST 4.2 Macros
 - AdVerifications (OM Web SDK)
-- VPAID 1 and 2 JavaScript <sup>deprecated</sup>
+- SIMID <sup>BETA</sup>
+- VPAID 1 and 2 JavaScript <sup>DEPRECATED</sup>
 - Outstream ads
 - Ad Pods
 - Audio Ads (MP3/M4A/HLS where natively supported) in HTML5 video
@@ -113,7 +114,6 @@ This example can be found live at https://www.radiantmediaplayer.com/rmp-vast/ap
 
 ### Currently unsupported features
 
-- SIMID (PR welcome)
 - VMAP
 
 [Back to documentation sections](#documentation-sections)
@@ -138,19 +138,19 @@ This example can be found live at https://www.radiantmediaplayer.com/rmp-vast/ap
 
 Desktop means Windows 7+, macOS 10.11+, Linux (latest LTS Ubuntu).
 
-#### WebViews (mobile apps built with Ionic, Cordova)
+#### WebViews (Ionic, Cordova, WebView)
 
 - Android 5+
 - iOS 12+ (WKWebView)
 
 With the announcement of Apple in december 2019, to remove support for UIWebView API by end 2020, we only support WKWebView API for iOS apps built with Cordova, Ionic or WebView. [See this blog post](https://www.radiantmediaplayer.com/blog/updating-ios-apps-for-wkwebview.html) to help you update to WKWebView API.
 
-#### Smart TV & OTT
+#### Smart TV & OTT (Native web, Cordova or WebView)
 
 - Samsung Tizen 3+ apps
 - LG webOS 3+ apps
 - Electron 6+ apps
-- Xbox One, Xbox Series S, Xbox Series X - UWP apps
+- Android TV 9+ apps with Cordova or WebView
 - Fire TV apps (Web Apps and Hybrid Apps) with fireOS 6+
 
 [Back to documentation sections](#documentation-sections)
@@ -236,14 +236,14 @@ Once rmp-vast is loaded on your page you can create a new rmp-vast instance as f
   - `params.showControlsForVastPlayer: Boolean` Shows VAST player HTML5 default video controls. Default: false.
   - `params.vastXmlInput: Boolean` Instead of a VAST URI, we provide directly to rmp-vast VAST XML. Default: false. See test/spec/inlineLinearSpec/raw-xml-input.html for an example.
   - `params.enableSimid: Boolean` Enables SIMID support or not. This feature is currently in BETA. Default: false.
-  - `params.enableVpaid: Boolean` Enables VPAID support or not. Default: true.
+  - `params.enableVpaid: Boolean` Enables VPAID support or not. Default: true. DEPRECATED.
   - `params.vpaidSettings: Object` information required to properly display VPAID creatives - note that it is up to the parent application of rmp-vast to provide those informations - below values are default (see test/spec/vpaidSpec/ for examples):
     - `params.vpaidSettings.width: Number` Default: 640.
     - `params.vpaidSettings.height: Number` Default: 360.
     - `params.vpaidSettings.viewMode: String` Default: 'normal'. Can be 'fullscreen' as well.
     - `params.vpaidSettings.desiredBitrate: Number` Default: 500. In kbps.
-  - `params.useHlsJS: Boolean` Enables rendering of HLS creatives with hls.js in rmp-vast. Default: false.
-  - `params.debugHlsJS: Boolean` Enables debugging of HLS creatives with hls.js in rmp-vast. Default: false.
+  - `params.useHlsJS: Boolean` Enables rendering of HLS creatives with hls.js in rmp-vast. Default: false. BETA feature.
+  - `params.debugHlsJS: Boolean` Enables debugging of HLS creatives with hls.js in rmp-vast. Default: false. BETA feature.
   - `params.forceUseContentPlayerForAds: Boolean` Forces player to use content player for ads - on Apple devices we may have a need to set useContentPlayerForAds differently based on content playback type (native vs. MSE playback). Default: false.
   - `params.omidSupport: Boolean` Enables OMID (OM Web SDK) support in rmp-vast. Default: false. Refer to the [AdVerifications OM Web SDK](#adverifications-om-web-sdk) section for more information.
   - `params.omidAllowedVendors: Array` List of allowed vendors for ad verification. Vendors not listed will be rejected. Default: [].
@@ -453,7 +453,7 @@ The following methods provide context information for the rmp-vast instance:
 ## Companion ads support
 
 We support StaticResource, IFrameResource and HTMLResource in Companion tags.
-We also support AltText, CompanionClickThrough, CompanionClickTracking, TrackingEvents tags in Companion tags. We support "required" attribute for CompanionAds tag as well as "adSlotID" attribute for Companion tag. We also support CompanionAds in wrappers/redirects (The CompanionAds nearer to the final linear creative will be selected).
+We also support AltText, CompanionClickThrough, CompanionClickTracking, TrackingEvents tags in Companion tags. We support "required" attribute for CompanionAds tag as well as "adSlotId" attribute for Companion tag. We also support CompanionAds in wrappers/redirects (The CompanionAds nearer to the final linear creative will be selected).
 
 See ./test/spec/companionSpec/ for examples of implementation.
 
@@ -463,7 +463,7 @@ The following methods must be queried when the `adstarted` event fires for the m
 
 ```javascript
 {
-  adSlotID: "RMPSLOTID-1",
+  adSlotId: "RMPSLOTID-1",
   altText: "Radiant Media Player logo",
   companionClickThroughUrl: "https://www.radiantmediaplayer.com",
   companionClickTrackingUrl: "https://www.radiantmediaplayer.com/vast/tags/ping.gif?creativeType=companion&type=companionClickTracking",
@@ -536,7 +536,8 @@ Current VPAID support limitations:
 
 ## HLS creatives support
 
-This is a BETA feature, please open a GitHub issue if you spot anything.
+### This is a BETA feature - open an issue for bugs and improvements
+
 With rmp-vast 5.2.0 we now support linear creatives in HLS format on all supported devices for rmp-vast. This is made possible thanks to the [hls.js project](https://github.com/video-dev/hls.js). Make sure to add ./externals/hls/hls.min.js to your page and enable this feature with `useHlsJS: true` setting. See ./test/spec/inlineLinearSpec/hls-creative.html for an example.
 
 [Back to documentation sections](#documentation-sections)
