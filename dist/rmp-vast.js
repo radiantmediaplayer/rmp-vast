@@ -9442,6 +9442,13 @@ module.exports = __webpack_require__(4888);
 
 module.exports = __webpack_require__(7460);
 
+/***/ }),
+
+/***/ 8760:
+/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
+
+module.exports = __webpack_require__(1895);
+
 /***/ })
 
 /******/ 	});
@@ -10019,6 +10026,7 @@ Response.prototype.clone = function() {
 
 Response.error = function() {
   var response = new Response(null, {status: 200, statusText: ''})
+  response.ok = false
   response.status = 0
   response.type = 'error'
   return response
@@ -10069,7 +10077,7 @@ function fetch(input, init) {
       }
       // This check if specifically for when a user fetches a file locally from the file system
       // Only if the status is out of a normal range
-      if (request.url.startsWith('file://') && (xhr.status < 200 || xhr.status > 599)) {
+      if (request.url.indexOf('file://') === 0 && (xhr.status < 200 || xhr.status > 599)) {
         options.status = 200;
       } else {
         options.status = xhr.status;
@@ -10570,22 +10578,22 @@ var to_primitive = __webpack_require__(6189);
 ;// CONCATENATED MODULE: ./node_modules/@babel/runtime-corejs3/helpers/esm/toPrimitive.js
 
 
-function _toPrimitive(input, hint) {
-  if (_typeof(input) !== "object" || input === null) return input;
-  var prim = input[to_primitive];
-  if (prim !== undefined) {
-    var res = prim.call(input, hint || "default");
-    if (_typeof(res) !== "object") return res;
+function toPrimitive(t, r) {
+  if ("object" != _typeof(t) || !t) return t;
+  var e = t[to_primitive];
+  if (void 0 !== e) {
+    var i = e.call(t, r || "default");
+    if ("object" != _typeof(i)) return i;
     throw new TypeError("@@toPrimitive must return a primitive value.");
   }
-  return (hint === "string" ? String : Number)(input);
+  return ("string" === r ? String : Number)(t);
 }
 ;// CONCATENATED MODULE: ./node_modules/@babel/runtime-corejs3/helpers/esm/toPropertyKey.js
 
 
-function _toPropertyKey(arg) {
-  var key = _toPrimitive(arg, "string");
-  return _typeof(key) === "symbol" ? key : String(key);
+function toPropertyKey(t) {
+  var i = toPrimitive(t, "string");
+  return "symbol" == _typeof(i) ? i : String(i);
 }
 ;// CONCATENATED MODULE: ./node_modules/@babel/runtime-corejs3/helpers/esm/createClass.js
 
@@ -10596,7 +10604,7 @@ function _defineProperties(target, props) {
     descriptor.enumerable = descriptor.enumerable || false;
     descriptor.configurable = true;
     if ("value" in descriptor) descriptor.writable = true;
-    define_property(target, _toPropertyKey(descriptor.key), descriptor);
+    define_property(target, toPropertyKey(descriptor.key), descriptor);
   }
 }
 function _createClass(Constructor, protoProps, staticProps) {
@@ -11466,7 +11474,6 @@ var _ping = function _ping(url) {
     */
   }
 };
-
 TRACKING_EVENTS.pingURI = function (url) {
   var trackingUrl = TRACKING_EVENTS.replaceMacros.call(this, url, true);
   _ping.call(this, trackingUrl);
@@ -14912,8 +14919,8 @@ VAST_PLAYER.init = function () {
   if (!this.useContentPlayerForAds) {
     this.vastPlayer = document.createElement('video');
     FW.logVideoEvents(this.vastPlayer, 'vast');
-    // disable casting of video ads for Android
-    if (ENV.isAndroid[0] && typeof this.vastPlayer.disableRemotePlayback !== 'undefined') {
+    // disable native UI cast for video ads
+    if (typeof this.vastPlayer.disableRemotePlayback !== 'undefined') {
       this.vastPlayer.disableRemotePlayback = true;
     }
     this.vastPlayer.className = 'rmp-ad-vast-video-player';
@@ -15272,7 +15279,7 @@ var Utils = /*#__PURE__*/function () {
         omidRunValidationScript: false,
         omidAutoplay: false,
         partnerName: 'rmp-vast',
-        partnerVersion: "13.0.0"
+        partnerVersion: "13.1.0"
       };
       this.params = defaultParams;
       if (inputParams && _typeof(inputParams) === 'object') {
@@ -16073,8 +16080,52 @@ var Storage = /*#__PURE__*/function () {
   }]);
   return Storage;
 }();
+// EXTERNAL MODULE: ./node_modules/@babel/runtime-corejs3/core-js-stable/reflect/construct.js
+var construct = __webpack_require__(8760);
+var construct_default = /*#__PURE__*/__webpack_require__.n(construct);
+;// CONCATENATED MODULE: ./node_modules/@babel/runtime-corejs3/helpers/esm/assertThisInitialized.js
+function _assertThisInitialized(self) {
+  if (self === void 0) {
+    throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+  }
+  return self;
+}
+;// CONCATENATED MODULE: ./node_modules/@babel/runtime-corejs3/helpers/esm/possibleConstructorReturn.js
+
+
+function _possibleConstructorReturn(self, call) {
+  if (call && (_typeof(call) === "object" || typeof call === "function")) {
+    return call;
+  } else if (call !== void 0) {
+    throw new TypeError("Derived constructors may only return object or undefined");
+  }
+  return _assertThisInitialized(self);
+}
+// EXTERNAL MODULE: ./node_modules/core-js-pure/full/reflect/construct.js
+var reflect_construct = __webpack_require__(6733);
+;// CONCATENATED MODULE: ./node_modules/@babel/runtime-corejs3/helpers/esm/isNativeReflectConstruct.js
+
+function _isNativeReflectConstruct() {
+  try {
+    var t = !Boolean.prototype.valueOf.call(reflect_construct(Boolean, [], function () {}));
+  } catch (t) {}
+  return (_isNativeReflectConstruct = function _isNativeReflectConstruct() {
+    return !!t;
+  })();
+}
 // EXTERNAL MODULE: ./node_modules/core-js-pure/full/instance/bind.js
 var bind = __webpack_require__(9097);
+;// CONCATENATED MODULE: ./node_modules/@babel/runtime-corejs3/helpers/esm/getPrototypeOf.js
+
+
+
+function _getPrototypeOf(o) {
+  var _context;
+  _getPrototypeOf = set_prototype_of ? bind(_context = get_prototype_of).call(_context) : function _getPrototypeOf(o) {
+    return o.__proto__ || get_prototype_of(o);
+  };
+  return _getPrototypeOf(o);
+}
 ;// CONCATENATED MODULE: ./node_modules/@babel/runtime-corejs3/helpers/esm/setPrototypeOf.js
 
 
@@ -16105,69 +16156,6 @@ function _inherits(subClass, superClass) {
     writable: false
   });
   if (superClass) _setPrototypeOf(subClass, superClass);
-}
-// EXTERNAL MODULE: ./node_modules/core-js-pure/full/reflect/construct.js
-var construct = __webpack_require__(6733);
-;// CONCATENATED MODULE: ./node_modules/@babel/runtime-corejs3/helpers/esm/getPrototypeOf.js
-
-
-
-function _getPrototypeOf(o) {
-  var _context;
-  _getPrototypeOf = set_prototype_of ? bind(_context = get_prototype_of).call(_context) : function _getPrototypeOf(o) {
-    return o.__proto__ || get_prototype_of(o);
-  };
-  return _getPrototypeOf(o);
-}
-;// CONCATENATED MODULE: ./node_modules/@babel/runtime-corejs3/helpers/esm/isNativeReflectConstruct.js
-
-function _isNativeReflectConstruct() {
-  if (typeof Reflect === "undefined" || !construct) return false;
-  if (construct.sham) return false;
-  if (typeof Proxy === "function") return true;
-  try {
-    Boolean.prototype.valueOf.call(construct(Boolean, [], function () {}));
-    return true;
-  } catch (e) {
-    return false;
-  }
-}
-;// CONCATENATED MODULE: ./node_modules/@babel/runtime-corejs3/helpers/esm/assertThisInitialized.js
-function _assertThisInitialized(self) {
-  if (self === void 0) {
-    throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
-  }
-  return self;
-}
-;// CONCATENATED MODULE: ./node_modules/@babel/runtime-corejs3/helpers/esm/possibleConstructorReturn.js
-
-
-function _possibleConstructorReturn(self, call) {
-  if (call && (_typeof(call) === "object" || typeof call === "function")) {
-    return call;
-  } else if (call !== void 0) {
-    throw new TypeError("Derived constructors may only return object or undefined");
-  }
-  return _assertThisInitialized(self);
-}
-;// CONCATENATED MODULE: ./node_modules/@babel/runtime-corejs3/helpers/esm/createSuper.js
-
-
-
-
-function _createSuper(Derived) {
-  var hasNativeReflectConstruct = _isNativeReflectConstruct();
-  return function _createSuperInternal() {
-    var Super = _getPrototypeOf(Derived),
-      result;
-    if (hasNativeReflectConstruct) {
-      var NewTarget = _getPrototypeOf(this).constructor;
-      result = construct(Super, arguments, NewTarget);
-    } else {
-      result = Super.apply(this, arguments);
-    }
-    return _possibleConstructorReturn(this, result);
-  };
 }
 ;// CONCATENATED MODULE: ./src/assets/@dailymotion/vast-client/src/ad.js
 function createAd() {
@@ -18476,6 +18464,10 @@ var updateEstimatedBitrate = function updateEstimatedBitrate(byteLength, duratio
 
 
 
+function _callSuper(t, o, e) { return o = _getPrototypeOf(o), _possibleConstructorReturn(t, _isNativeReflectConstruct() ? construct_default()(o, e || [], _getPrototypeOf(t).constructor) : o.apply(t, e)); }
+
+
+
 
 
 
@@ -18495,7 +18487,6 @@ var DEFAULT_EVENT_DATA = {
  */
 var VASTParser = /*#__PURE__*/function (_EventEmitter) {
   _inherits(VASTParser, _EventEmitter);
-  var _super = _createSuper(VASTParser);
   /**
    * Creates an instance of VASTParser.
    * @constructor
@@ -18503,7 +18494,7 @@ var VASTParser = /*#__PURE__*/function (_EventEmitter) {
   function VASTParser() {
     var _this;
     _classCallCheck(this, VASTParser);
-    _this = _super.call(this);
+    _this = _callSuper(this, VASTParser);
     _this.remainingAds = [];
     _this.errorURLTemplates = [];
     _this.rootErrorURLTemplates = [];
@@ -19712,7 +19703,7 @@ var RmpVast = /*#__PURE__*/function () {
      */
   }, {
     key: "_loopAds",
-    value: function () {
+    value: (function () {
       var _loopAds2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee(ads) {
         var _this8 = this;
         var _loop2, i;
@@ -19925,6 +19916,7 @@ var RmpVast = /*#__PURE__*/function () {
     /** 
      * @private
      */
+    )
   }, {
     key: "_handleParsedVast",
     value: function _handleParsedVast(response) {

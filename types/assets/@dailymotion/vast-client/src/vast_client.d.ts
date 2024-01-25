@@ -21,11 +21,11 @@ export class VASTClient {
     };
     vastParser: VASTParser;
     storage: Storage;
-    set lastSuccessfulAd(arg: any);
+    set lastSuccessfulAd(value: any);
     get lastSuccessfulAd(): any;
-    set totalCalls(arg: any);
+    set totalCalls(value: any);
     get totalCalls(): any;
-    set totalCallsTimeout(arg: any);
+    set totalCallsTimeout(value: any);
     get totalCallsTimeout(): any;
     getParser(): VASTParser;
     /**
