@@ -107,7 +107,7 @@ const _onPlayingAppendIcons = function () {
         }
       );
       icon.setAttribute('scrolling', 'no');
-      icon.setAttribute('allow', 'autoplay; fullscreen; picture-in-picture; xr-spatial-tracking; encrypted-media');
+      icon.setAttribute('allow', 'autoplay; fullscreen; picture-in-picture; encrypted-media');
       icon.setAttribute('sandbox', 'allow-scripts allow-presentation allow-same-origin');
     }
     icon.className = 'rmp-ad-container-icons';

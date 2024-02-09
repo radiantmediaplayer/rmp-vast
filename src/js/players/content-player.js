@@ -46,21 +46,15 @@ CONTENT_PLAYER.setMute = function (muted) {
 };
 
 CONTENT_PLAYER.getDuration = function () {
-  if (this.contentPlayer) {
-    const duration = this.contentPlayer.duration;
-    if (FW.isNumber(duration)) {
-      return Math.round(duration * 1000);
-    }
+  if (this.contentPlayer && FW.isNumber(this.contentPlayer.duration)) {
+    return this.contentPlayer.duration * 1000;
   }
   return -1;
 };
 
 CONTENT_PLAYER.getCurrentTime = function () {
-  if (this.contentPlayer) {
-    const currentTime = this.contentPlayer.currentTime;
-    if (FW.isNumber(currentTime)) {
-      return Math.round(currentTime * 1000);
-    }
+  if (this.contentPlayer && FW.isNumber(this.contentPlayer.currentTime)) {
+    return this.contentPlayer.currentTime * 1000;
   }
   return -1;
 };
@@ -70,8 +64,7 @@ CONTENT_PLAYER.seekTo = function (msSeek) {
     return;
   }
   if (msSeek >= 0 && this.contentPlayer) {
-    const seekValue = Math.round((msSeek / 1000) * 100) / 100;
-    this.contentPlayer.currentTime = seekValue;
+    this.contentPlayer.currentTime = msSeek / 1000;
   }
 };
 

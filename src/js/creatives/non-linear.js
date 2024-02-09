@@ -100,7 +100,7 @@ NON_LINEAR.update = function () {
         overflow: 'hidden'
       }
     );
-    this.nonLinearInnerElement.setAttribute('allow', 'autoplay; fullscreen; picture-in-picture; xr-spatial-tracking; encrypted-media');
+    this.nonLinearInnerElement.setAttribute('allow', 'autoplay; fullscreen; picture-in-picture; encrypted-media');
     this.nonLinearInnerElement.setAttribute('scrolling', 'no');
     this.nonLinearInnerElement.setAttribute('sandbox', 'allow-scripts allow-presentation allow-same-origin');
   }

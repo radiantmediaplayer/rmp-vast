@@ -331,21 +331,15 @@ VAST_PLAYER.pause = function () {
 };
 
 VAST_PLAYER.getDuration = function () {
-  if (this.vastPlayer) {
-    const duration = this.vastPlayer.duration;
-    if (FW.isNumber(duration)) {
-      return Math.round(duration * 1000);
-    }
+  if (this.vastPlayer && FW.isNumber(this.vastPlayer.duration)) {
+    return this.vastPlayer.duration * 1000;
   }
   return -1;
 };
 
 VAST_PLAYER.getCurrentTime = function () {
-  if (this.vastPlayer) {
-    const currentTime = this.vastPlayer.currentTime;
-    if (FW.isNumber(currentTime)) {
-      return Math.round(currentTime * 1000);
-    }
+  if (this.vastPlayer && FW.isNumber(this.vastPlayer.currentTime)) {
+    return this.vastPlayer.currentTime * 1000;
   }
   return -1;
 };

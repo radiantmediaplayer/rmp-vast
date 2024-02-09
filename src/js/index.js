@@ -1118,7 +1118,7 @@ export default class RmpVast {
         if (duration > 0) {
           duration = duration * 1000;
         }
-        return Math.round(duration);
+        return duration;
       } else {
         return VAST_PLAYER.getDuration.call(this);
       }
@@ -1137,7 +1137,7 @@ export default class RmpVast {
         if (remainingTime === -1 || duration === -1 || remainingTime > duration) {
           return -1;
         }
-        return Math.round(duration - remainingTime) * 1000;
+        return (duration - remainingTime) * 1000;
       } else {
         return VAST_PLAYER.getCurrentTime.call(this);
       }
@@ -1155,7 +1155,7 @@ export default class RmpVast {
         if (adRemainingTime > 0) {
           adRemainingTime = adRemainingTime * 1000;
         }
-        return Math.round(adRemainingTime);
+        return adRemainingTime;
       } else {
         const currentTime = VAST_PLAYER.getCurrentTime.call(this);
         const duration = VAST_PLAYER.getDuration.call(this);
