@@ -15259,6 +15259,7 @@ var Utils = /*#__PURE__*/function () {
         useHlsJS: false,
         debugHlsJS: false,
         forceUseContentPlayerForAds: false,
+        forceUseContentPlayerForAdsOniOS: true,
         // OM SDK params
         omidSupport: false,
         omidAllowedVendors: [],
@@ -15266,7 +15267,7 @@ var Utils = /*#__PURE__*/function () {
         omidRunValidationScript: false,
         omidAutoplay: false,
         partnerName: 'rmp-vast',
-        partnerVersion: "13.1.1"
+        partnerVersion: "13.2.0"
       };
       this.params = defaultParams;
       if (inputParams && _typeof(inputParams) === 'object') {
@@ -15407,13 +15408,6 @@ var Utils = /*#__PURE__*/function () {
       this.adPod = false;
       this.adPodLength = 0;
       this.adSequence = 0;
-      // on iOS we use content player to play ads
-      // to avoid issues related to fullscreen management and autoplay
-      // as fullscreen on iOS is handled by the default OS player
-      if (ENV.isIos[0]) {
-        this.useContentPlayerForAds = true;
-        console.log("".concat(FW.consolePrepend, " vast player will be content player"), FW.consoleStyle, '');
-      }
     }
   }, {
     key: "resetVariablesForNewLoadAds",
@@ -19364,7 +19358,16 @@ var RmpVast = /*#__PURE__*/function () {
 
     // set useContentPlayerForAds if needed
     if (this.params.forceUseContentPlayerForAds) {
-      console.log("".concat(FW.consolePrepend, " forceUseContentPlayerForAds enabled"), FW.consoleStyle, '');
+      console.log("".concat(FW.consolePrepend, " forceUseContentPlayerForAds enabled - vast player will be content player"), FW.consoleStyle, '');
+      this.useContentPlayerForAds = true;
+    }
+
+    // on iOS we use content player to play ads
+    // to avoid issues related to fullscreen management and autoplay
+    // With the introduction of Managed Media Source API on iOS 17.1, it becomes however possible to use 2 different 
+    // players, 1 for content and 1 for advertisement
+    if (ENV.isIos[0] && this.params.forceUseContentPlayerForAdsOniOS) {
+      console.log("".concat(FW.consolePrepend, " forceUseContentPlayerForAdsOniOS enabled - vast player will be content player for iOS"), FW.consoleStyle, '');
       this.useContentPlayerForAds = true;
     }
     console.log("".concat(FW.consolePrepend, " Filtered params follow"), FW.consoleStyle, '');

@@ -244,7 +244,8 @@ Once rmp-vast is loaded on your page you can create a new rmp-vast instance as f
     - `params.vpaidSettings.desiredBitrate: Number` Default: 500. In kbps.
   - `params.useHlsJS: Boolean` Enables rendering of HLS creatives with hls.js in rmp-vast. Default: false. BETA feature.
   - `params.debugHlsJS: Boolean` Enables debugging of HLS creatives with hls.js in rmp-vast. Default: false. BETA feature.
-  - `params.forceUseContentPlayerForAds: Boolean` Forces player to use content player for ads - on Apple devices we may have a need to set useContentPlayerForAds differently based on content playback type (native vs. MSE playback). Default: false.
+  - `params.forceUseContentPlayerForAds: Boolean` Forces player to use content player for ads - this may be needed on OTT platforms with limited resources available. Default: false. Note that this is automatically set to true for iOS due to platform restrictions. See `forceUseContentPlayerForAdsOniOS` below.
+  - `params.forceUseContentPlayerForAdsOniOS: Boolean` Forces player to use content player for ads on iOS. This is enabled by default due to platform restrictions. With the introduction of Managed Media Source API on iOS 17.1, it becomes however possible to use 2 different players, 1 for content and 1 for advertisement. Default: true.
   - `params.omidSupport: Boolean` Enables OMID (OM Web SDK) support in rmp-vast. Default: false. Refer to the [AdVerifications OM Web SDK](#adverifications-om-web-sdk) section for more information.
   - `params.omidAllowedVendors: Array` List of allowed vendors for ad verification. Vendors not listed will be rejected. Default: [].
   - `params.omidUnderEvaluation: Boolean` When debugging set this parameter to true. Default: false.
@@ -505,7 +506,7 @@ rmpVast.on("adstarted", function () {
 
 ## AdVerifications OM Web SDK
 
-rmp-vast supports AdVerifications through the [IAB OM Web SDK](https://iabtechlab.com/standards/open-measurement-sdk/). Our implementation is based on IAB GitHub [Open-Measurement-JSClients](https://github.com/InteractiveAdvertisingBureau/Open-Measurement-JSClients) and sports OM Web SDK version 1.3.37
+rmp-vast supports AdVerifications through the [IAB OM Web SDK](https://iabtechlab.com/standards/open-measurement-sdk/). Our implementation is based on IAB GitHub [Open-Measurement-JSClients](https://github.com/InteractiveAdvertisingBureau/Open-Measurement-JSClients) and sports OM Web SDK version 1.4.12
 
 - This feature needs to be activated through `omidSupport: true` setting
 - You need to add ./externals/omweb-js-X.X.X/Service/omweb-v1.js and ./externals/omweb-js-X.X.X/Session-Client/omid-session-client-v1.js to your page through a script tag

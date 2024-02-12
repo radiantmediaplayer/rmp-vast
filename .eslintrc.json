@@ -2,7 +2,7 @@
   "extends": "eslint:recommended",
   "ignorePatterns": [
     "externals/hls/*",
-    "externals/omweb-js-1.4.2/*",
+    "externals/omweb-js-1.4.12/*",
     "src/assets/*",
     "dist/*",
     "test/lib/*"

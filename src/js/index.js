@@ -104,7 +104,16 @@ export default class RmpVast {
 
     // set useContentPlayerForAds if needed
     if (this.params.forceUseContentPlayerForAds) {
-      console.log(`${FW.consolePrepend} forceUseContentPlayerForAds enabled`, FW.consoleStyle, '');
+      console.log(`${FW.consolePrepend} forceUseContentPlayerForAds enabled - vast player will be content player`, FW.consoleStyle, '');
+      this.useContentPlayerForAds = true;
+    }
+
+    // on iOS we use content player to play ads
+    // to avoid issues related to fullscreen management and autoplay
+    // With the introduction of Managed Media Source API on iOS 17.1, it becomes however possible to use 2 different 
+    // players, 1 for content and 1 for advertisement
+    if (ENV.isIos[0] && this.params.forceUseContentPlayerForAdsOniOS) {
+      console.log(`${FW.consolePrepend} forceUseContentPlayerForAdsOniOS enabled - vast player will be content player for iOS`, FW.consoleStyle, '');
       this.useContentPlayerForAds = true;
     }
 
