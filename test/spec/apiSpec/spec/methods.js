@@ -53,12 +53,11 @@ describe('Test for API methods', function () {
         const contentPlayerCompleted = rmpVast.contentPlayerCompleted;
         const adPlayer = rmpVast.adPlayer;
         const contentPlayer = rmpVast.contentPlayer;
-        const isUsingContentPlayerForAds = rmpVast.isUsingContentPlayerForAds;
 
         if (adPlayer instanceof HTMLVideoElement && contentPlayer instanceof HTMLVideoElement) {
           _incrementAndLogMethods('adPlayer');
         }
-        if (!contentPlayerCompleted && !isUsingContentPlayerForAds) {
+        if (!contentPlayerCompleted) {
           _incrementAndLogMethods('contentPlayerCompleted');
         }
         if (isSkippableAd && skipTimeOffset === 5) {
