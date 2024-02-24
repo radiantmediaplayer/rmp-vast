@@ -15,7 +15,7 @@ export default class RmpVast {
      * @typedef {object} Labels
      * @property {string} [skipMessage]
      * @property {string} [closeAd]
-     * @property {string} [textForClickUIOnMobile]
+     * @property {string} [textForInteractionUIOnMobile]
      * @typedef {object} RmpVastParams
      * @property {number} [ajaxTimeout] - timeout in ms for an AJAX request to load a VAST tag from the ad server.
      *  Default 8000.
@@ -26,14 +26,13 @@ export default class RmpVast {
      * @property {number} [maxNumRedirects] - the number of VAST wrappers the player should follow before triggering an
      *  error. Default: 4. Capped at 30 to avoid infinite wrapper loops.
      * @property {boolean} [outstream] - Enables outstream ad mode. Default: false.
-     * @property {boolean} [showControlsForVastPlayer] - Shows VAST player HTML5 default video controls. Default: false.
+     * @property {boolean} [showControlsForAdPlayer] - Shows Ad player HTML5 default video controls. Default: false.
      * @property {boolean} [vastXmlInput] - Instead of a VAST URI, we provide directly to rmp-vast VAST XML. Default: false.
      * @property {boolean} [enableVpaid] - Enables VPAID support or not. Default: true.
      * @property {VpaidSettings} [vpaidSettings] - Information required to display VPAID creatives - note that it is up
      *  to the parent application of rmp-vast to provide those informations
      * @property {boolean} [useHlsJS] - Enables hls.js usage to display creatives delivered in HLS format on all devices. Include hls.js library (./externals/hls/hls.min.js) in your page before usage. Default: false.
      * @property {boolean} [debugHlsJS] - Enables debug log when hls.js is used to stream creatives. Default: false.
-     * @property {boolean} [forceUseContentPlayerForAds] - Forces player to use content player for ads - on Apple devices we may have a need to set useContentPlayerForAds differently based on content playback type (native vs. MSE playback). Default: false.
      * @property {boolean} [omidSupport] - Enables OMID (OM Web SDK) support in rmp-vast. Default: false.
      * @property {string[]} [omidAllowedVendors] - List of allowed vendors for ad verification. Vendors not listed will
      *  be rejected. Default: [].
@@ -74,9 +73,9 @@ export default class RmpVast {
          */
         outstream?: boolean;
         /**
-         * - Shows VAST player HTML5 default video controls. Default: false.
+         * - Shows Ad player HTML5 default video controls. Default: false.
          */
-        showControlsForVastPlayer?: boolean;
+        showControlsForAdPlayer?: boolean;
         /**
          * - Instead of a VAST URI, we provide directly to rmp-vast VAST XML. Default: false.
          */
@@ -103,10 +102,6 @@ export default class RmpVast {
          * - Enables debug log when hls.js is used to stream creatives. Default: false.
          */
         debugHlsJS?: boolean;
-        /**
-         * - Forces player to use content player for ads - on Apple devices we may have a need to set useContentPlayerForAds differently based on content playback type (native vs. MSE playback). Default: false.
-         */
-        forceUseContentPlayerForAds?: boolean;
         /**
          * - Enables OMID (OM Web SDK) support in rmp-vast. Default: false.
          */
@@ -141,14 +136,14 @@ export default class RmpVast {
         labels?: {
             skipMessage?: string;
             closeAd?: string;
-            textForClickUIOnMobile?: string;
+            textForInteractionUIOnMobile?: string;
         };
     });
     id: string;
     container: HTMLElement;
     contentWrapper: Element;
-    contentPlayer: Element;
-    useContentPlayerForAds: boolean;
+    __contentPlayer: Element;
+    rmpVastContentPlayer: ContentPlayer;
     dispatch(eventName: string, data: object): void;
     /**
      * @private
@@ -166,30 +161,6 @@ export default class RmpVast {
     private _off;
     off(eventName: string, callback: Function): void;
     /**
-     * @typedef {object} Environment
-     * @property {number} devicePixelRatio
-     * @property {number} maxTouchPoints
-     * @property {boolean} isIpadOS
-     * @property {array} isIos
-     * @property {array} isAndroid
-     * @property {boolean} isMacOSSafari
-     * @property {boolean} isFirefox
-     * @property {boolean} isMobile
-     * @property {boolean} hasNativeFullscreenSupport
-     * @return {Environment}
-     */
-    getEnvironment(): {
-        devicePixelRatio: number;
-        maxTouchPoints: number;
-        isIpadOS: boolean;
-        isIos: any[];
-        isAndroid: any[];
-        isMacOSSafari: boolean;
-        isFirefox: boolean;
-        isMobile: boolean;
-        hasNativeFullscreenSupport: boolean;
-    };
-    /**
      * @private
      */
     private _addTrackingEvents;
@@ -198,7 +169,7 @@ export default class RmpVast {
      */
     private _parseCompanion;
     validCompanionAds: any[];
-    companionAdsRequiredAttribute: any;
+    __companionAdsRequiredAttribute: any;
     /**
      * @private
      */
@@ -213,7 +184,7 @@ export default class RmpVast {
      * @private
      */
     private _initViewableImpression;
-    attachViewableObserver: any;
+    attachViewableObserverFn: any;
     /**
      * @private
      */
@@ -221,6 +192,8 @@ export default class RmpVast {
     adPod: boolean;
     adPodLength: number;
     adSequence: number;
+    rmpVastLinearCreative: LinearCreative;
+    rmpVastNonLinearCreative: NonLinearCreative;
     /**
      * @private
      */
@@ -229,7 +202,7 @@ export default class RmpVast {
      * @private
      */
     private _getVastTag;
-    adTagUrl: string;
+    __adTagUrl: string;
     /**
      * @param {string} vastData - the URI to the VAST resource to be loaded - or raw VAST XML if params.vastXmlInput is true
      * @param {object} [regulationsInfo] - data for regulations as
@@ -246,29 +219,74 @@ export default class RmpVast {
         gdprConsent?: string;
     }, requireCategory?: boolean): void;
     requireCategory: boolean;
-    currentContentSrc: any;
-    currentContentCurrentTime: any;
     play(): void;
     pause(): void;
-    getAdPaused(): boolean;
-    setVolume(level: number): void;
-    getVolume(): number;
-    setMute(muted: boolean): void;
-    getMute(): boolean;
-    getFullscreen(): boolean;
     stopAds(): void;
     destroy(): void;
     skipAd(): void;
-    getAdTagUrl(): string;
-    getAdMediaUrl(): string;
-    getAdLinear(): boolean;
+    /**
+   * @typedef {object} Environment
+   * @property {number} devicePixelRatio
+   * @property {number} maxTouchPoints
+   * @property {boolean} isIpadOS
+   * @property {array} isIos
+   * @property {array} isAndroid
+   * @property {boolean} isMacOSSafari
+   * @property {boolean} isFirefox
+   * @property {boolean} isMobile
+   * @property {boolean} hasNativeFullscreenSupport
+   * @return {Environment}
+   */
+    get environment(): {
+        devicePixelRatio: number;
+        maxTouchPoints: number;
+        isIpadOS: boolean;
+        isIos: any[];
+        isAndroid: any[];
+        isMacOSSafari: boolean;
+        isFirefox: boolean;
+        isMobile: boolean;
+        hasNativeFullscreenSupport: boolean;
+    };
+    /**
+     * @type {() => boolean}
+     */
+    get adPaused(): () => boolean;
+    /**
+     * @type {(level: number) => void}
+     */
+    set volume(level: () => number);
+    /**
+     * @type {() => number}
+     */
+    get volume(): () => number;
+    /**
+     * @type {(muted: boolean) => void}
+     */
+    set muted(muted: () => boolean);
+    /**
+     * @type {() => boolean}
+     */
+    get muted(): () => boolean;
+    /**
+     * @type {() => string}
+     */
+    get adTagUrl(): () => string;
+    /**
+     * @type {() => string}
+     */
+    get adMediaUrl(): () => string;
+    /**
+     * @type {() => boolean}
+     */
+    get adLinear(): () => boolean;
     /**
      * @typedef {object} AdSystem
      * @property {string} value
      * @property {string} version
      * @return {AdSystem}
      */
-    getAdSystem(): {
+    get adSystem(): {
         value: string;
         version: string;
     };
@@ -278,20 +296,29 @@ export default class RmpVast {
      * @property {string} value
      * @return {universalAdId[]}
      */
-    getAdUniversalAdIds(): {
+    get adUniversalAdIds(): {
         idRegistry: string;
         value: string;
     }[];
-    getAdContentType(): string;
-    getAdTitle(): string;
-    getAdDescription(): string;
+    /**
+     * @type {() => string}
+     */
+    get adContentType(): () => string;
+    /**
+     * @type {() => string}
+     */
+    get adTitle(): () => string;
+    /**
+     * @type {() => string}
+     */
+    get adDescription(): () => string;
     /**
      * @typedef {object} Advertiser
      * @property {string} id
      * @property {string} value
      * @return {Advertiser}
      */
-    getAdAdvertiser(): {
+    get adAdvertiser(): {
         id: string;
         value: string;
     };
@@ -302,20 +329,26 @@ export default class RmpVast {
      * @property {string} currency
      * @return {Pricing}
      */
-    getAdPricing(): {
+    get adPricing(): {
         value: string;
         model: string;
         currency: string;
     };
-    getAdSurvey(): string;
-    getAdAdServingId(): string;
+    /**
+     * @type {() => string}
+     */
+    get adSurvey(): () => string;
+    /**
+     * @type {() => string}
+     */
+    get adAdServingId(): () => string;
     /**
      * @typedef {object} Category
      * @property {string} authority
      * @property {string} value
      * @return {Category[]}
      */
-    getAdCategories(): {
+    get adCategories(): {
         authority: string;
         value: string;
     }[];
@@ -325,39 +358,98 @@ export default class RmpVast {
      * @property {string} value
      * @return {BlockedAdCategory[]}
      */
-    getAdBlockedAdCategories(): {
+    get adBlockedAdCategories(): {
         authority: string;
         value: string;
     }[];
-    getAdDuration(): number;
-    getAdCurrentTime(): number;
-    getAdRemainingTime(): number;
-    getAdOnStage(): boolean;
-    getAdMediaWidth(): number;
-    getAdMediaHeight(): number;
-    getClickThroughUrl(): string;
-    getSkipTimeOffset(): number;
-    getIsSkippableAd(): boolean;
-    getContentPlayerCompleted(): boolean;
+    /**
+     * @type {() => number}
+     */
+    get adDuration(): () => number;
+    /**
+     * @type {() => number}
+     */
+    get adCurrentTime(): () => number;
+    /**
+     * @type {() => number}
+     */
+    get adRemainingTime(): () => number;
+    /**
+     * @type {() => boolean}
+     */
+    get adOnStage(): () => boolean;
+    /**
+     * @type {() => number}
+     */
+    get adMediaWidth(): () => number;
+    /**
+     * @type {() => number}
+     */
+    get adMediaHeight(): () => number;
+    /**
+     * @type {() => string}
+     */
+    get clickThroughUrl(): () => string;
+    /**
+     * @type {() => number}
+     */
+    get skipTimeOffset(): () => number;
+    /**
+     * @type {() => boolean}
+     */
+    get isSkippableAd(): () => boolean;
     /**
      * @param {boolean} value
      * @return {void}
      */
-    setContentPlayerCompleted(value: boolean): void;
-    contentPlayerCompleted: boolean;
-    getAdErrorMessage(): string;
-    getAdVastErrorCode(): number;
-    getAdErrorType(): string;
-    getIsUsingContentPlayerForAds(): boolean;
-    getAdSkippableState(): boolean;
+    set contentPlayerCompleted(value: () => boolean);
+    /**
+     * @type {() => boolean}
+     */
+    get contentPlayerCompleted(): () => boolean;
+    __contentPlayerCompleted: boolean;
+    /**
+     * @type {() => string}
+     */
+    get adErrorMessage(): () => string;
+    /**
+     * @type {() => number}
+     */
+    get adVastErrorCode(): () => number;
+    /**
+     * @type {() => string}
+     */
+    get adErrorType(): () => string;
+    /**
+     * @type {() => boolean}
+     */
+    get adSkippableState(): () => boolean;
     /**
      * @return {HTMLMediaElement|null}
      */
-    getVastPlayer(): HTMLMediaElement | null;
+    get adPlayer(): HTMLMediaElement;
     /**
      * @return {HTMLMediaElement|null}
      */
-    getContentPlayer(): HTMLMediaElement | null;
+    get contentPlayer(): HTMLMediaElement;
+    /**
+     * @type {() => boolean}
+     */
+    get initialized(): () => boolean;
+    /**
+     * @typedef {object} AdPod
+     * @property {number} adPodCurrentIndex
+     * @property {number} adPodLength
+     * @return {AdPod}
+     */
+    get adPodInfo(): {
+        adPodCurrentIndex: number;
+        adPodLength: number;
+    };
+    /**
+     * @type {() => string}
+     */
+    get companionAdsRequiredAttribute(): () => string;
     /**
      * @param {number} inputWidth
      * @param {number} inputHeight
@@ -384,27 +476,30 @@ export default class RmpVast {
     }[];
     companionAdsList: any[];
     /**
+     * @private
+     */
+    private _onImgClickThrough;
+    /**
      * @param {number} index
      * @return {HTMLElement|null}
      */
     getCompanionAd(index: number): HTMLElement | null;
-    getCompanionAdsRequiredAttribute(): string;
     initialize(): void;
-    getInitialized(): boolean;
-    /**
-     * @typedef {object} AdPod
-     * @property {number} adPodCurrentIndex
-     * @property {number} adPodLength
-     * @return {AdPod}
-     */
-    getAdPodInfo(): {
-        adPodCurrentIndex: number;
-        adPodLength: number;
-    };
+    rmpVastAdPlayer: AdPlayer;
     resizeAd(width: number, height: number, viewMode: string): void;
     expandAd(): void;
     collapseAd(): void;
-    getAdExpanded(): boolean;
-    getVPAIDCompanionAds(): string;
+    /**
+     * @type {() => boolean}
+     */
+    get adExpanded(): () => boolean;
+    /**
+     * @type {() => string}
+     */
+    get vpaidCompanionAds(): () => string;
 }
+import ContentPlayer from './players/content-player';
+import LinearCreative from './creatives/linear';
+import NonLinearCreative from './creatives/non-linear';
+import AdPlayer from './players/ad-player';
 //# sourceMappingURL=index.d.ts.map

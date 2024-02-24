@@ -3,15 +3,9 @@ const ADTAG = 'https://www.radiantmediaplayer.com/vast/tags/non-linear-html.xml'
 describe('Test for non-linear-html', function () {
 
   const id = 'rmp';
-  const container = document.getElementById(id);
   const video = document.querySelector('.rmp-video');
   const rmpVast = new RmpVast(id);
-  const env = rmpVast.getEnvironment();
   video.muted = true;
-  if (env.isAndroid[0] || env.isIos[0]) {
-    container.style.width = '320px';
-    container.style.height = '180px';
-  }
   const title = document.getElementsByTagName('title')[0];
 
   it('should load adTag and play it', function (done) {

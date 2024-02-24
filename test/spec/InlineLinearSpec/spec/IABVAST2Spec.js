@@ -7,7 +7,7 @@ describe('Test for Inline Linear ad (IAB VAST2)', function () {
   const container = document.getElementById(id);
   const video = document.querySelector('.rmp-video');
   const rmpVast = new RmpVast(id);
-  const env = rmpVast.getEnvironment();
+  const env = rmpVast.environment;
   video.muted = true;
   if (env.isAndroid[0] || env.isIos[0]) {
     container.style.width = '320px';

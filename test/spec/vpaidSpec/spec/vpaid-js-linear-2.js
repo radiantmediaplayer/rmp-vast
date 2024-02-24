@@ -1,4 +1,4 @@
-const ADTAG = 'https://www.radiantmediaplayer.com/vast/tags/vpaid-2-js-linear.xml';
+const ADTAG = 'https://pubads.g.doubleclick.net/gampad/ads?iu=/21775744923/external/single_ad_samples&sz=640x480&cust_params=sample_ct%3Dlinearvpaid2js&ciu_szs=300x250%2C728x90&gdfp_req=1&output=vast&unviewed_position_start=1&env=vp&impl=s&correlator=' + Date.now();
 
 describe('Test for vpaid-js-linear-2', function () {
 
@@ -15,7 +15,7 @@ describe('Test for vpaid-js-linear-2', function () {
     }
   };
   const rmpVast = new RmpVast(id, params);
-  const env = rmpVast.getEnvironment();
+  const env = rmpVast.environment;
   video.muted = true;
   if (env.isAndroid[0] || env.isIos[0]) {
     container.style.width = '320px';
@@ -45,11 +45,11 @@ describe('Test for vpaid-js-linear-2', function () {
       }
       _incrementAndLog(e);
       setTimeout(function () {
-        rmpVast.setVolume(0.5);
+        rmpVast.volume = 0.5;
       }, 400);
     });
     rmpVast.on('advolumechanged', function (e) {
-      if (rmpVast.getVolume() === 0.5) {
+      if (rmpVast.volume === 0.5) {
         _incrementAndLog(e);
         setTimeout(function () {
           rmpVast.stopAds();

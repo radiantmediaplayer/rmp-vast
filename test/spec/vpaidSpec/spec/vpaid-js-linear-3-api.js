@@ -15,7 +15,7 @@ describe('Test for vpaid-js-linear-3', function () {
     }
   };
   const rmpVast = new RmpVast(id, params);
-  const env = rmpVast.getEnvironment();
+  const env = rmpVast.environment;
   video.muted = true;
   let mutedAutoplay = false;
   if (env.isAndroid[0] || (env.isMacOSX && env.isSafari[0]) || env.isIos[0]) {
@@ -49,39 +49,39 @@ describe('Test for vpaid-js-linear-3', function () {
       _incrementAndLog(e);
       setTimeout(function () {
         if (!mutedAutoplay) {
-          rmpVast.setMute(true);
+          rmpVast.muted = true;
         }
       }, 1500);
     });
     rmpVast.on('advolumechanged', function (e) {
-      if (rmpVast.getMute()) {
+      if (rmpVast.muted) {
         setTimeout(function () {
           _incrementAndLog(e);
-          if (rmpVast.getAdTagUrl() !== ADTAG) {
+          if (rmpVast.adTagUrl !== ADTAG) {
             return;
           }
-          if (rmpVast.getAdMediaUrl() !== 'http://static.innovid.com/mobileapps/js/vpaid/1h41kg?cb=0ef1c87f-3745-1b3f-7978-b942737337c7&deviceid=&ivc=[ecp]') {
+          if (rmpVast.adMediaUrl !== 'http://static.innovid.com/mobileapps/js/vpaid/1h41kg?cb=0ef1c87f-3745-1b3f-7978-b942737337c7&deviceid=&ivc=[ecp]') {
             return;
           }
-          if (!rmpVast.getAdLinear()) {
+          if (!rmpVast.adLinear) {
             return;
           }
-          if (rmpVast.getAdContentType() !== 'application/javascript') {
+          if (rmpVast.adContentType !== 'application/javascript') {
             return;
           }
-          if (!rmpVast.getAdOnStage()) {
+          if (!rmpVast.adOnStage) {
             return;
           }
-          if (rmpVast.getAdMediaWidth() !== 640 && rmpVast.getAdMediaWidth() !== 320) {
+          if (rmpVast.adMediaWidth !== 640 && rmpVast.adMediaWidth !== 320) {
             return;
           }
-          if (rmpVast.getAdMediaHeight() !== 360 && rmpVast.getAdMediaWidth() !== 180) {
+          if (rmpVast.adMediaHeight !== 360 && rmpVast.adMediaHeight !== 180) {
             return;
           }
-          if (rmpVast.getAdDuration() !== 15140) {
+          if (rmpVast.adDuration !== 15140) {
             return;
           }
-          if (rmpVast.getAdCurrentTime() < 500) {
+          if (rmpVast.adCurrentTime < 500) {
             return;
           }
         }, 1500);

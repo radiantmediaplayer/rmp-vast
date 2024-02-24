@@ -1,5 +1,5 @@
 const ADTAG1 = 'https://www.radiantmediaplayer.com/vast/tags/inline-linear-1.xml';
-const ADTAG2 = 'https://www.radiantmediaplayer.com/vast/tags/vpaid-2-js-linear.xml';
+const ADTAG2 = 'https://www.radiantmediaplayer.com/vast/tags/inline-linear.xml';
 const ADTAG3 = 'https://www.radiantmediaplayer.com/vast/tags/inline-linear-1.xml';
 
 describe('Test for pre-mid-post', function () {
@@ -17,7 +17,7 @@ describe('Test for pre-mid-post', function () {
     }
   };
   const rmpVast = new RmpVast(id, params);
-  const env = rmpVast.getEnvironment();
+  const env = rmpVast.environment;
   video.muted = true;
   if (env.isAndroid[0] || env.isIos[0]) {
     container.style.width = '320px';

@@ -1,25 +1,12 @@
 const ADTAG = 'https://www.radiantmediaplayer.com/vast/tags/simid-survey.xml';
 
-// official test tags from https://github.com/InteractiveAdvertisingBureau/SIMID
-//ADTAG = 'https://www.radiantmediaplayer.com/vast/tags/simid.xml';
-//ADTAG = 'https://www.radiantmediaplayer.com/vast/tags/simid-error-interactive-creative-file.xml';
-//ADTAG = 'https://www.radiantmediaplayer.com/vast/tags/simid-survey.xml';
-//ADTAG = 'https://www.radiantmediaplayer.com/vast/tags/simid-selector.xml';
-//ADTAG = 'https://www.radiantmediaplayer.com/vast/tags/simid-error-interactive-media-file.xml';
-//ADTAG = 'https://www.radiantmediaplayer.com/vast/tags/simid-extender.xml';
-//ADTAG = 'https://www.radiantmediaplayer.com/vast/tags/simid-map.xml';
-//ADTAG = 'https://www.radiantmediaplayer.com/vast/tags/simid-non-linear.xml';
-
 describe('Test for simid-survey', function () {
 
   const id = 'rmp';
   const container = document.getElementById(id);
   const video = document.querySelector('.rmp-video');
-  const params = {
-    enableSimid: true
-  };
-  const rmpVast = new RmpVast(id, params);
-  const env = rmpVast.getEnvironment();
+  const rmpVast = new RmpVast(id);
+  const env = rmpVast.environment;
   video.muted = true;
   if (env.isAndroid[0] || env.isIos[0]) {
     container.style.width = '320px';

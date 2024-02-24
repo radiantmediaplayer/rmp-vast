@@ -1,7 +1,7 @@
 const ADTAG1 = 'https://www.radiantmediaplayer.com/vast/tags/inline-linear-1.xml';
 const ADTAG2 = 'https://www.radiantmediaplayer.com/vast/tags/inline-linear-2.xml';
 
-describe('Test for outstream/Simple', function () {
+describe('Test for outstream/reload', function () {
 
   const id = 'rmp';
   const container = document.getElementById(id);
@@ -10,7 +10,7 @@ describe('Test for outstream/Simple', function () {
     outstream: true
   };
   const rmpVast = new RmpVast(id, params);
-  const env = rmpVast.getEnvironment();
+  const env = rmpVast.environment;
   video.muted = true;
   if (env.isAndroid[0] || env.isIos[0]) {
     container.style.width = '320px';
@@ -19,7 +19,7 @@ describe('Test for outstream/Simple', function () {
 
   const title = document.getElementsByTagName('title')[0];
 
-  it('should load outstream', function (done) {
+  it('should load outstream/reload', function (done) {
     let validSteps = 0;
 
     const _incrementAndLog = function (event) {

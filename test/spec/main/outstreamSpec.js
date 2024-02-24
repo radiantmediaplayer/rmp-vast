@@ -5,13 +5,14 @@ const TEST = require('../helpers/test');
 let driver;
 
 let testUrls = [
-  TEST.pathToTest + 'outstreamSpec/Simple.html'
+  TEST.pathToTest + 'outstreamSpec/linear.html'
 ];
 
 const testUrlsChromeOnly = [
-  TEST.pathToTest + 'outstreamSpec/Simple.html',
-  TEST.pathToTest + 'outstreamSpec/Reload.html',
-  TEST.pathToTest + 'outstreamSpec/Vpaid.html'
+  TEST.pathToTest + 'outstreamSpec/linear.html',
+  TEST.pathToTest + 'outstreamSpec/reload.html',
+  TEST.pathToTest + 'outstreamSpec/vpaid.html',
+  TEST.pathToTest + 'outstreamSpec/simid.html'
 ];
 
 const args = process.argv;

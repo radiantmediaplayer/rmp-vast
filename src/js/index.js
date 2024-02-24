@@ -1,24 +1,25 @@
 /**
- * @license Copyright (c) 2015-2022 Radiant Media Player | https://www.radiantmediaplayer.com
+ * @license Copyright (c) 2015-2024 Radiant Media Player | https://www.radiantmediaplayer.com
  * rmp-vast
  * GitHub: https://github.com/radiantmediaplayer/rmp-vast
  * MIT License: https://github.com/radiantmediaplayer/rmp-vast/blob/master/LICENSE
  */
 
 import FW from './framework/fw';
-import ENV from './framework/env';
+import Environment from './framework/environment';
 import Utils from './framework/utils';
-import LINEAR from './creatives/linear';
-import NON_LINEAR from './creatives/non-linear';
-import VPAID from './players/vpaid';
-import VAST_PLAYER from './players/vast-player';
-import CONTENT_PLAYER from './players/content-player';
-import TRACKING_EVENTS from './tracking/tracking-events';
+import LinearCreative from './creatives/linear';
+import NonLinearCreative from './creatives/non-linear';
+import AdPlayer from './players/ad-player';
+import Tracking from './tracking/tracking';
 import OmSdkManager from './verification/omsdk';
-import DispatcherEvent from './framework/dispatcher-event';
+import Dispatcher from './framework/dispatcher';
+import ContentPlayer from './players/content-player';
 import { VASTClient } from '../assets/@dailymotion/vast-client/src/vast_client';
 import { VASTParser } from '../assets/@dailymotion/vast-client/src/parser/vast_parser';
+
 import '../less/rmp-vast.less';
+
 
 /**
  * The class to instantiate RmpVast
@@ -38,7 +39,7 @@ export default class RmpVast {
    * @typedef {object} Labels
    * @property {string} [skipMessage]
    * @property {string} [closeAd]
-   * @property {string} [textForClickUIOnMobile] 
+   * @property {string} [textForInteractionUIOnMobile] 
    * @typedef {object} RmpVastParams
    * @property {number} [ajaxTimeout] - timeout in ms for an AJAX request to load a VAST tag from the ad server.
    *  Default 8000.
@@ -49,14 +50,13 @@ export default class RmpVast {
    * @property {number} [maxNumRedirects] - the number of VAST wrappers the player should follow before triggering an
    *  error. Default: 4. Capped at 30 to avoid infinite wrapper loops.
    * @property {boolean} [outstream] - Enables outstream ad mode. Default: false.
-   * @property {boolean} [showControlsForVastPlayer] - Shows VAST player HTML5 default video controls. Default: false.
+   * @property {boolean} [showControlsForAdPlayer] - Shows Ad player HTML5 default video controls. Default: false.
    * @property {boolean} [vastXmlInput] - Instead of a VAST URI, we provide directly to rmp-vast VAST XML. Default: false.
    * @property {boolean} [enableVpaid] - Enables VPAID support or not. Default: true.
    * @property {VpaidSettings} [vpaidSettings] - Information required to display VPAID creatives - note that it is up 
    *  to the parent application of rmp-vast to provide those informations
    * @property {boolean} [useHlsJS] - Enables hls.js usage to display creatives delivered in HLS format on all devices. Include hls.js library (./externals/hls/hls.min.js) in your page before usage. Default: false.
    * @property {boolean} [debugHlsJS] - Enables debug log when hls.js is used to stream creatives. Default: false.
-   * @property {boolean} [forceUseContentPlayerForAds] - Forces player to use content player for ads - on Apple devices we may have a need to set useContentPlayerForAds differently based on content playback type (native vs. MSE playback). Default: false.
    * @property {boolean} [omidSupport] - Enables OMID (OM Web SDK) support in rmp-vast. Default: false.
    * @property {string[]} [omidAllowedVendors] - List of allowed vendors for ad verification. Vendors not listed will 
    *  be rejected. Default: [].
@@ -74,26 +74,27 @@ export default class RmpVast {
   constructor(id, params) {
     // reset instance variables - once per session
     Utils.initInstanceVariables.call(this);
+
     if (typeof id !== 'string' || id === '') {
       console.error(`Invalid id to create new instance - exit`);
       return;
     }
     this.id = id;
+
     this.container = document.getElementById(this.id);
-    if (this.container === null) {
-      console.error(`Invalid DOM layout - exit`);
-      return;
-    }
     this.contentWrapper = this.container.querySelector('.rmp-content');
-    this.contentPlayer = this.container.querySelector('.rmp-video');
-    if (this.contentWrapper === null || this.contentPlayer === null) {
-      console.error(`Invalid DOM layout - exit`);
+    this.__contentPlayer = this.container.querySelector('.rmp-video');
+
+    if (this.container === null || this.contentWrapper === null || this.__contentPlayer === null) {
+      console.error(`Invalid DOM layout - missing container or content wrapper or content player - exit`);
       return;
     }
 
     console.log(`${FW.consolePrepend} Creating new RmpVast instance`, FW.consoleStyle, '');
 
-    FW.logVideoEvents(this.contentPlayer, 'content');
+    this.rmpVastContentPlayer = new ContentPlayer(this);
+
+    FW.logVideoEvents(this.__contentPlayer, 'content');
     // reset loadAds variables - this is reset at addestroyed 
     // so that next loadAds is cleared
     Utils.resetVariablesForNewLoadAds.call(this);
@@ -101,21 +102,6 @@ export default class RmpVast {
     Utils.handleFullscreen.call(this);
     // filter input params
     Utils.filterParams.call(this, params);
-
-    // set useContentPlayerForAds if needed
-    if (this.params.forceUseContentPlayerForAds) {
-      console.log(`${FW.consolePrepend} forceUseContentPlayerForAds enabled - vast player will be content player`, FW.consoleStyle, '');
-      this.useContentPlayerForAds = true;
-    }
-
-    // on iOS we use content player to play ads
-    // to avoid issues related to fullscreen management and autoplay
-    // With the introduction of Managed Media Source API on iOS 17.1, it becomes however possible to use 2 different 
-    // players, 1 for content and 1 for advertisement
-    if (ENV.isIos[0] && this.params.forceUseContentPlayerForAdsOniOS) {
-      console.log(`${FW.consolePrepend} forceUseContentPlayerForAdsOniOS enabled - vast player will be content player for iOS`, FW.consoleStyle, '');
-      this.useContentPlayerForAds = true;
-    }
 
     console.log(`${FW.consolePrepend} Filtered params follow`, FW.consoleStyle, '');
     console.log(this.params);
@@ -146,7 +132,7 @@ export default class RmpVast {
     let event = this.events[eventName];
     // If the event does not exist then we should create it!
     if (!event) {
-      event = new DispatcherEvent(eventName);
+      event = new Dispatcher(eventName);
       this.events[eventName] = event;
     }
     // Now we add the callback to the event
@@ -171,10 +157,10 @@ export default class RmpVast {
    * @private
    */
   _one(eventName, callback) {
-    const newCallback = function (e) {
+    const newCallback = (e) => {
       this.off(eventName, newCallback);
       callback(e);
-    }.bind(this);
+    };
     this.on(eventName, newCallback);
   }
 
@@ -224,23 +210,6 @@ export default class RmpVast {
   }
 
   /** 
-   * @typedef {object} Environment
-   * @property {number} devicePixelRatio
-   * @property {number} maxTouchPoints
-   * @property {boolean} isIpadOS
-   * @property {array} isIos
-   * @property {array} isAndroid
-   * @property {boolean} isMacOSSafari
-   * @property {boolean} isFirefox
-   * @property {boolean} isMobile
-   * @property {boolean} hasNativeFullscreenSupport
-   * @return {Environment}
-   */
-  getEnvironment() {
-    return ENV;
-  }
-
-  /** 
    * @private
    */
   _addTrackingEvents(trackingEvents) {
@@ -261,9 +230,9 @@ export default class RmpVast {
   _parseCompanion(creative) {
     // reset variables in case wrapper
     this.validCompanionAds = [];
-    this.companionAdsRequiredAttribute = '';
+    this.__companionAdsRequiredAttribute = '';
     if (creative.required) {
-      this.companionAdsRequiredAttribute = creative.required;
+      this.__companionAdsRequiredAttribute = creative.required;
     }
     const companions = creative.variations;
     // at least 1 Companion is expected to continue
@@ -338,7 +307,7 @@ export default class RmpVast {
       if (entry.intersectionRatio > this.viewablePreviousRatio) {
         this.viewableObserver.unobserve(this.container);
         Utils.createApiEvent.call(this, 'adviewable');
-        TRACKING_EVENTS.dispatch.call(this, 'viewable');
+        Tracking.dispatch.call(this, 'viewable');
       }
       this.viewablePreviousRatio = entry.intersectionRatio;
     });
@@ -348,7 +317,7 @@ export default class RmpVast {
    * @private
    */
   _attachViewableObserver() {
-    this.off('adstarted', this.attachViewableObserver);
+    this.off('adstarted', this.attachViewableObserverFn);
     if (typeof window.IntersectionObserver !== 'undefined') {
       const options = {
         root: null,
@@ -359,7 +328,7 @@ export default class RmpVast {
       this.viewableObserver.observe(this.container);
     } else {
       Utils.createApiEvent.call(this, 'adviewundetermined');
-      TRACKING_EVENTS.dispatch.call(this, 'viewundetermined');
+      Tracking.dispatch.call(this, 'viewundetermined');
     }
   }
 
@@ -396,8 +365,8 @@ export default class RmpVast {
         });
       }
     });
-    this.attachViewableObserver = this._attachViewableObserver.bind(this);
-    this.on('adstarted', this.attachViewableObserver);
+    this.attachViewableObserverFn = this._attachViewableObserver.bind(this);
+    this.on('adstarted', this.attachViewableObserverFn);
   }
 
   /** 
@@ -457,7 +426,7 @@ export default class RmpVast {
         // this is to fix a weird bug in vast-client-js - sometimes it returns sequence === null for some items when
         // adpod is made of redirects
         if (this.adPod) {
-          let max = ads.reduce(function (prev, current) {
+          let max = ads.reduce((prev, current) => {
             return (prev.sequence > current.sequence) ? prev : current;
           }).sequence;
           ads.forEach(ad => {
@@ -466,8 +435,7 @@ export default class RmpVast {
               max++;
             }
           });
-        }
-        if (this.adPod) {
+
           this.adSequence++;
           if (this.adPodLength === 0) {
             let adPodLength = 0;
@@ -480,6 +448,16 @@ export default class RmpVast {
 
             console.log(`${FW.consolePrepend} AdPod detected with length ${this.adPodLength}`, FW.consoleStyle, '');
           }
+
+          this.one('addestroyed', () => {
+            if (this.adSequence === this.adPodLength) {
+              this.adPodLength = 0;
+              this.adSequence = 0;
+              this.adPod = false;
+              Utils.createApiEvent.call(this, 'adpodcompleted');
+            }
+            resolve();
+          });
         }
         this.ad.viewableImpression = currentAd.viewableImpression;
         if (this.ad.viewableImpression.length > 0) {
@@ -498,15 +476,6 @@ export default class RmpVast {
               url: impression.url
             });
           }
-        });
-        this.one('addestroyed', () => {
-          if (this.adPod && this.adSequence === this.adPodLength) {
-            this.adPodLength = 0;
-            this.adSequence = 0;
-            this.adPod = false;
-            Utils.createApiEvent.call(this, 'adpodcompleted');
-          }
-          resolve();
         });
         // parse companion
         const creatives = currentAd.creatives;
@@ -566,23 +535,18 @@ export default class RmpVast {
                 }
               }
               this._addTrackingEvents(creative.trackingEvents);
-              LINEAR.parse.call(this, creative.icons, creative.adParameters, creative.mediaFiles);
+              this.rmpVastLinearCreative = new LinearCreative(this);
+              this.rmpVastLinearCreative.parse(creative);
               if (this.params.omidSupport && currentAd.adVerifications.length > 0) {
-                const omSdkManager = new OmSdkManager(
-                  currentAd.adVerifications,
-                  this.contentPlayer,
-                  this.vastPlayer,
-                  this.params,
-                  this.getIsSkippableAd(),
-                  this.getSkipTimeOffset()
-                );
+                const omSdkManager = new OmSdkManager(currentAd.adVerifications, this);
                 omSdkManager.init();
               }
               break;
             case 'nonlinear':
               this.creative.isLinear = false;
               this._addTrackingEvents(creative.trackingEvents);
-              NON_LINEAR.parse.call(this, creative.variations);
+              this.rmpVastNonLinearCreative = new NonLinearCreative(this);
+              this.rmpVastNonLinearCreative.parse(creative.variations);
               break;
             default:
               break;
@@ -641,11 +605,11 @@ export default class RmpVast {
         resolveAll: false,
         allowMultipleAds: true
       };
-      this.adTagUrl = vastData;
+      this.__adTagUrl = vastData;
 
-      console.log(`${FW.consolePrepend} Try to load VAST tag at: ${this.adTagUrl}`, FW.consoleStyle, '');
+      console.log(`${FW.consolePrepend} Try to load VAST tag at: ${this.__adTagUrl}`, FW.consoleStyle, '');
 
-      vastClient.get(this.adTagUrl, options).then(response => {
+      vastClient.get(this.__adTagUrl, options).then(response => {
         Utils.createApiEvent.call(this, 'adtagloaded');
         this._handleParsedVast(response);
       }).catch(error => {
@@ -690,7 +654,7 @@ export default class RmpVast {
     console.log(`${FW.consolePrepend} loadAds method starts`, FW.consoleStyle, '');
 
     // if player is not initialized - this must be done now
-    if (!this.rmpVastInitialized) {
+    if (!this.__initialized) {
       this.initialize();
     }
     if (typeof regulationsInfo === 'object') {
@@ -713,42 +677,19 @@ export default class RmpVast {
     let finalVastData = vastData;
     if (!this.params.vastXmlInput) {
       // we have a VAST URI replaceMacros
-      finalVastData = TRACKING_EVENTS.replaceMacros.call(this, vastData, false);
+      finalVastData = Tracking.replaceMacros.call(this, vastData, false);
     }
 
     // if an ad is already on stage we need to clear it first before we can accept another ad request
-    if (this.getAdOnStage()) {
+    if (this.__adOnStage) {
       console.log(
         `${FW.consolePrepend} Creative already on stage calling stopAds before loading new ad`,
         FW.consoleStyle,
         ''
       );
-
-      const _onDestroyLoadAds = function (vastData) {
-        this.loadAds(vastData);
-      };
-      this.one('addestroyed', _onDestroyLoadAds.bind(this, finalVastData));
+      this.one('addestroyed', this.loadAds.bind(this, finalVastData));
       this.stopAds();
       return;
-    }
-    // for useContentPlayerForAds we need to know early what is the content src
-    // so that we can resume content when ad finishes or on aderror
-    const contentCurrentTime = CONTENT_PLAYER.getCurrentTime.call(this);
-    if (this.useContentPlayerForAds) {
-      this.currentContentSrc = this.contentPlayer.src;
-
-      console.log(`${FW.consolePrepend} currentContentSrc is ${this.currentContentSrc}`, FW.consoleStyle, '');
-
-      this.currentContentCurrentTime = contentCurrentTime;
-
-      console.log(
-        `${FW.consolePrepend} currentContentCurrentTime is ${this.currentContentCurrentTime}`,
-        FW.consoleStyle,
-        ''
-      );
-
-      // on iOS we need to prevent seeking when linear ad is on stage
-      CONTENT_PLAYER.preventSeekingForCustomPlayback.call(this);
     }
     this._getVastTag(finalVastData);
   }
@@ -757,14 +698,14 @@ export default class RmpVast {
    * @type {() => void} 
    */
   play() {
-    if (this.adOnStage && this.creative && this.creative.isLinear) {
-      if (this.isVPAID) {
-        VPAID.resumeAd.call(this);
-      } else {
-        VAST_PLAYER.play.call(this);
+    if (this.__adOnStage && this.creative && this.creative.isLinear) {
+      if (this.rmpVastVpaidPlayer) {
+        this.rmpVastVpaidPlayer.resumeAd();
+      } else if (this.rmpVastAdPlayer) {
+        this.rmpVastAdPlayer.play();
       }
     } else {
-      CONTENT_PLAYER.play.call(this);
+      this.rmpVastContentPlayer.play();
     }
   }
 
@@ -772,26 +713,93 @@ export default class RmpVast {
    * @type {() => void} 
    */
   pause() {
-    if (this.adOnStage && this.creative && this.creative.isLinear) {
-      if (this.isVPAID) {
-        VPAID.pauseAd.call(this);
-      } else {
-        VAST_PLAYER.pause.call(this);
+    if (this.__adOnStage && this.creative && this.creative.isLinear) {
+      if (this.rmpVastVpaidPlayer) {
+        this.rmpVastVpaidPlayer.pauseAd();
+      } else if (this.rmpVastAdPlayer) {
+        this.rmpVastAdPlayer.pause();
       }
     } else {
-      CONTENT_PLAYER.pause.call(this);
+      this.rmpVastContentPlayer.pause();
     }
+  }
+
+  /** 
+   * @type {() => void} 
+   */
+  stopAds() {
+    if (this.__adOnStage) {
+      if (this.rmpVastVpaidPlayer) {
+        this.rmpVastVpaidPlayer.stopAd();
+      } else if (this.rmpVastSimidPlayer) {
+        this.rmpVastSimidPlayer.stopAd();
+      } else if (this.rmpVastAdPlayer) {
+        // this will destroy ad
+        this.rmpVastAdPlayer.resumeContent();
+      }
+    }
+  }
+
+  /** 
+   * The difference between stopAds and destroy is that after calling destroy you may not call loadAds again
+   * You will need to create a new RmpVast instance. 
+   * @type {() => void} 
+   */
+  destroy() {
+    if (this.__contentPlayer) {
+      this.__contentPlayer.removeEventListener('webkitbeginfullscreen', this.onFullscreenchangeFn);
+      this.__contentPlayer.removeEventListener('webkitendfullscreen', this.onFullscreenchangeFn);
+    } else {
+      document.removeEventListener('fullscreenchange', this.onFullscreenchangeFn);
+    }
+    if (this.rmpVastAdPlayer) {
+      this.rmpVastAdPlayer.destroy();
+    }
+    Utils.initInstanceVariables.call(this);
+  }
+
+  /** 
+   * @type {() => void} 
+   */
+  skipAd() {
+    if (this.__adOnStage && this.adSkippableState) {
+      if (this.rmpVastVpaidPlayer) {
+        this.rmpVastVpaidPlayer.skipAd();
+      } else if (this.rmpVastSimidPlayer) {
+        this.rmpVastSimidPlayer.skipAd();
+      } else if (this.rmpVastAdPlayer) {
+        // this will destroy ad
+        this.rmpVastAdPlayer.resumeContent();
+      }
+    }
+  }
+
+  /** 
+ * @typedef {object} Environment
+ * @property {number} devicePixelRatio
+ * @property {number} maxTouchPoints
+ * @property {boolean} isIpadOS
+ * @property {array} isIos
+ * @property {array} isAndroid
+ * @property {boolean} isMacOSSafari
+ * @property {boolean} isFirefox
+ * @property {boolean} isMobile
+ * @property {boolean} hasNativeFullscreenSupport
+ * @return {Environment}
+ */
+  get environment() {
+    return Environment;
   }
 
   /** 
    * @type {() => boolean} 
    */
-  getAdPaused() {
-    if (this.adOnStage && this.creative && this.creative.isLinear) {
-      if (this.isVPAID) {
-        return VPAID.getAdPaused.call(this);
-      } else {
-        return this.vastPlayerPaused;
+  get adPaused() {
+    if (this.__adOnStage && this.creative && this.creative.isLinear) {
+      if (this.rmpVastVpaidPlayer) {
+        return this.rmpVastVpaidPlayer.getAdPaused();
+      } else if (this.__adPlayer) {
+        return this.__adPlayer.paused;
       }
     }
     return false;
@@ -800,7 +808,7 @@ export default class RmpVast {
   /** 
    * @type {(level: number) => void} 
    */
-  setVolume(level) {
+  set volume(level) {
     if (!FW.isNumber(level)) {
       return;
     }
@@ -812,136 +820,83 @@ export default class RmpVast {
     } else {
       validatedLevel = level;
     }
-    if (this.adOnStage && this.creative && this.creative.isLinear) {
-      if (this.isVPAID) {
-        VPAID.setAdVolume.call(this, validatedLevel);
+    if (this.__adOnStage && this.creative && this.creative.isLinear) {
+      if (this.rmpVastVpaidPlayer) {
+        this.rmpVastVpaidPlayer.setAdVolume(validatedLevel);
       }
-      VAST_PLAYER.setVolume.call(this, validatedLevel);
+      if (this.rmpVastAdPlayer) {
+        this.rmpVastAdPlayer.volume = validatedLevel;
+      }
     }
-    CONTENT_PLAYER.setVolume.call(this, validatedLevel);
+    this.rmpVastContentPlayer.volume = validatedLevel;
   }
 
   /** 
    * @type {() => number} 
    */
-  getVolume() {
-    if (this.adOnStage && this.creative && this.creative.isLinear) {
-      if (this.isVPAID) {
-        return VPAID.getAdVolume.call(this);
-      } else {
-        return VAST_PLAYER.getVolume.call(this);
+  get volume() {
+    if (this.__adOnStage && this.creative && this.creative.isLinear) {
+      if (this.rmpVastVpaidPlayer) {
+        return this.rmpVastVpaidPlayer.getAdVolume();
+      } else if (this.rmpVastAdPlayer) {
+        return this.rmpVastAdPlayer.volume;
       }
     }
-    return CONTENT_PLAYER.getVolume.call(this);
+    return this.rmpVastContentPlayer.volume;
   }
 
   /** 
    * @type {(muted: boolean) => void} 
    */
-  setMute(muted) {
+  set muted(muted) {
     if (typeof muted !== 'boolean') {
       return;
     }
-    if (this.adOnStage && this.creative && this.creative.isLinear) {
-      if (this.isVPAID) {
+    if (this.__adOnStage && this.creative && this.creative.isLinear) {
+      if (this.rmpVastVpaidPlayer) {
         if (muted) {
-          VPAID.setAdVolume.call(this, 0);
+          this.rmpVastVpaidPlayer.setAdVolume(0);
         } else {
-          VPAID.setAdVolume.call(this, 1);
+          this.rmpVastVpaidPlayer.setAdVolume(1);
         }
-      } else {
-        VAST_PLAYER.setMute.call(this, muted);
+      } else if (this.rmpVastAdPlayer) {
+        this.rmpVastAdPlayer.muted = muted;
       }
     }
-    CONTENT_PLAYER.setMute.call(this, muted);
+    this.rmpVastContentPlayer.muted = muted;
   }
 
   /** 
    * @type {() => boolean} 
    */
-  getMute() {
-    if (this.adOnStage && this.creative && this.creative.isLinear) {
-      if (this.isVPAID) {
-        if (VPAID.getAdVolume.call(this) === 0) {
+  get muted() {
+    if (this.__adOnStage && this.creative && this.creative.isLinear) {
+      if (this.rmpVastVpaidPlayer) {
+        if (this.rmpVastVpaidPlayer.getAdVolume() === 0) {
           return true;
         }
         return false;
-      } else {
-        return VAST_PLAYER.getMute.call(this);
+      } else if (this.rmpVastAdPlayer) {
+        return this.rmpVastAdPlayer.muted;
       }
     }
-    return CONTENT_PLAYER.getMute.call(this);
-  }
-
-  /** 
-   * @type {() => boolean} 
-   */
-  getFullscreen() {
-    return this.isInFullscreen;
-  }
-
-  /** 
-   * @type {() => void} 
-   */
-  stopAds() {
-    if (this.adOnStage) {
-      if (this.isVPAID) {
-        VPAID.stopAd.call(this);
-      } else if (this.simidPlayer) {
-        this.simidPlayer.stopAd();
-      } else {
-        // this will destroy ad
-        VAST_PLAYER.resumeContent.call(this);
-      }
-    }
-  }
-
-  /** 
-   * The difference between stopAds and destroy is that after calling destroy you may not call loadAds again
-   * You will need to create a new RmpVast instance. 
-   * @type {() => void} 
-   */
-  destroy() {
-    if (this.contentPlayer) {
-      this.contentPlayer.removeEventListener('webkitbeginfullscreen', this.onFullscreenchange);
-      this.contentPlayer.removeEventListener('webkitendfullscreen', this.onFullscreenchange);
-    } else {
-      document.removeEventListener('fullscreenchange', this.onFullscreenchange);
-    }
-    VAST_PLAYER.destroy.call(this);
-    Utils.initInstanceVariables.call(this);
-  }
-
-  /** 
-   * @type {() => void} 
-   */
-  skipAd() {
-    if (this.adOnStage && this.getAdSkippableState()) {
-      if (this.isVPAID) {
-        VPAID.skipAd.call(this);
-      } else if (this.simidPlayer) {
-        this.simidPlayer.skipAd();
-      } else {
-        // this will destroy ad
-        VAST_PLAYER.resumeContent.call(this);
-      }
-    }
+    return this.rmpVastContentPlayer.muted;
   }
 
   /** 
    * @type {() => string} 
    */
-  getAdTagUrl() {
-    return this.adTagUrl;
+  get adTagUrl() {
+    return this.__adTagUrl;
   }
 
   /** 
    * @type {() => string} 
    */
-  getAdMediaUrl() {
-    if (this.adOnStage) {
-      if (this.isVPAID) {
-        return VPAID.getCreativeUrl.call(this);
+  get adMediaUrl() {
+    if (this.__adOnStage) {
+      if (this.rmpVastVpaidPlayer) {
+        return this.rmpVastVpaidPlayer.getCreativeUrl();
       } else {
         if (this.creative && this.creative.mediaUrl) {
           return this.creative.mediaUrl;
@@ -954,7 +909,7 @@ export default class RmpVast {
   /** 
    * @type {() => boolean} 
    */
-  getAdLinear() {
+  get adLinear() {
     if (this.creative && this.creative.isLinear) {
       return true;
     }
@@ -967,7 +922,7 @@ export default class RmpVast {
    * @property {string} version
    * @return {AdSystem}
    */
-  getAdSystem() {
+  get adSystem() {
     // <AdSystem version="2.0" ><![CDATA[AdServer]]></AdSystem>
     // {value: String, version: String}
     if (this.ad && this.ad.system) {
@@ -989,7 +944,7 @@ export default class RmpVast {
    * @property {string} value
    * @return {universalAdId[]}
    */
-  getAdUniversalAdIds() {
+  get adUniversalAdIds() {
     // <UniversalAdId idRegistry="daily-motion-L">Linear-12345</UniversalAdId>
     // [{idRegistry: String, value: String}]
     if (this.creative && this.creative.universalAdIds) {
@@ -1001,7 +956,7 @@ export default class RmpVast {
   /** 
    * @type {() => string} 
    */
-  getAdContentType() {
+  get adContentType() {
     if (this.creative && this.creative.type) {
       return this.creative.type;
     }
@@ -1011,7 +966,7 @@ export default class RmpVast {
   /** 
    * @type {() => string} 
    */
-  getAdTitle() {
+  get adTitle() {
     if (this.ad && this.ad.title) {
       return this.ad.title;
     }
@@ -1021,7 +976,7 @@ export default class RmpVast {
   /** 
    * @type {() => string} 
    */
-  getAdDescription() {
+  get adDescription() {
     if (this.ad && this.ad.description) {
       return this.ad.description;
     }
@@ -1034,7 +989,7 @@ export default class RmpVast {
    * @property {string} value
    * @return {Advertiser}
    */
-  getAdAdvertiser() {
+  get adAdvertiser() {
     // <Advertiser id='advertiser-desc'><![CDATA[Advertiser name]]></Advertiser>
     // {id: String, value: String}
     if (this.ad && this.ad.advertiser && this.ad.advertiser !== null) {
@@ -1053,7 +1008,7 @@ export default class RmpVast {
    * @property {string} currency
    * @return {Pricing}
    */
-  getAdPricing() {
+  get adPricing() {
     // <Pricing model="CPM" currency="USD" ><![CDATA[1.09]]></Pricing>
     // {value: String, model: String, currency: String}
     if (this.ad && this.ad.pricing && this.ad.pricing !== null) {
@@ -1069,7 +1024,7 @@ export default class RmpVast {
   /** 
    * @type {() => string} 
    */
-  getAdSurvey() {
+  get adSurvey() {
     if (this.ad && this.ad.survey) {
       return this.ad.survey;
     }
@@ -1082,7 +1037,7 @@ export default class RmpVast {
   /** 
    * @type {() => string} 
    */
-  getAdAdServingId() {
+  get adAdServingId() {
     if (this.ad && this.ad.adServingId) {
       return this.ad.adServingId;
     }
@@ -1095,7 +1050,7 @@ export default class RmpVast {
    * @property {string} value
    * @return {Category[]}
    */
-  getAdCategories() {
+  get adCategories() {
     // <Category authority=”iabtechlab.com”>232</Category> 
     if (this.ad && this.ad.categories && this.ad.categories.length > 0) {
       return this.ad.categories;
@@ -1109,7 +1064,7 @@ export default class RmpVast {
    * @property {string} value
    * @return {BlockedAdCategory[]}
    */
-  getAdBlockedAdCategories() {
+  get adBlockedAdCategories() {
     // <BlockedAdCategories authority=”iabtechlab.com”>232</BlockedAdCategories> 
     if (this.ad && this.ad.blockedAdCategories && this.ad.blockedAdCategories.length > 0) {
       return this.ad.blockedAdCategories;
@@ -1120,16 +1075,16 @@ export default class RmpVast {
   /** 
    * @type {() => number} 
    */
-  getAdDuration() {
-    if (this.adOnStage && this.creative && this.creative.isLinear) {
-      if (this.isVPAID) {
-        let duration = VPAID.getAdDuration.call(this);
+  get adDuration() {
+    if (this.__adOnStage && this.creative && this.creative.isLinear) {
+      if (this.rmpVastVpaidPlayer) {
+        let duration = this.rmpVastVpaidPlayer.getAdDuration();
         if (duration > 0) {
           duration = duration * 1000;
         }
         return duration;
-      } else {
-        return VAST_PLAYER.getDuration.call(this);
+      } else if (this.rmpVastAdPlayer) {
+        return this.rmpVastAdPlayer.duration;
       }
     }
     return -1;
@@ -1138,17 +1093,17 @@ export default class RmpVast {
   /** 
    * @type {() => number} 
    */
-  getAdCurrentTime() {
-    if (this.adOnStage && this.creative && this.creative.isLinear) {
-      if (this.isVPAID) {
-        const remainingTime = VPAID.getAdRemainingTime.call(this);
-        const duration = VPAID.getAdDuration.call(this);
+  get adCurrentTime() {
+    if (this.__adOnStage && this.creative && this.creative.isLinear) {
+      if (this.rmpVastVpaidPlayer) {
+        const remainingTime = this.rmpVastVpaidPlayer.getAdRemainingTime();
+        const duration = this.rmpVastVpaidPlayer.getAdDuration();
         if (remainingTime === -1 || duration === -1 || remainingTime > duration) {
           return -1;
         }
         return (duration - remainingTime) * 1000;
-      } else {
-        return VAST_PLAYER.getCurrentTime.call(this);
+      } else if (this.rmpVastAdPlayer) {
+        return this.rmpVastAdPlayer.currentTime;
       }
     }
     return -1;
@@ -1157,17 +1112,17 @@ export default class RmpVast {
   /** 
    * @type {() => number} 
    */
-  getAdRemainingTime() {
-    if (this.adOnStage && this.creative && this.creative.isLinear) {
-      if (this.isVPAID) {
-        let adRemainingTime = VPAID.getAdRemainingTime.call(this);
+  get adRemainingTime() {
+    if (this.__adOnStage && this.creative && this.creative.isLinear) {
+      if (this.rmpVastVpaidPlayer) {
+        let adRemainingTime = this.rmpVastVpaidPlayer.getAdRemainingTime();
         if (adRemainingTime > 0) {
           adRemainingTime = adRemainingTime * 1000;
         }
         return adRemainingTime;
-      } else {
-        const currentTime = VAST_PLAYER.getCurrentTime.call(this);
-        const duration = VAST_PLAYER.getDuration.call(this);
+      } else if (this.rmpVastAdPlayer) {
+        const currentTime = this.rmpVastAdPlayer.currentTime;
+        const duration = this.rmpVastAdPlayer.duration;
         if (currentTime === -1 || duration === -1 || currentTime > duration) {
           return -1;
         }
@@ -1180,17 +1135,17 @@ export default class RmpVast {
   /** 
    * @type {() => boolean} 
    */
-  getAdOnStage() {
-    return this.adOnStage;
+  get adOnStage() {
+    return this.__adOnStage;
   }
 
   /** 
    * @type {() => number} 
    */
-  getAdMediaWidth() {
-    if (this.adOnStage) {
-      if (this.isVPAID) {
-        return VPAID.getAdWidth.call(this);
+  get adMediaWidth() {
+    if (this.__adOnStage) {
+      if (this.rmpVastVpaidPlayer) {
+        return this.rmpVastVpaidPlayer.getAdWidth();
       } else if (this.creative && this.creative.width) {
         return this.creative.width;
       }
@@ -1201,10 +1156,10 @@ export default class RmpVast {
   /** 
    * @type {() => number} 
    */
-  getAdMediaHeight() {
-    if (this.adOnStage) {
-      if (this.isVPAID) {
-        return VPAID.getAdHeight.call(this);
+  get adMediaHeight() {
+    if (this.__adOnStage) {
+      if (this.rmpVastVpaidPlayer) {
+        return this.rmpVastVpaidPlayer.getAdHeight();
       } else if (this.creative && this.creative.height) {
         return this.creative.height;
       }
@@ -1215,7 +1170,7 @@ export default class RmpVast {
   /** 
    * @type {() => string} 
    */
-  getClickThroughUrl() {
+  get clickThroughUrl() {
     if (this.creative && this.creative.clickThroughUrl) {
       return this.creative.clickThroughUrl;
     }
@@ -1225,7 +1180,7 @@ export default class RmpVast {
   /** 
    * @type {() => number} 
    */
-  getSkipTimeOffset() {
+  get skipTimeOffset() {
     if (this.creative && this.creative.skipoffset) {
       return this.creative.skipoffset;
     }
@@ -1235,7 +1190,7 @@ export default class RmpVast {
   /** 
    * @type {() => boolean} 
    */
-  getIsSkippableAd() {
+  get isSkippableAd() {
     if (this.creative && this.creative.isSkippableAd) {
       return true;
     }
@@ -1245,60 +1200,53 @@ export default class RmpVast {
   /** 
    * @type {() => boolean} 
    */
-  getContentPlayerCompleted() {
-    return this.contentPlayerCompleted;
+  get contentPlayerCompleted() {
+    return this.__contentPlayerCompleted;
   }
 
   /** 
    * @param {boolean} value
    * @return {void}
    */
-  setContentPlayerCompleted(value) {
+  set contentPlayerCompleted(value) {
     if (typeof value === 'boolean') {
-      this.contentPlayerCompleted = value;
+      this.__contentPlayerCompleted = value;
     }
   }
 
   /** 
    * @type {() => string} 
    */
-  getAdErrorMessage() {
-    return this.vastErrorMessage;
+  get adErrorMessage() {
+    return this.__adErrorMessage;
   }
 
   /** 
    * @type {() => number} 
    */
-  getAdVastErrorCode() {
-    return this.vastErrorCode;
+  get adVastErrorCode() {
+    return this.__vastErrorCode;
   }
 
   /** 
    * @type {() => string} 
    */
-  getAdErrorType() {
-    return this.adErrorType;
+  get adErrorType() {
+    return this.__adErrorType;
   }
 
   /** 
    * @type {() => boolean} 
    */
-  getIsUsingContentPlayerForAds() {
-    return this.useContentPlayerForAds;
-  }
-
-  /** 
-   * @type {() => boolean} 
-   */
-  getAdSkippableState() {
-    if (this.adOnStage) {
-      if (this.isVPAID) {
-        return VPAID.getAdSkippableState.call(this);
-      } else if (this.simidPlayer) {
+  get adSkippableState() {
+    if (this.__adOnStage) {
+      if (this.rmpVastVpaidPlayer) {
+        return this.rmpVastVpaidPlayer.getAdSkippableState();
+      } else if (this.rmpVastSimidPlayer) {
         return true;
       } else {
-        if (this.getIsSkippableAd()) {
-          return this.skippableAdCanBeSkipped;
+        if (this.isSkippableAd && this.rmpVastLinearCreative) {
+          return this.rmpVastLinearCreative.skippableAdCanBeSkipped;
         }
       }
     }
@@ -1308,15 +1256,48 @@ export default class RmpVast {
   /** 
    * @return {HTMLMediaElement|null}
    */
-  getVastPlayer() {
-    return this.vastPlayer;
+  get adPlayer() {
+    return this.__adPlayer;
   }
 
   /** 
    * @return {HTMLMediaElement|null}
    */
-  getContentPlayer() {
-    return this.contentPlayer;
+  get contentPlayer() {
+    return this.__contentPlayer;
+  }
+
+  /** 
+   * @type {() => boolean} 
+   */
+  get initialized() {
+    return this.__initialized;
+  }
+
+  /** 
+   * @typedef {object} AdPod
+   * @property {number} adPodCurrentIndex
+   * @property {number} adPodLength
+   * @return {AdPod}
+   */
+  get adPodInfo() {
+    if (this.adPod && this.adPodLength) {
+      const result = {};
+      result.adPodCurrentIndex = this.adSequence;
+      result.adPodLength = this.adPodLength;
+      return result;
+    }
+    return {
+      adPodCurrentIndex: -1,
+      adPodLength: 0
+    };
+  }
+
+  /** 
+   * @type {() => string} 
+   */
+  get companionAdsRequiredAttribute() {
+    return this.__companionAdsRequiredAttribute;
   }
 
   /** 
@@ -1352,6 +1333,26 @@ export default class RmpVast {
   }
 
   /** 
+   * @private
+   */
+  _onImgClickThrough(companionClickThroughUrl, companionClickTrackingUrls, event) {
+    if (event) {
+      event.stopPropagation();
+      if (event.type === 'touchend') {
+        event.preventDefault();
+      }
+    }
+    if (companionClickTrackingUrls) {
+      companionClickTrackingUrls.forEach(companionClickTrackingUrl => {
+        if (companionClickTrackingUrl.url) {
+          Tracking.pingURI.call(this, companionClickTrackingUrl.url);
+        }
+      });
+    }
+    FW.openWindow(companionClickThroughUrl);
+  }
+
+  /** 
    * @param {number} index
    * @return {HTMLElement|null}
    */
@@ -1382,11 +1383,11 @@ export default class RmpVast {
       if (trackingEventsUrls.length > 0) {
         html.onload = () => {
           trackingEventsUrls.forEach(trackingEventsUrl => {
-            TRACKING_EVENTS.pingURI.call(this, trackingEventsUrl);
+            Tracking.pingURI.call(this, trackingEventsUrl);
           });
         };
         html.onerror = () => {
-          TRACKING_EVENTS.error.call(this, 603);
+          Tracking.error.call(this, 603);
         };
       }
       let companionClickTrackingUrls = null;
@@ -1397,31 +1398,13 @@ export default class RmpVast {
 
         companionClickTrackingUrls = companionAd.companionClickTrackingUrls;
       }
-      const _onImgClickThrough = function (companionClickThroughUrl, companionClickTrackingUrls, event) {
-        if (event) {
-          event.stopPropagation();
-          if (event.type === 'touchend') {
-            event.preventDefault();
-          }
-        }
-        if (companionClickTrackingUrls) {
-          companionClickTrackingUrls.forEach(companionClickTrackingUrl => {
-            if (companionClickTrackingUrl.url) {
-              TRACKING_EVENTS.pingURI.call(this, companionClickTrackingUrl.url);
-            }
-          });
-        }
-        FW.openWindow(companionClickThroughUrl);
-      };
       if (companionAd.companionClickThroughUrl) {
-        html.addEventListener(
-          'touchend',
-          _onImgClickThrough.bind(this, companionAd.companionClickThroughUrl, companionClickTrackingUrls)
+        const _onImgClickThroughFn = this._onImgClickThrough.bind(
+          this,
+          companionAd.companionClickThroughUrl,
+          companionClickTrackingUrls
         );
-        html.addEventListener(
-          'click',
-          _onImgClickThrough.bind(this, companionAd.companionClickThroughUrl, companionClickTrackingUrls)
-        );
+        FW.addEvents(['touchend', 'click'], html, _onImgClickThroughFn);
       }
     }
     if (companionAd.imageUrl) {
@@ -1441,49 +1424,14 @@ export default class RmpVast {
   }
 
   /** 
-   * @type {() => string} 
-   */
-  getCompanionAdsRequiredAttribute() {
-    if (this.adOnStage) {
-      return this.companionAdsRequiredAttribute;
-    }
-    return '';
-  }
-
-  /** 
    * @type {() => void} 
    */
   initialize() {
-    if (!this.rmpVastInitialized) {
+    if (!this.__initialized) {
       console.log(`${FW.consolePrepend} Upon user interaction - player needs to be initialized`, FW.consoleStyle, '');
-      VAST_PLAYER.init.call(this);
+      this.rmpVastAdPlayer = new AdPlayer(this);
+      this.rmpVastAdPlayer.init();
     }
-  }
-
-  /** 
-   * @type {() => boolean} 
-   */
-  getInitialized() {
-    return this.rmpVastInitialized;
-  }
-
-  /** 
-   * @typedef {object} AdPod
-   * @property {number} adPodCurrentIndex
-   * @property {number} adPodLength
-   * @return {AdPod}
-   */
-  getAdPodInfo() {
-    if (this.adPod && this.adPodLength) {
-      const result = {};
-      result.adPodCurrentIndex = this.adSequence;
-      result.adPodLength = this.adPodLength;
-      return result;
-    }
-    return {
-      adPodCurrentIndex: -1,
-      adPodLength: 0
-    };
   }
 
   // VPAID methods
@@ -1491,8 +1439,8 @@ export default class RmpVast {
    * @type {(width: number, height: number, viewMode: string) => void} 
    */
   resizeAd(width, height, viewMode) {
-    if (this.adOnStage && this.isVPAID) {
-      VPAID.resizeAd.call(this, width, height, viewMode);
+    if (this.rmpVastVpaidPlayer) {
+      this.rmpVastVpaidPlayer.resizeAd(width, height, viewMode);
     }
   }
 
@@ -1500,8 +1448,8 @@ export default class RmpVast {
    * @type {() => void} 
    */
   expandAd() {
-    if (this.adOnStage && this.isVPAID) {
-      VPAID.expandAd.call(this);
+    if (this.rmpVastVpaidPlayer) {
+      this.rmpVastVpaidPlayer.expandAd();
     }
   }
 
@@ -1509,17 +1457,17 @@ export default class RmpVast {
    * @type {() => void} 
    */
   collapseAd() {
-    if (this.adOnStage && this.isVPAID) {
-      VPAID.collapseAd.call(this);
+    if (this.rmpVastVpaidPlayer) {
+      this.rmpVastVpaidPlayer.collapseAd();
     }
   }
 
   /** 
    * @type {() => boolean} 
    */
-  getAdExpanded() {
-    if (this.adOnStage && this.isVPAID) {
-      VPAID.getAdExpanded.call(this);
+  get adExpanded() {
+    if (this.rmpVastVpaidPlayer) {
+      this.rmpVastVpaidPlayer.getAdExpanded();
     }
     return false;
   }
@@ -1527,9 +1475,9 @@ export default class RmpVast {
   /** 
    * @type {() => string} 
    */
-  getVPAIDCompanionAds() {
-    if (this.adOnStage && this.isVPAID) {
-      VPAID.getAdCompanions.call(this);
+  get vpaidCompanionAds() {
+    if (this.rmpVastVpaidPlayer) {
+      this.rmpVastVpaidPlayer.getAdCompanions();
     }
     return '';
   }

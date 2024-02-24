@@ -15,15 +15,13 @@ import {
   PlayerErrorCode,
   StopCode
 } from './simid_protocol';
-
-
 import Utils from '../../framework/utils';
 import FW from '../../framework/fw';
-import VAST_PLAYER from '../vast-player';
-import TRACKING_EVENTS from '../../tracking/tracking-events';
+import Tracking from '../../tracking/tracking';
 
 const NO_REQUESTED_DURATION = 0;
 const UNLIMITED_DURATION = -2;
+
 
 /** 
  * All the logic for a simple SIMID player
@@ -34,14 +32,7 @@ export default class SimidPlayer {
    * Sets up the creative iframe and starts listening for messages
    * from the creative.
    */
-  constructor(isLinearAd,
-    simidData,
-    url,
-    adId,
-    creativeId,
-    adServingId,
-    clickThroughUrl,
-    rmpVast) {
+  constructor(url, rmpVast) {
     /**
      * The protocol for sending and receiving messages.
      * @protected {!SimidProtocol}
@@ -51,28 +42,28 @@ export default class SimidPlayer {
     this.addListeners_();
 
     this.rmpVast_ = rmpVast;
-    this.simidData_ = simidData;
-    this.adContainer_ = this.rmpVast_.adContainer;
-    this.playerDiv_ = this.rmpVast_.contentWrapper;
-    this.vastPlayerUrl_ = url;
-    this.adParameters_ = simidData.adParameters;
-    this.adId_ = adId;
-    this.creativeId_ = creativeId;
-    this.adServingId_ = adServingId;
-    this.clickThroughUrl_ = clickThroughUrl;
+    this.simidData_ = rmpVast.creative.simid;
+    this.adContainer_ = rmpVast.adContainer;
+    this.playerDiv_ = rmpVast.contentWrapper;
+    this.adPlayerUrl_ = url;
+    this.adParameters_ = rmpVast.creative.simid.adParameters;
+    this.adId_ = rmpVast.creative.adId;
+    this.creativeId_ = rmpVast.creative.id;
+    this.adServingId_ = rmpVast.ad.adServingId;
+    this.clickThroughUrl_ = rmpVast.creative.clickThroughUrl;
 
 
     /**
      * A reference to the video player on the players main page
      * @private {!Element}
      */
-    this.contentVideoElement_ = this.rmpVast_.contentPlayer;
+    this.contentVideoElement_ = rmpVast.__contentPlayer;
 
     /**
      * A reference to a video player for playing ads.
      * @private {!Element}
      */
-    this.adVideoElement_ = this.rmpVast_.vastPlayer;
+    this.adVideoElement_ = rmpVast.__adPlayer;
 
     /**
      * A reference to the iframe holding the SIMID creative.
@@ -102,7 +93,7 @@ export default class SimidPlayer {
      * A boolean indicating what type of creative ad is.
      * @const @private {boolean}
      */
-    this.isLinearAd_ = isLinearAd;
+    this.isLinearAd_ = rmpVast.creative.isLinear;
 
     /**
      * A number indicating when the non linear ad started.
@@ -549,7 +540,7 @@ export default class SimidPlayer {
   playLinearVideoAd_() {
     this.contentVideoElement_.pause();
     this.showAdPlayer_();
-    this.adVideoElement_.src = this.vastPlayerUrl_;
+    this.adVideoElement_.src = this.adPlayerUrl_;
     // we need this extra load for Chrome data saver mode in mobile or desktop
     this.adVideoElement_.load();
     this.adVideoElement_.play();
@@ -699,8 +690,8 @@ export default class SimidPlayer {
     //this.contentVideoElement_.play();
     if (error) {
       Utils.processVastErrors.call(this.rmpVast_, errorCode, true);
-    } else {
-      VAST_PLAYER.resumeContent.call(this.rmpVast_);
+    } else if (this.rmpVast_.rmpVastAdPlayer) {
+      this.rmpVast_.rmpVastAdPlayer.resumeContent();
     }
   }
 
@@ -786,7 +777,7 @@ export default class SimidPlayer {
   onReportTracking(incomingMessage) {
     const requestedUrlArray = incomingMessage.args['trackingUrls'];
     requestedUrlArray.forEach(url => {
-      TRACKING_EVENTS.pingURI.call(this, url);
+      Tracking.pingURI.call(this.rmpVast_, url);
     });
 
     console.log(`${FW.consolePrepend} SIMID: The creative has asked for the player to ping ${requestedUrlArray}`, FW.consoleStyle, '');

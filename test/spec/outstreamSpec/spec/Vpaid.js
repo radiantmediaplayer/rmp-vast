@@ -1,6 +1,6 @@
 const ADTAG1 = 'https://pubads.g.doubleclick.net/gampad/ads?iu=/21775744923/external/single_ad_samples&sz=640x480&cust_params=sample_ct%3Dlinearvpaid2js&ciu_szs=300x250%2C728x90&gdfp_req=1&output=vast&unviewed_position_start=1&env=vp&impl=s&correlator=' + Date.now();
 
-describe('Test for outstream/Vpaid', function () {
+describe('Test for outstream/vpaid', function () {
 
   const id = 'rmp';
   const container = document.getElementById(id);
@@ -16,7 +16,7 @@ describe('Test for outstream/Vpaid', function () {
     }
   };
   const rmpVast = new RmpVast(id, params);
-  const env = rmpVast.getEnvironment();
+  const env = rmpVast.environment;
   video.muted = true;
   if (env.isAndroid[0] || env.isIos[0]) {
     container.style.width = '320px';
@@ -25,7 +25,7 @@ describe('Test for outstream/Vpaid', function () {
 
   const title = document.getElementsByTagName('title')[0];
 
-  it('should load VPAID outstream', function (done) {
+  it('should load outstream/vpaid', function (done) {
     let validSteps = 0;
 
     const _incrementAndLog = function (event) {

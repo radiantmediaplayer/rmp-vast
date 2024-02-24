@@ -15,11 +15,8 @@ describe('Test for simid-linear', function () {
   const id = 'rmp';
   const container = document.getElementById(id);
   const video = document.querySelector('.rmp-video');
-  const params = {
-    enableSimid: true
-  };
-  const rmpVast = new RmpVast(id, params);
-  const env = rmpVast.getEnvironment();
+  const rmpVast = new RmpVast(id);
+  const env = rmpVast.environment;
   video.muted = true;
   if (env.isAndroid[0] || env.isIos[0]) {
     container.style.width = '320px';
@@ -46,7 +43,7 @@ describe('Test for simid-linear', function () {
   });
   const fatalButton = document.getElementById('fatal');
   fatalButton.addEventListener('click', () => {
-    rmpVast.simidPlayer.stopAd(1, true, 1100);
+    rmpVast.rmpVastSimidPlayer.stopAd(1, true, 1100);
   });
 
   it('should load and play simid-linear', function (done) {

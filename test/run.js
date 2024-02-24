@@ -1,5 +1,10 @@
 const child_process = require('child_process');
 
+// these ones require manual testing
+/*const manualTestList = [
+  'node test/spec/main/adBlockerSpec.js chrome',
+];*/
+
 const desktopTestList = [
   'node test/spec/main/adPodSpec.js',
   'node test/spec/main/adPodSpec.js chrome',

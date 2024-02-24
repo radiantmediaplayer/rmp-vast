@@ -7,7 +7,7 @@ describe('Test for initialize', function () {
   const container = document.getElementById(id);
   const video = document.querySelector('.rmp-video');
   window.rmpVast = new RmpVast(id, {
-    showControlsForVastPlayer: true
+    showControlsForAdPlayer: true
   });
   video.volume = 0.8;
   const title = document.getElementsByTagName('title')[0];
@@ -28,15 +28,15 @@ describe('Test for initialize', function () {
         _incrementAndLog(e);
         window.rmpVast.loadAds(ADTAG1);
         setTimeout(() => {
-          console.log(window.rmpVast.getVolume());
-          if (window.rmpVast.getVolume() === 0.8) {
+          console.log(window.rmpVast.volume);
+          if (window.rmpVast.volume === 0.8) {
             _incrementAndLog(e);
-            window.rmpVast.setVolume(0.2);
+            window.rmpVast.volume = 0.2;
           }
           setTimeout(() => {
-            if (window.rmpVast.getVolume() === 0.2 && !window.rmpVast.getMute()) {
+            if (window.rmpVast.volume === 0.2 && !window.rmpVast.muted) {
               _incrementAndLog(e);
-              window.rmpVast.setMute(true);
+              window.rmpVast.muted = true;
             }
           }, 500);
         }, 500);
@@ -44,7 +44,7 @@ describe('Test for initialize', function () {
     });
 
     window.rmpVast.on('addestroyed', function (e) {
-      if (window.rmpVast.getMute()) {
+      if (window.rmpVast.muted) {
         _incrementAndLog(e);
         expect(eventsSteps).toBe(5);
         if (eventsSteps === 5) {

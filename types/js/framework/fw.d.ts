@@ -1,6 +1,5 @@
 export default class FW {
     static _getStyleAttributeData(element: any, style: any): number;
-    static nullFn(): any;
     static createSyntheticEvent(eventName: any, element: any): void;
     static setStyle(element: any, styleObject: any): void;
     static getWidth(element: any): any;
@@ -17,5 +16,9 @@ export default class FW {
     static isNumber(n: any): boolean;
     static openWindow(link: any): void;
     static ajax(url: any, timeout: any, withCredentials: any): Promise<any>;
+    static addEvents(events: any, domElement: any, callback: any): void;
+    static removeEvents(events: any, domElement: any, callback: any): void;
+    static clearTimeout(timeoutCallback: any): void;
+    static clearInterval(intervalCallback: any): void;
 }
 //# sourceMappingURL=fw.d.ts.map

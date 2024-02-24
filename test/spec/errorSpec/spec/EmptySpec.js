@@ -7,7 +7,7 @@ describe('Test for EmptySpec', function () {
   const container = document.getElementById(id);
   const video = document.querySelector('.rmp-video');
   const rmpVast = new RmpVast(id, {});
-  const env = rmpVast.getEnvironment();
+  const env = rmpVast.environment;
   video.muted = true;
   if (env.isAndroid[0] || env.isIos[0]) {
     container.style.width = '320px';
@@ -31,7 +31,7 @@ describe('Test for EmptySpec', function () {
 
     rmpVast.on('aderror', function (e) {
       _incrementAndLog(e);
-      expect(rmpVast.getAdVastErrorCode()).toBe(303);
+      expect(rmpVast.adVastErrorCode).toBe(303);
     });
 
     rmpVast.on('addestroyed', function (e) {

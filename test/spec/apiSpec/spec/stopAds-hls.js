@@ -10,7 +10,7 @@ describe('Test for stopAds-hls', function () {
     debugHlsJS: false
   };
   const rmpVast = new RmpVast(id, params);
-  const env = rmpVast.getEnvironment();
+  const env = rmpVast.environment;
   video.muted = true;
   if (env.isAndroid[0] || env.isIos[0]) {
     container.style.width = '320px';
@@ -19,7 +19,7 @@ describe('Test for stopAds-hls', function () {
 
   setTimeout(function () {
     rmpVast.stopAds();
-  }, 5000);
+  }, 10000);
 
   const title = document.getElementsByTagName('title')[0];
 

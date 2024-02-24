@@ -1,69 +1,34 @@
 import FW from '../framework/fw';
-import TRACKING_EVENTS from '../tracking/tracking-events';
+import Tracking from '../tracking/tracking';
 
-const VIDEO_EVENT_TYPES = [
-  'error',
-  'loadeddata',
-  'pause',
-  'play',
-  'timeupdate',
-  'volumechange',
-  'click',
-];
 
-const CONTENT_URL = document.location.href;
-// we support Access Modes Creative Access a.k.a full (we do not support Domain Access for now)
-const ACCESS_MODE = 'full';
-const OMSDK_SERVICE_WINDOW = window.top;
+export default class OmSdkManager {
 
-class OmSdkManager {
-
-  constructor(adVerifications, contentPlayer, vastPlayer, params, isSkippableAd, skipTimeOffset) {
-    this.adEvents = null;
-    this.mediaEvents = null;
-    this.adSession = null;
+  constructor(adVerifications, rmpVast) {
+    this._rmpVast = rmpVast;
     this.VastProperties = null;
-    this.lastVideoTime = -1;
-    this.contentPlayer = contentPlayer;
-    this.vastPlayer = vastPlayer;
-    this.adVerifications = adVerifications;
-    this.params = params;
-    this.isSkippableAd = isSkippableAd;
-    this.skipTimeOffset = skipTimeOffset;
-    this.onFullscreenChange = null;
-
-    console.log(
-      `${FW.consolePrepend}${FW.consolePrepend2} create new class Instance`,
-      FW.consoleStyle,
-      FW.consoleStyle2,
-      ''
-    );
+    this._adEvents = null;
+    this._mediaEvents = null;
+    this._adSession = null;
+    this._lastVideoTime = -1;
+    this._adVerifications = adVerifications;
+    this._onFullscreenChangeFn = null;
+    this._contentPlayer = rmpVast.__contentPlayer;
+    this._adPlayer = rmpVast.__adPlayer;
+    this._params = rmpVast.params;
+    this._isSkippableAd = rmpVast.isSkippableAd;
+    this._skipTimeOffset = rmpVast.skipTimeOffset;
   }
 
-  init() {
-    // handle VAST player events
-    VIDEO_EVENT_TYPES.forEach((eventType) => {
-      this.vastPlayer.addEventListener(
-        eventType,
-        (event) => this._vastPlayerDidDispatchEvent(event)
-      );
-    });
-    // handle fullscreenchange 
-    this.onFullscreenChange = this._onFullscreenChange.bind(this);
-    document.addEventListener('fullscreenchange', this.onFullscreenChange);
-    // Service Script To incorporate omweb-v1.js, use a <script> tag - we are assuming it is there
-    this._onOMWebLoaded();
-  }
-
-  destroy() {
-    document.removeEventListener('fullscreenchange', this.onFullscreenChange);
-    this.adSession.finish();
+  _destroy() {
+    document.removeEventListener('fullscreenchange', this._onFullscreenChangeFn);
+    this._adSession.finish();
   }
 
   _onFullscreenChange() {
     const isFullscreen = document.fullscreenElement !== null;
     const playerState = isFullscreen ? 'fullscreen' : 'normal';
-    this.mediaEvents.playerStateChange(playerState);
+    this._mediaEvents.playerStateChange(playerState);
   }
 
   _pingVerificationNotExecuted(verification, reasonCode) {
@@ -76,77 +41,69 @@ class OmSdkManager {
         if (reasonPattern.test(validatedURI)) {
           validatedURI = validatedURI.replace(reasonPattern, reasonCode);
         }
-
-        console.log(
-          `${FW.consolePrepend}${FW.consolePrepend2} ping VerificationNotExecuted at URI ${validatedURI}`,
-          FW.consoleStyle,
-          FW.consoleStyle2,
-          ''
-        );
-
-        TRACKING_EVENTS.pingURI(validatedURI);
+        Tracking.pingURI.call(this._rmpVast, validatedURI);
       });
     }
   }
 
-  _vastPlayerDidDispatchTimeUpdate() {
-    if (!this.adEvents || !this.mediaEvents || this.vastPlayer.playbackRate === 0) {
+  _adPlayerDidDispatchTimeUpdate() {
+    if (!this._adEvents || !this._mediaEvents || !this._adPlayer || this._adPlayer.playbackRate === 0) {
       return;
     }
     // Check if playback has crossed a quartile threshold, and report that to
     // the OMSDK.
-    const vastPlayerCurrentTime = this.vastPlayer.currentTime;
-    const vastPlayerDuration = this.vastPlayer.duration;
-    if (vastPlayerCurrentTime > -1 && vastPlayerDuration > 0) {
-      const currentVideoTimePerCent = vastPlayerCurrentTime / vastPlayerDuration;
-      if (this.lastVideoTime < 0 && currentVideoTimePerCent >= 0) {
-        this.adEvents.impressionOccurred();
-        this.mediaEvents.start(
-          vastPlayerDuration,
-          this.vastPlayer.volume
+    const adPlayerCurrentTime = this._adPlayer.currentTime;
+    const adPlayerDuration = this._adPlayer.duration;
+    if (adPlayerCurrentTime > -1 && adPlayerDuration > 0) {
+      const currentVideoTimePerCent = adPlayerCurrentTime / adPlayerDuration;
+      if (this._lastVideoTime < 0 && currentVideoTimePerCent >= 0) {
+        this._adEvents.impressionOccurred();
+        this._mediaEvents.start(
+          adPlayerDuration,
+          this._adPlayer.volume
         );
-      } else if (this.lastVideoTime < 0.25 && currentVideoTimePerCent >= 0.25) {
-        this.mediaEvents.firstQuartile();
-      } else if (this.lastVideoTime < 0.5 && currentVideoTimePerCent >= 0.5) {
-        this.mediaEvents.midpoint();
-      } else if (this.lastVideoTime < 0.75 && currentVideoTimePerCent >= 0.75) {
-        this.mediaEvents.thirdQuartile();
-      } else if (this.lastVideoTime < 1 && currentVideoTimePerCent >= 1) {
-        this.mediaEvents.complete();
+      } else if (this._lastVideoTime < 0.25 && currentVideoTimePerCent >= 0.25) {
+        this._mediaEvents.firstQuartile();
+      } else if (this._lastVideoTime < 0.5 && currentVideoTimePerCent >= 0.5) {
+        this._mediaEvents.midpoint();
+      } else if (this._lastVideoTime < 0.75 && currentVideoTimePerCent >= 0.75) {
+        this._mediaEvents.thirdQuartile();
+      } else if (this._lastVideoTime < 1 && currentVideoTimePerCent >= 1) {
+        this._mediaEvents.complete();
         // to prevent ad pod to fire verification events
-        this.adEvents = null;
-        this.mediaEvents = null;
-        // Wait 3s, then finish the session.
+        this._adEvents = null;
+        this._mediaEvents = null;
+        // Wait 300 ms, then finish the session.
         setTimeout(() => {
-          this.destroy();
+          this._destroy();
         }, 300);
       }
-      this.lastVideoTime = currentVideoTimePerCent;
+      this._lastVideoTime = currentVideoTimePerCent;
     }
   }
 
-  _vastPlayerDidDispatchEvent(event) {
-    if (!this.adSession || !this.adEvents || !this.mediaEvents || !this.VastProperties) {
+  _adPlayerDidDispatchEvent(event) {
+    if (!this._adSession || !this._adEvents || !this._mediaEvents || !this.VastProperties) {
       return;
     }
     let vastProperties, volume;
     let videoPosition = 'preroll';
     switch (event.type) {
       case 'error':
-        this.adSession.error(
+        this._adSession.error(
           'video',
-          this.vastPlayer.error.message
+          this._adPlayer.error.message
         );
         break;
       case 'loadeddata':
-        if (this.skipTimeOffset < 0) {
-          this.skipTimeOffset = 0;
+        if (this._skipTimeOffset < 0) {
+          this._skipTimeOffset = 0;
         }
-        if (this.params.outstream) {
+        if (this._params.outstream) {
           videoPosition = 'standalone';
         } else {
-          const contentPlayerCurrentTime = this.contentPlayer.currentTime;
-          const contentPlayerDuration = this.contentPlayer.duration;
+          const contentPlayerCurrentTime = this._contentPlayer.currentTime;
+          const contentPlayerDuration = this._contentPlayer.duration;
           if (contentPlayerCurrentTime > 0 && contentPlayerCurrentTime < contentPlayerDuration) {
             videoPosition === 'midroll';
           } else if (contentPlayerCurrentTime >= contentPlayerDuration) {
@@ -154,30 +111,30 @@ class OmSdkManager {
           }
         }
         vastProperties = new this.VastProperties(
-          this.isSkippableAd,
-          this.skipTimeOffset,
-          this.params.omidAutoplay,
+          this._isSkippableAd,
+          this._skipTimeOffset,
+          this._params.omidAutoplay,
           videoPosition
         );
-        this.adEvents.loaded(vastProperties);
+        this._adEvents.loaded(vastProperties);
         break;
       case 'pause':
-        this.mediaEvents.pause();
+        this._mediaEvents.pause();
         break;
       case 'play':
-        if (this.vastPlayer.currentTime > 0) {
-          this.mediaEvents.resume();
+        if (this._adPlayer.currentTime > 0) {
+          this._mediaEvents.resume();
         }
         break;
       case 'timeupdate':
-        this._vastPlayerDidDispatchTimeUpdate();
+        this._adPlayerDidDispatchTimeUpdate();
         break;
       case 'volumechange':
-        volume = this.vastPlayer.muted ? 0 : this.vastPlayer.volume;
-        this.mediaEvents.volumeChange(volume);
+        volume = this._adPlayer.muted ? 0 : this._adPlayer.volume;
+        this._mediaEvents.volumeChange(volume);
         break;
       case 'click':
-        this.mediaEvents.adUserInteraction('click');
+        this._mediaEvents.adUserInteraction('click');
         break;
       default:
         break;
@@ -190,8 +147,8 @@ class OmSdkManager {
     // we only execute browserOptional="false" unless there are none 
     // in which case we will look for browserOptional="true"
     let browserOptional = [];
-    for (let i = 0; i < this.adVerifications.length; i++) {
-      const verification = this.adVerifications[i];
+    for (let i = 0; i < this._adVerifications.length; i++) {
+      const verification = this._adVerifications[i];
       if (typeof verification.resource !== 'string' || verification.resource === '') {
         continue;
       }
@@ -209,8 +166,8 @@ class OmSdkManager {
         continue;
       }
       // reject vendors not in omidAllowedVendors if omidAllowedVendors is not empty
-      if (this.params.omidAllowedVendors.length > 0 && typeof verification.vendor !== 'undefined') {
-        if (!this.params.omidAllowedVendors.includes(verification.vendor)) {
+      if (this._params.omidAllowedVendors.length > 0 && typeof verification.vendor !== 'undefined') {
+        if (!this._params.omidAllowedVendors.includes(verification.vendor)) {
           continue;
         }
       }
@@ -222,10 +179,10 @@ class OmSdkManager {
     }
     if (validatedVerificationArray.length === 0 && browserOptional.length > 0) {
       browserOptional.forEach(browserOptionalItem => {
-        validatedVerificationArray.push(this.adVerifications[browserOptionalItem]);
+        validatedVerificationArray.push(this._adVerifications[browserOptionalItem]);
       });
     }
-    this.adVerifications = validatedVerificationArray;
+    this._adVerifications = validatedVerificationArray;
     let sessionClient;
     try {
       sessionClient = OmidSessionClient['default'];
@@ -240,33 +197,38 @@ class OmSdkManager {
     const AdEvents = sessionClient.AdEvents;
     const MediaEvents = sessionClient.MediaEvents;
     this.VastProperties = sessionClient.VastProperties;
-    const partner = new Partner(this.params.partnerName, this.params.partnerVersion);
+    const partner = new Partner(this._params.partnerName, this._params.partnerVersion);
 
     let resources = [];
-    if (this.params.omidRunValidationScript) {
+    if (this._params.omidRunValidationScript) {
       // https://interactiveadvertisingbureau.github.io/Open-Measurement-SDKJS/validation.html
       const VALIDATION_SCRIPT_URL = 'https://cdn.radiantmediatechs.com/rmp/omsdk/1.3.37/omid-validation-verification-script-v1.js';
       const VENDOR_KEY = 'dummyVendor'; // you must use this value as is
       const PARAMS = JSON.stringify({ 'k': 'v' });
       resources.push(new VerificationScriptResource(VALIDATION_SCRIPT_URL, VENDOR_KEY, PARAMS));
     } else {
-      resources = this.adVerifications.map((verification) => {
+      // we support Access Modes Creative Access a.k.a full (we do not support Domain Access for now)
+      const accessMode = 'full';
+      resources = this._adVerifications.map((verification) => {
         return new VerificationScriptResource(
           verification.resource,
           verification.vendor,
           verification.parameters,
-          ACCESS_MODE
+          accessMode
         );
       });
     }
-    const context = new Context(partner, resources, CONTENT_URL);
+    const contentUrl = document.location.href;
+    const context = new Context(partner, resources, contentUrl);
 
     console.log(resources);
 
-    if (this.params.omidUnderEvaluation) {
+    if (this._params.omidUnderEvaluation) {
       context.underEvaluation = true;
     }
-    if (!OMSDK_SERVICE_WINDOW) {
+
+    const omdSdkServiceWindow = window.top;
+    if (!omdSdkServiceWindow) {
       console.log(
         `${FW.consolePrepend}${FW.consolePrepend2} invalid serviceWindow - return`,
         FW.consoleStyle,
@@ -275,15 +237,15 @@ class OmSdkManager {
       );
       return;
     }
-    context.setServiceWindow(OMSDK_SERVICE_WINDOW);
-    context.setVideoElement(this.vastPlayer);
+    context.setServiceWindow(omdSdkServiceWindow);
+    context.setVideoElement(this._adPlayer);
 
     console.log(context);
 
-    this.adSession = new AdSession(context);
-    this.adSession.setCreativeType('video');
-    this.adSession.setImpressionType('beginToRender');
-    if (!this.adSession.isSupported()) {
+    this._adSession = new AdSession(context);
+    this._adSession.setCreativeType('video');
+    this._adSession.setImpressionType('beginToRender');
+    if (!this._adSession.isSupported()) {
       console.log(
         `${FW.consolePrepend}${FW.consolePrepend2} invalid serviceWindow - return`,
         FW.consoleStyle,
@@ -292,11 +254,31 @@ class OmSdkManager {
       );
       return;
     }
-    this.adEvents = new AdEvents(this.adSession);
-    this.mediaEvents = new MediaEvents(this.adSession);
-    this.adSession.start();
+    this._adEvents = new AdEvents(this._adSession);
+    this._mediaEvents = new MediaEvents(this._adSession);
+    this._adSession.start();
   }
+
+  init() {
+    const videoEventTypes = [
+      'error',
+      'loadeddata',
+      'pause',
+      'play',
+      'timeupdate',
+      'volumechange',
+      'click',
+    ];
+
+    // handle ad player events
+    videoEventTypes.forEach((eventType) => {
+      this._adPlayer.addEventListener(eventType, event => this._adPlayerDidDispatchEvent(event));
+    });
+    // handle fullscreenchange 
+    this._onFullscreenChangeFn = this._onFullscreenChange.bind(this);
+    document.addEventListener('fullscreenchange', this._onFullscreenChangeFn);
+    // Service Script To incorporate omweb-v1.js, use a <script> tag - we are assuming it is there
+    this._onOMWebLoaded();
+  }
+
 }
-
-
-export default OmSdkManager;

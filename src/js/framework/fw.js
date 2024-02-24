@@ -16,10 +16,6 @@ export default class FW {
     return parseFloat(styleAttributeData);
   }
 
-  static nullFn() {
-    return null;
-  }
-
   static createSyntheticEvent(eventName, element) {
     let event;
     if (element) {
@@ -133,7 +129,7 @@ export default class FW {
     events.forEach((value) => {
       video.addEventListener(value, (e) => {
         if (e && e.type) {
-          console.log(`${FW.consolePrepend} ${type} player event ${e.type}`, FW.consoleStyle, '');
+          console.log(`${FW.consolePrepend} ${type} video player event "${e.type}"`, FW.consoleStyle, '');
         }
       });
     });
@@ -165,19 +161,46 @@ export default class FW {
       if (withCredentials) {
         xhr.withCredentials = true;
       }
-      xhr.onloadend = function () {
+      xhr.onloadend = () => {
         if (typeof xhr.status === 'number' && xhr.status >= 200 && xhr.status < 300) {
           resolve('XMLHttpRequest request succeeded');
         } else {
           reject('XMLHttpRequest wrong status code: ' + xhr.status);
         }
       };
-      xhr.ontimeout = function () {
+      xhr.ontimeout = () => {
         reject('XMLHttpRequest timeout');
       };
       xhr.send(null);
     });
   }
 
+  static addEvents(events, domElement, callback) {
+    if (events && events.length > 1 && domElement && typeof callback === 'function') {
+      events.forEach(event => {
+        domElement.addEventListener(event, callback);
+      });
+    }
+  }
+
+  static removeEvents(events, domElement, callback) {
+    if (events && events.length > 1 && domElement && typeof callback === 'function') {
+      events.forEach(event => {
+        domElement.removeEventListener(event, callback);
+      });
+    }
+  }
+
+  static clearTimeout(timeoutCallback) {
+    if (typeof timeoutCallback === 'number') {
+      window.clearTimeout(timeoutCallback);
+    }
+  }
+
+  static clearInterval(intervalCallback) {
+    if (typeof intervalCallback === 'number') {
+      window.clearInterval(intervalCallback);
+    }
+  }
 
 }

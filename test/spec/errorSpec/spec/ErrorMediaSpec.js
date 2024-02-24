@@ -7,7 +7,7 @@ describe('Test for ErrorMediaSpec', function () {
   const container = document.getElementById(id);
   const video = document.querySelector('.rmp-video');
   const rmpVast = new RmpVast(id);
-  const env = rmpVast.getEnvironment();
+  const env = rmpVast.environment;
   video.muted = true;
   if (env.isAndroid[0] || env.isIos[0]) {
     container.style.width = '320px';
@@ -31,7 +31,8 @@ describe('Test for ErrorMediaSpec', function () {
     });
 
     rmpVast.on('aderror', function (e) {
-      if (rmpVast.getAdVastErrorCode() === 401 && rmpVast.getAdErrorType() === 'adPlayError' && rmpVast.getAdErrorMessage() === 'File not found. Unable to find Linear/MediaFile from URI.') {
+      if (rmpVast.adVastErrorCode === 401 && rmpVast.adErrorType === 'adPlayError' && 
+      rmpVast.adErrorMessage === 'File not found. Unable to find Linear/MediaFile from URI.') {
         _incrementAndLog(e);
       }
     });

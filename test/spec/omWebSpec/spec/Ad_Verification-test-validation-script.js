@@ -13,7 +13,7 @@ describe('AAd_Verification-test-validation-script', function () {
     omidUnderEvaluation: true
   };
   const rmpVast = new RmpVast(id, params);
-  const env = rmpVast.getEnvironment();
+  const env = rmpVast.environment;
   video.muted = true;
   if (env.isAndroid[0] || env.isIos[0]) {
     container.style.width = '320px';

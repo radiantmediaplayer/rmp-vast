@@ -7,7 +7,8 @@ describe('Test for IABVAST3Spec', function () {
   const container = document.getElementById(id);
   const video = document.querySelector('.rmp-video');
   const rmpVast = new RmpVast(id);
-  const env = rmpVast.getEnvironment();
+  window.rmpVast = rmpVast;
+  const env = rmpVast.environment;
   video.muted = true;
   if (env.isAndroid[0] || env.isIos[0]) {
     container.style.width = '320px';
@@ -25,22 +26,22 @@ describe('Test for IABVAST3Spec', function () {
       }
     };
 
-    rmpVast.on('adloaded', function (e) {
+    rmpVast.on('adtagstartloading', function (e) {
+      _incrementAndLog(e);
+    });
+    rmpVast.on('adtagloaded', function (e) {
       _incrementAndLog(e);
     });
     rmpVast.on('addurationchange', function (e) {
+      _incrementAndLog(e);
+    });
+    rmpVast.on('adloaded', function (e) {
       _incrementAndLog(e);
     });
     rmpVast.on('adimpression', function (e) {
       _incrementAndLog(e);
     });
     rmpVast.on('adstarted', function (e) {
-      _incrementAndLog(e);
-    });
-    rmpVast.on('adtagstartloading', function (e) {
-      _incrementAndLog(e);
-    });
-    rmpVast.on('adtagloaded', function (e) {
       _incrementAndLog(e);
     });
     rmpVast.on('adcomplete', function (e) {

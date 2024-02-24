@@ -1,153 +1,215 @@
 import FW from './fw';
-import ENV from './env';
-import VAST_PLAYER from '../players/vast-player';
-import TRACKING_EVENTS from '../tracking/tracking-events';
+import Environment from './environment';
+import Tracking from '../tracking/tracking';
 
-// Indicates that the error was encountered when the ad was being loaded. 
-// Possible causes: there was no response from the ad server, malformed ad response was returned ...
-// 300, 301, 302, 303, 304 Wrapper errors are managed in ast-client-js
-const LOAD_ERROR_LIST = [
-  303,
-  900,
-  1001
-];
-
-// Indicates that the error was encountered after the ad loaded, during ad play. 
-// Possible causes: ad assets could not be loaded, etc.
-const PLAY_ERROR_LIST = [
-  201, 204, 205,
-  400, 401, 402, 403,
-  501, 502, 503,
-  603,
-  901,
-  1002
-];
-
-const VAST_ERRORS_LIST = [{
-  code: 201,
-  description: 'Video player expecting different linearity.'
-}, {
-  code: 204,
-  description: 'Ad category was required but not provided.'
-}, {
-  code: 205,
-  description: 'Inline Category violates Wrapper BlockedAdCategories.'
-}, {
-  code: 303,
-  description: 'No VAST response after one or more Wrappers.'
-}, {
-  code: 400,
-  description: 'General Linear error. Video player is unable to display the Linear Ad.'
-}, {
-  code: 401,
-  description: 'File not found. Unable to find Linear/MediaFile from URI.'
-}, {
-  code: 402,
-  description: 'Timeout of MediaFile URI.'
-}, {
-  code: 403,
-  description: 'Couldn\'t find MediaFile that is supported by this video player, based on the attributes of the MediaFile element.'
-}, {
-  code: 501,
-  description: 'Unable to display NonLinear Ad because creative dimensions do not align with creative display area (i.e. creative dimension too large).'
-}, {
-  code: 502,
-  description: 'Unable to fetch NonLinearAds/NonLinear resource.'
-}, {
-  code: 503,
-  description: 'Couldn\'t find NonLinear resource with supported type.'
-}, {
-  code: 603,
-  description: 'Unable to fetch CompanionAds/Companion resource.'
-}, {
-  code: 900,
-  description: 'Undefined Error.'
-}, {
-  code: 901,
-  description: 'General VPAID error.'
-}, {
-  code: 1001,
-  description: 'Invalid input for loadAds method'
-}, {
-  code: 1002,
-  description: 'Required DOMParser API is not available'
-}, {
-  code: 1100,
-  description: 'SIMID error: UNSPECIFIED_CREATIVE_ERROR'
-}, {
-  code: 1101,
-  description: 'SIMID error: CANNOT_LOAD_RESOURCE'
-}, {
-  code: 1102,
-  description: 'SIMID error: PLAYBACK_AREA_UNUSABLE'
-}, {
-  code: 1103,
-  description: 'SIMID error: INCORRECT_VERSION'
-}, {
-  code: 1104,
-  description: 'SIMID error: TECHNICAL_ERROR'
-}, {
-  code: 1105,
-  description: 'SIMID error: EXPAND_NOT_POSSIBLE'
-}, {
-  code: 1106,
-  description: 'SIMID error: PAUSE_NOT_HONORED'
-}, {
-  code: 1107,
-  description: 'SIMID error: PLAYMODE_NOT_ADEQUATE'
-}, {
-  code: 1108,
-  description: 'SIMID error: CREATIVE_INTERNAL_ERROR'
-}, {
-  code: 1109,
-  description: 'SIMID error: DEVICE_NOT_SUPPORTED'
-}, {
-  code: 1110,
-  description: 'SIMID error: MESSAGES_NOT_FOLLOWING_SPEC'
-}, {
-  code: 1111,
-  description: 'SIMID error: PLAYER_RESPONSE_TIMEOUT'
-}, {
-  code: 1200,
-  description: 'SIMID error: UNSPECIFIED_PLAYER_ERROR'
-}, {
-  code: 1201,
-  description: 'SIMID error: WRONG_VERSION'
-}, {
-  code: 1202,
-  description: 'SIMID error: UNSUPPORTED_TIME'
-}, {
-  code: 1203,
-  description: 'SIMID error: UNSUPPORTED_FUNCTIONALITY_REQUEST'
-}, {
-  code: 1204,
-  description: 'SIMID error: UNSUPPORTED_ACTIONS'
-}, {
-  code: 1205,
-  description: 'SIMID error: POSTMESSAGE_CHANNEL_OVERLOADED'
-}, {
-  code: 1206,
-  description: 'SIMID error: VIDEO_COULD_NOT_LOAD'
-}, {
-  code: 1207,
-  description: 'SIMID error: VIDEO_TIME_OUT'
-}, {
-  code: 1208,
-  description: 'SIMID error: RESPONSE_TIMEOUT'
-}, {
-  code: 1209,
-  description: 'SIMID error: MEDIA_NOT_SUPPORTED'
-}, {
-  code: 1210,
-  description: 'SIMID error: SPEC_NOT_FOLLOWED_ON_INIT'
-}, {
-  code: 1211,
-  description: 'SIMID error: SPEC_NOT_FOLLOWED_ON_MESSAGES'
-}];
 
 export default class Utils {
 
+  // attach fullscreen states
+  // this assumes we have a polyfill for fullscreenchange event 
+  // see app/js/app.js
+  // we need this to handle VAST fullscreen events
+  static _onFullscreenchange(event) {
+    if (event && event.type) {
+      console.log(`${FW.consolePrepend} event is ${event.type}`, FW.consoleStyle, '');
+
+      if (event.type === 'fullscreenchange') {
+        if (this.isInFullscreen) {
+          this.isInFullscreen = false;
+          if (this.__adOnStage && this.creative.isLinear) {
+            Tracking.dispatch.call(this, ['exitFullscreen', 'playerCollapse']);
+          }
+        } else {
+          this.isInFullscreen = true;
+          if (this.__adOnStage && this.creative.isLinear) {
+            Tracking.dispatch.call(this, ['fullscreen', 'playerExpand']);
+          }
+        }
+      } else if (event.type === 'webkitbeginfullscreen') {
+        // iOS uses webkitbeginfullscreen
+        if (this.__adOnStage && this.creative.isLinear) {
+          Tracking.dispatch.call(this, ['fullscreen', 'playerExpand']);
+        }
+        this.isInFullscreen = true;
+      } else if (event.type === 'webkitendfullscreen') {
+        // iOS uses webkitendfullscreen
+        if (this.__adOnStage && this.creative.isLinear) {
+          Tracking.dispatch.call(this, ['exitFullscreen', 'playerCollapse']);
+        }
+        this.isInFullscreen = false;
+      }
+    }
+  }
+
+  static _updateVastError(errorCode) {
+    // List of VAST errors according to specs
+    const vastErrorsList = [{
+      code: 201,
+      description: 'Video player expecting different linearity.'
+    }, {
+      code: 204,
+      description: 'Ad category was required but not provided.'
+    }, {
+      code: 205,
+      description: 'Inline Category violates Wrapper BlockedAdCategories.'
+    }, {
+      code: 303,
+      description: 'No VAST response after one or more Wrappers.'
+    }, {
+      code: 400,
+      description: 'General Linear error. Video player is unable to display the Linear Ad.'
+    }, {
+      code: 401,
+      description: 'File not found. Unable to find Linear/MediaFile from URI.'
+    }, {
+      code: 402,
+      description: 'Timeout of MediaFile URI.'
+    }, {
+      code: 403,
+      description: 'Couldn\'t find MediaFile that is supported by this video player, based on the attributes of the MediaFile element.'
+    }, {
+      code: 501,
+      description: 'Unable to display NonLinear Ad because creative dimensions do not align with creative display area (i.e. creative dimension too large).'
+    }, {
+      code: 502,
+      description: 'Unable to fetch NonLinearAds/NonLinear resource.'
+    }, {
+      code: 503,
+      description: 'Couldn\'t find NonLinear resource with supported type.'
+    }, {
+      code: 603,
+      description: 'Unable to fetch CompanionAds/Companion resource.'
+    }, {
+      code: 900,
+      description: 'Undefined Error.'
+    }, {
+      code: 901,
+      description: 'General VPAID error.'
+    }, {
+      code: 1001,
+      description: 'Invalid input for loadAds method'
+    }, {
+      code: 1002,
+      description: 'Required DOMParser API is not available'
+    }, {
+      code: 1100,
+      description: 'SIMID error: UNSPECIFIED_CREATIVE_ERROR'
+    }, {
+      code: 1101,
+      description: 'SIMID error: CANNOT_LOAD_RESOURCE'
+    }, {
+      code: 1102,
+      description: 'SIMID error: PLAYBACK_AREA_UNUSABLE'
+    }, {
+      code: 1103,
+      description: 'SIMID error: INCORRECT_VERSION'
+    }, {
+      code: 1104,
+      description: 'SIMID error: TECHNICAL_ERROR'
+    }, {
+      code: 1105,
+      description: 'SIMID error: EXPAND_NOT_POSSIBLE'
+    }, {
+      code: 1106,
+      description: 'SIMID error: PAUSE_NOT_HONORED'
+    }, {
+      code: 1107,
+      description: 'SIMID error: PLAYMODE_NOT_ADEQUATE'
+    }, {
+      code: 1108,
+      description: 'SIMID error: CREATIVE_INTERNAL_ERROR'
+    }, {
+      code: 1109,
+      description: 'SIMID error: DEVICE_NOT_SUPPORTED'
+    }, {
+      code: 1110,
+      description: 'SIMID error: MESSAGES_NOT_FOLLOWING_SPEC'
+    }, {
+      code: 1111,
+      description: 'SIMID error: PLAYER_RESPONSE_TIMEOUT'
+    }, {
+      code: 1200,
+      description: 'SIMID error: UNSPECIFIED_PLAYER_ERROR'
+    }, {
+      code: 1201,
+      description: 'SIMID error: WRONG_VERSION'
+    }, {
+      code: 1202,
+      description: 'SIMID error: UNSUPPORTED_TIME'
+    }, {
+      code: 1203,
+      description: 'SIMID error: UNSUPPORTED_FUNCTIONALITY_REQUEST'
+    }, {
+      code: 1204,
+      description: 'SIMID error: UNSUPPORTED_ACTIONS'
+    }, {
+      code: 1205,
+      description: 'SIMID error: POSTMESSAGE_CHANNEL_OVERLOADED'
+    }, {
+      code: 1206,
+      description: 'SIMID error: VIDEO_COULD_NOT_LOAD'
+    }, {
+      code: 1207,
+      description: 'SIMID error: VIDEO_TIME_OUT'
+    }, {
+      code: 1208,
+      description: 'SIMID error: RESPONSE_TIMEOUT'
+    }, {
+      code: 1209,
+      description: 'SIMID error: MEDIA_NOT_SUPPORTED'
+    }, {
+      code: 1210,
+      description: 'SIMID error: SPEC_NOT_FOLLOWED_ON_INIT'
+    }, {
+      code: 1211,
+      description: 'SIMID error: SPEC_NOT_FOLLOWED_ON_MESSAGES'
+    }];
+
+    // Indicates that the error was encountered after the ad loaded, during ad play. 
+    // Possible causes: ad assets could not be loaded, etc.
+    const playErrorsList = [
+      201, 204, 205,
+      400, 401, 402, 403,
+      501, 502, 503,
+      603,
+      901,
+      1002
+    ];
+
+    // Indicates that the error was encountered when the ad was being loaded. 
+    // Possible causes: there was no response from the ad server, malformed ad response was returned ...
+    // 300, 301, 302, 303, 304 Wrapper errors are managed in ast-client-js
+    const loadErrorsList = [
+      303,
+      900,
+      1001
+    ];
+
+    const error = vastErrorsList.filter((value) => {
+      return value.code === errorCode;
+    });
+    if (error.length > 0) {
+      this.__vastErrorCode = error[0].code;
+      this.__adErrorMessage = error[0].description;
+    } else {
+      this.__vastErrorCode = -1;
+      this.__adErrorMessage = 'Error getting VAST error';
+    }
+    if (this.__vastErrorCode > -1) {
+      if (loadErrorsList.indexOf(this.__vastErrorCode) > -1) {
+        this.__adErrorType = 'adLoadError';
+      } else if (playErrorsList.indexOf(this.__vastErrorCode) > -1) {
+        this.__adErrorType = 'adPlayError';
+      }
+    }
+
+    console.log(`${FW.consolePrepend} VAST error code is ${this.__vastErrorCode}`, FW.consoleStyle, '');
+    console.log(`${FW.consolePrepend} VAST error message is ${this.__adErrorMessage}`, FW.consoleStyle, '');
+    console.log(`${FW.consolePrepend} Ad error type is ${this.__adErrorType}`, FW.consoleStyle, '');
+  }
+
   static filterParams(inputParams) {
+    // default for input parameters
     const defaultParams = {
       ajaxTimeout: 5000,
       creativeLoadTimeout: 8000,
@@ -156,13 +218,13 @@ export default class Utils {
       labels: {
         skipMessage: 'Skip ad',
         closeAd: 'Close ad',
-        textForClickUIOnMobile: 'Learn more'
+        textForInteractionUIOnMobile: 'Learn more'
       },
       outstream: false,
-      showControlsForVastPlayer: false,
+      showControlsForAdPlayer: false,
       vastXmlInput: false,
       enableVpaid: true,
-      enableSimid: false,
+      enableSimid: true,
       vpaidSettings: {
         width: 640,
         height: 360,
@@ -171,8 +233,6 @@ export default class Utils {
       },
       useHlsJS: false,
       debugHlsJS: false,
-      forceUseContentPlayerForAds: false,
-      forceUseContentPlayerForAdsOniOS: true,
       // OM SDK params
       omidSupport: false,
       omidAllowedVendors: [],
@@ -182,7 +242,9 @@ export default class Utils {
       partnerName: 'rmp-vast',
       partnerVersion: RMP_VAST_VERSION
     };
+
     this.params = defaultParams;
+
     if (inputParams && typeof inputParams === 'object') {
       const keys = Object.keys(inputParams);
       keys.forEach(key => {
@@ -222,12 +284,12 @@ export default class Utils {
     if (Array.isArray(event)) {
       event.forEach(currentEvent => {
         if (currentEvent) {
-          console.log(currentEvent);
+          console.log(`${FW.consolePrepend} EVENT ${event}`, FW.consoleStyle, '');
           this.dispatch(currentEvent);
         }
       });
     } else if (event) {
-      console.log(event);
+      console.log(`${FW.consolePrepend} EVENT ${event}`, FW.consoleStyle, '');
       this.dispatch(event);
     }
   }
@@ -236,10 +298,10 @@ export default class Utils {
     let targetPlayer;
     switch (whichPlayer) {
       case 'content':
-        targetPlayer = this.contentPlayer;
+        targetPlayer = this.__contentPlayer;
         break;
       case 'vast':
-        targetPlayer = this.vastPlayer;
+        targetPlayer = this.__adPlayer;
         break;
       default:
         break;
@@ -266,7 +328,7 @@ export default class Utils {
 
           if (firstPlayerPlayRequest && whichPlayer === 'vast' && this.creative.isLinear) {
             console.log(
-              `${FW.consolePrepend} initial play promise on VAST player has been rejected`,
+              `${FW.consolePrepend} initial play promise on ad player has been rejected`,
               FW.consoleStyle,
               ''
             );
@@ -313,215 +375,92 @@ export default class Utils {
 
   static initInstanceVariables() {
     this.adContainer = null;
-    this.rmpVastInitialized = false;
-    this.useContentPlayerForAds = false;
-    this.contentPlayerCompleted = false;
+    this.contentWrapper = null;
+    this.container = null;
+    this.rmpVastContentPlayer = null;
+    this.rmpVastAdPlayer = null;
     this.currentContentSrc = '';
     this.currentContentCurrentTime = -1;
-    this.needsSeekAdjust = false;
-    this.seekAdjustAttached = false;
-    this.firstVastPlayerPlayRequest = true;
-    this.firstContentPlayerPlayRequest = true;
     this.params = {};
     this.events = {};
-    this.onFullscreenchange = FW.nullFn;
-    this.contentWrapper = null;
-    this.contentPlayer = null;
+    this.onFullscreenchangeFn = null;
     this.id = null;
-    this.container = null;
     this.isInFullscreen = false;
     // adpod
     this.adPod = false;
     this.adPodLength = 0;
     this.adSequence = 0;
+    // for public getters
+    this.__contentPlayer = null;
+    this.__adPlayer = null;
+    this.__initialized = false;
+    this.__contentPlayerCompleted = false;
   }
 
   static resetVariablesForNewLoadAds() {
-    this.off('adstarted', this.attachViewableObserver);
-    // init internal methods 
-    this.onLoadedmetadataPlay = FW.nullFn;
-    this.onPlaybackError = FW.nullFn;
-    // init internal tracking events methods
-    this.onPause = FW.nullFn;
-    this.onPlay = FW.nullFn;
-    this.onPlaying = FW.nullFn;
-    this.onEnded = FW.nullFn;
-    this.onVolumeChange = FW.nullFn;
-    this.onTimeupdate = FW.nullFn;
-    this.onEventPingTracking = FW.nullFn;
-    this.onClickThrough = FW.nullFn;
-    this.onPlayingAppendIcons = FW.nullFn;
-    this.onDurationChange = FW.nullFn;
-    this.onTimeupdateCheckSkip = FW.nullFn;
-    this.onClickSkip = FW.nullFn;
-    this.onNonLinearLoadSuccess = FW.nullFn;
-    this.onNonLinearLoadError = FW.nullFn;
-    this.onNonLinearClickThrough = FW.nullFn;
-    this.onContextMenu = FW.nullFn;
-    // init internal variables
-    this.adTagUrl = '';
-    this.vastPlayer = null;
-    this.vpaidSlot = null;
+    this.off('adstarted', this.attachViewableObserverFn);
+    this.onPauseFn = null;
+    this.onPlayFn = null;
+    this.onPlayingFn = null;
+    this.onEndedFn = null;
+    this.onVolumeChangeFn = null;
+    this.onTimeupdateFn = null;
     this.trackingTags = [];
     this.vastErrorTags = [];
     this.adErrorTags = [];
-    this.vastPlayerMuted = false;
-    this.vastPlayerDuration = -1;
-    this.vastPlayerCurrentTime = -1;
     this.firstQuartileEventFired = false;
     this.midpointEventFired = false;
     this.thirdQuartileEventFired = false;
-    this.vastPlayerPaused = false;
-    this.vastErrorCode = -1;
-    this.adErrorType = '';
-    this.vastErrorMessage = '';
-    this.adOnStage = false;
-    // hls.js
-    this.hlsJS = [];
-    this.hlsJSIndex = 0;
-    this.readingHlsJS = false;
-    // VAST ICONS
-    this.iconsData = [];
-    // players
-    this.clickUIOnMobile = null;
-    this.customPlaybackCurrentTime = 0;
-    this.antiSeekLogicInterval = null;
-    this.creativeLoadTimeoutCallback = null;
-    // VAST 4
+    this.needsSeekAdjust = false;
+    this.seekAdjustAttached = false;
     this.ad = {};
     this.creative = {};
-    this.attachViewableObserver = null;
+    this.attachViewableObserverFn = null;
     this.viewableObserver = null;
     this.viewablePreviousRatio = 0.5;
     this.regulationsInfo = {};
     this.requireCategory = false;
-    // skip
     this.progressEvents = [];
-    this.skipButton = null;
-    this.skipWaiting = null;
-    this.skipMessage = null;
-    this.skipIcon = null;
-    this.skippableAdCanBeSkipped = false;
-    // non linear
-    this.nonLinearContainer = null;
-    this.nonLinearATag = null;
-    this.nonLinearInnerElement = null;
-    this.onClickCloseNonLinear = FW.nullFn;
-    this.nonLinearMinSuggestedDuration = 0;
-    // companion ads
+    this.rmpVastLinearCreative = null;
+    this.rmpVastNonLinearCreative = null;
     this.validCompanionAds = [];
-    this.companionAdsRequiredAttribute = '';
     this.companionAdsList = [];
-    // VPAID
-    this.isVPAID = false;
-    this.vpaidCreative = null;
-    this.vpaidScript = null;
-    this.vpaidIframe = null;
-    this.vpaidLoadTimeout = null;
-    this.initAdTimeout = null;
-    this.startAdTimeout = null;
-    this.vpaidAvailableInterval = null;
-    this.adStoppedTimeout = null;
-    this.adSkippedTimeout = null;
+    this.rmpVastVpaidPlayer = null;
     this.adParametersData = '';
-    this.vpaidCurrentVolume = 1;
-    this.vpaidPaused = true;
-    this.vpaidCreativeUrl = '';
-    this.vpaidAdRemainingTimeInterval = null;
-    this.vpaidRemainingTime = -1;
-    this.vpaidVersion = -1;
-    this.vpaid1AdDuration = -1;
-    this.initialWidth = 640;
-    this.initialHeight = 360;
-    this.initialViewMode = 'normal';
-    this.desiredBitrate = 500;
-    this.vpaidAdLoaded = false;
-    this.vpaidAdStarted = false;
-    this.vpaidCallbacks = {};
-    // SIMID
-    this.simidPlayer = null;
-  }
-
-  // attach fullscreen states
-  // this assumes we have a polyfill for fullscreenchange event 
-  // see app/js/app.js
-  // we need this to handle VAST fullscreen events
-  static _onFullscreenchange(event) {
-    if (event && event.type) {
-      console.log(`${FW.consolePrepend} event is ${event.type}`, FW.consoleStyle, '');
-
-      if (event.type === 'fullscreenchange') {
-        if (this.isInFullscreen) {
-          this.isInFullscreen = false;
-          if (this.adOnStage && this.creative.isLinear) {
-            TRACKING_EVENTS.dispatch.call(this, ['exitFullscreen', 'playerCollapse']);
-          }
-        } else {
-          this.isInFullscreen = true;
-          if (this.adOnStage && this.creative.isLinear) {
-            TRACKING_EVENTS.dispatch.call(this, ['fullscreen', 'playerExpand']);
-          }
-        }
-      } else if (event.type === 'webkitbeginfullscreen') {
-        // iOS uses webkitbeginfullscreen
-        if (this.adOnStage && this.creative.isLinear) {
-          TRACKING_EVENTS.dispatch.call(this, ['fullscreen', 'playerExpand']);
-        }
-        this.isInFullscreen = true;
-      } else if (event.type === 'webkitendfullscreen') {
-        // iOS uses webkitendfullscreen
-        if (this.adOnStage && this.creative.isLinear) {
-          TRACKING_EVENTS.dispatch.call(this, ['exitFullscreen', 'playerCollapse']);
-        }
-        this.isInFullscreen = false;
-      }
-    }
+    this.rmpVastSimidPlayer = null;
+    this.rmpVastIcons = null;
+    // for public getters
+    this.__adTagUrl = '';
+    this.__companionAdsRequiredAttribute = '';
+    this.__vastErrorCode = -1;
+    this.__adErrorType = '';
+    this.__adErrorMessage = '';
+    this.__adOnStage = false;
   }
 
   static handleFullscreen() {
     // if we have native fullscreen support we handle fullscreen events
-    if (ENV.hasNativeFullscreenSupport) {
-      this.onFullscreenchange = Utils._onFullscreenchange.bind(this);
+    if (Environment.hasNativeFullscreenSupport) {
+      this.onFullscreenchangeFn = Utils._onFullscreenchange.bind(this);
       // for our beloved iOS 
-      if (ENV.isIos[0]) {
-        this.contentPlayer.addEventListener('webkitbeginfullscreen', this.onFullscreenchange);
-        this.contentPlayer.addEventListener('webkitendfullscreen', this.onFullscreenchange);
+      if (Environment.isIos[0]) {
+        this.__contentPlayer.addEventListener('webkitbeginfullscreen', this.onFullscreenchangeFn);
+        this.__contentPlayer.addEventListener('webkitendfullscreen', this.onFullscreenchangeFn);
       } else {
-        document.addEventListener('fullscreenchange', this.onFullscreenchange);
+        document.addEventListener('fullscreenchange', this.onFullscreenchangeFn);
       }
     }
-  }
-
-  static _updateVastError(errorCode) {
-    const error = VAST_ERRORS_LIST.filter((value) => {
-      return value.code === errorCode;
-    });
-    if (error.length > 0) {
-      this.vastErrorCode = error[0].code;
-      this.vastErrorMessage = error[0].description;
-    } else {
-      this.vastErrorCode = -1;
-      this.vastErrorMessage = 'Error getting VAST error';
-    }
-    if (this.vastErrorCode > -1) {
-      if (LOAD_ERROR_LIST.indexOf(this.vastErrorCode) > -1) {
-        this.adErrorType = 'adLoadError';
-      } else if (PLAY_ERROR_LIST.indexOf(this.vastErrorCode) > -1) {
-        this.adErrorType = 'adPlayError';
-      }
-    }
-
-    console.log(`${FW.consolePrepend} VAST error code is ${this.vastErrorCode}`, FW.consoleStyle, '');
-    console.log(`${FW.consolePrepend} VAST error message is ${this.vastErrorMessage}`, FW.consoleStyle, '');
-    console.log(`${FW.consolePrepend} Ad error type is ${this.adErrorType}`, FW.consoleStyle, '');
   }
 
   static processVastErrors(errorCode, ping) {
     if (ping) {
-      TRACKING_EVENTS.error.call(this, errorCode);
+      Tracking.error.call(this, errorCode);
     }
     Utils._updateVastError.call(this, errorCode);
     Utils.createApiEvent.call(this, 'aderror');
-    VAST_PLAYER.resumeContent.call(this);
+    if (this.rmpVastAdPlayer) {
+      this.rmpVastAdPlayer.resumeContent();
+    }
+
   }
 }

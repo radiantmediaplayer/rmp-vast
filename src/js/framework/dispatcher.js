@@ -1,4 +1,4 @@
-class DispatcherEvent {
+export default class Dispatcher {
 
   constructor(eventName) {
     this.eventName = eventName;
@@ -24,5 +24,3 @@ class DispatcherEvent {
   }
 
 }
-
-export default DispatcherEvent;

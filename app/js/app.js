@@ -85,17 +85,17 @@ const _exitFullscreen = function (video) {
 
 const _setFullscreen = function (fs) {
   if (typeof fs === 'boolean') {
-    const contentPlayer = rmpVast.getContentPlayer();
-    const vastPlayer = rmpVast.getVastPlayer();
+    const contentPlayer = rmpVast.contentPlayer;
+    const adPlayer = rmpVast.adPlayer;
     if (isInFullscreen && !fs) {
-      if (rmpVast.getAdOnStage() && rmpVast.getAdLinear()) {
-        _exitFullscreen(vastPlayer);
+      if (rmpVast.adOnStage && rmpVast.adLinear) {
+        _exitFullscreen(adPlayer);
       } else {
         _exitFullscreen(contentPlayer);
       }
     } else if (!isInFullscreen && fs) {
-      if (rmpVast.getAdOnStage() && rmpVast.getAdLinear()) {
-        _requestFullscreen(container, vastPlayer);
+      if (rmpVast.adOnStage && rmpVast.adLinear) {
+        _requestFullscreen(container, adPlayer);
       } else {
         _requestFullscreen(container, contentPlayer);
       }
@@ -138,10 +138,10 @@ const params = {
   labels: {
     skipMessage: 'Skip ad',
     closeAd: 'Close ad',
-    textForClickUIOnMobile: 'Learn more'
+    textForInteractionUIOnMobile: 'Learn more'
   },
   outstream: false,
-  showControlsForVastPlayer: true,
+  showControlsForAdPlayer: true,
   enableSimid: true,
   enableVpaid: true,
   vpaidSettings: {
@@ -210,62 +210,62 @@ const _wireUI = function () {
 
   const mute = document.getElementById('mute');
   mute.addEventListener('click', function () {
-    rmpVast.setMute(true);
+    rmpVast.muted = true;
   });
 
   const unmute = document.getElementById('unmute');
   unmute.addEventListener('click', function () {
-    rmpVast.setMute(false);
+    rmpVast.muted = false;
   });
 
   const volume13 = document.getElementById('volume13');
   volume13.addEventListener('click', function () {
-    rmpVast.setVolume(0.33);
+    rmpVast.volume = 0.33;
   });
 
   const volume23 = document.getElementById('volume23');
   volume23.addEventListener('click', function () {
-    rmpVast.setVolume(0.66);
+    rmpVast.volume = 0.66;
   });
 
   const volume33 = document.getElementById('volume33');
   volume33.addEventListener('click', function () {
-    rmpVast.setVolume(1);
+    rmpVast.volume = 1;
   });
 
   const getters = [
-    'getAdPaused',
-    'getVolume',
-    'getMute',
-    'getAdTagUrl',
-    'getAdMediaUrl',
-    'getAdLinear',
-    'getAdSystem',
-    'getAdUniversalAdIds',
-    'getAdContentType',
-    'getAdTitle',
-    'getAdDescription',
-    'getAdAdvertiser',
-    'getAdPricing',
-    'getAdSurvey',
-    'getAdAdServingId',
-    'getAdCategories',
-    'getAdBlockedAdCategories',
-    'getAdDuration',
-    'getAdCurrentTime',
-    'getAdRemainingTime',
-    'getAdOnStage',
-    'getAdMediaWidth',
-    'getAdMediaHeight',
-    'getClickThroughUrl',
-    'getSkipTimeOffset',
-    'getIsSkippableAd',
-    'getAdSkippableState'
+    'adPaused',
+    'volume',
+    'muted',
+    'adTagUrl',
+    'adMediaUrl',
+    'adLinear',
+    'adSystem',
+    'adUniversalAdIds',
+    'adContentType',
+    'adTitle',
+    'adDescription',
+    'adAdvertiser',
+    'adPricing',
+    'adSurvey',
+    'adAdServingId',
+    'adCategories',
+    'adBlockedAdCategories',
+    'adDuration',
+    'adCurrentTime',
+    'adRemainingTime',
+    'adOnStage',
+    'adMediaWidth',
+    'adMediaHeight',
+    'clickThroughUrl',
+    'skipTimeOffset',
+    'isSkippableAd',
+    'adSkippableState'
   ];
   const _bindResult = function (index) {
     if (getters[index]) {
       const result = document.getElementById(getters[index] + 'Result');
-      let value = rmpVast[getters[index]]();
+      let value = rmpVast[getters[index]];
       if (value === null) {
         value = 'null';
       } else if (typeof value === 'object') {
@@ -325,8 +325,8 @@ const _wireUI = function () {
       console.log(data);
       eventLogs.insertAdjacentHTML('afterbegin', '<p>' + data + '</p>');
       if (event.type === 'aderror') {
-        const errorMessage = rmpVast.getAdErrorMessage();
-        const errorCode = rmpVast.getAdVastErrorCode();
+        const errorMessage = rmpVast.adErrorMessage;
+        const errorCode = rmpVast.adVastErrorCode;
         const errorLog = errorCode + ' - ' + errorMessage;
         console.log(errorLog);
         eventLogs.insertAdjacentHTML('afterbegin', '<p>' + errorLog + '</p>');

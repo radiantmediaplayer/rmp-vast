@@ -552,7 +552,7 @@
       // Some browsers don't allow to use bind on console object anyway
       // fallback to default if needed
       try {
-        exportedLogger.log("Debug logs enabled for \"" + id + "\" in hls.js version " + "1.5.4");
+        exportedLogger.log("Debug logs enabled for \"" + id + "\" in hls.js version " + "1.5.6");
       } catch (e) {
         exportedLogger = fakeLogger;
       }
@@ -1845,11 +1845,13 @@
     var earliestPresentationTime = 0;
     var firstOffset = 0;
     if (version === 0) {
-      earliestPresentationTime = readUint32(sidx, index += 4);
-      firstOffset = readUint32(sidx, index += 4);
+      earliestPresentationTime = readUint32(sidx, index);
+      firstOffset = readUint32(sidx, index + 4);
+      index += 8;
     } else {
-      earliestPresentationTime = readUint64(sidx, index += 8);
-      firstOffset = readUint64(sidx, index += 8);
+      earliestPresentationTime = readUint64(sidx, index);
+      firstOffset = readUint64(sidx, index + 8);
+      index += 16;
     }
 
     // skip reserved
@@ -7511,8 +7513,7 @@
       }
     };
     _proto.getAutoLevelKey = function getAutoLevelKey() {
-      var _this$hls$mainForward;
-      return this.getBwEstimate() + "_" + ((_this$hls$mainForward = this.hls.mainForwardBufferInfo) == null ? void 0 : _this$hls$mainForward.len);
+      return this.getBwEstimate() + "_" + this.getStarvationDelay().toFixed(2);
     };
     _proto.getNextABRAutoLevel = function getNextABRAutoLevel() {
       var fragCurrent = this.fragCurrent,
@@ -7520,17 +7521,11 @@
         hls = this.hls;
       var maxAutoLevel = hls.maxAutoLevel,
         config = hls.config,
-        minAutoLevel = hls.minAutoLevel,
-        media = hls.media;
+        minAutoLevel = hls.minAutoLevel;
       var currentFragDuration = partCurrent ? partCurrent.duration : fragCurrent ? fragCurrent.duration : 0;
-
-      // playbackRate is the absolute value of the playback rate; if media.playbackRate is 0, we use 1 to load as
-      // if we're playing back at the normal rate.
-      var playbackRate = media && media.playbackRate !== 0 ? Math.abs(media.playbackRate) : 1.0;
       var avgbw = this.getBwEstimate();
       // bufferStarvationDelay is the wall-clock time left until the playback buffer is exhausted.
-      var bufferInfo = hls.mainForwardBufferInfo;
-      var bufferStarvationDelay = (bufferInfo ? bufferInfo.len : 0) / playbackRate;
+      var bufferStarvationDelay = this.getStarvationDelay();
       var bwFactor = config.abrBandWidthFactor;
       var bwUpFactor = config.abrBandWidthUpFactor;
 
@@ -7572,6 +7567,18 @@
       }
       // or if bitrate is not lower, continue to use loadLevel
       return hls.loadLevel;
+    };
+    _proto.getStarvationDelay = function getStarvationDelay() {
+      var hls = this.hls;
+      var media = hls.media;
+      if (!media) {
+        return Infinity;
+      }
+      // playbackRate is the absolute value of the playback rate; if media.playbackRate is 0, we use 1 to load as
+      // if we're playing back at the normal rate.
+      var playbackRate = media && media.playbackRate !== 0 ? Math.abs(media.playbackRate) : 1.0;
+      var bufferInfo = hls.mainForwardBufferInfo;
+      return (bufferInfo ? bufferInfo.len : 0) / playbackRate;
     };
     _proto.getBwEstimate = function getBwEstimate() {
       return this.bwEstimator.canEstimate() ? this.bwEstimator.getEstimate() : this.hls.config.abrEwmaDefaultEstimate;
@@ -7636,6 +7643,9 @@
             if (typeof (mediaCapabilities == null ? void 0 : mediaCapabilities.decodingInfo) === 'function' && requiresMediaCapabilitiesDecodingInfo(levelInfo, audioTracksByGroup, currentVideoRange, currentFrameRate, currentBw, audioPreference)) {
               levelInfo.supportedPromise = getMediaDecodingInfoPromise(levelInfo, audioTracksByGroup, mediaCapabilities);
               levelInfo.supportedPromise.then(function (decodingInfo) {
+                if (!_this2.hls) {
+                  return;
+                }
                 levelInfo.supportedResult = decodingInfo;
                 var levels = _this2.hls.levels;
                 var index = levels.indexOf(levelInfo);
@@ -17418,7 +17428,7 @@
     _proto.onSubtitleTracksUpdated = function onSubtitleTracksUpdated(event, _ref) {
       var _this2 = this;
       var subtitleTracks = _ref.subtitleTracks;
-      if (!this.levels || subtitleOptionsIdentical(this.levels, subtitleTracks)) {
+      if (this.levels && subtitleOptionsIdentical(this.levels, subtitleTracks)) {
         this.levels = subtitleTracks.map(function (mediaPlaylist) {
           return new Level(mediaPlaylist);
         });
@@ -27347,13 +27357,11 @@
         levelLastLoaded = this.levelLastLoaded,
         levels = this.levels,
         media = this.media;
-      var config = hls.config,
-        level = hls.nextLoadLevel;
 
       // if start level not parsed yet OR
       // if video not attached AND start fragment already requested OR start frag prefetch not enabled
       // exit loop, as we either need more info (level not parsed) or we need media to be attached to load new fragment
-      if (levelLastLoaded === null || !media && (this.startFragRequested || !config.startFragPrefetch)) {
+      if (levelLastLoaded === null || !media && (this.startFragRequested || !hls.config.startFragPrefetch)) {
         return;
       }
 
@@ -27361,6 +27369,7 @@
       if (this.altAudio && this.audioOnly) {
         return;
       }
+      var level = hls.nextLoadLevel;
       if (!(levels != null && levels[level])) {
         return;
       }
@@ -29182,7 +29191,7 @@
        * Get the video-dev/hls.js package version.
        */
       function get() {
-        return "1.5.4";
+        return "1.5.6";
       }
     }, {
       key: "Events",

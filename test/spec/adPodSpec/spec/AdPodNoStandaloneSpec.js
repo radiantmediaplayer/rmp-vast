@@ -6,7 +6,7 @@ describe('Test for AdPodNoStandaloneSpec', function () {
   const container = document.getElementById(id);
   const video = document.querySelector('.rmp-video');
   const rmpVast = new RmpVast(id);
-  const env = rmpVast.getEnvironment();
+  const env = rmpVast.environment;
 
   if (env.isAndroid[0] || env.isIos[0]) {
     container.style.width = '320px';
@@ -25,7 +25,7 @@ describe('Test for AdPodNoStandaloneSpec', function () {
     };
 
     rmpVast.on('adstarted', function (e) {
-      const adPodInfo = rmpVast.getAdPodInfo();
+      const adPodInfo = rmpVast.adPodInfo;
       if (adPodInfo && adPodInfo.adPodLength === 3) {
         _incrementAndLog(e);
       }

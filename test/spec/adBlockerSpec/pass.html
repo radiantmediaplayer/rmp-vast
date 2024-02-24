@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+  <title>pass</title>
+
+  <!-- jasmine -->
+  <link rel="shortcut icon" type="image/png" href="../../lib/jasmine-5.1.2/jasmine_favicon.png">
+  <link rel="stylesheet" href="../../lib/jasmine-5.1.2/jasmine.css">
+  <script src="../../lib/jasmine-5.1.2/jasmine.js"></script>
+  <script src="../../lib/jasmine-5.1.2/jasmine-html.js"></script>
+  <script src="../../lib/jasmine-5.1.2/boot0.js"></script>
+  <script src="../../lib/jasmine-5.1.2/boot1.js"></script>
+  <link rel="stylesheet" href="../../../app/css/app.css">
+
+  <!-- rmp-vast -->
+  <script src="../../../dist/rmp-vast.min.js"></script>
+
+</head>
+
+<body>
+  <div class="rmp-container" id="rmp">
+    <div class="rmp-content">
+      <video class="rmp-video" src="https://www.rmp-streaming.com/media/big-buck-bunny-360p.mp4" playsinline
+        disableRemotePlayback>
+      </video>
+    </div>
+  </div>
+  <p>This ad tag should pass ad-blocking - rmp-vast is not blocked by ad-blocker and the VAST tag is not hosted on a
+    blocked ad-server</p>
+  <!-- include spec files here... -->
+  <script src="spec/pass.js"></script>
+</body>
+
+</html>

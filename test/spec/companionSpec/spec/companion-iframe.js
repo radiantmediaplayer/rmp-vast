@@ -7,7 +7,7 @@ describe('companion-iframe', function () {
   const container = document.getElementById(id);
   const video = document.querySelector('.rmp-video');
   const rmpVast = new RmpVast(id);
-  const env = rmpVast.getEnvironment();
+  const env = rmpVast.environment;
   video.muted = true;
   if (env.isAndroid[0] || env.isIos[0]) {
     container.style.width = '320px';
@@ -39,13 +39,13 @@ describe('companion-iframe', function () {
     });
 
     rmpVast.on('adstarted', function (e) {
-      const adSystem = rmpVast.getAdSystem();
+      const adSystem = rmpVast.adSystem;
       window.console.log(adSystem);
       if (adSystem.value === 'RMP' && adSystem.version === '') {
-        const adDescription = rmpVast.getAdDescription();
+        const adDescription = rmpVast.adDescription;
         window.console.log(adDescription);
         if (adDescription === 'Test adTag for Radiant Media Player - inline linear with companion ad (iframe)') {
-          const title = rmpVast.getAdTitle();
+          const title = rmpVast.adTitle;
           window.console.log(title);
           if (title === 'Inline linear video ad with companion ad (iframe)') {
             const companionAdsList = rmpVast.getCompanionAdsList();

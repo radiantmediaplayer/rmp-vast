@@ -21,7 +21,7 @@ rmp-vast is used and maintained by [Radiant Media Player](https://www.radiantmed
 - [Parameters, API events and methods](#parameters-api-events-and-methods)
 - [Companion ads support](#companion-ads-support)
 - [AdVerifications OM Web SDK](#adverifications-om-web-sdk)
-- [SIMID support (BETA)](#simid-support)
+- [SIMID support](#simid-support)
 - [VPAID support (DEPRECATED)](#vpaid-support)
 - [HLS creatives support (BETA)](#hls-creatives-support)
 - [Autoplay support](#autoplay-support)
@@ -105,7 +105,7 @@ This example can be found live at https://www.radiantmediaplayer.com/rmp-vast/ap
 - Industry Icons (image/iframe/HTML)
 - VAST 4.2 Macros
 - AdVerifications (OM Web SDK)
-- SIMID <sup>BETA</sup>
+- SIMID (Linear creative only)
 - VPAID 1 and 2 JavaScript <sup>DEPRECATED</sup>
 - Outstream ads
 - Ad Pods
@@ -231,11 +231,11 @@ Once rmp-vast is loaded on your page you can create a new rmp-vast instance as f
   - `params.labels: Object` labels used to display information to the viewer.
   - `params.labels.skipMessage: String` skip message. Default: 'Skip ad'.
   - `params.labels.closeAd: String` close ad message. Default: 'Close ad'.
-  - `params.labels.textForClickUIOnMobile: String` on mobile devices the click-through URL for a linear ad is provided in a box located at the top right corner of the player. This setting set the text for this box. Default: 'Learn more'.
+  - `params.labels.textForInteractionUIOnMobile: String` on mobile devices the click-through URL for a linear ad is provided in a box located at the top right corner of the player. This setting set the text for this box. Default: 'Learn more'.
   - `params.outstream: Boolean` Enables outstream ad mode. Default: false.
-  - `params.showControlsForVastPlayer: Boolean` Shows VAST player HTML5 default video controls. Default: false.
+  - `params.showControlsForAdPlayer: Boolean` Shows ad player HTML5 default video controls. Default: false.
   - `params.vastXmlInput: Boolean` Instead of a VAST URI, we provide directly to rmp-vast VAST XML. Default: false. See test/spec/inlineLinearSpec/raw-xml-input.html for an example.
-  - `params.enableSimid: Boolean` Enables SIMID support or not. This feature is currently in BETA. Default: false.
+  - `params.enableSimid: Boolean` Enables SIMID support or not. Default: true.
   - `params.enableVpaid: Boolean` Enables VPAID support or not. Default: true. DEPRECATED.
   - `params.vpaidSettings: Object` information required to properly display VPAID creatives - note that it is up to the parent application of rmp-vast to provide those informations - below values are default (see test/spec/vpaidSpec/ for examples):
     - `params.vpaidSettings.width: Number` Default: 640.
@@ -244,8 +244,6 @@ Once rmp-vast is loaded on your page you can create a new rmp-vast instance as f
     - `params.vpaidSettings.desiredBitrate: Number` Default: 500. In kbps.
   - `params.useHlsJS: Boolean` Enables rendering of HLS creatives with hls.js in rmp-vast. Default: false. BETA feature.
   - `params.debugHlsJS: Boolean` Enables debugging of HLS creatives with hls.js in rmp-vast. Default: false. BETA feature.
-  - `params.forceUseContentPlayerForAds: Boolean` Forces player to use content player for ads - this may be needed on OTT platforms with limited resources available. Default: false. Note that this is automatically set to true for iOS due to platform restrictions. See `forceUseContentPlayerForAdsOniOS` below.
-  - `params.forceUseContentPlayerForAdsOniOS: Boolean` Forces player to use content player for ads on iOS. This is enabled by default due to platform restrictions. With the introduction of Managed Media Source API on iOS 17.1, it becomes however possible to use 2 different players, 1 for content and 1 for advertisement. Default: true.
   - `params.omidSupport: Boolean` Enables OMID (OM Web SDK) support in rmp-vast. Default: false. Refer to the [AdVerifications OM Web SDK](#adverifications-om-web-sdk) section for more information.
   - `params.omidAllowedVendors: Array` List of allowed vendors for ad verification. Vendors not listed will be rejected. Default: [].
   - `params.omidUnderEvaluation: Boolean` When debugging set this parameter to true. Default: false.
@@ -370,13 +368,13 @@ const rmpVast = new RmpVast(id);
 ...
 rmpVast.pause();
 ...
-rmpVast.setVolume(0.5);
+rmpVast.volume = 0.5;
 ```
 
-For linear ads rmp-vast exposes 2 players: a content player (for the actual content) and a vast player (for the loaded ad).
+For linear ads rmp-vast exposes 2 players: a content player (for the actual content) and a ad player (for the loaded ad).
 
-- `play()`: play content or vast player depending on what is on stage.
-- `pause()`: pause content or vast player depending on what is on stage.
+- `play()`: play content or ad player depending on what is on stage.
+- `pause()`: pause content or ad player depending on what is on stage.
 - `loadAds(vastUrl: String, regulationsInfo: Object, requireCategory: Boolean)`: load a new VAST tag and start displaying it - if rmp-vast is not initialized when loadAds is called then `initialize()` is called first. Input parameters are
   - `vastUrl: String` the URI to the VAST resource to be loaded
   - `regulationsInfo: Object` data for regulations as
@@ -385,69 +383,66 @@ For linear ads rmp-vast exposes 2 players: a content player (for the actual cont
     - `regulationsInfo.gdprConsent: String` Base64-encoded Cookie Value of IAB GDPR consent info for GDPRCONSENT macro
   - `requireCategory: Boolean` for enforcement of VAST 4 Ad Categories
 - `initialize()`: initialize rmp-vast - this method can be used in case of deferred use of `loadAds()` - Note that when autoplay is not wanted the call to `initialize()` must be the result of a direct user interaction.
-- `getAdPaused()`: return `Boolean`, stating if the ad on stage is paused or not.
-- `setVolume(volume: Number)`: set volume of (content|vast) player depending on what is on stage. Input value should be a `Number` between 0 and 1.
-- `getVolume()`: return `Number`, the volume of (content|vast) player depending on what is on stage. Returned value is a number between 0 and 1. -1 is returned if this value is not available.
-- `setMute(muted: Boolean)`: set mute state of (content|vast) player depending on what is on stage.
-- `getMute()`: return `Boolean`, the mute state of (content|vast) player depending on what is on stage. Returned value is a Boolean.
+- `adPaused`: getter-only returns `Boolean`, stating if the ad on stage is paused or not.
+- `volume`: getter returns `Boolean` return `Number`, volume of (content|ad) player. Returned value is a number between 0 and 1. -1 is returned if this value is not available | setter sets volume of (content|ad) player.
+- `muted`: getter returns `Boolean`, the mute state of (content|ad) player | setter sets (content|ad) player mute state
 - `stopAds()`: stop playing the ad on stage. You may call loadAds again after invoking stopAds.
 - `destroy()`: stop playing the ad on stage and destroy the current RmpVast instance. You may not call loadAds again after invoking destroy, you will need to create a new RmpVast instance.
-- `skipAd()`: skips the creative on stage - this method only has effects if the creative on stage is a skippable ad and can be skipped (e.g. `getAdSkippableState` returns true).
-- `getAdTagUrl()`: return `String`, representing the current VAST tag URL.
-- `getAdOnStage()`: return `Boolean`, stating if an ad is currently on stage.
-- `getInitialized()`: return `Boolean`, stating if rmp-vast has been initialized.
+- `skipAd()`: skips the creative on stage - this method only has effects if the creative on stage is a skippable ad and can be skipped (e.g. `adSkippableState` returns true).
+- `adTagUrl`: getter-only returns `String`, representing the current VAST tag URL.
+- `adOnStage`: getter-only returns `Boolean`, stating if an ad is currently on stage.
+- `initialized`: getter-only returns `Boolean`, stating if rmp-vast has been initialized.
 
-The following methods should be queried after the `adstarted` event has fired for accurate data:
+The following getter and setter should be queried after the `adstarted` event has fired for accurate data:
 
-- `getAdMediaUrl()`: return `String`, representing the selected creative URL.
-- `getAdLinear()`: return `Boolean`, representing the type of the selected creative either linear (true) or non linear (false).
-- `getAdSystem()`: return `{value: String, version: String}`, representing the VAST AdSystem tag.
-- `getAdUniversalAdIds()`: return `[{idRegistry: String, value: String}]`, representing the VAST UniversalAdId tag.
-- `getAdContentType()`: return `String`, representing the MIME type for the selected creative.
-- `getAdTitle()`: return `String`, representing the VAST AdTitle tag.
-- `getAdDescription()`: return `String`, representing the VAST Description tag.
-- `getAdAdvertiser()`: return `{id: String, value: String}`, representing the VAST Advertiser tag.
-- `getAdPricing()`: return `{value: String, model: String, currency: String}`, representing the VAST Pricing tag.
-- `getAdSurvey()`: return `String`, representing the VAST Survey tag.
-- `getAdAdServingId()`: return `String`, representing the VAST AdServingId tag.
-- `getAdCategories()`: return `{authority: String, value: String}[]`, representing the VAST Category tag.
-- `getAdBlockedAdCategories()`: return `{authority: String, value: String}[]`, representing the VAST BlockedAdCategories tag.
-- `getAdDuration()`: return `Number` in ms, representing the duration of the selected linear creative. -1 is returned if this value is not available.
-- `getAdCurrentTime()`: return `Number` in ms, representing the current timestamp in the selected linear creative. -1 is returned if this value is not available.
-- `getAdRemainingTime()`: return `Number` in ms, representing the current time remaining in the selected linear creative. -1 is returned if this value is not available.
-- `getAdMediaWidth()`: return `Number`, representing the width of the selected creative. -1 is returned if this value is not available.
-- `getAdMediaHeight()`: return `Number`, representing the height of the selected creative. -1 is returned if this value is not available.
-- `getClickThroughUrl()`: return `String`, representing the click-through (e.g. destination) URL for the selected creative.
-- `getIsSkippableAd()`: return `Boolean`, stating if the loaded linear ad is a VAST skippable ad - can be queried when adloaded event fires.
-- `getSkipTimeOffset()`: return `Number` giving the skip offset when a skippable ad is displayed.
-- `getAdSkippableState()`: return `Boolean`, stating if the creative on stage can be skipped or not.
-- `getContentPlayerCompleted()`: return `Boolean`, stating if content player has reached end of content.
-- `setContentPlayerCompleted(value: Boolean)`: sets the contentPlayerCompleted state of the player, this is used when source on content player changes and we need to explicitly reset contentPlayerCompleted internal value so that content can resume as expected on next ad load.
+- `adMediaUrl`: getter-only returns `String`, representing the selected creative URL.
+- `adLinear`: getter-only returns `Boolean`, representing the type of the selected creative either linear (true) or non linear (false).
+- `adSystem`: getter-only returns `{value: String, version: String}`, representing the VAST AdSystem tag.
+- `adUniversalAdIds`: getter-only returns `[{idRegistry: String, value: String}]`, representing the VAST UniversalAdId tag.
+- `adContentType`: getter-only returns `String`, representing the MIME type for the selected creative.
+- `adTitle`: getter-only returns `String`, representing the VAST AdTitle tag.
+- `adDescription`: getter-only returns `String`, representing the VAST Description tag.
+- `adAdvertiser`: getter-only returns `{id: String, value: String}`, representing the VAST Advertiser tag.
+- `adPricing`: getter-only returns `{value: String, model: String, currency: String}`, representing the VAST Pricing tag.
+- `adSurvey`: getter-only returns `String`, representing the VAST Survey tag.
+- `adAdServingId`: getter-only returns `String`, representing the VAST AdServingId tag.
+- `adCategories`: getter-only returns `{authority: String, value: String}[]`, representing the VAST Category tag.
+- `adBlockedAdCategories`: getter-only returns `{authority: String, value: String}[]`, representing the VAST BlockedAdCategories tag.
+- `adDuration`: getter-only returns `Number` in ms, representing the duration of the selected linear creative. -1 is returned if this value is not available.
+- `adCurrentTime`: getter-only returns `Number` in ms, representing the current timestamp in the selected linear creative. -1 is returned if this value is not available.
+- `adRemainingTime`: getter-only returns `Number` in ms, representing the current time remaining in the selected linear creative. -1 is returned if this value is not available.
+- `adMediaWidth`: getter-only returns `Number`, representing the width of the selected creative. -1 is returned if this value is not available.
+- `adMediaHeight`: getter-only returns `Number`, representing the height of the selected creative. -1 is returned if this value is not available.
+- `clickThroughUrl`: getter-only returns `String`, representing the click-through (e.g. destination) URL for the selected creative.
+- `isSkippableAd`: getter-only returns `Boolean`, stating if the loaded linear ad is a VAST skippable ad - can be queried when adloaded event fires.
+- `skipTimeOffset`: getter-only returns `Number` giving the skip offset when a skippable ad is displayed.
+- `adSkippableState`: getter-only returns `Boolean`, stating if the creative on stage can be skipped or not.
+- `contentPlayerCompleted`: getter returns `Boolean` | setter sets the contentPlayerCompleted state of the player. This is used when source on content player changes and we need to explicitly reset contentPlayerCompleted internal value so that content can resume as expected on next ad load.
 
 Additional AdPod-related methods
 
-- `getAdPodInfo()`: return `{adPodCurrentIndex: Number, adPodLength: Number}` giving information about the currently playing pod.
+- `adPodInfo`: getter-only return `{adPodCurrentIndex: Number, adPodLength: Number}` giving information about the currently playing pod.
 
 Additional VPAID-related methods
 
 - `resizeAd(width: Number, height: Number, viewMode: String)`: resizes the VPAID creative based on `width`, `height` and `viewMode`. viewMode should be either 'normal' or 'fullscreen'.
 - `expandAd()`: expands the VPAID creative on stage.
 - `collapseAd()`: collapses the VPAID creative on stage.
-- `getAdExpanded()`: return `Boolean`, stating if the VPAID creative on stage is expanded or not.
-- `getVPAIDCompanionAds()`: return `String`, providing ad companion details in VAST 3.0 format for the `<CompanionAds>` element.
+- `adExpanded`: getter-only return `Boolean`, stating if the VPAID creative on stage is expanded or not.
+- `vpaidCompanionAds`: getter-only  return `String`, providing ad companion details in VAST 3.0 format for the `<CompanionAds>` element.
 
 The following methods should be queried after the `aderror` event has fired for accurate data:
 
-- `getAdErrorMessage()`: return `String`, representing the error message for the current error.
-- `getAdVastErrorCode()`: return `Number`, representing the VAST error code for the current error. -1 is returned if this value is not available.
-- `getAdErrorType()`: return `String`, representing the detected ad error type, possible values: 'adLoadError', 'adPlayError' or '' (if unknown error type).
+- `adErrorMessage`: getter-only return `String`, representing the error message for the current error.
+- `adVastErrorCode`: getter-only return `Number`, representing the VAST error code for the current error. -1 is returned if this value is not available.
+- `adErrorType`: getter-only return `String`, representing the detected ad error type, possible values: 'adLoadError', 'adPlayError' or '' (if unknown error type).
 
 The following methods provide context information for the rmp-vast instance:
 
-- `getEnvironment()`: return `Object`, data about the environment that rmp-vast runs into.
-- `getVastPlayer()`: return `HTMLMediaElement|null`, the VAST player video tag.
-- `getContentPlayer()`: return `HTMLMediaElement|null`, the content player video tag.
-- `getIsUsingContentPlayerForAds()`: return `Boolean`, on iOS Safari the VAST player is the content player. This is to avoid fullscreen management and autoplay issues and to provide a consistent user experience. This method will return true for iOS Safari, false otherwise.
+- `environment`: getter-only return `Object`, data about the environment that rmp-vast runs into.
+- `adPlayer`: getter-only return `HTMLMediaElement|null`, the ad player video tag.
+- `contentPlayer`: getter-only return `HTMLMediaElement|null`, the content player video tag.
+- `isUsingContentPlayerForAds`: getter-only return `Boolean`, on iOS Safari the ad player is the content player. This is to avoid fullscreen management and autoplay issues and to provide a consistent user experience. This method will return true for iOS Safari, false otherwise.
 
 [Back to documentation sections](#documentation-sections)
 
@@ -500,7 +495,7 @@ rmpVast.on("adstarted", function () {
 });
 ```
 
-- `getCompanionAdsRequiredAttribute()`: return a String representing the "required" attribute for CompanionAds tag. Value can be all, any, none or an empty String when this attribute is not defined. See section 2.3.3.4 of VAST 3 specification for more information.
+- `companionAdsRequiredAttribute`: getter-only return a `String` representing the "required" attribute for CompanionAds tag. Value can be all, any, none or an empty String when this attribute is not defined. See section 2.3.3.4 of VAST 3 specification for more information.
 
 [Back to documentation sections](#documentation-sections)
 
@@ -518,9 +513,9 @@ Feedback is welcome. Please see ./test/spec/omWebSpec/ for implementation exampl
 
 ## SIMID support
 
-### This is a BETA feature - open an issue for bugs and improvements
+### As SIMID is a new format in the industry, feedback is welcome - open a PR/issue for bugs and improvements
 
-[SIMID](https://interactiveadvertisingbureau.github.io/SIMID/simid-1.1.0.html) replaces VPAID for interactive creatives. With rmp-vast 12 we support SIMID as a BETA feature. We only support linear SIMID creatives for the moment. See test/simidSpec/ for an implementation example. This feature needs to be enabled with `enableSimid: true` setting.
+[SIMID](https://interactiveadvertisingbureau.github.io/SIMID/simid-1.1.0.html) replaces VPAID for interactive creatives. We only support linear SIMID creatives for the moment. See test/simidSpec/ for an implementation example. This feature is enabled by default but can be turned off with `enableSimid: false` setting.
 
 ## VPAID support
 
@@ -551,7 +546,7 @@ This is done by simply calling `loadAds` method on page load (after HTML5 conten
 
 ## Fullscreen management
 
-rmp-vast supports fullscreen for the global player (e.g. content + vast players) but there is an extra layer to add to your application. See the ./app/js/app.js file around line 25 for an example of implementation.
+rmp-vast supports fullscreen for the global player (e.g. content + ad players) but there is an extra layer to add to your application. See the ./app/js/app.js file around line 25 for an example of implementation.
 
 [Back to documentation sections](#documentation-sections)
 

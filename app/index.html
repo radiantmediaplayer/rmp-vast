@@ -23,8 +23,6 @@
 				<h4>Implementation example</h4>
 				<p><a href="https://github.com/radiantmediaplayer/rmp-vast">See source on GitHub</a> - a <a
 						href="https://www.radiantmediaplayer.com">Radiant Media Player</a> project</p>
-				<p>NEW: SIMID support <sup>BETA</sup> - <a href="https://github.com/radiantmediaplayer/rmp-vast/issues">feedback
-						is welcome!</a></p>
 				<div class="rmp-container" id="rmp">
 					<div class="rmp-content">
 						<video class="rmp-video" src="https://www.rmp-streaming.com/media/big-buck-bunny-360p.mp4"
@@ -49,121 +47,121 @@
 						<button type="button" class="btn btn-outline-primary" id="loadAds">loadAds(newAdTagUrl)</button>
 					</div>
 					<div class="mt-2">
-						<button type="button" class="btn btn-outline-primary" id="mute">setMute(true)</button>
-						<button type="button" class="btn btn-outline-primary" id="unmute">setMute(false)</button>
-						<button type="button" class="btn btn-outline-primary" id="volume13">setVolume(0.33)</button>
-						<button type="button" class="btn btn-outline-primary" id="volume23">setVolume(0.66)</button>
-						<button type="button" class="btn btn-outline-primary" id="volume33">setVolume(1)</button>
+						<button type="button" class="btn btn-outline-primary" id="mute">muted = true</button>
+						<button type="button" class="btn btn-outline-primary" id="unmute">muted = false</button>
+						<button type="button" class="btn btn-outline-primary" id="volume13">volume = 0.33</button>
+						<button type="button" class="btn btn-outline-primary" id="volume23">volume = 0.66</button>
+						<button type="button" class="btn btn-outline-primary" id="volume33">volume = 1</button>
 					</div>
 					<div class="mt-2">
 						<div class="mt-1">
-							<button type="button" class="btn btn-outline-primary" id="getAdPaused">getAdPaused</button><span
-								id="getAdPausedResult"></span>
+							<button type="button" class="btn btn-outline-primary" id="adPaused">adPaused</button><span
+								id="adPausedResult"></span>
 						</div>
 						<div class="mt-1">
-							<button type="button" class="btn btn-outline-primary" id="getVolume">getVolume</button><span
-								id="getVolumeResult"></span>
+							<button type="button" class="btn btn-outline-primary" id="volume">volume</button><span
+								id="volumeResult"></span>
 						</div>
 						<div class="mt-1">
-							<button type="button" class="btn btn-outline-primary" id="getMute">getMute</button><span
-								id="getMuteResult"></span>
+							<button type="button" class="btn btn-outline-primary" id="muted">muted</button><span
+								id="mutedResult"></span>
 						</div>
 						<div class="mt-1">
-							<button type="button" class="btn btn-outline-primary" id="getAdTagUrl">getAdTagUrl</button><span
-								id="getAdTagUrlResult"></span>
+							<button type="button" class="btn btn-outline-primary" id="adTagUrl">adTagUrl</button><span
+								id="adTagUrlResult"></span>
 						</div>
 						<div class="mt-1">
-							<button type="button" class="btn btn-outline-primary" id="getAdMediaUrl">getAdMediaUrl</button><span
-								id="getAdMediaUrlResult"></span>
+							<button type="button" class="btn btn-outline-primary" id="adMediaUrl">adMediaUrl</button><span
+								id="adMediaUrlResult"></span>
 						</div>
 						<div class="mt-1">
-							<button type="button" class="btn btn-outline-primary" id="getAdLinear">getAdLinear</button><span
-								id="getAdLinearResult"></span>
+							<button type="button" class="btn btn-outline-primary" id="adLinear">adLinear</button><span
+								id="adLinearResult"></span>
 						</div>
 						<div class="mt-1">
-							<button type="button" class="btn btn-outline-primary" id="getAdSystem">getAdSystem</button><span
-								id="getAdSystemResult"></span>
-						</div>
-						<div class="mt-1">
-							<button type="button" class="btn btn-outline-primary"
-								id="getAdUniversalAdIds">getAdUniversalAdIds</button><span id="getAdUniversalAdIdsResult"></span>
-						</div>
-						<div class="mt-1">
-							<button type="button" class="btn btn-outline-primary" id="getAdContentType">getAdContentType</button><span
-								id="getAdContentTypeResult"></span>
-						</div>
-						<div class="mt-1">
-							<button type="button" class="btn btn-outline-primary" id="getAdTitle">getAdTitle</button><span
-								id="getAdTitleResult"></span>
-						</div>
-						<div class="mt-1">
-							<button type="button" class="btn btn-outline-primary" id="getAdDescription">getAdDescription</button><span
-								id="getAdDescriptionResult"></span>
-						</div>
-						<div class="mt-1">
-							<button type="button" class="btn btn-outline-primary" id="getAdAdvertiser">getAdAdvertiser</button><span
-								id="getAdAdvertiserResult"></span>
-						</div>
-						<div class="mt-1">
-							<button type="button" class="btn btn-outline-primary" id="getAdPricing">getAdPricing</button><span
-								id="getAdPricingResult"></span>
-						</div>
-						<div class="mt-1">
-							<button type="button" class="btn btn-outline-primary" id="getAdSurvey">getAdSurvey</button><span
-								id="getAdSurveyResult"></span>
-						</div>
-						<div class="mt-1">
-							<button type="button" class="btn btn-outline-primary" id="getAdAdServingId">getAdAdServingId</button><span
-								id="getAdAdServingIdResult"></span>
-						</div>
-						<div class="mt-1">
-							<button type="button" class="btn btn-outline-primary" id="getAdCategories">getAdCategories</button><span
-								id="getAdCategoriesResult"></span>
+							<button type="button" class="btn btn-outline-primary" id="adSystem">adSystem</button><span
+								id="adSystemResult"></span>
 						</div>
 						<div class="mt-1">
 							<button type="button" class="btn btn-outline-primary"
-								id="getAdBlockedAdCategories">getAdBlockedAdCategories</button><span
-								id="getAdBlockedAdCategoriesResult"></span>
+								id="adUniversalAdIds">adUniversalAdIds</button><span id="adUniversalAdIdsResult"></span>
 						</div>
 						<div class="mt-1">
-							<button type="button" class="btn btn-outline-primary" id="getAdDuration">getAdDuration</button><span
-								id="getAdDurationResult"></span>
+							<button type="button" class="btn btn-outline-primary" id="adContentType">adContentType</button><span
+								id="adContentTypeResult"></span>
 						</div>
 						<div class="mt-1">
-							<button type="button" class="btn btn-outline-primary" id="getAdCurrentTime">getAdCurrentTime</button><span
-								id="getAdCurrentTimeResult"></span>
+							<button type="button" class="btn btn-outline-primary" id="adTitle">adTitle</button><span
+								id="adTitleResult"></span>
+						</div>
+						<div class="mt-1">
+							<button type="button" class="btn btn-outline-primary" id="adDescription">adDescription</button><span
+								id="adDescriptionResult"></span>
+						</div>
+						<div class="mt-1">
+							<button type="button" class="btn btn-outline-primary" id="adAdvertiser">adAdvertiser</button><span
+								id="adAdvertiserResult"></span>
+						</div>
+						<div class="mt-1">
+							<button type="button" class="btn btn-outline-primary" id="adPricing">adPricing</button><span
+								id="adPricingResult"></span>
+						</div>
+						<div class="mt-1">
+							<button type="button" class="btn btn-outline-primary" id="adSurvey">adSurvey</button><span
+								id="adSurveyResult"></span>
+						</div>
+						<div class="mt-1">
+							<button type="button" class="btn btn-outline-primary" id="adAdServingId">adAdServingId</button><span
+								id="adAdServingIdResult"></span>
+						</div>
+						<div class="mt-1">
+							<button type="button" class="btn btn-outline-primary" id="adCategories">adCategories</button><span
+								id="adCategoriesResult"></span>
 						</div>
 						<div class="mt-1">
 							<button type="button" class="btn btn-outline-primary"
-								id="getAdRemainingTime">getAdRemainingTime</button><span id="getAdRemainingTimeResult"></span>
+								id="adBlockedAdCategories">adBlockedAdCategories</button><span
+								id="adBlockedAdCategoriesResult"></span>
 						</div>
 						<div class="mt-1">
-							<button type="button" class="btn btn-outline-primary" id="getAdOnStage">getAdOnStage</button><span
-								id="getAdOnStageResult"></span>
+							<button type="button" class="btn btn-outline-primary" id="adDuration">adDuration</button><span
+								id="adDurationResult"></span>
 						</div>
 						<div class="mt-1">
-							<button type="button" class="btn btn-outline-primary" id="getAdMediaWidth">getAdMediaWidth</button><span
-								id="getAdMediaWidthResult"></span>
-						</div>
-						<div class="mt-1">
-							<button type="button" class="btn btn-outline-primary" id="getAdMediaHeight">getAdMediaHeight</button><span
-								id="getAdMediaHeightResult"></span>
+							<button type="button" class="btn btn-outline-primary" id="adCurrentTime">adCurrentTime</button><span
+								id="adCurrentTimeResult"></span>
 						</div>
 						<div class="mt-1">
 							<button type="button" class="btn btn-outline-primary"
-								id="getClickThroughUrl">getClickThroughUrl</button><span id="getClickThroughUrlResult"></span>
+								id="adRemainingTime">adRemainingTime</button><span id="adRemainingTimeResult"></span>
+						</div>
+						<div class="mt-1">
+							<button type="button" class="btn btn-outline-primary" id="adOnStage">adOnStage</button><span
+								id="adOnStageResult"></span>
+						</div>
+						<div class="mt-1">
+							<button type="button" class="btn btn-outline-primary" id="adMediaWidth">adMediaWidth</button><span
+								id="adMediaWidthResult"></span>
+						</div>
+						<div class="mt-1">
+							<button type="button" class="btn btn-outline-primary" id="adMediaHeight">adMediaHeight</button><span
+								id="adMediaHeightResult"></span>
 						</div>
 						<div class="mt-1">
 							<button type="button" class="btn btn-outline-primary"
-								id="getSkipTimeOffset">getSkipTimeOffset</button><span id="getSkipTimeOffsetResult"></span>
+								id="clickThroughUrl">clickThroughUrl</button><span id="clickThroughUrlResult"></span>
 						</div>
 						<div class="mt-1">
-							<button type="button" class="btn btn-outline-primary" id="getIsSkippableAd">getIsSkippableAd</button><span
-								id="getIsSkippableAdResult"></span>
+							<button type="button" class="btn btn-outline-primary"
+								id="skipTimeOffset">skipTimeOffset</button><span id="skipTimeOffsetResult"></span>
+						</div>
+						<div class="mt-1">
+							<button type="button" class="btn btn-outline-primary" id="isSkippableAd">isSkippableAd</button><span
+								id="isSkippableAdResult"></span>
 						</div>
 						<div class="mt-1 mb-5">
 							<button type="button" class="btn btn-outline-primary"
-								id="getAdSkippableState">getAdSkippableState</button><span id="getAdSkippableStateResult"></span>
+								id="adSkippableState">adSkippableState</button><span id="adSkippableStateResult"></span>
 						</div>
 					</div>
 				</div>

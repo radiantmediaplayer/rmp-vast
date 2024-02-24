@@ -5,6 +5,7 @@ const TEST = require('../helpers/test');
 let driver;
 
 let testUrls = [
+  TEST.pathToTest + 'vpaidSpec/simid-map.html',
   TEST.pathToTest + 'vpaidSpec/simid-linear.html',
   TEST.pathToTest + 'vpaidSpec/simid-survey.html'
 ];

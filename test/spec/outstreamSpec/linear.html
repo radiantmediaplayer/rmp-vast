@@ -4,15 +4,15 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
-  <title>simple</title>
+  <title>linear</title>
 
   <!-- jasmine -->
-  <link rel="shortcut icon" type="image/png" href="../../lib/jasmine-3.10.0/jasmine_favicon.png">
-  <link rel="stylesheet" href="../../lib/jasmine-3.10.0/jasmine.css">
-  <script src="../../lib/jasmine-3.10.0/jasmine.js"></script>
-  <script src="../../lib/jasmine-3.10.0/jasmine-html.js"></script>
-  <script src="../../lib/jasmine-3.10.0/boot0.js"></script>
-  <script src="../../lib/jasmine-3.10.0/boot1.js"></script>
+  <link rel="shortcut icon" type="image/png" href="../../lib/jasmine-5.1.2/jasmine_favicon.png">
+  <link rel="stylesheet" href="../../lib/jasmine-5.1.2/jasmine.css">
+  <script src="../../lib/jasmine-5.1.2/jasmine.js"></script>
+  <script src="../../lib/jasmine-5.1.2/jasmine-html.js"></script>
+  <script src="../../lib/jasmine-5.1.2/boot0.js"></script>
+  <script src="../../lib/jasmine-5.1.2/boot1.js"></script>
   <link rel="stylesheet" href="../../../app/css/app.css">
 
   <!-- rmp-vast -->
@@ -24,11 +24,11 @@
   <div class="rmp-container" id="rmp">
     <div class="rmp-content">
       <!-- Since we are using rmp-vast in outstream ads mode there is no need to provide an src to the HTML5 video tag -->
-      <video class="rmp-video" playsinline></video>
+      <video class="rmp-video" playsinline disableRemotePlayback disablePictureInPicture></video>
     </div>
   </div>
   <!-- include spec files here... -->
-  <script src="spec/Simple.js"></script>
+  <script src="spec/linear.js"></script>
 </body>
 
 </html>

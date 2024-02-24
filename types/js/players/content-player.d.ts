@@ -1,14 +1,18 @@
-export default CONTENT_PLAYER;
-declare namespace CONTENT_PLAYER {
-    function play(firstContentPlayerPlayRequest: any): void;
-    function pause(): void;
-    function setVolume(level: any): void;
-    function getVolume(): any;
-    function getMute(): any;
-    function setMute(muted: any): void;
-    function getDuration(): number;
-    function getCurrentTime(): number;
-    function seekTo(msSeek: any): void;
-    function preventSeekingForCustomPlayback(): void;
+export default class ContentPlayer {
+    constructor(rmpVast: any);
+    _rmpVast: any;
+    _contentPlayer: any;
+    _customPlaybackCurrentTime: number;
+    _antiSeekLogicInterval: NodeJS.Timeout;
+    destroy(): void;
+    play(firstContentPlayerPlayRequest: any): void;
+    pause(): void;
+    set volume(level: any);
+    get volume(): any;
+    set muted(muted: any);
+    get muted(): any;
+    get currentTime(): number;
+    seekTo(msSeek: any): void;
+    preventSeekingForCustomPlayback(): void;
 }
 //# sourceMappingURL=content-player.d.ts.map

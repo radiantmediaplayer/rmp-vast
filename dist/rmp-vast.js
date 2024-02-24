@@ -1,60 +1,172 @@
 /******/ (function() { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
-/***/ 712:
+/***/ 7078:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var parent = __webpack_require__(1008);
+var parent = __webpack_require__(7481);
 
 module.exports = parent;
 
 
 /***/ }),
 
-/***/ 492:
+/***/ 1718:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var parent = __webpack_require__(6268);
+var parent = __webpack_require__(2437);
 
 module.exports = parent;
 
 
 /***/ }),
 
-/***/ 4160:
+/***/ 4023:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var parent = __webpack_require__(5212);
+var parent = __webpack_require__(3306);
 
 module.exports = parent;
 
 
 /***/ }),
 
-/***/ 8997:
+/***/ 8081:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var parent = __webpack_require__(3480);
+var parent = __webpack_require__(2956);
 
 module.exports = parent;
 
 
 /***/ }),
 
-/***/ 1748:
+/***/ 8977:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var parent = __webpack_require__(4672);
+var parent = __webpack_require__(4360);
 
 module.exports = parent;
 
 
 /***/ }),
 
-/***/ 6168:
+/***/ 3310:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var parent = __webpack_require__(6152);
+var parent = __webpack_require__(9771);
+
+module.exports = parent;
+
+
+/***/ }),
+
+/***/ 6726:
+/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
+
+var parent = __webpack_require__(7521);
+
+module.exports = parent;
+
+
+/***/ }),
+
+/***/ 8650:
+/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
+
+var parent = __webpack_require__(8485);
+
+module.exports = parent;
+
+
+/***/ }),
+
+/***/ 1550:
+/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
+
+var parent = __webpack_require__(4519);
+
+module.exports = parent;
+
+
+/***/ }),
+
+/***/ 4615:
+/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
+
+var parent = __webpack_require__(6368);
+
+module.exports = parent;
+
+
+/***/ }),
+
+/***/ 137:
+/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
+
+var parent = __webpack_require__(1288);
+
+module.exports = parent;
+
+
+/***/ }),
+
+/***/ 1829:
+/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
+
+var parent = __webpack_require__(8084);
+
+module.exports = parent;
+
+
+/***/ }),
+
+/***/ 3752:
+/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
+
+var parent = __webpack_require__(9253);
+
+module.exports = parent;
+
+
+/***/ }),
+
+/***/ 5485:
+/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
+
+var parent = __webpack_require__(2408);
+
+module.exports = parent;
+
+
+/***/ }),
+
+/***/ 1431:
+/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
+
+var parent = __webpack_require__(1208);
+
+__webpack_require__(639);
+
+module.exports = parent;
+
+
+/***/ }),
+
+/***/ 5665:
+/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
+
+var parent = __webpack_require__(4404);
+
+module.exports = parent;
+
+
+/***/ }),
+
+/***/ 2890:
+/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
+
+var parent = __webpack_require__(5879);
 
 module.exports = parent;
 
@@ -64,332 +176,220 @@ module.exports = parent;
 /***/ 7888:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var parent = __webpack_require__(2712);
-
-module.exports = parent;
-
-
-/***/ }),
-
-/***/ 4108:
-/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
-
-var parent = __webpack_require__(624);
-
-module.exports = parent;
-
-
-/***/ }),
-
-/***/ 6680:
-/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
-
-var parent = __webpack_require__(3776);
-
-module.exports = parent;
-
-
-/***/ }),
-
-/***/ 8716:
-/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
-
-var parent = __webpack_require__(8624);
-
-module.exports = parent;
-
-
-/***/ }),
-
-/***/ 6520:
-/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
-
-var parent = __webpack_require__(3808);
-
-module.exports = parent;
-
-
-/***/ }),
-
-/***/ 4064:
-/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
-
-var parent = __webpack_require__(3960);
-
-module.exports = parent;
-
-
-/***/ }),
-
-/***/ 1948:
-/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
-
-var parent = __webpack_require__(480);
-
-module.exports = parent;
-
-
-/***/ }),
-
-/***/ 5668:
-/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
-
-var parent = __webpack_require__(7596);
-
-module.exports = parent;
-
-
-/***/ }),
-
-/***/ 7416:
-/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
-
-var parent = __webpack_require__(848);
-
-__webpack_require__(6360);
-
-module.exports = parent;
-
-
-/***/ }),
-
-/***/ 648:
-/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
-
-var parent = __webpack_require__(9312);
-
-module.exports = parent;
-
-
-/***/ }),
-
-/***/ 1660:
-/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
-
-var parent = __webpack_require__(1688);
-
-module.exports = parent;
-
-
-/***/ }),
-
-/***/ 44:
-/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
-
-__webpack_require__(2336);
-__webpack_require__(472);
-var path = __webpack_require__(2204);
+__webpack_require__(7632);
+__webpack_require__(6206);
+var path = __webpack_require__(7675);
 
 module.exports = path.Array.from;
 
 
 /***/ }),
 
-/***/ 8064:
+/***/ 7864:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-__webpack_require__(6243);
-var path = __webpack_require__(2204);
+__webpack_require__(5425);
+var path = __webpack_require__(7675);
 
 module.exports = path.Array.isArray;
 
 
 /***/ }),
 
-/***/ 7504:
+/***/ 540:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-__webpack_require__(1348);
-var entryVirtual = __webpack_require__(3068);
+__webpack_require__(9958);
+var entryVirtual = __webpack_require__(5296);
 
 module.exports = entryVirtual('Array').concat;
 
 
 /***/ }),
 
-/***/ 3564:
+/***/ 7274:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-__webpack_require__(7660);
-var entryVirtual = __webpack_require__(3068);
+__webpack_require__(1284);
+var entryVirtual = __webpack_require__(5296);
 
 module.exports = entryVirtual('Array').filter;
 
 
 /***/ }),
 
-/***/ 2624:
+/***/ 9307:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-__webpack_require__(3964);
-var entryVirtual = __webpack_require__(3068);
+__webpack_require__(7765);
+var entryVirtual = __webpack_require__(5296);
 
 module.exports = entryVirtual('Array').find;
 
 
 /***/ }),
 
-/***/ 6196:
+/***/ 9756:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-__webpack_require__(788);
-var entryVirtual = __webpack_require__(3068);
+__webpack_require__(9177);
+var entryVirtual = __webpack_require__(5296);
 
 module.exports = entryVirtual('Array').forEach;
 
 
 /***/ }),
 
-/***/ 4492:
+/***/ 5213:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-__webpack_require__(4940);
-var entryVirtual = __webpack_require__(3068);
+__webpack_require__(7019);
+var entryVirtual = __webpack_require__(5296);
 
 module.exports = entryVirtual('Array').includes;
 
 
 /***/ }),
 
-/***/ 868:
+/***/ 6682:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-__webpack_require__(9548);
-var entryVirtual = __webpack_require__(3068);
+__webpack_require__(7640);
+var entryVirtual = __webpack_require__(5296);
 
 module.exports = entryVirtual('Array').indexOf;
 
 
 /***/ }),
 
-/***/ 9316:
+/***/ 4652:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-__webpack_require__(176);
-__webpack_require__(2984);
-var entryVirtual = __webpack_require__(3068);
+__webpack_require__(6396);
+__webpack_require__(5991);
+var entryVirtual = __webpack_require__(5296);
 
 module.exports = entryVirtual('Array').keys;
 
 
 /***/ }),
 
-/***/ 380:
+/***/ 2575:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-__webpack_require__(2148);
-var entryVirtual = __webpack_require__(3068);
+__webpack_require__(5973);
+var entryVirtual = __webpack_require__(5296);
 
 module.exports = entryVirtual('Array').lastIndexOf;
 
 
 /***/ }),
 
-/***/ 60:
+/***/ 1700:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-__webpack_require__(7192);
-var entryVirtual = __webpack_require__(3068);
+__webpack_require__(1306);
+var entryVirtual = __webpack_require__(5296);
 
 module.exports = entryVirtual('Array').map;
 
 
 /***/ }),
 
-/***/ 1744:
+/***/ 3232:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-__webpack_require__(784);
-var entryVirtual = __webpack_require__(3068);
+__webpack_require__(4966);
+var entryVirtual = __webpack_require__(5296);
 
 module.exports = entryVirtual('Array').push;
 
 
 /***/ }),
 
-/***/ 2988:
+/***/ 6914:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-__webpack_require__(6960);
-var entryVirtual = __webpack_require__(3068);
+__webpack_require__(8132);
+var entryVirtual = __webpack_require__(5296);
 
 module.exports = entryVirtual('Array').reduce;
 
 
 /***/ }),
 
-/***/ 4104:
+/***/ 1392:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-__webpack_require__(3616);
-var entryVirtual = __webpack_require__(3068);
+__webpack_require__(4126);
+var entryVirtual = __webpack_require__(5296);
 
 module.exports = entryVirtual('Array').reverse;
 
 
 /***/ }),
 
-/***/ 7816:
+/***/ 7452:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-__webpack_require__(6555);
-var entryVirtual = __webpack_require__(3068);
+__webpack_require__(9778);
+var entryVirtual = __webpack_require__(5296);
 
 module.exports = entryVirtual('Array').slice;
 
 
 /***/ }),
 
-/***/ 439:
+/***/ 700:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-__webpack_require__(9136);
-var entryVirtual = __webpack_require__(3068);
+__webpack_require__(2714);
+var entryVirtual = __webpack_require__(5296);
 
 module.exports = entryVirtual('Array').sort;
 
 
 /***/ }),
 
-/***/ 7828:
+/***/ 7500:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-__webpack_require__(1544);
-var entryVirtual = __webpack_require__(3068);
+__webpack_require__(8969);
+var entryVirtual = __webpack_require__(5296);
 
 module.exports = entryVirtual('Array').splice;
 
 
 /***/ }),
 
-/***/ 4344:
+/***/ 134:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-__webpack_require__(3572);
-var entryVirtual = __webpack_require__(3068);
+__webpack_require__(990);
+var entryVirtual = __webpack_require__(5296);
 
 module.exports = entryVirtual('Function').bind;
 
 
 /***/ }),
 
-/***/ 1136:
+/***/ 9225:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-__webpack_require__(176);
-__webpack_require__(2336);
-var getIteratorMethod = __webpack_require__(5632);
+__webpack_require__(6396);
+__webpack_require__(7632);
+var getIteratorMethod = __webpack_require__(6399);
 
 module.exports = getIteratorMethod;
 
 
 /***/ }),
 
-/***/ 9128:
+/***/ 1275:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var isPrototypeOf = __webpack_require__(8416);
-var method = __webpack_require__(4344);
+var isPrototypeOf = __webpack_require__(3381);
+var method = __webpack_require__(134);
 
 var FunctionPrototype = Function.prototype;
 
@@ -401,11 +401,11 @@ module.exports = function (it) {
 
 /***/ }),
 
-/***/ 7752:
+/***/ 7584:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var isPrototypeOf = __webpack_require__(8416);
-var method = __webpack_require__(7504);
+var isPrototypeOf = __webpack_require__(3381);
+var method = __webpack_require__(540);
 
 var ArrayPrototype = Array.prototype;
 
@@ -417,11 +417,11 @@ module.exports = function (it) {
 
 /***/ }),
 
-/***/ 3832:
+/***/ 7654:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var isPrototypeOf = __webpack_require__(8416);
-var method = __webpack_require__(3564);
+var isPrototypeOf = __webpack_require__(3381);
+var method = __webpack_require__(7274);
 
 var ArrayPrototype = Array.prototype;
 
@@ -433,11 +433,11 @@ module.exports = function (it) {
 
 /***/ }),
 
-/***/ 7616:
+/***/ 5775:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var isPrototypeOf = __webpack_require__(8416);
-var method = __webpack_require__(2624);
+var isPrototypeOf = __webpack_require__(3381);
+var method = __webpack_require__(9307);
 
 var ArrayPrototype = Array.prototype;
 
@@ -449,12 +449,12 @@ module.exports = function (it) {
 
 /***/ }),
 
-/***/ 416:
+/***/ 2737:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var isPrototypeOf = __webpack_require__(8416);
-var arrayMethod = __webpack_require__(4492);
-var stringMethod = __webpack_require__(7456);
+var isPrototypeOf = __webpack_require__(3381);
+var arrayMethod = __webpack_require__(5213);
+var stringMethod = __webpack_require__(9315);
 
 var ArrayPrototype = Array.prototype;
 var StringPrototype = String.prototype;
@@ -470,11 +470,11 @@ module.exports = function (it) {
 
 /***/ }),
 
-/***/ 6976:
+/***/ 2342:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var isPrototypeOf = __webpack_require__(8416);
-var method = __webpack_require__(868);
+var isPrototypeOf = __webpack_require__(3381);
+var method = __webpack_require__(6682);
 
 var ArrayPrototype = Array.prototype;
 
@@ -486,11 +486,11 @@ module.exports = function (it) {
 
 /***/ }),
 
-/***/ 6208:
+/***/ 1691:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var isPrototypeOf = __webpack_require__(8416);
-var method = __webpack_require__(380);
+var isPrototypeOf = __webpack_require__(3381);
+var method = __webpack_require__(2575);
 
 var ArrayPrototype = Array.prototype;
 
@@ -502,11 +502,11 @@ module.exports = function (it) {
 
 /***/ }),
 
-/***/ 6460:
+/***/ 16:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var isPrototypeOf = __webpack_require__(8416);
-var method = __webpack_require__(60);
+var isPrototypeOf = __webpack_require__(3381);
+var method = __webpack_require__(1700);
 
 var ArrayPrototype = Array.prototype;
 
@@ -518,11 +518,11 @@ module.exports = function (it) {
 
 /***/ }),
 
-/***/ 992:
+/***/ 5794:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var isPrototypeOf = __webpack_require__(8416);
-var method = __webpack_require__(8748);
+var isPrototypeOf = __webpack_require__(3381);
+var method = __webpack_require__(5036);
 
 var StringPrototype = String.prototype;
 
@@ -535,11 +535,11 @@ module.exports = function (it) {
 
 /***/ }),
 
-/***/ 1616:
+/***/ 4516:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var isPrototypeOf = __webpack_require__(8416);
-var method = __webpack_require__(1744);
+var isPrototypeOf = __webpack_require__(3381);
+var method = __webpack_require__(3232);
 
 var ArrayPrototype = Array.prototype;
 
@@ -551,11 +551,11 @@ module.exports = function (it) {
 
 /***/ }),
 
-/***/ 6044:
+/***/ 7806:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var isPrototypeOf = __webpack_require__(8416);
-var method = __webpack_require__(2988);
+var isPrototypeOf = __webpack_require__(3381);
+var method = __webpack_require__(6914);
 
 var ArrayPrototype = Array.prototype;
 
@@ -567,11 +567,11 @@ module.exports = function (it) {
 
 /***/ }),
 
-/***/ 3843:
+/***/ 8260:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var isPrototypeOf = __webpack_require__(8416);
-var method = __webpack_require__(4104);
+var isPrototypeOf = __webpack_require__(3381);
+var method = __webpack_require__(1392);
 
 var ArrayPrototype = Array.prototype;
 
@@ -583,11 +583,11 @@ module.exports = function (it) {
 
 /***/ }),
 
-/***/ 8468:
+/***/ 1328:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var isPrototypeOf = __webpack_require__(8416);
-var method = __webpack_require__(7816);
+var isPrototypeOf = __webpack_require__(3381);
+var method = __webpack_require__(7452);
 
 var ArrayPrototype = Array.prototype;
 
@@ -599,11 +599,11 @@ module.exports = function (it) {
 
 /***/ }),
 
-/***/ 3947:
+/***/ 4824:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var isPrototypeOf = __webpack_require__(8416);
-var method = __webpack_require__(439);
+var isPrototypeOf = __webpack_require__(3381);
+var method = __webpack_require__(700);
 
 var ArrayPrototype = Array.prototype;
 
@@ -615,11 +615,11 @@ module.exports = function (it) {
 
 /***/ }),
 
-/***/ 1836:
+/***/ 5992:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var isPrototypeOf = __webpack_require__(8416);
-var method = __webpack_require__(7828);
+var isPrototypeOf = __webpack_require__(3381);
+var method = __webpack_require__(7500);
 
 var ArrayPrototype = Array.prototype;
 
@@ -631,11 +631,11 @@ module.exports = function (it) {
 
 /***/ }),
 
-/***/ 6403:
+/***/ 8174:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var isPrototypeOf = __webpack_require__(8416);
-var method = __webpack_require__(8324);
+var isPrototypeOf = __webpack_require__(3381);
+var method = __webpack_require__(8160);
 
 var StringPrototype = String.prototype;
 
@@ -648,11 +648,11 @@ module.exports = function (it) {
 
 /***/ }),
 
-/***/ 7532:
+/***/ 744:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var isPrototypeOf = __webpack_require__(8416);
-var method = __webpack_require__(8340);
+var isPrototypeOf = __webpack_require__(3381);
+var method = __webpack_require__(4170);
 
 var StringPrototype = String.prototype;
 
@@ -665,12 +665,12 @@ module.exports = function (it) {
 
 /***/ }),
 
-/***/ 8580:
+/***/ 4090:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-__webpack_require__(2636);
-var path = __webpack_require__(2204);
-var apply = __webpack_require__(720);
+__webpack_require__(1522);
+var path = __webpack_require__(7675);
+var apply = __webpack_require__(1981);
 
 // eslint-disable-next-line es/no-json -- safe
 if (!path.JSON) path.JSON = { stringify: JSON.stringify };
@@ -683,36 +683,36 @@ module.exports = function stringify(it, replacer, space) {
 
 /***/ }),
 
-/***/ 5492:
+/***/ 8789:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-__webpack_require__(176);
-__webpack_require__(2944);
-__webpack_require__(2984);
-__webpack_require__(2336);
-var path = __webpack_require__(2204);
+__webpack_require__(6396);
+__webpack_require__(9445);
+__webpack_require__(5991);
+__webpack_require__(7632);
+var path = __webpack_require__(7675);
 
 module.exports = path.Map;
 
 
 /***/ }),
 
-/***/ 300:
+/***/ 5933:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-__webpack_require__(7212);
-var path = __webpack_require__(2204);
+__webpack_require__(6889);
+var path = __webpack_require__(7675);
 
 module.exports = path.Object.assign;
 
 
 /***/ }),
 
-/***/ 2728:
+/***/ 2096:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-__webpack_require__(9640);
-var path = __webpack_require__(2204);
+__webpack_require__(9252);
+var path = __webpack_require__(7675);
 
 var Object = path.Object;
 
@@ -723,11 +723,11 @@ module.exports = function create(P, D) {
 
 /***/ }),
 
-/***/ 6536:
+/***/ 8825:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-__webpack_require__(6892);
-var path = __webpack_require__(2204);
+__webpack_require__(8805);
+var path = __webpack_require__(7675);
 
 var Object = path.Object;
 
@@ -740,11 +740,11 @@ if (Object.defineProperty.sham) defineProperty.sham = true;
 
 /***/ }),
 
-/***/ 152:
+/***/ 6696:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-__webpack_require__(7120);
-var path = __webpack_require__(2204);
+__webpack_require__(28);
+var path = __webpack_require__(7675);
 
 var Object = path.Object;
 
@@ -755,391 +755,391 @@ module.exports = function getOwnPropertyNames(it) {
 
 /***/ }),
 
-/***/ 7784:
+/***/ 6859:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-__webpack_require__(5700);
-var path = __webpack_require__(2204);
+__webpack_require__(4999);
+var path = __webpack_require__(7675);
 
 module.exports = path.Object.getPrototypeOf;
 
 
 /***/ }),
 
-/***/ 5488:
+/***/ 9768:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-__webpack_require__(6800);
-var path = __webpack_require__(2204);
+__webpack_require__(9676);
+var path = __webpack_require__(7675);
 
 module.exports = path.Object.keys;
 
 
 /***/ }),
 
-/***/ 2176:
+/***/ 3119:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-__webpack_require__(4036);
-var path = __webpack_require__(2204);
+__webpack_require__(2947);
+var path = __webpack_require__(7675);
 
 module.exports = path.Object.setPrototypeOf;
 
 
 /***/ }),
 
-/***/ 9008:
+/***/ 5746:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-__webpack_require__(5328);
-var path = __webpack_require__(2204);
+__webpack_require__(3582);
+var path = __webpack_require__(7675);
 
 module.exports = path.Object.values;
 
 
 /***/ }),
 
-/***/ 3984:
+/***/ 3584:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-__webpack_require__(3219);
-var path = __webpack_require__(2204);
+__webpack_require__(6839);
+var path = __webpack_require__(7675);
 
 module.exports = path.parseFloat;
 
 
 /***/ }),
 
-/***/ 5288:
+/***/ 9388:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-__webpack_require__(6904);
-var path = __webpack_require__(2204);
+__webpack_require__(1416);
+var path = __webpack_require__(7675);
 
 module.exports = path.parseInt;
 
 
 /***/ }),
 
-/***/ 9228:
+/***/ 2650:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
+__webpack_require__(1095);
+__webpack_require__(6396);
+__webpack_require__(5991);
+__webpack_require__(9766);
 __webpack_require__(6331);
-__webpack_require__(176);
-__webpack_require__(2984);
-__webpack_require__(1356);
-__webpack_require__(8632);
-__webpack_require__(2168);
-__webpack_require__(9440);
-__webpack_require__(2336);
-var path = __webpack_require__(2204);
+__webpack_require__(3474);
+__webpack_require__(4235);
+__webpack_require__(7632);
+var path = __webpack_require__(7675);
 
 module.exports = path.Promise;
 
 
 /***/ }),
 
-/***/ 5952:
+/***/ 1251:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-__webpack_require__(8272);
-var path = __webpack_require__(2204);
+__webpack_require__(6765);
+var path = __webpack_require__(7675);
 
 module.exports = path.Reflect.construct;
 
 
 /***/ }),
 
-/***/ 7456:
+/***/ 9315:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-__webpack_require__(5344);
-var entryVirtual = __webpack_require__(3068);
+__webpack_require__(3991);
+var entryVirtual = __webpack_require__(5296);
 
 module.exports = entryVirtual('String').includes;
 
 
 /***/ }),
 
-/***/ 8748:
+/***/ 5036:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-__webpack_require__(5588);
-var entryVirtual = __webpack_require__(3068);
+__webpack_require__(448);
+var entryVirtual = __webpack_require__(5296);
 
 module.exports = entryVirtual('String').padStart;
 
 
 /***/ }),
 
-/***/ 8324:
+/***/ 8160:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-__webpack_require__(4196);
-var entryVirtual = __webpack_require__(3068);
+__webpack_require__(2780);
+var entryVirtual = __webpack_require__(5296);
 
 module.exports = entryVirtual('String').startsWith;
 
 
 /***/ }),
 
-/***/ 8340:
+/***/ 4170:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-__webpack_require__(9812);
-var entryVirtual = __webpack_require__(3068);
+__webpack_require__(614);
+var entryVirtual = __webpack_require__(5296);
 
 module.exports = entryVirtual('String').trim;
 
 
 /***/ }),
 
-/***/ 9668:
+/***/ 6309:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-__webpack_require__(1348);
-__webpack_require__(2984);
-__webpack_require__(864);
-__webpack_require__(8117);
-__webpack_require__(4584);
-__webpack_require__(8916);
-__webpack_require__(1460);
-__webpack_require__(604);
-__webpack_require__(7948);
-__webpack_require__(7604);
-__webpack_require__(2828);
-__webpack_require__(8112);
-__webpack_require__(7620);
-__webpack_require__(2504);
-__webpack_require__(5980);
-__webpack_require__(4476);
-__webpack_require__(9912);
-__webpack_require__(9696);
-__webpack_require__(8128);
-__webpack_require__(9156);
-var path = __webpack_require__(2204);
+__webpack_require__(9958);
+__webpack_require__(5991);
+__webpack_require__(7375);
+__webpack_require__(3128);
+__webpack_require__(1555);
+__webpack_require__(101);
+__webpack_require__(7100);
+__webpack_require__(3391);
+__webpack_require__(2712);
+__webpack_require__(3714);
+__webpack_require__(1713);
+__webpack_require__(9357);
+__webpack_require__(47);
+__webpack_require__(7253);
+__webpack_require__(2136);
+__webpack_require__(7193);
+__webpack_require__(4850);
+__webpack_require__(6111);
+__webpack_require__(2259);
+__webpack_require__(308);
+var path = __webpack_require__(7675);
 
 module.exports = path.Symbol;
 
 
 /***/ }),
 
-/***/ 220:
+/***/ 6075:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-__webpack_require__(176);
-__webpack_require__(2984);
-__webpack_require__(2336);
-__webpack_require__(604);
-var WrappedWellKnownSymbolModule = __webpack_require__(7360);
+__webpack_require__(6396);
+__webpack_require__(5991);
+__webpack_require__(7632);
+__webpack_require__(3391);
+var WrappedWellKnownSymbolModule = __webpack_require__(1635);
 
 module.exports = WrappedWellKnownSymbolModule.f('iterator');
 
 
 /***/ }),
 
-/***/ 1676:
+/***/ 9148:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-__webpack_require__(9060);
-__webpack_require__(5980);
-var WrappedWellKnownSymbolModule = __webpack_require__(7360);
+__webpack_require__(5704);
+__webpack_require__(2136);
+var WrappedWellKnownSymbolModule = __webpack_require__(1635);
 
 module.exports = WrappedWellKnownSymbolModule.f('toPrimitive');
 
 
 /***/ }),
 
-/***/ 2332:
+/***/ 8327:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var parent = __webpack_require__(712);
+var parent = __webpack_require__(7078);
 
 module.exports = parent;
 
 
 /***/ }),
 
-/***/ 7716:
+/***/ 4411:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var parent = __webpack_require__(492);
+var parent = __webpack_require__(1718);
 
 module.exports = parent;
 
 
 /***/ }),
 
-/***/ 8868:
+/***/ 8376:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var parent = __webpack_require__(4160);
+var parent = __webpack_require__(4023);
 
 module.exports = parent;
 
 
 /***/ }),
 
-/***/ 3404:
+/***/ 2698:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var parent = __webpack_require__(8997);
+var parent = __webpack_require__(8081);
 
 module.exports = parent;
 
 
 /***/ }),
 
-/***/ 2244:
+/***/ 3222:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var parent = __webpack_require__(1748);
+var parent = __webpack_require__(8977);
 
 module.exports = parent;
 
 
 /***/ }),
 
-/***/ 2171:
+/***/ 1997:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var parent = __webpack_require__(6168);
+var parent = __webpack_require__(3310);
 
 module.exports = parent;
 
 
 /***/ }),
 
-/***/ 2384:
+/***/ 8027:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var parent = __webpack_require__(7888);
+var parent = __webpack_require__(6726);
 
 module.exports = parent;
 
 
 /***/ }),
 
-/***/ 5608:
+/***/ 4831:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var parent = __webpack_require__(4108);
+var parent = __webpack_require__(8650);
 
 module.exports = parent;
 
 
 /***/ }),
 
-/***/ 6488:
+/***/ 3461:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var parent = __webpack_require__(6680);
+var parent = __webpack_require__(1550);
 
 module.exports = parent;
 
 
 /***/ }),
 
-/***/ 348:
+/***/ 1350:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var parent = __webpack_require__(8716);
+var parent = __webpack_require__(4615);
 
 module.exports = parent;
 
 
 /***/ }),
 
-/***/ 6408:
+/***/ 1758:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var parent = __webpack_require__(6520);
+var parent = __webpack_require__(137);
 
 module.exports = parent;
 
 
 /***/ }),
 
-/***/ 7940:
+/***/ 6890:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var parent = __webpack_require__(4064);
+var parent = __webpack_require__(1829);
 
 module.exports = parent;
 
 
 /***/ }),
 
-/***/ 368:
+/***/ 6691:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var parent = __webpack_require__(1948);
-__webpack_require__(6332);
+var parent = __webpack_require__(3752);
+__webpack_require__(4506);
 // TODO: Remove from `core-js@4`
-__webpack_require__(2852);
-__webpack_require__(4412);
-__webpack_require__(5252);
+__webpack_require__(4478);
+__webpack_require__(3240);
+__webpack_require__(6531);
 
 module.exports = parent;
 
 
 /***/ }),
 
-/***/ 8968:
+/***/ 594:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var parent = __webpack_require__(5668);
+var parent = __webpack_require__(5485);
 
 module.exports = parent;
 
 
 /***/ }),
 
-/***/ 804:
+/***/ 6258:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var parent = __webpack_require__(7416);
-__webpack_require__(2240);
-__webpack_require__(688);
-__webpack_require__(5644);
-__webpack_require__(1656);
-__webpack_require__(7376);
-__webpack_require__(8424);
+var parent = __webpack_require__(1431);
+__webpack_require__(4182);
+__webpack_require__(9125);
+__webpack_require__(6423);
+__webpack_require__(3692);
+__webpack_require__(2643);
+__webpack_require__(7269);
 // TODO: Remove from `core-js@4`
-__webpack_require__(9108);
-__webpack_require__(7140);
-__webpack_require__(5680);
+__webpack_require__(1693);
+__webpack_require__(3807);
+__webpack_require__(220);
 
 module.exports = parent;
 
 
 /***/ }),
 
-/***/ 3536:
+/***/ 4770:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var parent = __webpack_require__(648);
+var parent = __webpack_require__(5665);
 
 module.exports = parent;
 
 
 /***/ }),
 
-/***/ 3300:
+/***/ 1677:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var parent = __webpack_require__(1660);
+var parent = __webpack_require__(2890);
 
 module.exports = parent;
 
 
 /***/ }),
 
-/***/ 7568:
+/***/ 182:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var isCallable = __webpack_require__(824);
-var tryToString = __webpack_require__(2112);
+var isCallable = __webpack_require__(2073);
+var tryToString = __webpack_require__(4003);
 
 var $TypeError = TypeError;
 
@@ -1152,11 +1152,11 @@ module.exports = function (argument) {
 
 /***/ }),
 
-/***/ 5648:
+/***/ 5040:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var isConstructor = __webpack_require__(1520);
-var tryToString = __webpack_require__(2112);
+var isConstructor = __webpack_require__(6553);
+var tryToString = __webpack_require__(4003);
 
 var $TypeError = TypeError;
 
@@ -1169,10 +1169,10 @@ module.exports = function (argument) {
 
 /***/ }),
 
-/***/ 1456:
+/***/ 8934:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var isCallable = __webpack_require__(824);
+var isCallable = __webpack_require__(2073);
 
 var $String = String;
 var $TypeError = TypeError;
@@ -1185,7 +1185,7 @@ module.exports = function (argument) {
 
 /***/ }),
 
-/***/ 6416:
+/***/ 6065:
 /***/ (function(module) {
 
 module.exports = function () { /* empty */ };
@@ -1193,10 +1193,10 @@ module.exports = function () { /* empty */ };
 
 /***/ }),
 
-/***/ 4932:
+/***/ 675:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var isPrototypeOf = __webpack_require__(8416);
+var isPrototypeOf = __webpack_require__(3381);
 
 var $TypeError = TypeError;
 
@@ -1208,10 +1208,10 @@ module.exports = function (it, Prototype) {
 
 /***/ }),
 
-/***/ 6080:
+/***/ 8347:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var isObject = __webpack_require__(6884);
+var isObject = __webpack_require__(5774);
 
 var $String = String;
 var $TypeError = TypeError;
@@ -1225,11 +1225,11 @@ module.exports = function (argument) {
 
 /***/ }),
 
-/***/ 7836:
+/***/ 6784:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
 // FF26- bug: ArrayBuffers are non-extensible, but Object.isExtensible does not report it
-var fails = __webpack_require__(6688);
+var fails = __webpack_require__(7131);
 
 module.exports = fails(function () {
   if (typeof ArrayBuffer == 'function') {
@@ -1242,13 +1242,13 @@ module.exports = fails(function () {
 
 /***/ }),
 
-/***/ 1245:
+/***/ 1591:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
 "use strict";
 
-var $forEach = (__webpack_require__(1548).forEach);
-var arrayMethodIsStrict = __webpack_require__(4700);
+var $forEach = (__webpack_require__(2217).forEach);
+var arrayMethodIsStrict = __webpack_require__(538);
 
 var STRICT_METHOD = arrayMethodIsStrict('forEach');
 
@@ -1262,21 +1262,21 @@ module.exports = !STRICT_METHOD ? function forEach(callbackfn /* , thisArg */) {
 
 /***/ }),
 
-/***/ 1032:
+/***/ 6864:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
 "use strict";
 
-var bind = __webpack_require__(1524);
-var call = __webpack_require__(1816);
-var toObject = __webpack_require__(320);
-var callWithSafeIterationClosing = __webpack_require__(4848);
-var isArrayIteratorMethod = __webpack_require__(1740);
-var isConstructor = __webpack_require__(1520);
-var lengthOfArrayLike = __webpack_require__(9868);
-var createProperty = __webpack_require__(364);
-var getIterator = __webpack_require__(5208);
-var getIteratorMethod = __webpack_require__(5632);
+var bind = __webpack_require__(2116);
+var call = __webpack_require__(3057);
+var toObject = __webpack_require__(5809);
+var callWithSafeIterationClosing = __webpack_require__(2843);
+var isArrayIteratorMethod = __webpack_require__(5669);
+var isConstructor = __webpack_require__(6553);
+var lengthOfArrayLike = __webpack_require__(954);
+var createProperty = __webpack_require__(8724);
+var getIterator = __webpack_require__(7013);
+var getIteratorMethod = __webpack_require__(6399);
 
 var $Array = Array;
 
@@ -1316,12 +1316,12 @@ module.exports = function from(arrayLike /* , mapfn = undefined, thisArg = undef
 
 /***/ }),
 
-/***/ 9748:
+/***/ 4581:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var toIndexedObject = __webpack_require__(8709);
-var toAbsoluteIndex = __webpack_require__(9940);
-var lengthOfArrayLike = __webpack_require__(9868);
+var toIndexedObject = __webpack_require__(9441);
+var toAbsoluteIndex = __webpack_require__(8630);
+var lengthOfArrayLike = __webpack_require__(954);
 
 // `Array.prototype.{ indexOf, includes }` methods implementation
 var createMethod = function (IS_INCLUDES) {
@@ -1355,15 +1355,15 @@ module.exports = {
 
 /***/ }),
 
-/***/ 1548:
+/***/ 2217:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var bind = __webpack_require__(1524);
-var uncurryThis = __webpack_require__(4800);
-var IndexedObject = __webpack_require__(9928);
-var toObject = __webpack_require__(320);
-var lengthOfArrayLike = __webpack_require__(9868);
-var arraySpeciesCreate = __webpack_require__(5040);
+var bind = __webpack_require__(2116);
+var uncurryThis = __webpack_require__(9036);
+var IndexedObject = __webpack_require__(6731);
+var toObject = __webpack_require__(5809);
+var lengthOfArrayLike = __webpack_require__(954);
+var arraySpeciesCreate = __webpack_require__(6601);
 
 var push = uncurryThis([].push);
 
@@ -1435,17 +1435,17 @@ module.exports = {
 
 /***/ }),
 
-/***/ 2248:
+/***/ 4071:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
 "use strict";
 
 /* eslint-disable es/no-array-prototype-lastindexof -- safe */
-var apply = __webpack_require__(720);
-var toIndexedObject = __webpack_require__(8709);
-var toIntegerOrInfinity = __webpack_require__(3880);
-var lengthOfArrayLike = __webpack_require__(9868);
-var arrayMethodIsStrict = __webpack_require__(4700);
+var apply = __webpack_require__(1981);
+var toIndexedObject = __webpack_require__(9441);
+var toIntegerOrInfinity = __webpack_require__(6759);
+var lengthOfArrayLike = __webpack_require__(954);
+var arrayMethodIsStrict = __webpack_require__(538);
 
 var min = Math.min;
 var $lastIndexOf = [].lastIndexOf;
@@ -1470,12 +1470,12 @@ module.exports = FORCED ? function lastIndexOf(searchElement /* , fromIndex = @[
 
 /***/ }),
 
-/***/ 9068:
+/***/ 1225:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var fails = __webpack_require__(6688);
-var wellKnownSymbol = __webpack_require__(6868);
-var V8_VERSION = __webpack_require__(3928);
+var fails = __webpack_require__(7131);
+var wellKnownSymbol = __webpack_require__(6615);
+var V8_VERSION = __webpack_require__(6312);
 
 var SPECIES = wellKnownSymbol('species');
 
@@ -1496,12 +1496,12 @@ module.exports = function (METHOD_NAME) {
 
 /***/ }),
 
-/***/ 4700:
+/***/ 538:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
 "use strict";
 
-var fails = __webpack_require__(6688);
+var fails = __webpack_require__(7131);
 
 module.exports = function (METHOD_NAME, argument) {
   var method = [][METHOD_NAME];
@@ -1514,13 +1514,13 @@ module.exports = function (METHOD_NAME, argument) {
 
 /***/ }),
 
-/***/ 400:
+/***/ 266:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var aCallable = __webpack_require__(7568);
-var toObject = __webpack_require__(320);
-var IndexedObject = __webpack_require__(9928);
-var lengthOfArrayLike = __webpack_require__(9868);
+var aCallable = __webpack_require__(182);
+var toObject = __webpack_require__(5809);
+var IndexedObject = __webpack_require__(6731);
+var lengthOfArrayLike = __webpack_require__(954);
 
 var $TypeError = TypeError;
 
@@ -1563,13 +1563,13 @@ module.exports = {
 
 /***/ }),
 
-/***/ 8760:
+/***/ 6219:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
 "use strict";
 
-var DESCRIPTORS = __webpack_require__(2892);
-var isArray = __webpack_require__(6060);
+var DESCRIPTORS = __webpack_require__(5560);
+var isArray = __webpack_require__(1972);
 
 var $TypeError = TypeError;
 // eslint-disable-next-line es/no-object-getownpropertydescriptor -- safe
@@ -1598,12 +1598,12 @@ module.exports = SILENT_ON_NON_WRITABLE_LENGTH_SET ? function (O, length) {
 
 /***/ }),
 
-/***/ 6456:
+/***/ 8067:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var toAbsoluteIndex = __webpack_require__(9940);
-var lengthOfArrayLike = __webpack_require__(9868);
-var createProperty = __webpack_require__(364);
+var toAbsoluteIndex = __webpack_require__(8630);
+var lengthOfArrayLike = __webpack_require__(954);
+var createProperty = __webpack_require__(8724);
 
 var $Array = Array;
 var max = Math.max;
@@ -1621,20 +1621,20 @@ module.exports = function (O, start, end) {
 
 /***/ }),
 
-/***/ 424:
+/***/ 820:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var uncurryThis = __webpack_require__(4800);
+var uncurryThis = __webpack_require__(9036);
 
 module.exports = uncurryThis([].slice);
 
 
 /***/ }),
 
-/***/ 144:
+/***/ 2916:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var arraySlice = __webpack_require__(6456);
+var arraySlice = __webpack_require__(8067);
 
 var floor = Math.floor;
 
@@ -1682,13 +1682,13 @@ module.exports = mergeSort;
 
 /***/ }),
 
-/***/ 296:
+/***/ 9077:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var isArray = __webpack_require__(6060);
-var isConstructor = __webpack_require__(1520);
-var isObject = __webpack_require__(6884);
-var wellKnownSymbol = __webpack_require__(6868);
+var isArray = __webpack_require__(1972);
+var isConstructor = __webpack_require__(6553);
+var isObject = __webpack_require__(5774);
+var wellKnownSymbol = __webpack_require__(6615);
 
 var SPECIES = wellKnownSymbol('species');
 var $Array = Array;
@@ -1711,10 +1711,10 @@ module.exports = function (originalArray) {
 
 /***/ }),
 
-/***/ 5040:
+/***/ 6601:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var arraySpeciesConstructor = __webpack_require__(296);
+var arraySpeciesConstructor = __webpack_require__(9077);
 
 // `ArraySpeciesCreate` abstract operation
 // https://tc39.es/ecma262/#sec-arrayspeciescreate
@@ -1725,11 +1725,11 @@ module.exports = function (originalArray, length) {
 
 /***/ }),
 
-/***/ 4848:
+/***/ 2843:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var anObject = __webpack_require__(6080);
-var iteratorClose = __webpack_require__(3736);
+var anObject = __webpack_require__(8347);
+var iteratorClose = __webpack_require__(7959);
 
 // call something on iterator step with safe closing on error
 module.exports = function (iterator, fn, value, ENTRIES) {
@@ -1743,10 +1743,10 @@ module.exports = function (iterator, fn, value, ENTRIES) {
 
 /***/ }),
 
-/***/ 1792:
+/***/ 8224:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var wellKnownSymbol = __webpack_require__(6868);
+var wellKnownSymbol = __webpack_require__(6615);
 
 var ITERATOR = wellKnownSymbol('iterator');
 var SAFE_CLOSING = false;
@@ -1788,10 +1788,10 @@ module.exports = function (exec, SKIP_CLOSING) {
 
 /***/ }),
 
-/***/ 8:
+/***/ 244:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var uncurryThis = __webpack_require__(4800);
+var uncurryThis = __webpack_require__(9036);
 
 var toString = uncurryThis({}.toString);
 var stringSlice = uncurryThis(''.slice);
@@ -1803,13 +1803,13 @@ module.exports = function (it) {
 
 /***/ }),
 
-/***/ 1980:
+/***/ 5663:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var TO_STRING_TAG_SUPPORT = __webpack_require__(8168);
-var isCallable = __webpack_require__(824);
-var classofRaw = __webpack_require__(8);
-var wellKnownSymbol = __webpack_require__(6868);
+var TO_STRING_TAG_SUPPORT = __webpack_require__(7104);
+var isCallable = __webpack_require__(2073);
+var classofRaw = __webpack_require__(244);
+var wellKnownSymbol = __webpack_require__(6615);
 
 var TO_STRING_TAG = wellKnownSymbol('toStringTag');
 var $Object = Object;
@@ -1839,24 +1839,24 @@ module.exports = TO_STRING_TAG_SUPPORT ? classofRaw : function (it) {
 
 /***/ }),
 
-/***/ 8496:
+/***/ 4502:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
 "use strict";
 
-var create = __webpack_require__(3576);
-var defineBuiltInAccessor = __webpack_require__(6792);
-var defineBuiltIns = __webpack_require__(6452);
-var bind = __webpack_require__(1524);
-var anInstance = __webpack_require__(4932);
-var isNullOrUndefined = __webpack_require__(5340);
-var iterate = __webpack_require__(6084);
-var defineIterator = __webpack_require__(6548);
-var createIterResultObject = __webpack_require__(2428);
-var setSpecies = __webpack_require__(3100);
-var DESCRIPTORS = __webpack_require__(2892);
-var fastKey = (__webpack_require__(8380).fastKey);
-var InternalStateModule = __webpack_require__(4880);
+var create = __webpack_require__(3628);
+var defineBuiltInAccessor = __webpack_require__(3614);
+var defineBuiltIns = __webpack_require__(1011);
+var bind = __webpack_require__(2116);
+var anInstance = __webpack_require__(675);
+var isNullOrUndefined = __webpack_require__(6153);
+var iterate = __webpack_require__(9384);
+var defineIterator = __webpack_require__(6188);
+var createIterResultObject = __webpack_require__(789);
+var setSpecies = __webpack_require__(9413);
+var DESCRIPTORS = __webpack_require__(5560);
+var fastKey = (__webpack_require__(4191).fastKey);
+var InternalStateModule = __webpack_require__(9257);
 
 var setInternalState = InternalStateModule.set;
 var internalStateGetterFor = InternalStateModule.getterFor;
@@ -2054,25 +2054,25 @@ module.exports = {
 
 /***/ }),
 
-/***/ 8248:
+/***/ 8816:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
 "use strict";
 
-var $ = __webpack_require__(9596);
-var global = __webpack_require__(5624);
-var InternalMetadataModule = __webpack_require__(8380);
-var fails = __webpack_require__(6688);
-var createNonEnumerableProperty = __webpack_require__(7180);
-var iterate = __webpack_require__(6084);
-var anInstance = __webpack_require__(4932);
-var isCallable = __webpack_require__(824);
-var isObject = __webpack_require__(6884);
-var setToStringTag = __webpack_require__(3600);
-var defineProperty = (__webpack_require__(752).f);
-var forEach = (__webpack_require__(1548).forEach);
-var DESCRIPTORS = __webpack_require__(2892);
-var InternalStateModule = __webpack_require__(4880);
+var $ = __webpack_require__(1938);
+var global = __webpack_require__(5391);
+var InternalMetadataModule = __webpack_require__(4191);
+var fails = __webpack_require__(7131);
+var createNonEnumerableProperty = __webpack_require__(8471);
+var iterate = __webpack_require__(9384);
+var anInstance = __webpack_require__(675);
+var isCallable = __webpack_require__(2073);
+var isObject = __webpack_require__(5774);
+var setToStringTag = __webpack_require__(5051);
+var defineProperty = (__webpack_require__(6381).f);
+var forEach = (__webpack_require__(2217).forEach);
+var DESCRIPTORS = __webpack_require__(5560);
+var InternalStateModule = __webpack_require__(9257);
 
 var setInternalState = InternalStateModule.set;
 var internalStateGetterFor = InternalStateModule.getterFor;
@@ -2138,13 +2138,13 @@ module.exports = function (CONSTRUCTOR_NAME, wrapper, common) {
 
 /***/ }),
 
-/***/ 9495:
+/***/ 2144:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var hasOwn = __webpack_require__(1328);
-var ownKeys = __webpack_require__(7312);
-var getOwnPropertyDescriptorModule = __webpack_require__(2200);
-var definePropertyModule = __webpack_require__(752);
+var hasOwn = __webpack_require__(4373);
+var ownKeys = __webpack_require__(8195);
+var getOwnPropertyDescriptorModule = __webpack_require__(5687);
+var definePropertyModule = __webpack_require__(6381);
 
 module.exports = function (target, source, exceptions) {
   var keys = ownKeys(source);
@@ -2161,10 +2161,10 @@ module.exports = function (target, source, exceptions) {
 
 /***/ }),
 
-/***/ 4688:
+/***/ 7288:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var wellKnownSymbol = __webpack_require__(6868);
+var wellKnownSymbol = __webpack_require__(6615);
 
 var MATCH = wellKnownSymbol('match');
 
@@ -2183,10 +2183,10 @@ module.exports = function (METHOD_NAME) {
 
 /***/ }),
 
-/***/ 2744:
+/***/ 7007:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var fails = __webpack_require__(6688);
+var fails = __webpack_require__(7131);
 
 module.exports = !fails(function () {
   function F() { /* empty */ }
@@ -2198,7 +2198,7 @@ module.exports = !fails(function () {
 
 /***/ }),
 
-/***/ 2428:
+/***/ 789:
 /***/ (function(module) {
 
 // `CreateIterResultObject` abstract operation
@@ -2210,12 +2210,12 @@ module.exports = function (value, done) {
 
 /***/ }),
 
-/***/ 7180:
+/***/ 8471:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var DESCRIPTORS = __webpack_require__(2892);
-var definePropertyModule = __webpack_require__(752);
-var createPropertyDescriptor = __webpack_require__(8216);
+var DESCRIPTORS = __webpack_require__(5560);
+var definePropertyModule = __webpack_require__(6381);
+var createPropertyDescriptor = __webpack_require__(3768);
 
 module.exports = DESCRIPTORS ? function (object, key, value) {
   return definePropertyModule.f(object, key, createPropertyDescriptor(1, value));
@@ -2227,7 +2227,7 @@ module.exports = DESCRIPTORS ? function (object, key, value) {
 
 /***/ }),
 
-/***/ 8216:
+/***/ 3768:
 /***/ (function(module) {
 
 module.exports = function (bitmap, value) {
@@ -2242,14 +2242,14 @@ module.exports = function (bitmap, value) {
 
 /***/ }),
 
-/***/ 364:
+/***/ 8724:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
 "use strict";
 
-var toPropertyKey = __webpack_require__(8960);
-var definePropertyModule = __webpack_require__(752);
-var createPropertyDescriptor = __webpack_require__(8216);
+var toPropertyKey = __webpack_require__(5141);
+var definePropertyModule = __webpack_require__(6381);
+var createPropertyDescriptor = __webpack_require__(3768);
 
 module.exports = function (object, key, value) {
   var propertyKey = toPropertyKey(key);
@@ -2260,10 +2260,10 @@ module.exports = function (object, key, value) {
 
 /***/ }),
 
-/***/ 6792:
+/***/ 3614:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var defineProperty = __webpack_require__(752);
+var defineProperty = __webpack_require__(6381);
 
 module.exports = function (target, name, descriptor) {
   return defineProperty.f(target, name, descriptor);
@@ -2272,10 +2272,10 @@ module.exports = function (target, name, descriptor) {
 
 /***/ }),
 
-/***/ 9152:
+/***/ 492:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var createNonEnumerableProperty = __webpack_require__(7180);
+var createNonEnumerableProperty = __webpack_require__(8471);
 
 module.exports = function (target, key, value, options) {
   if (options && options.enumerable) target[key] = value;
@@ -2286,10 +2286,10 @@ module.exports = function (target, key, value, options) {
 
 /***/ }),
 
-/***/ 6452:
+/***/ 1011:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var defineBuiltIn = __webpack_require__(9152);
+var defineBuiltIn = __webpack_require__(492);
 
 module.exports = function (target, src, options) {
   for (var key in src) {
@@ -2301,10 +2301,10 @@ module.exports = function (target, src, options) {
 
 /***/ }),
 
-/***/ 8616:
+/***/ 909:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var global = __webpack_require__(5624);
+var global = __webpack_require__(5391);
 
 // eslint-disable-next-line es/no-object-defineproperty -- safe
 var defineProperty = Object.defineProperty;
@@ -2320,12 +2320,12 @@ module.exports = function (key, value) {
 
 /***/ }),
 
-/***/ 3604:
+/***/ 2850:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
 "use strict";
 
-var tryToString = __webpack_require__(2112);
+var tryToString = __webpack_require__(4003);
 
 var $TypeError = TypeError;
 
@@ -2336,10 +2336,10 @@ module.exports = function (O, P) {
 
 /***/ }),
 
-/***/ 2892:
+/***/ 5560:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var fails = __webpack_require__(6688);
+var fails = __webpack_require__(7131);
 
 // Detect IE8's incomplete defineProperty implementation
 module.exports = !fails(function () {
@@ -2350,7 +2350,7 @@ module.exports = !fails(function () {
 
 /***/ }),
 
-/***/ 8672:
+/***/ 7023:
 /***/ (function(module) {
 
 var documentAll = typeof document == 'object' && document.all;
@@ -2367,11 +2367,11 @@ module.exports = {
 
 /***/ }),
 
-/***/ 728:
+/***/ 6171:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var global = __webpack_require__(5624);
-var isObject = __webpack_require__(6884);
+var global = __webpack_require__(5391);
+var isObject = __webpack_require__(5774);
 
 var document = global.document;
 // typeof document.createElement is 'object' in old IE
@@ -2384,7 +2384,7 @@ module.exports = function (it) {
 
 /***/ }),
 
-/***/ 748:
+/***/ 6929:
 /***/ (function(module) {
 
 var $TypeError = TypeError;
@@ -2398,7 +2398,7 @@ module.exports = function (it) {
 
 /***/ }),
 
-/***/ 7700:
+/***/ 4740:
 /***/ (function(module) {
 
 // iterable DOM collections
@@ -2440,10 +2440,10 @@ module.exports = {
 
 /***/ }),
 
-/***/ 6024:
+/***/ 166:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var userAgent = __webpack_require__(6748);
+var userAgent = __webpack_require__(4084);
 
 var firefox = userAgent.match(/firefox\/(\d+)/i);
 
@@ -2452,11 +2452,11 @@ module.exports = !!firefox && +firefox[1];
 
 /***/ }),
 
-/***/ 1896:
+/***/ 3846:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var IS_DENO = __webpack_require__(5708);
-var IS_NODE = __webpack_require__(1832);
+var IS_DENO = __webpack_require__(9360);
+var IS_NODE = __webpack_require__(7244);
 
 module.exports = !IS_DENO && !IS_NODE
   && typeof window == 'object'
@@ -2465,7 +2465,7 @@ module.exports = !IS_DENO && !IS_NODE
 
 /***/ }),
 
-/***/ 5708:
+/***/ 9360:
 /***/ (function(module) {
 
 /* global Deno -- Deno case */
@@ -2474,30 +2474,30 @@ module.exports = typeof Deno == 'object' && Deno && typeof Deno.version == 'obje
 
 /***/ }),
 
-/***/ 2568:
+/***/ 1054:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var UA = __webpack_require__(6748);
+var UA = __webpack_require__(4084);
 
 module.exports = /MSIE|Trident/.test(UA);
 
 
 /***/ }),
 
-/***/ 8604:
+/***/ 6304:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var userAgent = __webpack_require__(6748);
+var userAgent = __webpack_require__(4084);
 
 module.exports = /ipad|iphone|ipod/i.test(userAgent) && typeof Pebble != 'undefined';
 
 
 /***/ }),
 
-/***/ 6180:
+/***/ 7603:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var userAgent = __webpack_require__(6748);
+var userAgent = __webpack_require__(4084);
 
 // eslint-disable-next-line redos/no-vulnerable -- safe
 module.exports = /(?:ipad|iphone|ipod).*applewebkit/i.test(userAgent);
@@ -2505,27 +2505,27 @@ module.exports = /(?:ipad|iphone|ipod).*applewebkit/i.test(userAgent);
 
 /***/ }),
 
-/***/ 1832:
+/***/ 7244:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var classof = __webpack_require__(8);
+var classof = __webpack_require__(244);
 
 module.exports = typeof process != 'undefined' && classof(process) == 'process';
 
 
 /***/ }),
 
-/***/ 2872:
+/***/ 8689:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var userAgent = __webpack_require__(6748);
+var userAgent = __webpack_require__(4084);
 
 module.exports = /web0s(?!.*chrome)/i.test(userAgent);
 
 
 /***/ }),
 
-/***/ 6748:
+/***/ 4084:
 /***/ (function(module) {
 
 module.exports = typeof navigator != 'undefined' && String(navigator.userAgent) || '';
@@ -2533,11 +2533,11 @@ module.exports = typeof navigator != 'undefined' && String(navigator.userAgent) 
 
 /***/ }),
 
-/***/ 3928:
+/***/ 6312:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var global = __webpack_require__(5624);
-var userAgent = __webpack_require__(6748);
+var global = __webpack_require__(5391);
+var userAgent = __webpack_require__(4084);
 
 var process = global.process;
 var Deno = global.Deno;
@@ -2567,10 +2567,10 @@ module.exports = version;
 
 /***/ }),
 
-/***/ 7796:
+/***/ 6532:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var userAgent = __webpack_require__(6748);
+var userAgent = __webpack_require__(4084);
 
 var webkit = userAgent.match(/AppleWebKit\/(\d+)\./);
 
@@ -2579,10 +2579,10 @@ module.exports = !!webkit && +webkit[1];
 
 /***/ }),
 
-/***/ 3068:
+/***/ 5296:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var path = __webpack_require__(2204);
+var path = __webpack_require__(7675);
 
 module.exports = function (CONSTRUCTOR) {
   return path[CONSTRUCTOR + 'Prototype'];
@@ -2591,7 +2591,7 @@ module.exports = function (CONSTRUCTOR) {
 
 /***/ }),
 
-/***/ 7768:
+/***/ 347:
 /***/ (function(module) {
 
 // IE8- don't enum bug keys
@@ -2608,10 +2608,10 @@ module.exports = [
 
 /***/ }),
 
-/***/ 536:
+/***/ 7205:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var uncurryThis = __webpack_require__(4800);
+var uncurryThis = __webpack_require__(9036);
 
 var $Error = Error;
 var replace = uncurryThis(''.replace);
@@ -2630,12 +2630,12 @@ module.exports = function (stack, dropEntries) {
 
 /***/ }),
 
-/***/ 3452:
+/***/ 927:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var createNonEnumerableProperty = __webpack_require__(7180);
-var clearErrorStack = __webpack_require__(536);
-var ERROR_STACK_INSTALLABLE = __webpack_require__(496);
+var createNonEnumerableProperty = __webpack_require__(8471);
+var clearErrorStack = __webpack_require__(7205);
+var ERROR_STACK_INSTALLABLE = __webpack_require__(1527);
 
 // non-standard V8
 var captureStackTrace = Error.captureStackTrace;
@@ -2650,11 +2650,11 @@ module.exports = function (error, C, stack, dropEntries) {
 
 /***/ }),
 
-/***/ 496:
+/***/ 1527:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var fails = __webpack_require__(6688);
-var createPropertyDescriptor = __webpack_require__(8216);
+var fails = __webpack_require__(7131);
+var createPropertyDescriptor = __webpack_require__(3768);
 
 module.exports = !fails(function () {
   var error = Error('a');
@@ -2667,21 +2667,21 @@ module.exports = !fails(function () {
 
 /***/ }),
 
-/***/ 9596:
+/***/ 1938:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
 "use strict";
 
-var global = __webpack_require__(5624);
-var apply = __webpack_require__(720);
-var uncurryThis = __webpack_require__(8936);
-var isCallable = __webpack_require__(824);
-var getOwnPropertyDescriptor = (__webpack_require__(2200).f);
-var isForced = __webpack_require__(9280);
-var path = __webpack_require__(2204);
-var bind = __webpack_require__(1524);
-var createNonEnumerableProperty = __webpack_require__(7180);
-var hasOwn = __webpack_require__(1328);
+var global = __webpack_require__(5391);
+var apply = __webpack_require__(1981);
+var uncurryThis = __webpack_require__(9000);
+var isCallable = __webpack_require__(2073);
+var getOwnPropertyDescriptor = (__webpack_require__(5687).f);
+var isForced = __webpack_require__(3488);
+var path = __webpack_require__(7675);
+var bind = __webpack_require__(2116);
+var createNonEnumerableProperty = __webpack_require__(8471);
+var hasOwn = __webpack_require__(4373);
 
 var wrapConstructor = function (NativeConstructor) {
   var Wrapper = function (a, b, c) {
@@ -2777,7 +2777,7 @@ module.exports = function (options, source) {
 
 /***/ }),
 
-/***/ 6688:
+/***/ 7131:
 /***/ (function(module) {
 
 module.exports = function (exec) {
@@ -2791,10 +2791,10 @@ module.exports = function (exec) {
 
 /***/ }),
 
-/***/ 6516:
+/***/ 3764:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var fails = __webpack_require__(6688);
+var fails = __webpack_require__(7131);
 
 module.exports = !fails(function () {
   // eslint-disable-next-line es/no-object-isextensible, es/no-object-preventextensions -- required for testing
@@ -2804,10 +2804,10 @@ module.exports = !fails(function () {
 
 /***/ }),
 
-/***/ 720:
+/***/ 1981:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var NATIVE_BIND = __webpack_require__(1568);
+var NATIVE_BIND = __webpack_require__(5164);
 
 var FunctionPrototype = Function.prototype;
 var apply = FunctionPrototype.apply;
@@ -2821,12 +2821,12 @@ module.exports = typeof Reflect == 'object' && Reflect.apply || (NATIVE_BIND ? c
 
 /***/ }),
 
-/***/ 1524:
+/***/ 2116:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var uncurryThis = __webpack_require__(8936);
-var aCallable = __webpack_require__(7568);
-var NATIVE_BIND = __webpack_require__(1568);
+var uncurryThis = __webpack_require__(9000);
+var aCallable = __webpack_require__(182);
+var NATIVE_BIND = __webpack_require__(5164);
 
 var bind = uncurryThis(uncurryThis.bind);
 
@@ -2841,10 +2841,10 @@ module.exports = function (fn, that) {
 
 /***/ }),
 
-/***/ 1568:
+/***/ 5164:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var fails = __webpack_require__(6688);
+var fails = __webpack_require__(7131);
 
 module.exports = !fails(function () {
   // eslint-disable-next-line es/no-function-prototype-bind -- safe
@@ -2856,17 +2856,17 @@ module.exports = !fails(function () {
 
 /***/ }),
 
-/***/ 7736:
+/***/ 2026:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
 "use strict";
 
-var uncurryThis = __webpack_require__(4800);
-var aCallable = __webpack_require__(7568);
-var isObject = __webpack_require__(6884);
-var hasOwn = __webpack_require__(1328);
-var arraySlice = __webpack_require__(424);
-var NATIVE_BIND = __webpack_require__(1568);
+var uncurryThis = __webpack_require__(9036);
+var aCallable = __webpack_require__(182);
+var isObject = __webpack_require__(5774);
+var hasOwn = __webpack_require__(4373);
+var arraySlice = __webpack_require__(820);
+var NATIVE_BIND = __webpack_require__(5164);
 
 var $Function = Function;
 var concat = uncurryThis([].concat);
@@ -2898,10 +2898,10 @@ module.exports = NATIVE_BIND ? $Function.bind : function bind(that /* , ...args 
 
 /***/ }),
 
-/***/ 1816:
+/***/ 3057:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var NATIVE_BIND = __webpack_require__(1568);
+var NATIVE_BIND = __webpack_require__(5164);
 
 var call = Function.prototype.call;
 
@@ -2912,11 +2912,11 @@ module.exports = NATIVE_BIND ? call.bind(call) : function () {
 
 /***/ }),
 
-/***/ 4307:
+/***/ 4970:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var DESCRIPTORS = __webpack_require__(2892);
-var hasOwn = __webpack_require__(1328);
+var DESCRIPTORS = __webpack_require__(5560);
+var hasOwn = __webpack_require__(4373);
 
 var FunctionPrototype = Function.prototype;
 // eslint-disable-next-line es/no-object-getownpropertydescriptor -- safe
@@ -2936,11 +2936,11 @@ module.exports = {
 
 /***/ }),
 
-/***/ 1480:
+/***/ 7006:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var uncurryThis = __webpack_require__(4800);
-var aCallable = __webpack_require__(7568);
+var uncurryThis = __webpack_require__(9036);
+var aCallable = __webpack_require__(182);
 
 module.exports = function (object, key, method) {
   try {
@@ -2952,11 +2952,11 @@ module.exports = function (object, key, method) {
 
 /***/ }),
 
-/***/ 8936:
+/***/ 9000:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var classofRaw = __webpack_require__(8);
-var uncurryThis = __webpack_require__(4800);
+var classofRaw = __webpack_require__(244);
+var uncurryThis = __webpack_require__(9036);
 
 module.exports = function (fn) {
   // Nashorn bug:
@@ -2968,10 +2968,10 @@ module.exports = function (fn) {
 
 /***/ }),
 
-/***/ 4800:
+/***/ 9036:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var NATIVE_BIND = __webpack_require__(1568);
+var NATIVE_BIND = __webpack_require__(5164);
 
 var FunctionPrototype = Function.prototype;
 var call = FunctionPrototype.call;
@@ -2986,12 +2986,12 @@ module.exports = NATIVE_BIND ? uncurryThisWithBind : function (fn) {
 
 /***/ }),
 
-/***/ 7724:
+/***/ 7827:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var path = __webpack_require__(2204);
-var global = __webpack_require__(5624);
-var isCallable = __webpack_require__(824);
+var path = __webpack_require__(7675);
+var global = __webpack_require__(5391);
+var isCallable = __webpack_require__(2073);
 
 var aFunction = function (variable) {
   return isCallable(variable) ? variable : undefined;
@@ -3005,14 +3005,14 @@ module.exports = function (namespace, method) {
 
 /***/ }),
 
-/***/ 5632:
+/***/ 6399:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var classof = __webpack_require__(1980);
-var getMethod = __webpack_require__(4092);
-var isNullOrUndefined = __webpack_require__(5340);
-var Iterators = __webpack_require__(2936);
-var wellKnownSymbol = __webpack_require__(6868);
+var classof = __webpack_require__(5663);
+var getMethod = __webpack_require__(3514);
+var isNullOrUndefined = __webpack_require__(6153);
+var Iterators = __webpack_require__(1113);
+var wellKnownSymbol = __webpack_require__(6615);
 
 var ITERATOR = wellKnownSymbol('iterator');
 
@@ -3025,14 +3025,14 @@ module.exports = function (it) {
 
 /***/ }),
 
-/***/ 5208:
+/***/ 7013:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var call = __webpack_require__(1816);
-var aCallable = __webpack_require__(7568);
-var anObject = __webpack_require__(6080);
-var tryToString = __webpack_require__(2112);
-var getIteratorMethod = __webpack_require__(5632);
+var call = __webpack_require__(3057);
+var aCallable = __webpack_require__(182);
+var anObject = __webpack_require__(8347);
+var tryToString = __webpack_require__(4003);
+var getIteratorMethod = __webpack_require__(6399);
 
 var $TypeError = TypeError;
 
@@ -3045,14 +3045,14 @@ module.exports = function (argument, usingIterator) {
 
 /***/ }),
 
-/***/ 9888:
+/***/ 7873:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var uncurryThis = __webpack_require__(4800);
-var isArray = __webpack_require__(6060);
-var isCallable = __webpack_require__(824);
-var classof = __webpack_require__(8);
-var toString = __webpack_require__(4552);
+var uncurryThis = __webpack_require__(9036);
+var isArray = __webpack_require__(1972);
+var isCallable = __webpack_require__(2073);
+var classof = __webpack_require__(244);
+var toString = __webpack_require__(7803);
 
 var push = uncurryThis([].push);
 
@@ -3081,11 +3081,11 @@ module.exports = function (replacer) {
 
 /***/ }),
 
-/***/ 4092:
+/***/ 3514:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var aCallable = __webpack_require__(7568);
-var isNullOrUndefined = __webpack_require__(5340);
+var aCallable = __webpack_require__(182);
+var isNullOrUndefined = __webpack_require__(6153);
 
 // `GetMethod` abstract operation
 // https://tc39.es/ecma262/#sec-getmethod
@@ -3097,7 +3097,7 @@ module.exports = function (V, P) {
 
 /***/ }),
 
-/***/ 5624:
+/***/ 5391:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
 var check = function (it) {
@@ -3118,11 +3118,11 @@ module.exports =
 
 /***/ }),
 
-/***/ 1328:
+/***/ 4373:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var uncurryThis = __webpack_require__(4800);
-var toObject = __webpack_require__(320);
+var uncurryThis = __webpack_require__(9036);
+var toObject = __webpack_require__(5809);
 
 var hasOwnProperty = uncurryThis({}.hasOwnProperty);
 
@@ -3136,7 +3136,7 @@ module.exports = Object.hasOwn || function hasOwn(it, key) {
 
 /***/ }),
 
-/***/ 7248:
+/***/ 6145:
 /***/ (function(module) {
 
 module.exports = {};
@@ -3144,7 +3144,7 @@ module.exports = {};
 
 /***/ }),
 
-/***/ 9320:
+/***/ 2321:
 /***/ (function(module) {
 
 module.exports = function (a, b) {
@@ -3157,22 +3157,22 @@ module.exports = function (a, b) {
 
 /***/ }),
 
-/***/ 2648:
+/***/ 9417:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var getBuiltIn = __webpack_require__(7724);
+var getBuiltIn = __webpack_require__(7827);
 
 module.exports = getBuiltIn('document', 'documentElement');
 
 
 /***/ }),
 
-/***/ 8776:
+/***/ 2633:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var DESCRIPTORS = __webpack_require__(2892);
-var fails = __webpack_require__(6688);
-var createElement = __webpack_require__(728);
+var DESCRIPTORS = __webpack_require__(5560);
+var fails = __webpack_require__(7131);
+var createElement = __webpack_require__(6171);
 
 // Thanks to IE8 for its funny defineProperty
 module.exports = !DESCRIPTORS && !fails(function () {
@@ -3185,12 +3185,12 @@ module.exports = !DESCRIPTORS && !fails(function () {
 
 /***/ }),
 
-/***/ 9928:
+/***/ 6731:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var uncurryThis = __webpack_require__(4800);
-var fails = __webpack_require__(6688);
-var classof = __webpack_require__(8);
+var uncurryThis = __webpack_require__(9036);
+var fails = __webpack_require__(7131);
+var classof = __webpack_require__(244);
 
 var $Object = Object;
 var split = uncurryThis(''.split);
@@ -3207,12 +3207,12 @@ module.exports = fails(function () {
 
 /***/ }),
 
-/***/ 5156:
+/***/ 6678:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var uncurryThis = __webpack_require__(4800);
-var isCallable = __webpack_require__(824);
-var store = __webpack_require__(2980);
+var uncurryThis = __webpack_require__(9036);
+var isCallable = __webpack_require__(2073);
+var store = __webpack_require__(4993);
 
 var functionToString = uncurryThis(Function.toString);
 
@@ -3228,11 +3228,11 @@ module.exports = store.inspectSource;
 
 /***/ }),
 
-/***/ 3976:
+/***/ 60:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var isObject = __webpack_require__(6884);
-var createNonEnumerableProperty = __webpack_require__(7180);
+var isObject = __webpack_require__(5774);
+var createNonEnumerableProperty = __webpack_require__(8471);
 
 // `InstallErrorCause` abstract operation
 // https://tc39.es/proposal-error-cause/#sec-errorobjects-install-error-cause
@@ -3245,20 +3245,20 @@ module.exports = function (O, options) {
 
 /***/ }),
 
-/***/ 8380:
+/***/ 4191:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var $ = __webpack_require__(9596);
-var uncurryThis = __webpack_require__(4800);
-var hiddenKeys = __webpack_require__(7248);
-var isObject = __webpack_require__(6884);
-var hasOwn = __webpack_require__(1328);
-var defineProperty = (__webpack_require__(752).f);
-var getOwnPropertyNamesModule = __webpack_require__(7728);
-var getOwnPropertyNamesExternalModule = __webpack_require__(1952);
-var isExtensible = __webpack_require__(8184);
-var uid = __webpack_require__(3368);
-var FREEZING = __webpack_require__(6516);
+var $ = __webpack_require__(1938);
+var uncurryThis = __webpack_require__(9036);
+var hiddenKeys = __webpack_require__(6145);
+var isObject = __webpack_require__(5774);
+var hasOwn = __webpack_require__(4373);
+var defineProperty = (__webpack_require__(6381).f);
+var getOwnPropertyNamesModule = __webpack_require__(2036);
+var getOwnPropertyNamesExternalModule = __webpack_require__(3126);
+var isExtensible = __webpack_require__(8280);
+var uid = __webpack_require__(7980);
+var FREEZING = __webpack_require__(3764);
 
 var REQUIRED = false;
 var METADATA = uid('meta');
@@ -3341,17 +3341,17 @@ hiddenKeys[METADATA] = true;
 
 /***/ }),
 
-/***/ 4880:
+/***/ 9257:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var NATIVE_WEAK_MAP = __webpack_require__(8299);
-var global = __webpack_require__(5624);
-var isObject = __webpack_require__(6884);
-var createNonEnumerableProperty = __webpack_require__(7180);
-var hasOwn = __webpack_require__(1328);
-var shared = __webpack_require__(2980);
-var sharedKey = __webpack_require__(6756);
-var hiddenKeys = __webpack_require__(7248);
+var NATIVE_WEAK_MAP = __webpack_require__(8698);
+var global = __webpack_require__(5391);
+var isObject = __webpack_require__(5774);
+var createNonEnumerableProperty = __webpack_require__(8471);
+var hasOwn = __webpack_require__(4373);
+var shared = __webpack_require__(4993);
+var sharedKey = __webpack_require__(651);
+var hiddenKeys = __webpack_require__(6145);
 
 var OBJECT_ALREADY_INITIALIZED = 'Object already initialized';
 var TypeError = global.TypeError;
@@ -3418,11 +3418,11 @@ module.exports = {
 
 /***/ }),
 
-/***/ 1740:
+/***/ 5669:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var wellKnownSymbol = __webpack_require__(6868);
-var Iterators = __webpack_require__(2936);
+var wellKnownSymbol = __webpack_require__(6615);
+var Iterators = __webpack_require__(1113);
 
 var ITERATOR = wellKnownSymbol('iterator');
 var ArrayPrototype = Array.prototype;
@@ -3435,10 +3435,10 @@ module.exports = function (it) {
 
 /***/ }),
 
-/***/ 6060:
+/***/ 1972:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var classof = __webpack_require__(8);
+var classof = __webpack_require__(244);
 
 // `IsArray` abstract operation
 // https://tc39.es/ecma262/#sec-isarray
@@ -3450,10 +3450,10 @@ module.exports = Array.isArray || function isArray(argument) {
 
 /***/ }),
 
-/***/ 824:
+/***/ 2073:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var $documentAll = __webpack_require__(8672);
+var $documentAll = __webpack_require__(7023);
 
 var documentAll = $documentAll.all;
 
@@ -3468,15 +3468,15 @@ module.exports = $documentAll.IS_HTMLDDA ? function (argument) {
 
 /***/ }),
 
-/***/ 1520:
+/***/ 6553:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var uncurryThis = __webpack_require__(4800);
-var fails = __webpack_require__(6688);
-var isCallable = __webpack_require__(824);
-var classof = __webpack_require__(1980);
-var getBuiltIn = __webpack_require__(7724);
-var inspectSource = __webpack_require__(5156);
+var uncurryThis = __webpack_require__(9036);
+var fails = __webpack_require__(7131);
+var isCallable = __webpack_require__(2073);
+var classof = __webpack_require__(5663);
+var getBuiltIn = __webpack_require__(7827);
+var inspectSource = __webpack_require__(6678);
 
 var noop = function () { /* empty */ };
 var empty = [];
@@ -3527,11 +3527,11 @@ module.exports = !construct || fails(function () {
 
 /***/ }),
 
-/***/ 9280:
+/***/ 3488:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var fails = __webpack_require__(6688);
-var isCallable = __webpack_require__(824);
+var fails = __webpack_require__(7131);
+var isCallable = __webpack_require__(2073);
 
 var replacement = /#|\.prototype\./;
 
@@ -3556,7 +3556,7 @@ module.exports = isForced;
 
 /***/ }),
 
-/***/ 5340:
+/***/ 6153:
 /***/ (function(module) {
 
 // we can't use just `it == null` since of `document.all` special case
@@ -3568,11 +3568,11 @@ module.exports = function (it) {
 
 /***/ }),
 
-/***/ 6884:
+/***/ 5774:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var isCallable = __webpack_require__(824);
-var $documentAll = __webpack_require__(8672);
+var isCallable = __webpack_require__(2073);
+var $documentAll = __webpack_require__(7023);
 
 var documentAll = $documentAll.all;
 
@@ -3585,7 +3585,7 @@ module.exports = $documentAll.IS_HTMLDDA ? function (it) {
 
 /***/ }),
 
-/***/ 9304:
+/***/ 3599:
 /***/ (function(module) {
 
 module.exports = true;
@@ -3593,12 +3593,12 @@ module.exports = true;
 
 /***/ }),
 
-/***/ 6088:
+/***/ 5856:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var isObject = __webpack_require__(6884);
-var classof = __webpack_require__(8);
-var wellKnownSymbol = __webpack_require__(6868);
+var isObject = __webpack_require__(5774);
+var classof = __webpack_require__(244);
+var wellKnownSymbol = __webpack_require__(6615);
 
 var MATCH = wellKnownSymbol('match');
 
@@ -3612,13 +3612,13 @@ module.exports = function (it) {
 
 /***/ }),
 
-/***/ 360:
+/***/ 3969:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var getBuiltIn = __webpack_require__(7724);
-var isCallable = __webpack_require__(824);
-var isPrototypeOf = __webpack_require__(8416);
-var USE_SYMBOL_AS_UID = __webpack_require__(8116);
+var getBuiltIn = __webpack_require__(7827);
+var isCallable = __webpack_require__(2073);
+var isPrototypeOf = __webpack_require__(3381);
+var USE_SYMBOL_AS_UID = __webpack_require__(1004);
 
 var $Object = Object;
 
@@ -3632,19 +3632,19 @@ module.exports = USE_SYMBOL_AS_UID ? function (it) {
 
 /***/ }),
 
-/***/ 6084:
+/***/ 9384:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var bind = __webpack_require__(1524);
-var call = __webpack_require__(1816);
-var anObject = __webpack_require__(6080);
-var tryToString = __webpack_require__(2112);
-var isArrayIteratorMethod = __webpack_require__(1740);
-var lengthOfArrayLike = __webpack_require__(9868);
-var isPrototypeOf = __webpack_require__(8416);
-var getIterator = __webpack_require__(5208);
-var getIteratorMethod = __webpack_require__(5632);
-var iteratorClose = __webpack_require__(3736);
+var bind = __webpack_require__(2116);
+var call = __webpack_require__(3057);
+var anObject = __webpack_require__(8347);
+var tryToString = __webpack_require__(4003);
+var isArrayIteratorMethod = __webpack_require__(5669);
+var lengthOfArrayLike = __webpack_require__(954);
+var isPrototypeOf = __webpack_require__(3381);
+var getIterator = __webpack_require__(7013);
+var getIteratorMethod = __webpack_require__(6399);
+var iteratorClose = __webpack_require__(7959);
 
 var $TypeError = TypeError;
 
@@ -3707,12 +3707,12 @@ module.exports = function (iterable, unboundFunction, options) {
 
 /***/ }),
 
-/***/ 3736:
+/***/ 7959:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var call = __webpack_require__(1816);
-var anObject = __webpack_require__(6080);
-var getMethod = __webpack_require__(4092);
+var call = __webpack_require__(3057);
+var anObject = __webpack_require__(8347);
+var getMethod = __webpack_require__(3514);
 
 module.exports = function (iterator, kind, value) {
   var innerResult, innerError;
@@ -3737,16 +3737,16 @@ module.exports = function (iterator, kind, value) {
 
 /***/ }),
 
-/***/ 6528:
+/***/ 7102:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
 "use strict";
 
-var IteratorPrototype = (__webpack_require__(5184).IteratorPrototype);
-var create = __webpack_require__(3576);
-var createPropertyDescriptor = __webpack_require__(8216);
-var setToStringTag = __webpack_require__(3600);
-var Iterators = __webpack_require__(2936);
+var IteratorPrototype = (__webpack_require__(2373).IteratorPrototype);
+var create = __webpack_require__(3628);
+var createPropertyDescriptor = __webpack_require__(3768);
+var setToStringTag = __webpack_require__(5051);
+var Iterators = __webpack_require__(1113);
 
 var returnThis = function () { return this; };
 
@@ -3761,25 +3761,25 @@ module.exports = function (IteratorConstructor, NAME, next, ENUMERABLE_NEXT) {
 
 /***/ }),
 
-/***/ 6548:
+/***/ 6188:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
 "use strict";
 
-var $ = __webpack_require__(9596);
-var call = __webpack_require__(1816);
-var IS_PURE = __webpack_require__(9304);
-var FunctionName = __webpack_require__(4307);
-var isCallable = __webpack_require__(824);
-var createIteratorConstructor = __webpack_require__(6528);
-var getPrototypeOf = __webpack_require__(5528);
-var setPrototypeOf = __webpack_require__(5504);
-var setToStringTag = __webpack_require__(3600);
-var createNonEnumerableProperty = __webpack_require__(7180);
-var defineBuiltIn = __webpack_require__(9152);
-var wellKnownSymbol = __webpack_require__(6868);
-var Iterators = __webpack_require__(2936);
-var IteratorsCore = __webpack_require__(5184);
+var $ = __webpack_require__(1938);
+var call = __webpack_require__(3057);
+var IS_PURE = __webpack_require__(3599);
+var FunctionName = __webpack_require__(4970);
+var isCallable = __webpack_require__(2073);
+var createIteratorConstructor = __webpack_require__(7102);
+var getPrototypeOf = __webpack_require__(3439);
+var setPrototypeOf = __webpack_require__(4619);
+var setToStringTag = __webpack_require__(5051);
+var createNonEnumerableProperty = __webpack_require__(8471);
+var defineBuiltIn = __webpack_require__(492);
+var wellKnownSymbol = __webpack_require__(6615);
+var Iterators = __webpack_require__(1113);
+var IteratorsCore = __webpack_require__(2373);
 
 var PROPER_FUNCTION_NAME = FunctionName.PROPER;
 var CONFIGURABLE_FUNCTION_NAME = FunctionName.CONFIGURABLE;
@@ -3868,19 +3868,19 @@ module.exports = function (Iterable, NAME, IteratorConstructor, next, DEFAULT, I
 
 /***/ }),
 
-/***/ 5184:
+/***/ 2373:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
 "use strict";
 
-var fails = __webpack_require__(6688);
-var isCallable = __webpack_require__(824);
-var isObject = __webpack_require__(6884);
-var create = __webpack_require__(3576);
-var getPrototypeOf = __webpack_require__(5528);
-var defineBuiltIn = __webpack_require__(9152);
-var wellKnownSymbol = __webpack_require__(6868);
-var IS_PURE = __webpack_require__(9304);
+var fails = __webpack_require__(7131);
+var isCallable = __webpack_require__(2073);
+var isObject = __webpack_require__(5774);
+var create = __webpack_require__(3628);
+var getPrototypeOf = __webpack_require__(3439);
+var defineBuiltIn = __webpack_require__(492);
+var wellKnownSymbol = __webpack_require__(6615);
+var IS_PURE = __webpack_require__(3599);
 
 var ITERATOR = wellKnownSymbol('iterator');
 var BUGGY_SAFARI_ITERATORS = false;
@@ -3925,7 +3925,7 @@ module.exports = {
 
 /***/ }),
 
-/***/ 2936:
+/***/ 1113:
 /***/ (function(module) {
 
 module.exports = {};
@@ -3933,10 +3933,10 @@ module.exports = {};
 
 /***/ }),
 
-/***/ 9868:
+/***/ 954:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var toLength = __webpack_require__(2912);
+var toLength = __webpack_require__(2954);
 
 // `LengthOfArrayLike` abstract operation
 // https://tc39.es/ecma262/#sec-lengthofarraylike
@@ -3947,7 +3947,7 @@ module.exports = function (obj) {
 
 /***/ }),
 
-/***/ 2880:
+/***/ 1049:
 /***/ (function(module) {
 
 var ceil = Math.ceil;
@@ -3964,18 +3964,18 @@ module.exports = Math.trunc || function trunc(x) {
 
 /***/ }),
 
-/***/ 9064:
+/***/ 5655:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var global = __webpack_require__(5624);
-var bind = __webpack_require__(1524);
-var getOwnPropertyDescriptor = (__webpack_require__(2200).f);
-var macrotask = (__webpack_require__(8974).set);
-var Queue = __webpack_require__(3296);
-var IS_IOS = __webpack_require__(6180);
-var IS_IOS_PEBBLE = __webpack_require__(8604);
-var IS_WEBOS_WEBKIT = __webpack_require__(2872);
-var IS_NODE = __webpack_require__(1832);
+var global = __webpack_require__(5391);
+var bind = __webpack_require__(2116);
+var getOwnPropertyDescriptor = (__webpack_require__(5687).f);
+var macrotask = (__webpack_require__(4677).set);
+var Queue = __webpack_require__(6949);
+var IS_IOS = __webpack_require__(7603);
+var IS_IOS_PEBBLE = __webpack_require__(6304);
+var IS_WEBOS_WEBKIT = __webpack_require__(8689);
+var IS_NODE = __webpack_require__(7244);
 
 var MutationObserver = global.MutationObserver || global.WebKitMutationObserver;
 var document = global.document;
@@ -4051,12 +4051,12 @@ module.exports = microtask;
 
 /***/ }),
 
-/***/ 7392:
+/***/ 8959:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
 "use strict";
 
-var aCallable = __webpack_require__(7568);
+var aCallable = __webpack_require__(182);
 
 var $TypeError = TypeError;
 
@@ -4080,10 +4080,10 @@ module.exports.f = function (C) {
 
 /***/ }),
 
-/***/ 6832:
+/***/ 9383:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var toString = __webpack_require__(4552);
+var toString = __webpack_require__(7803);
 
 module.exports = function (argument, $default) {
   return argument === undefined ? arguments.length < 2 ? '' : $default : toString(argument);
@@ -4092,10 +4092,10 @@ module.exports = function (argument, $default) {
 
 /***/ }),
 
-/***/ 3992:
+/***/ 5923:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var isRegExp = __webpack_require__(6088);
+var isRegExp = __webpack_require__(5856);
 
 var $TypeError = TypeError;
 
@@ -4108,15 +4108,15 @@ module.exports = function (it) {
 
 /***/ }),
 
-/***/ 4560:
+/***/ 3180:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var global = __webpack_require__(5624);
-var fails = __webpack_require__(6688);
-var uncurryThis = __webpack_require__(4800);
-var toString = __webpack_require__(4552);
-var trim = (__webpack_require__(1388).trim);
-var whitespaces = __webpack_require__(568);
+var global = __webpack_require__(5391);
+var fails = __webpack_require__(7131);
+var uncurryThis = __webpack_require__(9036);
+var toString = __webpack_require__(7803);
+var trim = (__webpack_require__(966).trim);
+var whitespaces = __webpack_require__(1192);
 
 var charAt = uncurryThis(''.charAt);
 var $parseFloat = global.parseFloat;
@@ -4137,15 +4137,15 @@ module.exports = FORCED ? function parseFloat(string) {
 
 /***/ }),
 
-/***/ 1288:
+/***/ 5787:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var global = __webpack_require__(5624);
-var fails = __webpack_require__(6688);
-var uncurryThis = __webpack_require__(4800);
-var toString = __webpack_require__(4552);
-var trim = (__webpack_require__(1388).trim);
-var whitespaces = __webpack_require__(568);
+var global = __webpack_require__(5391);
+var fails = __webpack_require__(7131);
+var uncurryThis = __webpack_require__(9036);
+var toString = __webpack_require__(7803);
+var trim = (__webpack_require__(966).trim);
+var whitespaces = __webpack_require__(1192);
 
 var $parseInt = global.parseInt;
 var Symbol = global.Symbol;
@@ -4166,20 +4166,20 @@ module.exports = FORCED ? function parseInt(string, radix) {
 
 /***/ }),
 
-/***/ 1940:
+/***/ 8593:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
 "use strict";
 
-var DESCRIPTORS = __webpack_require__(2892);
-var uncurryThis = __webpack_require__(4800);
-var call = __webpack_require__(1816);
-var fails = __webpack_require__(6688);
-var objectKeys = __webpack_require__(1248);
-var getOwnPropertySymbolsModule = __webpack_require__(8576);
-var propertyIsEnumerableModule = __webpack_require__(1632);
-var toObject = __webpack_require__(320);
-var IndexedObject = __webpack_require__(9928);
+var DESCRIPTORS = __webpack_require__(5560);
+var uncurryThis = __webpack_require__(9036);
+var call = __webpack_require__(3057);
+var fails = __webpack_require__(7131);
+var objectKeys = __webpack_require__(5556);
+var getOwnPropertySymbolsModule = __webpack_require__(6841);
+var propertyIsEnumerableModule = __webpack_require__(6337);
+var toObject = __webpack_require__(5809);
+var IndexedObject = __webpack_require__(6731);
 
 // eslint-disable-next-line es/no-object-assign -- safe
 var $assign = Object.assign;
@@ -4231,17 +4231,17 @@ module.exports = !$assign || fails(function () {
 
 /***/ }),
 
-/***/ 3576:
+/***/ 3628:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
 /* global ActiveXObject -- old IE, WSH */
-var anObject = __webpack_require__(6080);
-var definePropertiesModule = __webpack_require__(7308);
-var enumBugKeys = __webpack_require__(7768);
-var hiddenKeys = __webpack_require__(7248);
-var html = __webpack_require__(2648);
-var documentCreateElement = __webpack_require__(728);
-var sharedKey = __webpack_require__(6756);
+var anObject = __webpack_require__(8347);
+var definePropertiesModule = __webpack_require__(9157);
+var enumBugKeys = __webpack_require__(347);
+var hiddenKeys = __webpack_require__(6145);
+var html = __webpack_require__(9417);
+var documentCreateElement = __webpack_require__(6171);
+var sharedKey = __webpack_require__(651);
 
 var GT = '>';
 var LT = '<';
@@ -4321,15 +4321,15 @@ module.exports = Object.create || function create(O, Properties) {
 
 /***/ }),
 
-/***/ 7308:
+/***/ 9157:
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
-var DESCRIPTORS = __webpack_require__(2892);
-var V8_PROTOTYPE_DEFINE_BUG = __webpack_require__(9708);
-var definePropertyModule = __webpack_require__(752);
-var anObject = __webpack_require__(6080);
-var toIndexedObject = __webpack_require__(8709);
-var objectKeys = __webpack_require__(1248);
+var DESCRIPTORS = __webpack_require__(5560);
+var V8_PROTOTYPE_DEFINE_BUG = __webpack_require__(2506);
+var definePropertyModule = __webpack_require__(6381);
+var anObject = __webpack_require__(8347);
+var toIndexedObject = __webpack_require__(9441);
+var objectKeys = __webpack_require__(5556);
 
 // `Object.defineProperties` method
 // https://tc39.es/ecma262/#sec-object.defineproperties
@@ -4348,14 +4348,14 @@ exports.f = DESCRIPTORS && !V8_PROTOTYPE_DEFINE_BUG ? Object.defineProperties : 
 
 /***/ }),
 
-/***/ 752:
+/***/ 6381:
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
-var DESCRIPTORS = __webpack_require__(2892);
-var IE8_DOM_DEFINE = __webpack_require__(8776);
-var V8_PROTOTYPE_DEFINE_BUG = __webpack_require__(9708);
-var anObject = __webpack_require__(6080);
-var toPropertyKey = __webpack_require__(8960);
+var DESCRIPTORS = __webpack_require__(5560);
+var IE8_DOM_DEFINE = __webpack_require__(2633);
+var V8_PROTOTYPE_DEFINE_BUG = __webpack_require__(2506);
+var anObject = __webpack_require__(8347);
+var toPropertyKey = __webpack_require__(5141);
 
 var $TypeError = TypeError;
 // eslint-disable-next-line es/no-object-defineproperty -- safe
@@ -4398,17 +4398,17 @@ exports.f = DESCRIPTORS ? V8_PROTOTYPE_DEFINE_BUG ? function defineProperty(O, P
 
 /***/ }),
 
-/***/ 2200:
+/***/ 5687:
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
-var DESCRIPTORS = __webpack_require__(2892);
-var call = __webpack_require__(1816);
-var propertyIsEnumerableModule = __webpack_require__(1632);
-var createPropertyDescriptor = __webpack_require__(8216);
-var toIndexedObject = __webpack_require__(8709);
-var toPropertyKey = __webpack_require__(8960);
-var hasOwn = __webpack_require__(1328);
-var IE8_DOM_DEFINE = __webpack_require__(8776);
+var DESCRIPTORS = __webpack_require__(5560);
+var call = __webpack_require__(3057);
+var propertyIsEnumerableModule = __webpack_require__(6337);
+var createPropertyDescriptor = __webpack_require__(3768);
+var toIndexedObject = __webpack_require__(9441);
+var toPropertyKey = __webpack_require__(5141);
+var hasOwn = __webpack_require__(4373);
+var IE8_DOM_DEFINE = __webpack_require__(2633);
 
 // eslint-disable-next-line es/no-object-getownpropertydescriptor -- safe
 var $getOwnPropertyDescriptor = Object.getOwnPropertyDescriptor;
@@ -4427,14 +4427,14 @@ exports.f = DESCRIPTORS ? $getOwnPropertyDescriptor : function getOwnPropertyDes
 
 /***/ }),
 
-/***/ 1952:
+/***/ 3126:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
 /* eslint-disable es/no-object-getownpropertynames -- safe */
-var classof = __webpack_require__(8);
-var toIndexedObject = __webpack_require__(8709);
-var $getOwnPropertyNames = (__webpack_require__(7728).f);
-var arraySlice = __webpack_require__(6456);
+var classof = __webpack_require__(244);
+var toIndexedObject = __webpack_require__(9441);
+var $getOwnPropertyNames = (__webpack_require__(2036).f);
+var arraySlice = __webpack_require__(8067);
 
 var windowNames = typeof window == 'object' && window && Object.getOwnPropertyNames
   ? Object.getOwnPropertyNames(window) : [];
@@ -4457,11 +4457,11 @@ module.exports.f = function getOwnPropertyNames(it) {
 
 /***/ }),
 
-/***/ 7728:
+/***/ 2036:
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
-var internalObjectKeys = __webpack_require__(6008);
-var enumBugKeys = __webpack_require__(7768);
+var internalObjectKeys = __webpack_require__(4512);
+var enumBugKeys = __webpack_require__(347);
 
 var hiddenKeys = enumBugKeys.concat('length', 'prototype');
 
@@ -4475,7 +4475,7 @@ exports.f = Object.getOwnPropertyNames || function getOwnPropertyNames(O) {
 
 /***/ }),
 
-/***/ 8576:
+/***/ 6841:
 /***/ (function(__unused_webpack_module, exports) {
 
 // eslint-disable-next-line es/no-object-getownpropertysymbols -- safe
@@ -4484,14 +4484,14 @@ exports.f = Object.getOwnPropertySymbols;
 
 /***/ }),
 
-/***/ 5528:
+/***/ 3439:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var hasOwn = __webpack_require__(1328);
-var isCallable = __webpack_require__(824);
-var toObject = __webpack_require__(320);
-var sharedKey = __webpack_require__(6756);
-var CORRECT_PROTOTYPE_GETTER = __webpack_require__(2744);
+var hasOwn = __webpack_require__(4373);
+var isCallable = __webpack_require__(2073);
+var toObject = __webpack_require__(5809);
+var sharedKey = __webpack_require__(651);
+var CORRECT_PROTOTYPE_GETTER = __webpack_require__(7007);
 
 var IE_PROTO = sharedKey('IE_PROTO');
 var $Object = Object;
@@ -4512,13 +4512,13 @@ module.exports = CORRECT_PROTOTYPE_GETTER ? $Object.getPrototypeOf : function (O
 
 /***/ }),
 
-/***/ 8184:
+/***/ 8280:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var fails = __webpack_require__(6688);
-var isObject = __webpack_require__(6884);
-var classof = __webpack_require__(8);
-var ARRAY_BUFFER_NON_EXTENSIBLE = __webpack_require__(7836);
+var fails = __webpack_require__(7131);
+var isObject = __webpack_require__(5774);
+var classof = __webpack_require__(244);
+var ARRAY_BUFFER_NON_EXTENSIBLE = __webpack_require__(6784);
 
 // eslint-disable-next-line es/no-object-isextensible -- safe
 var $isExtensible = Object.isExtensible;
@@ -4535,24 +4535,24 @@ module.exports = (FAILS_ON_PRIMITIVES || ARRAY_BUFFER_NON_EXTENSIBLE) ? function
 
 /***/ }),
 
-/***/ 8416:
+/***/ 3381:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var uncurryThis = __webpack_require__(4800);
+var uncurryThis = __webpack_require__(9036);
 
 module.exports = uncurryThis({}.isPrototypeOf);
 
 
 /***/ }),
 
-/***/ 6008:
+/***/ 4512:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var uncurryThis = __webpack_require__(4800);
-var hasOwn = __webpack_require__(1328);
-var toIndexedObject = __webpack_require__(8709);
-var indexOf = (__webpack_require__(9748).indexOf);
-var hiddenKeys = __webpack_require__(7248);
+var uncurryThis = __webpack_require__(9036);
+var hasOwn = __webpack_require__(4373);
+var toIndexedObject = __webpack_require__(9441);
+var indexOf = (__webpack_require__(4581).indexOf);
+var hiddenKeys = __webpack_require__(6145);
 
 var push = uncurryThis([].push);
 
@@ -4572,11 +4572,11 @@ module.exports = function (object, names) {
 
 /***/ }),
 
-/***/ 1248:
+/***/ 5556:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var internalObjectKeys = __webpack_require__(6008);
-var enumBugKeys = __webpack_require__(7768);
+var internalObjectKeys = __webpack_require__(4512);
+var enumBugKeys = __webpack_require__(347);
 
 // `Object.keys` method
 // https://tc39.es/ecma262/#sec-object.keys
@@ -4588,7 +4588,7 @@ module.exports = Object.keys || function keys(O) {
 
 /***/ }),
 
-/***/ 1632:
+/***/ 6337:
 /***/ (function(__unused_webpack_module, exports) {
 
 "use strict";
@@ -4610,13 +4610,13 @@ exports.f = NASHORN_BUG ? function propertyIsEnumerable(V) {
 
 /***/ }),
 
-/***/ 5504:
+/***/ 4619:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
 /* eslint-disable no-proto -- safe */
-var uncurryThisAccessor = __webpack_require__(1480);
-var anObject = __webpack_require__(6080);
-var aPossiblePrototype = __webpack_require__(1456);
+var uncurryThisAccessor = __webpack_require__(7006);
+var anObject = __webpack_require__(8347);
+var aPossiblePrototype = __webpack_require__(8934);
 
 // `Object.setPrototypeOf` method
 // https://tc39.es/ecma262/#sec-object.setprototypeof
@@ -4643,14 +4643,14 @@ module.exports = Object.setPrototypeOf || ('__proto__' in {} ? function () {
 
 /***/ }),
 
-/***/ 7744:
+/***/ 5657:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var DESCRIPTORS = __webpack_require__(2892);
-var uncurryThis = __webpack_require__(4800);
-var objectKeys = __webpack_require__(1248);
-var toIndexedObject = __webpack_require__(8709);
-var $propertyIsEnumerable = (__webpack_require__(1632).f);
+var DESCRIPTORS = __webpack_require__(5560);
+var uncurryThis = __webpack_require__(9036);
+var objectKeys = __webpack_require__(5556);
+var toIndexedObject = __webpack_require__(9441);
+var $propertyIsEnumerable = (__webpack_require__(6337).f);
 
 var propertyIsEnumerable = uncurryThis($propertyIsEnumerable);
 var push = uncurryThis([].push);
@@ -4686,13 +4686,13 @@ module.exports = {
 
 /***/ }),
 
-/***/ 7832:
+/***/ 5759:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
 "use strict";
 
-var TO_STRING_TAG_SUPPORT = __webpack_require__(8168);
-var classof = __webpack_require__(1980);
+var TO_STRING_TAG_SUPPORT = __webpack_require__(7104);
+var classof = __webpack_require__(5663);
 
 // `Object.prototype.toString` method implementation
 // https://tc39.es/ecma262/#sec-object.prototype.tostring
@@ -4703,12 +4703,12 @@ module.exports = TO_STRING_TAG_SUPPORT ? {}.toString : function toString() {
 
 /***/ }),
 
-/***/ 4644:
+/***/ 6034:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var call = __webpack_require__(1816);
-var isCallable = __webpack_require__(824);
-var isObject = __webpack_require__(6884);
+var call = __webpack_require__(3057);
+var isCallable = __webpack_require__(2073);
+var isObject = __webpack_require__(5774);
 
 var $TypeError = TypeError;
 
@@ -4725,14 +4725,14 @@ module.exports = function (input, pref) {
 
 /***/ }),
 
-/***/ 7312:
+/***/ 8195:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var getBuiltIn = __webpack_require__(7724);
-var uncurryThis = __webpack_require__(4800);
-var getOwnPropertyNamesModule = __webpack_require__(7728);
-var getOwnPropertySymbolsModule = __webpack_require__(8576);
-var anObject = __webpack_require__(6080);
+var getBuiltIn = __webpack_require__(7827);
+var uncurryThis = __webpack_require__(9036);
+var getOwnPropertyNamesModule = __webpack_require__(2036);
+var getOwnPropertySymbolsModule = __webpack_require__(6841);
+var anObject = __webpack_require__(8347);
 
 var concat = uncurryThis([].concat);
 
@@ -4746,7 +4746,7 @@ module.exports = getBuiltIn('Reflect', 'ownKeys') || function ownKeys(it) {
 
 /***/ }),
 
-/***/ 2204:
+/***/ 7675:
 /***/ (function(module) {
 
 module.exports = {};
@@ -4754,7 +4754,7 @@ module.exports = {};
 
 /***/ }),
 
-/***/ 9276:
+/***/ 1851:
 /***/ (function(module) {
 
 module.exports = function (exec) {
@@ -4768,19 +4768,19 @@ module.exports = function (exec) {
 
 /***/ }),
 
-/***/ 812:
+/***/ 5616:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var global = __webpack_require__(5624);
-var NativePromiseConstructor = __webpack_require__(8931);
-var isCallable = __webpack_require__(824);
-var isForced = __webpack_require__(9280);
-var inspectSource = __webpack_require__(5156);
-var wellKnownSymbol = __webpack_require__(6868);
-var IS_BROWSER = __webpack_require__(1896);
-var IS_DENO = __webpack_require__(5708);
-var IS_PURE = __webpack_require__(9304);
-var V8_VERSION = __webpack_require__(3928);
+var global = __webpack_require__(5391);
+var NativePromiseConstructor = __webpack_require__(1074);
+var isCallable = __webpack_require__(2073);
+var isForced = __webpack_require__(3488);
+var inspectSource = __webpack_require__(6678);
+var wellKnownSymbol = __webpack_require__(6615);
+var IS_BROWSER = __webpack_require__(3846);
+var IS_DENO = __webpack_require__(9360);
+var IS_PURE = __webpack_require__(3599);
+var V8_VERSION = __webpack_require__(6312);
 
 var NativePromisePrototype = NativePromiseConstructor && NativePromiseConstructor.prototype;
 var SPECIES = wellKnownSymbol('species');
@@ -4822,22 +4822,22 @@ module.exports = {
 
 /***/ }),
 
-/***/ 8931:
+/***/ 1074:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var global = __webpack_require__(5624);
+var global = __webpack_require__(5391);
 
 module.exports = global.Promise;
 
 
 /***/ }),
 
-/***/ 7032:
+/***/ 2130:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var anObject = __webpack_require__(6080);
-var isObject = __webpack_require__(6884);
-var newPromiseCapability = __webpack_require__(7392);
+var anObject = __webpack_require__(8347);
+var isObject = __webpack_require__(5774);
+var newPromiseCapability = __webpack_require__(8959);
 
 module.exports = function (C, x) {
   anObject(C);
@@ -4851,12 +4851,12 @@ module.exports = function (C, x) {
 
 /***/ }),
 
-/***/ 4240:
+/***/ 1197:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var NativePromiseConstructor = __webpack_require__(8931);
-var checkCorrectnessOfIteration = __webpack_require__(1792);
-var FORCED_PROMISE_CONSTRUCTOR = (__webpack_require__(812).CONSTRUCTOR);
+var NativePromiseConstructor = __webpack_require__(1074);
+var checkCorrectnessOfIteration = __webpack_require__(8224);
+var FORCED_PROMISE_CONSTRUCTOR = (__webpack_require__(5616).CONSTRUCTOR);
 
 module.exports = FORCED_PROMISE_CONSTRUCTOR || !checkCorrectnessOfIteration(function (iterable) {
   NativePromiseConstructor.all(iterable).then(undefined, function () { /* empty */ });
@@ -4865,7 +4865,7 @@ module.exports = FORCED_PROMISE_CONSTRUCTOR || !checkCorrectnessOfIteration(func
 
 /***/ }),
 
-/***/ 3296:
+/***/ 6949:
 /***/ (function(module) {
 
 var Queue = function () {
@@ -4896,10 +4896,10 @@ module.exports = Queue;
 
 /***/ }),
 
-/***/ 7020:
+/***/ 8890:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var isNullOrUndefined = __webpack_require__(5340);
+var isNullOrUndefined = __webpack_require__(6153);
 
 var $TypeError = TypeError;
 
@@ -4913,15 +4913,15 @@ module.exports = function (it) {
 
 /***/ }),
 
-/***/ 3100:
+/***/ 9413:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
 "use strict";
 
-var getBuiltIn = __webpack_require__(7724);
-var defineBuiltInAccessor = __webpack_require__(6792);
-var wellKnownSymbol = __webpack_require__(6868);
-var DESCRIPTORS = __webpack_require__(2892);
+var getBuiltIn = __webpack_require__(7827);
+var defineBuiltInAccessor = __webpack_require__(3614);
+var wellKnownSymbol = __webpack_require__(6615);
+var DESCRIPTORS = __webpack_require__(5560);
 
 var SPECIES = wellKnownSymbol('species');
 
@@ -4939,15 +4939,15 @@ module.exports = function (CONSTRUCTOR_NAME) {
 
 /***/ }),
 
-/***/ 3600:
+/***/ 5051:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var TO_STRING_TAG_SUPPORT = __webpack_require__(8168);
-var defineProperty = (__webpack_require__(752).f);
-var createNonEnumerableProperty = __webpack_require__(7180);
-var hasOwn = __webpack_require__(1328);
-var toString = __webpack_require__(7832);
-var wellKnownSymbol = __webpack_require__(6868);
+var TO_STRING_TAG_SUPPORT = __webpack_require__(7104);
+var defineProperty = (__webpack_require__(6381).f);
+var createNonEnumerableProperty = __webpack_require__(8471);
+var hasOwn = __webpack_require__(4373);
+var toString = __webpack_require__(5759);
+var wellKnownSymbol = __webpack_require__(6615);
 
 var TO_STRING_TAG = wellKnownSymbol('toStringTag');
 
@@ -4966,11 +4966,11 @@ module.exports = function (it, TAG, STATIC, SET_METHOD) {
 
 /***/ }),
 
-/***/ 6756:
+/***/ 651:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var shared = __webpack_require__(8792);
-var uid = __webpack_require__(3368);
+var shared = __webpack_require__(3557);
+var uid = __webpack_require__(7980);
 
 var keys = shared('keys');
 
@@ -4981,11 +4981,11 @@ module.exports = function (key) {
 
 /***/ }),
 
-/***/ 2980:
+/***/ 4993:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var global = __webpack_require__(5624);
-var defineGlobalProperty = __webpack_require__(8616);
+var global = __webpack_require__(5391);
+var defineGlobalProperty = __webpack_require__(909);
 
 var SHARED = '__core-js_shared__';
 var store = global[SHARED] || defineGlobalProperty(SHARED, {});
@@ -4995,11 +4995,11 @@ module.exports = store;
 
 /***/ }),
 
-/***/ 8792:
+/***/ 3557:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var IS_PURE = __webpack_require__(9304);
-var store = __webpack_require__(2980);
+var IS_PURE = __webpack_require__(3599);
+var store = __webpack_require__(4993);
 
 (module.exports = function (key, value) {
   return store[key] || (store[key] = value !== undefined ? value : {});
@@ -5014,13 +5014,13 @@ var store = __webpack_require__(2980);
 
 /***/ }),
 
-/***/ 4264:
+/***/ 4745:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var anObject = __webpack_require__(6080);
-var aConstructor = __webpack_require__(5648);
-var isNullOrUndefined = __webpack_require__(5340);
-var wellKnownSymbol = __webpack_require__(6868);
+var anObject = __webpack_require__(8347);
+var aConstructor = __webpack_require__(5040);
+var isNullOrUndefined = __webpack_require__(6153);
+var wellKnownSymbol = __webpack_require__(6615);
 
 var SPECIES = wellKnownSymbol('species');
 
@@ -5035,13 +5035,13 @@ module.exports = function (O, defaultConstructor) {
 
 /***/ }),
 
-/***/ 3784:
+/***/ 235:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var uncurryThis = __webpack_require__(4800);
-var toIntegerOrInfinity = __webpack_require__(3880);
-var toString = __webpack_require__(4552);
-var requireObjectCoercible = __webpack_require__(7020);
+var uncurryThis = __webpack_require__(9036);
+var toIntegerOrInfinity = __webpack_require__(6759);
+var toString = __webpack_require__(7803);
+var requireObjectCoercible = __webpack_require__(8890);
 
 var charAt = uncurryThis(''.charAt);
 var charCodeAt = uncurryThis(''.charCodeAt);
@@ -5078,26 +5078,26 @@ module.exports = {
 
 /***/ }),
 
-/***/ 4960:
+/***/ 8915:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
 // https://github.com/zloirock/core-js/issues/280
-var userAgent = __webpack_require__(6748);
+var userAgent = __webpack_require__(4084);
 
 module.exports = /Version\/10(?:\.\d+){1,2}(?: [\w./]+)?(?: Mobile\/\w+)? Safari\//.test(userAgent);
 
 
 /***/ }),
 
-/***/ 1124:
+/***/ 865:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
 // https://github.com/tc39/proposal-string-pad-start-end
-var uncurryThis = __webpack_require__(4800);
-var toLength = __webpack_require__(2912);
-var toString = __webpack_require__(4552);
-var $repeat = __webpack_require__(7432);
-var requireObjectCoercible = __webpack_require__(7020);
+var uncurryThis = __webpack_require__(9036);
+var toLength = __webpack_require__(2954);
+var toString = __webpack_require__(7803);
+var $repeat = __webpack_require__(6849);
+var requireObjectCoercible = __webpack_require__(8890);
 
 var repeat = uncurryThis($repeat);
 var stringSlice = uncurryThis(''.slice);
@@ -5131,14 +5131,14 @@ module.exports = {
 
 /***/ }),
 
-/***/ 7432:
+/***/ 6849:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
 "use strict";
 
-var toIntegerOrInfinity = __webpack_require__(3880);
-var toString = __webpack_require__(4552);
-var requireObjectCoercible = __webpack_require__(7020);
+var toIntegerOrInfinity = __webpack_require__(6759);
+var toString = __webpack_require__(7803);
+var requireObjectCoercible = __webpack_require__(8890);
 
 var $RangeError = RangeError;
 
@@ -5156,12 +5156,12 @@ module.exports = function repeat(count) {
 
 /***/ }),
 
-/***/ 4024:
+/***/ 6014:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var PROPER_FUNCTION_NAME = (__webpack_require__(4307).PROPER);
-var fails = __webpack_require__(6688);
-var whitespaces = __webpack_require__(568);
+var PROPER_FUNCTION_NAME = (__webpack_require__(4970).PROPER);
+var fails = __webpack_require__(7131);
+var whitespaces = __webpack_require__(1192);
 
 var non = '\u200B\u0085\u180E';
 
@@ -5178,13 +5178,13 @@ module.exports = function (METHOD_NAME) {
 
 /***/ }),
 
-/***/ 1388:
+/***/ 966:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var uncurryThis = __webpack_require__(4800);
-var requireObjectCoercible = __webpack_require__(7020);
-var toString = __webpack_require__(4552);
-var whitespaces = __webpack_require__(568);
+var uncurryThis = __webpack_require__(9036);
+var requireObjectCoercible = __webpack_require__(8890);
+var toString = __webpack_require__(7803);
+var whitespaces = __webpack_require__(1192);
 
 var replace = uncurryThis(''.replace);
 var ltrim = RegExp('^[' + whitespaces + ']+');
@@ -5215,13 +5215,13 @@ module.exports = {
 
 /***/ }),
 
-/***/ 9336:
+/***/ 7235:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
 /* eslint-disable es/no-symbol -- required for testing */
-var V8_VERSION = __webpack_require__(3928);
-var fails = __webpack_require__(6688);
-var global = __webpack_require__(5624);
+var V8_VERSION = __webpack_require__(6312);
+var fails = __webpack_require__(7131);
+var global = __webpack_require__(5391);
 
 var $String = global.String;
 
@@ -5240,13 +5240,13 @@ module.exports = !!Object.getOwnPropertySymbols && !fails(function () {
 
 /***/ }),
 
-/***/ 1016:
+/***/ 3966:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var call = __webpack_require__(1816);
-var getBuiltIn = __webpack_require__(7724);
-var wellKnownSymbol = __webpack_require__(6868);
-var defineBuiltIn = __webpack_require__(9152);
+var call = __webpack_require__(3057);
+var getBuiltIn = __webpack_require__(7827);
+var wellKnownSymbol = __webpack_require__(6615);
+var defineBuiltIn = __webpack_require__(492);
 
 module.exports = function () {
   var Symbol = getBuiltIn('Symbol');
@@ -5267,10 +5267,10 @@ module.exports = function () {
 
 /***/ }),
 
-/***/ 2084:
+/***/ 7700:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var NATIVE_SYMBOL = __webpack_require__(9336);
+var NATIVE_SYMBOL = __webpack_require__(7235);
 
 /* eslint-disable es/no-symbol -- safe */
 module.exports = NATIVE_SYMBOL && !!Symbol['for'] && !!Symbol.keyFor;
@@ -5278,21 +5278,21 @@ module.exports = NATIVE_SYMBOL && !!Symbol['for'] && !!Symbol.keyFor;
 
 /***/ }),
 
-/***/ 8974:
+/***/ 4677:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var global = __webpack_require__(5624);
-var apply = __webpack_require__(720);
-var bind = __webpack_require__(1524);
-var isCallable = __webpack_require__(824);
-var hasOwn = __webpack_require__(1328);
-var fails = __webpack_require__(6688);
-var html = __webpack_require__(2648);
-var arraySlice = __webpack_require__(424);
-var createElement = __webpack_require__(728);
-var validateArgumentsLength = __webpack_require__(2592);
-var IS_IOS = __webpack_require__(6180);
-var IS_NODE = __webpack_require__(1832);
+var global = __webpack_require__(5391);
+var apply = __webpack_require__(1981);
+var bind = __webpack_require__(2116);
+var isCallable = __webpack_require__(2073);
+var hasOwn = __webpack_require__(4373);
+var fails = __webpack_require__(7131);
+var html = __webpack_require__(9417);
+var arraySlice = __webpack_require__(820);
+var createElement = __webpack_require__(6171);
+var validateArgumentsLength = __webpack_require__(4952);
+var IS_IOS = __webpack_require__(7603);
+var IS_NODE = __webpack_require__(7244);
 
 var set = global.setImmediate;
 var clear = global.clearImmediate;
@@ -5401,10 +5401,10 @@ module.exports = {
 
 /***/ }),
 
-/***/ 9940:
+/***/ 8630:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var toIntegerOrInfinity = __webpack_require__(3880);
+var toIntegerOrInfinity = __webpack_require__(6759);
 
 var max = Math.max;
 var min = Math.min;
@@ -5420,12 +5420,12 @@ module.exports = function (index, length) {
 
 /***/ }),
 
-/***/ 8709:
+/***/ 9441:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
 // toObject with fallback for non-array-like ES3 strings
-var IndexedObject = __webpack_require__(9928);
-var requireObjectCoercible = __webpack_require__(7020);
+var IndexedObject = __webpack_require__(6731);
+var requireObjectCoercible = __webpack_require__(8890);
 
 module.exports = function (it) {
   return IndexedObject(requireObjectCoercible(it));
@@ -5434,10 +5434,10 @@ module.exports = function (it) {
 
 /***/ }),
 
-/***/ 3880:
+/***/ 6759:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var trunc = __webpack_require__(2880);
+var trunc = __webpack_require__(1049);
 
 // `ToIntegerOrInfinity` abstract operation
 // https://tc39.es/ecma262/#sec-tointegerorinfinity
@@ -5450,10 +5450,10 @@ module.exports = function (argument) {
 
 /***/ }),
 
-/***/ 2912:
+/***/ 2954:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var toIntegerOrInfinity = __webpack_require__(3880);
+var toIntegerOrInfinity = __webpack_require__(6759);
 
 var min = Math.min;
 
@@ -5466,10 +5466,10 @@ module.exports = function (argument) {
 
 /***/ }),
 
-/***/ 320:
+/***/ 5809:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var requireObjectCoercible = __webpack_require__(7020);
+var requireObjectCoercible = __webpack_require__(8890);
 
 var $Object = Object;
 
@@ -5482,15 +5482,15 @@ module.exports = function (argument) {
 
 /***/ }),
 
-/***/ 4352:
+/***/ 5045:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var call = __webpack_require__(1816);
-var isObject = __webpack_require__(6884);
-var isSymbol = __webpack_require__(360);
-var getMethod = __webpack_require__(4092);
-var ordinaryToPrimitive = __webpack_require__(4644);
-var wellKnownSymbol = __webpack_require__(6868);
+var call = __webpack_require__(3057);
+var isObject = __webpack_require__(5774);
+var isSymbol = __webpack_require__(3969);
+var getMethod = __webpack_require__(3514);
+var ordinaryToPrimitive = __webpack_require__(6034);
+var wellKnownSymbol = __webpack_require__(6615);
 
 var $TypeError = TypeError;
 var TO_PRIMITIVE = wellKnownSymbol('toPrimitive');
@@ -5514,11 +5514,11 @@ module.exports = function (input, pref) {
 
 /***/ }),
 
-/***/ 8960:
+/***/ 5141:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var toPrimitive = __webpack_require__(4352);
-var isSymbol = __webpack_require__(360);
+var toPrimitive = __webpack_require__(5045);
+var isSymbol = __webpack_require__(3969);
 
 // `ToPropertyKey` abstract operation
 // https://tc39.es/ecma262/#sec-topropertykey
@@ -5530,10 +5530,10 @@ module.exports = function (argument) {
 
 /***/ }),
 
-/***/ 8168:
+/***/ 7104:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var wellKnownSymbol = __webpack_require__(6868);
+var wellKnownSymbol = __webpack_require__(6615);
 
 var TO_STRING_TAG = wellKnownSymbol('toStringTag');
 var test = {};
@@ -5545,10 +5545,10 @@ module.exports = String(test) === '[object z]';
 
 /***/ }),
 
-/***/ 4552:
+/***/ 7803:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var classof = __webpack_require__(1980);
+var classof = __webpack_require__(5663);
 
 var $String = String;
 
@@ -5560,7 +5560,7 @@ module.exports = function (argument) {
 
 /***/ }),
 
-/***/ 2112:
+/***/ 4003:
 /***/ (function(module) {
 
 var $String = String;
@@ -5576,10 +5576,10 @@ module.exports = function (argument) {
 
 /***/ }),
 
-/***/ 3368:
+/***/ 7980:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var uncurryThis = __webpack_require__(4800);
+var uncurryThis = __webpack_require__(9036);
 
 var id = 0;
 var postfix = Math.random();
@@ -5592,11 +5592,11 @@ module.exports = function (key) {
 
 /***/ }),
 
-/***/ 8116:
+/***/ 1004:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
 /* eslint-disable es/no-symbol -- required for testing */
-var NATIVE_SYMBOL = __webpack_require__(9336);
+var NATIVE_SYMBOL = __webpack_require__(7235);
 
 module.exports = NATIVE_SYMBOL
   && !Symbol.sham
@@ -5605,11 +5605,11 @@ module.exports = NATIVE_SYMBOL
 
 /***/ }),
 
-/***/ 9708:
+/***/ 2506:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var DESCRIPTORS = __webpack_require__(2892);
-var fails = __webpack_require__(6688);
+var DESCRIPTORS = __webpack_require__(5560);
+var fails = __webpack_require__(7131);
 
 // V8 ~ Chrome 36-
 // https://bugs.chromium.org/p/v8/issues/detail?id=3334
@@ -5624,7 +5624,7 @@ module.exports = DESCRIPTORS && fails(function () {
 
 /***/ }),
 
-/***/ 2592:
+/***/ 4952:
 /***/ (function(module) {
 
 var $TypeError = TypeError;
@@ -5637,11 +5637,11 @@ module.exports = function (passed, required) {
 
 /***/ }),
 
-/***/ 8299:
+/***/ 8698:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var global = __webpack_require__(5624);
-var isCallable = __webpack_require__(824);
+var global = __webpack_require__(5391);
+var isCallable = __webpack_require__(2073);
 
 var WeakMap = global.WeakMap;
 
@@ -5650,13 +5650,13 @@ module.exports = isCallable(WeakMap) && /native code/.test(String(WeakMap));
 
 /***/ }),
 
-/***/ 4971:
+/***/ 923:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var path = __webpack_require__(2204);
-var hasOwn = __webpack_require__(1328);
-var wrappedWellKnownSymbolModule = __webpack_require__(7360);
-var defineProperty = (__webpack_require__(752).f);
+var path = __webpack_require__(7675);
+var hasOwn = __webpack_require__(4373);
+var wrappedWellKnownSymbolModule = __webpack_require__(1635);
+var defineProperty = (__webpack_require__(6381).f);
 
 module.exports = function (NAME) {
   var Symbol = path.Symbol || (path.Symbol = {});
@@ -5668,25 +5668,25 @@ module.exports = function (NAME) {
 
 /***/ }),
 
-/***/ 7360:
+/***/ 1635:
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
-var wellKnownSymbol = __webpack_require__(6868);
+var wellKnownSymbol = __webpack_require__(6615);
 
 exports.f = wellKnownSymbol;
 
 
 /***/ }),
 
-/***/ 6868:
+/***/ 6615:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var global = __webpack_require__(5624);
-var shared = __webpack_require__(8792);
-var hasOwn = __webpack_require__(1328);
-var uid = __webpack_require__(3368);
-var NATIVE_SYMBOL = __webpack_require__(9336);
-var USE_SYMBOL_AS_UID = __webpack_require__(8116);
+var global = __webpack_require__(5391);
+var shared = __webpack_require__(3557);
+var hasOwn = __webpack_require__(4373);
+var uid = __webpack_require__(7980);
+var NATIVE_SYMBOL = __webpack_require__(7235);
+var USE_SYMBOL_AS_UID = __webpack_require__(1004);
 
 var Symbol = global.Symbol;
 var WellKnownSymbolsStore = shared('wks');
@@ -5703,7 +5703,7 @@ module.exports = function (name) {
 
 /***/ }),
 
-/***/ 568:
+/***/ 1192:
 /***/ (function(module) {
 
 // a string of all valid unicode whitespaces
@@ -5713,24 +5713,24 @@ module.exports = '\u0009\u000A\u000B\u000C\u000D\u0020\u00A0\u1680\u2000\u2001\u
 
 /***/ }),
 
-/***/ 9112:
+/***/ 2949:
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
 "use strict";
 
-var $ = __webpack_require__(9596);
-var isPrototypeOf = __webpack_require__(8416);
-var getPrototypeOf = __webpack_require__(5528);
-var setPrototypeOf = __webpack_require__(5504);
-var copyConstructorProperties = __webpack_require__(9495);
-var create = __webpack_require__(3576);
-var createNonEnumerableProperty = __webpack_require__(7180);
-var createPropertyDescriptor = __webpack_require__(8216);
-var installErrorCause = __webpack_require__(3976);
-var installErrorStack = __webpack_require__(3452);
-var iterate = __webpack_require__(6084);
-var normalizeStringArgument = __webpack_require__(6832);
-var wellKnownSymbol = __webpack_require__(6868);
+var $ = __webpack_require__(1938);
+var isPrototypeOf = __webpack_require__(3381);
+var getPrototypeOf = __webpack_require__(3439);
+var setPrototypeOf = __webpack_require__(4619);
+var copyConstructorProperties = __webpack_require__(2144);
+var create = __webpack_require__(3628);
+var createNonEnumerableProperty = __webpack_require__(8471);
+var createPropertyDescriptor = __webpack_require__(3768);
+var installErrorCause = __webpack_require__(60);
+var installErrorStack = __webpack_require__(927);
+var iterate = __webpack_require__(9384);
+var normalizeStringArgument = __webpack_require__(9383);
+var wellKnownSymbol = __webpack_require__(6615);
 
 var TO_STRING_TAG = wellKnownSymbol('toStringTag');
 var $Error = Error;
@@ -5772,32 +5772,32 @@ $({ global: true, constructor: true, arity: 2 }, {
 
 /***/ }),
 
-/***/ 6331:
+/***/ 1095:
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
 // TODO: Remove this module from `core-js@4` since it's replaced to module below
-__webpack_require__(9112);
+__webpack_require__(2949);
 
 
 /***/ }),
 
-/***/ 1348:
+/***/ 9958:
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
 "use strict";
 
-var $ = __webpack_require__(9596);
-var fails = __webpack_require__(6688);
-var isArray = __webpack_require__(6060);
-var isObject = __webpack_require__(6884);
-var toObject = __webpack_require__(320);
-var lengthOfArrayLike = __webpack_require__(9868);
-var doesNotExceedSafeInteger = __webpack_require__(748);
-var createProperty = __webpack_require__(364);
-var arraySpeciesCreate = __webpack_require__(5040);
-var arrayMethodHasSpeciesSupport = __webpack_require__(9068);
-var wellKnownSymbol = __webpack_require__(6868);
-var V8_VERSION = __webpack_require__(3928);
+var $ = __webpack_require__(1938);
+var fails = __webpack_require__(7131);
+var isArray = __webpack_require__(1972);
+var isObject = __webpack_require__(5774);
+var toObject = __webpack_require__(5809);
+var lengthOfArrayLike = __webpack_require__(954);
+var doesNotExceedSafeInteger = __webpack_require__(6929);
+var createProperty = __webpack_require__(8724);
+var arraySpeciesCreate = __webpack_require__(6601);
+var arrayMethodHasSpeciesSupport = __webpack_require__(1225);
+var wellKnownSymbol = __webpack_require__(6615);
+var V8_VERSION = __webpack_require__(6312);
 
 var IS_CONCAT_SPREADABLE = wellKnownSymbol('isConcatSpreadable');
 
@@ -5847,14 +5847,14 @@ $({ target: 'Array', proto: true, arity: 1, forced: FORCED }, {
 
 /***/ }),
 
-/***/ 7660:
+/***/ 1284:
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
 "use strict";
 
-var $ = __webpack_require__(9596);
-var $filter = (__webpack_require__(1548).filter);
-var arrayMethodHasSpeciesSupport = __webpack_require__(9068);
+var $ = __webpack_require__(1938);
+var $filter = (__webpack_require__(2217).filter);
+var arrayMethodHasSpeciesSupport = __webpack_require__(1225);
 
 var HAS_SPECIES_SUPPORT = arrayMethodHasSpeciesSupport('filter');
 
@@ -5870,14 +5870,14 @@ $({ target: 'Array', proto: true, forced: !HAS_SPECIES_SUPPORT }, {
 
 /***/ }),
 
-/***/ 3964:
+/***/ 7765:
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
 "use strict";
 
-var $ = __webpack_require__(9596);
-var $find = (__webpack_require__(1548).find);
-var addToUnscopables = __webpack_require__(6416);
+var $ = __webpack_require__(1938);
+var $find = (__webpack_require__(2217).find);
+var addToUnscopables = __webpack_require__(6065);
 
 var FIND = 'find';
 var SKIPS_HOLES = true;
@@ -5900,13 +5900,13 @@ addToUnscopables(FIND);
 
 /***/ }),
 
-/***/ 788:
+/***/ 9177:
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
 "use strict";
 
-var $ = __webpack_require__(9596);
-var forEach = __webpack_require__(1245);
+var $ = __webpack_require__(1938);
+var forEach = __webpack_require__(1591);
 
 // `Array.prototype.forEach` method
 // https://tc39.es/ecma262/#sec-array.prototype.foreach
@@ -5918,12 +5918,12 @@ $({ target: 'Array', proto: true, forced: [].forEach != forEach }, {
 
 /***/ }),
 
-/***/ 472:
+/***/ 6206:
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
-var $ = __webpack_require__(9596);
-var from = __webpack_require__(1032);
-var checkCorrectnessOfIteration = __webpack_require__(1792);
+var $ = __webpack_require__(1938);
+var from = __webpack_require__(6864);
+var checkCorrectnessOfIteration = __webpack_require__(8224);
 
 var INCORRECT_ITERATION = !checkCorrectnessOfIteration(function (iterable) {
   // eslint-disable-next-line es/no-array-from -- required for testing
@@ -5939,15 +5939,15 @@ $({ target: 'Array', stat: true, forced: INCORRECT_ITERATION }, {
 
 /***/ }),
 
-/***/ 4940:
+/***/ 7019:
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
 "use strict";
 
-var $ = __webpack_require__(9596);
-var $includes = (__webpack_require__(9748).includes);
-var fails = __webpack_require__(6688);
-var addToUnscopables = __webpack_require__(6416);
+var $ = __webpack_require__(1938);
+var $includes = (__webpack_require__(4581).includes);
+var fails = __webpack_require__(7131);
+var addToUnscopables = __webpack_require__(6065);
 
 // FF99+ bug
 var BROKEN_ON_SPARSE = fails(function () {
@@ -5969,16 +5969,16 @@ addToUnscopables('includes');
 
 /***/ }),
 
-/***/ 9548:
+/***/ 7640:
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
 "use strict";
 
 /* eslint-disable es/no-array-prototype-indexof -- required for testing */
-var $ = __webpack_require__(9596);
-var uncurryThis = __webpack_require__(8936);
-var $indexOf = (__webpack_require__(9748).indexOf);
-var arrayMethodIsStrict = __webpack_require__(4700);
+var $ = __webpack_require__(1938);
+var uncurryThis = __webpack_require__(9000);
+var $indexOf = (__webpack_require__(4581).indexOf);
+var arrayMethodIsStrict = __webpack_require__(538);
 
 var nativeIndexOf = uncurryThis([].indexOf);
 
@@ -6000,11 +6000,11 @@ $({ target: 'Array', proto: true, forced: FORCED }, {
 
 /***/ }),
 
-/***/ 6243:
+/***/ 5425:
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
-var $ = __webpack_require__(9596);
-var isArray = __webpack_require__(6060);
+var $ = __webpack_require__(1938);
+var isArray = __webpack_require__(1972);
 
 // `Array.isArray` method
 // https://tc39.es/ecma262/#sec-array.isarray
@@ -6015,20 +6015,20 @@ $({ target: 'Array', stat: true }, {
 
 /***/ }),
 
-/***/ 176:
+/***/ 6396:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
 "use strict";
 
-var toIndexedObject = __webpack_require__(8709);
-var addToUnscopables = __webpack_require__(6416);
-var Iterators = __webpack_require__(2936);
-var InternalStateModule = __webpack_require__(4880);
-var defineProperty = (__webpack_require__(752).f);
-var defineIterator = __webpack_require__(6548);
-var createIterResultObject = __webpack_require__(2428);
-var IS_PURE = __webpack_require__(9304);
-var DESCRIPTORS = __webpack_require__(2892);
+var toIndexedObject = __webpack_require__(9441);
+var addToUnscopables = __webpack_require__(6065);
+var Iterators = __webpack_require__(1113);
+var InternalStateModule = __webpack_require__(9257);
+var defineProperty = (__webpack_require__(6381).f);
+var defineIterator = __webpack_require__(6188);
+var createIterResultObject = __webpack_require__(789);
+var IS_PURE = __webpack_require__(3599);
+var DESCRIPTORS = __webpack_require__(5560);
 
 var ARRAY_ITERATOR = 'Array Iterator';
 var setInternalState = InternalStateModule.set;
@@ -6085,11 +6085,11 @@ if (!IS_PURE && DESCRIPTORS && values.name !== 'values') try {
 
 /***/ }),
 
-/***/ 2148:
+/***/ 5973:
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
-var $ = __webpack_require__(9596);
-var lastIndexOf = __webpack_require__(2248);
+var $ = __webpack_require__(1938);
+var lastIndexOf = __webpack_require__(4071);
 
 // `Array.prototype.lastIndexOf` method
 // https://tc39.es/ecma262/#sec-array.prototype.lastindexof
@@ -6101,14 +6101,14 @@ $({ target: 'Array', proto: true, forced: lastIndexOf !== [].lastIndexOf }, {
 
 /***/ }),
 
-/***/ 7192:
+/***/ 1306:
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
 "use strict";
 
-var $ = __webpack_require__(9596);
-var $map = (__webpack_require__(1548).map);
-var arrayMethodHasSpeciesSupport = __webpack_require__(9068);
+var $ = __webpack_require__(1938);
+var $map = (__webpack_require__(2217).map);
+var arrayMethodHasSpeciesSupport = __webpack_require__(1225);
 
 var HAS_SPECIES_SUPPORT = arrayMethodHasSpeciesSupport('map');
 
@@ -6124,17 +6124,17 @@ $({ target: 'Array', proto: true, forced: !HAS_SPECIES_SUPPORT }, {
 
 /***/ }),
 
-/***/ 784:
+/***/ 4966:
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
 "use strict";
 
-var $ = __webpack_require__(9596);
-var toObject = __webpack_require__(320);
-var lengthOfArrayLike = __webpack_require__(9868);
-var setArrayLength = __webpack_require__(8760);
-var doesNotExceedSafeInteger = __webpack_require__(748);
-var fails = __webpack_require__(6688);
+var $ = __webpack_require__(1938);
+var toObject = __webpack_require__(5809);
+var lengthOfArrayLike = __webpack_require__(954);
+var setArrayLength = __webpack_require__(6219);
+var doesNotExceedSafeInteger = __webpack_require__(6929);
+var fails = __webpack_require__(7131);
 
 var INCORRECT_TO_LENGTH = fails(function () {
   return [].push.call({ length: 0x100000000 }, 1) !== 4294967297;
@@ -6174,16 +6174,16 @@ $({ target: 'Array', proto: true, arity: 1, forced: FORCED }, {
 
 /***/ }),
 
-/***/ 6960:
+/***/ 8132:
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
 "use strict";
 
-var $ = __webpack_require__(9596);
-var $reduce = (__webpack_require__(400).left);
-var arrayMethodIsStrict = __webpack_require__(4700);
-var CHROME_VERSION = __webpack_require__(3928);
-var IS_NODE = __webpack_require__(1832);
+var $ = __webpack_require__(1938);
+var $reduce = (__webpack_require__(266).left);
+var arrayMethodIsStrict = __webpack_require__(538);
+var CHROME_VERSION = __webpack_require__(6312);
+var IS_NODE = __webpack_require__(7244);
 
 // Chrome 80-82 has a critical bug
 // https://bugs.chromium.org/p/chromium/issues/detail?id=1049982
@@ -6202,14 +6202,14 @@ $({ target: 'Array', proto: true, forced: FORCED }, {
 
 /***/ }),
 
-/***/ 3616:
+/***/ 4126:
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
 "use strict";
 
-var $ = __webpack_require__(9596);
-var uncurryThis = __webpack_require__(4800);
-var isArray = __webpack_require__(6060);
+var $ = __webpack_require__(1938);
+var uncurryThis = __webpack_require__(9036);
+var isArray = __webpack_require__(1972);
 
 var nativeReverse = uncurryThis([].reverse);
 var test = [1, 2];
@@ -6229,22 +6229,22 @@ $({ target: 'Array', proto: true, forced: String(test) === String(test.reverse()
 
 /***/ }),
 
-/***/ 6555:
+/***/ 9778:
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
 "use strict";
 
-var $ = __webpack_require__(9596);
-var isArray = __webpack_require__(6060);
-var isConstructor = __webpack_require__(1520);
-var isObject = __webpack_require__(6884);
-var toAbsoluteIndex = __webpack_require__(9940);
-var lengthOfArrayLike = __webpack_require__(9868);
-var toIndexedObject = __webpack_require__(8709);
-var createProperty = __webpack_require__(364);
-var wellKnownSymbol = __webpack_require__(6868);
-var arrayMethodHasSpeciesSupport = __webpack_require__(9068);
-var nativeSlice = __webpack_require__(424);
+var $ = __webpack_require__(1938);
+var isArray = __webpack_require__(1972);
+var isConstructor = __webpack_require__(6553);
+var isObject = __webpack_require__(5774);
+var toAbsoluteIndex = __webpack_require__(8630);
+var lengthOfArrayLike = __webpack_require__(954);
+var toIndexedObject = __webpack_require__(9441);
+var createProperty = __webpack_require__(8724);
+var wellKnownSymbol = __webpack_require__(6615);
+var arrayMethodHasSpeciesSupport = __webpack_require__(1225);
+var nativeSlice = __webpack_require__(820);
 
 var HAS_SPECIES_SUPPORT = arrayMethodHasSpeciesSupport('slice');
 
@@ -6286,25 +6286,25 @@ $({ target: 'Array', proto: true, forced: !HAS_SPECIES_SUPPORT }, {
 
 /***/ }),
 
-/***/ 9136:
+/***/ 2714:
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
 "use strict";
 
-var $ = __webpack_require__(9596);
-var uncurryThis = __webpack_require__(4800);
-var aCallable = __webpack_require__(7568);
-var toObject = __webpack_require__(320);
-var lengthOfArrayLike = __webpack_require__(9868);
-var deletePropertyOrThrow = __webpack_require__(3604);
-var toString = __webpack_require__(4552);
-var fails = __webpack_require__(6688);
-var internalSort = __webpack_require__(144);
-var arrayMethodIsStrict = __webpack_require__(4700);
-var FF = __webpack_require__(6024);
-var IE_OR_EDGE = __webpack_require__(2568);
-var V8 = __webpack_require__(3928);
-var WEBKIT = __webpack_require__(7796);
+var $ = __webpack_require__(1938);
+var uncurryThis = __webpack_require__(9036);
+var aCallable = __webpack_require__(182);
+var toObject = __webpack_require__(5809);
+var lengthOfArrayLike = __webpack_require__(954);
+var deletePropertyOrThrow = __webpack_require__(2850);
+var toString = __webpack_require__(7803);
+var fails = __webpack_require__(7131);
+var internalSort = __webpack_require__(2916);
+var arrayMethodIsStrict = __webpack_require__(538);
+var FF = __webpack_require__(166);
+var IE_OR_EDGE = __webpack_require__(1054);
+var V8 = __webpack_require__(6312);
+var WEBKIT = __webpack_require__(6532);
 
 var test = [];
 var nativeSort = uncurryThis(test.sort);
@@ -6400,22 +6400,22 @@ $({ target: 'Array', proto: true, forced: FORCED }, {
 
 /***/ }),
 
-/***/ 1544:
+/***/ 8969:
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
 "use strict";
 
-var $ = __webpack_require__(9596);
-var toObject = __webpack_require__(320);
-var toAbsoluteIndex = __webpack_require__(9940);
-var toIntegerOrInfinity = __webpack_require__(3880);
-var lengthOfArrayLike = __webpack_require__(9868);
-var setArrayLength = __webpack_require__(8760);
-var doesNotExceedSafeInteger = __webpack_require__(748);
-var arraySpeciesCreate = __webpack_require__(5040);
-var createProperty = __webpack_require__(364);
-var deletePropertyOrThrow = __webpack_require__(3604);
-var arrayMethodHasSpeciesSupport = __webpack_require__(9068);
+var $ = __webpack_require__(1938);
+var toObject = __webpack_require__(5809);
+var toAbsoluteIndex = __webpack_require__(8630);
+var toIntegerOrInfinity = __webpack_require__(6759);
+var lengthOfArrayLike = __webpack_require__(954);
+var setArrayLength = __webpack_require__(6219);
+var doesNotExceedSafeInteger = __webpack_require__(6929);
+var arraySpeciesCreate = __webpack_require__(6601);
+var createProperty = __webpack_require__(8724);
+var deletePropertyOrThrow = __webpack_require__(2850);
+var arrayMethodHasSpeciesSupport = __webpack_require__(1225);
 
 var HAS_SPECIES_SUPPORT = arrayMethodHasSpeciesSupport('splice');
 
@@ -6475,7 +6475,7 @@ $({ target: 'Array', proto: true, forced: !HAS_SPECIES_SUPPORT }, {
 
 /***/ }),
 
-/***/ 9060:
+/***/ 5704:
 /***/ (function() {
 
 // empty
@@ -6483,12 +6483,12 @@ $({ target: 'Array', proto: true, forced: !HAS_SPECIES_SUPPORT }, {
 
 /***/ }),
 
-/***/ 3572:
+/***/ 990:
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
 // TODO: Remove from `core-js@4`
-var $ = __webpack_require__(9596);
-var bind = __webpack_require__(7736);
+var $ = __webpack_require__(1938);
+var bind = __webpack_require__(2026);
 
 // `Function.prototype.bind` method
 // https://tc39.es/ecma262/#sec-function.prototype.bind
@@ -6500,20 +6500,20 @@ $({ target: 'Function', proto: true, forced: Function.bind !== bind }, {
 
 /***/ }),
 
-/***/ 2636:
+/***/ 1522:
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
-var $ = __webpack_require__(9596);
-var getBuiltIn = __webpack_require__(7724);
-var apply = __webpack_require__(720);
-var call = __webpack_require__(1816);
-var uncurryThis = __webpack_require__(4800);
-var fails = __webpack_require__(6688);
-var isCallable = __webpack_require__(824);
-var isSymbol = __webpack_require__(360);
-var arraySlice = __webpack_require__(424);
-var getReplacerFunction = __webpack_require__(9888);
-var NATIVE_SYMBOL = __webpack_require__(9336);
+var $ = __webpack_require__(1938);
+var getBuiltIn = __webpack_require__(7827);
+var apply = __webpack_require__(1981);
+var call = __webpack_require__(3057);
+var uncurryThis = __webpack_require__(9036);
+var fails = __webpack_require__(7131);
+var isCallable = __webpack_require__(2073);
+var isSymbol = __webpack_require__(3969);
+var arraySlice = __webpack_require__(820);
+var getReplacerFunction = __webpack_require__(7873);
+var NATIVE_SYMBOL = __webpack_require__(7235);
 
 var $String = String;
 var $stringify = getBuiltIn('JSON', 'stringify');
@@ -6579,11 +6579,11 @@ if ($stringify) {
 
 /***/ }),
 
-/***/ 9696:
+/***/ 6111:
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
-var global = __webpack_require__(5624);
-var setToStringTag = __webpack_require__(3600);
+var global = __webpack_require__(5391);
+var setToStringTag = __webpack_require__(5051);
 
 // JSON[@@toStringTag] property
 // https://tc39.es/ecma262/#sec-json-@@tostringtag
@@ -6592,13 +6592,13 @@ setToStringTag(global.JSON, 'JSON', true);
 
 /***/ }),
 
-/***/ 2316:
+/***/ 5719:
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
 "use strict";
 
-var collection = __webpack_require__(8248);
-var collectionStrong = __webpack_require__(8496);
+var collection = __webpack_require__(8816);
+var collectionStrong = __webpack_require__(4502);
 
 // `Map` constructor
 // https://tc39.es/ecma262/#sec-map-objects
@@ -6609,16 +6609,16 @@ collection('Map', function (init) {
 
 /***/ }),
 
-/***/ 2944:
+/***/ 9445:
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
 // TODO: Remove this module from `core-js@4` since it's replaced to module below
-__webpack_require__(2316);
+__webpack_require__(5719);
 
 
 /***/ }),
 
-/***/ 8128:
+/***/ 2259:
 /***/ (function() {
 
 // empty
@@ -6626,11 +6626,11 @@ __webpack_require__(2316);
 
 /***/ }),
 
-/***/ 7212:
+/***/ 6889:
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
-var $ = __webpack_require__(9596);
-var assign = __webpack_require__(1940);
+var $ = __webpack_require__(1938);
+var assign = __webpack_require__(8593);
 
 // `Object.assign` method
 // https://tc39.es/ecma262/#sec-object.assign
@@ -6642,13 +6642,13 @@ $({ target: 'Object', stat: true, arity: 2, forced: Object.assign !== assign }, 
 
 /***/ }),
 
-/***/ 9640:
+/***/ 9252:
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
 // TODO: Remove from `core-js@4`
-var $ = __webpack_require__(9596);
-var DESCRIPTORS = __webpack_require__(2892);
-var create = __webpack_require__(3576);
+var $ = __webpack_require__(1938);
+var DESCRIPTORS = __webpack_require__(5560);
+var create = __webpack_require__(3628);
 
 // `Object.create` method
 // https://tc39.es/ecma262/#sec-object.create
@@ -6659,12 +6659,12 @@ $({ target: 'Object', stat: true, sham: !DESCRIPTORS }, {
 
 /***/ }),
 
-/***/ 6892:
+/***/ 8805:
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
-var $ = __webpack_require__(9596);
-var DESCRIPTORS = __webpack_require__(2892);
-var defineProperty = (__webpack_require__(752).f);
+var $ = __webpack_require__(1938);
+var DESCRIPTORS = __webpack_require__(5560);
+var defineProperty = (__webpack_require__(6381).f);
 
 // `Object.defineProperty` method
 // https://tc39.es/ecma262/#sec-object.defineproperty
@@ -6676,12 +6676,12 @@ $({ target: 'Object', stat: true, forced: Object.defineProperty !== defineProper
 
 /***/ }),
 
-/***/ 7120:
+/***/ 28:
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
-var $ = __webpack_require__(9596);
-var fails = __webpack_require__(6688);
-var getOwnPropertyNames = (__webpack_require__(1952).f);
+var $ = __webpack_require__(1938);
+var fails = __webpack_require__(7131);
+var getOwnPropertyNames = (__webpack_require__(3126).f);
 
 // eslint-disable-next-line es/no-object-getownpropertynames -- required for testing
 var FAILS_ON_PRIMITIVES = fails(function () { return !Object.getOwnPropertyNames(1); });
@@ -6695,14 +6695,14 @@ $({ target: 'Object', stat: true, forced: FAILS_ON_PRIMITIVES }, {
 
 /***/ }),
 
-/***/ 1024:
+/***/ 65:
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
-var $ = __webpack_require__(9596);
-var NATIVE_SYMBOL = __webpack_require__(9336);
-var fails = __webpack_require__(6688);
-var getOwnPropertySymbolsModule = __webpack_require__(8576);
-var toObject = __webpack_require__(320);
+var $ = __webpack_require__(1938);
+var NATIVE_SYMBOL = __webpack_require__(7235);
+var fails = __webpack_require__(7131);
+var getOwnPropertySymbolsModule = __webpack_require__(6841);
+var toObject = __webpack_require__(5809);
 
 // V8 ~ Chrome 38 and 39 `Object.getOwnPropertySymbols` fails on primitives
 // https://bugs.chromium.org/p/v8/issues/detail?id=3443
@@ -6720,14 +6720,14 @@ $({ target: 'Object', stat: true, forced: FORCED }, {
 
 /***/ }),
 
-/***/ 5700:
+/***/ 4999:
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
-var $ = __webpack_require__(9596);
-var fails = __webpack_require__(6688);
-var toObject = __webpack_require__(320);
-var nativeGetPrototypeOf = __webpack_require__(5528);
-var CORRECT_PROTOTYPE_GETTER = __webpack_require__(2744);
+var $ = __webpack_require__(1938);
+var fails = __webpack_require__(7131);
+var toObject = __webpack_require__(5809);
+var nativeGetPrototypeOf = __webpack_require__(3439);
+var CORRECT_PROTOTYPE_GETTER = __webpack_require__(7007);
 
 var FAILS_ON_PRIMITIVES = fails(function () { nativeGetPrototypeOf(1); });
 
@@ -6743,13 +6743,13 @@ $({ target: 'Object', stat: true, forced: FAILS_ON_PRIMITIVES, sham: !CORRECT_PR
 
 /***/ }),
 
-/***/ 6800:
+/***/ 9676:
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
-var $ = __webpack_require__(9596);
-var toObject = __webpack_require__(320);
-var nativeKeys = __webpack_require__(1248);
-var fails = __webpack_require__(6688);
+var $ = __webpack_require__(1938);
+var toObject = __webpack_require__(5809);
+var nativeKeys = __webpack_require__(5556);
+var fails = __webpack_require__(7131);
 
 var FAILS_ON_PRIMITIVES = fails(function () { nativeKeys(1); });
 
@@ -6764,11 +6764,11 @@ $({ target: 'Object', stat: true, forced: FAILS_ON_PRIMITIVES }, {
 
 /***/ }),
 
-/***/ 4036:
+/***/ 2947:
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
-var $ = __webpack_require__(9596);
-var setPrototypeOf = __webpack_require__(5504);
+var $ = __webpack_require__(1938);
+var setPrototypeOf = __webpack_require__(4619);
 
 // `Object.setPrototypeOf` method
 // https://tc39.es/ecma262/#sec-object.setprototypeof
@@ -6779,7 +6779,7 @@ $({ target: 'Object', stat: true }, {
 
 /***/ }),
 
-/***/ 2984:
+/***/ 5991:
 /***/ (function() {
 
 // empty
@@ -6787,11 +6787,11 @@ $({ target: 'Object', stat: true }, {
 
 /***/ }),
 
-/***/ 5328:
+/***/ 3582:
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
-var $ = __webpack_require__(9596);
-var $values = (__webpack_require__(7744).values);
+var $ = __webpack_require__(1938);
+var $values = (__webpack_require__(5657).values);
 
 // `Object.values` method
 // https://tc39.es/ecma262/#sec-object.values
@@ -6804,11 +6804,11 @@ $({ target: 'Object', stat: true }, {
 
 /***/ }),
 
-/***/ 3219:
+/***/ 6839:
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
-var $ = __webpack_require__(9596);
-var $parseFloat = __webpack_require__(4560);
+var $ = __webpack_require__(1938);
+var $parseFloat = __webpack_require__(3180);
 
 // `parseFloat` method
 // https://tc39.es/ecma262/#sec-parsefloat-string
@@ -6819,11 +6819,11 @@ $({ global: true, forced: parseFloat != $parseFloat }, {
 
 /***/ }),
 
-/***/ 6904:
+/***/ 1416:
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
-var $ = __webpack_require__(9596);
-var $parseInt = __webpack_require__(1288);
+var $ = __webpack_require__(1938);
+var $parseInt = __webpack_require__(5787);
 
 // `parseInt` method
 // https://tc39.es/ecma262/#sec-parseint-string-radix
@@ -6834,18 +6834,18 @@ $({ global: true, forced: parseInt != $parseInt }, {
 
 /***/ }),
 
-/***/ 8632:
+/***/ 6331:
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
 "use strict";
 
-var $ = __webpack_require__(9596);
-var call = __webpack_require__(1816);
-var aCallable = __webpack_require__(7568);
-var newPromiseCapabilityModule = __webpack_require__(7392);
-var perform = __webpack_require__(9276);
-var iterate = __webpack_require__(6084);
-var PROMISE_STATICS_INCORRECT_ITERATION = __webpack_require__(4240);
+var $ = __webpack_require__(1938);
+var call = __webpack_require__(3057);
+var aCallable = __webpack_require__(182);
+var newPromiseCapabilityModule = __webpack_require__(8959);
+var perform = __webpack_require__(1851);
+var iterate = __webpack_require__(9384);
+var PROMISE_STATICS_INCORRECT_ITERATION = __webpack_require__(1197);
 
 // `Promise.allSettled` method
 // https://tc39.es/ecma262/#sec-promise.allsettled
@@ -6886,18 +6886,18 @@ $({ target: 'Promise', stat: true, forced: PROMISE_STATICS_INCORRECT_ITERATION }
 
 /***/ }),
 
-/***/ 3252:
+/***/ 3423:
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
 "use strict";
 
-var $ = __webpack_require__(9596);
-var call = __webpack_require__(1816);
-var aCallable = __webpack_require__(7568);
-var newPromiseCapabilityModule = __webpack_require__(7392);
-var perform = __webpack_require__(9276);
-var iterate = __webpack_require__(6084);
-var PROMISE_STATICS_INCORRECT_ITERATION = __webpack_require__(4240);
+var $ = __webpack_require__(1938);
+var call = __webpack_require__(3057);
+var aCallable = __webpack_require__(182);
+var newPromiseCapabilityModule = __webpack_require__(8959);
+var perform = __webpack_require__(1851);
+var iterate = __webpack_require__(9384);
+var PROMISE_STATICS_INCORRECT_ITERATION = __webpack_require__(1197);
 
 // `Promise.all` method
 // https://tc39.es/ecma262/#sec-promise.all
@@ -6933,19 +6933,19 @@ $({ target: 'Promise', stat: true, forced: PROMISE_STATICS_INCORRECT_ITERATION }
 
 /***/ }),
 
-/***/ 2168:
+/***/ 3474:
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
 "use strict";
 
-var $ = __webpack_require__(9596);
-var call = __webpack_require__(1816);
-var aCallable = __webpack_require__(7568);
-var getBuiltIn = __webpack_require__(7724);
-var newPromiseCapabilityModule = __webpack_require__(7392);
-var perform = __webpack_require__(9276);
-var iterate = __webpack_require__(6084);
-var PROMISE_STATICS_INCORRECT_ITERATION = __webpack_require__(4240);
+var $ = __webpack_require__(1938);
+var call = __webpack_require__(3057);
+var aCallable = __webpack_require__(182);
+var getBuiltIn = __webpack_require__(7827);
+var newPromiseCapabilityModule = __webpack_require__(8959);
+var perform = __webpack_require__(1851);
+var iterate = __webpack_require__(9384);
+var PROMISE_STATICS_INCORRECT_ITERATION = __webpack_require__(1197);
 
 var PROMISE_ANY_ERROR = 'No one promise resolved';
 
@@ -6989,18 +6989,18 @@ $({ target: 'Promise', stat: true, forced: PROMISE_STATICS_INCORRECT_ITERATION }
 
 /***/ }),
 
-/***/ 448:
+/***/ 9959:
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
 "use strict";
 
-var $ = __webpack_require__(9596);
-var IS_PURE = __webpack_require__(9304);
-var FORCED_PROMISE_CONSTRUCTOR = (__webpack_require__(812).CONSTRUCTOR);
-var NativePromiseConstructor = __webpack_require__(8931);
-var getBuiltIn = __webpack_require__(7724);
-var isCallable = __webpack_require__(824);
-var defineBuiltIn = __webpack_require__(9152);
+var $ = __webpack_require__(1938);
+var IS_PURE = __webpack_require__(3599);
+var FORCED_PROMISE_CONSTRUCTOR = (__webpack_require__(5616).CONSTRUCTOR);
+var NativePromiseConstructor = __webpack_require__(1074);
+var getBuiltIn = __webpack_require__(7827);
+var isCallable = __webpack_require__(2073);
+var defineBuiltIn = __webpack_require__(492);
 
 var NativePromisePrototype = NativePromiseConstructor && NativePromiseConstructor.prototype;
 
@@ -7023,34 +7023,34 @@ if (!IS_PURE && isCallable(NativePromiseConstructor)) {
 
 /***/ }),
 
-/***/ 2928:
+/***/ 832:
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
 "use strict";
 
-var $ = __webpack_require__(9596);
-var IS_PURE = __webpack_require__(9304);
-var IS_NODE = __webpack_require__(1832);
-var global = __webpack_require__(5624);
-var call = __webpack_require__(1816);
-var defineBuiltIn = __webpack_require__(9152);
-var setPrototypeOf = __webpack_require__(5504);
-var setToStringTag = __webpack_require__(3600);
-var setSpecies = __webpack_require__(3100);
-var aCallable = __webpack_require__(7568);
-var isCallable = __webpack_require__(824);
-var isObject = __webpack_require__(6884);
-var anInstance = __webpack_require__(4932);
-var speciesConstructor = __webpack_require__(4264);
-var task = (__webpack_require__(8974).set);
-var microtask = __webpack_require__(9064);
-var hostReportErrors = __webpack_require__(9320);
-var perform = __webpack_require__(9276);
-var Queue = __webpack_require__(3296);
-var InternalStateModule = __webpack_require__(4880);
-var NativePromiseConstructor = __webpack_require__(8931);
-var PromiseConstructorDetection = __webpack_require__(812);
-var newPromiseCapabilityModule = __webpack_require__(7392);
+var $ = __webpack_require__(1938);
+var IS_PURE = __webpack_require__(3599);
+var IS_NODE = __webpack_require__(7244);
+var global = __webpack_require__(5391);
+var call = __webpack_require__(3057);
+var defineBuiltIn = __webpack_require__(492);
+var setPrototypeOf = __webpack_require__(4619);
+var setToStringTag = __webpack_require__(5051);
+var setSpecies = __webpack_require__(9413);
+var aCallable = __webpack_require__(182);
+var isCallable = __webpack_require__(2073);
+var isObject = __webpack_require__(5774);
+var anInstance = __webpack_require__(675);
+var speciesConstructor = __webpack_require__(4745);
+var task = (__webpack_require__(4677).set);
+var microtask = __webpack_require__(5655);
+var hostReportErrors = __webpack_require__(2321);
+var perform = __webpack_require__(1851);
+var Queue = __webpack_require__(6949);
+var InternalStateModule = __webpack_require__(9257);
+var NativePromiseConstructor = __webpack_require__(1074);
+var PromiseConstructorDetection = __webpack_require__(5616);
+var newPromiseCapabilityModule = __webpack_require__(8959);
 
 var PROMISE = 'Promise';
 var FORCED_PROMISE_CONSTRUCTOR = PromiseConstructorDetection.CONSTRUCTOR;
@@ -7319,20 +7319,20 @@ setSpecies(PROMISE);
 
 /***/ }),
 
-/***/ 9440:
+/***/ 4235:
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
 "use strict";
 
-var $ = __webpack_require__(9596);
-var IS_PURE = __webpack_require__(9304);
-var NativePromiseConstructor = __webpack_require__(8931);
-var fails = __webpack_require__(6688);
-var getBuiltIn = __webpack_require__(7724);
-var isCallable = __webpack_require__(824);
-var speciesConstructor = __webpack_require__(4264);
-var promiseResolve = __webpack_require__(7032);
-var defineBuiltIn = __webpack_require__(9152);
+var $ = __webpack_require__(1938);
+var IS_PURE = __webpack_require__(3599);
+var NativePromiseConstructor = __webpack_require__(1074);
+var fails = __webpack_require__(7131);
+var getBuiltIn = __webpack_require__(7827);
+var isCallable = __webpack_require__(2073);
+var speciesConstructor = __webpack_require__(4745);
+var promiseResolve = __webpack_require__(2130);
+var defineBuiltIn = __webpack_require__(492);
 
 var NativePromisePrototype = NativePromiseConstructor && NativePromiseConstructor.prototype;
 
@@ -7370,32 +7370,32 @@ if (!IS_PURE && isCallable(NativePromiseConstructor)) {
 
 /***/ }),
 
-/***/ 1356:
+/***/ 9766:
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
 // TODO: Remove this module from `core-js@4` since it's split to modules listed below
-__webpack_require__(2928);
-__webpack_require__(3252);
-__webpack_require__(448);
-__webpack_require__(7372);
-__webpack_require__(8708);
-__webpack_require__(7640);
+__webpack_require__(832);
+__webpack_require__(3423);
+__webpack_require__(9959);
+__webpack_require__(7003);
+__webpack_require__(5189);
+__webpack_require__(4972);
 
 
 /***/ }),
 
-/***/ 7372:
+/***/ 7003:
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
 "use strict";
 
-var $ = __webpack_require__(9596);
-var call = __webpack_require__(1816);
-var aCallable = __webpack_require__(7568);
-var newPromiseCapabilityModule = __webpack_require__(7392);
-var perform = __webpack_require__(9276);
-var iterate = __webpack_require__(6084);
-var PROMISE_STATICS_INCORRECT_ITERATION = __webpack_require__(4240);
+var $ = __webpack_require__(1938);
+var call = __webpack_require__(3057);
+var aCallable = __webpack_require__(182);
+var newPromiseCapabilityModule = __webpack_require__(8959);
+var perform = __webpack_require__(1851);
+var iterate = __webpack_require__(9384);
+var PROMISE_STATICS_INCORRECT_ITERATION = __webpack_require__(1197);
 
 // `Promise.race` method
 // https://tc39.es/ecma262/#sec-promise.race
@@ -7418,15 +7418,15 @@ $({ target: 'Promise', stat: true, forced: PROMISE_STATICS_INCORRECT_ITERATION }
 
 /***/ }),
 
-/***/ 8708:
+/***/ 5189:
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
 "use strict";
 
-var $ = __webpack_require__(9596);
-var call = __webpack_require__(1816);
-var newPromiseCapabilityModule = __webpack_require__(7392);
-var FORCED_PROMISE_CONSTRUCTOR = (__webpack_require__(812).CONSTRUCTOR);
+var $ = __webpack_require__(1938);
+var call = __webpack_require__(3057);
+var newPromiseCapabilityModule = __webpack_require__(8959);
+var FORCED_PROMISE_CONSTRUCTOR = (__webpack_require__(5616).CONSTRUCTOR);
 
 // `Promise.reject` method
 // https://tc39.es/ecma262/#sec-promise.reject
@@ -7441,17 +7441,17 @@ $({ target: 'Promise', stat: true, forced: FORCED_PROMISE_CONSTRUCTOR }, {
 
 /***/ }),
 
-/***/ 7640:
+/***/ 4972:
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
 "use strict";
 
-var $ = __webpack_require__(9596);
-var getBuiltIn = __webpack_require__(7724);
-var IS_PURE = __webpack_require__(9304);
-var NativePromiseConstructor = __webpack_require__(8931);
-var FORCED_PROMISE_CONSTRUCTOR = (__webpack_require__(812).CONSTRUCTOR);
-var promiseResolve = __webpack_require__(7032);
+var $ = __webpack_require__(1938);
+var getBuiltIn = __webpack_require__(7827);
+var IS_PURE = __webpack_require__(3599);
+var NativePromiseConstructor = __webpack_require__(1074);
+var FORCED_PROMISE_CONSTRUCTOR = (__webpack_require__(5616).CONSTRUCTOR);
+var promiseResolve = __webpack_require__(2130);
 
 var PromiseConstructorWrapper = getBuiltIn('Promise');
 var CHECK_WRAPPER = IS_PURE && !FORCED_PROMISE_CONSTRUCTOR;
@@ -7467,18 +7467,18 @@ $({ target: 'Promise', stat: true, forced: IS_PURE || FORCED_PROMISE_CONSTRUCTOR
 
 /***/ }),
 
-/***/ 8272:
+/***/ 6765:
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
-var $ = __webpack_require__(9596);
-var getBuiltIn = __webpack_require__(7724);
-var apply = __webpack_require__(720);
-var bind = __webpack_require__(7736);
-var aConstructor = __webpack_require__(5648);
-var anObject = __webpack_require__(6080);
-var isObject = __webpack_require__(6884);
-var create = __webpack_require__(3576);
-var fails = __webpack_require__(6688);
+var $ = __webpack_require__(1938);
+var getBuiltIn = __webpack_require__(7827);
+var apply = __webpack_require__(1981);
+var bind = __webpack_require__(2026);
+var aConstructor = __webpack_require__(5040);
+var anObject = __webpack_require__(8347);
+var isObject = __webpack_require__(5774);
+var create = __webpack_require__(3628);
+var fails = __webpack_require__(7131);
 
 var nativeConstruct = getBuiltIn('Reflect', 'construct');
 var ObjectPrototype = Object.prototype;
@@ -7530,7 +7530,7 @@ $({ target: 'Reflect', stat: true, forced: FORCED, sham: FORCED }, {
 
 /***/ }),
 
-/***/ 9156:
+/***/ 308:
 /***/ (function() {
 
 // empty
@@ -7538,17 +7538,17 @@ $({ target: 'Reflect', stat: true, forced: FORCED, sham: FORCED }, {
 
 /***/ }),
 
-/***/ 5344:
+/***/ 3991:
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
 "use strict";
 
-var $ = __webpack_require__(9596);
-var uncurryThis = __webpack_require__(4800);
-var notARegExp = __webpack_require__(3992);
-var requireObjectCoercible = __webpack_require__(7020);
-var toString = __webpack_require__(4552);
-var correctIsRegExpLogic = __webpack_require__(4688);
+var $ = __webpack_require__(1938);
+var uncurryThis = __webpack_require__(9036);
+var notARegExp = __webpack_require__(5923);
+var requireObjectCoercible = __webpack_require__(8890);
+var toString = __webpack_require__(7803);
+var correctIsRegExpLogic = __webpack_require__(7288);
 
 var stringIndexOf = uncurryThis(''.indexOf);
 
@@ -7567,16 +7567,16 @@ $({ target: 'String', proto: true, forced: !correctIsRegExpLogic('includes') }, 
 
 /***/ }),
 
-/***/ 2336:
+/***/ 7632:
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
 "use strict";
 
-var charAt = (__webpack_require__(3784).charAt);
-var toString = __webpack_require__(4552);
-var InternalStateModule = __webpack_require__(4880);
-var defineIterator = __webpack_require__(6548);
-var createIterResultObject = __webpack_require__(2428);
+var charAt = (__webpack_require__(235).charAt);
+var toString = __webpack_require__(7803);
+var InternalStateModule = __webpack_require__(9257);
+var defineIterator = __webpack_require__(6188);
+var createIterResultObject = __webpack_require__(789);
 
 var STRING_ITERATOR = 'String Iterator';
 var setInternalState = InternalStateModule.set;
@@ -7606,14 +7606,14 @@ defineIterator(String, 'String', function (iterated) {
 
 /***/ }),
 
-/***/ 5588:
+/***/ 448:
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
 "use strict";
 
-var $ = __webpack_require__(9596);
-var $padStart = (__webpack_require__(1124).start);
-var WEBKIT_BUG = __webpack_require__(4960);
+var $ = __webpack_require__(1938);
+var $padStart = (__webpack_require__(865).start);
+var WEBKIT_BUG = __webpack_require__(8915);
 
 // `String.prototype.padStart` method
 // https://tc39.es/ecma262/#sec-string.prototype.padstart
@@ -7626,20 +7626,20 @@ $({ target: 'String', proto: true, forced: WEBKIT_BUG }, {
 
 /***/ }),
 
-/***/ 4196:
+/***/ 2780:
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
 "use strict";
 
-var $ = __webpack_require__(9596);
-var uncurryThis = __webpack_require__(8936);
-var getOwnPropertyDescriptor = (__webpack_require__(2200).f);
-var toLength = __webpack_require__(2912);
-var toString = __webpack_require__(4552);
-var notARegExp = __webpack_require__(3992);
-var requireObjectCoercible = __webpack_require__(7020);
-var correctIsRegExpLogic = __webpack_require__(4688);
-var IS_PURE = __webpack_require__(9304);
+var $ = __webpack_require__(1938);
+var uncurryThis = __webpack_require__(9000);
+var getOwnPropertyDescriptor = (__webpack_require__(5687).f);
+var toLength = __webpack_require__(2954);
+var toString = __webpack_require__(7803);
+var notARegExp = __webpack_require__(5923);
+var requireObjectCoercible = __webpack_require__(8890);
+var correctIsRegExpLogic = __webpack_require__(7288);
+var IS_PURE = __webpack_require__(3599);
 
 // eslint-disable-next-line es/no-string-prototype-startswith -- safe
 var nativeStartsWith = uncurryThis(''.startsWith);
@@ -7670,14 +7670,14 @@ $({ target: 'String', proto: true, forced: !MDN_POLYFILL_BUG && !CORRECT_IS_REGE
 
 /***/ }),
 
-/***/ 9812:
+/***/ 614:
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
 "use strict";
 
-var $ = __webpack_require__(9596);
-var $trim = (__webpack_require__(1388).trim);
-var forcedStringTrimMethod = __webpack_require__(4024);
+var $ = __webpack_require__(1938);
+var $trim = (__webpack_require__(966).trim);
+var forcedStringTrimMethod = __webpack_require__(6014);
 
 // `String.prototype.trim` method
 // https://tc39.es/ecma262/#sec-string.prototype.trim
@@ -7690,10 +7690,10 @@ $({ target: 'String', proto: true, forced: forcedStringTrimMethod('trim') }, {
 
 /***/ }),
 
-/***/ 8117:
+/***/ 3128:
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
-var defineWellKnownSymbol = __webpack_require__(4971);
+var defineWellKnownSymbol = __webpack_require__(923);
 
 // `Symbol.asyncIterator` well-known symbol
 // https://tc39.es/ecma262/#sec-symbol.asynciterator
@@ -7702,48 +7702,48 @@ defineWellKnownSymbol('asyncIterator');
 
 /***/ }),
 
-/***/ 9936:
+/***/ 3805:
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
 "use strict";
 
-var $ = __webpack_require__(9596);
-var global = __webpack_require__(5624);
-var call = __webpack_require__(1816);
-var uncurryThis = __webpack_require__(4800);
-var IS_PURE = __webpack_require__(9304);
-var DESCRIPTORS = __webpack_require__(2892);
-var NATIVE_SYMBOL = __webpack_require__(9336);
-var fails = __webpack_require__(6688);
-var hasOwn = __webpack_require__(1328);
-var isPrototypeOf = __webpack_require__(8416);
-var anObject = __webpack_require__(6080);
-var toIndexedObject = __webpack_require__(8709);
-var toPropertyKey = __webpack_require__(8960);
-var $toString = __webpack_require__(4552);
-var createPropertyDescriptor = __webpack_require__(8216);
-var nativeObjectCreate = __webpack_require__(3576);
-var objectKeys = __webpack_require__(1248);
-var getOwnPropertyNamesModule = __webpack_require__(7728);
-var getOwnPropertyNamesExternal = __webpack_require__(1952);
-var getOwnPropertySymbolsModule = __webpack_require__(8576);
-var getOwnPropertyDescriptorModule = __webpack_require__(2200);
-var definePropertyModule = __webpack_require__(752);
-var definePropertiesModule = __webpack_require__(7308);
-var propertyIsEnumerableModule = __webpack_require__(1632);
-var defineBuiltIn = __webpack_require__(9152);
-var defineBuiltInAccessor = __webpack_require__(6792);
-var shared = __webpack_require__(8792);
-var sharedKey = __webpack_require__(6756);
-var hiddenKeys = __webpack_require__(7248);
-var uid = __webpack_require__(3368);
-var wellKnownSymbol = __webpack_require__(6868);
-var wrappedWellKnownSymbolModule = __webpack_require__(7360);
-var defineWellKnownSymbol = __webpack_require__(4971);
-var defineSymbolToPrimitive = __webpack_require__(1016);
-var setToStringTag = __webpack_require__(3600);
-var InternalStateModule = __webpack_require__(4880);
-var $forEach = (__webpack_require__(1548).forEach);
+var $ = __webpack_require__(1938);
+var global = __webpack_require__(5391);
+var call = __webpack_require__(3057);
+var uncurryThis = __webpack_require__(9036);
+var IS_PURE = __webpack_require__(3599);
+var DESCRIPTORS = __webpack_require__(5560);
+var NATIVE_SYMBOL = __webpack_require__(7235);
+var fails = __webpack_require__(7131);
+var hasOwn = __webpack_require__(4373);
+var isPrototypeOf = __webpack_require__(3381);
+var anObject = __webpack_require__(8347);
+var toIndexedObject = __webpack_require__(9441);
+var toPropertyKey = __webpack_require__(5141);
+var $toString = __webpack_require__(7803);
+var createPropertyDescriptor = __webpack_require__(3768);
+var nativeObjectCreate = __webpack_require__(3628);
+var objectKeys = __webpack_require__(5556);
+var getOwnPropertyNamesModule = __webpack_require__(2036);
+var getOwnPropertyNamesExternal = __webpack_require__(3126);
+var getOwnPropertySymbolsModule = __webpack_require__(6841);
+var getOwnPropertyDescriptorModule = __webpack_require__(5687);
+var definePropertyModule = __webpack_require__(6381);
+var definePropertiesModule = __webpack_require__(9157);
+var propertyIsEnumerableModule = __webpack_require__(6337);
+var defineBuiltIn = __webpack_require__(492);
+var defineBuiltInAccessor = __webpack_require__(3614);
+var shared = __webpack_require__(3557);
+var sharedKey = __webpack_require__(651);
+var hiddenKeys = __webpack_require__(6145);
+var uid = __webpack_require__(7980);
+var wellKnownSymbol = __webpack_require__(6615);
+var wrappedWellKnownSymbolModule = __webpack_require__(1635);
+var defineWellKnownSymbol = __webpack_require__(923);
+var defineSymbolToPrimitive = __webpack_require__(3966);
+var setToStringTag = __webpack_require__(5051);
+var InternalStateModule = __webpack_require__(9257);
+var $forEach = (__webpack_require__(2217).forEach);
 
 var HIDDEN = sharedKey('hidden');
 var SYMBOL = 'Symbol';
@@ -7963,7 +7963,7 @@ hiddenKeys[HIDDEN] = true;
 
 /***/ }),
 
-/***/ 4584:
+/***/ 1555:
 /***/ (function() {
 
 // empty
@@ -7971,15 +7971,15 @@ hiddenKeys[HIDDEN] = true;
 
 /***/ }),
 
-/***/ 288:
+/***/ 2042:
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
-var $ = __webpack_require__(9596);
-var getBuiltIn = __webpack_require__(7724);
-var hasOwn = __webpack_require__(1328);
-var toString = __webpack_require__(4552);
-var shared = __webpack_require__(8792);
-var NATIVE_SYMBOL_REGISTRY = __webpack_require__(2084);
+var $ = __webpack_require__(1938);
+var getBuiltIn = __webpack_require__(7827);
+var hasOwn = __webpack_require__(4373);
+var toString = __webpack_require__(7803);
+var shared = __webpack_require__(3557);
+var NATIVE_SYMBOL_REGISTRY = __webpack_require__(7700);
 
 var StringToSymbolRegistry = shared('string-to-symbol-registry');
 var SymbolToStringRegistry = shared('symbol-to-string-registry');
@@ -8000,10 +8000,10 @@ $({ target: 'Symbol', stat: true, forced: !NATIVE_SYMBOL_REGISTRY }, {
 
 /***/ }),
 
-/***/ 8916:
+/***/ 101:
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
-var defineWellKnownSymbol = __webpack_require__(4971);
+var defineWellKnownSymbol = __webpack_require__(923);
 
 // `Symbol.hasInstance` well-known symbol
 // https://tc39.es/ecma262/#sec-symbol.hasinstance
@@ -8012,10 +8012,10 @@ defineWellKnownSymbol('hasInstance');
 
 /***/ }),
 
-/***/ 1460:
+/***/ 7100:
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
-var defineWellKnownSymbol = __webpack_require__(4971);
+var defineWellKnownSymbol = __webpack_require__(923);
 
 // `Symbol.isConcatSpreadable` well-known symbol
 // https://tc39.es/ecma262/#sec-symbol.isconcatspreadable
@@ -8024,10 +8024,10 @@ defineWellKnownSymbol('isConcatSpreadable');
 
 /***/ }),
 
-/***/ 604:
+/***/ 3391:
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
-var defineWellKnownSymbol = __webpack_require__(4971);
+var defineWellKnownSymbol = __webpack_require__(923);
 
 // `Symbol.iterator` well-known symbol
 // https://tc39.es/ecma262/#sec-symbol.iterator
@@ -8036,28 +8036,28 @@ defineWellKnownSymbol('iterator');
 
 /***/ }),
 
-/***/ 864:
+/***/ 7375:
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
 // TODO: Remove this module from `core-js@4` since it's split to modules listed below
-__webpack_require__(9936);
-__webpack_require__(288);
-__webpack_require__(3120);
-__webpack_require__(2636);
-__webpack_require__(1024);
+__webpack_require__(3805);
+__webpack_require__(2042);
+__webpack_require__(8552);
+__webpack_require__(1522);
+__webpack_require__(65);
 
 
 /***/ }),
 
-/***/ 3120:
+/***/ 8552:
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
-var $ = __webpack_require__(9596);
-var hasOwn = __webpack_require__(1328);
-var isSymbol = __webpack_require__(360);
-var tryToString = __webpack_require__(2112);
-var shared = __webpack_require__(8792);
-var NATIVE_SYMBOL_REGISTRY = __webpack_require__(2084);
+var $ = __webpack_require__(1938);
+var hasOwn = __webpack_require__(4373);
+var isSymbol = __webpack_require__(3969);
+var tryToString = __webpack_require__(4003);
+var shared = __webpack_require__(3557);
+var NATIVE_SYMBOL_REGISTRY = __webpack_require__(7700);
 
 var SymbolToStringRegistry = shared('symbol-to-string-registry');
 
@@ -8073,10 +8073,10 @@ $({ target: 'Symbol', stat: true, forced: !NATIVE_SYMBOL_REGISTRY }, {
 
 /***/ }),
 
-/***/ 7604:
+/***/ 3714:
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
-var defineWellKnownSymbol = __webpack_require__(4971);
+var defineWellKnownSymbol = __webpack_require__(923);
 
 // `Symbol.matchAll` well-known symbol
 // https://tc39.es/ecma262/#sec-symbol.matchall
@@ -8085,10 +8085,10 @@ defineWellKnownSymbol('matchAll');
 
 /***/ }),
 
-/***/ 7948:
+/***/ 2712:
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
-var defineWellKnownSymbol = __webpack_require__(4971);
+var defineWellKnownSymbol = __webpack_require__(923);
 
 // `Symbol.match` well-known symbol
 // https://tc39.es/ecma262/#sec-symbol.match
@@ -8097,10 +8097,10 @@ defineWellKnownSymbol('match');
 
 /***/ }),
 
-/***/ 2828:
+/***/ 1713:
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
-var defineWellKnownSymbol = __webpack_require__(4971);
+var defineWellKnownSymbol = __webpack_require__(923);
 
 // `Symbol.replace` well-known symbol
 // https://tc39.es/ecma262/#sec-symbol.replace
@@ -8109,10 +8109,10 @@ defineWellKnownSymbol('replace');
 
 /***/ }),
 
-/***/ 8112:
+/***/ 9357:
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
-var defineWellKnownSymbol = __webpack_require__(4971);
+var defineWellKnownSymbol = __webpack_require__(923);
 
 // `Symbol.search` well-known symbol
 // https://tc39.es/ecma262/#sec-symbol.search
@@ -8121,10 +8121,10 @@ defineWellKnownSymbol('search');
 
 /***/ }),
 
-/***/ 7620:
+/***/ 47:
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
-var defineWellKnownSymbol = __webpack_require__(4971);
+var defineWellKnownSymbol = __webpack_require__(923);
 
 // `Symbol.species` well-known symbol
 // https://tc39.es/ecma262/#sec-symbol.species
@@ -8133,10 +8133,10 @@ defineWellKnownSymbol('species');
 
 /***/ }),
 
-/***/ 2504:
+/***/ 7253:
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
-var defineWellKnownSymbol = __webpack_require__(4971);
+var defineWellKnownSymbol = __webpack_require__(923);
 
 // `Symbol.split` well-known symbol
 // https://tc39.es/ecma262/#sec-symbol.split
@@ -8145,11 +8145,11 @@ defineWellKnownSymbol('split');
 
 /***/ }),
 
-/***/ 5980:
+/***/ 2136:
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
-var defineWellKnownSymbol = __webpack_require__(4971);
-var defineSymbolToPrimitive = __webpack_require__(1016);
+var defineWellKnownSymbol = __webpack_require__(923);
+var defineSymbolToPrimitive = __webpack_require__(3966);
 
 // `Symbol.toPrimitive` well-known symbol
 // https://tc39.es/ecma262/#sec-symbol.toprimitive
@@ -8162,12 +8162,12 @@ defineSymbolToPrimitive();
 
 /***/ }),
 
-/***/ 4476:
+/***/ 7193:
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
-var getBuiltIn = __webpack_require__(7724);
-var defineWellKnownSymbol = __webpack_require__(4971);
-var setToStringTag = __webpack_require__(3600);
+var getBuiltIn = __webpack_require__(7827);
+var defineWellKnownSymbol = __webpack_require__(923);
+var setToStringTag = __webpack_require__(5051);
 
 // `Symbol.toStringTag` well-known symbol
 // https://tc39.es/ecma262/#sec-symbol.tostringtag
@@ -8180,10 +8180,10 @@ setToStringTag(getBuiltIn('Symbol'), 'Symbol');
 
 /***/ }),
 
-/***/ 9912:
+/***/ 4850:
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
-var defineWellKnownSymbol = __webpack_require__(4971);
+var defineWellKnownSymbol = __webpack_require__(923);
 
 // `Symbol.unscopables` well-known symbol
 // https://tc39.es/ecma262/#sec-symbol.unscopables
@@ -8192,7 +8192,16 @@ defineWellKnownSymbol('unscopables');
 
 /***/ }),
 
-/***/ 6332:
+/***/ 4506:
+/***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
+
+// TODO: Remove from `core-js@4`
+__webpack_require__(1095);
+
+
+/***/ }),
+
+/***/ 4478:
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
 // TODO: Remove from `core-js@4`
@@ -8201,33 +8210,24 @@ __webpack_require__(6331);
 
 /***/ }),
 
-/***/ 2852:
+/***/ 6531:
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
 // TODO: Remove from `core-js@4`
-__webpack_require__(8632);
+__webpack_require__(3474);
 
 
 /***/ }),
 
-/***/ 5252:
-/***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
-
-// TODO: Remove from `core-js@4`
-__webpack_require__(2168);
-
-
-/***/ }),
-
-/***/ 4412:
+/***/ 3240:
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
 "use strict";
 
 // TODO: Remove from `core-js@4`
-var $ = __webpack_require__(9596);
-var newPromiseCapabilityModule = __webpack_require__(7392);
-var perform = __webpack_require__(9276);
+var $ = __webpack_require__(1938);
+var newPromiseCapabilityModule = __webpack_require__(8959);
+var perform = __webpack_require__(1851);
 
 // `Promise.try` method
 // https://github.com/tc39/proposal-promise-try
@@ -8243,10 +8243,10 @@ $({ target: 'Promise', stat: true, forced: true }, {
 
 /***/ }),
 
-/***/ 2240:
+/***/ 4182:
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
-var defineWellKnownSymbol = __webpack_require__(4971);
+var defineWellKnownSymbol = __webpack_require__(923);
 
 // `Symbol.asyncDispose` well-known symbol
 // https://github.com/tc39/proposal-async-explicit-resource-management
@@ -8255,10 +8255,10 @@ defineWellKnownSymbol('asyncDispose');
 
 /***/ }),
 
-/***/ 6360:
+/***/ 639:
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
-var defineWellKnownSymbol = __webpack_require__(4971);
+var defineWellKnownSymbol = __webpack_require__(923);
 
 // `Symbol.dispose` well-known symbol
 // https://github.com/tc39/proposal-explicit-resource-management
@@ -8267,12 +8267,12 @@ defineWellKnownSymbol('dispose');
 
 /***/ }),
 
-/***/ 688:
+/***/ 9125:
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
-var $ = __webpack_require__(9596);
-var getBuiltIn = __webpack_require__(7724);
-var uncurryThis = __webpack_require__(4800);
+var $ = __webpack_require__(1938);
+var getBuiltIn = __webpack_require__(7827);
+var uncurryThis = __webpack_require__(9036);
 
 var Symbol = getBuiltIn('Symbol');
 var keyFor = Symbol.keyFor;
@@ -8293,15 +8293,15 @@ $({ target: 'Symbol', stat: true }, {
 
 /***/ }),
 
-/***/ 5644:
+/***/ 6423:
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
-var $ = __webpack_require__(9596);
-var shared = __webpack_require__(8792);
-var getBuiltIn = __webpack_require__(7724);
-var uncurryThis = __webpack_require__(4800);
-var isSymbol = __webpack_require__(360);
-var wellKnownSymbol = __webpack_require__(6868);
+var $ = __webpack_require__(1938);
+var shared = __webpack_require__(3557);
+var getBuiltIn = __webpack_require__(7827);
+var uncurryThis = __webpack_require__(9036);
+var isSymbol = __webpack_require__(3969);
+var wellKnownSymbol = __webpack_require__(6615);
 
 var Symbol = getBuiltIn('Symbol');
 var $isWellKnown = Symbol.isWellKnown;
@@ -8336,10 +8336,10 @@ $({ target: 'Symbol', stat: true, forced: true }, {
 
 /***/ }),
 
-/***/ 1656:
+/***/ 3692:
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
-var defineWellKnownSymbol = __webpack_require__(4971);
+var defineWellKnownSymbol = __webpack_require__(923);
 
 // `Symbol.matcher` well-known symbol
 // https://github.com/tc39/proposal-pattern-matching
@@ -8348,10 +8348,10 @@ defineWellKnownSymbol('matcher');
 
 /***/ }),
 
-/***/ 7376:
+/***/ 2643:
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
-var defineWellKnownSymbol = __webpack_require__(4971);
+var defineWellKnownSymbol = __webpack_require__(923);
 
 // `Symbol.metadataKey` well-known symbol
 // https://github.com/tc39/proposal-decorator-metadata
@@ -8360,11 +8360,11 @@ defineWellKnownSymbol('metadataKey');
 
 /***/ }),
 
-/***/ 9108:
+/***/ 1693:
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
 // TODO: Remove from `core-js@4`
-var defineWellKnownSymbol = __webpack_require__(4971);
+var defineWellKnownSymbol = __webpack_require__(923);
 
 // `Symbol.metadata` well-known symbol
 // https://github.com/tc39/proposal-decorators
@@ -8373,10 +8373,10 @@ defineWellKnownSymbol('metadata');
 
 /***/ }),
 
-/***/ 8424:
+/***/ 7269:
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
-var defineWellKnownSymbol = __webpack_require__(4971);
+var defineWellKnownSymbol = __webpack_require__(923);
 
 // `Symbol.observable` well-known symbol
 // https://github.com/tc39/proposal-observable
@@ -8385,11 +8385,11 @@ defineWellKnownSymbol('observable');
 
 /***/ }),
 
-/***/ 7140:
+/***/ 3807:
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
 // TODO: remove from `core-js@4`
-var defineWellKnownSymbol = __webpack_require__(4971);
+var defineWellKnownSymbol = __webpack_require__(923);
 
 // `Symbol.patternMatch` well-known symbol
 // https://github.com/tc39/proposal-pattern-matching
@@ -8398,27 +8398,27 @@ defineWellKnownSymbol('patternMatch');
 
 /***/ }),
 
-/***/ 5680:
+/***/ 220:
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
 // TODO: remove from `core-js@4`
-var defineWellKnownSymbol = __webpack_require__(4971);
+var defineWellKnownSymbol = __webpack_require__(923);
 
 defineWellKnownSymbol('replaceAll');
 
 
 /***/ }),
 
-/***/ 9796:
+/***/ 813:
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
-__webpack_require__(176);
-var DOMIterables = __webpack_require__(7700);
-var global = __webpack_require__(5624);
-var classof = __webpack_require__(1980);
-var createNonEnumerableProperty = __webpack_require__(7180);
-var Iterators = __webpack_require__(2936);
-var wellKnownSymbol = __webpack_require__(6868);
+__webpack_require__(6396);
+var DOMIterables = __webpack_require__(4740);
+var global = __webpack_require__(5391);
+var classof = __webpack_require__(5663);
+var createNonEnumerableProperty = __webpack_require__(8471);
+var Iterators = __webpack_require__(1113);
+var wellKnownSymbol = __webpack_require__(6615);
 
 var TO_STRING_TAG = wellKnownSymbol('toStringTag');
 
@@ -8434,105 +8434,105 @@ for (var COLLECTION_NAME in DOMIterables) {
 
 /***/ }),
 
-/***/ 1008:
+/***/ 7481:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var parent = __webpack_require__(44);
+var parent = __webpack_require__(7888);
 
 module.exports = parent;
 
 
 /***/ }),
 
-/***/ 6268:
+/***/ 2437:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var parent = __webpack_require__(8064);
+var parent = __webpack_require__(7864);
 
 module.exports = parent;
 
 
 /***/ }),
 
-/***/ 8362:
+/***/ 8110:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var parent = __webpack_require__(6196);
+var parent = __webpack_require__(9756);
 
 module.exports = parent;
 
 
 /***/ }),
 
-/***/ 3320:
+/***/ 505:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var parent = __webpack_require__(9316);
+var parent = __webpack_require__(4652);
 
 module.exports = parent;
 
 
 /***/ }),
 
-/***/ 5212:
+/***/ 3306:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var parent = __webpack_require__(1136);
-__webpack_require__(9796);
+var parent = __webpack_require__(9225);
+__webpack_require__(813);
 
 module.exports = parent;
 
 
 /***/ }),
 
-/***/ 3480:
+/***/ 2956:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var parent = __webpack_require__(9128);
+var parent = __webpack_require__(1275);
 
 module.exports = parent;
 
 
 /***/ }),
 
-/***/ 9816:
+/***/ 4087:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var parent = __webpack_require__(7752);
+var parent = __webpack_require__(7584);
 
 module.exports = parent;
 
 
 /***/ }),
 
-/***/ 6932:
+/***/ 1261:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var parent = __webpack_require__(3832);
+var parent = __webpack_require__(7654);
 
 module.exports = parent;
 
 
 /***/ }),
 
-/***/ 9688:
+/***/ 7024:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var parent = __webpack_require__(7616);
+var parent = __webpack_require__(5775);
 
 module.exports = parent;
 
 
 /***/ }),
 
-/***/ 4672:
+/***/ 4360:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-__webpack_require__(9796);
-var classof = __webpack_require__(1980);
-var hasOwn = __webpack_require__(1328);
-var isPrototypeOf = __webpack_require__(8416);
-var method = __webpack_require__(8362);
+__webpack_require__(813);
+var classof = __webpack_require__(5663);
+var hasOwn = __webpack_require__(4373);
+var isPrototypeOf = __webpack_require__(3381);
+var method = __webpack_require__(8110);
 
 var ArrayPrototype = Array.prototype;
 
@@ -8550,34 +8550,34 @@ module.exports = function (it) {
 
 /***/ }),
 
-/***/ 5960:
+/***/ 2566:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var parent = __webpack_require__(416);
+var parent = __webpack_require__(2737);
 
 module.exports = parent;
 
 
 /***/ }),
 
-/***/ 6340:
+/***/ 6473:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var parent = __webpack_require__(6976);
+var parent = __webpack_require__(2342);
 
 module.exports = parent;
 
 
 /***/ }),
 
-/***/ 9820:
+/***/ 9371:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-__webpack_require__(9796);
-var classof = __webpack_require__(1980);
-var hasOwn = __webpack_require__(1328);
-var isPrototypeOf = __webpack_require__(8416);
-var method = __webpack_require__(3320);
+__webpack_require__(813);
+var classof = __webpack_require__(5663);
+var hasOwn = __webpack_require__(4373);
+var isPrototypeOf = __webpack_require__(3381);
+var method = __webpack_require__(505);
 
 var ArrayPrototype = Array.prototype;
 
@@ -8595,297 +8595,297 @@ module.exports = function (it) {
 
 /***/ }),
 
-/***/ 3008:
+/***/ 4498:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var parent = __webpack_require__(6208);
+var parent = __webpack_require__(1691);
 
 module.exports = parent;
 
 
 /***/ }),
 
-/***/ 7219:
+/***/ 2585:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var parent = __webpack_require__(6460);
+var parent = __webpack_require__(16);
 
 module.exports = parent;
 
 
 /***/ }),
 
-/***/ 8244:
+/***/ 3627:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var parent = __webpack_require__(992);
+var parent = __webpack_require__(5794);
 
 module.exports = parent;
 
 
 /***/ }),
 
-/***/ 6152:
+/***/ 9771:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var parent = __webpack_require__(1616);
+var parent = __webpack_require__(4516);
 
 module.exports = parent;
 
 
 /***/ }),
 
-/***/ 4580:
+/***/ 1393:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var parent = __webpack_require__(6044);
+var parent = __webpack_require__(7806);
 
 module.exports = parent;
 
 
 /***/ }),
 
-/***/ 2712:
+/***/ 7521:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var parent = __webpack_require__(3843);
+var parent = __webpack_require__(8260);
 
 module.exports = parent;
 
 
 /***/ }),
 
-/***/ 624:
+/***/ 8485:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var parent = __webpack_require__(8468);
+var parent = __webpack_require__(1328);
 
 module.exports = parent;
 
 
 /***/ }),
 
-/***/ 856:
+/***/ 1979:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var parent = __webpack_require__(3947);
+var parent = __webpack_require__(4824);
 
 module.exports = parent;
 
 
 /***/ }),
 
-/***/ 7500:
+/***/ 5399:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var parent = __webpack_require__(1836);
+var parent = __webpack_require__(5992);
 
 module.exports = parent;
 
 
 /***/ }),
 
-/***/ 7904:
+/***/ 1487:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var parent = __webpack_require__(6403);
+var parent = __webpack_require__(8174);
 
 module.exports = parent;
 
 
 /***/ }),
 
-/***/ 7104:
+/***/ 1915:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var parent = __webpack_require__(7532);
+var parent = __webpack_require__(744);
 
 module.exports = parent;
 
 
 /***/ }),
 
-/***/ 8076:
+/***/ 7311:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var parent = __webpack_require__(8580);
+var parent = __webpack_require__(4090);
 
 module.exports = parent;
 
 
 /***/ }),
 
-/***/ 4668:
+/***/ 110:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var parent = __webpack_require__(5492);
-__webpack_require__(9796);
+var parent = __webpack_require__(8789);
+__webpack_require__(813);
 
 module.exports = parent;
 
 
 /***/ }),
 
-/***/ 9792:
+/***/ 5926:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var parent = __webpack_require__(300);
+var parent = __webpack_require__(5933);
 
 module.exports = parent;
 
 
 /***/ }),
 
-/***/ 3776:
+/***/ 4519:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var parent = __webpack_require__(2728);
+var parent = __webpack_require__(2096);
 
 module.exports = parent;
 
 
 /***/ }),
 
-/***/ 8624:
+/***/ 6368:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var parent = __webpack_require__(6536);
+var parent = __webpack_require__(8825);
 
 module.exports = parent;
 
 
 /***/ }),
 
-/***/ 1392:
+/***/ 8535:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var parent = __webpack_require__(152);
+var parent = __webpack_require__(6696);
 
 module.exports = parent;
 
 
 /***/ }),
 
-/***/ 3808:
+/***/ 1288:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var parent = __webpack_require__(7784);
+var parent = __webpack_require__(6859);
 
 module.exports = parent;
 
 
 /***/ }),
 
-/***/ 1464:
+/***/ 3959:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var parent = __webpack_require__(5488);
+var parent = __webpack_require__(9768);
 
 module.exports = parent;
 
 
 /***/ }),
 
-/***/ 3960:
+/***/ 8084:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var parent = __webpack_require__(2176);
+var parent = __webpack_require__(3119);
 
 module.exports = parent;
 
 
 /***/ }),
 
-/***/ 608:
+/***/ 3229:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var parent = __webpack_require__(9008);
+var parent = __webpack_require__(5746);
 
 module.exports = parent;
 
 
 /***/ }),
 
-/***/ 7880:
+/***/ 4823:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var parent = __webpack_require__(3984);
+var parent = __webpack_require__(3584);
 
 module.exports = parent;
 
 
 /***/ }),
 
-/***/ 9296:
+/***/ 6680:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var parent = __webpack_require__(5288);
+var parent = __webpack_require__(9388);
 
 module.exports = parent;
 
 
 /***/ }),
 
-/***/ 480:
+/***/ 9253:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var parent = __webpack_require__(9228);
-__webpack_require__(9796);
+var parent = __webpack_require__(2650);
+__webpack_require__(813);
 
 module.exports = parent;
 
 
 /***/ }),
 
-/***/ 7596:
+/***/ 2408:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var parent = __webpack_require__(5952);
+var parent = __webpack_require__(1251);
 
 module.exports = parent;
 
 
 /***/ }),
 
-/***/ 848:
+/***/ 1208:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var parent = __webpack_require__(9668);
-__webpack_require__(9796);
+var parent = __webpack_require__(6309);
+__webpack_require__(813);
 
 module.exports = parent;
 
 
 /***/ }),
 
-/***/ 9312:
+/***/ 4404:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var parent = __webpack_require__(220);
-__webpack_require__(9796);
+var parent = __webpack_require__(6075);
+__webpack_require__(813);
 
 module.exports = parent;
 
 
 /***/ }),
 
-/***/ 1688:
+/***/ 5879:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var parent = __webpack_require__(1676);
+var parent = __webpack_require__(9148);
 
 module.exports = parent;
 
 
 /***/ }),
 
-/***/ 3704:
+/***/ 382:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var _node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3268);
+/* harmony import */ var _node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1354);
 /* harmony import */ var _node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(2312);
+/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(6314);
 /* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__);
 // Imports
 
@@ -8894,12 +8894,12 @@ var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBP
 // Module
 ___CSS_LOADER_EXPORT___.push([module.id, "@charset \"UTF-8\";\n.rmp-container {\n  position: relative;\n  text-align: center;\n  outline: none;\n  background: #000000;\n  padding: 0;\n  border: none;\n  display: block;\n  font-size: 14px;\n  max-width: none;\n  max-height: none;\n  overflow: hidden;\n  line-height: 1;\n  box-sizing: border-box;\n  font-family: Arial, Helvetica, sans-serif;\n}\n.rmp-container * {\n  box-sizing: border-box;\n}\n.rmp-video,\n.rmp-content {\n  width: 100%;\n  height: 100%;\n  position: absolute;\n  left: 0;\n  top: 0;\n  margin: 0;\n  padding: 0;\n  outline: none;\n  display: block;\n}\n.rmp-ad-container {\n  position: absolute;\n  top: 0;\n  left: 0;\n  margin: 0;\n  padding: 0;\n  width: 100%;\n  height: 100%;\n  outline: none;\n  display: block;\n  text-align: initial;\n}\n.rmp-fullscreen-on {\n  position: fixed !important;\n  width: 100% !important;\n  height: 100% !important;\n  background: #000000 !important;\n  overflow: hidden !important;\n  z-index: 9999 !important;\n  top: 0;\n  left: 0;\n}\n.rmp-vpaid-container {\n  position: absolute;\n  top: 0;\n  left: 0;\n  margin: 0;\n  padding: 0;\n  width: 100%;\n  height: 100%;\n  outline: none;\n  display: block;\n  text-align: initial;\n}\n.rmp-ad-vast-video-player {\n  width: 100%;\n  height: 100%;\n  position: absolute;\n  left: 0;\n  top: 0;\n  margin: 0;\n  padding: 0;\n  outline: none;\n  display: block;\n  cursor: pointer;\n}\n.rmp-ad-container-icons {\n  position: absolute;\n  display: block;\n  cursor: pointer;\n}\n.rmp-ad-container-skip {\n  position: absolute;\n  right: 0;\n  bottom: 44px;\n  width: 160px;\n  height: 40px;\n  line-height: 38px;\n  text-align: center;\n  cursor: pointer;\n  background-color: #333;\n  border: 1px solid #333;\n  transition-property: border-color;\n  transition-duration: 0.4s;\n  transition-timing-function: ease-in;\n}\n.rmp-ad-container-skip:hover {\n  border-color: #000000;\n}\n.rmp-ad-container-skip-waiting {\n  width: 100%;\n  position: absolute;\n  padding: 0 2px;\n  color: #cfcfcf;\n  white-space: nowrap;\n  overflow: hidden;\n  text-overflow: ellipsis;\n}\n.rmp-ad-container-skip-message {\n  width: 65%;\n  position: absolute;\n  left: 5%;\n  color: #ffffff;\n  white-space: nowrap;\n  overflow: hidden;\n  text-overflow: ellipsis;\n}\n.rmp-ad-container-skip-icon {\n  position: absolute;\n  left: 75%;\n  width: 20%;\n  background-image: url(\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAQJJREFUeNpi/P//PwMUNADxXyBuZsAPcoA4CIjfA/EuIJ4JFgUZBMU3/kNAMZIYNnz8PwIcgokzIdl0A0r3AHEbHhf9RGJ/hjGQDWJFYlcC8SQgZibgzf/YDEIHuUC8CIi58ahhJMYgEIgC4mVALIFNMzIgZBAI+AHxRiCWRfcOqQaBgBkQrwRiMSB+iE0BCwPxwBKIDwLxH0pcBAMPkKOcXIPmALEnED+lxKDJQJwKZUuQa1AVEOch8f+SE9hZQDydGCcjG/QPif0H6pUF+LIFriwCy1dvgTgChyEMaPmPBZuLVKA2RALxbjy+IGjQCiD+RcAQEFgF9fpHIN4GEwQIMACnXWgupdnzwwAAAABJRU5ErkJggg==\");\n  height: 100%;\n  background-repeat: no-repeat;\n  background-position: center;\n  opacity: 0.7;\n  transition-property: opacity;\n  transition-duration: 0.4s;\n  transition-timing-function: ease-in;\n}\n.rmp-ad-container-skip:hover .rmp-ad-container-skip-icon {\n  opacity: 1;\n}\n.rmp-ad-non-linear-container {\n  position: absolute;\n  text-align: center;\n  left: 50%;\n  bottom: 0;\n  transform: translate(-50%, 0);\n}\n.rmp-ad-non-linear-anchor:link,\n.rmp-ad-non-linear-anchor:visited,\n.rmp-ad-non-linear-anchor:hover,\n.rmp-ad-non-linear-anchor:active {\n  text-decoration: none;\n}\n.rmp-ad-non-linear-creative {\n  position: relative;\n  cursor: pointer;\n  text-align: center;\n  width: 100%;\n  height: 100%;\n  bottom: 0;\n}\n.rmp-ad-non-linear-close {\n  right: 0;\n  top: 0;\n  position: absolute;\n  cursor: pointer;\n  width: 20px;\n  height: 20px;\n  background-color: #000000;\n  background-image: url(\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAHdJREFUeNqUk9EKwCAIRaX9/9MgEAZ9amsPsWVXdxV8Ec+B1Ep/o40UMuuEpK/RMvAUnEZysfAIlYRkg5/6tyGSQNgKPIkLIwGSuLAn8CSKeovgOMiaMKtKPQENjB5i1Pi7xkoMzD0kBg5PmYVnqv1MGXiT3AIMACNQPFnn5xfHAAAAAElFTkSuQmCC\");\n  background-size: cover;\n  border: 4px solid #000000;\n}\n.rmp-ad-click-ui-mobile {\n  border: 2px solid #ffffff;\n  background: rgba(0, 0, 0, 0.4);\n  color: #ffffff;\n  display: block;\n  position: absolute;\n  right: 8px;\n  top: 8px;\n  font-size: 18px;\n  width: 112px;\n  height: 34px;\n  text-decoration: none;\n  text-align: center;\n  line-height: 30px;\n  box-shadow: 0 0 2px rgba(0, 0, 0, 0.6);\n}\n.rmp-ad-click-ui-mobile:visited,\n.rmp-ad-click-ui-mobile:hover,\n.rmp-ad-click-ui-mobile:active {\n  color: #ffffff;\n  text-decoration: none;\n}\n.rmp-linear-simid-creative {\n  position: absolute;\n  top: 0;\n  border-width: 0;\n  width: 100%;\n  height: 100%;\n}\n.overlayed {\n  position: absolute;\n  top: 0;\n  width: 640px;\n  height: 480px;\n}\n.content {\n  width: 640px;\n  height: 480px;\n}\n.hidden {\n  display: none;\n}\n", "",{"version":3,"sources":["webpack://./src/less/rmp-vast.less"],"names":[],"mappings":"AAAA,gBAAS;AA0BT;EACE,kBAAA;EACA,kBAAA;EACA,aAAA;EACA,mBAAA;EACA,UAAA;EACA,YAAA;EACA,cAAA;EACA,eAAA;EACA,eAAA;EACA,gBAAA;EACA,gBAAA;EACA,cAAA;EACA,sBAAA;EACA,yCAAA;AAxBF;AA2BA;EACE,sBAAA;AAzBF;AA4BA;;EAEE,WAAA;EACA,YAAA;EACA,kBAAA;EACA,OAAA;EACA,MAAA;EACA,SAAA;EACA,UAAA;EACA,aAAA;EACA,cAAA;AA1BF;AA6BA;EACE,kBAAA;EACA,MAAA;EACA,OAAA;EACA,SAAA;EACA,UAAA;EACA,WAAA;EACA,YAAA;EACA,aAAA;EACA,cAAA;EACA,mBAAA;AA3BF;AA8BA;EACE,0BAAA;EACA,sBAAA;EACA,uBAAA;EACA,8BAAA;EACA,2BAAA;EACA,wBAAA;EACA,MAAA;EACA,OAAA;AA5BF;AAgCA;EACE,kBAAA;EACA,MAAA;EACA,OAAA;EACA,SAAA;EACA,UAAA;EACA,WAAA;EACA,YAAA;EACA,aAAA;EACA,cAAA;EACA,mBAAA;AA9BF;AAiCA;EACE,WAAA;EACA,YAAA;EACA,kBAAA;EACA,OAAA;EACA,MAAA;EACA,SAAA;EACA,UAAA;EACA,aAAA;EACA,cAAA;EACA,eAAA;AA/BF;AAkCA;EACE,kBAAA;EACA,cAAA;EACA,eAAA;AAhCF;AAmCA;EACE,kBAAA;EACA,QAAA;EACA,YAAA;EACA,YAAA;EACA,YAAA;EACA,iBAAA;EACA,kBAAA;EACA,eAAA;EACA,sBAAA;EACA,sBAAA;EAjHA,iCAAA;EACA,yBAAA;EACA,mCAAA;AAiFF;AAkCA;EACE,qBAAA;AAhCF;AAmCA;EACE,WAAA;EACA,kBAAA;EACA,cAAA;EACA,cAAA;EAvHA,mBAAA;EACA,gBAAA;EACA,uBAAA;AAuFF;AAkCA;EACE,UAAA;EACA,kBAAA;EACA,QAAA;EACA,cAAA;EA/HA,mBAAA;EACA,gBAAA;EACA,uBAAA;AAgGF;AAiCA;EACE,kBAAA;EACA,SAAA;EACA,UAAA;EACA,ugBAAA;EACA,YAAA;EACA,4BAAA;EACA,2BAAA;EACA,YAAA;EAjJA,4BAAA;EACA,yBAAA;EACA,mCAAA;AAmHF;AAgCA;EACE,UAAA;AA9BF;AAiCA;EACE,kBAAA;EACA,kBAAA;EACA,SAAA;EACA,SAAA;EACA,6BAAA;AA/BF;AAkCA;;;;EAIE,qBAAA;AAhCF;AAmCA;EACE,kBAAA;EACA,eAAA;EACA,kBAAA;EACA,WAAA;EACA,YAAA;EACA,SAAA;AAjCF;AAoCA;EACE,QAAA;EACA,MAAA;EACA,kBAAA;EACA,eAAA;EACA,WAAA;EACA,YAAA;EACA,yBAAA;EACA,2UAAA;EACA,sBAAA;EACA,yBAAA;AAlCF;AAqCA;EACE,yBAAA;EACA,8BAAA;EACA,cAAA;EACA,cAAA;EACA,kBAAA;EACA,UAAA;EACA,QAAA;EACA,eAAA;EACA,YAAA;EACA,YAAA;EACA,qBAAA;EACA,kBAAA;EACA,iBAAA;EACA,sCAAA;AAnCF;AAsCA;;;EAGE,cAAA;EACA,qBAAA;AApCF;AAuCA;EACE,kBAAA;EACA,MAAA;EACA,eAAA;EACA,WAAA;EACA,YAAA;AArCF;AAwCA;EACE,kBAAA;EACA,MAAA;EACA,YAAA;EACA,aAAA;AAtCF;AAyCA;EACE,YAAA;EACA,aAAA;AAvCF;AA0CA;EACE,aAAA;AAxCF","sourcesContent":["@charset \"UTF-8\";\n\n// colors\n@black: rgba(0, 0, 0, 1);\n@grey: #333;\n@light-grey: #cfcfcf;\n@white: rgba(255, 255, 255, 1);\n@shadow-1: rgba(0, 0, 0, 0.8);\n@shadow-2: rgba(0, 0, 0, 0.6);\n@shadow-3: rgba(0, 0, 0, 0.5);\n@shadow-4: rgba(0, 0, 0, 0.4);\n\n// mixins\n.transition(@property: background; @duration: 0.4s; @timing: ease-in) {\n  transition-property: @property;\n  transition-duration: @duration;\n  transition-timing-function: @timing;\n}\n\n.text-ellipsis() {\n  white-space: nowrap;\n  overflow: hidden;\n  text-overflow: ellipsis;\n}\n\n// shared CSS with RMP\n.rmp-container {\n  position: relative;\n  text-align: center;\n  outline: none;\n  background: @black;\n  padding: 0;\n  border: none;\n  display: block;\n  font-size: 14px;\n  max-width: none;\n  max-height: none;\n  overflow: hidden;\n  line-height: 1;\n  box-sizing: border-box;\n  font-family: Arial, Helvetica, sans-serif;\n}\n\n.rmp-container * {\n  box-sizing: border-box;\n}\n\n.rmp-video,\n.rmp-content {\n  width: 100%;\n  height: 100%;\n  position: absolute;\n  left: 0;\n  top: 0;\n  margin: 0;\n  padding: 0;\n  outline: none;\n  display: block;\n}\n\n.rmp-ad-container {\n  position: absolute;\n  top: 0;\n  left: 0;\n  margin: 0;\n  padding: 0;\n  width: 100%;\n  height: 100%;\n  outline: none;\n  display: block;\n  text-align: initial;\n}\n\n.rmp-fullscreen-on {\n  position: fixed !important;\n  width: 100% !important;\n  height: 100% !important;\n  background: @black !important;\n  overflow: hidden !important;\n  z-index: 9999 !important;\n  top: 0;\n  left: 0;\n}\n\n// specific CSS to rmp-vast\n.rmp-vpaid-container {\n  position: absolute;\n  top: 0;\n  left: 0;\n  margin: 0;\n  padding: 0;\n  width: 100%;\n  height: 100%;\n  outline: none;\n  display: block;\n  text-align: initial;\n}\n\n.rmp-ad-vast-video-player {\n  width: 100%;\n  height: 100%;\n  position: absolute;\n  left: 0;\n  top: 0;\n  margin: 0;\n  padding: 0;\n  outline: none;\n  display: block;\n  cursor: pointer;\n}\n\n.rmp-ad-container-icons {\n  position: absolute;\n  display: block;\n  cursor: pointer;\n}\n\n.rmp-ad-container-skip {\n  position: absolute;\n  right: 0;\n  bottom: 44px;\n  width: 160px;\n  height: 40px;\n  line-height: 38px;\n  text-align: center;\n  cursor: pointer;\n  background-color: @grey;\n  border: 1px solid @grey;\n  .transition(border-color, 0.4s);\n}\n\n.rmp-ad-container-skip:hover {\n  border-color: @black;\n}\n\n.rmp-ad-container-skip-waiting {\n  width: 100%;\n  position: absolute;\n  padding: 0 2px;\n  color: @light-grey;\n  .text-ellipsis();\n}\n\n.rmp-ad-container-skip-message {\n  width: 65%;\n  position: absolute;\n  left: 5%;\n  color: @white;\n  .text-ellipsis();\n}\n\n.rmp-ad-container-skip-icon {\n  position: absolute;\n  left: 75%;\n  width: 20%;\n  background-image: url(\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAQJJREFUeNpi/P//PwMUNADxXyBuZsAPcoA4CIjfA/EuIJ4JFgUZBMU3/kNAMZIYNnz8PwIcgokzIdl0A0r3AHEbHhf9RGJ/hjGQDWJFYlcC8SQgZibgzf/YDEIHuUC8CIi58ahhJMYgEIgC4mVALIFNMzIgZBAI+AHxRiCWRfcOqQaBgBkQrwRiMSB+iE0BCwPxwBKIDwLxH0pcBAMPkKOcXIPmALEnED+lxKDJQJwKZUuQa1AVEOch8f+SE9hZQDydGCcjG/QPif0H6pUF+LIFriwCy1dvgTgChyEMaPmPBZuLVKA2RALxbjy+IGjQCiD+RcAQEFgF9fpHIN4GEwQIMACnXWgupdnzwwAAAABJRU5ErkJggg==\");\n  height: 100%;\n  background-repeat: no-repeat;\n  background-position: center;\n  opacity: 0.7;\n  .transition(opacity, 0.4s);\n}\n\n.rmp-ad-container-skip:hover .rmp-ad-container-skip-icon {\n  opacity: 1;\n}\n\n.rmp-ad-non-linear-container {\n  position: absolute;\n  text-align: center;\n  left: 50%;\n  bottom: 0;\n  transform: translate(-50%, 0);\n}\n\n.rmp-ad-non-linear-anchor:link,\n.rmp-ad-non-linear-anchor:visited,\n.rmp-ad-non-linear-anchor:hover,\n.rmp-ad-non-linear-anchor:active {\n  text-decoration: none;\n}\n\n.rmp-ad-non-linear-creative {\n  position: relative;\n  cursor: pointer;\n  text-align: center;\n  width: 100%;\n  height: 100%;\n  bottom: 0;\n}\n\n.rmp-ad-non-linear-close {\n  right: 0;\n  top: 0;\n  position: absolute;\n  cursor: pointer;\n  width: 20px;\n  height: 20px;\n  background-color: @black;\n  background-image: url(\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAHdJREFUeNqUk9EKwCAIRaX9/9MgEAZ9amsPsWVXdxV8Ec+B1Ep/o40UMuuEpK/RMvAUnEZysfAIlYRkg5/6tyGSQNgKPIkLIwGSuLAn8CSKeovgOMiaMKtKPQENjB5i1Pi7xkoMzD0kBg5PmYVnqv1MGXiT3AIMACNQPFnn5xfHAAAAAElFTkSuQmCC\");\n  background-size: cover;\n  border: 4px solid @black;\n}\n\n.rmp-ad-click-ui-mobile {\n  border: 2px solid @white;\n  background: @shadow-4;\n  color: @white;\n  display: block;\n  position: absolute;\n  right: 8px;\n  top: 8px;\n  font-size: 18px;\n  width: 112px;\n  height: 34px;\n  text-decoration: none;\n  text-align: center;\n  line-height: 30px;\n  box-shadow: 0 0 2px @shadow-2;\n}\n\n.rmp-ad-click-ui-mobile:visited,\n.rmp-ad-click-ui-mobile:hover,\n.rmp-ad-click-ui-mobile:active {\n  color: @white;\n  text-decoration: none;\n}\n\n.rmp-linear-simid-creative {\n  position: absolute;\n  top: 0;\n  border-width: 0;\n  width: 100%;\n  height: 100%;\n}\n\n.overlayed {\n  position: absolute;\n  top: 0;\n  width: 640px;\n  height: 480px;\n}\n\n.content {\n  width: 640px;\n  height: 480px;\n}\n\n.hidden {\n  display: none;\n}   \n"],"sourceRoot":""}]);
 // Exports
-/* harmony default export */ __webpack_exports__.c = (___CSS_LOADER_EXPORT___);
+/* harmony default export */ __webpack_exports__.A = (___CSS_LOADER_EXPORT___);
 
 
 /***/ }),
 
-/***/ 2312:
+/***/ 6314:
 /***/ (function(module) {
 
 "use strict";
@@ -8991,7 +8991,7 @@ module.exports = function (cssWithMappingToString) {
 
 /***/ }),
 
-/***/ 3268:
+/***/ 1354:
 /***/ (function(module) {
 
 "use strict";
@@ -9014,7 +9014,7 @@ module.exports = function (item) {
 
 /***/ }),
 
-/***/ 4596:
+/***/ 5072:
 /***/ (function(module) {
 
 "use strict";
@@ -9105,7 +9105,7 @@ module.exports = function (list, options) {
 
 /***/ }),
 
-/***/ 6176:
+/***/ 7659:
 /***/ (function(module) {
 
 "use strict";
@@ -9146,7 +9146,7 @@ module.exports = insertBySelector;
 
 /***/ }),
 
-/***/ 6808:
+/***/ 8159:
 /***/ (function(module) {
 
 "use strict";
@@ -9163,7 +9163,7 @@ module.exports = insertStyleElement;
 
 /***/ }),
 
-/***/ 5120:
+/***/ 5056:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
 "use strict";
@@ -9180,7 +9180,7 @@ module.exports = setAttributesWithoutAttributes;
 
 /***/ }),
 
-/***/ 4139:
+/***/ 7825:
 /***/ (function(module) {
 
 "use strict";
@@ -9248,7 +9248,7 @@ module.exports = domAPI;
 
 /***/ }),
 
-/***/ 1936:
+/***/ 3494:
 /***/ (function(module) {
 
 "use strict";
@@ -9269,185 +9269,185 @@ module.exports = styleTagTransform;
 
 /***/ }),
 
-/***/ 3548:
+/***/ 9763:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-module.exports = __webpack_require__(1008);
+module.exports = __webpack_require__(7481);
 
 /***/ }),
 
-/***/ 9208:
+/***/ 3774:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-module.exports = __webpack_require__(9816);
+module.exports = __webpack_require__(4087);
 
 /***/ }),
 
-/***/ 8428:
+/***/ 6319:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-module.exports = __webpack_require__(6932);
+module.exports = __webpack_require__(1261);
 
 /***/ }),
 
-/***/ 7208:
+/***/ 1426:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-module.exports = __webpack_require__(9688);
+module.exports = __webpack_require__(7024);
 
 /***/ }),
 
-/***/ 9324:
+/***/ 8628:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-module.exports = __webpack_require__(5960);
+module.exports = __webpack_require__(2566);
 
 /***/ }),
 
-/***/ 308:
+/***/ 4007:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-module.exports = __webpack_require__(6340);
+module.exports = __webpack_require__(6473);
 
 /***/ }),
 
-/***/ 904:
+/***/ 5413:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-module.exports = __webpack_require__(9820);
+module.exports = __webpack_require__(9371);
 
 /***/ }),
 
-/***/ 4216:
+/***/ 6712:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-module.exports = __webpack_require__(3008);
+module.exports = __webpack_require__(4498);
 
 /***/ }),
 
-/***/ 4260:
+/***/ 8079:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-module.exports = __webpack_require__(7219);
+module.exports = __webpack_require__(2585);
 
 /***/ }),
 
-/***/ 8100:
+/***/ 4929:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-module.exports = __webpack_require__(8244);
+module.exports = __webpack_require__(3627);
 
 /***/ }),
 
-/***/ 5064:
+/***/ 3363:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-module.exports = __webpack_require__(4580);
+module.exports = __webpack_require__(1393);
 
 /***/ }),
 
-/***/ 960:
+/***/ 8979:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-module.exports = __webpack_require__(624);
+module.exports = __webpack_require__(8485);
 
 /***/ }),
 
-/***/ 2052:
+/***/ 129:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-module.exports = __webpack_require__(856);
+module.exports = __webpack_require__(1979);
 
 /***/ }),
 
-/***/ 3628:
+/***/ 385:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-module.exports = __webpack_require__(7500);
+module.exports = __webpack_require__(5399);
 
 /***/ }),
 
-/***/ 8331:
+/***/ 165:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-module.exports = __webpack_require__(7904);
+module.exports = __webpack_require__(1487);
 
 /***/ }),
 
-/***/ 5076:
+/***/ 1265:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-module.exports = __webpack_require__(7104);
+module.exports = __webpack_require__(1915);
 
 /***/ }),
 
-/***/ 9360:
+/***/ 5569:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-module.exports = __webpack_require__(8076);
+module.exports = __webpack_require__(7311);
 
 /***/ }),
 
-/***/ 8080:
+/***/ 4707:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-module.exports = __webpack_require__(4668);
+module.exports = __webpack_require__(110);
 
 /***/ }),
 
-/***/ 2184:
+/***/ 9544:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-module.exports = __webpack_require__(9792);
+module.exports = __webpack_require__(5926);
 
 /***/ }),
 
-/***/ 2460:
+/***/ 9493:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-module.exports = __webpack_require__(1392);
+module.exports = __webpack_require__(8535);
 
 /***/ }),
 
-/***/ 2400:
+/***/ 697:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-module.exports = __webpack_require__(1464);
+module.exports = __webpack_require__(3959);
 
 /***/ }),
 
-/***/ 6916:
+/***/ 7119:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-module.exports = __webpack_require__(608);
+module.exports = __webpack_require__(3229);
 
 /***/ }),
 
-/***/ 6872:
+/***/ 3981:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-module.exports = __webpack_require__(7880);
+module.exports = __webpack_require__(4823);
 
 /***/ }),
 
-/***/ 7084:
+/***/ 6586:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-module.exports = __webpack_require__(9296);
+module.exports = __webpack_require__(6680);
 
 /***/ }),
 
-/***/ 8436:
+/***/ 1240:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-module.exports = __webpack_require__(480);
+module.exports = __webpack_require__(9253);
 
 /***/ }),
 
-/***/ 8904:
+/***/ 2574:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-module.exports = __webpack_require__(7596);
+module.exports = __webpack_require__(2408);
 
 /***/ })
 
@@ -10185,9 +10185,9 @@ __webpack_require__.d(__webpack_exports__, {
 });
 
 // EXTERNAL MODULE: ./node_modules/core-js-pure/full/symbol/index.js
-var symbol = __webpack_require__(804);
+var symbol = __webpack_require__(6258);
 // EXTERNAL MODULE: ./node_modules/core-js-pure/full/symbol/iterator.js
-var iterator = __webpack_require__(3536);
+var iterator = __webpack_require__(4770);
 ;// CONCATENATED MODULE: ./node_modules/@babel/runtime-corejs3/helpers/esm/typeof.js
 
 
@@ -10201,23 +10201,23 @@ function _typeof(o) {
   }, _typeof(o);
 }
 // EXTERNAL MODULE: ./node_modules/core-js-pure/full/object/define-property.js
-var define_property = __webpack_require__(348);
+var define_property = __webpack_require__(1350);
 // EXTERNAL MODULE: ./node_modules/core-js-pure/full/object/create.js
-var create = __webpack_require__(6488);
+var create = __webpack_require__(3461);
 // EXTERNAL MODULE: ./node_modules/core-js-pure/full/object/get-prototype-of.js
-var get_prototype_of = __webpack_require__(6408);
+var get_prototype_of = __webpack_require__(1758);
 // EXTERNAL MODULE: ./node_modules/core-js-pure/full/instance/for-each.js
-var for_each = __webpack_require__(2244);
+var for_each = __webpack_require__(3222);
 // EXTERNAL MODULE: ./node_modules/core-js-pure/full/instance/push.js
-var push = __webpack_require__(2171);
+var push = __webpack_require__(1997);
 // EXTERNAL MODULE: ./node_modules/core-js-pure/full/object/set-prototype-of.js
-var set_prototype_of = __webpack_require__(7940);
+var set_prototype_of = __webpack_require__(6890);
 // EXTERNAL MODULE: ./node_modules/core-js-pure/full/promise/index.js
-var promise = __webpack_require__(368);
+var promise = __webpack_require__(6691);
 // EXTERNAL MODULE: ./node_modules/core-js-pure/full/instance/reverse.js
-var reverse = __webpack_require__(2384);
+var reverse = __webpack_require__(8027);
 // EXTERNAL MODULE: ./node_modules/core-js-pure/full/instance/slice.js
-var slice = __webpack_require__(5608);
+var slice = __webpack_require__(4831);
 ;// CONCATENATED MODULE: ./node_modules/@babel/runtime-corejs3/helpers/esm/regeneratorRuntime.js
 
 
@@ -10574,7 +10574,7 @@ function _classCallCheck(instance, Constructor) {
   }
 }
 // EXTERNAL MODULE: ./node_modules/core-js-pure/full/symbol/to-primitive.js
-var to_primitive = __webpack_require__(3300);
+var to_primitive = __webpack_require__(1677);
 ;// CONCATENATED MODULE: ./node_modules/@babel/runtime-corejs3/helpers/esm/toPrimitive.js
 
 
@@ -10616,28 +10616,28 @@ function _createClass(Constructor, protoProps, staticProps) {
   return Constructor;
 }
 // EXTERNAL MODULE: ./node_modules/@babel/runtime-corejs3/core-js-stable/instance/index-of.js
-var index_of = __webpack_require__(308);
+var index_of = __webpack_require__(4007);
 var index_of_default = /*#__PURE__*/__webpack_require__.n(index_of);
 // EXTERNAL MODULE: ./node_modules/@babel/runtime-corejs3/core-js-stable/object/keys.js
-var object_keys = __webpack_require__(2400);
+var object_keys = __webpack_require__(697);
 var keys_default = /*#__PURE__*/__webpack_require__.n(object_keys);
 // EXTERNAL MODULE: ./node_modules/@babel/runtime-corejs3/core-js-stable/instance/find.js
-var find = __webpack_require__(7208);
+var find = __webpack_require__(1426);
 var find_default = /*#__PURE__*/__webpack_require__.n(find);
 // EXTERNAL MODULE: ./node_modules/@babel/runtime-corejs3/core-js-stable/promise.js
-var core_js_stable_promise = __webpack_require__(8436);
+var core_js_stable_promise = __webpack_require__(1240);
 var core_js_stable_promise_default = /*#__PURE__*/__webpack_require__.n(core_js_stable_promise);
 // EXTERNAL MODULE: ./node_modules/@babel/runtime-corejs3/core-js-stable/instance/reduce.js
-var reduce = __webpack_require__(5064);
+var reduce = __webpack_require__(3363);
 var reduce_default = /*#__PURE__*/__webpack_require__.n(reduce);
 // EXTERNAL MODULE: ./node_modules/@babel/runtime-corejs3/core-js-stable/instance/concat.js
-var concat = __webpack_require__(9208);
+var concat = __webpack_require__(3774);
 var concat_default = /*#__PURE__*/__webpack_require__.n(concat);
 // EXTERNAL MODULE: ./node_modules/@babel/runtime-corejs3/core-js-stable/instance/filter.js
-var filter = __webpack_require__(8428);
+var filter = __webpack_require__(6319);
 var filter_default = /*#__PURE__*/__webpack_require__.n(filter);
 // EXTERNAL MODULE: ./node_modules/@babel/runtime-corejs3/core-js-stable/parse-float.js
-var parse_float = __webpack_require__(6872);
+var parse_float = __webpack_require__(3981);
 var parse_float_default = /*#__PURE__*/__webpack_require__.n(parse_float);
 ;// CONCATENATED MODULE: ./src/js/framework/fw.js
 
@@ -10668,11 +10668,6 @@ var FW = /*#__PURE__*/function () {
         styleAttributeData = styleAttributeData.replace('px', '');
       }
       return parse_float_default()(styleAttributeData);
-    }
-  }, {
-    key: "nullFn",
-    value: function nullFn() {
-      return null;
     }
   }, {
     key: "createSyntheticEvent",
@@ -10792,7 +10787,7 @@ var FW = /*#__PURE__*/function () {
         video.addEventListener(value, function (e) {
           if (e && e.type) {
             var _context, _context2;
-            console.log(concat_default()(_context = concat_default()(_context2 = "".concat(FW.consolePrepend, " ")).call(_context2, type, " player event ")).call(_context, e.type), FW.consoleStyle, '');
+            console.log(concat_default()(_context = concat_default()(_context2 = "".concat(FW.consolePrepend, " ")).call(_context2, type, " video player event \"")).call(_context, e.type, "\""), FW.consoleStyle, '');
           }
         });
       });
@@ -10840,37 +10835,55 @@ var FW = /*#__PURE__*/function () {
         xhr.send(null);
       });
     }
+  }, {
+    key: "addEvents",
+    value: function addEvents(events, domElement, callback) {
+      if (events && events.length > 1 && domElement && typeof callback === 'function') {
+        events.forEach(function (event) {
+          domElement.addEventListener(event, callback);
+        });
+      }
+    }
+  }, {
+    key: "removeEvents",
+    value: function removeEvents(events, domElement, callback) {
+      if (events && events.length > 1 && domElement && typeof callback === 'function') {
+        events.forEach(function (event) {
+          domElement.removeEventListener(event, callback);
+        });
+      }
+    }
+  }, {
+    key: "clearTimeout",
+    value: function clearTimeout(timeoutCallback) {
+      if (typeof timeoutCallback === 'number') {
+        window.clearTimeout(timeoutCallback);
+      }
+    }
+  }, {
+    key: "clearInterval",
+    value: function clearInterval(intervalCallback) {
+      if (typeof intervalCallback === 'number') {
+        window.clearInterval(intervalCallback);
+      }
+    }
   }]);
   return FW;
 }();
 
 // EXTERNAL MODULE: ./node_modules/@babel/runtime-corejs3/core-js-stable/parse-int.js
-var parse_int = __webpack_require__(7084);
+var parse_int = __webpack_require__(6586);
 var parse_int_default = /*#__PURE__*/__webpack_require__.n(parse_int);
-;// CONCATENATED MODULE: ./src/js/framework/env.js
+;// CONCATENATED MODULE: ./src/js/framework/environment.js
 
 
 
 
-var TEST_VIDEO = document.createElement('video');
-var IOS_PATTERN = /(ipad|iphone|ipod)/i;
-var IOS_VERSION_PATTERN = /os\s+(\d+)_/i;
-var MACOS_PATTERN = /(macintosh|mac\s+os)/i;
-var MACOS_VERSION_PATTERN = /mac\s+os\s+x\s+(\d+)_(\d+)/i;
-var SAFARI_PATTERN = /safari\/[.0-9]*/i;
-var SAFARI_VERSION_PATTERN = /version\/(\d+)\./i;
-var NO_SAFARI_PATTERN = /(chrome|chromium|android|crios|fxios)/i;
-var MAC_PLATFORM_PATTERN = /macintel/i;
-var ANDROID_PATTERN = /android/i;
-var ANDROID_VERSION_PATTERN = /android\s*(\d+)\./i;
-
-/*const FIREFOX_PATTERN = /firefox\//i;
-const SEAMONKEY_PATTERN = /seamonkey\//i;*/
-var ENV = /*#__PURE__*/function () {
-  function ENV() {
-    _classCallCheck(this, ENV);
+var Environment = /*#__PURE__*/function () {
+  function Environment() {
+    _classCallCheck(this, Environment);
   }
-  _createClass(ENV, null, [{
+  _createClass(Environment, null, [{
     key: "_filterVersion",
     value: function _filterVersion(pattern) {
       if (navigator.userAgent) {
@@ -10880,6 +10893,11 @@ var ENV = /*#__PURE__*/function () {
         }
       }
       return -1;
+    }
+  }, {
+    key: "_testVideo",
+    get: function get() {
+      return document.createElement('video');
     }
   }, {
     key: "hasTouchEvents",
@@ -10917,16 +10935,19 @@ var ENV = /*#__PURE__*/function () {
   }, {
     key: "isIos",
     get: function get() {
+      var IOS_PATTERN = /(ipad|iphone|ipod)/i;
+      var IOS_VERSION_PATTERN = /os\s+(\d+)_/i;
       var support = [false, -1];
-      if (IOS_PATTERN.test(ENV.userAgent) && ENV.hasTouchEvents) {
-        support = [true, ENV._filterVersion(IOS_VERSION_PATTERN)];
+      if (IOS_PATTERN.test(Environment.userAgent) && Environment.hasTouchEvents) {
+        support = [true, Environment._filterVersion(IOS_VERSION_PATTERN)];
       }
       return support;
     }
   }, {
     key: "isIpadOS",
     get: function get() {
-      if (!ENV.isIos[0] && ENV.hasTouchEvents && MAC_PLATFORM_PATTERN.test(navigator.platform) && ENV.devicePixelRatio > 1 && ENV.maxTouchPoints > 1) {
+      var MAC_PLATFORM_PATTERN = /macintel/i;
+      if (!Environment.isIos[0] && Environment.hasTouchEvents && MAC_PLATFORM_PATTERN.test(navigator.platform) && Environment.devicePixelRatio > 1 && Environment.maxTouchPoints > 1) {
         return true;
       }
       return false;
@@ -10934,51 +10955,50 @@ var ENV = /*#__PURE__*/function () {
   }, {
     key: "isMacOS",
     get: function get() {
+      var MACOS_PATTERN = /(macintosh|mac\s+os)/i;
+      var MACOS_VERSION_PATTERN = /mac\s+os\s+x\s+(\d+)_(\d+)/i;
       var isMacOS = false;
       var macOSXMinorVersion = -1;
-      if (!ENV.isIos[0] && !ENV.isIpadOS && MACOS_PATTERN.test(ENV.userAgent)) {
+      if (!Environment.isIos[0] && !Environment.isIpadOS && MACOS_PATTERN.test(Environment.userAgent)) {
         isMacOS = true;
-        macOSXMinorVersion = ENV._filterVersion(MACOS_VERSION_PATTERN, true);
+        macOSXMinorVersion = Environment._filterVersion(MACOS_VERSION_PATTERN, true);
       }
       return [isMacOS, macOSXMinorVersion];
     }
   }, {
     key: "isSafari",
     get: function get() {
+      var SAFARI_PATTERN = /safari\/[.0-9]*/i;
+      var SAFARI_VERSION_PATTERN = /version\/(\d+)\./i;
+      var NO_SAFARI_PATTERN = /(chrome|chromium|android|crios|fxios)/i;
       var isSafari = false;
       var safariVersion = -1;
-      if (SAFARI_PATTERN.test(ENV.userAgent) && !NO_SAFARI_PATTERN.test(ENV.userAgent)) {
+      if (SAFARI_PATTERN.test(Environment.userAgent) && !NO_SAFARI_PATTERN.test(Environment.userAgent)) {
         isSafari = true;
-        safariVersion = ENV._filterVersion(SAFARI_VERSION_PATTERN);
+        safariVersion = Environment._filterVersion(SAFARI_VERSION_PATTERN);
       }
       return [isSafari, safariVersion];
     }
   }, {
     key: "isMacOSSafari",
     get: function get() {
-      return ENV.isMacOS[0] && ENV.isSafari[0];
+      return Environment.isMacOS[0] && Environment.isSafari[0];
     }
   }, {
     key: "isAndroid",
     get: function get() {
+      var ANDROID_PATTERN = /android/i;
+      var ANDROID_VERSION_PATTERN = /android\s*(\d+)\./i;
       var support = [false, -1];
-      if (!ENV.isIos[0] && ENV.hasTouchEvents && ANDROID_PATTERN.test(ENV.userAgent)) {
-        support = [true, ENV._filterVersion(ANDROID_VERSION_PATTERN)];
+      if (!Environment.isIos[0] && Environment.hasTouchEvents && ANDROID_PATTERN.test(Environment.userAgent)) {
+        support = [true, Environment._filterVersion(ANDROID_VERSION_PATTERN)];
       }
       return support;
     }
-
-    /*// from https://developer.mozilla.org/en-US/docs/Web/HTTP/Browser_detection_using_the_user_agent
-    static get isFirefox() {
-      if (FIREFOX_PATTERN.test(ENV.userAgent) && !SEAMONKEY_PATTERN.test(ENV.userAgent)) {
-        return true;
-      }
-      return false;
-    }*/
   }, {
     key: "isMobile",
     get: function get() {
-      if (ENV.isIos[0] || ENV.isAndroid[0] || ENV.isIpadOS) {
+      if (Environment.isIos[0] || Environment.isAndroid[0] || Environment.isIpadOS) {
         return true;
       }
       return false;
@@ -10987,8 +11007,9 @@ var ENV = /*#__PURE__*/function () {
     key: "hasNativeFullscreenSupport",
     get: function get() {
       var doc = document.documentElement;
+      var testVideo = Environment._testVideo;
       if (doc) {
-        if (typeof doc.requestFullscreen !== 'undefined' || typeof doc.webkitRequestFullscreen !== 'undefined' || typeof doc.mozRequestFullScreen !== 'undefined' || typeof doc.msRequestFullscreen !== 'undefined' || typeof TEST_VIDEO.webkitEnterFullscreen !== 'undefined') {
+        if (typeof doc.requestFullscreen !== 'undefined' || typeof doc.webkitRequestFullscreen !== 'undefined' || typeof doc.mozRequestFullScreen !== 'undefined' || typeof doc.msRequestFullscreen !== 'undefined' || typeof testVideo.webkitEnterFullscreen !== 'undefined') {
           return true;
         }
       }
@@ -10997,14 +11018,15 @@ var ENV = /*#__PURE__*/function () {
   }, {
     key: "checkCanPlayType",
     value: function checkCanPlayType(type, codec) {
-      if (TEST_VIDEO.canPlayType !== 'undefined') {
+      var testVideo = Environment._testVideo;
+      if (testVideo.canPlayType !== 'undefined') {
         if (type && codec) {
-          var canPlayType = TEST_VIDEO.canPlayType(type + '; codecs="' + codec + '"');
+          var canPlayType = testVideo.canPlayType(type + '; codecs="' + codec + '"');
           if (canPlayType !== '') {
             return true;
           }
         } else if (type && !codec) {
-          var _canPlayType = TEST_VIDEO.canPlayType(type);
+          var _canPlayType = testVideo.canPlayType(type);
           if (_canPlayType !== '') {
             return true;
           }
@@ -11013,88 +11035,11 @@ var ENV = /*#__PURE__*/function () {
       return false;
     }
   }]);
-  return ENV;
+  return Environment;
 }();
 
-;// CONCATENATED MODULE: ./src/js/players/content-player.js
-
-
-var CONTENT_PLAYER = {};
-CONTENT_PLAYER.play = function (firstContentPlayerPlayRequest) {
-  if (this.contentPlayer && this.contentPlayer.paused) {
-    Utils.playPromise.call(this, 'content', firstContentPlayerPlayRequest);
-  }
-};
-CONTENT_PLAYER.pause = function () {
-  if (this.contentPlayer && !this.contentPlayer.paused) {
-    this.contentPlayer.pause();
-  }
-};
-CONTENT_PLAYER.setVolume = function (level) {
-  if (this.contentPlayer) {
-    this.contentPlayer.volume = level;
-  }
-};
-CONTENT_PLAYER.getVolume = function () {
-  if (this.contentPlayer) {
-    return this.contentPlayer.volume;
-  }
-  return -1;
-};
-CONTENT_PLAYER.getMute = function () {
-  if (this.contentPlayer) {
-    return this.contentPlayer.muted;
-  }
-  return false;
-};
-CONTENT_PLAYER.setMute = function (muted) {
-  if (this.contentPlayer) {
-    if (muted && !this.contentPlayer.muted) {
-      this.contentPlayer.muted = true;
-    } else if (!muted && this.contentPlayer.muted) {
-      this.contentPlayer.muted = false;
-    }
-  }
-};
-CONTENT_PLAYER.getDuration = function () {
-  if (this.contentPlayer && FW.isNumber(this.contentPlayer.duration)) {
-    return this.contentPlayer.duration * 1000;
-  }
-  return -1;
-};
-CONTENT_PLAYER.getCurrentTime = function () {
-  if (this.contentPlayer && FW.isNumber(this.contentPlayer.currentTime)) {
-    return this.contentPlayer.currentTime * 1000;
-  }
-  return -1;
-};
-CONTENT_PLAYER.seekTo = function (msSeek) {
-  if (!FW.isNumber(msSeek)) {
-    return;
-  }
-  if (msSeek >= 0 && this.contentPlayer) {
-    this.contentPlayer.currentTime = msSeek / 1000;
-  }
-};
-CONTENT_PLAYER.preventSeekingForCustomPlayback = function () {
-  var _this = this;
-  // after much poking it appears we cannot rely on seek events for iOS to 
-  // set this up reliably - so interval it is
-  if (this.contentPlayer) {
-    this.antiSeekLogicInterval = setInterval(function () {
-      if (_this.creative.isLinear && _this.adOnStage) {
-        var diff = Math.abs(_this.customPlaybackCurrentTime - _this.contentPlayer.currentTime);
-        if (diff > 1) {
-          _this.contentPlayer.currentTime = _this.customPlaybackCurrentTime;
-        }
-        _this.customPlaybackCurrentTime = _this.contentPlayer.currentTime;
-      }
-    }, 200);
-  }
-};
-/* harmony default export */ var content_player = (CONTENT_PLAYER);
 // EXTERNAL MODULE: ./node_modules/core-js-pure/full/array/is-array.js
-var is_array = __webpack_require__(7716);
+var is_array = __webpack_require__(4411);
 ;// CONCATENATED MODULE: ./node_modules/@babel/runtime-corejs3/helpers/esm/arrayLikeToArray.js
 function _arrayLikeToArray(arr, len) {
   if (len == null || len > arr.length) len = arr.length;
@@ -11108,9 +11053,9 @@ function _arrayWithoutHoles(arr) {
   if (is_array(arr)) return _arrayLikeToArray(arr);
 }
 // EXTERNAL MODULE: ./node_modules/core-js-pure/full/get-iterator-method.js
-var get_iterator_method = __webpack_require__(8868);
+var get_iterator_method = __webpack_require__(8376);
 // EXTERNAL MODULE: ./node_modules/core-js-pure/full/array/from.js
-var from = __webpack_require__(2332);
+var from = __webpack_require__(8327);
 ;// CONCATENATED MODULE: ./node_modules/@babel/runtime-corejs3/helpers/esm/iterableToArray.js
 
 
@@ -11144,12 +11089,12 @@ function _toConsumableArray(arr) {
   return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread();
 }
 // EXTERNAL MODULE: ./node_modules/@babel/runtime-corejs3/core-js-stable/instance/map.js
-var map = __webpack_require__(4260);
+var map = __webpack_require__(8079);
 var map_default = /*#__PURE__*/__webpack_require__.n(map);
 // EXTERNAL MODULE: ./node_modules/@babel/runtime-corejs3/core-js-stable/instance/slice.js
-var instance_slice = __webpack_require__(960);
+var instance_slice = __webpack_require__(8979);
 var instance_slice_default = /*#__PURE__*/__webpack_require__.n(instance_slice);
-;// CONCATENATED MODULE: ./src/js/tracking/tracking-events.js
+;// CONCATENATED MODULE: ./src/js/tracking/tracking.js
 
 
 
@@ -11161,1415 +11106,1134 @@ var instance_slice_default = /*#__PURE__*/__webpack_require__.n(instance_slice);
 
 
 
-var TRACKING_EVENTS = {};
-var MEDIA_MIME = ['video/webm', 'video/mp4', 'video/ogg', 'video/3gpp', 'application/vnd.apple.mpegurl', 'application/dash+xml'];
-var _dispatch = function _dispatch(event) {
-  var _context,
-    _context2,
-    _this = this;
-  console.log(concat_default()(_context = "".concat(FW.consolePrepend, " ping tracking for ")).call(_context, event, " VAST event"), FW.consoleStyle, '');
+var Tracking = /*#__PURE__*/function () {
+  function Tracking() {
+    _classCallCheck(this, Tracking);
+  }
+  _createClass(Tracking, null, [{
+    key: "_dispatch",
+    value: function _dispatch(event) {
+      var _context,
+        _context2,
+        _this = this;
+      console.log(concat_default()(_context = "".concat(FW.consolePrepend, " ping tracking for ")).call(_context, event, " VAST event"), FW.consoleStyle, '');
 
-  // filter trackers - may return multiple urls for same event as allowed by VAST spec
-  var trackers = filter_default()(_context2 = this.trackingTags).call(_context2, function (value) {
-    return event === value.event;
-  });
-  // send ping for each valid tracker
-  if (trackers.length > 0) {
-    trackers.forEach(function (element) {
-      TRACKING_EVENTS.pingURI.call(_this, element.url);
-    });
-  }
-};
-TRACKING_EVENTS.dispatch = function (event) {
-  var _this2 = this;
-  if (Array.isArray(event)) {
-    event.forEach(function (currentEvent) {
-      _dispatch.call(_this2, currentEvent);
-    });
-  } else {
-    _dispatch.call(this, event);
-  }
-};
-var _vastReadableTime = function _vastReadableTime(time) {
-  if (FW.isNumber(time) && time >= 0) {
-    var seconds = 0;
-    var minutes = 0;
-    var hours = 0;
-    var ms = Math.floor(time % 1000);
-    if (ms === 0) {
-      ms = '000';
-    } else if (ms < 10) {
-      ms = '00' + ms;
-    } else if (ms < 100) {
-      ms = '0' + ms;
-    } else {
-      ms = ms.toString();
-    }
-    seconds = Math.floor(time * 1.0 / 1000);
-    if (seconds > 59) {
-      minutes = Math.floor(seconds * 1.0 / 60);
-      seconds = seconds - minutes * 60;
-    }
-    if (seconds === 0) {
-      seconds = '00';
-    } else if (seconds < 10) {
-      seconds = '0' + seconds;
-    } else {
-      seconds = seconds.toString();
-    }
-    if (minutes > 59) {
-      hours = Math.floor(minutes * 1.0 / 60);
-      minutes = minutes - hours * 60;
-    }
-    if (minutes === 0) {
-      minutes = '00';
-    } else if (minutes < 10) {
-      minutes = '0' + minutes;
-    } else {
-      minutes = minutes.toString();
-    }
-    if (hours === 0) {
-      hours = '00';
-    } else if (hours < 10) {
-      hours = '0' + hours;
-    } else {
-      if (hours > 23) {
-        hours = '00';
-      } else {
-        hours = hours.toString();
-      }
-    }
-    return hours + ':' + minutes + ':' + seconds + '.' + ms;
-  } else {
-    return '00:00:00.000';
-  }
-};
-var _generateCacheBusting = function _generateCacheBusting() {
-  var text = '';
-  var possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  for (var i = 0; i < 8; i++) {
-    text += possible.charAt(Math.floor(Math.random() * possible.length));
-  }
-  return text;
-};
-TRACKING_EVENTS.replaceMacros = function (url, trackingPixels) {
-  var _this3 = this;
-  var pattern0 = /\[.+?\]/i;
-  if (!pattern0.test(url)) {
-    return url;
-  }
-  var finalString = url;
-  // Marking Macro Values as Unknown or Unavailable 
-  var pattern8 = /\[(ADCOUNT|TRANSACTIONID|PLACEMENTTYPE|BREAKMAXDURATION|BREAKMINDURATION|BREAKMAXADS|BREAKMINADLENGTH|BREAKMAXADLENGTH|IFA|IFATYPE|CLIENTUA|SERVERUA|DEVICEIP|APPBUNDLE|EXTENSIONS|VERIFICATIONVENDORS|OMIDPARTNER|INVENTORYSTATE|CONTENTID|LATLONG)\]/gi;
-  if (pattern8.test(finalString)) {
-    finalString = finalString.replace(pattern8, '-1');
-  }
-  var pattern8bis = /\[(CONTENTURI|CLICKPOS)\]/gi;
-  if (pattern8bis.test(finalString)) {
-    finalString = finalString.replace(pattern8bis, '-2');
-  }
-  // available macros
-  var pattern1 = /\[TIMESTAMP\]/gi;
-  var date = new Date().toISOString();
-  if (pattern1.test(finalString)) {
-    finalString = finalString.replace(pattern1, encodeURIComponent(date));
-  }
-  var pattern2 = /\[CACHEBUSTING\]/gi;
-  if (pattern2.test(finalString)) {
-    finalString = finalString.replace(pattern2, _generateCacheBusting());
-  }
-  var pattern3 = /\[(CONTENTPLAYHEAD|MEDIAPLAYHEAD)\]/gi;
-  var currentContentTime = content_player.getCurrentTime.call(this);
-  if (pattern3.test(finalString) && currentContentTime > -1) {
-    finalString = finalString.replace(pattern3, encodeURIComponent(_vastReadableTime(currentContentTime)));
-  }
-  var pattern5 = /\[BREAKPOSITION\]/gi;
-  var duration = vast_player.getDuration.call(this);
-  if (pattern5.test(finalString)) {
-    if (currentContentTime === 0) {
-      finalString = finalString.replace(pattern5, '1');
-    } else if (currentContentTime > 0 && currentContentTime < duration) {
-      finalString = finalString.replace(pattern5, '2');
-    } else {
-      finalString = finalString.replace(pattern5, '3');
-    }
-  }
-  var pattern9 = /\[ADTYPE\]/gi;
-  if (pattern9.test(finalString) && this.ad.adType) {
-    finalString = finalString.replace(pattern9, encodeURIComponent(this.ad.adType));
-  }
-  var pattern11 = /\[DEVICEUA\]/gi;
-  if (pattern11.test(finalString) && ENV.userAgent) {
-    finalString = finalString.replace(pattern11, encodeURIComponent(ENV.userAgent));
-  }
-  var pattern11bis = /\[SERVERSIDE\]/gi;
-  if (pattern11bis.test(finalString) && ENV.userAgent) {
-    finalString = finalString.replace(pattern11bis, '0');
-  }
-  var pattern13 = /\[DOMAIN\]/gi;
-  if (pattern13.test(finalString) && window.location.hostname) {
-    finalString = finalString.replace(pattern13, encodeURIComponent(window.location.hostname));
-  }
-  var pattern14 = /\[PAGEURL\]/gi;
-  if (pattern14.test(finalString) && window.location.href) {
-    finalString = finalString.replace(pattern14, encodeURIComponent(window.location.href));
-  }
-  var pattern18 = /\[PLAYERCAPABILITIES\]/gi;
-  if (pattern18.test(finalString)) {
-    finalString = finalString.replace(pattern18, 'skip,mute,autoplay,mautoplay,fullscreen,icon');
-  }
-  var pattern19 = /\[CLICKTYPE\]/gi;
-  if (pattern19.test(finalString)) {
-    var clickType = '1';
-    if (ENV.isMobile) {
-      clickType = '2';
-    }
-    finalString = finalString.replace(pattern19, clickType);
-  }
-  var pattern21 = /\[PLAYERSIZE\]/gi;
-  if (pattern21.test(finalString)) {
-    var width = parse_int_default()(FW.getWidth(this.container));
-    var height = parse_int_default()(FW.getHeight(this.container));
-    finalString = finalString.replace(pattern21, encodeURIComponent(width.toString() + ',' + height.toString()));
-  }
-  if (trackingPixels) {
-    var pattern4 = /\[ADPLAYHEAD\]/gi;
-    var currentVastTime = vast_player.getCurrentTime.call(this);
-    if (pattern4.test(finalString) && currentVastTime > -1) {
-      finalString = finalString.replace(pattern4, encodeURIComponent(_vastReadableTime(currentVastTime)));
-    }
-    var pattern10 = /\[UNIVERSALADID\]/gi;
-    if (pattern10.test(finalString) && this.creative.universalAdIds.length > 0) {
-      var universalAdIdString = '';
-      this.creative.universalAdIds.forEach(function (universalAdId, index) {
-        if (index !== 0 || index !== _this3.creative.universalAdIds.length - 1) {
-          universalAdIdString += ',';
-        }
-        universalAdIdString += universalAdId.idRegistry + ' ' + universalAdId.value;
+      // filter trackers - may return multiple urls for same event as allowed by VAST spec
+      var trackers = filter_default()(_context2 = this.trackingTags).call(_context2, function (value) {
+        return event === value.event;
       });
-      finalString = finalString.replace(pattern10, encodeURIComponent(universalAdIdString));
-    }
-    var pattern22 = /\[ASSETURI\]/gi;
-    var assetUri = this.getAdMediaUrl();
-    if (pattern22.test(finalString) && typeof assetUri === 'string' && assetUri !== '') {
-      finalString = finalString.replace(pattern22, encodeURIComponent(assetUri));
-    }
-    var pattern23 = /\[PODSEQUENCE\]/gi;
-    if (pattern23.test(finalString) && this.ad.sequence) {
-      finalString = finalString.replace(pattern23, encodeURIComponent(this.ad.sequence.toString()));
-    }
-    var pattern24 = /\[ADSERVINGID\]/gi;
-    if (pattern24.test(finalString) && this.ad.adServingId) {
-      finalString = finalString.replace(pattern24, encodeURIComponent(this.ad.adServingId));
-    }
-  } else {
-    var pattern6 = /\[ADCATEGORIES\]/gi;
-    if (pattern6.test(finalString) && this.ad.categories.length > 0) {
-      var _context3;
-      var categories = map_default()(_context3 = this.ad.categories).call(_context3, function (categorie) {
-        return categorie.value;
-      }).join(',');
-      finalString = finalString.replace(pattern6, encodeURIComponent(categories));
-    }
-    var pattern7 = /\[BLOCKEDADCATEGORIES\]/gi;
-    if (pattern7.test(finalString) && this.ad.blockedAdCategories.length > 0) {
-      var _context4;
-      var blockedAdCategories = map_default()(_context4 = this.ad.blockedAdCategories).call(_context4, function (blockedAdCategories) {
-        return blockedAdCategories.value;
-      }).join(',');
-      finalString = finalString.replace(pattern7, encodeURIComponent(blockedAdCategories));
-    }
-    var pattern15 = /\[VASTVERSIONS\]/gi;
-    if (pattern15.test(finalString)) {
-      finalString = finalString.replace(pattern15, '2,3,5,6,7,8,11,12,13,14');
-    }
-    var pattern16 = /\[APIFRAMEWORKS\]/gi;
-    if (pattern16.test(finalString)) {
-      finalString = finalString.replace(pattern16, '2');
-    }
-    var pattern17 = /\[MEDIAMIME\]/gi;
-    if (pattern17.test(finalString)) {
-      var mimeTyepString = '';
-      MEDIA_MIME.forEach(function (value) {
-        if (ENV.checkCanPlayType(value)) {
-          mimeTyepString += value + ',';
-        }
-      });
-      if (mimeTyepString) {
-        mimeTyepString = instance_slice_default()(mimeTyepString).call(mimeTyepString, 0, -1);
-        finalString = finalString.replace(pattern17, encodeURIComponent(mimeTyepString));
-      }
-    }
-    var pattern20 = /\[PLAYERSTATE\]/gi;
-    if (pattern20.test(finalString)) {
-      var playerState = '';
-      var muted = content_player.getMute();
-      if (muted) {
-        playerState += 'muted';
-      }
-      var fullscreen = this.getFullscreen();
-      if (fullscreen) {
-        if (playerState) {
-          playerState += ',';
-        }
-        playerState += 'fullscreen';
-      }
-      finalString = finalString.replace(pattern20, playerState);
-    }
-  }
-  var pattern25 = /\[LIMITADTRACKING\]/gi;
-  if (pattern25.test(finalString) && this.regulationsInfo.limitAdTracking) {
-    finalString = finalString.replace(pattern25, encodeURIComponent(this.regulationsInfo.limitAdTracking));
-  }
-  var pattern26 = /\[REGULATIONS\]/gi;
-  if (pattern26.test(finalString) && this.regulationsInfo.regulations) {
-    finalString = finalString.replace(pattern26, encodeURIComponent(this.regulationsInfo.regulations));
-  }
-  var pattern27 = /\[GDPRCONSENT\]/gi;
-  if (pattern27.test(finalString) && this.regulationsInfo.gdprConsent) {
-    finalString = finalString.replace(pattern27, encodeURIComponent(this.regulationsInfo.gdprConsent));
-  }
-  return finalString;
-};
-var _ping = function _ping(url) {
-  // we expect an image format for the tracker (generally a 1px GIF/PNG/JPG/AVIF) or JavaScript as 
-  // those are the most common format in the industry 
-  // other format may produce errors and the related tracker may not be requested properly
-  var jsPattern = /\.js$/i;
-  if (jsPattern.test(url)) {
-    var script = document.createElement('script');
-    script.src = url;
-    try {
-      document.head.appendChild(script);
-    } catch (error) {
-      console.warn(error);
-      document.body.appendChild(script);
-    }
-  } else {
-    FW.ajax(url, this.params.ajaxTimeout, false, 'GET').then(function () {
-      var _context5;
-      console.log(concat_default()(_context5 = "".concat(FW.consolePrepend, " VAST tracker successfully loaded ")).call(_context5, url), FW.consoleStyle, '');
-    }).catch(function (error) {
-      var _context6, _context7;
-      console.log(concat_default()(_context6 = concat_default()(_context7 = "".concat(FW.consolePrepend, " VAST tracker failed loading ")).call(_context7, url, " with error ")).call(_context6, error), FW.consoleStyle, '');
-    });
-    /* old way of doing it but browsers 304 cache requests when url is requested multiple times
-    let img = new Image();
-    img.addEventListener('load', () => {
-      console.log(`${FW.consolePrepend} VAST tracker successfully loaded ${url}`, FW.consoleStyle, '');
-      img = null;
-    });
-    img.addEventListener('error', () => {
-      console.log(`${FW.consolePrepend} VAST tracker failed loading ${url}`, FW.consoleStyle, '');
-      img = null;
-    });
-    img.src = url;
-    */
-  }
-};
-TRACKING_EVENTS.pingURI = function (url) {
-  var trackingUrl = TRACKING_EVENTS.replaceMacros.call(this, url, true);
-  _ping.call(this, trackingUrl);
-};
-TRACKING_EVENTS.error = function (errorCode) {
-  var _this4 = this;
-  // for each Error tag within an InLine or chain of Wrapper ping error URL
-  var errorTags = this.adErrorTags;
-  if (errorCode === 303 && this.vastErrorTags.length > 0) {
-    var _context8;
-    // here we ping vastErrorTags with error code 303 according to spec
-    // concat array thus
-    errorTags = concat_default()(_context8 = []).call(_context8, _toConsumableArray(errorTags), _toConsumableArray(this.vastErrorTags));
-  }
-  if (errorTags.length > 0) {
-    errorTags.forEach(function (errorTag) {
-      if (errorTag.url) {
-        var errorUrl = errorTag.url;
-        var errorRegExp = /\[ERRORCODE\]/gi;
-        if (errorRegExp.test(errorUrl) && FW.isNumber(errorCode) && errorCode > 0 && errorCode < 1000) {
-          errorUrl = errorUrl.replace(errorRegExp, errorCode);
-        }
-        _ping.call(_this4, errorUrl);
-      }
-    });
-  }
-};
-var _onVolumeChange = function _onVolumeChange() {
-  if (this.vastPlayer.muted || this.vastPlayer.volume === 0) {
-    Utils.createApiEvent.call(this, 'advolumemuted');
-    TRACKING_EVENTS.dispatch.call(this, 'mute');
-    this.vastPlayerMuted = true;
-  } else {
-    if (this.vastPlayerMuted) {
-      TRACKING_EVENTS.dispatch.call(this, 'unmute');
-      this.vastPlayerMuted = false;
-    }
-  }
-  Utils.createApiEvent.call(this, 'advolumechanged');
-};
-var _onTimeupdate = function _onTimeupdate() {
-  var _this5 = this;
-  this.vastPlayerCurrentTime = vast_player.getCurrentTime.call(this);
-  if (this.vastPlayerCurrentTime > 0) {
-    if (this.vastPlayerDuration > 0 && this.vastPlayerDuration > this.vastPlayerCurrentTime) {
-      if (this.vastPlayerCurrentTime >= this.vastPlayerDuration * 0.25 && !this.firstQuartileEventFired) {
-        this.firstQuartileEventFired = true;
-        Utils.createApiEvent.call(this, 'adfirstquartile');
-        TRACKING_EVENTS.dispatch.call(this, 'firstQuartile');
-      } else if (this.vastPlayerCurrentTime >= this.vastPlayerDuration * 0.5 && !this.midpointEventFired) {
-        this.midpointEventFired = true;
-        Utils.createApiEvent.call(this, 'admidpoint');
-        TRACKING_EVENTS.dispatch.call(this, 'midpoint');
-      } else if (this.vastPlayerCurrentTime >= this.vastPlayerDuration * 0.75 && !this.thirdQuartileEventFired) {
-        this.thirdQuartileEventFired = true;
-        Utils.createApiEvent.call(this, 'adthirdquartile');
-        TRACKING_EVENTS.dispatch.call(this, 'thirdQuartile');
-      }
-    }
-    // progress event
-    if (this.progressEvents.length > 0) {
-      if (this.vastPlayerCurrentTime > this.progressEvents[0].time) {
-        var _context9;
-        var filterProgressEvent = filter_default()(_context9 = this.progressEvents).call(_context9, function (progressEvent) {
-          return progressEvent.time === _this5.progressEvents[0].time;
+      // send ping for each valid tracker
+      if (trackers.length > 0) {
+        trackers.forEach(function (element) {
+          Tracking.pingURI.call(_this, element.url);
         });
-        filterProgressEvent.forEach(function (progressEvent) {
-          if (progressEvent.url) {
-            TRACKING_EVENTS.pingURI.call(_this5, progressEvent.url);
+      }
+    }
+  }, {
+    key: "_vastReadableTime",
+    value: function _vastReadableTime(time) {
+      if (FW.isNumber(time) && time >= 0) {
+        var seconds = 0;
+        var minutes = 0;
+        var hours = 0;
+        var ms = Math.floor(time % 1000);
+        if (ms === 0) {
+          ms = '000';
+        } else if (ms < 10) {
+          ms = '00' + ms;
+        } else if (ms < 100) {
+          ms = '0' + ms;
+        } else {
+          ms = ms.toString();
+        }
+        seconds = Math.floor(time * 1.0 / 1000);
+        if (seconds > 59) {
+          minutes = Math.floor(seconds * 1.0 / 60);
+          seconds = seconds - minutes * 60;
+        }
+        if (seconds === 0) {
+          seconds = '00';
+        } else if (seconds < 10) {
+          seconds = '0' + seconds;
+        } else {
+          seconds = seconds.toString();
+        }
+        if (minutes > 59) {
+          hours = Math.floor(minutes * 1.0 / 60);
+          minutes = minutes - hours * 60;
+        }
+        if (minutes === 0) {
+          minutes = '00';
+        } else if (minutes < 10) {
+          minutes = '0' + minutes;
+        } else {
+          minutes = minutes.toString();
+        }
+        if (hours === 0) {
+          hours = '00';
+        } else if (hours < 10) {
+          hours = '0' + hours;
+        } else {
+          if (hours > 23) {
+            hours = '00';
+          } else {
+            hours = hours.toString();
+          }
+        }
+        return hours + ':' + minutes + ':' + seconds + '.' + ms;
+      } else {
+        return '00:00:00.000';
+      }
+    }
+  }, {
+    key: "_generateCacheBusting",
+    value: function _generateCacheBusting() {
+      var text = '';
+      var possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+      for (var i = 0; i < 8; i++) {
+        text += possible.charAt(Math.floor(Math.random() * possible.length));
+      }
+      return text;
+    }
+  }, {
+    key: "_ping",
+    value: function _ping(url) {
+      // we expect an image format for the tracker (generally a 1px GIF/PNG/JPG/AVIF) or JavaScript as 
+      // those are the most common format in the industry 
+      // other format may produce errors and the related tracker may not be requested properly
+      var jsPattern = /\.js$/i;
+      if (jsPattern.test(url)) {
+        var script = document.createElement('script');
+        script.src = url;
+        try {
+          document.head.appendChild(script);
+        } catch (error) {
+          console.warn(error);
+          document.body.appendChild(script);
+        }
+      } else {
+        FW.ajax(url, this.params.ajaxTimeout, false, 'GET').then(function () {
+          var _context3;
+          console.log(concat_default()(_context3 = "".concat(FW.consolePrepend, " VAST tracker successfully loaded ")).call(_context3, url), FW.consoleStyle, '');
+        }).catch(function (error) {
+          var _context4, _context5;
+          console.log(concat_default()(_context4 = concat_default()(_context5 = "".concat(FW.consolePrepend, " VAST tracker failed loading ")).call(_context5, url, " with error ")).call(_context4, error), FW.consoleStyle, '');
+        });
+      }
+    }
+  }, {
+    key: "_onVolumeChange",
+    value: function _onVolumeChange() {
+      if (this.__adPlayer.muted || this.__adPlayer.volume === 0) {
+        Utils.createApiEvent.call(this, 'advolumemuted');
+        Tracking.dispatch.call(this, 'mute');
+      } else if (!this.__adPlayer.muted && this.__adPlayer.volume > 0) {
+        Tracking.dispatch.call(this, 'unmute');
+      }
+      Utils.createApiEvent.call(this, 'advolumechanged');
+    }
+  }, {
+    key: "_onTimeupdate",
+    value: function _onTimeupdate() {
+      var _this2 = this;
+      var adPlayerDuration = -1;
+      var adPlayerCurrentTime = -1;
+      if (this.rmpVastAdPlayer) {
+        adPlayerCurrentTime = this.rmpVastAdPlayer.currentTime;
+        adPlayerDuration = this.rmpVastAdPlayer.duration;
+      }
+      if (adPlayerCurrentTime > 0) {
+        if (adPlayerDuration > 0 && adPlayerDuration > adPlayerCurrentTime) {
+          if (adPlayerCurrentTime >= adPlayerDuration * 0.25 && !this.firstQuartileEventFired) {
+            this.firstQuartileEventFired = true;
+            Utils.createApiEvent.call(this, 'adfirstquartile');
+            Tracking.dispatch.call(this, 'firstQuartile');
+          } else if (adPlayerCurrentTime >= adPlayerDuration * 0.5 && !this.midpointEventFired) {
+            this.midpointEventFired = true;
+            Utils.createApiEvent.call(this, 'admidpoint');
+            Tracking.dispatch.call(this, 'midpoint');
+          } else if (adPlayerCurrentTime >= adPlayerDuration * 0.75 && !this.thirdQuartileEventFired) {
+            this.thirdQuartileEventFired = true;
+            Utils.createApiEvent.call(this, 'adthirdquartile');
+            Tracking.dispatch.call(this, 'thirdQuartile');
+          }
+        }
+        // progress event
+        if (this.progressEvents.length > 0) {
+          if (adPlayerCurrentTime > this.progressEvents[0].time) {
+            var _context6;
+            var filterProgressEvent = filter_default()(_context6 = this.progressEvents).call(_context6, function (progressEvent) {
+              return progressEvent.time === _this2.progressEvents[0].time;
+            });
+            filterProgressEvent.forEach(function (progressEvent) {
+              if (progressEvent.url) {
+                Tracking.pingURI.call(_this2, progressEvent.url);
+              }
+            });
+            this.progressEvents.shift();
+            Utils.createApiEvent.call(this, 'adprogress');
+          }
+        }
+      }
+    }
+  }, {
+    key: "_onPause",
+    value: function _onPause() {
+      if (this.__adPlayer && this.__adPlayer.paused) {
+        var currentTime = this.__adPlayer.currentTime;
+        var currentDuration = this.__adPlayer.duration;
+        // we have reached end of linear creative - a HTML5 video pause event may fire just before ended event
+        // in this case we ignore the adpaused event as adcomplete prevails
+        if (currentTime === currentDuration) {
+          return;
+        }
+        Utils.createApiEvent.call(this, 'adpaused');
+        Tracking.dispatch.call(this, 'pause');
+      }
+    }
+  }, {
+    key: "_onPlay",
+    value: function _onPlay() {
+      if (this.__adPlayer && !this.__adPlayer.paused) {
+        Utils.createApiEvent.call(this, 'adresumed');
+        Tracking.dispatch.call(this, 'resume');
+      }
+    }
+  }, {
+    key: "_onPlaying",
+    value: function _onPlaying() {
+      Utils.createApiEvent.call(this, ['adimpression', 'adstarted']);
+      Tracking.dispatch.call(this, ['impression', 'creativeView', 'start']);
+    }
+  }, {
+    key: "_onEnded",
+    value: function _onEnded() {
+      Utils.createApiEvent.call(this, 'adcomplete');
+      Tracking.dispatch.call(this, 'complete');
+      if (this.rmpVastAdPlayer) {
+        this.rmpVastAdPlayer.resumeContent();
+      }
+    }
+  }, {
+    key: "replaceMacros",
+    value: function replaceMacros(url, trackingPixels) {
+      var _this3 = this;
+      var pattern0 = /\[.+?\]/i;
+      if (!pattern0.test(url)) {
+        return url;
+      }
+      var finalString = url;
+
+      // Marking Macro Values as Unknown or Unavailable 
+      var pattern8 = /\[(ADCOUNT|TRANSACTIONID|PLACEMENTTYPE|BREAKMAXDURATION|BREAKMINDURATION|BREAKMAXADS|BREAKMINADLENGTH|BREAKMAXADLENGTH|IFA|IFATYPE|CLIENTUA|SERVERUA|DEVICEIP|APPBUNDLE|EXTENSIONS|VERIFICATIONVENDORS|OMIDPARTNER|INVENTORYSTATE|CONTENTID|LATLONG)\]/gi;
+      if (pattern8.test(finalString)) {
+        finalString = finalString.replace(pattern8, '-1');
+      }
+      var pattern8bis = /\[(CONTENTURI|CLICKPOS)\]/gi;
+      if (pattern8bis.test(finalString)) {
+        finalString = finalString.replace(pattern8bis, '-2');
+      }
+
+      // available macros
+      var pattern1 = /\[TIMESTAMP\]/gi;
+      var date = new Date().toISOString();
+      if (pattern1.test(finalString)) {
+        finalString = finalString.replace(pattern1, encodeURIComponent(date));
+      }
+      var pattern2 = /\[CACHEBUSTING\]/gi;
+      if (pattern2.test(finalString)) {
+        finalString = finalString.replace(pattern2, Tracking._generateCacheBusting());
+      }
+      var pattern3 = /\[(CONTENTPLAYHEAD|MEDIAPLAYHEAD)\]/gi;
+      var currentContentTime = this.rmpVastContentPlayer.currentTime;
+      if (pattern3.test(finalString) && currentContentTime > -1) {
+        finalString = finalString.replace(pattern3, encodeURIComponent(Tracking._vastReadableTime(currentContentTime)));
+      }
+      var pattern5 = /\[BREAKPOSITION\]/gi;
+      var adPlayerDuration = -1;
+      if (this.rmpVastAdPlayer) {
+        adPlayerDuration = this.rmpVastAdPlayer.duration;
+      }
+      if (pattern5.test(finalString)) {
+        if (currentContentTime === 0) {
+          finalString = finalString.replace(pattern5, '1');
+        } else if (currentContentTime > 0 && currentContentTime < adPlayerDuration) {
+          finalString = finalString.replace(pattern5, '2');
+        } else {
+          finalString = finalString.replace(pattern5, '3');
+        }
+      }
+      var pattern9 = /\[ADTYPE\]/gi;
+      if (pattern9.test(finalString) && this.ad.adType) {
+        finalString = finalString.replace(pattern9, encodeURIComponent(this.ad.adType));
+      }
+      var pattern11 = /\[DEVICEUA\]/gi;
+      if (pattern11.test(finalString) && Environment.userAgent) {
+        finalString = finalString.replace(pattern11, encodeURIComponent(Environment.userAgent));
+      }
+      var pattern11bis = /\[SERVERSIDE\]/gi;
+      if (pattern11bis.test(finalString) && Environment.userAgent) {
+        finalString = finalString.replace(pattern11bis, '0');
+      }
+      var pattern13 = /\[DOMAIN\]/gi;
+      if (pattern13.test(finalString) && window.location.hostname) {
+        finalString = finalString.replace(pattern13, encodeURIComponent(window.location.hostname));
+      }
+      var pattern14 = /\[PAGEURL\]/gi;
+      if (pattern14.test(finalString) && window.location.href) {
+        finalString = finalString.replace(pattern14, encodeURIComponent(window.location.href));
+      }
+      var pattern18 = /\[PLAYERCAPABILITIES\]/gi;
+      if (pattern18.test(finalString)) {
+        finalString = finalString.replace(pattern18, 'skip,mute,autoplay,mautoplay,fullscreen,icon');
+      }
+      var pattern19 = /\[CLICKTYPE\]/gi;
+      if (pattern19.test(finalString)) {
+        var clickType = '1';
+        if (Environment.isMobile) {
+          clickType = '2';
+        }
+        finalString = finalString.replace(pattern19, clickType);
+      }
+      var pattern21 = /\[PLAYERSIZE\]/gi;
+      if (pattern21.test(finalString)) {
+        var width = parse_int_default()(FW.getWidth(this.container));
+        var height = parse_int_default()(FW.getHeight(this.container));
+        finalString = finalString.replace(pattern21, encodeURIComponent(width.toString() + ',' + height.toString()));
+      }
+      if (trackingPixels) {
+        var pattern4 = /\[ADPLAYHEAD\]/gi;
+        var adPlayerCurrentTime = -1;
+        if (this.rmpVastAdPlayer) {
+          adPlayerCurrentTime = this.rmpVastAdPlayer.currentTime;
+        }
+        if (pattern4.test(finalString) && adPlayerCurrentTime > -1) {
+          finalString = finalString.replace(pattern4, encodeURIComponent(Tracking._vastReadableTime(adPlayerCurrentTime)));
+        }
+        var pattern10 = /\[UNIVERSALADID\]/gi;
+        if (pattern10.test(finalString) && this.creative.universalAdIds.length > 0) {
+          var universalAdIdString = '';
+          this.creative.universalAdIds.forEach(function (universalAdId, index) {
+            if (index !== 0 || index !== _this3.creative.universalAdIds.length - 1) {
+              universalAdIdString += ',';
+            }
+            universalAdIdString += universalAdId.idRegistry + ' ' + universalAdId.value;
+          });
+          finalString = finalString.replace(pattern10, encodeURIComponent(universalAdIdString));
+        }
+        var pattern22 = /\[ASSETURI\]/gi;
+        var assetUri = this.adMediaUrl;
+        if (pattern22.test(finalString) && typeof assetUri === 'string' && assetUri !== '') {
+          finalString = finalString.replace(pattern22, encodeURIComponent(assetUri));
+        }
+        var pattern23 = /\[PODSEQUENCE\]/gi;
+        if (pattern23.test(finalString) && this.ad.sequence) {
+          finalString = finalString.replace(pattern23, encodeURIComponent(this.ad.sequence.toString()));
+        }
+        var pattern24 = /\[ADSERVINGID\]/gi;
+        if (pattern24.test(finalString) && this.ad.adServingId) {
+          finalString = finalString.replace(pattern24, encodeURIComponent(this.ad.adServingId));
+        }
+      } else {
+        var pattern6 = /\[ADCATEGORIES\]/gi;
+        if (pattern6.test(finalString) && this.ad.categories.length > 0) {
+          var _context7;
+          var categories = map_default()(_context7 = this.ad.categories).call(_context7, function (categorie) {
+            return categorie.value;
+          }).join(',');
+          finalString = finalString.replace(pattern6, encodeURIComponent(categories));
+        }
+        var pattern7 = /\[BLOCKEDADCATEGORIES\]/gi;
+        if (pattern7.test(finalString) && this.ad.blockedAdCategories.length > 0) {
+          var _context8;
+          var blockedAdCategories = map_default()(_context8 = this.ad.blockedAdCategories).call(_context8, function (blockedAdCategories) {
+            return blockedAdCategories.value;
+          }).join(',');
+          finalString = finalString.replace(pattern7, encodeURIComponent(blockedAdCategories));
+        }
+        var pattern15 = /\[VASTVERSIONS\]/gi;
+        if (pattern15.test(finalString)) {
+          finalString = finalString.replace(pattern15, '2,3,5,6,7,8,11,12,13,14');
+        }
+        var pattern16 = /\[APIFRAMEWORKS\]/gi;
+        if (pattern16.test(finalString)) {
+          finalString = finalString.replace(pattern16, '2');
+        }
+        var pattern17 = /\[MEDIAMIME\]/gi;
+        var mediaMime = ['video/webm', 'video/mp4', 'video/ogg', 'video/3gpp', 'application/vnd.apple.mpegurl', 'application/dash+xml'];
+        if (pattern17.test(finalString)) {
+          var mimeTyepString = '';
+          mediaMime.forEach(function (value) {
+            if (Environment.checkCanPlayType(value)) {
+              mimeTyepString += value + ',';
+            }
+          });
+          if (mimeTyepString) {
+            mimeTyepString = instance_slice_default()(mimeTyepString).call(mimeTyepString, 0, -1);
+            finalString = finalString.replace(pattern17, encodeURIComponent(mimeTyepString));
+          }
+        }
+        var pattern20 = /\[PLAYERSTATE\]/gi;
+        if (pattern20.test(finalString)) {
+          var playerState = '';
+          if (this.rmpVastContentPlayer.muted) {
+            playerState += 'muted';
+          }
+          if (this.isInFullscreen) {
+            if (playerState) {
+              playerState += ',';
+            }
+            playerState += 'fullscreen';
+          }
+          finalString = finalString.replace(pattern20, playerState);
+        }
+      }
+      var pattern25 = /\[LIMITADTRACKING\]/gi;
+      if (pattern25.test(finalString) && this.regulationsInfo.limitAdTracking) {
+        finalString = finalString.replace(pattern25, encodeURIComponent(this.regulationsInfo.limitAdTracking));
+      }
+      var pattern26 = /\[REGULATIONS\]/gi;
+      if (pattern26.test(finalString) && this.regulationsInfo.regulations) {
+        finalString = finalString.replace(pattern26, encodeURIComponent(this.regulationsInfo.regulations));
+      }
+      var pattern27 = /\[GDPRCONSENT\]/gi;
+      if (pattern27.test(finalString) && this.regulationsInfo.gdprConsent) {
+        finalString = finalString.replace(pattern27, encodeURIComponent(this.regulationsInfo.gdprConsent));
+      }
+      return finalString;
+    }
+  }, {
+    key: "pingURI",
+    value: function pingURI(url) {
+      var trackingUrl = Tracking.replaceMacros.call(this, url, true);
+      Tracking._ping.call(this, trackingUrl);
+    }
+  }, {
+    key: "error",
+    value: function error(errorCode) {
+      var _this4 = this;
+      // for each Error tag within an InLine or chain of Wrapper ping error URL
+      var errorTags = this.adErrorTags;
+      if (errorCode === 303 && this.vastErrorTags.length > 0) {
+        var _context9;
+        // here we ping vastErrorTags with error code 303 according to spec
+        // concat array thus
+        errorTags = concat_default()(_context9 = []).call(_context9, _toConsumableArray(errorTags), _toConsumableArray(this.vastErrorTags));
+      }
+      if (errorTags.length > 0) {
+        errorTags.forEach(function (errorTag) {
+          if (errorTag.url) {
+            var errorUrl = errorTag.url;
+            var errorRegExp = /\[ERRORCODE\]/gi;
+            if (errorRegExp.test(errorUrl) && FW.isNumber(errorCode) && errorCode > 0 && errorCode < 1000) {
+              errorUrl = errorUrl.replace(errorRegExp, errorCode);
+            }
+            Tracking._ping.call(_this4, errorUrl);
           }
         });
-        this.progressEvents.shift();
-        Utils.createApiEvent.call(this, 'adprogress');
       }
     }
-  }
-};
-var _onPause = function _onPause() {
-  if (!this.vastPlayerPaused) {
-    this.vastPlayerPaused = true;
-    var currentTime = this.vastPlayer.currentTime;
-    var currentDuration = this.vastPlayer.duration;
-    // we have reached end of linear creative - a HTML5 video pause event may fire just before ended event
-    // in this case we ignore the adpaused event as adcomplete prevails
-    if (currentTime === currentDuration) {
-      return;
+  }, {
+    key: "dispatch",
+    value: function dispatch(event) {
+      var _this5 = this;
+      if (Array.isArray(event)) {
+        event.forEach(function (currentEvent) {
+          Tracking._dispatch.call(_this5, currentEvent);
+        });
+      } else {
+        Tracking._dispatch.call(this, event);
+      }
     }
-    Utils.createApiEvent.call(this, 'adpaused');
-    TRACKING_EVENTS.dispatch.call(this, 'pause');
+  }, {
+    key: "destroy",
+    value: function destroy() {
+      if (this.__adPlayer) {
+        this.__adPlayer.removeEventListener('pause', this.onPauseFn);
+        this.__adPlayer.removeEventListener('play', this.onPlayFn);
+        this.__adPlayer.removeEventListener('playing', this.onPlayingFn);
+        this.__adPlayer.removeEventListener('ended', this.onEndedFn);
+        this.__adPlayer.removeEventListener('volumechange', this.onVolumeChangeFn);
+        this.__adPlayer.removeEventListener('timeupdate', this.onTimeupdateFn);
+      }
+    }
+  }, {
+    key: "wire",
+    value: function wire() {
+      // we filter through all HTML5 video events and create new VAST events 
+      if (this.__adPlayer && this.creative.isLinear && !this.rmpVastVpaidPlayer) {
+        this.onPauseFn = Tracking._onPause.bind(this);
+        this.__adPlayer.addEventListener('pause', this.onPauseFn);
+        this.onPlayFn = Tracking._onPlay.bind(this);
+        this.__adPlayer.addEventListener('play', this.onPlayFn);
+        this.onPlayingFn = Tracking._onPlaying.bind(this);
+        this.__adPlayer.addEventListener('playing', this.onPlayingFn, {
+          once: true
+        });
+        this.onEndedFn = Tracking._onEnded.bind(this);
+        this.__adPlayer.addEventListener('ended', this.onEndedFn, {
+          once: true
+        });
+        this.onVolumeChangeFn = Tracking._onVolumeChange.bind(this);
+        this.__adPlayer.addEventListener('volumechange', this.onVolumeChangeFn);
+        this.onTimeupdateFn = Tracking._onTimeupdate.bind(this);
+        this.__adPlayer.addEventListener('timeupdate', this.onTimeupdateFn);
+      }
+    }
+  }]);
+  return Tracking;
+}();
+
+;// CONCATENATED MODULE: ./src/js/framework/utils.js
+
+
+
+
+
+
+
+
+
+
+var Utils = /*#__PURE__*/function () {
+  function Utils() {
+    _classCallCheck(this, Utils);
   }
-};
-var _onPlay = function _onPlay() {
-  if (this.vastPlayerPaused) {
-    this.vastPlayerPaused = false;
-    Utils.createApiEvent.call(this, 'adresumed');
-    TRACKING_EVENTS.dispatch.call(this, 'resume');
-  }
-};
-var _onPlaying = function _onPlaying() {
-  this.vastPlayer.removeEventListener('playing', this.onPlaying);
-  Utils.createApiEvent.call(this, ['adimpression', 'adstarted']);
-  TRACKING_EVENTS.dispatch.call(this, ['impression', 'creativeView', 'start']);
-};
-var _onEnded = function _onEnded() {
-  this.vastPlayer.removeEventListener('ended', this.onEnded);
-  Utils.createApiEvent.call(this, 'adcomplete');
-  TRACKING_EVENTS.dispatch.call(this, 'complete');
-  vast_player.resumeContent.call(this);
-};
-TRACKING_EVENTS.wire = function () {
-  // we filter through all HTML5 video events and create new VAST events 
-  if (this.vastPlayer && this.creative.isLinear && !this.isVPAID) {
-    this.onPause = _onPause.bind(this);
-    this.vastPlayer.addEventListener('pause', this.onPause);
-    this.onPlay = _onPlay.bind(this);
-    this.vastPlayer.addEventListener('play', this.onPlay);
-    this.onPlaying = _onPlaying.bind(this);
-    this.vastPlayer.addEventListener('playing', this.onPlaying);
-    this.onEnded = _onEnded.bind(this);
-    this.vastPlayer.addEventListener('ended', this.onEnded);
-    this.onVolumeChange = _onVolumeChange.bind(this);
-    this.vastPlayer.addEventListener('volumechange', this.onVolumeChange);
-    this.onTimeupdate = _onTimeupdate.bind(this);
-    this.vastPlayer.addEventListener('timeupdate', this.onTimeupdate);
-  }
-};
-/* harmony default export */ var tracking_events = (TRACKING_EVENTS);
+  _createClass(Utils, null, [{
+    key: "_onFullscreenchange",
+    value:
+    // attach fullscreen states
+    // this assumes we have a polyfill for fullscreenchange event 
+    // see app/js/app.js
+    // we need this to handle VAST fullscreen events
+    function _onFullscreenchange(event) {
+      if (event && event.type) {
+        var _context;
+        console.log(concat_default()(_context = "".concat(FW.consolePrepend, " event is ")).call(_context, event.type), FW.consoleStyle, '');
+        if (event.type === 'fullscreenchange') {
+          if (this.isInFullscreen) {
+            this.isInFullscreen = false;
+            if (this.__adOnStage && this.creative.isLinear) {
+              Tracking.dispatch.call(this, ['exitFullscreen', 'playerCollapse']);
+            }
+          } else {
+            this.isInFullscreen = true;
+            if (this.__adOnStage && this.creative.isLinear) {
+              Tracking.dispatch.call(this, ['fullscreen', 'playerExpand']);
+            }
+          }
+        } else if (event.type === 'webkitbeginfullscreen') {
+          // iOS uses webkitbeginfullscreen
+          if (this.__adOnStage && this.creative.isLinear) {
+            Tracking.dispatch.call(this, ['fullscreen', 'playerExpand']);
+          }
+          this.isInFullscreen = true;
+        } else if (event.type === 'webkitendfullscreen') {
+          // iOS uses webkitendfullscreen
+          if (this.__adOnStage && this.creative.isLinear) {
+            Tracking.dispatch.call(this, ['exitFullscreen', 'playerCollapse']);
+          }
+          this.isInFullscreen = false;
+        }
+      }
+    }
+  }, {
+    key: "_updateVastError",
+    value: function _updateVastError(errorCode) {
+      var _context2, _context3, _context4;
+      // List of VAST errors according to specs
+      var vastErrorsList = [{
+        code: 201,
+        description: 'Video player expecting different linearity.'
+      }, {
+        code: 204,
+        description: 'Ad category was required but not provided.'
+      }, {
+        code: 205,
+        description: 'Inline Category violates Wrapper BlockedAdCategories.'
+      }, {
+        code: 303,
+        description: 'No VAST response after one or more Wrappers.'
+      }, {
+        code: 400,
+        description: 'General Linear error. Video player is unable to display the Linear Ad.'
+      }, {
+        code: 401,
+        description: 'File not found. Unable to find Linear/MediaFile from URI.'
+      }, {
+        code: 402,
+        description: 'Timeout of MediaFile URI.'
+      }, {
+        code: 403,
+        description: 'Couldn\'t find MediaFile that is supported by this video player, based on the attributes of the MediaFile element.'
+      }, {
+        code: 501,
+        description: 'Unable to display NonLinear Ad because creative dimensions do not align with creative display area (i.e. creative dimension too large).'
+      }, {
+        code: 502,
+        description: 'Unable to fetch NonLinearAds/NonLinear resource.'
+      }, {
+        code: 503,
+        description: 'Couldn\'t find NonLinear resource with supported type.'
+      }, {
+        code: 603,
+        description: 'Unable to fetch CompanionAds/Companion resource.'
+      }, {
+        code: 900,
+        description: 'Undefined Error.'
+      }, {
+        code: 901,
+        description: 'General VPAID error.'
+      }, {
+        code: 1001,
+        description: 'Invalid input for loadAds method'
+      }, {
+        code: 1002,
+        description: 'Required DOMParser API is not available'
+      }, {
+        code: 1100,
+        description: 'SIMID error: UNSPECIFIED_CREATIVE_ERROR'
+      }, {
+        code: 1101,
+        description: 'SIMID error: CANNOT_LOAD_RESOURCE'
+      }, {
+        code: 1102,
+        description: 'SIMID error: PLAYBACK_AREA_UNUSABLE'
+      }, {
+        code: 1103,
+        description: 'SIMID error: INCORRECT_VERSION'
+      }, {
+        code: 1104,
+        description: 'SIMID error: TECHNICAL_ERROR'
+      }, {
+        code: 1105,
+        description: 'SIMID error: EXPAND_NOT_POSSIBLE'
+      }, {
+        code: 1106,
+        description: 'SIMID error: PAUSE_NOT_HONORED'
+      }, {
+        code: 1107,
+        description: 'SIMID error: PLAYMODE_NOT_ADEQUATE'
+      }, {
+        code: 1108,
+        description: 'SIMID error: CREATIVE_INTERNAL_ERROR'
+      }, {
+        code: 1109,
+        description: 'SIMID error: DEVICE_NOT_SUPPORTED'
+      }, {
+        code: 1110,
+        description: 'SIMID error: MESSAGES_NOT_FOLLOWING_SPEC'
+      }, {
+        code: 1111,
+        description: 'SIMID error: PLAYER_RESPONSE_TIMEOUT'
+      }, {
+        code: 1200,
+        description: 'SIMID error: UNSPECIFIED_PLAYER_ERROR'
+      }, {
+        code: 1201,
+        description: 'SIMID error: WRONG_VERSION'
+      }, {
+        code: 1202,
+        description: 'SIMID error: UNSUPPORTED_TIME'
+      }, {
+        code: 1203,
+        description: 'SIMID error: UNSUPPORTED_FUNCTIONALITY_REQUEST'
+      }, {
+        code: 1204,
+        description: 'SIMID error: UNSUPPORTED_ACTIONS'
+      }, {
+        code: 1205,
+        description: 'SIMID error: POSTMESSAGE_CHANNEL_OVERLOADED'
+      }, {
+        code: 1206,
+        description: 'SIMID error: VIDEO_COULD_NOT_LOAD'
+      }, {
+        code: 1207,
+        description: 'SIMID error: VIDEO_TIME_OUT'
+      }, {
+        code: 1208,
+        description: 'SIMID error: RESPONSE_TIMEOUT'
+      }, {
+        code: 1209,
+        description: 'SIMID error: MEDIA_NOT_SUPPORTED'
+      }, {
+        code: 1210,
+        description: 'SIMID error: SPEC_NOT_FOLLOWED_ON_INIT'
+      }, {
+        code: 1211,
+        description: 'SIMID error: SPEC_NOT_FOLLOWED_ON_MESSAGES'
+      }];
+
+      // Indicates that the error was encountered after the ad loaded, during ad play. 
+      // Possible causes: ad assets could not be loaded, etc.
+      var playErrorsList = [201, 204, 205, 400, 401, 402, 403, 501, 502, 503, 603, 901, 1002];
+
+      // Indicates that the error was encountered when the ad was being loaded. 
+      // Possible causes: there was no response from the ad server, malformed ad response was returned ...
+      // 300, 301, 302, 303, 304 Wrapper errors are managed in ast-client-js
+      var loadErrorsList = [303, 900, 1001];
+      var error = filter_default()(vastErrorsList).call(vastErrorsList, function (value) {
+        return value.code === errorCode;
+      });
+      if (error.length > 0) {
+        this.__vastErrorCode = error[0].code;
+        this.__adErrorMessage = error[0].description;
+      } else {
+        this.__vastErrorCode = -1;
+        this.__adErrorMessage = 'Error getting VAST error';
+      }
+      if (this.__vastErrorCode > -1) {
+        if (index_of_default()(loadErrorsList).call(loadErrorsList, this.__vastErrorCode) > -1) {
+          this.__adErrorType = 'adLoadError';
+        } else if (index_of_default()(playErrorsList).call(playErrorsList, this.__vastErrorCode) > -1) {
+          this.__adErrorType = 'adPlayError';
+        }
+      }
+      console.log(concat_default()(_context2 = "".concat(FW.consolePrepend, " VAST error code is ")).call(_context2, this.__vastErrorCode), FW.consoleStyle, '');
+      console.log(concat_default()(_context3 = "".concat(FW.consolePrepend, " VAST error message is ")).call(_context3, this.__adErrorMessage), FW.consoleStyle, '');
+      console.log(concat_default()(_context4 = "".concat(FW.consolePrepend, " Ad error type is ")).call(_context4, this.__adErrorType), FW.consoleStyle, '');
+    }
+  }, {
+    key: "filterParams",
+    value: function filterParams(inputParams) {
+      var _this = this;
+      // default for input parameters
+      var defaultParams = {
+        ajaxTimeout: 5000,
+        creativeLoadTimeout: 8000,
+        ajaxWithCredentials: false,
+        maxNumRedirects: 4,
+        labels: {
+          skipMessage: 'Skip ad',
+          closeAd: 'Close ad',
+          textForInteractionUIOnMobile: 'Learn more'
+        },
+        outstream: false,
+        showControlsForAdPlayer: false,
+        vastXmlInput: false,
+        enableVpaid: true,
+        enableSimid: true,
+        vpaidSettings: {
+          width: 640,
+          height: 360,
+          viewMode: 'normal',
+          desiredBitrate: 500
+        },
+        useHlsJS: false,
+        debugHlsJS: false,
+        // OM SDK params
+        omidSupport: false,
+        omidAllowedVendors: [],
+        omidUnderEvaluation: false,
+        omidRunValidationScript: false,
+        omidAutoplay: false,
+        partnerName: 'rmp-vast',
+        partnerVersion: "14.0.0"
+      };
+      this.params = defaultParams;
+      if (inputParams && _typeof(inputParams) === 'object') {
+        var keys = keys_default()(inputParams);
+        keys.forEach(function (key) {
+          if (_typeof(inputParams[key]) === _typeof(_this.params[key])) {
+            if (FW.isNumber(inputParams[key]) && inputParams[key] > 0 || typeof inputParams[key] !== 'number') {
+              if (key === 'vpaidSettings') {
+                if (FW.isNumber(inputParams.vpaidSettings.width) && inputParams.vpaidSettings.width > 0) {
+                  _this.params.vpaidSettings.width = inputParams.vpaidSettings.width;
+                }
+                if (FW.isNumber(inputParams.vpaidSettings.height) && inputParams.vpaidSettings.height > 0) {
+                  _this.params.vpaidSettings.height = inputParams.vpaidSettings.height;
+                }
+                if (typeof inputParams.vpaidSettings.viewMode === 'string' && inputParams.vpaidSettings.viewMode === 'fullscreen') {
+                  _this.params.vpaidSettings.viewMode = inputParams.vpaidSettings.viewMode;
+                }
+                if (FW.isNumber(inputParams.vpaidSettings.desiredBitrate) && inputParams.vpaidSettings.desiredBitrate > 0) {
+                  _this.params.vpaidSettings.desiredBitrate = inputParams.vpaidSettings.desiredBitrate;
+                }
+              } else {
+                _this.params[key] = inputParams[key];
+              }
+            }
+          }
+        });
+      }
+    }
+  }, {
+    key: "createApiEvent",
+    value: function createApiEvent(event) {
+      var _this2 = this;
+      // adloaded, addurationchange, adclick, adimpression, adstarted, 
+      // adtagloaded, adtagstartloading, adpaused, adresumed 
+      // advolumemuted, advolumechanged, adcomplete, adskipped, 
+      // adskippablestatechanged, adclosed
+      // adfirstquartile, admidpoint, adthirdquartile, aderror, 
+      // addestroyed
+      // adlinearchange, adexpandedchange, adremainingtimechange 
+      // adinteraction, adsizechange
+      if (Array.isArray(event)) {
+        event.forEach(function (currentEvent) {
+          if (currentEvent) {
+            var _context5;
+            console.log(concat_default()(_context5 = "".concat(FW.consolePrepend, " EVENT ")).call(_context5, event), FW.consoleStyle, '');
+            _this2.dispatch(currentEvent);
+          }
+        });
+      } else if (event) {
+        var _context6;
+        console.log(concat_default()(_context6 = "".concat(FW.consolePrepend, " EVENT ")).call(_context6, event), FW.consoleStyle, '');
+        this.dispatch(event);
+      }
+    }
+  }, {
+    key: "playPromise",
+    value: function playPromise(whichPlayer, firstPlayerPlayRequest) {
+      var _this3 = this;
+      var targetPlayer;
+      switch (whichPlayer) {
+        case 'content':
+          targetPlayer = this.__contentPlayer;
+          break;
+        case 'vast':
+          targetPlayer = this.__adPlayer;
+          break;
+        default:
+          break;
+      }
+      if (targetPlayer) {
+        var playPromise = targetPlayer.play();
+        // most modern browsers support play as a Promise
+        // this lets us handle autoplay rejection 
+        // https://developers.google.com/web/updates/2016/03/play-returns-promise
+        if (playPromise !== undefined) {
+          playPromise.then(function () {
+            var _context7;
+            console.log(concat_default()(_context7 = "".concat(FW.consolePrepend, " playPromise on ")).call(_context7, whichPlayer, " player has succeeded"), FW.consoleStyle, '');
+            if (firstPlayerPlayRequest) {
+              Utils.createApiEvent.call(_this3, 'adinitialplayrequestsucceeded');
+            }
+          }).catch(function (error) {
+            console.warn(error);
+            if (firstPlayerPlayRequest && whichPlayer === 'vast' && _this3.creative.isLinear) {
+              console.log("".concat(FW.consolePrepend, " initial play promise on ad player has been rejected"), FW.consoleStyle, '');
+              Utils.processVastErrors.call(_this3, 400, true);
+              Utils.createApiEvent.call(_this3, 'adinitialplayrequestfailed');
+            } else if (firstPlayerPlayRequest && whichPlayer === 'content' && !_this3.creative.isLinear) {
+              console.log("".concat(FW.consolePrepend, " initial play promise on content player has been rejected"), FW.consoleStyle, '');
+              Utils.createApiEvent.call(_this3, 'adinitialplayrequestfailed');
+            } else {
+              var _context8;
+              console.log(concat_default()(_context8 = "".concat(FW.consolePrepend, " playPromise on ")).call(_context8, whichPlayer, " player has been rejected"), FW.consoleStyle, '');
+            }
+          });
+        }
+      }
+    }
+  }, {
+    key: "makeButtonAccessible",
+    value: function makeButtonAccessible(element, ariaLabel) {
+      // make skip button accessible
+      element.tabIndex = 0;
+      element.setAttribute('role', 'button');
+      element.addEventListener('keyup', function (event) {
+        var code = event.which;
+        // 13 = Return, 32 = Space
+        if (code === 13 || code === 32) {
+          event.stopPropagation();
+          event.preventDefault();
+          FW.createSyntheticEvent('click', element);
+        }
+      });
+      if (ariaLabel) {
+        element.setAttribute('aria-label', ariaLabel);
+      }
+    }
+  }, {
+    key: "initInstanceVariables",
+    value: function initInstanceVariables() {
+      this.adContainer = null;
+      this.contentWrapper = null;
+      this.container = null;
+      this.rmpVastContentPlayer = null;
+      this.rmpVastAdPlayer = null;
+      this.currentContentSrc = '';
+      this.currentContentCurrentTime = -1;
+      this.params = {};
+      this.events = {};
+      this.onFullscreenchangeFn = null;
+      this.id = null;
+      this.isInFullscreen = false;
+      // adpod
+      this.adPod = false;
+      this.adPodLength = 0;
+      this.adSequence = 0;
+      // for public getters
+      this.__contentPlayer = null;
+      this.__adPlayer = null;
+      this.__initialized = false;
+      this.__contentPlayerCompleted = false;
+    }
+  }, {
+    key: "resetVariablesForNewLoadAds",
+    value: function resetVariablesForNewLoadAds() {
+      this.off('adstarted', this.attachViewableObserverFn);
+      this.onPauseFn = null;
+      this.onPlayFn = null;
+      this.onPlayingFn = null;
+      this.onEndedFn = null;
+      this.onVolumeChangeFn = null;
+      this.onTimeupdateFn = null;
+      this.trackingTags = [];
+      this.vastErrorTags = [];
+      this.adErrorTags = [];
+      this.firstQuartileEventFired = false;
+      this.midpointEventFired = false;
+      this.thirdQuartileEventFired = false;
+      this.needsSeekAdjust = false;
+      this.seekAdjustAttached = false;
+      this.ad = {};
+      this.creative = {};
+      this.attachViewableObserverFn = null;
+      this.viewableObserver = null;
+      this.viewablePreviousRatio = 0.5;
+      this.regulationsInfo = {};
+      this.requireCategory = false;
+      this.progressEvents = [];
+      this.rmpVastLinearCreative = null;
+      this.rmpVastNonLinearCreative = null;
+      this.validCompanionAds = [];
+      this.companionAdsList = [];
+      this.rmpVastVpaidPlayer = null;
+      this.adParametersData = '';
+      this.rmpVastSimidPlayer = null;
+      this.rmpVastIcons = null;
+      // for public getters
+      this.__adTagUrl = '';
+      this.__companionAdsRequiredAttribute = '';
+      this.__vastErrorCode = -1;
+      this.__adErrorType = '';
+      this.__adErrorMessage = '';
+      this.__adOnStage = false;
+    }
+  }, {
+    key: "handleFullscreen",
+    value: function handleFullscreen() {
+      // if we have native fullscreen support we handle fullscreen events
+      if (Environment.hasNativeFullscreenSupport) {
+        this.onFullscreenchangeFn = Utils._onFullscreenchange.bind(this);
+        // for our beloved iOS 
+        if (Environment.isIos[0]) {
+          this.__contentPlayer.addEventListener('webkitbeginfullscreen', this.onFullscreenchangeFn);
+          this.__contentPlayer.addEventListener('webkitendfullscreen', this.onFullscreenchangeFn);
+        } else {
+          document.addEventListener('fullscreenchange', this.onFullscreenchangeFn);
+        }
+      }
+    }
+  }, {
+    key: "processVastErrors",
+    value: function processVastErrors(errorCode, ping) {
+      if (ping) {
+        Tracking.error.call(this, errorCode);
+      }
+      Utils._updateVastError.call(this, errorCode);
+      Utils.createApiEvent.call(this, 'aderror');
+      if (this.rmpVastAdPlayer) {
+        this.rmpVastAdPlayer.resumeContent();
+      }
+    }
+  }]);
+  return Utils;
+}();
+
+// EXTERNAL MODULE: ./node_modules/@babel/runtime-corejs3/core-js-stable/instance/sort.js
+var sort = __webpack_require__(129);
+var sort_default = /*#__PURE__*/__webpack_require__.n(sort);
 ;// CONCATENATED MODULE: ./src/js/creatives/icons.js
 
 
 
 
-var ICONS = {};
-ICONS.destroy = function () {
-  console.log("".concat(FW.consolePrepend, " Start destroying icons"), FW.consoleStyle, '');
-  var icons = this.adContainer.querySelectorAll('.rmp-ad-container-icons');
-  if (icons.length > 0) {
-    icons.forEach(function (icon) {
-      FW.removeElement(icon);
-    });
+
+
+var Icons = /*#__PURE__*/function () {
+  function Icons(rmpVast) {
+    _classCallCheck(this, Icons);
+    this._rmpVast = rmpVast;
+    this._adContainer = rmpVast.adContainer;
+    this._adPlayer = rmpVast.__adPlayer;
+    this._onPlayingAppendIconsFn = null;
+    this._iconsData = [];
   }
-};
-ICONS.parse = function (icons) {
-  console.log("".concat(FW.consolePrepend, " Start parsing for icons"), FW.consoleStyle, '');
-  for (var i = 0; i < icons.length; i++) {
-    var currentIcon = icons[i];
-    var program = currentIcon.program;
-    if (program === null) {
-      continue;
+  _createClass(Icons, [{
+    key: "iconsData",
+    get: function get() {
+      return this._iconsData;
     }
-    var width = currentIcon.width;
-    var height = currentIcon.height;
-    var xPosition = currentIcon.xPosition;
-    var yPosition = currentIcon.yPosition;
-    if (width <= 0 || height <= 0 || xPosition < 0 || yPosition < 0) {
-      continue;
-    }
-    var staticResourceUrl = currentIcon.staticResource;
-    var iframeResourceUrl = currentIcon.iframeResource;
-    var htmlResource = currentIcon.htmlResource;
-    // we only support StaticResource (HTMLResource not supported)
-    if (staticResourceUrl === null && iframeResourceUrl === null && htmlResource === null) {
-      continue;
-    }
-    var iconData = {
-      program: program,
-      width: width,
-      height: height,
-      xPosition: xPosition,
-      yPosition: yPosition,
-      staticResourceUrl: staticResourceUrl,
-      iframeResourceUrl: iframeResourceUrl,
-      htmlContent: htmlResource
-    };
-    iconData.iconViewTrackingUrl = currentIcon.iconViewTrackingURLTemplate;
-    iconData.iconClickThroughUrl = currentIcon.iconClickThroughURLTemplate;
-    iconData.iconClickTrackingUrls = currentIcon.iconClickTrackingURLTemplates;
-    this.iconsData.push(iconData);
-  }
-  console.log("".concat(FW.consolePrepend, " Validated parsed icons follows"), FW.consoleStyle, '');
-  console.log(this.iconsData);
-};
-var _onIconClickThrough = function _onIconClickThrough(index, event) {
-  var _this = this;
-  if (event) {
-    event.stopPropagation();
-    if (event.type === 'touchend') {
-      event.preventDefault();
-    }
-  }
-  FW.openWindow(this.iconsData[index].iconClickThroughUrl);
-  // send trackers if any for IconClickTracking
-  var iconClickTrackingUrls = this.iconsData[index].iconClickTrackingUrls;
-  if (iconClickTrackingUrls.length > 0) {
-    iconClickTrackingUrls.forEach(function (tracking) {
-      if (tracking.url) {
-        tracking_events.pingURI.call(_this, tracking.url);
+  }, {
+    key: "_onIconClickThrough",
+    value: function _onIconClickThrough(index, event) {
+      var _this = this;
+      if (event) {
+        event.stopPropagation();
+        if (event.type === 'touchend') {
+          event.preventDefault();
+        }
       }
-    });
-  }
-};
-var _onIconLoadPingTracking = function _onIconLoadPingTracking(index) {
-  var _context;
-  console.log(concat_default()(_context = "".concat(FW.consolePrepend, " IconViewTracking for icon at index ")).call(_context, index), FW.consoleStyle, '');
-  tracking_events.pingURI.call(this, this.iconsData[index].iconViewTrackingUrl);
-};
-var _onPlayingAppendIcons = function _onPlayingAppendIcons() {
-  var _this2 = this;
-  console.log("".concat(FW.consolePrepend, " playing states has been reached - append icons"), FW.consoleStyle, '');
-  this.vastPlayer.removeEventListener('playing', this.onPlayingAppendIcons);
-  this.iconsData.forEach(function (iconData, index) {
-    var icon;
-    var src;
-    if (iconData.staticResourceUrl) {
-      icon = document.createElement('img');
-      src = iconData.staticResourceUrl;
-    } else if (iconData.iframeResourceUrl || iconData.htmlContent) {
-      icon = document.createElement('iframe');
-      icon.sandbox = 'allow-scripts allow-same-origin';
-      if (iconData.htmlContent) {
-        src = iconData.htmlContent;
-      } else {
-        src = iconData.iframeResourceUrl;
-      }
-      FW.setStyle(icon, {
-        border: 'none',
-        overflow: 'hidden'
-      });
-      icon.setAttribute('scrolling', 'no');
-      icon.setAttribute('allow', 'autoplay; fullscreen; picture-in-picture; encrypted-media');
-      icon.setAttribute('sandbox', 'allow-scripts allow-presentation allow-same-origin');
-    }
-    icon.className = 'rmp-ad-container-icons';
-    FW.setStyle(icon, {
-      width: parse_int_default()(iconData.width) + 'px',
-      height: parse_int_default()(iconData.height) + 'px'
-    });
-    var xPosition = iconData.xPosition;
-    if (xPosition === 'left') {
-      icon.style.left = '0px';
-    } else if (xPosition === 'right') {
-      icon.style.right = '0px';
-    } else if (parse_int_default()(xPosition) >= 0) {
-      icon.style.left = xPosition + 'px';
-    } else {
-      icon.style.left = '0px';
-    }
-    var yPosition = iconData.yPosition;
-    if (yPosition === 'top') {
-      icon.style.top = '0px';
-    } else if (xPosition === 'bottom') {
-      icon.style.bottom = '0px';
-    } else if (parse_int_default()(yPosition) >= 0) {
-      icon.style.top = yPosition + 'px';
-    } else {
-      icon.style.top = '0px';
-    }
-    if (iconData.iconViewTrackingUrl) {
-      icon.onload = _onIconLoadPingTracking.bind(_this2, index);
-    }
-    if (iconData.iconClickThroughUrl) {
-      icon.addEventListener('touchend', _onIconClickThrough.bind(_this2, index));
-      icon.addEventListener('click', _onIconClickThrough.bind(_this2, index));
-    }
-    if (iconData.htmlContent) {
-      icon.srcdoc = src;
-    } else {
-      icon.src = src;
-    }
-    console.log("".concat(FW.consolePrepend, " Selected icon details follow"), FW.consoleStyle, '');
-    console.log(icon);
-    _this2.adContainer.appendChild(icon);
-  });
-};
-ICONS.append = function () {
-  this.onPlayingAppendIcons = _onPlayingAppendIcons.bind(this);
-  // as per VAST 3 spec only append icon when ad starts playing
-  this.vastPlayer.addEventListener('playing', this.onPlayingAppendIcons);
-};
-/* harmony default export */ var creatives_icons = (ICONS);
-;// CONCATENATED MODULE: ./src/js/players/vpaid.js
-
-
-
-
-
-
-
-
-
-var VPAID = {};
-
-// vpaidCreative getters
-
-VPAID.getAdWidth = function () {
-  if (this.vpaidCreative && typeof this.vpaidCreative.getAdWidth === 'function') {
-    return this.vpaidCreative.getAdWidth();
-  }
-  return -1;
-};
-VPAID.getAdHeight = function () {
-  if (this.vpaidCreative && typeof this.vpaidCreative.getAdHeight === 'function') {
-    return this.vpaidCreative.getAdHeight();
-  }
-  return -1;
-};
-VPAID.getAdDuration = function () {
-  if (this.vpaidCreative) {
-    if (typeof this.vpaidCreative.getAdDuration === 'function') {
-      return this.vpaidCreative.getAdDuration();
-    } else if (this.vpaid1AdDuration > -1) {
-      return this.vpaid1AdDuration;
-    }
-  }
-  return -1;
-};
-VPAID.getAdRemainingTime = function () {
-  if (this.vpaidRemainingTime >= 0) {
-    return this.vpaidRemainingTime;
-  }
-  return -1;
-};
-VPAID.getCreativeUrl = function () {
-  if (this.vpaidCreativeUrl) {
-    return this.vpaidCreativeUrl;
-  }
-  return '';
-};
-VPAID.getVpaidCreative = function () {
-  return this.vpaidCreative;
-};
-VPAID.getAdVolume = function () {
-  if (this.vpaidCreative && typeof this.vpaidCreative.getAdVolume === 'function') {
-    return this.vpaidCreative.getAdVolume();
-  }
-  return null;
-};
-VPAID.getAdPaused = function () {
-  return this.vpaidPaused;
-};
-VPAID.getAdExpanded = function () {
-  if (this.vpaidCreative && typeof this.vpaidCreative.getAdExpanded === 'function') {
-    return this.vpaidCreative.getAdExpanded();
-  }
-  return false;
-};
-VPAID.getAdSkippableState = function () {
-  if (this.vpaidCreative && typeof this.vpaidCreative.getAdSkippableState === 'function') {
-    return this.vpaidCreative.getAdSkippableState();
-  }
-  return false;
-};
-VPAID.getAdIcons = function () {
-  if (this.vpaidCreative && typeof this.vpaidCreative.getAdIcons === 'function') {
-    return this.vpaidCreative.getAdIcons();
-  }
-  return null;
-};
-VPAID.getAdCompanions = function () {
-  if (this.vpaidCreative && typeof this.vpaidCreative.getAdCompanions === 'function') {
-    return this.vpaidCreative.getAdCompanions();
-  }
-  return '';
-};
-
-// VPAID creative events
-var _onAdLoaded = function _onAdLoaded() {
-  var _this = this;
-  this.vpaidAdLoaded = true;
-  if (!this.vpaidCreative) {
-    return;
-  }
-  if (this.initAdTimeout) {
-    clearTimeout(this.initAdTimeout);
-  }
-  if (this.vpaidCallbacks.AdLoaded) {
-    this.vpaidCreative.unsubscribe(this.vpaidCallbacks.AdLoaded, 'AdLoaded');
-  }
-  // when we call startAd we expect AdStarted event to follow closely
-  // otherwise we need to resume content
-  this.startAdTimeout = setTimeout(function () {
-    if (!_this.vpaidAdStarted) {
-      vast_player.resumeContent.call(_this);
-    }
-    _this.vpaidAdStarted = false;
-  }, this.params.creativeLoadTimeout);
-  this.adOnStage = true;
-  this.vpaidCreative.startAd();
-  Utils.createApiEvent.call(this, 'adloaded');
-  tracking_events.dispatch.call(this, 'loaded');
-};
-var _onAdStarted = function _onAdStarted() {
-  this.vpaidAdStarted = true;
-  if (!this.vpaidCreative) {
-    return;
-  }
-  if (this.startAdTimeout) {
-    clearTimeout(this.startAdTimeout);
-  }
-  if (this.vpaidCallbacks.AdStarted) {
-    this.vpaidCreative.unsubscribe(this.vpaidCallbacks.AdStarted, 'AdStarted');
-  }
-  // update duration for VPAID 1.*
-  if (this.vpaidVersion === 1) {
-    this.vpaid1AdDuration = VPAID.getAdRemainingTime.call(this);
-  }
-  // append icons - if VPAID does not handle them
-  if (!VPAID.getAdIcons.call(this) && !this.useContentPlayerForAds && this.iconsData.length > 0) {
-    creatives_icons.append.call(this);
-  }
-  if (typeof this.vpaidCreative.getAdLinear === 'function') {
-    this.creative.isLinear = this.vpaidCreative.getAdLinear();
-  }
-  tracking_events.dispatch.call(this, 'creativeView');
-};
-var _onAdStopped = function _onAdStopped() {
-  console.log("".concat(FW.consolePrepend, " VPAID AdStopped event"), FW.consoleStyle, '');
-  if (this.adStoppedTimeout) {
-    clearTimeout(this.adStoppedTimeout);
-  }
-  vast_player.resumeContent.call(this);
-};
-var _onAdSkipped = function _onAdSkipped() {
-  if (this.adSkippedTimeout) {
-    clearTimeout(this.adSkippedTimeout);
-  }
-  Utils.createApiEvent.call(this, 'adskipped');
-  tracking_events.dispatch.call(this, 'skip');
-};
-var _onAdSkippableStateChange = function _onAdSkippableStateChange() {
-  Utils.createApiEvent.call(this, 'adskippablestatechanged');
-};
-var _onAdDurationChange = function _onAdDurationChange() {
-  var _this2 = this;
-  if (this.vpaidCreative && typeof this.vpaidCreative.getAdRemainingTime === 'function') {
-    var remainingTime = this.vpaidCreative.getAdRemainingTime();
-    if (remainingTime >= 0) {
-      this.vpaidRemainingTime = remainingTime;
-    }
-    // AdRemainingTimeChange is deprecated in VPAID 2
-    // instead we use setInterval
-    clearInterval(this.vpaidAdRemainingTimeInterval);
-    this.vpaidAdRemainingTimeInterval = setInterval(function () {
-      var remainingTime = _this2.vpaidCreative.getAdRemainingTime();
-      if (remainingTime >= 0) {
-        _this2.vpaidRemainingTime = remainingTime;
-      }
-    }, 200);
-    Utils.createApiEvent.call(this, 'addurationchange');
-  }
-};
-var _onAdVolumeChange = function _onAdVolumeChange() {
-  var newVolume = VPAID.getAdVolume.call(this);
-  if (newVolume === null) {
-    return;
-  }
-  if (this.vpaidCurrentVolume > 0 && newVolume === 0) {
-    tracking_events.dispatch.call(this, 'mute');
-  } else if (this.vpaidCurrentVolume === 0 && newVolume > 0) {
-    tracking_events.dispatch.call(this, 'unmute');
-  }
-  this.vpaidCurrentVolume = newVolume;
-  Utils.createApiEvent.call(this, 'advolumechanged');
-};
-var _onAdImpression = function _onAdImpression() {
-  Utils.createApiEvent.call(this, 'adimpression');
-  tracking_events.dispatch.call(this, 'impression');
-};
-var _onAdVideoStart = function _onAdVideoStart() {
-  this.vpaidPaused = false;
-  var newVolume = VPAID.getAdVolume.call(this);
-  if (newVolume === null) {
-    newVolume = 1;
-  }
-  this.vpaidCurrentVolume = newVolume;
-  Utils.createApiEvent.call(this, 'adstarted');
-  tracking_events.dispatch.call(this, 'start');
-};
-var _onAdVideoFirstQuartile = function _onAdVideoFirstQuartile() {
-  Utils.createApiEvent.call(this, 'adfirstquartile');
-  tracking_events.dispatch.call(this, 'firstQuartile');
-};
-var _onAdVideoMidpoint = function _onAdVideoMidpoint() {
-  Utils.createApiEvent.call(this, 'admidpoint');
-  tracking_events.dispatch.call(this, 'midpoint');
-};
-var _onAdVideoThirdQuartile = function _onAdVideoThirdQuartile() {
-  Utils.createApiEvent.call(this, 'adthirdquartile');
-  tracking_events.dispatch.call(this, 'thirdQuartile');
-};
-var _onAdVideoComplete = function _onAdVideoComplete() {
-  Utils.createApiEvent.call(this, 'adcomplete');
-  tracking_events.dispatch.call(this, 'complete');
-};
-var _onAdClickThru = function _onAdClickThru(url, id, playerHandles) {
-  Utils.createApiEvent.call(this, 'adclick');
-  tracking_events.dispatch.call(this, 'clickthrough');
-  if (typeof playerHandles !== 'boolean') {
-    return;
-  }
-  if (!playerHandles) {
-    return;
-  } else {
-    var destUrl;
-    if (url) {
-      destUrl = url;
-    } else if (this.creative.clickThroughUrl) {
-      destUrl = this.creative.clickThroughUrl;
-    }
-    if (destUrl) {
-      // for getClickThroughUrl API method
-      this.creative.clickThroughUrl = destUrl;
-      FW.openWindow(this.creative.clickThroughUrl);
-    }
-  }
-};
-var _onAdPaused = function _onAdPaused() {
-  this.vpaidPaused = true;
-  Utils.createApiEvent.call(this, 'adpaused');
-  tracking_events.dispatch.call(this, 'pause');
-};
-var _onAdPlaying = function _onAdPlaying() {
-  this.vpaidPaused = false;
-  Utils.createApiEvent.call(this, 'adresumed');
-  tracking_events.dispatch.call(this, 'resume');
-};
-var _onAdLog = function _onAdLog(message) {
-  var _context;
-  console.log(concat_default()(_context = "".concat(FW.consolePrepend, " VPAID AdLog event ")).call(_context, message), FW.consoleStyle, '');
-};
-var _onAdError = function _onAdError(message) {
-  var _context2;
-  console.log(concat_default()(_context2 = "".concat(FW.consolePrepend, " VPAID AdError event ")).call(_context2, message), FW.consoleStyle, '');
-  Utils.processVastErrors.call(this, 901, true);
-};
-var _onAdInteraction = function _onAdInteraction() {
-  Utils.createApiEvent.call(this, 'adinteraction');
-};
-var _onAdUserAcceptInvitation = function _onAdUserAcceptInvitation() {
-  Utils.createApiEvent.call(this, 'aduseracceptinvitation');
-  tracking_events.dispatch.call(this, 'acceptInvitation');
-};
-var _onAdUserMinimize = function _onAdUserMinimize() {
-  Utils.createApiEvent.call(this, 'adcollapse');
-  tracking_events.dispatch.call(this, ['collapse', 'adCollapse']);
-};
-var _onAdUserClose = function _onAdUserClose() {
-  Utils.createApiEvent.call(this, 'adclosed');
-  tracking_events.dispatch.call(this, 'close');
-};
-var _onAdSizeChange = function _onAdSizeChange() {
-  Utils.createApiEvent.call(this, 'adsizechange');
-};
-var _onAdLinearChange = function _onAdLinearChange() {
-  if (this.vpaidCreative && typeof this.vpaidCreative.getAdLinear === 'function') {
-    this.creative.isLinear = this.vpaidCreative.getAdLinear();
-    Utils.createApiEvent.call(this, 'adlinearchange');
-  }
-};
-var _onAdExpandedChange = function _onAdExpandedChange() {
-  Utils.createApiEvent.call(this, 'adexpandedchange');
-};
-var _onAdRemainingTimeChange = function _onAdRemainingTimeChange() {
-  if (this.vpaidCreative && typeof this.vpaidCreative.getAdRemainingTime === 'function') {
-    var remainingTime = this.vpaidCreative.getAdRemainingTime();
-    if (remainingTime >= 0) {
-      this.vpaidRemainingTime = remainingTime;
-    }
-    Utils.createApiEvent.call(this, 'adremainingtimechange');
-  }
-};
-
-// vpaidCreative methods
-VPAID.resizeAd = function (width, height, viewMode) {
-  var _context3, _context4, _context5;
-  if (!this.vpaidCreative) {
-    return;
-  }
-  if (!FW.isNumber(width) || !FW.isNumber(height) || typeof viewMode !== 'string') {
-    return;
-  }
-  if (width <= 0 || height <= 0) {
-    return;
-  }
-  var validViewMode = 'normal';
-  if (viewMode === 'fullscreen') {
-    validViewMode = viewMode;
-  }
-  console.log(concat_default()(_context3 = concat_default()(_context4 = concat_default()(_context5 = "".concat(FW.consolePrepend, " VPAID resizeAd with width ")).call(_context5, width, ", height ")).call(_context4, height, ", viewMode ")).call(_context3, viewMode), FW.consoleStyle, '');
-  this.vpaidCreative.resizeAd(width, height, validViewMode);
-};
-VPAID.stopAd = function () {
-  var _this3 = this;
-  if (!this.vpaidCreative) {
-    return;
-  }
-  console.log("".concat(FW.consolePrepend, " stopAd"), FW.consoleStyle, '');
-
-  // when stopAd is called we need to check a 
-  // AdStopped event follows
-  this.adStoppedTimeout = setTimeout(function () {
-    _onAdStopped.call(_this3);
-  }, this.params.creativeLoadTimeout);
-  this.vpaidCreative.stopAd();
-};
-VPAID.pauseAd = function () {
-  console.log("".concat(FW.consolePrepend, " pauseAd"), FW.consoleStyle, '');
-  if (this.vpaidCreative && !this.vpaidPaused) {
-    this.vpaidCreative.pauseAd();
-  }
-};
-VPAID.resumeAd = function () {
-  console.log("".concat(FW.consolePrepend, " resumeAd"), FW.consoleStyle, '');
-  if (this.vpaidCreative && this.vpaidPaused) {
-    this.vpaidCreative.resumeAd();
-  }
-};
-VPAID.expandAd = function () {
-  if (this.vpaidCreative) {
-    this.vpaidCreative.expandAd();
-  }
-};
-VPAID.collapseAd = function () {
-  if (this.vpaidCreative) {
-    this.vpaidCreative.collapseAd();
-  }
-};
-VPAID.skipAd = function () {
-  var _this4 = this;
-  if (!this.vpaidCreative) {
-    return;
-  }
-  // when skipAd is called we need to check a 
-  // AdSkipped event follows
-  this.adSkippedTimeout = setTimeout(function () {
-    _onAdStopped.call(_this4);
-  }, this.params.creativeLoadTimeout);
-  this.vpaidCreative.skipAd();
-};
-VPAID.setAdVolume = function (volume) {
-  if (this.vpaidCreative && FW.isNumber(volume) && volume >= 0 && volume <= 1 && typeof this.vpaidCreative.setAdVolume === 'function') {
-    this.vpaidCreative.setAdVolume(volume);
-  }
-};
-var _setCallbacksForCreative = function _setCallbacksForCreative() {
-  var _this5 = this;
-  if (!this.vpaidCreative) {
-    return;
-  }
-  this.vpaidCallbacks = {
-    AdLoaded: _onAdLoaded.bind(this),
-    AdStarted: _onAdStarted.bind(this),
-    AdStopped: _onAdStopped.bind(this),
-    AdSkipped: _onAdSkipped.bind(this),
-    AdSkippableStateChange: _onAdSkippableStateChange.bind(this),
-    AdDurationChange: _onAdDurationChange.bind(this),
-    AdVolumeChange: _onAdVolumeChange.bind(this),
-    AdImpression: _onAdImpression.bind(this),
-    AdVideoStart: _onAdVideoStart.bind(this),
-    AdVideoFirstQuartile: _onAdVideoFirstQuartile.bind(this),
-    AdVideoMidpoint: _onAdVideoMidpoint.bind(this),
-    AdVideoThirdQuartile: _onAdVideoThirdQuartile.bind(this),
-    AdVideoComplete: _onAdVideoComplete.bind(this),
-    AdClickThru: _onAdClickThru.bind(this),
-    AdPaused: _onAdPaused.bind(this),
-    AdPlaying: _onAdPlaying.bind(this),
-    AdLog: _onAdLog.bind(this),
-    AdError: _onAdError.bind(this),
-    AdInteraction: _onAdInteraction.bind(this),
-    AdUserAcceptInvitation: _onAdUserAcceptInvitation.bind(this),
-    AdUserMinimize: _onAdUserMinimize.bind(this),
-    AdUserClose: _onAdUserClose.bind(this),
-    AdSizeChange: _onAdSizeChange.bind(this),
-    AdLinearChange: _onAdLinearChange.bind(this),
-    AdExpandedChange: _onAdExpandedChange.bind(this),
-    AdRemainingTimeChange: _onAdRemainingTimeChange.bind(this)
-  };
-  // Looping through the object and registering each of the callbacks with the creative
-  var callbacksKeys = keys_default()(this.vpaidCallbacks);
-  callbacksKeys.forEach(function (key) {
-    _this5.vpaidCreative.subscribe(_this5.vpaidCallbacks[key], key);
-  });
-};
-var _unsetCallbacksForCreative = function _unsetCallbacksForCreative() {
-  var _this6 = this;
-  if (!this.vpaidCreative) {
-    return;
-  }
-  // Looping through the object and registering each of the callbacks with the creative
-  var callbacksKeys = keys_default()(this.vpaidCallbacks);
-  callbacksKeys.forEach(function (key) {
-    _this6.vpaidCreative.unsubscribe(_this6.vpaidCallbacks[key], key);
-  });
-};
-var _isValidVPAID = function _isValidVPAID(creative) {
-  if (typeof creative.initAd === 'function' && typeof creative.startAd === 'function' && typeof creative.stopAd === 'function' && typeof creative.skipAd === 'function' && typeof creative.resizeAd === 'function' && typeof creative.pauseAd === 'function' && typeof creative.resumeAd === 'function' && typeof creative.expandAd === 'function' && typeof creative.collapseAd === 'function' && typeof creative.subscribe === 'function' && typeof creative.unsubscribe === 'function') {
-    return true;
-  }
-  return false;
-};
-var _onVPAIDAvailable = function _onVPAIDAvailable() {
-  var _this7 = this;
-  if (this.vpaidAvailableInterval) {
-    clearInterval(this.vpaidAvailableInterval);
-  }
-  if (this.vpaidLoadTimeout) {
-    clearTimeout(this.vpaidLoadTimeout);
-  }
-  this.vpaidCreative = this.vpaidIframe.contentWindow.getVPAIDAd();
-  if (this.vpaidCreative && typeof this.vpaidCreative.handshakeVersion === 'function') {
-    // we need to insure handshakeVersion return
-    var vpaidVersion;
-    try {
-      vpaidVersion = this.vpaidCreative.handshakeVersion('2.0');
-    } catch (error) {
-      console.warn(error);
-      console.log("".concat(FW.consolePrepend, " could not validate VPAID ad unit handshakeVersion"), FW.consoleStyle, '');
-      Utils.processVastErrors.call(this, 901, true);
-      return;
-    }
-    this.vpaidVersion = parse_int_default()(vpaidVersion);
-    if (this.vpaidVersion < 1) {
-      console.log("".concat(FW.consolePrepend, " unsupported VPAID version - exit"), FW.consoleStyle, '');
-      Utils.processVastErrors.call(this, 901, true);
-      return;
-    }
-    if (!_isValidVPAID(this.vpaidCreative)) {
-      //The VPAID creative doesn't conform to the VPAID spec
-      console.log("".concat(FW.consolePrepend, " VPAID creative does not conform to VPAID spec - exit"), FW.consoleStyle, '');
-      Utils.processVastErrors.call(this, 901, true);
-      return;
-    }
-    // wire callback for VPAID events
-    _setCallbacksForCreative.call(this);
-    // wire tracking events for VAST pings
-    tracking_events.wire.call(this);
-    var creativeData = {};
-    creativeData.AdParameters = this.adParametersData;
-    console.log("".concat(FW.consolePrepend, " VPAID AdParameters follow"), FW.consoleStyle, '');
-    console.log(this.adParametersData);
-    FW.show(this.adContainer);
-    FW.show(this.vastPlayer);
-    var environmentVars = {};
-    // we create a new slot for VPAID creative - using adContainer can cause some VPAID to ill-render
-    // from spec:
-    // The 'environmentVars' object contains a reference, 'slot', to the HTML element
-    // on the page in which the ad is to be rendered. The ad unit essentially gets
-    // control of that element. 
-    this.vpaidSlot = document.createElement('div');
-    this.vpaidSlot.className = 'rmp-vpaid-container';
-    this.adContainer.appendChild(this.vpaidSlot);
-    environmentVars.slot = this.vpaidSlot;
-    environmentVars.videoSlot = this.vastPlayer;
-    // we assume we can autoplay (or at least muted autoplay) because this.vastPlayer 
-    // has been init
-    environmentVars.videoSlotCanAutoPlay = true;
-    // when we call initAd we expect AdLoaded event to follow closely
-    // if not we need to resume content
-    this.initAdTimeout = setTimeout(function () {
-      if (!_this7.vpaidAdLoaded) {
-        console.log("".concat(FW.consolePrepend, " initAdTimeout"), FW.consoleStyle, '');
-        vast_player.resumeContent.call(_this7);
-      }
-      _this7.vpaidAdLoaded = false;
-    }, this.params.creativeLoadTimeout * 10);
-    console.log("".concat(FW.consolePrepend, " calling initAd on VPAID creative now"), FW.consoleStyle, '');
-    this.vpaidCreative.initAd(this.initialWidth, this.initialHeight, this.initialViewMode, this.desiredBitrate, creativeData, environmentVars);
-  }
-};
-var _onJSVPAIDLoaded = function _onJSVPAIDLoaded() {
-  var _this8 = this;
-  console.log("".concat(FW.consolePrepend, " VPAID JS loaded"), FW.consoleStyle, '');
-  var iframeWindow = this.vpaidIframe.contentWindow;
-  if (typeof iframeWindow.getVPAIDAd === 'function') {
-    _onVPAIDAvailable.call(this);
-  } else {
-    this.vpaidAvailableInterval = setInterval(function () {
-      if (typeof iframeWindow.getVPAIDAd === 'function') {
-        _onVPAIDAvailable.call(_this8);
-      }
-    }, 100);
-  }
-  this.vpaidScript.onload = null;
-  this.vpaidScript.onerror = null;
-};
-var _onJSVPAIDError = function _onJSVPAIDError() {
-  console.log("".concat(FW.consolePrepend, " VPAID JS error loading"), FW.consoleStyle, '');
-  Utils.processVastErrors.call(this, 901, true);
-  this.vpaidScript.onload = null;
-  this.vpaidScript.onerror = null;
-};
-VPAID.loadCreative = function (creativeUrl, vpaidSettings) {
-  this.initialWidth = vpaidSettings.width;
-  this.initialHeight = vpaidSettings.height;
-  this.initialViewMode = vpaidSettings.viewMode;
-  this.desiredBitrate = vpaidSettings.desiredBitrate;
-  this.vpaidCreativeUrl = creativeUrl;
-  if (!this.vastPlayer) {
-    if (this.useContentPlayerForAds) {
-      this.vastPlayer = this.contentPlayer;
-    } else {
-      // we use existing rmp-ad-vast-video-player as it is already 
-      // available and initialized (no need for user interaction)
-      var existingVastPlayer = null;
-      if (this.adContainer) {
-        existingVastPlayer = this.adContainer.querySelector('.rmp-ad-vast-video-player');
-      }
-      if (existingVastPlayer === null) {
-        Utils.processVastErrors.call(this, 900, true);
-        return;
-      }
-      this.vastPlayer = existingVastPlayer;
-    }
-  }
-  // pause content player
-  content_player.pause.call(this);
-  // create FiF 
-  this.vpaidIframe = document.createElement('iframe');
-  this.vpaidIframe.sandbox = 'allow-scripts allow-same-origin';
-  this.vpaidIframe.id = 'vpaid-frame';
-  // do not use display: none;
-  // https://bugzilla.mozilla.org/show_bug.cgi?id=548397
-  FW.setStyle(this.vpaidIframe, {
-    visibility: 'hidden',
-    width: '0px',
-    height: '0px',
-    border: 'none'
-  });
-  // this is to adhere to Best Practices for Rich Media Ads 
-  // in Asynchronous Ad Environments  http://www.iab.net/media/file/rich_media_ajax_best_practices.pdf
-  var src = 'about:blank';
-  // ... however this does not work in Firefox (onload is never reached)
-  // https://bugzilla.mozilla.org/show_bug.cgi?id=444165
-  // about:self also causes protocol mis-match issues with iframes in iOS/macOS Safari
-  // ... TL;DR iframes are troubles
-  //let src = 'about:self';
-  /*if (ENV.isFirefox || this.useContentPlayerForAds) {
-    src = '';
-  }*/
-  // see https://bugs.chromium.org/p/chromium/issues/detail?id=1220186 about:self no longer works
-  // we use about:blank instead but this is still under review
-  // since about:blank seems to work in our testing cross browsers and is what is 
-  // recommended on the web 
-  // (see https://stackoverflow.com/questions/5946607/is-an-empty-iframe-src-valid/5946631) we now use about:blank
-  this.vpaidIframe.onload = function () {
-    var _this9 = this;
-    console.log("".concat(FW.consolePrepend, " vpaidIframe.onload"), FW.consoleStyle, '');
-    if (!this.vpaidIframe.contentWindow || !this.vpaidIframe.contentWindow.document || !this.vpaidIframe.contentWindow.document.body) {
-      // PING error and resume content
-
-      Utils.processVastErrors.call(this, 901, true);
-      return;
-    }
-    var iframeWindow = this.vpaidIframe.contentWindow;
-    var iframeDocument = iframeWindow.document;
-    var iframeBody = iframeDocument.body;
-    this.vpaidScript = iframeDocument.createElement('script');
-    this.vpaidLoadTimeout = setTimeout(function () {
-      console.log("".concat(FW.consolePrepend, " could not load VPAID JS Creative or getVPAIDAd in iframeWindow - resume content"), FW.consoleStyle, '');
-      _this9.vpaidScript.onload = null;
-      _this9.vpaidScript.onerror = null;
-      vast_player.resumeContent.call(_this9);
-    }, this.params.creativeLoadTimeout);
-    this.vpaidScript.onload = _onJSVPAIDLoaded.bind(this);
-    this.vpaidScript.onerror = _onJSVPAIDError.bind(this);
-    iframeBody.appendChild(this.vpaidScript);
-    this.vpaidScript.src = this.vpaidCreativeUrl;
-  }.bind(this);
-  this.vpaidIframe.src = src;
-  this.adContainer.appendChild(this.vpaidIframe);
-};
-VPAID.destroy = function () {
-  console.log("".concat(FW.consolePrepend, " destroy VPAID dependencies"), FW.consoleStyle, '');
-  if (this.vpaidAvailableInterval) {
-    clearInterval(this.vpaidAvailableInterval);
-  }
-  if (this.vpaidAdRemainingTimeInterval) {
-    clearInterval(this.vpaidAdRemainingTimeInterval);
-  }
-  if (this.vpaidLoadTimeout) {
-    clearTimeout(this.vpaidLoadTimeout);
-  }
-  if (this.initAdTimeout) {
-    clearTimeout(this.initAdTimeout);
-  }
-  if (this.startAdTimeout) {
-    clearTimeout(this.startAdTimeout);
-  }
-  _unsetCallbacksForCreative.call(this);
-  if (this.vpaidScript) {
-    this.vpaidScript.onload = null;
-    this.vpaidScript.onerror = null;
-  }
-  if (this.vpaidSlot) {
-    FW.removeElement(this.vpaidSlot);
-  }
-  if (this.vpaidIframe) {
-    FW.removeElement(this.vpaidIframe);
-  }
-};
-/* harmony default export */ var vpaid = (VPAID);
-;// CONCATENATED MODULE: ./src/js/creatives/non-linear.js
-
-
-
-
-
-
-
-var NON_LINEAR = {};
-var _onNonLinearLoadError = function _onNonLinearLoadError() {
-  Utils.processVastErrors.call(this, 502, true);
-};
-var _onNonLinearLoadSuccess = function _onNonLinearLoadSuccess() {
-  var _context;
-  console.log(concat_default()(_context = "".concat(FW.consolePrepend, " success loading non-linear creative at ")).call(_context, this.creative.mediaUrl), FW.consoleStyle, '');
-  this.adOnStage = true;
-  Utils.createApiEvent.call(this, ['adloaded', 'adimpression', 'adstarted']);
-  tracking_events.dispatch.call(this, ['impression', 'creativeView', 'start', 'loaded']);
-};
-var _onNonLinearClickThrough = function _onNonLinearClickThrough(event) {
-  try {
-    if (event) {
-      event.stopPropagation();
-    }
-    this.pause();
-    Utils.createApiEvent.call(this, 'adclick');
-    tracking_events.dispatch.call(this, 'clickthrough');
-  } catch (e) {
-    console.warn(e);
-  }
-};
-var _onClickCloseNonLinear = function _onClickCloseNonLinear(event) {
-  if (event) {
-    event.stopPropagation();
-    if (event.type === 'touchend') {
-      event.preventDefault();
-    }
-  }
-  FW.setStyle(this.nonLinearContainer, {
-    display: 'none'
-  });
-  Utils.createApiEvent.call(this, 'adclosed');
-  tracking_events.dispatch.call(this, 'close');
-};
-var _appendCloseButton = function _appendCloseButton() {
-  var _this = this;
-  this.nonLinearClose = document.createElement('div');
-  this.nonLinearClose.className = 'rmp-ad-non-linear-close';
-  Utils.makeButtonAccessible(this.nonLinearClose, this.params.labels.closeAd);
-  if (this.nonLinearMinSuggestedDuration > 0) {
-    FW.setStyle(this.nonLinearClose, {
-      display: 'none'
-    });
-    setTimeout(function () {
-      FW.setStyle(_this.nonLinearClose, {
-        display: 'block'
-      });
-    }, this.nonLinearMinSuggestedDuration * 1000);
-  } else {
-    FW.setStyle(this.nonLinearClose, {
-      display: 'block'
-    });
-  }
-  this.onClickCloseNonLinear = _onClickCloseNonLinear.bind(this);
-  this.nonLinearClose.addEventListener('touchend', this.onClickCloseNonLinear);
-  this.nonLinearClose.addEventListener('click', this.onClickCloseNonLinear);
-  this.nonLinearContainer.appendChild(this.nonLinearClose);
-};
-NON_LINEAR.update = function () {
-  // non-linear ad container
-  this.nonLinearContainer = document.createElement('div');
-  this.nonLinearContainer.className = 'rmp-ad-non-linear-container';
-  FW.setStyle(this.nonLinearContainer, {
-    width: this.creative.width.toString() + 'px',
-    height: this.creative.height.toString() + 'px'
-  });
-  // a tag to handle click - a tag is best for WebView support
-  this.nonLinearATag = document.createElement('a');
-  this.nonLinearATag.className = 'rmp-ad-non-linear-anchor';
-  if (this.creative.clickThroughUrl) {
-    this.nonLinearATag.href = this.creative.clickThroughUrl;
-    this.nonLinearATag.target = '_blank';
-    this.onNonLinearClickThrough = _onNonLinearClickThrough.bind(this);
-    if (ENV.isMobile) {
-      this.nonLinearATag.addEventListener('touchend', this.onNonLinearClickThrough);
-    } else {
-      this.nonLinearATag.addEventListener('click', this.onNonLinearClickThrough);
-    }
-  }
-  // non-linear creative image
-  if (this.creative.nonLinearType === 'image') {
-    this.nonLinearInnerElement = document.createElement('img');
-  } else {
-    this.nonLinearInnerElement = document.createElement('iframe');
-    this.nonLinearInnerElement.sandbox = 'allow-scripts allow-same-origin';
-    FW.setStyle(this.nonLinearInnerElement, {
-      border: 'none',
-      overflow: 'hidden'
-    });
-    this.nonLinearInnerElement.setAttribute('allow', 'autoplay; fullscreen; picture-in-picture; encrypted-media');
-    this.nonLinearInnerElement.setAttribute('scrolling', 'no');
-    this.nonLinearInnerElement.setAttribute('sandbox', 'allow-scripts allow-presentation allow-same-origin');
-  }
-  this.nonLinearInnerElement.className = 'rmp-ad-non-linear-creative';
-  this.onNonLinearLoadError = _onNonLinearLoadError.bind(this);
-  this.nonLinearInnerElement.addEventListener('error', this.onNonLinearLoadError);
-  this.onNonLinearLoadSuccess = _onNonLinearLoadSuccess.bind(this);
-  this.nonLinearInnerElement.addEventListener('load', this.onNonLinearLoadSuccess);
-  if (this.creative.nonLinearType === 'html') {
-    this.nonLinearInnerElement.srcdoc = this.creative.mediaUrl;
-  } else {
-    this.nonLinearInnerElement.src = this.creative.mediaUrl;
-  }
-  // append to adContainer
-  this.nonLinearATag.appendChild(this.nonLinearInnerElement);
-  this.nonLinearContainer.appendChild(this.nonLinearATag);
-  this.adContainer.appendChild(this.nonLinearContainer);
-  // display a close button when non-linear ad has reached minSuggestedDuration
-  _appendCloseButton.call(this);
-  FW.show(this.adContainer);
-  content_player.play.call(this, this.firstContentPlayerPlayRequest);
-  if (this.firstContentPlayerPlayRequest) {
-    this.firstContentPlayerPlayRequest = false;
-  }
-};
-NON_LINEAR.parse = function (variations) {
-  var _this2 = this;
-  console.log("".concat(FW.consolePrepend, " non-linear creatives follow"), FW.consoleStyle, '');
-  console.log(variations);
-  var isDimensionError = false;
-  var currentVariation;
-  // The video player should poll each <NonLinear> element to determine 
-  // which creative is offered in a format the video player can support.
-  for (var i = 0; i < variations.length; i++) {
-    isDimensionError = false;
-    currentVariation = variations[i];
-    var width = currentVariation.width;
-    var height = currentVariation.height;
-    // width/height attribute is required
-    if (width <= 0) {
-      width = 300;
-    }
-    if (height <= 0) {
-      height = 44;
-    }
-    // if width of non-linear creative does not fit within current player container width 
-    // we should skip this creative
-    if (width > FW.getWidth(this.container) || height > FW.getHeight(this.container)) {
-      isDimensionError = true;
-      continue;
-    }
-    // get minSuggestedDuration (optional)
-    this.nonLinearMinSuggestedDuration = currentVariation.minSuggestedDuration;
-    var staticResource = currentVariation.staticResource;
-    var iframeResource = currentVariation.iframeResource;
-    var htmlResource = currentVariation.htmlResource;
-    // we have a valid NonLinear/StaticResource with supported creativeType - we break
-    if (staticResource !== null || iframeResource !== null || htmlResource !== null) {
-      if (staticResource) {
-        this.creative.mediaUrl = staticResource;
-        this.creative.nonLinearType = 'image';
-      } else if (iframeResource) {
-        this.creative.mediaUrl = iframeResource;
-        this.creative.nonLinearType = 'iframe';
-      } else if (htmlResource) {
-        this.creative.mediaUrl = htmlResource;
-        this.creative.nonLinearType = 'html';
-      }
-      this.creative.width = width;
-      this.creative.height = height;
-      this.creative.type = currentVariation.type;
-      console.log("".concat(FW.consolePrepend, " selected non-linear creative"), FW.consoleStyle, '');
-      console.log(this.creative);
-      break;
-    }
-  }
-  // if not supported NonLinear type ping for error
-  if (!this.creative.mediaUrl || isDimensionError) {
-    var vastErrorCode = 503;
-    if (isDimensionError) {
-      vastErrorCode = 501;
-    }
-    Utils.processVastErrors.call(this, vastErrorCode, true);
-    return;
-  }
-  this.creative.clickThroughUrl = currentVariation.nonlinearClickThroughURLTemplate;
-  if (currentVariation.nonlinearClickTrackingURLTemplates.length > 0) {
-    currentVariation.nonlinearClickTrackingURLTemplates.forEach(function (nonlinearClickTrackingURLTemplate) {
-      if (nonlinearClickTrackingURLTemplate.url) {
-        _this2.trackingTags.push({
-          event: 'clickthrough',
-          url: nonlinearClickTrackingURLTemplate.url
+      FW.openWindow(this._iconsData[index].iconClickThroughUrl);
+      // send trackers if any for IconClickTracking
+      var iconClickTrackingUrls = this._iconsData[index].iconClickTrackingUrls;
+      if (iconClickTrackingUrls.length > 0) {
+        iconClickTrackingUrls.forEach(function (tracking) {
+          if (tracking.url) {
+            Tracking.pingURI.call(_this._rmpVast, tracking.url);
+          }
         });
       }
-    });
-  }
-  vast_player.append.call(this);
-};
-/* harmony default export */ var non_linear = (NON_LINEAR);
-// EXTERNAL MODULE: ./node_modules/@babel/runtime-corejs3/core-js-stable/instance/sort.js
-var sort = __webpack_require__(2052);
-var sort_default = /*#__PURE__*/__webpack_require__.n(sort);
+    }
+  }, {
+    key: "_onIconLoadPingTracking",
+    value: function _onIconLoadPingTracking(index) {
+      var _context;
+      console.log(concat_default()(_context = "".concat(FW.consolePrepend, " IconViewTracking for icon at index ")).call(_context, index), FW.consoleStyle, '');
+      Tracking.pingURI.call(this._rmpVast, this._iconsData[index].iconViewTrackingUrl);
+    }
+  }, {
+    key: "_onPlayingAppendIcons",
+    value: function _onPlayingAppendIcons() {
+      var _this2 = this;
+      console.log("".concat(FW.consolePrepend, " playing states has been reached - append icons"), FW.consoleStyle, '');
+      this._iconsData.forEach(function (iconData, index) {
+        var icon;
+        var src;
+        if (iconData.staticResourceUrl) {
+          icon = document.createElement('img');
+          src = iconData.staticResourceUrl;
+        } else if (iconData.iframeResourceUrl || iconData.htmlContent) {
+          icon = document.createElement('iframe');
+          icon.sandbox = 'allow-scripts allow-same-origin';
+          if (iconData.htmlContent) {
+            src = iconData.htmlContent;
+          } else {
+            src = iconData.iframeResourceUrl;
+          }
+          FW.setStyle(icon, {
+            border: 'none',
+            overflow: 'hidden'
+          });
+          icon.setAttribute('scrolling', 'no');
+          icon.setAttribute('allow', 'autoplay; fullscreen; picture-in-picture; encrypted-media');
+          icon.setAttribute('sandbox', 'allow-scripts allow-presentation allow-same-origin');
+        }
+        icon.className = 'rmp-ad-container-icons';
+        FW.setStyle(icon, {
+          width: parse_int_default()(iconData.width) + 'px',
+          height: parse_int_default()(iconData.height) + 'px'
+        });
+        var xPosition = iconData.xPosition;
+        if (xPosition === 'left') {
+          icon.style.left = '0px';
+        } else if (xPosition === 'right') {
+          icon.style.right = '0px';
+        } else if (parse_int_default()(xPosition) >= 0) {
+          icon.style.left = xPosition + 'px';
+        } else {
+          icon.style.left = '0px';
+        }
+        var yPosition = iconData.yPosition;
+        if (yPosition === 'top') {
+          icon.style.top = '0px';
+        } else if (xPosition === 'bottom') {
+          icon.style.bottom = '0px';
+        } else if (parse_int_default()(yPosition) >= 0) {
+          icon.style.top = yPosition + 'px';
+        } else {
+          icon.style.top = '0px';
+        }
+        if (iconData.iconViewTrackingUrl) {
+          icon.onload = _this2._onIconLoadPingTracking.bind(_this2, index);
+        }
+        if (iconData.iconClickThroughUrl) {
+          var _onIconClickThroughFn = _this2._onIconClickThrough.bind(_this2, index);
+          FW.addEvents(['touchend', 'click'], icon, _onIconClickThroughFn);
+        }
+        if (iconData.htmlContent) {
+          icon.srcdoc = src;
+        } else {
+          icon.src = src;
+        }
+        console.log("".concat(FW.consolePrepend, " Selected icon details follow"), FW.consoleStyle, '');
+        console.log(icon);
+        _this2._adContainer.appendChild(icon);
+      });
+    }
+  }, {
+    key: "destroy",
+    value: function destroy() {
+      console.log("".concat(FW.consolePrepend, " Start destroying icons"), FW.consoleStyle, '');
+      var icons = this._adContainer.querySelectorAll('.rmp-ad-container-icons');
+      if (icons.length > 0) {
+        icons.forEach(function (icon) {
+          FW.removeElement(icon);
+        });
+      }
+      if (this._adPlayer) {
+        this._adPlayer.removeEventListener('playing', this._onPlayingAppendIconsFn);
+      }
+    }
+  }, {
+    key: "parse",
+    value: function parse(icons) {
+      console.log("".concat(FW.consolePrepend, " Start parsing for icons"), FW.consoleStyle, '');
+      for (var i = 0; i < icons.length; i++) {
+        var currentIcon = icons[i];
+        var program = currentIcon.program;
+        if (program === null) {
+          continue;
+        }
+        var width = currentIcon.width;
+        var height = currentIcon.height;
+        var xPosition = currentIcon.xPosition;
+        var yPosition = currentIcon.yPosition;
+        if (width <= 0 || height <= 0 || xPosition < 0 || yPosition < 0) {
+          continue;
+        }
+        var staticResourceUrl = currentIcon.staticResource;
+        var iframeResourceUrl = currentIcon.iframeResource;
+        var htmlResource = currentIcon.htmlResource;
+        // we only support StaticResource (HTMLResource not supported)
+        if (staticResourceUrl === null && iframeResourceUrl === null && htmlResource === null) {
+          continue;
+        }
+        var iconData = {
+          program: program,
+          width: width,
+          height: height,
+          xPosition: xPosition,
+          yPosition: yPosition,
+          staticResourceUrl: staticResourceUrl,
+          iframeResourceUrl: iframeResourceUrl,
+          htmlContent: htmlResource
+        };
+        iconData.iconViewTrackingUrl = currentIcon.iconViewTrackingURLTemplate;
+        iconData.iconClickThroughUrl = currentIcon.iconClickThroughURLTemplate;
+        iconData.iconClickTrackingUrls = currentIcon.iconClickTrackingURLTemplates;
+        this._iconsData.push(iconData);
+      }
+      console.log("".concat(FW.consolePrepend, " Validated parsed icons follows"), FW.consoleStyle, '');
+      console.log(this._iconsData);
+    }
+  }, {
+    key: "append",
+    value: function append() {
+      this._onPlayingAppendIconsFn = this._onPlayingAppendIcons.bind(this);
+      // as per VAST 3 spec only append icon when ad starts playing
+      this._adPlayer.addEventListener('playing', this._onPlayingAppendIconsFn, {
+        once: true
+      });
+    }
+  }]);
+  return Icons;
+}();
+
 ;// CONCATENATED MODULE: ./src/assets/rmp-connection/rmp-connection.js
 
 
@@ -12799,25 +12463,25 @@ function _createForOfIteratorHelper(o, allowArrayLike) {
   };
 }
 // EXTERNAL MODULE: ./node_modules/@babel/runtime-corejs3/core-js-stable/map.js
-var core_js_stable_map = __webpack_require__(8080);
+var core_js_stable_map = __webpack_require__(4707);
 var core_js_stable_map_default = /*#__PURE__*/__webpack_require__.n(core_js_stable_map);
 // EXTERNAL MODULE: ./node_modules/@babel/runtime-corejs3/core-js-stable/json/stringify.js
-var stringify = __webpack_require__(9360);
+var stringify = __webpack_require__(5569);
 var stringify_default = /*#__PURE__*/__webpack_require__.n(stringify);
 // EXTERNAL MODULE: ./node_modules/@babel/runtime-corejs3/core-js-stable/instance/includes.js
-var includes = __webpack_require__(9324);
+var includes = __webpack_require__(8628);
 var includes_default = /*#__PURE__*/__webpack_require__.n(includes);
 // EXTERNAL MODULE: ./node_modules/@babel/runtime-corejs3/core-js-stable/object/values.js
-var values = __webpack_require__(6916);
+var values = __webpack_require__(7119);
 var values_default = /*#__PURE__*/__webpack_require__.n(values);
 // EXTERNAL MODULE: ./node_modules/@babel/runtime-corejs3/core-js-stable/instance/starts-with.js
-var starts_with = __webpack_require__(8331);
+var starts_with = __webpack_require__(165);
 var starts_with_default = /*#__PURE__*/__webpack_require__.n(starts_with);
 // EXTERNAL MODULE: ./node_modules/@babel/runtime-corejs3/core-js-stable/array/from.js
-var array_from = __webpack_require__(3548);
+var array_from = __webpack_require__(9763);
 var array_from_default = /*#__PURE__*/__webpack_require__.n(array_from);
 // EXTERNAL MODULE: ./node_modules/@babel/runtime-corejs3/core-js-stable/instance/keys.js
-var keys = __webpack_require__(904);
+var keys = __webpack_require__(5413);
 var instance_keys_default = /*#__PURE__*/__webpack_require__.n(keys);
 ;// CONCATENATED MODULE: ./src/js/players/simid/simid_protocol.js
 
@@ -13273,7 +12937,6 @@ var SimidProtocol = /*#__PURE__*/function () {
 
 
 
-
 var NO_REQUESTED_DURATION = 0;
 var UNLIMITED_DURATION = -2;
 
@@ -13285,7 +12948,7 @@ var SimidPlayer = /*#__PURE__*/function () {
    * Sets up the creative iframe and starts listening for messages
    * from the creative.
    */
-  function SimidPlayer(isLinearAd, simidData, url, adId, creativeId, adServingId, clickThroughUrl, rmpVast) {
+  function SimidPlayer(url, rmpVast) {
     var _this = this;
     _classCallCheck(this, SimidPlayer);
     /**
@@ -13295,27 +12958,27 @@ var SimidPlayer = /*#__PURE__*/function () {
     this.simidProtocol = new SimidProtocol();
     this.addListeners_();
     this.rmpVast_ = rmpVast;
-    this.simidData_ = simidData;
-    this.adContainer_ = this.rmpVast_.adContainer;
-    this.playerDiv_ = this.rmpVast_.contentWrapper;
-    this.vastPlayerUrl_ = url;
-    this.adParameters_ = simidData.adParameters;
-    this.adId_ = adId;
-    this.creativeId_ = creativeId;
-    this.adServingId_ = adServingId;
-    this.clickThroughUrl_ = clickThroughUrl;
+    this.simidData_ = rmpVast.creative.simid;
+    this.adContainer_ = rmpVast.adContainer;
+    this.playerDiv_ = rmpVast.contentWrapper;
+    this.adPlayerUrl_ = url;
+    this.adParameters_ = rmpVast.creative.simid.adParameters;
+    this.adId_ = rmpVast.creative.adId;
+    this.creativeId_ = rmpVast.creative.id;
+    this.adServingId_ = rmpVast.ad.adServingId;
+    this.clickThroughUrl_ = rmpVast.creative.clickThroughUrl;
 
     /**
      * A reference to the video player on the players main page
      * @private {!Element}
      */
-    this.contentVideoElement_ = this.rmpVast_.contentPlayer;
+    this.contentVideoElement_ = rmpVast.__contentPlayer;
 
     /**
      * A reference to a video player for playing ads.
      * @private {!Element}
      */
-    this.adVideoElement_ = this.rmpVast_.vastPlayer;
+    this.adVideoElement_ = rmpVast.__adPlayer;
 
     /**
      * A reference to the iframe holding the SIMID creative.
@@ -13345,7 +13008,7 @@ var SimidPlayer = /*#__PURE__*/function () {
      * A boolean indicating what type of creative ad is.
      * @const @private {boolean}
      */
-    this.isLinearAd_ = isLinearAd;
+    this.isLinearAd_ = rmpVast.creative.isLinear;
 
     /**
      * A number indicating when the non linear ad started.
@@ -13830,7 +13493,7 @@ var SimidPlayer = /*#__PURE__*/function () {
     value: function playLinearVideoAd_() {
       this.contentVideoElement_.pause();
       this.showAdPlayer_();
-      this.adVideoElement_.src = this.vastPlayerUrl_;
+      this.adVideoElement_.src = this.adPlayerUrl_;
       // we need this extra load for Chrome data saver mode in mobile or desktop
       this.adVideoElement_.load();
       this.adVideoElement_.play();
@@ -14033,8 +13696,8 @@ var SimidPlayer = /*#__PURE__*/function () {
       //this.contentVideoElement_.play();
       if (error) {
         Utils.processVastErrors.call(this.rmpVast_, errorCode, true);
-      } else {
-        vast_player.resumeContent.call(this.rmpVast_);
+      } else if (this.rmpVast_.rmpVastAdPlayer) {
+        this.rmpVast_.rmpVastAdPlayer.resumeContent();
       }
     }
 
@@ -14142,7 +13805,7 @@ var SimidPlayer = /*#__PURE__*/function () {
         _context8;
       var requestedUrlArray = incomingMessage.args['trackingUrls'];
       requestedUrlArray.forEach(function (url) {
-        tracking_events.pingURI.call(_this11, url);
+        Tracking.pingURI.call(_this11.rmpVast_, url);
       });
       console.log(concat_default()(_context8 = "".concat(FW.consolePrepend, " SIMID: The creative has asked for the player to ping ")).call(_context8, requestedUrlArray), FW.consoleStyle, '');
     }
@@ -14244,6 +13907,728 @@ var SimidPlayer = /*#__PURE__*/function () {
   return SimidPlayer;
 }();
 
+;// CONCATENATED MODULE: ./src/js/players/vpaid-player.js
+
+
+
+
+
+
+
+
+var VpaidPlayer = /*#__PURE__*/function () {
+  function VpaidPlayer(rmpVast) {
+    _classCallCheck(this, VpaidPlayer);
+    this._rmpVast = rmpVast;
+    this._adContainer = rmpVast.adContainer;
+    this._adPlayer = rmpVast.__adPlayer;
+    this._params = rmpVast.params;
+    this._adParametersData = rmpVast.adParametersData;
+    this._initialWidth = 640;
+    this._initialHeight = 360;
+    this._initialViewMode = 'normal';
+    this._desiredBitrate = 500;
+    this._vpaidCreativeUrl = '';
+    this._vpaidCreative = null;
+    this._vpaidScript = null;
+    this._vpaidIframe = null;
+    this._vpaidAdLoaded = false;
+    this._initAdTimeout = null;
+    this._vpaidCallbacks = {};
+    this._startAdTimeout = null;
+    this._vpaidAdStarted = false;
+    this._vpaidVersion = -1;
+    this._vpaid1AdDuration = -1;
+    this._adStoppedTimeout = null;
+    this._adSkippedTimeout = null;
+    this._vpaidAdRemainingTimeInterval = null;
+    this._vpaidRemainingTime = -1;
+    this._vpaidCurrentVolume = 1;
+    this._vpaidPaused = true;
+    this._vpaidLoadTimeout = null;
+    this._vpaidAvailableInterval = null;
+    this._vpaidSlot = null;
+  }
+
+  // VPAID creative events
+  _createClass(VpaidPlayer, [{
+    key: "_onAdLoaded",
+    value: function _onAdLoaded() {
+      var _this = this;
+      this._vpaidAdLoaded = true;
+      if (!this._vpaidCreative) {
+        return;
+      }
+      FW.clearTimeout(this._initAdTimeout);
+      if (this._vpaidCallbacks.AdLoaded) {
+        this._vpaidCreative.unsubscribe(this._vpaidCallbacks.AdLoaded, 'AdLoaded');
+      }
+      // when we call startAd we expect AdStarted event to follow closely
+      // otherwise we need to resume content
+      this._startAdTimeout = setTimeout(function () {
+        if (!_this._vpaidAdStarted && _this._rmpVast.rmpVastAdPlayer) {
+          _this._rmpVast.rmpVastAdPlayer.resumeContent();
+        }
+        _this._vpaidAdStarted = false;
+      }, this._params.creativeLoadTimeout);
+      this._rmpVast.__adOnStage = true;
+      this._vpaidCreative.startAd();
+      Utils.createApiEvent.call(this._rmpVast, 'adloaded');
+      Tracking.dispatch.call(this._rmpVast, 'loaded');
+    }
+  }, {
+    key: "_onAdStarted",
+    value: function _onAdStarted() {
+      this._vpaidAdStarted = true;
+      if (!this._vpaidCreative) {
+        return;
+      }
+      FW.clearTimeout(this._startAdTimeout);
+      if (this._vpaidCallbacks.AdStarted) {
+        this._vpaidCreative.unsubscribe(this._vpaidCallbacks.AdStarted, 'AdStarted');
+      }
+      // update duration for VPAID 1.*
+      if (this._vpaidVersion === 1) {
+        this._vpaid1AdDuration = this._vpaidCreative.getAdRemainingTime();
+      }
+      // append icons - if VPAID does not handle them
+      var adIcons = this._vpaidCreative.getAdIcons();
+      if (!adIcons && this._rmpVast.rmpVastIcons) {
+        var iconsData = this._rmpVast.rmpVastIcons.iconsData;
+        if (iconsData.length > 0) {
+          this._rmpVast.rmpVastIcons.append();
+        }
+      }
+      if (typeof this._vpaidCreative.getAdLinear === 'function') {
+        this._rmpVast.creative.isLinear = this._vpaidCreative.getAdLinear();
+      }
+      Tracking.dispatch.call(this._rmpVast, 'creativeView');
+    }
+  }, {
+    key: "_onAdStopped",
+    value: function _onAdStopped() {
+      console.log("".concat(FW.consolePrepend, " VPAID AdStopped event"), FW.consoleStyle, '');
+      FW.clearTimeout(this._adStoppedTimeout);
+      if (this._rmpVast.rmpVastAdPlayer) {
+        this._rmpVast.rmpVastAdPlayer.resumeContent();
+      }
+    }
+  }, {
+    key: "_onAdSkipped",
+    value: function _onAdSkipped() {
+      FW.clearTimeout(this._adSkippedTimeout);
+      Utils.createApiEvent.call(this._rmpVast, 'adskipped');
+      Tracking.dispatch.call(this._rmpVast, 'skip');
+    }
+  }, {
+    key: "_onAdSkippableStateChange",
+    value: function _onAdSkippableStateChange() {
+      Utils.createApiEvent.call(this._rmpVast, 'adskippablestatechanged');
+    }
+  }, {
+    key: "_onAdDurationChange",
+    value: function _onAdDurationChange() {
+      var _this2 = this;
+      if (this._vpaidCreative && typeof this._vpaidCreative.getAdRemainingTime === 'function') {
+        var remainingTime = this._vpaidCreative.getAdRemainingTime();
+        if (remainingTime >= 0) {
+          this._vpaidRemainingTime = remainingTime;
+        }
+        // AdRemainingTimeChange is deprecated in VPAID 2
+        // instead we use setInterval
+        FW.clearInterval(this._vpaidAdRemainingTimeInterval);
+        this._vpaidAdRemainingTimeInterval = setInterval(function () {
+          var remainingTime = _this2._vpaidCreative.getAdRemainingTime();
+          if (remainingTime >= 0) {
+            _this2._vpaidRemainingTime = remainingTime;
+          }
+        }, 200);
+        Utils.createApiEvent.call(this._rmpVast, 'addurationchange');
+      }
+    }
+  }, {
+    key: "_onAdVolumeChange",
+    value: function _onAdVolumeChange() {
+      var newVolume = -1;
+      if (this._vpaidCreative) {
+        newVolume = this._vpaidCreative.getAdVolume();
+      }
+      if (typeof newVolume === 'number' && newVolume >= 0) {
+        if (this._vpaidCurrentVolume > 0 && newVolume === 0) {
+          Tracking.dispatch.call(this._rmpVast, 'mute');
+        } else if (this._vpaidCurrentVolume === 0 && newVolume > 0) {
+          Tracking.dispatch.call(this._rmpVast, 'unmute');
+        }
+        this._vpaidCurrentVolume = newVolume;
+        Utils.createApiEvent.call(this._rmpVast, 'advolumechanged');
+      }
+    }
+  }, {
+    key: "_onAdImpression",
+    value: function _onAdImpression() {
+      Utils.createApiEvent.call(this._rmpVast, 'adimpression');
+      Tracking.dispatch.call(this._rmpVast, 'impression');
+    }
+  }, {
+    key: "_onAdVideoStart",
+    value: function _onAdVideoStart() {
+      this._vpaidPaused = false;
+      var newVolume = -1;
+      if (this._vpaidCreative) {
+        newVolume = this._vpaidCreative.getAdVolume();
+      }
+      if (typeof newVolume === 'number' && newVolume >= 0) {
+        this._vpaidCurrentVolume = newVolume;
+        Utils.createApiEvent.call(this._rmpVast, 'adstarted');
+        Tracking.dispatch.call(this._rmpVast, 'start');
+      }
+    }
+  }, {
+    key: "_onAdVideoFirstQuartile",
+    value: function _onAdVideoFirstQuartile() {
+      Utils.createApiEvent.call(this._rmpVast, 'adfirstquartile');
+      Tracking.dispatch.call(this._rmpVast, 'firstQuartile');
+    }
+  }, {
+    key: "_onAdVideoMidpoint",
+    value: function _onAdVideoMidpoint() {
+      Utils.createApiEvent.call(this._rmpVast, 'admidpoint');
+      Tracking.dispatch.call(this._rmpVast, 'midpoint');
+    }
+  }, {
+    key: "_onAdVideoThirdQuartile",
+    value: function _onAdVideoThirdQuartile() {
+      Utils.createApiEvent.call(this._rmpVast, 'adthirdquartile');
+      Tracking.dispatch.call(this._rmpVast, 'thirdQuartile');
+    }
+  }, {
+    key: "_onAdVideoComplete",
+    value: function _onAdVideoComplete() {
+      Utils.createApiEvent.call(this._rmpVast, 'adcomplete');
+      Tracking.dispatch.call(this._rmpVast, 'complete');
+    }
+  }, {
+    key: "_onAdClickThru",
+    value: function _onAdClickThru(url, id, playerHandles) {
+      Utils.createApiEvent.call(this._rmpVast, 'adclick');
+      Tracking.dispatch.call(this._rmpVast, 'clickthrough');
+      if (typeof playerHandles !== 'boolean') {
+        return;
+      }
+      if (!playerHandles) {
+        return;
+      } else {
+        var destUrl;
+        if (url) {
+          destUrl = url;
+        } else if (this._rmpVast.creative.clickThroughUrl) {
+          destUrl = this._rmpVast.creative.clickThroughUrl;
+        }
+        if (destUrl) {
+          this._rmpVast.creative.clickThroughUrl = destUrl;
+          FW.openWindow(this._rmpVast.creative.clickThroughUrl);
+        }
+      }
+    }
+  }, {
+    key: "_onAdPaused",
+    value: function _onAdPaused() {
+      this._vpaidPaused = true;
+      Utils.createApiEvent.call(this._rmpVast, 'adpaused');
+      Tracking.dispatch.call(this._rmpVast, 'pause');
+    }
+  }, {
+    key: "_onAdPlaying",
+    value: function _onAdPlaying() {
+      this._vpaidPaused = false;
+      Utils.createApiEvent.call(this._rmpVast, 'adresumed');
+      Tracking.dispatch.call(this._rmpVast, 'resume');
+    }
+  }, {
+    key: "_onAdLog",
+    value: function _onAdLog(message) {
+      var _context;
+      console.log(concat_default()(_context = "".concat(FW.consolePrepend, " VPAID AdLog event ")).call(_context, message), FW.consoleStyle, '');
+    }
+  }, {
+    key: "_onAdError",
+    value: function _onAdError(message) {
+      var _context2;
+      console.log(concat_default()(_context2 = "".concat(FW.consolePrepend, " VPAID AdError event ")).call(_context2, message), FW.consoleStyle, '');
+      Utils.processVastErrors.call(this._rmpVast, 901, true);
+    }
+  }, {
+    key: "_onAdInteraction",
+    value: function _onAdInteraction() {
+      Utils.createApiEvent.call(this._rmpVast, 'adinteraction');
+    }
+  }, {
+    key: "_onAdUserAcceptInvitation",
+    value: function _onAdUserAcceptInvitation() {
+      Utils.createApiEvent.call(this._rmpVast, 'aduseracceptinvitation');
+      Tracking.dispatch.call(this._rmpVast, 'acceptInvitation');
+    }
+  }, {
+    key: "_onAdUserMinimize",
+    value: function _onAdUserMinimize() {
+      Utils.createApiEvent.call(this._rmpVast, 'adcollapse');
+      Tracking.dispatch.call(this._rmpVast, ['collapse', 'adCollapse']);
+    }
+  }, {
+    key: "_onAdUserClose",
+    value: function _onAdUserClose() {
+      Utils.createApiEvent.call(this._rmpVast, 'adclosed');
+      Tracking.dispatch.call(this._rmpVast, 'close');
+    }
+  }, {
+    key: "_onAdSizeChange",
+    value: function _onAdSizeChange() {
+      Utils.createApiEvent.call(this._rmpVast, 'adsizechange');
+    }
+  }, {
+    key: "_onAdLinearChange",
+    value: function _onAdLinearChange() {
+      if (this._vpaidCreative && typeof this._vpaidCreative.getAdLinear === 'function') {
+        this._rmpVast.creative.isLinear = this._vpaidCreative.getAdLinear();
+        Utils.createApiEvent.call(this._rmpVast, 'adlinearchange');
+      }
+    }
+  }, {
+    key: "_onAdExpandedChange",
+    value: function _onAdExpandedChange() {
+      Utils.createApiEvent.call(this._rmpVast, 'adexpandedchange');
+    }
+  }, {
+    key: "_onAdRemainingTimeChange",
+    value: function _onAdRemainingTimeChange() {
+      if (this._vpaidCreative && typeof this._vpaidCreative.getAdRemainingTime === 'function') {
+        var remainingTime = this._vpaidCreative.getAdRemainingTime();
+        if (remainingTime >= 0) {
+          this._vpaidRemainingTime = remainingTime;
+        }
+        Utils.createApiEvent.call(this._rmpVast, 'adremainingtimechange');
+      }
+    }
+  }, {
+    key: "_setCallbacksForCreative",
+    value: function _setCallbacksForCreative() {
+      var _this3 = this;
+      if (!this._vpaidCreative) {
+        return;
+      }
+      this._vpaidCallbacks = {
+        AdLoaded: this._onAdLoaded.bind(this),
+        AdStarted: this._onAdStarted.bind(this),
+        AdStopped: this._onAdStopped.bind(this),
+        AdSkipped: this._onAdSkipped.bind(this),
+        AdSkippableStateChange: this._onAdSkippableStateChange.bind(this),
+        AdDurationChange: this._onAdDurationChange.bind(this),
+        AdVolumeChange: this._onAdVolumeChange.bind(this),
+        AdImpression: this._onAdImpression.bind(this),
+        AdVideoStart: this._onAdVideoStart.bind(this),
+        AdVideoFirstQuartile: this._onAdVideoFirstQuartile.bind(this),
+        AdVideoMidpoint: this._onAdVideoMidpoint.bind(this),
+        AdVideoThirdQuartile: this._onAdVideoThirdQuartile.bind(this),
+        AdVideoComplete: this._onAdVideoComplete.bind(this),
+        AdClickThru: this._onAdClickThru.bind(this),
+        AdPaused: this._onAdPaused.bind(this),
+        AdPlaying: this._onAdPlaying.bind(this),
+        AdLog: this._onAdLog.bind(this),
+        AdError: this._onAdError.bind(this),
+        AdInteraction: this._onAdInteraction.bind(this),
+        AdUserAcceptInvitation: this._onAdUserAcceptInvitation.bind(this),
+        AdUserMinimize: this._onAdUserMinimize.bind(this),
+        AdUserClose: this._onAdUserClose.bind(this),
+        AdSizeChange: this._onAdSizeChange.bind(this),
+        AdLinearChange: this._onAdLinearChange.bind(this),
+        AdExpandedChange: this._onAdExpandedChange.bind(this),
+        AdRemainingTimeChange: this._onAdRemainingTimeChange.bind(this)
+      };
+      // Looping through the object and registering each of the callbacks with the creative
+      var callbacksKeys = keys_default()(this._vpaidCallbacks);
+      callbacksKeys.forEach(function (key) {
+        _this3._vpaidCreative.subscribe(_this3._vpaidCallbacks[key], key);
+      });
+    }
+  }, {
+    key: "_unsetCallbacksForCreative",
+    value: function _unsetCallbacksForCreative() {
+      var _this4 = this;
+      if (!this._vpaidCreative) {
+        return;
+      }
+      // Looping through the object and registering each of the callbacks with the creative
+      var callbacksKeys = keys_default()(this._vpaidCallbacks);
+      callbacksKeys.forEach(function (key) {
+        _this4._vpaidCreative.unsubscribe(_this4._vpaidCallbacks[key], key);
+      });
+    }
+  }, {
+    key: "_isValidVPAID",
+    value: function _isValidVPAID(creative) {
+      if (typeof creative.initAd === 'function' && typeof creative.startAd === 'function' && typeof creative.stopAd === 'function' && typeof creative.skipAd === 'function' && typeof creative.resizeAd === 'function' && typeof creative.pauseAd === 'function' && typeof creative.resumeAd === 'function' && typeof creative.expandAd === 'function' && typeof creative.collapseAd === 'function' && typeof creative.subscribe === 'function' && typeof creative.unsubscribe === 'function') {
+        return true;
+      }
+      return false;
+    }
+  }, {
+    key: "_onVPAIDAvailable",
+    value: function _onVPAIDAvailable() {
+      var _this5 = this;
+      FW.clearInterval(this._vpaidAvailableInterval);
+      FW.clearTimeout(this._vpaidLoadTimeout);
+      this._vpaidCreative = this._vpaidIframe.contentWindow.getVPAIDAd();
+      if (this._vpaidCreative && typeof this._vpaidCreative.handshakeVersion === 'function') {
+        // we need to insure handshakeVersion return
+        var vpaidVersion;
+        try {
+          vpaidVersion = this._vpaidCreative.handshakeVersion('2.0');
+        } catch (error) {
+          console.warn(error);
+          console.log("".concat(FW.consolePrepend, " could not validate VPAID ad unit handshakeVersion"), FW.consoleStyle, '');
+          Utils.processVastErrors.call(this._rmpVast, 901, true);
+          return;
+        }
+        this._vpaidVersion = parse_int_default()(vpaidVersion);
+        if (this._vpaidVersion < 1) {
+          console.log("".concat(FW.consolePrepend, " unsupported VPAID version - exit"), FW.consoleStyle, '');
+          Utils.processVastErrors.call(this._rmpVast, 901, true);
+          return;
+        }
+        if (!this._isValidVPAID(this._vpaidCreative)) {
+          //The VPAID creative doesn't conform to the VPAID spec
+          console.log("".concat(FW.consolePrepend, " VPAID creative does not conform to VPAID spec - exit"), FW.consoleStyle, '');
+          Utils.processVastErrors.call(this._rmpVast, 901, true);
+          return;
+        }
+        // wire callback for VPAID events
+        this._setCallbacksForCreative();
+        // wire tracking events for VAST pings
+        Tracking.wire.call(this._rmpVast);
+        var creativeData = {};
+        creativeData.AdParameters = this._adParametersData;
+        console.log("".concat(FW.consolePrepend, " VPAID AdParameters follow"), FW.consoleStyle, '');
+        console.log(this._adParametersData);
+        FW.show(this._adContainer);
+        FW.show(this._adPlayer);
+        var environmentVars = {};
+        // we create a new slot for VPAID creative - using adContainer can cause some VPAID to ill-render
+        // from spec:
+        // The 'environmentVars' object contains a reference, 'slot', to the HTML element
+        // on the page in which the ad is to be rendered. The ad unit essentially gets
+        // control of that element. 
+        this._vpaidSlot = document.createElement('div');
+        this._vpaidSlot.className = 'rmp-vpaid-container';
+        this._adContainer.appendChild(this._vpaidSlot);
+        environmentVars.slot = this._vpaidSlot;
+        environmentVars.videoSlot = this._adPlayer;
+        // we assume we can autoplay (or at least muted autoplay) because this._rmpVast.__adPlayer 
+        // has been init
+        environmentVars.videoSlotCanAutoPlay = true;
+        // when we call initAd we expect AdLoaded event to follow closely
+        // if not we need to resume content
+        this._initAdTimeout = setTimeout(function () {
+          if (!_this5._vpaidAdLoaded) {
+            console.log("".concat(FW.consolePrepend, " _initAdTimeout"), FW.consoleStyle, '');
+            if (_this5._rmpVast.rmpVastAdPlayer) {
+              _this5._rmpVast.rmpVastAdPlayer.resumeContent();
+            }
+          }
+          _this5._vpaidAdLoaded = false;
+        }, this._params.creativeLoadTimeout * 10);
+        console.log("".concat(FW.consolePrepend, " calling initAd on VPAID creative now"), FW.consoleStyle, '');
+        this._vpaidCreative.initAd(this._initialWidth, this._initialHeight, this._initialViewMode, this._desiredBitrate, creativeData, environmentVars);
+      }
+    }
+  }, {
+    key: "_onJSVPAIDLoaded",
+    value: function _onJSVPAIDLoaded() {
+      var _this6 = this;
+      console.log("".concat(FW.consolePrepend, " VPAID JS loaded"), FW.consoleStyle, '');
+      var iframeWindow = this._vpaidIframe.contentWindow;
+      if (typeof iframeWindow.getVPAIDAd === 'function') {
+        this._onVPAIDAvailable();
+      } else {
+        this._vpaidAvailableInterval = setInterval(function () {
+          if (typeof iframeWindow.getVPAIDAd === 'function') {
+            _this6._onVPAIDAvailable();
+          }
+        }, 100);
+      }
+      this._vpaidScript.onload = null;
+      this._vpaidScript.onerror = null;
+    }
+  }, {
+    key: "_onJSVPAIDError",
+    value: function _onJSVPAIDError() {
+      console.log("".concat(FW.consolePrepend, " VPAID JS error loading"), FW.consoleStyle, '');
+      Utils.processVastErrors.call(this._rmpVast, 901, true);
+      this._vpaidScript.onload = null;
+      this._vpaidScript.onerror = null;
+    }
+
+    // _vpaidCreative getters
+  }, {
+    key: "getAdWidth",
+    value: function getAdWidth() {
+      if (this._vpaidCreative && typeof this._vpaidCreative.getAdWidth === 'function') {
+        return this._vpaidCreative.getAdWidth();
+      }
+      return -1;
+    }
+  }, {
+    key: "getAdHeight",
+    value: function getAdHeight() {
+      if (this._vpaidCreative && typeof this._vpaidCreative.getAdHeight === 'function') {
+        return this._vpaidCreative.getAdHeight();
+      }
+      return -1;
+    }
+  }, {
+    key: "getAdDuration",
+    value: function getAdDuration() {
+      if (this._vpaidCreative) {
+        if (typeof this._vpaidCreative.getAdDuration === 'function') {
+          return this._vpaidCreative.getAdDuration();
+        } else if (this._vpaid1AdDuration > -1) {
+          return this._vpaid1AdDuration;
+        }
+      }
+      return -1;
+    }
+  }, {
+    key: "getAdRemainingTime",
+    value: function getAdRemainingTime() {
+      if (this._vpaidRemainingTime >= 0) {
+        return this._vpaidRemainingTime;
+      }
+      return -1;
+    }
+  }, {
+    key: "getCreativeUrl",
+    value: function getCreativeUrl() {
+      if (this._vpaidCreativeUrl) {
+        return this._vpaidCreativeUrl;
+      }
+      return '';
+    }
+  }, {
+    key: "getAdVolume",
+    value: function getAdVolume() {
+      if (this._vpaidCreative && typeof this._vpaidCreative.getAdVolume === 'function') {
+        return this._vpaidCreative.getAdVolume();
+      }
+      return -1;
+    }
+  }, {
+    key: "getAdPaused",
+    value: function getAdPaused() {
+      return this._vpaidPaused;
+    }
+  }, {
+    key: "getAdExpanded",
+    value: function getAdExpanded() {
+      if (this._vpaidCreative && typeof this._vpaidCreative.getAdExpanded === 'function') {
+        return this._vpaidCreative.getAdExpanded();
+      }
+      return false;
+    }
+  }, {
+    key: "getAdSkippableState",
+    value: function getAdSkippableState() {
+      if (this._vpaidCreative && typeof this._vpaidCreative.getAdSkippableState === 'function') {
+        return this._vpaidCreative.getAdSkippableState();
+      }
+      return false;
+    }
+  }, {
+    key: "getAdCompanions",
+    value: function getAdCompanions() {
+      if (this._vpaidCreative && typeof this._vpaidCreative.getAdCompanions === 'function') {
+        return this._vpaidCreative.getAdCompanions();
+      }
+      return '';
+    }
+
+    // _vpaidCreative methods
+  }, {
+    key: "resizeAd",
+    value: function resizeAd(width, height, viewMode) {
+      var _context3, _context4, _context5;
+      if (!this._vpaidCreative) {
+        return;
+      }
+      if (!FW.isNumber(width) || !FW.isNumber(height) || typeof viewMode !== 'string') {
+        return;
+      }
+      if (width <= 0 || height <= 0) {
+        return;
+      }
+      var validViewMode = 'normal';
+      if (viewMode === 'fullscreen') {
+        validViewMode = viewMode;
+      }
+      console.log(concat_default()(_context3 = concat_default()(_context4 = concat_default()(_context5 = "".concat(FW.consolePrepend, " VPAID resizeAd with width ")).call(_context5, width, ", height ")).call(_context4, height, ", viewMode ")).call(_context3, viewMode), FW.consoleStyle, '');
+      this._vpaidCreative.resizeAd(width, height, validViewMode);
+    }
+  }, {
+    key: "stopAd",
+    value: function stopAd() {
+      var _this7 = this;
+      if (!this._vpaidCreative) {
+        return;
+      }
+      console.log("".concat(FW.consolePrepend, " stopAd"), FW.consoleStyle, '');
+      // when stopAd is called we need to check a 
+      // AdStopped event follows
+      this._adStoppedTimeout = setTimeout(function () {
+        _this7._onAdStopped();
+      }, this._params.creativeLoadTimeout);
+      this._vpaidCreative.stopAd();
+    }
+  }, {
+    key: "pauseAd",
+    value: function pauseAd() {
+      console.log("".concat(FW.consolePrepend, " pauseAd"), FW.consoleStyle, '');
+      if (this._vpaidCreative && !this._vpaidPaused) {
+        this._vpaidCreative.pauseAd();
+      }
+    }
+  }, {
+    key: "resumeAd",
+    value: function resumeAd() {
+      console.log("".concat(FW.consolePrepend, " resumeAd"), FW.consoleStyle, '');
+      if (this._vpaidCreative && this._vpaidPaused) {
+        this._vpaidCreative.resumeAd();
+      }
+    }
+  }, {
+    key: "expandAd",
+    value: function expandAd() {
+      if (this._vpaidCreative) {
+        this._vpaidCreative.expandAd();
+      }
+    }
+  }, {
+    key: "collapseAd",
+    value: function collapseAd() {
+      if (this._vpaidCreative) {
+        this._vpaidCreative.collapseAd();
+      }
+    }
+  }, {
+    key: "skipAd",
+    value: function skipAd() {
+      var _this8 = this;
+      if (!this._vpaidCreative) {
+        return;
+      }
+      // when skipAd is called we need to check a 
+      // AdSkipped event follows
+      this._adSkippedTimeout = setTimeout(function () {
+        _this8._onAdStopped();
+      }, this._params.creativeLoadTimeout);
+      this._vpaidCreative.skipAd();
+    }
+  }, {
+    key: "setAdVolume",
+    value: function setAdVolume(volume) {
+      if (this._vpaidCreative && FW.isNumber(volume) && volume >= 0 && volume <= 1 && typeof this._vpaidCreative.setAdVolume === 'function') {
+        this._vpaidCreative.setAdVolume(volume);
+      }
+    }
+  }, {
+    key: "init",
+    value: function init(creativeUrl, vpaidSettings) {
+      var _this9 = this;
+      this._initialWidth = vpaidSettings.width;
+      this._initialHeight = vpaidSettings.height;
+      this._initialViewMode = vpaidSettings.viewMode;
+      this._desiredBitrate = vpaidSettings.desiredBitrate;
+      this._vpaidCreativeUrl = creativeUrl;
+      if (!this._adPlayer) {
+        // we use existing ad player as it is already 
+        // available and initialized (no need for user interaction)
+        var existingAdPlayer = null;
+        if (this._adContainer) {
+          existingAdPlayer = this._adContainer.querySelector('.rmp-ad-vast-video-player');
+        }
+        if (existingAdPlayer === null) {
+          Utils.processVastErrors.call(this._rmpVast, 900, true);
+          return;
+        }
+        this._adPlayer = existingAdPlayer;
+      }
+      // pause content player
+      this._rmpVast.rmpVastContentPlayer.pause();
+      // create FiF 
+      this._vpaidIframe = document.createElement('iframe');
+      this._vpaidIframe.sandbox = 'allow-scripts allow-same-origin';
+      this._vpaidIframe.id = 'vpaid-frame';
+      // do not use display: none;
+      // https://bugzilla.mozilla.org/show_bug.cgi?id=548397
+      FW.setStyle(this._vpaidIframe, {
+        visibility: 'hidden',
+        width: '0px',
+        height: '0px',
+        border: 'none'
+      });
+      // this is to adhere to Best Practices for Rich Media Ads 
+      // in Asynchronous Ad Environments  http://www.iab.net/media/file/rich_media_ajax_best_practices.pdf
+      var src = 'about:blank';
+      this._vpaidIframe.onload = function () {
+        console.log("".concat(FW.consolePrepend, " _vpaidIframe.onload"), FW.consoleStyle, '');
+        if (!_this9._vpaidIframe.contentWindow || !_this9._vpaidIframe.contentWindow.document || !_this9._vpaidIframe.contentWindow.document.body) {
+          // PING error and resume content
+
+          Utils.processVastErrors.call(_this9._rmpVast, 901, true);
+          return;
+        }
+        var iframeWindow = _this9._vpaidIframe.contentWindow;
+        var iframeDocument = iframeWindow.document;
+        var iframeBody = iframeDocument.body;
+        _this9._vpaidScript = iframeDocument.createElement('script');
+        _this9._vpaidLoadTimeout = setTimeout(function () {
+          console.log("".concat(FW.consolePrepend, " could not load VPAID JS Creative or getVPAIDAd in iframeWindow - resume content"), FW.consoleStyle, '');
+          _this9._vpaidScript.onload = null;
+          _this9._vpaidScript.onerror = null;
+          if (_this9._rmpVast.rmpVastAdPlayer) {
+            _this9._rmpVast.rmpVastAdPlayer.resumeContent();
+          }
+        }, _this9._params.creativeLoadTimeout);
+        _this9._vpaidScript.onload = _this9._onJSVPAIDLoaded.bind(_this9);
+        _this9._vpaidScript.onerror = _this9._onJSVPAIDError.bind(_this9);
+        iframeBody.appendChild(_this9._vpaidScript);
+        _this9._vpaidScript.src = _this9._vpaidCreativeUrl;
+      };
+      this._vpaidIframe.src = src;
+      this._adContainer.appendChild(this._vpaidIframe);
+    }
+  }, {
+    key: "destroy",
+    value: function destroy() {
+      console.log("".concat(FW.consolePrepend, " destroy VPAID dependencies"), FW.consoleStyle, '');
+      FW.clearInterval(this._vpaidAvailableInterval);
+      FW.clearInterval(this._vpaidAdRemainingTimeInterval);
+      FW.clearTimeout(this._vpaidLoadTimeout);
+      FW.clearTimeout(this._initAdTimeout);
+      FW.clearTimeout(this._startAdTimeout);
+      this._unsetCallbacksForCreative();
+      if (this._vpaidScript) {
+        this._vpaidScript.onload = null;
+        this._vpaidScript.onerror = null;
+      }
+      if (this._vpaidSlot) {
+        FW.removeElement(this._vpaidSlot);
+      }
+      if (this._vpaidIframe) {
+        FW.removeElement(this._vpaidIframe);
+      }
+    }
+  }]);
+  return VpaidPlayer;
+}();
+
 ;// CONCATENATED MODULE: ./src/js/creatives/linear.js
 
 
@@ -14260,1352 +14645,1109 @@ var SimidPlayer = /*#__PURE__*/function () {
 
 
 
-var LINEAR = {};
-var VPAID_PATTERN = /vpaid/i;
-var JS_PATTERN = /\/javascript/i;
-var HTML5_MEDIA_ERROR_TYPES = ['MEDIA_ERR_CUSTOM', 'MEDIA_ERR_ABORTED', 'MEDIA_ERR_NETWORK', 'MEDIA_ERR_DECODE', 'MEDIA_ERR_SRC_NOT_SUPPORTED', 'MEDIA_ERR_ENCRYPTED'];
-var COMMON_VIDEO_FORMATS = ['video/webm', 'video/mp4', 'video/ogg', 'video/3gpp'];
-var _onDurationChange = function _onDurationChange() {
-  var _this = this;
-  this.vastPlayerDuration = vast_player.getDuration.call(this);
-  Utils.createApiEvent.call(this, 'addurationchange');
-  // progress event
-  if (this.vastPlayerDuration === -1) {
-    return;
+
+var LinearCreative = /*#__PURE__*/function () {
+  function LinearCreative(rmpVast) {
+    _classCallCheck(this, LinearCreative);
+    this._rmpVast = rmpVast;
+    this._params = rmpVast.params;
+    this._container = rmpVast.container;
+    this._adContainer = rmpVast.adContainer;
+    this._adPlayer = rmpVast.__adPlayer;
+    this._contentPlayer = rmpVast.__contentPlayer;
+    this._firstAdPlayerPlayRequest = true;
+    this._interactionMobileUI = null;
+    this._skipWaitingUI = null;
+    this._skipMessageUI = null;
+    this._skipIconUI = null;
+    this._skipButtonUI = null;
+    this._skippableAdCanBeSkipped = false;
+    this._onSkipInteractionFn = null;
+    this._onTimeupdateCheckSkipFn = null;
+    this._onDurationChangeFn = null;
+    this._onLoadedmetadataPlayFn = null;
+    this._onContextMenuFn = null;
+    this._onPlaybackErrorFn = null;
+    this._onInteractionOpenClickThroughUrlFn = null;
+    this._creativeLoadTimeoutCallback = null;
+    // hls.js
+    this._hlsJS = [];
+    this._hlsJSIndex = 0;
+    this._readingHlsJS = false;
   }
-  var keys = keys_default()(this.creative.trackingEvents);
-  keys.forEach(function (eventName) {
-    if (/progress-/i.test(eventName)) {
-      var time = eventName.split('-');
-      var time_2 = time[1];
-      if (/%/i.test(time_2)) {
-        var timePerCent = instance_slice_default()(time_2).call(time_2, 0, -1);
-        timePerCent = _this.vastPlayerDuration * parse_float_default()(timePerCent) / 100;
-        var trackingUrls = _this.creative.trackingEvents[eventName];
-        trackingUrls.forEach(function (url) {
-          _this.progressEvents.push({
-            time: timePerCent,
-            url: url
-          });
-        });
-      } else {
-        var _trackingUrls = _this.creative.trackingEvents[eventName];
-        _trackingUrls.forEach(function (url) {
-          _this.progressEvents.push({
-            time: parse_float_default()(time_2) * 1000,
-            url: url
-          });
-        });
+  _createClass(LinearCreative, [{
+    key: "hlsJSInstances",
+    get: function get() {
+      return this._hlsJS;
+    }
+  }, {
+    key: "hlsJSIndex",
+    get: function get() {
+      return this._hlsJSIndex;
+    },
+    set: function set(value) {
+      this._hlsJSIndex = value;
+    }
+  }, {
+    key: "readingHlsJS",
+    get: function get() {
+      return this._readingHlsJS;
+    },
+    set: function set(value) {
+      this._readingHlsJS = value;
+    }
+  }, {
+    key: "skippableAdCanBeSkipped",
+    get: function get() {
+      return this._skippableAdCanBeSkipped;
+    }
+  }, {
+    key: "_onDurationChange",
+    value: function _onDurationChange() {
+      var _this = this;
+      var adPlayerDuration = -1;
+      if (this._rmpVast.rmpVastAdPlayer) {
+        adPlayerDuration = this._rmpVast.rmpVastAdPlayer.duration;
       }
-    }
-  });
-  // sort progress time ascending
-  if (this.progressEvents.length > 0) {
-    var _context;
-    sort_default()(_context = this.progressEvents).call(_context, function (a, b) {
-      return a.time - b.time;
-    });
-  }
-};
-var _onLoadedmetadataPlay = function _onLoadedmetadataPlay() {
-  clearTimeout(this.creativeLoadTimeoutCallback);
-  // adjust volume to make sure content player volume matches vast player volume
-  if (this.vastPlayer) {
-    if (this.vastPlayer.volume !== this.contentPlayer.volume) {
-      this.vastPlayer.volume = this.contentPlayer.volume;
-    }
-    if (this.contentPlayer.muted) {
-      this.vastPlayer.muted = true;
-    } else {
-      this.vastPlayer.muted = false;
-    }
-  }
-  // show ad container holding vast player
-  FW.show(this.adContainer);
-  FW.show(this.vastPlayer);
-  this.adOnStage = true;
-  // play VAST player
-  vast_player.play.call(this, this.firstVastPlayerPlayRequest);
-  if (this.firstVastPlayerPlayRequest) {
-    this.firstVastPlayerPlayRequest = false;
-  }
-  Utils.createApiEvent.call(this, 'adloaded');
-  tracking_events.dispatch.call(this, 'loaded');
-};
-var _onClickThrough = function _onClickThrough(event) {
-  if (event) {
-    event.stopPropagation();
-  }
-  if (!ENV.isMobile) {
-    var _context2;
-    console.log(concat_default()(_context2 = "".concat(FW.consolePrepend, " Opening clickthrough URL at ")).call(_context2, this.creative.clickThroughUrl), FW.consoleStyle, '');
-    FW.openWindow(this.creative.clickThroughUrl);
-  }
-  this.pause();
-  Utils.createApiEvent.call(this, 'adclick');
-  tracking_events.dispatch.call(this, 'clickthrough');
-};
-var _onPlaybackError = function _onPlaybackError(event) {
-  // https://www.w3.org/TR/html50/embedded-content-0.html#mediaerror
-  // MEDIA_ERR_SRC_NOT_SUPPORTED is sign of fatal error
-  // other errors may produce non-fatal error in the browser so we do not 
-  // act upon them
-  if (event && event.target) {
-    var videoElement = event.target;
-    if (videoElement.error && FW.isNumber(videoElement.error.code)) {
-      var _context3, _context4, _context5;
-      var errorCode = videoElement.error.code;
-      var errorMessage = '';
-      if (typeof videoElement.error.message === 'string') {
-        errorMessage = videoElement.error.message;
+      Utils.createApiEvent.call(this._rmpVast, 'addurationchange');
+      // progress event
+      if (adPlayerDuration === -1) {
+        return;
       }
-      console.log(concat_default()(_context3 = concat_default()(_context4 = "".concat(FW.consolePrepend, " Error on video element with code ")).call(_context4, errorCode.toString(), " and message ")).call(_context3, errorMessage), FW.consoleStyle, '');
-      console.log(concat_default()(_context5 = "".concat(FW.consolePrepend, " error type is ")).call(_context5, HTML5_MEDIA_ERROR_TYPES[errorCode] ? HTML5_MEDIA_ERROR_TYPES[errorCode] : 'unknown type'), FW.consoleStyle, '');
-
-      // EDIA_ERR_SRC_NOT_SUPPORTED (numeric value 4)
-      if (errorCode === 4) {
-        Utils.processVastErrors.call(this, 401, true);
-      }
-    }
-  }
-};
-var _appendClickUIOnMobile = function _appendClickUIOnMobile() {
-  // we create a <a> tag rather than using window.open 
-  // because it works better in standalone mode and WebView
-  this.clickUIOnMobile = document.createElement('a');
-  this.clickUIOnMobile.className = 'rmp-ad-click-ui-mobile';
-  this.clickUIOnMobile.textContent = this.params.labels.textForClickUIOnMobile;
-  this.clickUIOnMobile.addEventListener('touchend', this.onClickThrough);
-  this.clickUIOnMobile.href = this.creative.clickThroughUrl;
-  this.clickUIOnMobile.target = '_blank';
-  this.adContainer.appendChild(this.clickUIOnMobile);
-};
-var _onContextMenu = function _onContextMenu(event) {
-  if (event) {
-    event.stopPropagation();
-    event.preventDefault();
-  }
-};
-var _setCanBeSkippedUI = function _setCanBeSkippedUI() {
-  FW.setStyle(this.skipWaiting, {
-    display: 'none'
-  });
-  FW.setStyle(this.skipMessage, {
-    display: 'block'
-  });
-  FW.setStyle(this.skipIcon, {
-    display: 'block'
-  });
-};
-var _updateWaitingForCanBeSkippedUI = function _updateWaitingForCanBeSkippedUI(delta) {
-  if (Math.round(delta) > 0) {
-    this.skipWaiting.textContent = this.params.labels.skipMessage + ' ' + Math.round(delta) + 's';
-  }
-};
-var _onTimeupdateCheckSkip = function _onTimeupdateCheckSkip() {
-  if (this.skipButton.style.display === 'none') {
-    FW.setStyle(this.skipButton, {
-      display: 'block'
-    });
-  }
-  this.vastPlayerCurrentTime = this.vastPlayer.currentTime;
-  if (FW.isNumber(this.vastPlayerCurrentTime) && this.vastPlayerCurrentTime > 0) {
-    if (this.vastPlayerCurrentTime >= this.creative.skipoffset) {
-      this.vastPlayer.removeEventListener('timeupdate', this.onTimeupdateCheckSkip);
-      _setCanBeSkippedUI.call(this);
-      this.skippableAdCanBeSkipped = true;
-      Utils.createApiEvent.call(this, 'adskippablestatechanged');
-    } else if (this.creative.skipoffset - this.vastPlayerCurrentTime > 0) {
-      _updateWaitingForCanBeSkippedUI.call(this, this.creative.skipoffset - this.vastPlayerCurrentTime);
-    }
-  }
-};
-var _onClickSkip = function _onClickSkip(event) {
-  if (event) {
-    event.stopPropagation();
-    if (event.type === 'touchend') {
-      event.preventDefault();
-    }
-  }
-  if (this.skippableAdCanBeSkipped) {
-    // create API event 
-    Utils.createApiEvent.call(this, 'adskipped');
-    // request ping for skip event
-    tracking_events.dispatch.call(this, 'skip');
-    // resume content
-    vast_player.resumeContent.call(this);
-  }
-};
-var _appendSkip = function _appendSkip() {
-  this.skipButton = document.createElement('div');
-  this.skipButton.className = 'rmp-ad-container-skip';
-  FW.setStyle(this.skipButton, {
-    display: 'none'
-  });
-  Utils.makeButtonAccessible(this.skipButton, this.params.labels.skipMessage);
-  this.skipWaiting = document.createElement('div');
-  this.skipWaiting.className = 'rmp-ad-container-skip-waiting';
-  _updateWaitingForCanBeSkippedUI.call(this, this.creative.skipoffset);
-  FW.setStyle(this.skipWaiting, {
-    display: 'block'
-  });
-  this.skipMessage = document.createElement('div');
-  this.skipMessage.className = 'rmp-ad-container-skip-message';
-  this.skipMessage.textContent = this.params.labels.skipMessage;
-  FW.setStyle(this.skipMessage, {
-    display: 'none'
-  });
-  this.skipIcon = document.createElement('div');
-  this.skipIcon.className = 'rmp-ad-container-skip-icon';
-  FW.setStyle(this.skipIcon, {
-    display: 'none'
-  });
-  this.onClickSkip = _onClickSkip.bind(this);
-  this.skipButton.addEventListener('click', this.onClickSkip);
-  this.skipButton.addEventListener('touchend', this.onClickSkip);
-  this.skipButton.appendChild(this.skipWaiting);
-  this.skipButton.appendChild(this.skipMessage);
-  this.skipButton.appendChild(this.skipIcon);
-  this.adContainer.appendChild(this.skipButton);
-  this.onTimeupdateCheckSkip = _onTimeupdateCheckSkip.bind(this);
-  this.vastPlayer.addEventListener('timeupdate', this.onTimeupdateCheckSkip);
-};
-var _onHlsJSError = function _onHlsJSError(event, data) {
-  if (data.fatal) {
-    switch (data.type) {
-      case Hls.ErrorTypes.NETWORK_ERROR:
-        // try to recover network error
-        this.hlsJS[this.hlsJSIndex].startLoad();
-        break;
-      case Hls.ErrorTypes.MEDIA_ERROR:
-        this.hlsJS[this.hlsJSIndex].recoverMediaError();
-        break;
-      default:
-        Utils.processVastErrors.call(this, 900, true);
-        break;
-    }
-  }
-};
-LINEAR.update = function (url, type) {
-  var _context6,
-    _context7,
-    _this2 = this;
-  console.log(concat_default()(_context6 = concat_default()(_context7 = "".concat(FW.consolePrepend, " update vast player for linear creative of type ")).call(_context7, type, " located at ")).call(_context6, url), FW.consoleStyle, '');
-  this.onDurationChange = _onDurationChange.bind(this);
-  this.vastPlayer.addEventListener('durationchange', this.onDurationChange, {
-    once: true
-  });
-
-  // when creative is loaded play it 
-  this.onLoadedmetadataPlay = _onLoadedmetadataPlay.bind(this);
-  this.vastPlayer.addEventListener('loadedmetadata', this.onLoadedmetadataPlay, {
-    once: true
-  });
-
-  // prevent built in menu to show on right click
-  this.onContextMenu = _onContextMenu.bind(this);
-  this.vastPlayer.addEventListener('contextmenu', this.onContextMenu);
-  this.onPlaybackError = _onPlaybackError.bind(this);
-
-  // start creativeLoadTimeout
-  this.creativeLoadTimeoutCallback = setTimeout(function () {
-    Utils.processVastErrors.call(_this2, 402, true);
-  }, this.params.creativeLoadTimeout);
-  // load ad asset
-  if (this.useContentPlayerForAds) {
-    this.contentPlayer.addEventListener('error', this.onPlaybackError);
-    this.contentPlayer.src = url;
-  } else {
-    if (this.params.useHlsJS && type === 'application/vnd.apple.mpegurl' && typeof window.Hls !== 'undefined' && Hls.isSupported()) {
-      this.readingHlsJS = true;
-      var hlsJSConfig = {
-        autoStartLoad: true,
-        debug: this.params.debugHlsJS,
-        capLevelToPlayerSize: true,
-        testBandwidth: true,
-        progressive: false,
-        lowLatencyMode: false,
-        enableWebVTT: false,
-        enableIMSC1: false,
-        enableCEA708Captions: false
-      };
-      this.hlsJS[this.hlsJSIndex] = new Hls(hlsJSConfig);
-      this.hlsJS[this.hlsJSIndex].on(Hls.Events.ERROR, _onHlsJSError.bind(this));
-      this.hlsJS[this.hlsJSIndex].loadSource(url);
-      this.hlsJS[this.hlsJSIndex].attachMedia(this.vastPlayer);
-    } else {
-      if (typeof this.creative.simid === 'undefined' || this.creative.simid && !this.params.enableSimid) {
-        this.vastPlayer.addEventListener('error', this.onPlaybackError);
-        this.vastPlayer.src = url;
-        // we need this extra load for Chrome data saver mode in mobile or desktop
-        this.vastPlayer.load();
-      } else {
-        if (this.simidPlayer) {
-          this.simidPlayer.stopAd();
-        }
-        this.simidPlayer = new SimidPlayer(this.creative.isLinear, this.creative.simid, url, this.creative.adId, this.creative.id, this.ad.adServingId, this.creative.clickThroughUrl, this);
-        this.simidPlayer.initializeAd();
-        this.simidPlayer.playAd();
-      }
-    }
-  }
-
-  // clickthrough interaction
-  this.onClickThrough = _onClickThrough.bind(this);
-  if (this.creative.clickThroughUrl) {
-    if (ENV.isMobile) {
-      _appendClickUIOnMobile.call(this);
-    } else {
-      this.vastPlayer.addEventListener('click', this.onClickThrough);
-    }
-  }
-
-  // skippable - only where vast player is different from 
-  // content player
-  if (this.creative.isSkippableAd) {
-    _appendSkip.call(this);
-  }
-};
-LINEAR.parse = function (icons, adParameters, mediaFiles) {
-  if (icons.length > 0) {
-    creatives_icons.parse.call(this, icons);
-  }
-  // check for AdParameters tag in case we have a VPAID creative
-  this.adParametersData = '';
-  if (adParameters && adParameters.value) {
-    this.adParametersData = adParameters.value;
-  }
-  var mediaFileItems = [];
-  for (var i = 0; i < mediaFiles.length; i++) {
-    var currentMediaFile = mediaFiles[i];
-    var mediaFileValue = currentMediaFile.fileURL;
-    var type = currentMediaFile.mimeType;
-    if (mediaFileValue === null || type === null) {
-      continue;
-    }
-    var newMediaFileItem = {};
-    newMediaFileItem.url = mediaFileValue;
-    newMediaFileItem.type = type;
-    if (currentMediaFile.codec !== null) {
-      newMediaFileItem.codec = currentMediaFile.codec;
-    }
-    // check for potential VPAID - we have a VPAID JS - we break
-    // for VPAID we may not have a width, height or delivery
-    if (this.params.enableVpaid && currentMediaFile.apiFramework && VPAID_PATTERN.test(currentMediaFile.apiFramework) && JS_PATTERN.test(type)) {
-      console.log("".concat(FW.consolePrepend, " VPAID creative detected"), FW.consoleStyle, '');
-      mediaFileItems = [newMediaFileItem];
-      this.isVPAID = true;
-      break;
-    }
-    newMediaFileItem.width = currentMediaFile.width;
-    newMediaFileItem.height = currentMediaFile.height;
-    newMediaFileItem.bitrate = currentMediaFile.bitrate;
-    mediaFileItems.push(newMediaFileItem);
-  }
-  // we support HLS; MP4; WebM: VPAID so let us fecth for those
-  var creatives = [];
-  for (var j = 0; j < mediaFileItems.length; j++) {
-    var currentMediaFileItem = mediaFileItems[j];
-    var _type = currentMediaFileItem.type;
-    var url = currentMediaFileItem.url;
-    if (this.isVPAID && url) {
-      vpaid.loadCreative.call(this, url, this.params.vpaidSettings);
-      this.creative.type = _type;
-      return;
-    }
-    // we have HLS > use hls.js where no native support for HLS is available or native HLS otherwise (Apple devices mainly)
-    if (_type === 'application/vnd.apple.mpegurl' && (ENV.checkCanPlayType(_type) || typeof window.Hls !== 'undefined' && Hls.isSupported())) {
-      vast_player.append.call(this, url, _type);
-      this.creative.type = _type;
-      return;
-    }
-    // we have DASH and DASH is natively supported > use DASH
-    if (ENV.checkCanPlayType('application/dash+xml')) {
-      vast_player.append.call(this, url, _type);
-      this.creative.type = _type;
-      return;
-    }
-    // we gather MP4, WebM, OGG and remaining files
-    creatives.push(currentMediaFileItem);
-  }
-  var retainedCreatives = [];
-  // first we check for the common formats below ... 
-  var __filterCommonCreatives = function __filterCommonCreatives(i, creative) {
-    if (creative.codec && creative.type === COMMON_VIDEO_FORMATS[i]) {
-      return ENV.checkCanPlayType(creative.type, creative.codec);
-    } else if (creative.type === COMMON_VIDEO_FORMATS[i]) {
-      return ENV.checkCanPlayType(creative.type);
-    }
-    return false;
-  };
-  for (var k = 0; k < COMMON_VIDEO_FORMATS.length; k++) {
-    retainedCreatives = filter_default()(creatives).call(creatives, __filterCommonCreatives.bind(null, k));
-    if (retainedCreatives.length > 0) {
-      break;
-    }
-  }
-  // ... if none of the common format work, then we check for exotic format
-  // first we check for those with codec information as it provides more accurate support indication ...
-  if (retainedCreatives.length === 0) {
-    var __filterCodecCreatives = function __filterCodecCreatives(codec, type, creative) {
-      return creative.codec === codec && creative.type === type;
-    };
-    creatives.forEach(function (creative) {
-      if (creative.codec && creative.type && ENV.checkCanPlayType(creative.type, creative.codec)) {
-        retainedCreatives = filter_default()(creatives).call(creatives, __filterCodecCreatives.bind(null, creative.codec, creative.type));
-      }
-    });
-  }
-  // ... if codec information are not available then we go first type matching
-  if (retainedCreatives.length === 0) {
-    var __filterTypeCreatives = function __filterTypeCreatives(type, creative) {
-      return creative.type === type;
-    };
-    creatives.forEach(function (creative) {
-      if (creative.type && ENV.checkCanPlayType(creative.type)) {
-        retainedCreatives = filter_default()(creatives).call(creatives, __filterTypeCreatives.bind(null, creative.type));
-      }
-    });
-  }
-
-  // still no match for supported format - we exit
-  if (retainedCreatives.length === 0) {
-    // None of the MediaFile provided are supported by the player
-    Utils.processVastErrors.call(this, 403, true);
-    return;
-  }
-
-  // sort supported creatives by width
-  sort_default()(retainedCreatives).call(retainedCreatives, function (a, b) {
-    return a.width - b.width;
-  });
-  console.log("".concat(FW.consolePrepend, " available linear creative follows"), FW.consoleStyle, '');
-  console.log(retainedCreatives);
-
-  // we have files matching device capabilities
-  // select the best one based on player current width
-  var finalCreative;
-  var validCreativesByWidth = [];
-  var validCreativesByBitrate = [];
-  if (retainedCreatives.length > 1) {
-    var _context8;
-    var containerWidth = FW.getWidth(this.container) * ENV.devicePixelRatio;
-    var containerHeight = FW.getHeight(this.container) * ENV.devicePixelRatio;
-    if (containerWidth > 0 && containerHeight > 0) {
-      validCreativesByWidth = filter_default()(retainedCreatives).call(retainedCreatives, function (creative) {
-        return containerWidth >= creative.width && containerHeight >= creative.height;
-      });
-    }
-    console.log("".concat(FW.consolePrepend, " validCreativesByWidth follow"), FW.consoleStyle, '');
-    console.log(validCreativesByWidth);
-
-    // if no match by size 
-    if (validCreativesByWidth.length === 0) {
-      validCreativesByWidth = [retainedCreatives[0]];
-    }
-
-    // filter by bitrate to provide best quality
-    var rmpConnection = new RmpConnection();
-    var availableBandwidth = rmpConnection.bandwidthData.estimate;
-    console.log(concat_default()(_context8 = "".concat(FW.consolePrepend, " availableBandwidth is ")).call(_context8, availableBandwidth, " Mbps"), FW.consoleStyle, '');
-    if (availableBandwidth > -1 && validCreativesByWidth.length > 1) {
-      // sort supported creatives by bitrates
-      sort_default()(validCreativesByWidth).call(validCreativesByWidth, function (a, b) {
-        return a.bitrate - b.bitrate;
-      });
-      // convert to kbps
-      availableBandwidth = Math.round(availableBandwidth * 1000);
-      validCreativesByBitrate = filter_default()(validCreativesByWidth).call(validCreativesByWidth, function (creative) {
-        return availableBandwidth >= creative.bitrate;
-      });
-      console.log("".concat(FW.consolePrepend, " validCreativesByBitrate follow"), FW.consoleStyle, '');
-      console.log(validCreativesByBitrate);
-
-      // pick max available bitrate
-      finalCreative = validCreativesByBitrate[validCreativesByBitrate.length - 1];
-    }
-  }
-
-  // if no match by bitrate 
-  if (!finalCreative) {
-    if (validCreativesByWidth.length > 0) {
-      finalCreative = validCreativesByWidth[validCreativesByWidth.length - 1];
-    } else {
-      sort_default()(retainedCreatives).call(retainedCreatives, function (a, b) {
-        return a.bitrate - b.bitrate;
-      });
-      finalCreative = retainedCreatives[retainedCreatives.length - 1];
-    }
-  }
-  console.log("".concat(FW.consolePrepend, " selected linear creative follows"), FW.consoleStyle, '');
-  console.log(finalCreative);
-  this.creative.mediaUrl = finalCreative.url;
-  this.creative.height = finalCreative.height;
-  this.creative.width = finalCreative.width;
-  this.creative.type = finalCreative.type;
-  vast_player.append.call(this, finalCreative.url, finalCreative.type);
-};
-/* harmony default export */ var linear = (LINEAR);
-;// CONCATENATED MODULE: ./src/js/players/vast-player.js
-
-
-
-
-
-
-
-
-
-
-var VAST_PLAYER = {};
-var _unwireVastPlayerEvents = function _unwireVastPlayerEvents() {
-  var _this = this;
-  console.log("".concat(FW.consolePrepend, " reset - unwireVastPlayerEvents"), FW.consoleStyle, '');
-  if (this.nonLinearContainer) {
-    this.nonLinearInnerElement.removeEventListener('load', this.onNonLinearLoadSuccess);
-    this.nonLinearInnerElement.removeEventListener('error', this.onNonLinearLoadError);
-    this.nonLinearATag.removeEventListener('click', this.onNonLinearClickThrough);
-    this.nonLinearATag.removeEventListener('touchend', this.onNonLinearClickThrough);
-    this.nonLinearClose.removeEventListener('click', this.onClickCloseNonLinear);
-    this.nonLinearClose.removeEventListener('touchend', this.onClickCloseNonLinear);
-    this.trackingTags.forEach(function (trackingTag) {
-      _this.nonLinearContainer.removeEventListener(trackingTag.event, _this.onEventPingTracking);
-    });
-  }
-  if (this.vastPlayer) {
-    this.vastPlayer.removeEventListener('error', this.onPlaybackError);
-    // vastPlayer content pause/resume events
-    this.vastPlayer.removeEventListener('durationchange', this.onDurationChange);
-    this.vastPlayer.removeEventListener('loadedmetadata', this.onLoadedmetadataPlay);
-    this.vastPlayer.removeEventListener('contextmenu', this.onContextMenu);
-    // unwire HTML5 video events
-    this.vastPlayer.removeEventListener('pause', this.onPause);
-    this.vastPlayer.removeEventListener('play', this.onPlay);
-    this.vastPlayer.removeEventListener('playing', this.onPlaying);
-    this.vastPlayer.removeEventListener('ended', this.onEnded);
-    this.vastPlayer.removeEventListener('volumechange', this.onVolumeChange);
-    this.vastPlayer.removeEventListener('timeupdate', this.onTimeupdate);
-
-    // unwire HTML5 VAST events
-    this.trackingTags.forEach(function (trackingTag) {
-      _this.vastPlayer.removeEventListener(trackingTag.event, _this.onEventPingTracking);
-    });
-    // remove clicktrough handling
-    this.vastPlayer.removeEventListener('click', this.onClickThrough);
-    this.vastPlayer.removeEventListener('playing', this.onPlayingAppendIcons);
-    // skip
-    this.vastPlayer.removeEventListener('timeupdate', this.onTimeupdateCheckSkip);
-  }
-  if (this.skipButton) {
-    this.skipButton.removeEventListener('click', this.onClickSkip);
-    this.skipButton.removeEventListener('touchend', this.onClickSkip);
-  }
-  // click UI on mobile
-  if (this.clickUIOnMobile) {
-    this.clickUIOnMobile.removeEventListener('touchend', this.onClickThrough);
-  }
-  if (this.contentPlayer) {
-    this.contentPlayer.removeEventListener('error', this.onPlaybackError);
-  }
-};
-VAST_PLAYER.destroy = function () {
-  var _this2 = this;
-  console.log("".concat(FW.consolePrepend, " start destroying vast player"), FW.consoleStyle, '');
-
-  // destroy icons if any 
-  if (this.iconsData.length > 0) {
-    creatives_icons.destroy.call(this);
-  }
-  if (this.isVPAID) {
-    vpaid.destroy.call(this);
-  }
-  // unwire events
-  _unwireVastPlayerEvents.call(this);
-  // remove clickUI on mobile
-  if (this.clickUIOnMobile) {
-    FW.removeElement(this.clickUIOnMobile);
-  }
-  if (this.creative.isSkippableAd) {
-    FW.removeElement(this.skipButton);
-  }
-  // hide rmp-ad-container
-  FW.hide(this.adContainer);
-  // unwire anti-seek logic (iOS)
-  clearInterval(this.antiSeekLogicInterval);
-  // reset creativeLoadTimeout
-  clearTimeout(this.creativeLoadTimeoutCallback);
-  if (this.useContentPlayerForAds) {
-    if (!this.params.outstream) {
-      if (this.nonLinearContainer) {
-        FW.removeElement(this.nonLinearContainer);
-      } else {
-        var _context, _context2;
-        // when content is restored we need to seek to previously known currentTime
-        // this must happen on playing event
-        // the below is some hack I come up with because Safari is confused with 
-        // what it is asked to do when post roll come into play
-        if (this.currentContentCurrentTime > 4000) {
-          this.needsSeekAdjust = true;
-          if (this.contentPlayerCompleted) {
-            this.needsSeekAdjust = false;
-          }
-          if (!this.seekAdjustAttached) {
-            this.seekAdjustAttached = true;
-            this.contentPlayer.addEventListener('playing', function () {
-              if (_this2.needsSeekAdjust) {
-                _this2.needsSeekAdjust = false;
-                content_player.seekTo.call(_this2, _this2.currentContentCurrentTime);
-              }
+      var keys = keys_default()(this._rmpVast.creative.trackingEvents);
+      keys.forEach(function (eventName) {
+        if (/progress-/i.test(eventName)) {
+          var time = eventName.split('-');
+          var time_2 = time[1];
+          if (/%/i.test(time_2)) {
+            var timePerCent = instance_slice_default()(time_2).call(time_2, 0, -1);
+            timePerCent = adPlayerDuration * parse_float_default()(timePerCent) / 100;
+            var trackingUrls = _this._rmpVast.creative.trackingEvents[eventName];
+            trackingUrls.forEach(function (url) {
+              _this._rmpVast.progressEvents.push({
+                time: timePerCent,
+                url: url
+              });
+            });
+          } else {
+            var _trackingUrls = _this._rmpVast.creative.trackingEvents[eventName];
+            _trackingUrls.forEach(function (url) {
+              _this._rmpVast.progressEvents.push({
+                time: parse_float_default()(time_2) * 1000,
+                url: url
+              });
             });
           }
         }
-        console.log(concat_default()(_context = concat_default()(_context2 = "".concat(FW.consolePrepend, " recovering content ")).call(_context2, this.currentContentSrc, " at time ")).call(_context, this.currentContentCurrentTime), FW.consoleStyle, '');
-        this.contentPlayer.src = this.currentContentSrc;
+      });
+      // sort progress time ascending
+      if (this._rmpVast.progressEvents.length > 0) {
+        var _context;
+        sort_default()(_context = this._rmpVast.progressEvents).call(_context, function (a, b) {
+          return a.time - b.time;
+        });
       }
-    } else {
-      // specific handling for outstream ad === flush buffer and do not attempt to resume content
+    }
+  }, {
+    key: "_onLoadedmetadataPlay",
+    value: function _onLoadedmetadataPlay() {
+      FW.clearTimeout(this._creativeLoadTimeoutCallback);
+      // adjust volume to make sure content player volume matches ad player volume
+      if (this._adPlayer) {
+        if (this._adPlayer.volume !== this._contentPlayer.volume) {
+          this._adPlayer.volume = this._contentPlayer.volume;
+        }
+        if (this._contentPlayer.muted) {
+          this._adPlayer.muted = true;
+        } else {
+          this._adPlayer.muted = false;
+        }
+      }
+      // show ad container holding ad player
+      FW.show(this._adContainer);
+      FW.show(this._adPlayer);
+      this._rmpVast.__adOnStage = true;
+      // play ad player
+      if (this._rmpVast.rmpVastAdPlayer) {
+        this._rmpVast.rmpVastAdPlayer.play(this._firstAdPlayerPlayRequest);
+        this._firstAdPlayerPlayRequest = false;
+      }
+      Utils.createApiEvent.call(this._rmpVast, 'adloaded');
+      Tracking.dispatch.call(this._rmpVast, 'loaded');
+    }
+  }, {
+    key: "_onInteractionOpenClickThroughUrl",
+    value: function _onInteractionOpenClickThroughUrl(event) {
+      if (event) {
+        event.stopPropagation();
+      }
+      if (!Environment.isMobile) {
+        FW.openWindow(this._rmpVast.creative.clickThroughUrl);
+      }
+      this._rmpVast.pause();
+      Utils.createApiEvent.call(this._rmpVast, 'adclick');
+      Tracking.dispatch.call(this._rmpVast, 'clickthrough');
+    }
+  }, {
+    key: "_onPlaybackError",
+    value: function _onPlaybackError(event) {
+      // https://www.w3.org/TR/html50/embedded-content-0.html#mediaerror
+      // MEDIA_ERR_SRC_NOT_SUPPORTED is sign of fatal error
+      // other errors may produce non-fatal error in the browser so we do not 
+      // act upon them
+      if (event && event.target) {
+        var videoElement = event.target;
+        if (videoElement.error && FW.isNumber(videoElement.error.code)) {
+          var _context2, _context3, _context4;
+          var errorCode = videoElement.error.code;
+          var errorMessage = '';
+          if (typeof videoElement.error.message === 'string') {
+            errorMessage = videoElement.error.message;
+          }
+          var htmlMediaErrorTypes = ['MEDIA_ERR_CUSTOM', 'MEDIA_ERR_ABORTED', 'MEDIA_ERR_NETWORK', 'MEDIA_ERR_DECODE', 'MEDIA_ERR_SRC_NOT_SUPPORTED', 'MEDIA_ERR_ENCRYPTED'];
+          console.log(concat_default()(_context2 = concat_default()(_context3 = "".concat(FW.consolePrepend, " Error on video element with code ")).call(_context3, errorCode.toString(), " and message ")).call(_context2, errorMessage), FW.consoleStyle, '');
+          console.log(concat_default()(_context4 = "".concat(FW.consolePrepend, " error type is ")).call(_context4, htmlMediaErrorTypes[errorCode] ? htmlMediaErrorTypes[errorCode] : 'unknown type'), FW.consoleStyle, '');
+
+          // EDIA_ERR_SRC_NOT_SUPPORTED (numeric value 4)
+          if (errorCode === 4) {
+            Utils.processVastErrors.call(this._rmpVast, 401, true);
+          }
+        }
+      }
+    }
+  }, {
+    key: "_onContextMenu",
+    value: function _onContextMenu(event) {
+      if (event) {
+        event.stopPropagation();
+        event.preventDefault();
+      }
+    }
+  }, {
+    key: "_updateWaitingForCanBeSkippedUI",
+    value: function _updateWaitingForCanBeSkippedUI(delta) {
+      if (Math.round(delta) > 0) {
+        this._skipWaitingUI.textContent = this._params.labels.skipMessage + ' ' + Math.round(delta) + 's';
+      }
+    }
+  }, {
+    key: "_onTimeupdateCheckSkip",
+    value: function _onTimeupdateCheckSkip() {
+      if (this._skipButtonUI.style.display === 'none') {
+        FW.setStyle(this._skipButtonUI, {
+          display: 'block'
+        });
+      }
+      var adPlayerCurrentTime = this._adPlayer.currentTime;
+      if (FW.isNumber(adPlayerCurrentTime) && adPlayerCurrentTime > 0) {
+        if (adPlayerCurrentTime >= this._rmpVast.creative.skipoffset) {
+          this._adPlayer.removeEventListener('timeupdate', this._onTimeupdateCheckSkipFn);
+          FW.setStyle(this._skipWaitingUI, {
+            display: 'none'
+          });
+          FW.setStyle(this._skipMessageUI, {
+            display: 'block'
+          });
+          FW.setStyle(this._skipIconUI, {
+            display: 'block'
+          });
+          this._skippableAdCanBeSkipped = true;
+          Utils.createApiEvent.call(this._rmpVast, 'adskippablestatechanged');
+        } else if (this._rmpVast.creative.skipoffset - adPlayerCurrentTime > 0) {
+          this._updateWaitingForCanBeSkippedUI(this._rmpVast.creative.skipoffset - adPlayerCurrentTime);
+        }
+      }
+    }
+  }, {
+    key: "_onSkipInteraction",
+    value: function _onSkipInteraction(event) {
+      if (event) {
+        event.stopPropagation();
+        if (event.type === 'touchend') {
+          event.preventDefault();
+        }
+      }
+      if (this._skippableAdCanBeSkipped) {
+        // create API event 
+        Utils.createApiEvent.call(this._rmpVast, 'adskipped');
+        // request ping for skip event
+        Tracking.dispatch.call(this._rmpVast, 'skip');
+        // resume content
+        if (this._rmpVast.rmpVastAdPlayer) {
+          this._rmpVast.rmpVastAdPlayer.resumeContent();
+        }
+      }
+    }
+  }, {
+    key: "_appendSkipUI",
+    value: function _appendSkipUI() {
+      this._skipButtonUI = document.createElement('div');
+      this._skipButtonUI.className = 'rmp-ad-container-skip';
+      FW.setStyle(this._skipButtonUI, {
+        display: 'none'
+      });
+      Utils.makeButtonAccessible(this._skipButtonUI, this._params.labels.skipMessage);
+      this._skipWaitingUI = document.createElement('div');
+      this._skipWaitingUI.className = 'rmp-ad-container-skip-waiting';
+      this._updateWaitingForCanBeSkippedUI(this._rmpVast.creative.skipoffset);
+      FW.setStyle(this._skipWaitingUI, {
+        display: 'block'
+      });
+      this._skipMessageUI = document.createElement('div');
+      this._skipMessageUI.className = 'rmp-ad-container-skip-message';
+      this._skipMessageUI.textContent = this._params.labels.skipMessage;
+      FW.setStyle(this._skipMessageUI, {
+        display: 'none'
+      });
+      this._skipIconUI = document.createElement('div');
+      this._skipIconUI.className = 'rmp-ad-container-skip-icon';
+      FW.setStyle(this._skipIconUI, {
+        display: 'none'
+      });
+      this._onSkipInteractionFn = this._onSkipInteraction.bind(this);
+      FW.addEvents(['click', 'touchend'], this._skipButtonUI, this._onSkipInteractionFn);
+      this._skipButtonUI.appendChild(this._skipWaitingUI);
+      this._skipButtonUI.appendChild(this._skipMessageUI);
+      this._skipButtonUI.appendChild(this._skipIconUI);
+      this._adContainer.appendChild(this._skipButtonUI);
+      this._onTimeupdateCheckSkipFn = this._onTimeupdateCheckSkip.bind(this);
+      this._adPlayer.addEventListener('timeupdate', this._onTimeupdateCheckSkipFn);
+    }
+  }, {
+    key: "_onHlsJSError",
+    value: function _onHlsJSError(event, data) {
+      if (data.fatal) {
+        switch (data.type) {
+          case Hls.ErrorTypes.NETWORK_ERROR:
+            // try to recover network error
+            this._hlsJS[this._hlsJSIndex].startLoad();
+            break;
+          case Hls.ErrorTypes.MEDIA_ERROR:
+            this._hlsJS[this._hlsJSIndex].recoverMediaError();
+            break;
+          default:
+            Utils.processVastErrors.call(this._rmpVast, 900, true);
+            break;
+        }
+      }
+    }
+  }, {
+    key: "destroy",
+    value: function destroy() {
+      if (this._interactionMobileUI) {
+        this._interactionMobileUI.removeEventListener('touchend', this._onInteractionOpenClickThroughUrlFn);
+        FW.removeElement(this._interactionMobileUI);
+      }
+      FW.clearTimeout(this._creativeLoadTimeoutCallback);
+      FW.removeElement(this._skipButtonUI);
+      FW.removeEvents(['click', 'touchend'], this._skipButtonUI, this._onSkipInteractionFn);
+      if (this._adPlayer) {
+        this._adPlayer.removeEventListener('click', this._onInteractionOpenClickThroughUrlFn);
+        this._adPlayer.removeEventListener('timeupdate', this._onTimeupdateCheckSkipFn);
+        this._adPlayer.removeEventListener('durationchange', this._onDurationChangeFn);
+        this._adPlayer.removeEventListener('loadedmetadata', this._onLoadedmetadataPlayFn);
+        this._adPlayer.removeEventListener('contextmenu', this._onContextMenuFn);
+        this._adPlayer.removeEventListener('error', this._onPlaybackErrorFn);
+      }
+      this._contentPlayer.removeEventListener('error', this._onPlaybackErrorFn);
+    }
+  }, {
+    key: "update",
+    value: function update(url, type) {
+      var _context5,
+        _context6,
+        _this2 = this;
+      console.log(concat_default()(_context5 = concat_default()(_context6 = "".concat(FW.consolePrepend, " update ad player for linear creative of type ")).call(_context6, type, " located at ")).call(_context5, url), FW.consoleStyle, '');
+      this._onDurationChangeFn = this._onDurationChange.bind(this);
+      this._adPlayer.addEventListener('durationchange', this._onDurationChangeFn, {
+        once: true
+      });
+
+      // when creative is loaded play it 
+      this._onLoadedmetadataPlayFn = this._onLoadedmetadataPlay.bind(this);
+      this._adPlayer.addEventListener('loadedmetadata', this._onLoadedmetadataPlayFn, {
+        once: true
+      });
+
+      // prevent built in menu to show on right click
+      this._onContextMenuFn = this._onContextMenu.bind(this);
+      this._adPlayer.addEventListener('contextmenu', this._onContextMenuFn);
+      this._onPlaybackErrorFn = this._onPlaybackError.bind(this);
+
+      // start creativeLoadTimeout
+      this._creativeLoadTimeoutCallback = setTimeout(function () {
+        Utils.processVastErrors.call(_this2._rmpVast, 402, true);
+      }, this._params.creativeLoadTimeout);
+      if (this._params.useHlsJS && type === 'application/vnd.apple.mpegurl' && typeof window.Hls !== 'undefined' && Hls.isSupported()) {
+        this._readingHlsJS = true;
+        var hlsJSConfig = {
+          debug: this._params.debugHlsJS,
+          capLevelToPlayerSize: true,
+          testBandwidth: true,
+          startLevel: -1,
+          lowLatencyMode: false
+        };
+        this._hlsJS[this._hlsJSIndex] = new Hls(hlsJSConfig);
+        this._hlsJS[this._hlsJSIndex].on(Hls.Events.ERROR, this._onHlsJSError.bind(this));
+        this._hlsJS[this._hlsJSIndex].loadSource(url);
+        this._hlsJS[this._hlsJSIndex].attachMedia(this._adPlayer);
+      } else {
+        if (typeof this._rmpVast.creative.simid === 'undefined' || this._rmpVast.creative.simid && !this._params.enableSimid) {
+          this._adPlayer.addEventListener('error', this._onPlaybackErrorFn);
+          this._adPlayer.src = url;
+          // we need this extra load for Chrome data saver mode in mobile or desktop
+          this._adPlayer.load();
+        } else {
+          if (this._rmpVast.rmpVastSimidPlayer) {
+            this._rmpVast.rmpVastSimidPlayer.stopAd();
+          }
+          this._rmpVast.rmpVastSimidPlayer = new SimidPlayer(url, this._rmpVast);
+          this._rmpVast.rmpVastSimidPlayer.initializeAd();
+          this._rmpVast.rmpVastSimidPlayer.playAd();
+        }
+      }
+
+      // clickthrough interaction
+      this._onInteractionOpenClickThroughUrlFn = this._onInteractionOpenClickThroughUrl.bind(this);
+      if (this._rmpVast.creative.clickThroughUrl) {
+        if (Environment.isMobile) {
+          // we create a <a> tag rather than using window.open 
+          // because it works better in standalone mode and WebView
+          this._interactionMobileUI = document.createElement('a');
+          this._interactionMobileUI.className = 'rmp-ad-click-ui-mobile';
+          this._interactionMobileUI.textContent = this._params.labels.textForInteractionUIOnMobile;
+          this._interactionMobileUI.addEventListener('touchend', this._onInteractionOpenClickThroughUrlFn);
+          this._interactionMobileUI.href = this._rmpVast.creative.clickThroughUrl;
+          this._interactionMobileUI.target = '_blank';
+          this._adContainer.appendChild(this._interactionMobileUI);
+        } else {
+          this._adPlayer.addEventListener('click', this._onInteractionOpenClickThroughUrlFn);
+        }
+      }
+
+      // skippable - only where ad player is different from 
+      // content player
+      if (this._rmpVast.creative.isSkippableAd) {
+        this._appendSkipUI();
+      }
+    }
+  }, {
+    key: "parse",
+    value: function parse(creative) {
+      var icons = creative.icons;
+      var adParameters = creative.adParameters;
+      var mediaFiles = creative.mediaFiles;
+      // some linear tags may pass till here but have empty MediaFiles
+      // this is against specification so we return
+      if (mediaFiles.length === 0) {
+        return;
+      }
+      if (icons.length > 0) {
+        this._rmpVast.rmpVastIcons = new Icons(this._rmpVast);
+        this._rmpVast.rmpVastIcons.parse(icons);
+      }
+      // check for AdParameters tag in case we have a VPAID creative
+      this._rmpVast.adParametersData = '';
+      if (adParameters && adParameters.value) {
+        this._rmpVast.adParametersData = adParameters.value;
+      }
+      var mediaFileItems = [];
+      var isVpaid = false;
+      for (var i = 0; i < mediaFiles.length; i++) {
+        var currentMediaFile = mediaFiles[i];
+        var mediaFileValue = currentMediaFile.fileURL;
+        var type = currentMediaFile.mimeType;
+        if (mediaFileValue === null || type === null) {
+          continue;
+        }
+        var newMediaFileItem = {};
+        newMediaFileItem.url = mediaFileValue;
+        newMediaFileItem.type = type;
+        if (currentMediaFile.codec !== null) {
+          newMediaFileItem.codec = currentMediaFile.codec;
+        }
+        // check for potential VPAID - we have a VPAID JS - we break
+        // for VPAID we may not have a width, height or delivery
+        var vpaidPattern = /vpaid/i;
+        var jsPattern = /\/javascript/i;
+        if (this._params.enableVpaid && currentMediaFile.apiFramework && vpaidPattern.test(currentMediaFile.apiFramework) && jsPattern.test(type)) {
+          console.log("".concat(FW.consolePrepend, " VPAID creative detected"), FW.consoleStyle, '');
+          mediaFileItems = [newMediaFileItem];
+          isVpaid = true;
+          break;
+        }
+        newMediaFileItem.width = currentMediaFile.width;
+        newMediaFileItem.height = currentMediaFile.height;
+        newMediaFileItem.bitrate = currentMediaFile.bitrate;
+        mediaFileItems.push(newMediaFileItem);
+      }
+      // we support HLS; MP4; WebM: VPAID so let us fecth for those
+      var creatives = [];
+      for (var j = 0; j < mediaFileItems.length; j++) {
+        var currentMediaFileItem = mediaFileItems[j];
+        var _type = currentMediaFileItem.type;
+        var url = currentMediaFileItem.url;
+        if (isVpaid && url) {
+          this._rmpVast.rmpVastVpaidPlayer = new VpaidPlayer(this._rmpVast);
+          this._rmpVast.rmpVastVpaidPlayer.init(url, this._params.vpaidSettings);
+          this._rmpVast.creative.type = _type;
+          return;
+        }
+        // we have HLS > use hls.js where no native support for HLS is available or native HLS otherwise (Apple devices mainly)
+        if (this._rmpVast.rmpVastAdPlayer) {
+          if (_type === 'application/vnd.apple.mpegurl' && (Environment.checkCanPlayType(_type) || typeof window.Hls !== 'undefined' && Hls.isSupported())) {
+            this._rmpVast.rmpVastAdPlayer.append(url, _type);
+            this._rmpVast.creative.type = _type;
+            return;
+          }
+          // we have DASH and DASH is natively supported > use DASH
+          if (Environment.checkCanPlayType('application/dash+xml')) {
+            this._rmpVast.rmpVastAdPlayer.append(url, _type);
+            this._rmpVast.creative.type = _type;
+            return;
+          }
+        }
+        // we gather MP4, WebM, OGG and remaining files
+        creatives.push(currentMediaFileItem);
+      }
+      if (isVpaid) {
+        return;
+      }
+      var retainedCreatives = [];
+      var commonVideoFormats = ['video/webm', 'video/mp4', 'video/ogg', 'video/3gpp'];
+      // first we check for the common formats below ... 
+      var __filterCommonCreatives = function __filterCommonCreatives(i, creative) {
+        if (creative.codec && creative.type === commonVideoFormats[i]) {
+          return Environment.checkCanPlayType(creative.type, creative.codec);
+        } else if (creative.type === commonVideoFormats[i]) {
+          return Environment.checkCanPlayType(creative.type);
+        }
+        return false;
+      };
+      for (var k = 0; k < commonVideoFormats.length; k++) {
+        retainedCreatives = filter_default()(creatives).call(creatives, __filterCommonCreatives.bind(null, k));
+        if (retainedCreatives.length > 0) {
+          break;
+        }
+      }
+      // ... if none of the common format work, then we check for exotic format
+      // first we check for those with codec information as it provides more accurate support indication ...
+      if (retainedCreatives.length === 0) {
+        var __filterCodecCreatives = function __filterCodecCreatives(codec, type, creative) {
+          return creative.codec === codec && creative.type === type;
+        };
+        creatives.forEach(function (creative) {
+          if (creative.codec && creative.type && Environment.checkCanPlayType(creative.type, creative.codec)) {
+            retainedCreatives = filter_default()(creatives).call(creatives, __filterCodecCreatives.bind(null, creative.codec, creative.type));
+          }
+        });
+      }
+      // ... if codec information are not available then we go first type matching
+      if (retainedCreatives.length === 0) {
+        var __filterTypeCreatives = function __filterTypeCreatives(type, creative) {
+          return creative.type === type;
+        };
+        creatives.forEach(function (creative) {
+          if (creative.type && Environment.checkCanPlayType(creative.type)) {
+            retainedCreatives = filter_default()(creatives).call(creatives, __filterTypeCreatives.bind(null, creative.type));
+          }
+        });
+      }
+
+      // still no match for supported format - we exit
+      if (retainedCreatives.length === 0) {
+        // None of the MediaFile provided are supported by the player
+        Utils.processVastErrors.call(this._rmpVast, 403, true);
+        return;
+      }
+
+      // sort supported creatives by width
+      sort_default()(retainedCreatives).call(retainedCreatives, function (a, b) {
+        return a.width - b.width;
+      });
+      console.log("".concat(FW.consolePrepend, " available linear creative follows"), FW.consoleStyle, '');
+      console.log(retainedCreatives);
+
+      // we have files matching device capabilities
+      // select the best one based on player current width
+      var finalCreative;
+      var validCreativesByWidth = [];
+      var validCreativesByBitrate = [];
+      if (retainedCreatives.length > 1) {
+        var _context7;
+        var containerWidth = FW.getWidth(this._container) * Environment.devicePixelRatio;
+        var containerHeight = FW.getHeight(this._container) * Environment.devicePixelRatio;
+        if (containerWidth > 0 && containerHeight > 0) {
+          validCreativesByWidth = filter_default()(retainedCreatives).call(retainedCreatives, function (creative) {
+            return containerWidth >= creative.width && containerHeight >= creative.height;
+          });
+        }
+        console.log("".concat(FW.consolePrepend, " validCreativesByWidth follow"), FW.consoleStyle, '');
+        console.log(validCreativesByWidth);
+
+        // if no match by size 
+        if (validCreativesByWidth.length === 0) {
+          validCreativesByWidth = [retainedCreatives[0]];
+        }
+
+        // filter by bitrate to provide best quality
+        var rmpConnection = new RmpConnection();
+        var availableBandwidth = rmpConnection.bandwidthData.estimate;
+        console.log(concat_default()(_context7 = "".concat(FW.consolePrepend, " availableBandwidth is ")).call(_context7, availableBandwidth, " Mbps"), FW.consoleStyle, '');
+        if (availableBandwidth > -1 && validCreativesByWidth.length > 1) {
+          // sort supported creatives by bitrates
+          sort_default()(validCreativesByWidth).call(validCreativesByWidth, function (a, b) {
+            return a.bitrate - b.bitrate;
+          });
+          // convert to kbps
+          availableBandwidth = Math.round(availableBandwidth * 1000);
+          validCreativesByBitrate = filter_default()(validCreativesByWidth).call(validCreativesByWidth, function (creative) {
+            return availableBandwidth >= creative.bitrate;
+          });
+          console.log("".concat(FW.consolePrepend, " validCreativesByBitrate follow"), FW.consoleStyle, '');
+          console.log(validCreativesByBitrate);
+
+          // pick max available bitrate
+          finalCreative = validCreativesByBitrate[validCreativesByBitrate.length - 1];
+        }
+      }
+
+      // if no match by bitrate 
+      if (!finalCreative) {
+        if (validCreativesByWidth.length > 0) {
+          finalCreative = validCreativesByWidth[validCreativesByWidth.length - 1];
+        } else {
+          sort_default()(retainedCreatives).call(retainedCreatives, function (a, b) {
+            return a.bitrate - b.bitrate;
+          });
+          finalCreative = retainedCreatives[retainedCreatives.length - 1];
+        }
+      }
+      console.log("".concat(FW.consolePrepend, " selected linear creative follows"), FW.consoleStyle, '');
+      console.log(finalCreative);
+      this._rmpVast.creative.mediaUrl = finalCreative.url;
+      this._rmpVast.creative.height = finalCreative.height;
+      this._rmpVast.creative.width = finalCreative.width;
+      this._rmpVast.creative.type = finalCreative.type;
+      if (this._rmpVast.rmpVastAdPlayer) {
+        this._rmpVast.rmpVastAdPlayer.append(finalCreative.url, finalCreative.type);
+      }
+    }
+  }]);
+  return LinearCreative;
+}();
+
+;// CONCATENATED MODULE: ./src/js/creatives/non-linear.js
+
+
+
+
+
+
+var NonLinearCreative = /*#__PURE__*/function () {
+  function NonLinearCreative(rmpVast) {
+    _classCallCheck(this, NonLinearCreative);
+    this._rmpVast = rmpVast;
+    this._params = rmpVast.params;
+    this._adContainer = rmpVast.adContainer;
+    this._container = rmpVast.container;
+    this._nonLinearMinSuggestedDuration = 0;
+    this._firstContentPlayerPlayRequest = true;
+    this._nonLinearCloseElement = null;
+    this._nonLinearAElement = null;
+    this._nonLinearInnerElement = null;
+    this._nonLinearContainerElement = null;
+    this._onNonLinearLoadSuccessFn = null;
+    this._onNonLinearLoadErrorFn = null;
+    this._onNonLinearClickThroughFn = null;
+    this._onClickCloseNonLinearFn = null;
+  }
+  _createClass(NonLinearCreative, [{
+    key: "nonLinearContainerElement",
+    get: function get() {
+      return this._nonLinearContainerElement;
+    }
+  }, {
+    key: "_onNonLinearLoadError",
+    value: function _onNonLinearLoadError() {
+      Utils.processVastErrors.call(this._rmpVast, 502, true);
+    }
+  }, {
+    key: "_onNonLinearLoadSuccess",
+    value: function _onNonLinearLoadSuccess() {
+      var _context;
+      console.log(concat_default()(_context = "".concat(FW.consolePrepend, " success loading non-linear creative at ")).call(_context, this._rmpVast.creative.mediaUrl), FW.consoleStyle, '');
+      this._rmpVast.__adOnStage = true;
+      Utils.createApiEvent.call(this._rmpVast, ['adloaded', 'adimpression', 'adstarted']);
+      Tracking.dispatch.call(this._rmpVast, ['impression', 'creativeView', 'start', 'loaded']);
+    }
+  }, {
+    key: "_onNonLinearClickThrough",
+    value: function _onNonLinearClickThrough(event) {
       try {
-        if (this.contentPlayer) {
-          this.contentPlayer.pause();
-          // empty buffer
-          this.contentPlayer.removeAttribute('src');
-          this.contentPlayer.load();
-          console.log("".concat(FW.consolePrepend, " flushing contentPlayer buffer after outstream ad"), FW.consoleStyle, '');
+        if (event) {
+          event.stopPropagation();
+        }
+        this._rmpVast.pause();
+        Utils.createApiEvent.call(this._rmpVast, 'adclick');
+        Tracking.dispatch.call(this._rmpVast, 'clickthrough');
+      } catch (e) {
+        console.warn(e);
+      }
+    }
+  }, {
+    key: "_onClickCloseNonLinear",
+    value: function _onClickCloseNonLinear(event) {
+      if (event) {
+        event.stopPropagation();
+        if (event.type === 'touchend') {
+          event.preventDefault();
+        }
+      }
+      FW.setStyle(this._nonLinearContainerElement, {
+        display: 'none'
+      });
+      Utils.createApiEvent.call(this._rmpVast, 'adclosed');
+      Tracking.dispatch.call(this._rmpVast, 'close');
+    }
+  }, {
+    key: "_appendCloseButton",
+    value: function _appendCloseButton() {
+      var _this = this;
+      this._nonLinearCloseElement = document.createElement('div');
+      this._nonLinearCloseElement.className = 'rmp-ad-non-linear-close';
+      Utils.makeButtonAccessible(this._nonLinearCloseElement, this._params.labels.closeAd);
+      if (this._nonLinearMinSuggestedDuration > 0) {
+        FW.setStyle(this._nonLinearCloseElement, {
+          display: 'none'
+        });
+        setTimeout(function () {
+          FW.setStyle(_this._nonLinearCloseElement, {
+            display: 'block'
+          });
+        }, this._nonLinearMinSuggestedDuration * 1000);
+      } else {
+        FW.setStyle(this._nonLinearCloseElement, {
+          display: 'block'
+        });
+      }
+      this._onClickCloseNonLinearFn = this._onClickCloseNonLinear.bind(this);
+      FW.addEvents(['touchend', 'click'], this._nonLinearCloseElement, this._onClickCloseNonLinearFn);
+      this._nonLinearContainerElement.appendChild(this._nonLinearCloseElement);
+    }
+  }, {
+    key: "destroy",
+    value: function destroy() {
+      if (this._nonLinearInnerElement) {
+        this._nonLinearInnerElement.removeEventListener('load', this._onNonLinearLoadSuccessFn);
+        this._nonLinearInnerElement.removeEventListener('error', this._onNonLinearLoadErrorFn);
+      }
+      FW.removeEvents(['touchend', 'click'], this._nonLinearAElement, this._onNonLinearClickThroughFn);
+      FW.removeEvents(['touchend', 'click'], this._nonLinearCloseElement, this._onClickCloseNonLinearFn);
+    }
+  }, {
+    key: "update",
+    value: function update() {
+      // non-linear ad container
+      this._nonLinearContainerElement = document.createElement('div');
+      this._nonLinearContainerElement.className = 'rmp-ad-non-linear-container';
+      FW.setStyle(this._nonLinearContainerElement, {
+        width: this._rmpVast.creative.width.toString() + 'px',
+        height: this._rmpVast.creative.height.toString() + 'px'
+      });
+
+      // a tag to handle click - a tag is best for WebView support
+      this._nonLinearAElement = document.createElement('a');
+      this._nonLinearAElement.className = 'rmp-ad-non-linear-anchor';
+      if (this._rmpVast.creative.clickThroughUrl) {
+        this._nonLinearAElement.href = this._rmpVast.creative.clickThroughUrl;
+        this._nonLinearAElement.target = '_blank';
+        this._onNonLinearClickThroughFn = this._onNonLinearClickThrough.bind(this);
+        FW.addEvents(['touchend', 'click'], this._nonLinearAElement, this._onNonLinearClickThroughFn);
+      }
+
+      // non-linear creative image
+      if (this._rmpVast.creative.nonLinearType === 'image') {
+        this._nonLinearInnerElement = document.createElement('img');
+      } else {
+        this._nonLinearInnerElement = document.createElement('iframe');
+        this._nonLinearInnerElement.sandbox = 'allow-scripts allow-same-origin';
+        FW.setStyle(this._nonLinearInnerElement, {
+          border: 'none',
+          overflow: 'hidden'
+        });
+        this._nonLinearInnerElement.setAttribute('allow', 'autoplay; fullscreen; picture-in-picture; encrypted-media');
+        this._nonLinearInnerElement.setAttribute('scrolling', 'no');
+        this._nonLinearInnerElement.setAttribute('sandbox', 'allow-scripts allow-presentation allow-same-origin');
+      }
+      this._nonLinearInnerElement.className = 'rmp-ad-non-linear-creative';
+      this._onNonLinearLoadErrorFn = this._onNonLinearLoadError.bind(this);
+      this._nonLinearInnerElement.addEventListener('error', this._onNonLinearLoadErrorFn);
+      this._onNonLinearLoadSuccessFn = this._onNonLinearLoadSuccess.bind(this);
+      this._nonLinearInnerElement.addEventListener('load', this._onNonLinearLoadSuccessFn);
+      if (this._rmpVast.creative.nonLinearType === 'html') {
+        this._nonLinearInnerElement.srcdoc = this._rmpVast.creative.mediaUrl;
+      } else {
+        this._nonLinearInnerElement.src = this._rmpVast.creative.mediaUrl;
+      }
+
+      // append to adContainer
+      this._nonLinearAElement.appendChild(this._nonLinearInnerElement);
+      this._nonLinearContainerElement.appendChild(this._nonLinearAElement);
+      this._adContainer.appendChild(this._nonLinearContainerElement);
+
+      // display a close button when non-linear ad has reached minSuggestedDuration
+      this._appendCloseButton();
+      FW.show(this._adContainer);
+      this._rmpVast.rmpVastContentPlayer.play(this._firstContentPlayerPlayRequest);
+      this._firstContentPlayerPlayRequest = false;
+    }
+  }, {
+    key: "parse",
+    value: function parse(variations) {
+      var _this2 = this;
+      console.log("".concat(FW.consolePrepend, " non-linear creatives follow"), FW.consoleStyle, '');
+      console.log(variations);
+      var isDimensionError = false;
+      var currentVariation;
+      // The video player should poll each <NonLinear> element to determine 
+      // which creative is offered in a format the video player can support.
+      for (var i = 0; i < variations.length; i++) {
+        isDimensionError = false;
+        currentVariation = variations[i];
+        var width = currentVariation.width;
+        var height = currentVariation.height;
+        // width/height attribute is required
+        if (width <= 0) {
+          width = 300;
+        }
+        if (height <= 0) {
+          height = 44;
+        }
+        // if width of non-linear creative does not fit within current player container width 
+        // we should skip this creative
+        if (width > FW.getWidth(this._container) || height > FW.getHeight(this._container)) {
+          isDimensionError = true;
+          continue;
+        }
+        // get minSuggestedDuration (optional)
+        this._nonLinearMinSuggestedDuration = currentVariation.minSuggestedDuration;
+        var staticResource = currentVariation.staticResource;
+        var iframeResource = currentVariation.iframeResource;
+        var htmlResource = currentVariation.htmlResource;
+        // we have a valid NonLinear/StaticResource with supported creativeType - we break
+        if (staticResource !== null || iframeResource !== null || htmlResource !== null) {
+          if (staticResource) {
+            this._rmpVast.creative.mediaUrl = staticResource;
+            this._rmpVast.creative.nonLinearType = 'image';
+          } else if (iframeResource) {
+            this._rmpVast.creative.mediaUrl = iframeResource;
+            this._rmpVast.creative.nonLinearType = 'iframe';
+          } else if (htmlResource) {
+            this._rmpVast.creative.mediaUrl = htmlResource;
+            this._rmpVast.creative.nonLinearType = 'html';
+          }
+          this._rmpVast.creative.width = width;
+          this._rmpVast.creative.height = height;
+          this._rmpVast.creative.type = currentVariation.type;
+          console.log("".concat(FW.consolePrepend, " selected non-linear creative"), FW.consoleStyle, '');
+          console.log(this._rmpVast.creative);
+          break;
+        }
+      }
+      // if not supported NonLinear type ping for error
+      if (!this._rmpVast.creative.mediaUrl || isDimensionError) {
+        var vastErrorCode = 503;
+        if (isDimensionError) {
+          vastErrorCode = 501;
+        }
+        Utils.processVastErrors.call(this._rmpVast, vastErrorCode, true);
+        return;
+      }
+      this._rmpVast.creative.clickThroughUrl = currentVariation.nonlinearClickThroughURLTemplate;
+      if (currentVariation.nonlinearClickTrackingURLTemplates.length > 0) {
+        currentVariation.nonlinearClickTrackingURLTemplates.forEach(function (nonlinearClickTrackingURLTemplate) {
+          if (nonlinearClickTrackingURLTemplate.url) {
+            _this2._rmpVast.trackingTags.push({
+              event: 'clickthrough',
+              url: nonlinearClickTrackingURLTemplate.url
+            });
+          }
+        });
+      }
+      if (this._rmpVast.rmpVastAdPlayer) {
+        this._rmpVast.rmpVastAdPlayer.append();
+      }
+    }
+  }]);
+  return NonLinearCreative;
+}();
+
+;// CONCATENATED MODULE: ./src/js/players/ad-player.js
+
+
+
+
+
+
+var AdPlayer = /*#__PURE__*/function () {
+  function AdPlayer(rmpVast) {
+    _classCallCheck(this, AdPlayer);
+    this._rmpVast = rmpVast;
+    this._params = rmpVast.params;
+    this._contentPlayer = rmpVast.__contentPlayer;
+    this._adContainer = rmpVast.adContainer;
+    this._contentWrapper = rmpVast.contentWrapper;
+    this._adPlayer = null;
+  }
+  _createClass(AdPlayer, [{
+    key: "destroy",
+    value: function destroy() {
+      console.log("".concat(FW.consolePrepend, " start destroying ad player"), FW.consoleStyle, '');
+
+      // destroy icons if any 
+      if (this._rmpVast.rmpVastIcons) {
+        this._rmpVast.rmpVastIcons.destroy();
+      }
+      if (this._rmpVast.rmpVastVpaidPlayer) {
+        this._rmpVast.rmpVastVpaidPlayer.destroy();
+      }
+
+      // reset non-linear creative
+      if (this._rmpVast.rmpVastNonLinearCreative) {
+        this._rmpVast.rmpVastNonLinearCreative.destroy();
+      }
+
+      // reset linear creative
+      if (this._rmpVast.rmpVastLinearCreative) {
+        this._rmpVast.rmpVastLinearCreative.destroy();
+      }
+
+      // unwire events
+      Tracking.destroy.call(this._rmpVast);
+
+      // hide rmp-ad-container
+      FW.hide(this._adContainer);
+
+      // unwire anti-seek logic (iOS)
+      if (this._rmpVast.rmpVastContentPlayer) {
+        this._rmpVast.rmpVastContentPlayer.destroy();
+      }
+      // flush __adPlayer
+      try {
+        if (this._adPlayer) {
+          this._adPlayer.pause();
+          if (this._rmpVast.rmpVastLinearCreative && this._rmpVast.rmpVastLinearCreative.readingHlsJS) {
+            this._rmpVast.rmpVastLinearCreative.readingHlsJS = false;
+            this._rmpVast.rmpVastLinearCreative.hlsJSInstances[this._rmpVast.rmpVastLinearCreative.hlsJSIndex].destroy();
+            this._rmpVast.rmpVastLinearCreative.hlsJSIndex = this._rmpVast.rmpVastLinearCreative.hlsJSIndex++;
+          } else {
+            // empty buffer
+            this._adPlayer.removeAttribute('src');
+            this._adPlayer.load();
+          }
+          FW.hide(this._adPlayer);
+          console.log("".concat(FW.consolePrepend, " flushing __adPlayer buffer after ad"), FW.consoleStyle, '');
+        }
+        if (this._rmpVast.rmpVastNonLinearCreative) {
+          FW.removeElement(this._rmpVast.rmpVastNonLinearCreative.nonLinearContainerElement);
         }
       } catch (error) {
         console.warn(error);
       }
+      Utils.resetVariablesForNewLoadAds.call(this._rmpVast);
+      Utils.createApiEvent.call(this._rmpVast, 'addestroyed');
     }
-  } else {
-    // flush vastPlayer
-    try {
-      if (this.vastPlayer) {
-        this.vastPlayer.pause();
-        if (this.readingHlsJS) {
-          this.readingHlsJS = false;
-          this.hlsJS[this.hlsJSIndex].destroy();
-          this.hlsJSIndex++;
-        } else {
-          // empty buffer
-          this.vastPlayer.removeAttribute('src');
-          this.vastPlayer.load();
-        }
-        FW.hide(this.vastPlayer);
-        console.log("".concat(FW.consolePrepend, " flushing vastPlayer buffer after ad"), FW.consoleStyle, '');
-      }
-      if (this.nonLinearContainer) {
-        FW.removeElement(this.nonLinearContainer);
-      }
-    } catch (error) {
-      console.warn(error);
-    }
-  }
-  Utils.resetVariablesForNewLoadAds.call(this);
-  Utils.createApiEvent.call(this, 'addestroyed');
-};
-VAST_PLAYER.init = function () {
-  var _this3 = this;
-  this.adContainer = document.createElement('div');
-  this.adContainer.className = 'rmp-ad-container';
-  this.contentWrapper.appendChild(this.adContainer);
-  FW.hide(this.adContainer);
-  if (!this.useContentPlayerForAds) {
-    this.vastPlayer = document.createElement('video');
-    FW.logVideoEvents(this.vastPlayer, 'vast');
-    // disable native UI cast for video ads
-    if (typeof this.vastPlayer.disableRemotePlayback !== 'undefined') {
-      this.vastPlayer.disableRemotePlayback = true;
-    }
-    this.vastPlayer.className = 'rmp-ad-vast-video-player';
-    if (this.params.showControlsForVastPlayer) {
-      this.vastPlayer.controls = true;
-    } else {
-      this.vastPlayer.controls = false;
-    }
-
-    // this.contentPlayer.muted may not be set because of a bug in some version of Chromium
-    if (this.contentPlayer.hasAttribute('muted')) {
-      this.contentPlayer.muted = true;
-    }
-    if (this.contentPlayer.muted) {
-      this.vastPlayer.muted = true;
-    }
-    // black poster based 64 png
-    this.vastPlayer.poster = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=';
-    // note to myself: we use setAttribute for non-standard attribute (instead of . notation)
-    this.vastPlayer.setAttribute('x-webkit-airplay', 'allow');
-    if (typeof this.contentPlayer.playsInline === 'boolean' && this.contentPlayer.playsInline) {
-      this.vastPlayer.playsInline = true;
-    }
-    this.vastPlayer.defaultPlaybackRate = 1;
-    // append to rmp-ad-container
-    FW.hide(this.vastPlayer);
-    this.adContainer.appendChild(this.vastPlayer);
-  } else {
-    this.vastPlayer = this.contentPlayer;
-  }
-  // we track ended state for content player
-  this.contentPlayer.addEventListener('ended', function () {
-    if (_this3.adOnStage) {
-      return;
-    }
-    _this3.contentPlayerCompleted = true;
-  });
-  // we need to preload as much creative data as possible
-  // also on macOS and iOS Safari we need to force preload to avoid 
-  // playback issues
-  this.vastPlayer.preload = 'auto';
-  // we need to init the vast player video tag
-  // according to https://developers.google.com/interactive-media-ads/docs/sdks/html5/mobile_video
-  // to initialize the content element, a call to the load() method is sufficient.
-  if (ENV.isMobile) {
-    // on Android both this.contentPlayer (to resume content)
-    // and this.vastPlayer (to start ads) needs to be init
-    // on iOS only init this.vastPlayer (as same as this.contentPlayer)
-    if (!this.useContentPlayerForAds) {
-      this.contentPlayer.load();
-    }
-    this.vastPlayer.load();
-  } else {
-    // due to autoplay being blocked on macOS Safari 11+
-    // we also need to init player on this browser
-    // this also work on previous version of Safari
-    if (this.useContentPlayerForAds) {
-      this.vastPlayer.load();
-    }
-  }
-  this.rmpVastInitialized = true;
-};
-VAST_PLAYER.append = function (url, type) {
-  // in case loadAds is called several times - rmpVastInitialized is already true
-  // but we still need to locate the vastPlayer
-  if (!this.vastPlayer) {
-    if (this.useContentPlayerForAds) {
-      this.vastPlayer = this.contentPlayer;
-    } else {
-      // we use existing rmp-ad-vast-video-player as it is already 
-      // available and initialized (no need for user interaction)
-      var existingVastPlayer = null;
-      if (this.adContainer) {
-        existingVastPlayer = this.adContainer.querySelector('.rmp-ad-vast-video-player');
-      }
-      if (existingVastPlayer === null) {
-        Utils.processVastErrors.call(this, 900, true);
-        return;
-      }
-      this.vastPlayer = existingVastPlayer;
-    }
-  }
-  content_player.pause.call(this);
-  if (!this.creative.isLinear) {
-    // we do not display non-linear ads with outstream ad 
-    // they won't fit the format
-    if (this.params.outstream) {
-      console.log("".concat(FW.consolePrepend, " non-linear creative detected for outstream ad mode - discarding creative"), FW.consoleStyle, '');
-      Utils.processVastErrors.call(this, 201, true);
-      return;
-    } else {
-      non_linear.update.call(this);
-    }
-  } else {
-    if (url && type) {
-      linear.update.call(this, url, type);
-    }
-  }
-  // wire tracking events
-  tracking_events.wire.call(this);
-
-  // append icons - only where vast player is different from 
-  // content player
-  if (!this.useContentPlayerForAds && this.iconsData.length > 0) {
-    creatives_icons.append.call(this);
-  }
-};
-VAST_PLAYER.setVolume = function (level) {
-  if (this.vastPlayer) {
-    this.vastPlayer.volume = level;
-  }
-};
-VAST_PLAYER.getVolume = function () {
-  if (this.vastPlayer) {
-    return this.vastPlayer.volume;
-  }
-  return -1;
-};
-VAST_PLAYER.setMute = function (muted) {
-  if (this.vastPlayer) {
-    if (muted && !this.vastPlayer.muted) {
-      this.vastPlayer.muted = true;
-    } else if (!muted && this.vastPlayer.muted) {
-      this.vastPlayer.muted = false;
-    }
-  }
-};
-VAST_PLAYER.getMute = function () {
-  if (this.vastPlayer) {
-    return this.vastPlayer.muted;
-  }
-  return false;
-};
-VAST_PLAYER.play = function (firstVastPlayerPlayRequest) {
-  if (this.vastPlayer && this.vastPlayer.paused) {
-    Utils.playPromise.call(this, 'vast', firstVastPlayerPlayRequest);
-  }
-};
-VAST_PLAYER.pause = function () {
-  if (this.vastPlayer && !this.vastPlayer.paused) {
-    this.vastPlayer.pause();
-  }
-};
-VAST_PLAYER.getDuration = function () {
-  if (this.vastPlayer && FW.isNumber(this.vastPlayer.duration)) {
-    return this.vastPlayer.duration * 1000;
-  }
-  return -1;
-};
-VAST_PLAYER.getCurrentTime = function () {
-  if (this.vastPlayer && FW.isNumber(this.vastPlayer.currentTime)) {
-    return this.vastPlayer.currentTime * 1000;
-  }
-  return -1;
-};
-VAST_PLAYER.resumeContent = function () {
-  console.log("".concat(FW.consolePrepend, " VAST_PLAYER.resumeContent requested"), FW.consoleStyle, '');
-  VAST_PLAYER.destroy.call(this);
-  this.readingHlsJS = false;
-  // if this.contentPlayerCompleted = true - we are in a post-roll situation
-  // in that case we must not resume content once the post-roll has completed
-  // you can use setContentPlayerCompleted/getContentPlayerCompleted to support 
-  // custom use-cases when dynamically changing source for content
-  // no need to resume content for outstream ads
-  if (!this.contentPlayerCompleted && !this.params.outstream) {
-    console.log("".concat(FW.consolePrepend, " CONTENT_PLAYER.play requested after VAST_PLAYER.resumeContent"), FW.consoleStyle, '');
-    content_player.play.call(this);
-  }
-  this.contentPlayerCompleted = false;
-};
-/* harmony default export */ var vast_player = (VAST_PLAYER);
-;// CONCATENATED MODULE: ./src/js/framework/utils.js
-
-
-
-
-
-
-
-
-
-
-
-
-// Indicates that the error was encountered when the ad was being loaded. 
-// Possible causes: there was no response from the ad server, malformed ad response was returned ...
-// 300, 301, 302, 303, 304 Wrapper errors are managed in ast-client-js
-var LOAD_ERROR_LIST = [303, 900, 1001];
-
-// Indicates that the error was encountered after the ad loaded, during ad play. 
-// Possible causes: ad assets could not be loaded, etc.
-var PLAY_ERROR_LIST = [201, 204, 205, 400, 401, 402, 403, 501, 502, 503, 603, 901, 1002];
-var VAST_ERRORS_LIST = [{
-  code: 201,
-  description: 'Video player expecting different linearity.'
-}, {
-  code: 204,
-  description: 'Ad category was required but not provided.'
-}, {
-  code: 205,
-  description: 'Inline Category violates Wrapper BlockedAdCategories.'
-}, {
-  code: 303,
-  description: 'No VAST response after one or more Wrappers.'
-}, {
-  code: 400,
-  description: 'General Linear error. Video player is unable to display the Linear Ad.'
-}, {
-  code: 401,
-  description: 'File not found. Unable to find Linear/MediaFile from URI.'
-}, {
-  code: 402,
-  description: 'Timeout of MediaFile URI.'
-}, {
-  code: 403,
-  description: 'Couldn\'t find MediaFile that is supported by this video player, based on the attributes of the MediaFile element.'
-}, {
-  code: 501,
-  description: 'Unable to display NonLinear Ad because creative dimensions do not align with creative display area (i.e. creative dimension too large).'
-}, {
-  code: 502,
-  description: 'Unable to fetch NonLinearAds/NonLinear resource.'
-}, {
-  code: 503,
-  description: 'Couldn\'t find NonLinear resource with supported type.'
-}, {
-  code: 603,
-  description: 'Unable to fetch CompanionAds/Companion resource.'
-}, {
-  code: 900,
-  description: 'Undefined Error.'
-}, {
-  code: 901,
-  description: 'General VPAID error.'
-}, {
-  code: 1001,
-  description: 'Invalid input for loadAds method'
-}, {
-  code: 1002,
-  description: 'Required DOMParser API is not available'
-}, {
-  code: 1100,
-  description: 'SIMID error: UNSPECIFIED_CREATIVE_ERROR'
-}, {
-  code: 1101,
-  description: 'SIMID error: CANNOT_LOAD_RESOURCE'
-}, {
-  code: 1102,
-  description: 'SIMID error: PLAYBACK_AREA_UNUSABLE'
-}, {
-  code: 1103,
-  description: 'SIMID error: INCORRECT_VERSION'
-}, {
-  code: 1104,
-  description: 'SIMID error: TECHNICAL_ERROR'
-}, {
-  code: 1105,
-  description: 'SIMID error: EXPAND_NOT_POSSIBLE'
-}, {
-  code: 1106,
-  description: 'SIMID error: PAUSE_NOT_HONORED'
-}, {
-  code: 1107,
-  description: 'SIMID error: PLAYMODE_NOT_ADEQUATE'
-}, {
-  code: 1108,
-  description: 'SIMID error: CREATIVE_INTERNAL_ERROR'
-}, {
-  code: 1109,
-  description: 'SIMID error: DEVICE_NOT_SUPPORTED'
-}, {
-  code: 1110,
-  description: 'SIMID error: MESSAGES_NOT_FOLLOWING_SPEC'
-}, {
-  code: 1111,
-  description: 'SIMID error: PLAYER_RESPONSE_TIMEOUT'
-}, {
-  code: 1200,
-  description: 'SIMID error: UNSPECIFIED_PLAYER_ERROR'
-}, {
-  code: 1201,
-  description: 'SIMID error: WRONG_VERSION'
-}, {
-  code: 1202,
-  description: 'SIMID error: UNSUPPORTED_TIME'
-}, {
-  code: 1203,
-  description: 'SIMID error: UNSUPPORTED_FUNCTIONALITY_REQUEST'
-}, {
-  code: 1204,
-  description: 'SIMID error: UNSUPPORTED_ACTIONS'
-}, {
-  code: 1205,
-  description: 'SIMID error: POSTMESSAGE_CHANNEL_OVERLOADED'
-}, {
-  code: 1206,
-  description: 'SIMID error: VIDEO_COULD_NOT_LOAD'
-}, {
-  code: 1207,
-  description: 'SIMID error: VIDEO_TIME_OUT'
-}, {
-  code: 1208,
-  description: 'SIMID error: RESPONSE_TIMEOUT'
-}, {
-  code: 1209,
-  description: 'SIMID error: MEDIA_NOT_SUPPORTED'
-}, {
-  code: 1210,
-  description: 'SIMID error: SPEC_NOT_FOLLOWED_ON_INIT'
-}, {
-  code: 1211,
-  description: 'SIMID error: SPEC_NOT_FOLLOWED_ON_MESSAGES'
-}];
-var Utils = /*#__PURE__*/function () {
-  function Utils() {
-    _classCallCheck(this, Utils);
-  }
-  _createClass(Utils, null, [{
-    key: "filterParams",
-    value: function filterParams(inputParams) {
+  }, {
+    key: "init",
+    value: function init() {
       var _this = this;
-      var defaultParams = {
-        ajaxTimeout: 5000,
-        creativeLoadTimeout: 8000,
-        ajaxWithCredentials: false,
-        maxNumRedirects: 4,
-        labels: {
-          skipMessage: 'Skip ad',
-          closeAd: 'Close ad',
-          textForClickUIOnMobile: 'Learn more'
-        },
-        outstream: false,
-        showControlsForVastPlayer: false,
-        vastXmlInput: false,
-        enableVpaid: true,
-        enableSimid: false,
-        vpaidSettings: {
-          width: 640,
-          height: 360,
-          viewMode: 'normal',
-          desiredBitrate: 500
-        },
-        useHlsJS: false,
-        debugHlsJS: false,
-        forceUseContentPlayerForAds: false,
-        forceUseContentPlayerForAdsOniOS: true,
-        // OM SDK params
-        omidSupport: false,
-        omidAllowedVendors: [],
-        omidUnderEvaluation: false,
-        omidRunValidationScript: false,
-        omidAutoplay: false,
-        partnerName: 'rmp-vast',
-        partnerVersion: "13.2.0"
-      };
-      this.params = defaultParams;
-      if (inputParams && _typeof(inputParams) === 'object') {
-        var keys = keys_default()(inputParams);
-        keys.forEach(function (key) {
-          if (_typeof(inputParams[key]) === _typeof(_this.params[key])) {
-            if (FW.isNumber(inputParams[key]) && inputParams[key] > 0 || typeof inputParams[key] !== 'number') {
-              if (key === 'vpaidSettings') {
-                if (FW.isNumber(inputParams.vpaidSettings.width) && inputParams.vpaidSettings.width > 0) {
-                  _this.params.vpaidSettings.width = inputParams.vpaidSettings.width;
-                }
-                if (FW.isNumber(inputParams.vpaidSettings.height) && inputParams.vpaidSettings.height > 0) {
-                  _this.params.vpaidSettings.height = inputParams.vpaidSettings.height;
-                }
-                if (typeof inputParams.vpaidSettings.viewMode === 'string' && inputParams.vpaidSettings.viewMode === 'fullscreen') {
-                  _this.params.vpaidSettings.viewMode = inputParams.vpaidSettings.viewMode;
-                }
-                if (FW.isNumber(inputParams.vpaidSettings.desiredBitrate) && inputParams.vpaidSettings.desiredBitrate > 0) {
-                  _this.params.vpaidSettings.desiredBitrate = inputParams.vpaidSettings.desiredBitrate;
-                }
-              } else {
-                _this.params[key] = inputParams[key];
-              }
-            }
-          }
-        });
-      }
-    }
-  }, {
-    key: "createApiEvent",
-    value: function createApiEvent(event) {
-      var _this2 = this;
-      // adloaded, addurationchange, adclick, adimpression, adstarted, 
-      // adtagloaded, adtagstartloading, adpaused, adresumed 
-      // advolumemuted, advolumechanged, adcomplete, adskipped, 
-      // adskippablestatechanged, adclosed
-      // adfirstquartile, admidpoint, adthirdquartile, aderror, 
-      // addestroyed
-      // adlinearchange, adexpandedchange, adremainingtimechange 
-      // adinteraction, adsizechange
-      if (Array.isArray(event)) {
-        event.forEach(function (currentEvent) {
-          if (currentEvent) {
-            console.log(currentEvent);
-            _this2.dispatch(currentEvent);
-          }
-        });
-      } else if (event) {
-        console.log(event);
-        this.dispatch(event);
-      }
-    }
-  }, {
-    key: "playPromise",
-    value: function playPromise(whichPlayer, firstPlayerPlayRequest) {
-      var _this3 = this;
-      var targetPlayer;
-      switch (whichPlayer) {
-        case 'content':
-          targetPlayer = this.contentPlayer;
-          break;
-        case 'vast':
-          targetPlayer = this.vastPlayer;
-          break;
-        default:
-          break;
-      }
-      if (targetPlayer) {
-        var playPromise = targetPlayer.play();
-        // most modern browsers support play as a Promise
-        // this lets us handle autoplay rejection 
-        // https://developers.google.com/web/updates/2016/03/play-returns-promise
-        if (playPromise !== undefined) {
-          playPromise.then(function () {
-            var _context;
-            console.log(concat_default()(_context = "".concat(FW.consolePrepend, " playPromise on ")).call(_context, whichPlayer, " player has succeeded"), FW.consoleStyle, '');
-            if (firstPlayerPlayRequest) {
-              Utils.createApiEvent.call(_this3, 'adinitialplayrequestsucceeded');
-            }
-          }).catch(function (error) {
-            console.warn(error);
-            if (firstPlayerPlayRequest && whichPlayer === 'vast' && _this3.creative.isLinear) {
-              console.log("".concat(FW.consolePrepend, " initial play promise on VAST player has been rejected"), FW.consoleStyle, '');
-              Utils.processVastErrors.call(_this3, 400, true);
-              Utils.createApiEvent.call(_this3, 'adinitialplayrequestfailed');
-            } else if (firstPlayerPlayRequest && whichPlayer === 'content' && !_this3.creative.isLinear) {
-              console.log("".concat(FW.consolePrepend, " initial play promise on content player has been rejected"), FW.consoleStyle, '');
-              Utils.createApiEvent.call(_this3, 'adinitialplayrequestfailed');
-            } else {
-              var _context2;
-              console.log(concat_default()(_context2 = "".concat(FW.consolePrepend, " playPromise on ")).call(_context2, whichPlayer, " player has been rejected"), FW.consoleStyle, '');
-            }
-          });
-        }
-      }
-    }
-  }, {
-    key: "makeButtonAccessible",
-    value: function makeButtonAccessible(element, ariaLabel) {
-      // make skip button accessible
-      element.tabIndex = 0;
-      element.setAttribute('role', 'button');
-      element.addEventListener('keyup', function (event) {
-        var code = event.which;
-        // 13 = Return, 32 = Space
-        if (code === 13 || code === 32) {
-          event.stopPropagation();
-          event.preventDefault();
-          FW.createSyntheticEvent('click', element);
-        }
-      });
-      if (ariaLabel) {
-        element.setAttribute('aria-label', ariaLabel);
-      }
-    }
-  }, {
-    key: "initInstanceVariables",
-    value: function initInstanceVariables() {
-      this.adContainer = null;
-      this.rmpVastInitialized = false;
-      this.useContentPlayerForAds = false;
-      this.contentPlayerCompleted = false;
-      this.currentContentSrc = '';
-      this.currentContentCurrentTime = -1;
-      this.needsSeekAdjust = false;
-      this.seekAdjustAttached = false;
-      this.firstVastPlayerPlayRequest = true;
-      this.firstContentPlayerPlayRequest = true;
-      this.params = {};
-      this.events = {};
-      this.onFullscreenchange = FW.nullFn;
-      this.contentWrapper = null;
-      this.contentPlayer = null;
-      this.id = null;
-      this.container = null;
-      this.isInFullscreen = false;
-      // adpod
-      this.adPod = false;
-      this.adPodLength = 0;
-      this.adSequence = 0;
-    }
-  }, {
-    key: "resetVariablesForNewLoadAds",
-    value: function resetVariablesForNewLoadAds() {
-      this.off('adstarted', this.attachViewableObserver);
-      // init internal methods 
-      this.onLoadedmetadataPlay = FW.nullFn;
-      this.onPlaybackError = FW.nullFn;
-      // init internal tracking events methods
-      this.onPause = FW.nullFn;
-      this.onPlay = FW.nullFn;
-      this.onPlaying = FW.nullFn;
-      this.onEnded = FW.nullFn;
-      this.onVolumeChange = FW.nullFn;
-      this.onTimeupdate = FW.nullFn;
-      this.onEventPingTracking = FW.nullFn;
-      this.onClickThrough = FW.nullFn;
-      this.onPlayingAppendIcons = FW.nullFn;
-      this.onDurationChange = FW.nullFn;
-      this.onTimeupdateCheckSkip = FW.nullFn;
-      this.onClickSkip = FW.nullFn;
-      this.onNonLinearLoadSuccess = FW.nullFn;
-      this.onNonLinearLoadError = FW.nullFn;
-      this.onNonLinearClickThrough = FW.nullFn;
-      this.onContextMenu = FW.nullFn;
-      // init internal variables
-      this.adTagUrl = '';
-      this.vastPlayer = null;
-      this.vpaidSlot = null;
-      this.trackingTags = [];
-      this.vastErrorTags = [];
-      this.adErrorTags = [];
-      this.vastPlayerMuted = false;
-      this.vastPlayerDuration = -1;
-      this.vastPlayerCurrentTime = -1;
-      this.firstQuartileEventFired = false;
-      this.midpointEventFired = false;
-      this.thirdQuartileEventFired = false;
-      this.vastPlayerPaused = false;
-      this.vastErrorCode = -1;
-      this.adErrorType = '';
-      this.vastErrorMessage = '';
-      this.adOnStage = false;
-      // hls.js
-      this.hlsJS = [];
-      this.hlsJSIndex = 0;
-      this.readingHlsJS = false;
-      // VAST ICONS
-      this.iconsData = [];
-      // players
-      this.clickUIOnMobile = null;
-      this.customPlaybackCurrentTime = 0;
-      this.antiSeekLogicInterval = null;
-      this.creativeLoadTimeoutCallback = null;
-      // VAST 4
-      this.ad = {};
-      this.creative = {};
-      this.attachViewableObserver = null;
-      this.viewableObserver = null;
-      this.viewablePreviousRatio = 0.5;
-      this.regulationsInfo = {};
-      this.requireCategory = false;
-      // skip
-      this.progressEvents = [];
-      this.skipButton = null;
-      this.skipWaiting = null;
-      this.skipMessage = null;
-      this.skipIcon = null;
-      this.skippableAdCanBeSkipped = false;
-      // non linear
-      this.nonLinearContainer = null;
-      this.nonLinearATag = null;
-      this.nonLinearInnerElement = null;
-      this.onClickCloseNonLinear = FW.nullFn;
-      this.nonLinearMinSuggestedDuration = 0;
-      // companion ads
-      this.validCompanionAds = [];
-      this.companionAdsRequiredAttribute = '';
-      this.companionAdsList = [];
-      // VPAID
-      this.isVPAID = false;
-      this.vpaidCreative = null;
-      this.vpaidScript = null;
-      this.vpaidIframe = null;
-      this.vpaidLoadTimeout = null;
-      this.initAdTimeout = null;
-      this.startAdTimeout = null;
-      this.vpaidAvailableInterval = null;
-      this.adStoppedTimeout = null;
-      this.adSkippedTimeout = null;
-      this.adParametersData = '';
-      this.vpaidCurrentVolume = 1;
-      this.vpaidPaused = true;
-      this.vpaidCreativeUrl = '';
-      this.vpaidAdRemainingTimeInterval = null;
-      this.vpaidRemainingTime = -1;
-      this.vpaidVersion = -1;
-      this.vpaid1AdDuration = -1;
-      this.initialWidth = 640;
-      this.initialHeight = 360;
-      this.initialViewMode = 'normal';
-      this.desiredBitrate = 500;
-      this.vpaidAdLoaded = false;
-      this.vpaidAdStarted = false;
-      this.vpaidCallbacks = {};
-      // SIMID
-      this.simidPlayer = null;
-    }
-
-    // attach fullscreen states
-    // this assumes we have a polyfill for fullscreenchange event 
-    // see app/js/app.js
-    // we need this to handle VAST fullscreen events
-  }, {
-    key: "_onFullscreenchange",
-    value: function _onFullscreenchange(event) {
-      if (event && event.type) {
-        var _context3;
-        console.log(concat_default()(_context3 = "".concat(FW.consolePrepend, " event is ")).call(_context3, event.type), FW.consoleStyle, '');
-        if (event.type === 'fullscreenchange') {
-          if (this.isInFullscreen) {
-            this.isInFullscreen = false;
-            if (this.adOnStage && this.creative.isLinear) {
-              tracking_events.dispatch.call(this, ['exitFullscreen', 'playerCollapse']);
-            }
-          } else {
-            this.isInFullscreen = true;
-            if (this.adOnStage && this.creative.isLinear) {
-              tracking_events.dispatch.call(this, ['fullscreen', 'playerExpand']);
-            }
-          }
-        } else if (event.type === 'webkitbeginfullscreen') {
-          // iOS uses webkitbeginfullscreen
-          if (this.adOnStage && this.creative.isLinear) {
-            tracking_events.dispatch.call(this, ['fullscreen', 'playerExpand']);
-          }
-          this.isInFullscreen = true;
-        } else if (event.type === 'webkitendfullscreen') {
-          // iOS uses webkitendfullscreen
-          if (this.adOnStage && this.creative.isLinear) {
-            tracking_events.dispatch.call(this, ['exitFullscreen', 'playerCollapse']);
-          }
-          this.isInFullscreen = false;
-        }
-      }
-    }
-  }, {
-    key: "handleFullscreen",
-    value: function handleFullscreen() {
-      // if we have native fullscreen support we handle fullscreen events
-      if (ENV.hasNativeFullscreenSupport) {
-        this.onFullscreenchange = Utils._onFullscreenchange.bind(this);
-        // for our beloved iOS 
-        if (ENV.isIos[0]) {
-          this.contentPlayer.addEventListener('webkitbeginfullscreen', this.onFullscreenchange);
-          this.contentPlayer.addEventListener('webkitendfullscreen', this.onFullscreenchange);
-        } else {
-          document.addEventListener('fullscreenchange', this.onFullscreenchange);
-        }
-      }
-    }
-  }, {
-    key: "_updateVastError",
-    value: function _updateVastError(errorCode) {
-      var _context4, _context5, _context6;
-      var error = filter_default()(VAST_ERRORS_LIST).call(VAST_ERRORS_LIST, function (value) {
-        return value.code === errorCode;
-      });
-      if (error.length > 0) {
-        this.vastErrorCode = error[0].code;
-        this.vastErrorMessage = error[0].description;
+      this._rmpVast.adContainer = this._adContainer = document.createElement('div');
+      this._adContainer.className = 'rmp-ad-container';
+      this._contentWrapper.appendChild(this._adContainer);
+      FW.hide(this._adContainer);
+      this._rmpVast.__adPlayer = this._adPlayer = document.createElement('video');
+      FW.logVideoEvents(this._adPlayer, 'ad');
+      // disable native UI cast/PiP for ad player
+      this._adPlayer.disableRemotePlayback = true;
+      this._adPlayer.disablePictureInPicture = true;
+      this._adPlayer.className = 'rmp-ad-vast-video-player';
+      if (this._params.showControlsForAdPlayer) {
+        this._adPlayer.controls = true;
       } else {
-        this.vastErrorCode = -1;
-        this.vastErrorMessage = 'Error getting VAST error';
+        this._adPlayer.controls = false;
       }
-      if (this.vastErrorCode > -1) {
-        if (index_of_default()(LOAD_ERROR_LIST).call(LOAD_ERROR_LIST, this.vastErrorCode) > -1) {
-          this.adErrorType = 'adLoadError';
-        } else if (index_of_default()(PLAY_ERROR_LIST).call(PLAY_ERROR_LIST, this.vastErrorCode) > -1) {
-          this.adErrorType = 'adPlayError';
+
+      // this.__contentPlayer.muted may not be set because of a bug in some version of Chromium
+      if (this._contentPlayer.hasAttribute('muted')) {
+        this._contentPlayer.muted = true;
+      }
+      if (this._contentPlayer.muted) {
+        this._adPlayer.muted = true;
+      }
+      // black poster based 64 png
+      this._adPlayer.poster = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=';
+      // note to myself: we use setAttribute for non-standard attribute (instead of . notation)
+      this._adPlayer.setAttribute('x-webkit-airplay', 'allow');
+      if (typeof this._contentPlayer.playsInline === 'boolean' && this._contentPlayer.playsInline) {
+        this._adPlayer.playsInline = true;
+      }
+      // append to rmp-ad-container
+      FW.hide(this._adPlayer);
+      this._adContainer.appendChild(this._adPlayer);
+
+      // we track ended state for content player
+      this._contentPlayer.addEventListener('ended', function () {
+        if (_this._rmpVast.__adOnStage) {
+          return;
         }
+        _this._rmpVast.__contentPlayerCompleted = true;
+      });
+      // we need to preload as much creative data as possible
+      // also on macOS and iOS Safari we need to force preload to avoid 
+      // playback issues
+      this._adPlayer.preload = 'auto';
+      // we need to init the ad player video tag
+      // according to https://developers.google.com/interactive-media-ads/docs/sdks/html5/mobile_video
+      // to initialize the content element, a call to the load() method is sufficient.
+      if (Environment.isMobile) {
+        // on Android both this.__contentPlayer (to resume content)
+        // and this.__adPlayer (to start ads) needs to be init
+        // on iOS only init this.__adPlayer (as same as this.__contentPlayer)
+        this._contentPlayer.load();
+        this._adPlayer.load();
       }
-      console.log(concat_default()(_context4 = "".concat(FW.consolePrepend, " VAST error code is ")).call(_context4, this.vastErrorCode), FW.consoleStyle, '');
-      console.log(concat_default()(_context5 = "".concat(FW.consolePrepend, " VAST error message is ")).call(_context5, this.vastErrorMessage), FW.consoleStyle, '');
-      console.log(concat_default()(_context6 = "".concat(FW.consolePrepend, " Ad error type is ")).call(_context6, this.adErrorType), FW.consoleStyle, '');
+      this._rmpVast.__initialized = true;
     }
   }, {
-    key: "processVastErrors",
-    value: function processVastErrors(errorCode, ping) {
-      if (ping) {
-        tracking_events.error.call(this, errorCode);
+    key: "append",
+    value: function append(url, type) {
+      // in case loadAds is called several times - __initialized is already true
+      // but we still need to locate the __adPlayer
+      if (!this._adPlayer) {
+        // we use existing ad player as it is already 
+        // available and initialized (no need for user interaction)
+        var existingAdPlayer = null;
+        if (this._adContainer) {
+          existingAdPlayer = this._adContainer.querySelector('.rmp-ad-vast-video-player');
+        }
+        if (existingAdPlayer === null) {
+          Utils.processVastErrors.call(this._rmpVast, 900, true);
+          return;
+        }
+        this._adPlayer = existingAdPlayer;
       }
-      Utils._updateVastError.call(this, errorCode);
-      Utils.createApiEvent.call(this, 'aderror');
-      vast_player.resumeContent.call(this);
+      this._rmpVast.rmpVastContentPlayer.pause();
+      if (!this._rmpVast.creative.isLinear) {
+        // we do not display non-linear ads with outstream ad 
+        // they won't fit the format
+        if (this._params.outstream) {
+          console.log("".concat(FW.consolePrepend, " non-linear creative detected for outstream ad mode - discarding creative"), FW.consoleStyle, '');
+          Utils.processVastErrors.call(this._rmpVast, 201, true);
+          return;
+        } else {
+          if (this._rmpVast.rmpVastNonLinearCreative) this._rmpVast.rmpVastNonLinearCreative.update();
+        }
+      } else {
+        if (url && type && this._rmpVast.rmpVastLinearCreative) {
+          this._rmpVast.rmpVastLinearCreative.update(url, type);
+        }
+      }
+      // wire tracking events
+      Tracking.wire.call(this._rmpVast);
+
+      // append icons - only where ad player is different from 
+      // content player
+      if (this._rmpVast.rmpVastIcons) {
+        var iconsData = this._rmpVast.rmpVastIcons.iconsData;
+        if (iconsData.length > 0) {
+          this._rmpVast.rmpVastIcons.append();
+        }
+      }
+    }
+  }, {
+    key: "volume",
+    get: function get() {
+      if (this._adPlayer) {
+        return this._adPlayer.volume;
+      }
+      return -1;
+    },
+    set: function set(level) {
+      if (this._adPlayer) {
+        this._adPlayer.volume = level;
+      }
+    }
+  }, {
+    key: "muted",
+    get: function get() {
+      if (this._adPlayer) {
+        return this._adPlayer.muted;
+      }
+      return false;
+    },
+    set: function set(muted) {
+      if (this._adPlayer) {
+        if (muted && !this._adPlayer.muted) {
+          this._adPlayer.muted = true;
+        } else if (!muted && this._adPlayer.muted) {
+          this._adPlayer.muted = false;
+        }
+      }
+    }
+  }, {
+    key: "duration",
+    get: function get() {
+      if (this._adPlayer && FW.isNumber(this._adPlayer.duration)) {
+        return this._adPlayer.duration * 1000;
+      }
+      return -1;
+    }
+  }, {
+    key: "currentTime",
+    get: function get() {
+      if (this._adPlayer && FW.isNumber(this._adPlayer.currentTime)) {
+        return this._adPlayer.currentTime * 1000;
+      }
+      return -1;
+    }
+  }, {
+    key: "play",
+    value: function play(firstAdPlayerPlayRequest) {
+      if (this._adPlayer && this._adPlayer.paused) {
+        Utils.playPromise.call(this._rmpVast, 'vast', firstAdPlayerPlayRequest);
+      }
+    }
+  }, {
+    key: "pause",
+    value: function pause() {
+      if (this._adPlayer && !this._adPlayer.paused) {
+        this._adPlayer.pause();
+      }
+    }
+  }, {
+    key: "resumeContent",
+    value: function resumeContent() {
+      console.log("".concat(FW.consolePrepend, " AdPlayer resumeContent requested"), FW.consoleStyle, '');
+      if (this._rmpVast.rmpVastAdPlayer) {
+        this._rmpVast.rmpVastAdPlayer.destroy();
+      }
+      if (this._rmpVast.rmpVastLinearCreative) {
+        this._rmpVast.rmpVastLinearCreative.readingHlsJS = false;
+      }
+      // if contentPlayerCompleted = true - we are in a post-roll situation
+      // in that case we must not resume content once the post-roll has completed
+      // you can use contentPlayerCompleted to support 
+      // custom use-cases when dynamically changing source for content
+      // no need to resume content for outstream ads
+      if (!this._rmpVast.__contentPlayerCompleted && !this._params.outstream) {
+        console.log("".concat(FW.consolePrepend, " content player play requested after ad player resumeContent"), FW.consoleStyle, '');
+        this._rmpVast.rmpVastContentPlayer.play();
+      }
+      this._rmpVast.__contentPlayerCompleted = false;
     }
   }]);
-  return Utils;
+  return AdPlayer;
 }();
 
 ;// CONCATENATED MODULE: ./src/js/verification/omsdk.js
@@ -15617,156 +15759,133 @@ var Utils = /*#__PURE__*/function () {
 
 
 
-var VIDEO_EVENT_TYPES = ['error', 'loadeddata', 'pause', 'play', 'timeupdate', 'volumechange', 'click'];
-var CONTENT_URL = document.location.href;
-// we support Access Modes Creative Access a.k.a full (we do not support Domain Access for now)
-var ACCESS_MODE = 'full';
-var OMSDK_SERVICE_WINDOW = window.top;
 var OmSdkManager = /*#__PURE__*/function () {
-  function OmSdkManager(adVerifications, contentPlayer, vastPlayer, params, isSkippableAd, skipTimeOffset) {
-    var _context;
+  function OmSdkManager(adVerifications, rmpVast) {
     _classCallCheck(this, OmSdkManager);
-    this.adEvents = null;
-    this.mediaEvents = null;
-    this.adSession = null;
+    this._rmpVast = rmpVast;
     this.VastProperties = null;
-    this.lastVideoTime = -1;
-    this.contentPlayer = contentPlayer;
-    this.vastPlayer = vastPlayer;
-    this.adVerifications = adVerifications;
-    this.params = params;
-    this.isSkippableAd = isSkippableAd;
-    this.skipTimeOffset = skipTimeOffset;
-    this.onFullscreenChange = null;
-    console.log(concat_default()(_context = "".concat(FW.consolePrepend)).call(_context, FW.consolePrepend2, " create new class Instance"), FW.consoleStyle, FW.consoleStyle2, '');
+    this._adEvents = null;
+    this._mediaEvents = null;
+    this._adSession = null;
+    this._lastVideoTime = -1;
+    this._adVerifications = adVerifications;
+    this._onFullscreenChangeFn = null;
+    this._contentPlayer = rmpVast.__contentPlayer;
+    this._adPlayer = rmpVast.__adPlayer;
+    this._params = rmpVast.params;
+    this._isSkippableAd = rmpVast.isSkippableAd;
+    this._skipTimeOffset = rmpVast.skipTimeOffset;
   }
   _createClass(OmSdkManager, [{
-    key: "init",
-    value: function init() {
-      var _this = this;
-      // handle VAST player events
-      VIDEO_EVENT_TYPES.forEach(function (eventType) {
-        _this.vastPlayer.addEventListener(eventType, function (event) {
-          return _this._vastPlayerDidDispatchEvent(event);
-        });
-      });
-      // handle fullscreenchange 
-      this.onFullscreenChange = this._onFullscreenChange.bind(this);
-      document.addEventListener('fullscreenchange', this.onFullscreenChange);
-      // Service Script To incorporate omweb-v1.js, use a <script> tag - we are assuming it is there
-      this._onOMWebLoaded();
-    }
-  }, {
-    key: "destroy",
-    value: function destroy() {
-      document.removeEventListener('fullscreenchange', this.onFullscreenChange);
-      this.adSession.finish();
+    key: "_destroy",
+    value: function _destroy() {
+      document.removeEventListener('fullscreenchange', this._onFullscreenChangeFn);
+      this._adSession.finish();
     }
   }, {
     key: "_onFullscreenChange",
     value: function _onFullscreenChange() {
       var isFullscreen = document.fullscreenElement !== null;
       var playerState = isFullscreen ? 'fullscreen' : 'normal';
-      this.mediaEvents.playerStateChange(playerState);
+      this._mediaEvents.playerStateChange(playerState);
     }
   }, {
     key: "_pingVerificationNotExecuted",
     value: function _pingVerificationNotExecuted(verification, reasonCode) {
+      var _this = this;
       if (typeof verification.trackingEvents !== 'undefined' && Array.isArray(verification.trackingEvents.verificationNotExecuted) && verification.trackingEvents.verificationNotExecuted.length > 0) {
         verification.trackingEvents.verificationNotExecuted.forEach(function (verificationNotExecutedURI) {
-          var _context2, _context3;
           var validatedURI = verificationNotExecutedURI;
           var reasonPattern = /\[REASON\]/gi;
           if (reasonPattern.test(validatedURI)) {
             validatedURI = validatedURI.replace(reasonPattern, reasonCode);
           }
-          console.log(concat_default()(_context2 = concat_default()(_context3 = "".concat(FW.consolePrepend)).call(_context3, FW.consolePrepend2, " ping VerificationNotExecuted at URI ")).call(_context2, validatedURI), FW.consoleStyle, FW.consoleStyle2, '');
-          tracking_events.pingURI(validatedURI);
+          Tracking.pingURI.call(_this._rmpVast, validatedURI);
         });
       }
     }
   }, {
-    key: "_vastPlayerDidDispatchTimeUpdate",
-    value: function _vastPlayerDidDispatchTimeUpdate() {
+    key: "_adPlayerDidDispatchTimeUpdate",
+    value: function _adPlayerDidDispatchTimeUpdate() {
       var _this2 = this;
-      if (!this.adEvents || !this.mediaEvents || this.vastPlayer.playbackRate === 0) {
+      if (!this._adEvents || !this._mediaEvents || !this._adPlayer || this._adPlayer.playbackRate === 0) {
         return;
       }
       // Check if playback has crossed a quartile threshold, and report that to
       // the OMSDK.
-      var vastPlayerCurrentTime = this.vastPlayer.currentTime;
-      var vastPlayerDuration = this.vastPlayer.duration;
-      if (vastPlayerCurrentTime > -1 && vastPlayerDuration > 0) {
-        var currentVideoTimePerCent = vastPlayerCurrentTime / vastPlayerDuration;
-        if (this.lastVideoTime < 0 && currentVideoTimePerCent >= 0) {
-          this.adEvents.impressionOccurred();
-          this.mediaEvents.start(vastPlayerDuration, this.vastPlayer.volume);
-        } else if (this.lastVideoTime < 0.25 && currentVideoTimePerCent >= 0.25) {
-          this.mediaEvents.firstQuartile();
-        } else if (this.lastVideoTime < 0.5 && currentVideoTimePerCent >= 0.5) {
-          this.mediaEvents.midpoint();
-        } else if (this.lastVideoTime < 0.75 && currentVideoTimePerCent >= 0.75) {
-          this.mediaEvents.thirdQuartile();
-        } else if (this.lastVideoTime < 1 && currentVideoTimePerCent >= 1) {
-          this.mediaEvents.complete();
+      var adPlayerCurrentTime = this._adPlayer.currentTime;
+      var adPlayerDuration = this._adPlayer.duration;
+      if (adPlayerCurrentTime > -1 && adPlayerDuration > 0) {
+        var currentVideoTimePerCent = adPlayerCurrentTime / adPlayerDuration;
+        if (this._lastVideoTime < 0 && currentVideoTimePerCent >= 0) {
+          this._adEvents.impressionOccurred();
+          this._mediaEvents.start(adPlayerDuration, this._adPlayer.volume);
+        } else if (this._lastVideoTime < 0.25 && currentVideoTimePerCent >= 0.25) {
+          this._mediaEvents.firstQuartile();
+        } else if (this._lastVideoTime < 0.5 && currentVideoTimePerCent >= 0.5) {
+          this._mediaEvents.midpoint();
+        } else if (this._lastVideoTime < 0.75 && currentVideoTimePerCent >= 0.75) {
+          this._mediaEvents.thirdQuartile();
+        } else if (this._lastVideoTime < 1 && currentVideoTimePerCent >= 1) {
+          this._mediaEvents.complete();
           // to prevent ad pod to fire verification events
-          this.adEvents = null;
-          this.mediaEvents = null;
-          // Wait 3s, then finish the session.
+          this._adEvents = null;
+          this._mediaEvents = null;
+          // Wait 300 ms, then finish the session.
           setTimeout(function () {
-            _this2.destroy();
+            _this2._destroy();
           }, 300);
         }
-        this.lastVideoTime = currentVideoTimePerCent;
+        this._lastVideoTime = currentVideoTimePerCent;
       }
     }
   }, {
-    key: "_vastPlayerDidDispatchEvent",
-    value: function _vastPlayerDidDispatchEvent(event) {
-      if (!this.adSession || !this.adEvents || !this.mediaEvents || !this.VastProperties) {
+    key: "_adPlayerDidDispatchEvent",
+    value: function _adPlayerDidDispatchEvent(event) {
+      if (!this._adSession || !this._adEvents || !this._mediaEvents || !this.VastProperties) {
         return;
       }
       var vastProperties, volume;
       var videoPosition = 'preroll';
       switch (event.type) {
         case 'error':
-          this.adSession.error('video', this.vastPlayer.error.message);
+          this._adSession.error('video', this._adPlayer.error.message);
           break;
         case 'loadeddata':
-          if (this.skipTimeOffset < 0) {
-            this.skipTimeOffset = 0;
+          if (this._skipTimeOffset < 0) {
+            this._skipTimeOffset = 0;
           }
-          if (this.params.outstream) {
+          if (this._params.outstream) {
             videoPosition = 'standalone';
           } else {
-            var contentPlayerCurrentTime = this.contentPlayer.currentTime;
-            var contentPlayerDuration = this.contentPlayer.duration;
+            var contentPlayerCurrentTime = this._contentPlayer.currentTime;
+            var contentPlayerDuration = this._contentPlayer.duration;
             if (contentPlayerCurrentTime > 0 && contentPlayerCurrentTime < contentPlayerDuration) {
               videoPosition === 'midroll';
             } else if (contentPlayerCurrentTime >= contentPlayerDuration) {
               videoPosition = 'postroll';
             }
           }
-          vastProperties = new this.VastProperties(this.isSkippableAd, this.skipTimeOffset, this.params.omidAutoplay, videoPosition);
-          this.adEvents.loaded(vastProperties);
+          vastProperties = new this.VastProperties(this._isSkippableAd, this._skipTimeOffset, this._params.omidAutoplay, videoPosition);
+          this._adEvents.loaded(vastProperties);
           break;
         case 'pause':
-          this.mediaEvents.pause();
+          this._mediaEvents.pause();
           break;
         case 'play':
-          if (this.vastPlayer.currentTime > 0) {
-            this.mediaEvents.resume();
+          if (this._adPlayer.currentTime > 0) {
+            this._mediaEvents.resume();
           }
           break;
         case 'timeupdate':
-          this._vastPlayerDidDispatchTimeUpdate();
+          this._adPlayerDidDispatchTimeUpdate();
           break;
         case 'volumechange':
-          volume = this.vastPlayer.muted ? 0 : this.vastPlayer.volume;
-          this.mediaEvents.volumeChange(volume);
+          volume = this._adPlayer.muted ? 0 : this._adPlayer.volume;
+          this._mediaEvents.volumeChange(volume);
           break;
         case 'click':
-          this.mediaEvents.adUserInteraction('click');
+          this._mediaEvents.adUserInteraction('click');
           break;
         default:
           break;
@@ -15781,8 +15900,8 @@ var OmSdkManager = /*#__PURE__*/function () {
       // we only execute browserOptional="false" unless there are none 
       // in which case we will look for browserOptional="true"
       var browserOptional = [];
-      for (var i = 0; i < this.adVerifications.length; i++) {
-        var verification = this.adVerifications[i];
+      for (var i = 0; i < this._adVerifications.length; i++) {
+        var verification = this._adVerifications[i];
         if (typeof verification.resource !== 'string' || verification.resource === '') {
           continue;
         }
@@ -15800,9 +15919,9 @@ var OmSdkManager = /*#__PURE__*/function () {
           continue;
         }
         // reject vendors not in omidAllowedVendors if omidAllowedVendors is not empty
-        if (this.params.omidAllowedVendors.length > 0 && typeof verification.vendor !== 'undefined') {
-          var _context4;
-          if (!includes_default()(_context4 = this.params.omidAllowedVendors).call(_context4, verification.vendor)) {
+        if (this._params.omidAllowedVendors.length > 0 && typeof verification.vendor !== 'undefined') {
+          var _context;
+          if (!includes_default()(_context = this._params.omidAllowedVendors).call(_context, verification.vendor)) {
             continue;
           }
         }
@@ -15814,10 +15933,10 @@ var OmSdkManager = /*#__PURE__*/function () {
       }
       if (validatedVerificationArray.length === 0 && browserOptional.length > 0) {
         browserOptional.forEach(function (browserOptionalItem) {
-          validatedVerificationArray.push(_this3.adVerifications[browserOptionalItem]);
+          validatedVerificationArray.push(_this3._adVerifications[browserOptionalItem]);
         });
       }
-      this.adVerifications = validatedVerificationArray;
+      this._adVerifications = validatedVerificationArray;
       var sessionClient;
       try {
         sessionClient = OmidSessionClient['default'];
@@ -15832,9 +15951,9 @@ var OmSdkManager = /*#__PURE__*/function () {
       var AdEvents = sessionClient.AdEvents;
       var MediaEvents = sessionClient.MediaEvents;
       this.VastProperties = sessionClient.VastProperties;
-      var partner = new Partner(this.params.partnerName, this.params.partnerVersion);
+      var partner = new Partner(this._params.partnerName, this._params.partnerVersion);
       var resources = [];
-      if (this.params.omidRunValidationScript) {
+      if (this._params.omidRunValidationScript) {
         // https://interactiveadvertisingbureau.github.io/Open-Measurement-SDKJS/validation.html
         var VALIDATION_SCRIPT_URL = 'https://cdn.radiantmediatechs.com/rmp/omsdk/1.3.37/omid-validation-verification-script-v1.js';
         var VENDOR_KEY = 'dummyVendor'; // you must use this value as is
@@ -15843,56 +15962,78 @@ var OmSdkManager = /*#__PURE__*/function () {
         });
         resources.push(new VerificationScriptResource(VALIDATION_SCRIPT_URL, VENDOR_KEY, PARAMS));
       } else {
-        var _context5;
-        resources = map_default()(_context5 = this.adVerifications).call(_context5, function (verification) {
-          return new VerificationScriptResource(verification.resource, verification.vendor, verification.parameters, ACCESS_MODE);
+        var _context2;
+        // we support Access Modes Creative Access a.k.a full (we do not support Domain Access for now)
+        var accessMode = 'full';
+        resources = map_default()(_context2 = this._adVerifications).call(_context2, function (verification) {
+          return new VerificationScriptResource(verification.resource, verification.vendor, verification.parameters, accessMode);
         });
       }
-      var context = new Context(partner, resources, CONTENT_URL);
+      var contentUrl = document.location.href;
+      var context = new Context(partner, resources, contentUrl);
       console.log(resources);
-      if (this.params.omidUnderEvaluation) {
+      if (this._params.omidUnderEvaluation) {
         context.underEvaluation = true;
       }
-      if (!OMSDK_SERVICE_WINDOW) {
-        var _context6;
-        console.log(concat_default()(_context6 = "".concat(FW.consolePrepend)).call(_context6, FW.consolePrepend2, " invalid serviceWindow - return"), FW.consoleStyle, FW.consoleStyle2, '');
+      var omdSdkServiceWindow = window.top;
+      if (!omdSdkServiceWindow) {
+        var _context3;
+        console.log(concat_default()(_context3 = "".concat(FW.consolePrepend)).call(_context3, FW.consolePrepend2, " invalid serviceWindow - return"), FW.consoleStyle, FW.consoleStyle2, '');
         return;
       }
-      context.setServiceWindow(OMSDK_SERVICE_WINDOW);
-      context.setVideoElement(this.vastPlayer);
+      context.setServiceWindow(omdSdkServiceWindow);
+      context.setVideoElement(this._adPlayer);
       console.log(context);
-      this.adSession = new AdSession(context);
-      this.adSession.setCreativeType('video');
-      this.adSession.setImpressionType('beginToRender');
-      if (!this.adSession.isSupported()) {
-        var _context7;
-        console.log(concat_default()(_context7 = "".concat(FW.consolePrepend)).call(_context7, FW.consolePrepend2, " invalid serviceWindow - return"), FW.consoleStyle, FW.consoleStyle2, '');
+      this._adSession = new AdSession(context);
+      this._adSession.setCreativeType('video');
+      this._adSession.setImpressionType('beginToRender');
+      if (!this._adSession.isSupported()) {
+        var _context4;
+        console.log(concat_default()(_context4 = "".concat(FW.consolePrepend)).call(_context4, FW.consolePrepend2, " invalid serviceWindow - return"), FW.consoleStyle, FW.consoleStyle2, '');
         return;
       }
-      this.adEvents = new AdEvents(this.adSession);
-      this.mediaEvents = new MediaEvents(this.adSession);
-      this.adSession.start();
+      this._adEvents = new AdEvents(this._adSession);
+      this._mediaEvents = new MediaEvents(this._adSession);
+      this._adSession.start();
+    }
+  }, {
+    key: "init",
+    value: function init() {
+      var _this4 = this;
+      var videoEventTypes = ['error', 'loadeddata', 'pause', 'play', 'timeupdate', 'volumechange', 'click'];
+
+      // handle ad player events
+      videoEventTypes.forEach(function (eventType) {
+        _this4._adPlayer.addEventListener(eventType, function (event) {
+          return _this4._adPlayerDidDispatchEvent(event);
+        });
+      });
+      // handle fullscreenchange 
+      this._onFullscreenChangeFn = this._onFullscreenChange.bind(this);
+      document.addEventListener('fullscreenchange', this._onFullscreenChangeFn);
+      // Service Script To incorporate omweb-v1.js, use a <script> tag - we are assuming it is there
+      this._onOMWebLoaded();
     }
   }]);
   return OmSdkManager;
 }();
-/* harmony default export */ var omsdk = (OmSdkManager);
+
 // EXTERNAL MODULE: ./node_modules/@babel/runtime-corejs3/core-js-stable/instance/splice.js
-var splice = __webpack_require__(3628);
+var splice = __webpack_require__(385);
 var splice_default = /*#__PURE__*/__webpack_require__.n(splice);
-;// CONCATENATED MODULE: ./src/js/framework/dispatcher-event.js
+;// CONCATENATED MODULE: ./src/js/framework/dispatcher.js
 
 
 
 
 
-var DispatcherEvent = /*#__PURE__*/function () {
-  function DispatcherEvent(eventName) {
-    _classCallCheck(this, DispatcherEvent);
+var Dispatcher = /*#__PURE__*/function () {
+  function Dispatcher(eventName) {
+    _classCallCheck(this, Dispatcher);
     this.eventName = eventName;
     this.callbacks = [];
   }
-  _createClass(DispatcherEvent, [{
+  _createClass(Dispatcher, [{
     key: "registerCallback",
     value: function registerCallback(callback) {
       this.callbacks.push(callback);
@@ -15917,11 +16058,113 @@ var DispatcherEvent = /*#__PURE__*/function () {
       });
     }
   }]);
-  return DispatcherEvent;
+  return Dispatcher;
 }();
-/* harmony default export */ var dispatcher_event = (DispatcherEvent);
+
+;// CONCATENATED MODULE: ./src/js/players/content-player.js
+
+
+
+
+var ContentPlayer = /*#__PURE__*/function () {
+  function ContentPlayer(rmpVast) {
+    _classCallCheck(this, ContentPlayer);
+    this._rmpVast = rmpVast;
+    this._contentPlayer = rmpVast.__contentPlayer;
+    this._customPlaybackCurrentTime = 0;
+    this._antiSeekLogicInterval = null;
+  }
+  _createClass(ContentPlayer, [{
+    key: "destroy",
+    value: function destroy() {
+      FW.clearInterval(this._antiSeekLogicInterval);
+    }
+  }, {
+    key: "play",
+    value: function play(firstContentPlayerPlayRequest) {
+      if (this._contentPlayer && this._contentPlayer.paused) {
+        Utils.playPromise.call(this._rmpVast, 'content', firstContentPlayerPlayRequest);
+      }
+    }
+  }, {
+    key: "pause",
+    value: function pause() {
+      if (this._contentPlayer && !this._contentPlayer.paused) {
+        this._contentPlayer.pause();
+      }
+    }
+  }, {
+    key: "volume",
+    get: function get() {
+      if (this._contentPlayer) {
+        return this._contentPlayer.volume;
+      }
+      return -1;
+    },
+    set: function set(level) {
+      if (this._contentPlayer) {
+        this._contentPlayer.volume = level;
+      }
+    }
+  }, {
+    key: "muted",
+    get: function get() {
+      if (this._contentPlayer) {
+        return this._contentPlayer.muted;
+      }
+      return false;
+    },
+    set: function set(muted) {
+      if (this._contentPlayer) {
+        if (muted && !this._contentPlayer.muted) {
+          this._contentPlayer.muted = true;
+        } else if (!muted && this._contentPlayer.muted) {
+          this._contentPlayer.muted = false;
+        }
+      }
+    }
+  }, {
+    key: "currentTime",
+    get: function get() {
+      if (this._contentPlayer && FW.isNumber(this._contentPlayer.currentTime)) {
+        return this._contentPlayer.currentTime * 1000;
+      }
+      return -1;
+    }
+  }, {
+    key: "seekTo",
+    value: function seekTo(msSeek) {
+      if (!FW.isNumber(msSeek)) {
+        return;
+      }
+      if (msSeek >= 0 && this._contentPlayer) {
+        this._contentPlayer.currentTime = msSeek / 1000;
+      }
+    }
+  }, {
+    key: "preventSeekingForCustomPlayback",
+    value: function preventSeekingForCustomPlayback() {
+      var _this = this;
+      // after much poking it appears we cannot rely on seek events for iOS to 
+      // set this up reliably - so interval it is
+      if (this._contentPlayer) {
+        this._antiSeekLogicInterval = setInterval(function () {
+          if (_this._rmpVast.creative.isLinear && _this._rmpVast.__adOnStage) {
+            var diff = Math.abs(_this._customPlaybackCurrentTime - _this._contentPlayer.currentTime);
+            if (diff > 1) {
+              _this._contentPlayer.currentTime = _this._customPlaybackCurrentTime;
+            }
+            _this._customPlaybackCurrentTime = _this._contentPlayer.currentTime;
+          }
+        }, 200);
+      }
+    }
+  }]);
+  return ContentPlayer;
+}();
+
 // EXTERNAL MODULE: ./node_modules/@babel/runtime-corejs3/core-js-stable/object/assign.js
-var object_assign = __webpack_require__(2184);
+var object_assign = __webpack_require__(9544);
 var assign_default = /*#__PURE__*/__webpack_require__.n(object_assign);
 ;// CONCATENATED MODULE: ./src/assets/@dailymotion/vast-client/src/util/storage.js
 
@@ -16062,7 +16305,7 @@ var Storage = /*#__PURE__*/function () {
   return Storage;
 }();
 // EXTERNAL MODULE: ./node_modules/@babel/runtime-corejs3/core-js-stable/reflect/construct.js
-var construct = __webpack_require__(8904);
+var construct = __webpack_require__(2574);
 var construct_default = /*#__PURE__*/__webpack_require__.n(construct);
 ;// CONCATENATED MODULE: ./node_modules/@babel/runtime-corejs3/helpers/esm/assertThisInitialized.js
 function _assertThisInitialized(self) {
@@ -16083,7 +16326,7 @@ function _possibleConstructorReturn(self, call) {
   return _assertThisInitialized(self);
 }
 // EXTERNAL MODULE: ./node_modules/core-js-pure/full/reflect/construct.js
-var reflect_construct = __webpack_require__(8968);
+var reflect_construct = __webpack_require__(594);
 ;// CONCATENATED MODULE: ./node_modules/@babel/runtime-corejs3/helpers/esm/isNativeReflectConstruct.js
 
 function _isNativeReflectConstruct() {
@@ -16095,7 +16338,7 @@ function _isNativeReflectConstruct() {
   })();
 }
 // EXTERNAL MODULE: ./node_modules/core-js-pure/full/instance/bind.js
-var bind = __webpack_require__(3404);
+var bind = __webpack_require__(2698);
 ;// CONCATENATED MODULE: ./node_modules/@babel/runtime-corejs3/helpers/esm/getPrototypeOf.js
 
 
@@ -16240,16 +16483,16 @@ function createCreativeCompanion() {
   };
 }
 // EXTERNAL MODULE: ./node_modules/@babel/runtime-corejs3/core-js-stable/instance/last-index-of.js
-var last_index_of = __webpack_require__(4216);
+var last_index_of = __webpack_require__(6712);
 var last_index_of_default = /*#__PURE__*/__webpack_require__.n(last_index_of);
 // EXTERNAL MODULE: ./node_modules/@babel/runtime-corejs3/core-js-stable/instance/trim.js
-var trim = __webpack_require__(5076);
+var trim = __webpack_require__(1265);
 var trim_default = /*#__PURE__*/__webpack_require__.n(trim);
 // EXTERNAL MODULE: ./node_modules/@babel/runtime-corejs3/core-js-stable/object/get-own-property-names.js
-var get_own_property_names = __webpack_require__(2460);
+var get_own_property_names = __webpack_require__(9493);
 var get_own_property_names_default = /*#__PURE__*/__webpack_require__.n(get_own_property_names);
 // EXTERNAL MODULE: ./node_modules/@babel/runtime-corejs3/core-js-stable/instance/pad-start.js
-var pad_start = __webpack_require__(8100);
+var pad_start = __webpack_require__(4929);
 var pad_start_default = /*#__PURE__*/__webpack_require__.n(pad_start);
 ;// CONCATENATED MODULE: ./src/assets/@dailymotion/vast-client/src/util/macros.js
 var supportedMacros = ['ADCATEGORIES', 'ADCOUNT', 'ADPLAYHEAD', 'ADSERVINGID', 'ADTYPE', 'APIFRAMEWORKS', 'APPBUNDLE', 'ASSETURI', 'BLOCKEDADCATEGORIES', 'BREAKMAXADLENGTH', 'BREAKMAXADS', 'BREAKMAXDURATION', 'BREAKMINADLENGTH', 'BREAKMINDURATION', 'BREAKPOSITION', 'CLICKPOS', 'CLICKTYPE', 'CLIENTUA', 'CONTENTID', 'CONTENTPLAYHEAD',
@@ -19193,25 +19436,25 @@ var VASTClient = /*#__PURE__*/function () {
   return VASTClient;
 }();
 // EXTERNAL MODULE: ./node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js
-var injectStylesIntoStyleTag = __webpack_require__(4596);
+var injectStylesIntoStyleTag = __webpack_require__(5072);
 var injectStylesIntoStyleTag_default = /*#__PURE__*/__webpack_require__.n(injectStylesIntoStyleTag);
 // EXTERNAL MODULE: ./node_modules/style-loader/dist/runtime/styleDomAPI.js
-var styleDomAPI = __webpack_require__(4139);
+var styleDomAPI = __webpack_require__(7825);
 var styleDomAPI_default = /*#__PURE__*/__webpack_require__.n(styleDomAPI);
 // EXTERNAL MODULE: ./node_modules/style-loader/dist/runtime/insertBySelector.js
-var insertBySelector = __webpack_require__(6176);
+var insertBySelector = __webpack_require__(7659);
 var insertBySelector_default = /*#__PURE__*/__webpack_require__.n(insertBySelector);
 // EXTERNAL MODULE: ./node_modules/style-loader/dist/runtime/setAttributesWithoutAttributes.js
-var setAttributesWithoutAttributes = __webpack_require__(5120);
+var setAttributesWithoutAttributes = __webpack_require__(5056);
 var setAttributesWithoutAttributes_default = /*#__PURE__*/__webpack_require__.n(setAttributesWithoutAttributes);
 // EXTERNAL MODULE: ./node_modules/style-loader/dist/runtime/insertStyleElement.js
-var insertStyleElement = __webpack_require__(6808);
+var insertStyleElement = __webpack_require__(8159);
 var insertStyleElement_default = /*#__PURE__*/__webpack_require__.n(insertStyleElement);
 // EXTERNAL MODULE: ./node_modules/style-loader/dist/runtime/styleTagTransform.js
-var styleTagTransform = __webpack_require__(1936);
+var styleTagTransform = __webpack_require__(3494);
 var styleTagTransform_default = /*#__PURE__*/__webpack_require__.n(styleTagTransform);
 // EXTERNAL MODULE: ./node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[0].use[1]!./node_modules/less-loader/dist/cjs.js!./src/less/rmp-vast.less
-var rmp_vast = __webpack_require__(3704);
+var rmp_vast = __webpack_require__(382);
 ;// CONCATENATED MODULE: ./src/less/rmp-vast.less
 
       
@@ -19234,12 +19477,12 @@ options.setAttributes = (setAttributesWithoutAttributes_default());
 options.domAPI = (styleDomAPI_default());
 options.insertStyleElement = (insertStyleElement_default());
 
-var update = injectStylesIntoStyleTag_default()(rmp_vast/* default */.c, options);
+var update = injectStylesIntoStyleTag_default()(rmp_vast/* default */.A, options);
 
 
 
 
-       /* harmony default export */ var less_rmp_vast = (rmp_vast/* default */.c && rmp_vast/* default */.c.locals ? rmp_vast/* default */.c.locals : undefined);
+       /* harmony default export */ var less_rmp_vast = (rmp_vast/* default */.A && rmp_vast/* default */.A.locals ? rmp_vast/* default */.A.locals : undefined);
 
 ;// CONCATENATED MODULE: ./src/js/index.js
 
@@ -19255,12 +19498,11 @@ var update = injectStylesIntoStyleTag_default()(rmp_vast/* default */.c, options
 
 
 /**
- * @license Copyright (c) 2015-2022 Radiant Media Player | https://www.radiantmediaplayer.com
+ * @license Copyright (c) 2015-2024 Radiant Media Player | https://www.radiantmediaplayer.com
  * rmp-vast
  * GitHub: https://github.com/radiantmediaplayer/rmp-vast
  * MIT License: https://github.com/radiantmediaplayer/rmp-vast/blob/master/LICENSE
  */
-
 
 
 
@@ -19293,7 +19535,7 @@ var RmpVast = /*#__PURE__*/function () {
    * @typedef {object} Labels
    * @property {string} [skipMessage]
    * @property {string} [closeAd]
-   * @property {string} [textForClickUIOnMobile] 
+   * @property {string} [textForInteractionUIOnMobile] 
    * @typedef {object} RmpVastParams
    * @property {number} [ajaxTimeout] - timeout in ms for an AJAX request to load a VAST tag from the ad server.
    *  Default 8000.
@@ -19304,14 +19546,13 @@ var RmpVast = /*#__PURE__*/function () {
    * @property {number} [maxNumRedirects] - the number of VAST wrappers the player should follow before triggering an
    *  error. Default: 4. Capped at 30 to avoid infinite wrapper loops.
    * @property {boolean} [outstream] - Enables outstream ad mode. Default: false.
-   * @property {boolean} [showControlsForVastPlayer] - Shows VAST player HTML5 default video controls. Default: false.
+   * @property {boolean} [showControlsForAdPlayer] - Shows Ad player HTML5 default video controls. Default: false.
    * @property {boolean} [vastXmlInput] - Instead of a VAST URI, we provide directly to rmp-vast VAST XML. Default: false.
    * @property {boolean} [enableVpaid] - Enables VPAID support or not. Default: true.
    * @property {VpaidSettings} [vpaidSettings] - Information required to display VPAID creatives - note that it is up 
    *  to the parent application of rmp-vast to provide those informations
    * @property {boolean} [useHlsJS] - Enables hls.js usage to display creatives delivered in HLS format on all devices. Include hls.js library (./externals/hls/hls.min.js) in your page before usage. Default: false.
    * @property {boolean} [debugHlsJS] - Enables debug log when hls.js is used to stream creatives. Default: false.
-   * @property {boolean} [forceUseContentPlayerForAds] - Forces player to use content player for ads - on Apple devices we may have a need to set useContentPlayerForAds differently based on content playback type (native vs. MSE playback). Default: false.
    * @property {boolean} [omidSupport] - Enables OMID (OM Web SDK) support in rmp-vast. Default: false.
    * @property {string[]} [omidAllowedVendors] - List of allowed vendors for ad verification. Vendors not listed will 
    *  be rejected. Default: [].
@@ -19336,18 +19577,15 @@ var RmpVast = /*#__PURE__*/function () {
     }
     this.id = id;
     this.container = document.getElementById(this.id);
-    if (this.container === null) {
-      console.error("Invalid DOM layout - exit");
-      return;
-    }
     this.contentWrapper = this.container.querySelector('.rmp-content');
-    this.contentPlayer = this.container.querySelector('.rmp-video');
-    if (this.contentWrapper === null || this.contentPlayer === null) {
-      console.error("Invalid DOM layout - exit");
+    this.__contentPlayer = this.container.querySelector('.rmp-video');
+    if (this.container === null || this.contentWrapper === null || this.__contentPlayer === null) {
+      console.error("Invalid DOM layout - missing container or content wrapper or content player - exit");
       return;
     }
     console.log("".concat(FW.consolePrepend, " Creating new RmpVast instance"), FW.consoleStyle, '');
-    FW.logVideoEvents(this.contentPlayer, 'content');
+    this.rmpVastContentPlayer = new ContentPlayer(this);
+    FW.logVideoEvents(this.__contentPlayer, 'content');
     // reset loadAds variables - this is reset at addestroyed 
     // so that next loadAds is cleared
     Utils.resetVariablesForNewLoadAds.call(this);
@@ -19355,21 +19593,6 @@ var RmpVast = /*#__PURE__*/function () {
     Utils.handleFullscreen.call(this);
     // filter input params
     Utils.filterParams.call(this, params);
-
-    // set useContentPlayerForAds if needed
-    if (this.params.forceUseContentPlayerForAds) {
-      console.log("".concat(FW.consolePrepend, " forceUseContentPlayerForAds enabled - vast player will be content player"), FW.consoleStyle, '');
-      this.useContentPlayerForAds = true;
-    }
-
-    // on iOS we use content player to play ads
-    // to avoid issues related to fullscreen management and autoplay
-    // With the introduction of Managed Media Source API on iOS 17.1, it becomes however possible to use 2 different 
-    // players, 1 for content and 1 for advertisement
-    if (ENV.isIos[0] && this.params.forceUseContentPlayerForAdsOniOS) {
-      console.log("".concat(FW.consolePrepend, " forceUseContentPlayerForAdsOniOS enabled - vast player will be content player for iOS"), FW.consoleStyle, '');
-      this.useContentPlayerForAds = true;
-    }
     console.log("".concat(FW.consolePrepend, " Filtered params follow"), FW.consoleStyle, '');
     console.log(this.params);
   }
@@ -19403,7 +19626,7 @@ var RmpVast = /*#__PURE__*/function () {
       var event = this.events[eventName];
       // If the event does not exist then we should create it!
       if (!event) {
-        event = new dispatcher_event(eventName);
+        event = new Dispatcher(eventName);
         this.events[eventName] = event;
       }
       // Now we add the callback to the event
@@ -19433,10 +19656,11 @@ var RmpVast = /*#__PURE__*/function () {
   }, {
     key: "_one",
     value: function _one(eventName, callback) {
-      var newCallback = function (e) {
-        this.off(eventName, newCallback);
+      var _this2 = this;
+      var newCallback = function newCallback(e) {
+        _this2.off(eventName, newCallback);
         callback(e);
-      }.bind(this);
+      };
       this.on(eventName, newCallback);
     }
 
@@ -19447,13 +19671,13 @@ var RmpVast = /*#__PURE__*/function () {
   }, {
     key: "one",
     value: function one(eventName, callback) {
-      var _this2 = this;
+      var _this3 = this;
       if (typeof eventName !== 'string' || eventName === '' || typeof callback !== 'function') {
         return;
       }
       var split = eventName.split(' ');
       split.forEach(function (eventItem) {
-        _this2._one(eventItem, callback);
+        _this3._one(eventItem, callback);
       });
     }
 
@@ -19484,33 +19708,14 @@ var RmpVast = /*#__PURE__*/function () {
   }, {
     key: "off",
     value: function off(eventName, callback) {
-      var _this3 = this;
+      var _this4 = this;
       if (typeof eventName !== 'string' || eventName === '' || typeof callback !== 'function') {
         return;
       }
       var split = eventName.split(' ');
       split.forEach(function (eventItem) {
-        _this3._off(eventItem, callback);
+        _this4._off(eventItem, callback);
       });
-    }
-
-    /** 
-     * @typedef {object} Environment
-     * @property {number} devicePixelRatio
-     * @property {number} maxTouchPoints
-     * @property {boolean} isIpadOS
-     * @property {array} isIos
-     * @property {array} isAndroid
-     * @property {boolean} isMacOSSafari
-     * @property {boolean} isFirefox
-     * @property {boolean} isMobile
-     * @property {boolean} hasNativeFullscreenSupport
-     * @return {Environment}
-     */
-  }, {
-    key: "getEnvironment",
-    value: function getEnvironment() {
-      return ENV;
     }
 
     /** 
@@ -19519,11 +19724,11 @@ var RmpVast = /*#__PURE__*/function () {
   }, {
     key: "_addTrackingEvents",
     value: function _addTrackingEvents(trackingEvents) {
-      var _this4 = this;
+      var _this5 = this;
       var keys = keys_default()(trackingEvents);
       keys.forEach(function (key) {
         trackingEvents[key].forEach(function (url) {
-          _this4.trackingTags.push({
+          _this5.trackingTags.push({
             event: key,
             url: url
           });
@@ -19537,12 +19742,12 @@ var RmpVast = /*#__PURE__*/function () {
   }, {
     key: "_parseCompanion",
     value: function _parseCompanion(creative) {
-      var _this5 = this;
+      var _this6 = this;
       // reset variables in case wrapper
       this.validCompanionAds = [];
-      this.companionAdsRequiredAttribute = '';
+      this.__companionAdsRequiredAttribute = '';
       if (creative.required) {
-        this.companionAdsRequiredAttribute = creative.required;
+        this.__companionAdsRequiredAttribute = creative.required;
       }
       var companions = creative.variations;
       // at least 1 Companion is expected to continue
@@ -19600,7 +19805,7 @@ var RmpVast = /*#__PURE__*/function () {
               newCompanionAds.trackingEventsUrls.push(creativeView);
             });
           }
-          _this5.validCompanionAds.push(newCompanionAds);
+          _this6.validCompanionAds.push(newCompanionAds);
         };
         for (var i = 0; i < companions.length; i++) {
           if (_loop()) continue;
@@ -19616,14 +19821,14 @@ var RmpVast = /*#__PURE__*/function () {
   }, {
     key: "_handleIntersect",
     value: function _handleIntersect(entries) {
-      var _this6 = this;
+      var _this7 = this;
       entries.forEach(function (entry) {
-        if (entry.intersectionRatio > _this6.viewablePreviousRatio) {
-          _this6.viewableObserver.unobserve(_this6.container);
-          Utils.createApiEvent.call(_this6, 'adviewable');
-          tracking_events.dispatch.call(_this6, 'viewable');
+        if (entry.intersectionRatio > _this7.viewablePreviousRatio) {
+          _this7.viewableObserver.unobserve(_this7.container);
+          Utils.createApiEvent.call(_this7, 'adviewable');
+          Tracking.dispatch.call(_this7, 'viewable');
         }
-        _this6.viewablePreviousRatio = entry.intersectionRatio;
+        _this7.viewablePreviousRatio = entry.intersectionRatio;
       });
     }
 
@@ -19633,7 +19838,7 @@ var RmpVast = /*#__PURE__*/function () {
   }, {
     key: "_attachViewableObserver",
     value: function _attachViewableObserver() {
-      this.off('adstarted', this.attachViewableObserver);
+      this.off('adstarted', this.attachViewableObserverFn);
       if (typeof window.IntersectionObserver !== 'undefined') {
         var options = {
           root: null,
@@ -19644,7 +19849,7 @@ var RmpVast = /*#__PURE__*/function () {
         this.viewableObserver.observe(this.container);
       } else {
         Utils.createApiEvent.call(this, 'adviewundetermined');
-        tracking_events.dispatch.call(this, 'viewundetermined');
+        Tracking.dispatch.call(this, 'viewundetermined');
       }
     }
 
@@ -19654,14 +19859,14 @@ var RmpVast = /*#__PURE__*/function () {
   }, {
     key: "_initViewableImpression",
     value: function _initViewableImpression() {
-      var _this7 = this;
+      var _this8 = this;
       if (this.viewableObserver) {
         this.viewableObserver.unobserve(this.container);
       }
       this.ad.viewableImpression.forEach(function (viewableImpression) {
         if (viewableImpression.viewable.length > 0) {
           viewableImpression.viewable.forEach(function (url) {
-            _this7.trackingTags.push({
+            _this8.trackingTags.push({
               event: 'viewable',
               url: url
             });
@@ -19669,7 +19874,7 @@ var RmpVast = /*#__PURE__*/function () {
         }
         if (viewableImpression.notViewable.length > 0) {
           viewableImpression.notViewable.forEach(function (url) {
-            _this7.trackingTags.push({
+            _this8.trackingTags.push({
               event: 'notviewable',
               url: url
             });
@@ -19677,15 +19882,15 @@ var RmpVast = /*#__PURE__*/function () {
         }
         if (viewableImpression.viewUndetermined.length > 0) {
           viewableImpression.viewUndetermined.forEach(function (url) {
-            _this7.trackingTags.push({
+            _this8.trackingTags.push({
               event: 'viewundetermined',
               url: url
             });
           });
         }
       });
-      this.attachViewableObserver = this._attachViewableObserver.bind(this);
-      this.on('adstarted', this.attachViewableObserver);
+      this.attachViewableObserverFn = this._attachViewableObserver.bind(this);
+      this.on('adstarted', this.attachViewableObserverFn);
     }
 
     /** 
@@ -19695,7 +19900,7 @@ var RmpVast = /*#__PURE__*/function () {
     key: "_loopAds",
     value: (function () {
       var _loopAds2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee(ads) {
-        var _this8 = this;
+        var _this9 = this;
         var _loop2, i;
         return _regeneratorRuntime().wrap(function _callee$(_context7) {
           while (1) switch (_context7.prev = _context7.next) {
@@ -19709,26 +19914,26 @@ var RmpVast = /*#__PURE__*/function () {
                         var currentAd = ads[i];
                         console.log("".concat(FW.consolePrepend, " currentAd follows"), FW.consoleStyle, '');
                         console.log(currentAd);
-                        _this8.ad.id = currentAd.id;
-                        _this8.ad.adServingId = currentAd.adServingId;
-                        _this8.ad.categories = currentAd.categories;
-                        if (_this8.requireCategory) {
-                          if (_this8.ad.categories.length === 0 || !_this8.ad.categories[0].authority) {
-                            Utils.processVastErrors.call(_this8, 204, true);
+                        _this9.ad.id = currentAd.id;
+                        _this9.ad.adServingId = currentAd.adServingId;
+                        _this9.ad.categories = currentAd.categories;
+                        if (_this9.requireCategory) {
+                          if (_this9.ad.categories.length === 0 || !_this9.ad.categories[0].authority) {
+                            Utils.processVastErrors.call(_this9, 204, true);
                             resolve();
                           }
                         }
-                        _this8.ad.blockedAdCategories = currentAd.blockedAdCategories;
-                        if (_this8.requireCategory) {
+                        _this9.ad.blockedAdCategories = currentAd.blockedAdCategories;
+                        if (_this9.requireCategory) {
                           var haltDueToBlockedAdCategories = false;
-                          _this8.ad.blockedAdCategories.forEach(function (blockedAdCategory) {
+                          _this9.ad.blockedAdCategories.forEach(function (blockedAdCategory) {
                             var blockedAdCategoryAuthority = blockedAdCategory.authority;
                             var blockedAdCategoryValue = blockedAdCategory.value;
-                            _this8.ad.categories.forEach(function (category) {
+                            _this9.ad.categories.forEach(function (category) {
                               var categoriesAuthority = category.authority;
                               var categoriesValue = category.value;
                               if (blockedAdCategoryAuthority === categoriesAuthority && blockedAdCategoryValue === categoriesValue) {
-                                Utils.processVastErrors.call(_this8, 205, true);
+                                Utils.processVastErrors.call(_this9, 205, true);
                                 haltDueToBlockedAdCategories = true;
                               }
                             });
@@ -19737,24 +19942,24 @@ var RmpVast = /*#__PURE__*/function () {
                             resolve();
                           }
                         }
-                        _this8.ad.adType = currentAd.adType;
-                        _this8.ad.title = currentAd.title;
-                        _this8.ad.description = currentAd.description;
-                        _this8.ad.system = currentAd.system;
-                        _this8.ad.advertiser = currentAd.advertiser;
-                        _this8.ad.pricing = currentAd.pricing;
-                        _this8.ad.survey = currentAd.survey;
-                        _this8.ad.sequence = currentAd.sequence;
+                        _this9.ad.adType = currentAd.adType;
+                        _this9.ad.title = currentAd.title;
+                        _this9.ad.description = currentAd.description;
+                        _this9.ad.system = currentAd.system;
+                        _this9.ad.advertiser = currentAd.advertiser;
+                        _this9.ad.pricing = currentAd.pricing;
+                        _this9.ad.survey = currentAd.survey;
+                        _this9.ad.sequence = currentAd.sequence;
                         find_default()(ads).call(ads, function (ad) {
-                          _this8.adPod = false;
+                          _this9.adPod = false;
                           if (ad.sequence && ad.sequence > 1) {
-                            _this8.adPod = true;
+                            _this9.adPod = true;
                             return true;
                           }
                         });
                         // this is to fix a weird bug in vast-client-js - sometimes it returns sequence === null for some items when
                         // adpod is made of redirects
-                        if (_this8.adPod) {
+                        if (_this9.adPod) {
                           var max = reduce_default()(ads).call(ads, function (prev, current) {
                             return prev.sequence > current.sequence ? prev : current;
                           }).sequence;
@@ -19764,10 +19969,8 @@ var RmpVast = /*#__PURE__*/function () {
                               max++;
                             }
                           });
-                        }
-                        if (_this8.adPod) {
-                          _this8.adSequence++;
-                          if (_this8.adPodLength === 0) {
+                          _this9.adSequence++;
+                          if (_this9.adPodLength === 0) {
                             var _context5;
                             var adPodLength = 0;
                             ads.forEach(function (ad) {
@@ -19775,36 +19978,36 @@ var RmpVast = /*#__PURE__*/function () {
                                 adPodLength++;
                               }
                             });
-                            _this8.adPodLength = adPodLength;
-                            console.log(concat_default()(_context5 = "".concat(FW.consolePrepend, " AdPod detected with length ")).call(_context5, _this8.adPodLength), FW.consoleStyle, '');
+                            _this9.adPodLength = adPodLength;
+                            console.log(concat_default()(_context5 = "".concat(FW.consolePrepend, " AdPod detected with length ")).call(_context5, _this9.adPodLength), FW.consoleStyle, '');
                           }
+                          _this9.one('addestroyed', function () {
+                            if (_this9.adSequence === _this9.adPodLength) {
+                              _this9.adPodLength = 0;
+                              _this9.adSequence = 0;
+                              _this9.adPod = false;
+                              Utils.createApiEvent.call(_this9, 'adpodcompleted');
+                            }
+                            resolve();
+                          });
                         }
-                        _this8.ad.viewableImpression = currentAd.viewableImpression;
-                        if (_this8.ad.viewableImpression.length > 0) {
-                          _this8._initViewableImpression();
+                        _this9.ad.viewableImpression = currentAd.viewableImpression;
+                        if (_this9.ad.viewableImpression.length > 0) {
+                          _this9._initViewableImpression();
                         }
                         currentAd.errorURLTemplates.forEach(function (errorURLTemplate) {
-                          _this8.adErrorTags.push({
+                          _this9.adErrorTags.push({
                             event: 'error',
                             url: errorURLTemplate
                           });
                         });
                         currentAd.impressionURLTemplates.forEach(function (impression) {
                           if (impression.url) {
-                            _this8.trackingTags.push({
+                            _this9.trackingTags.push({
                               event: 'impression',
                               url: impression.url
                             });
                           }
-                        });
-                        _this8.one('addestroyed', function () {
-                          if (_this8.adPod && _this8.adSequence === _this8.adPodLength) {
-                            _this8.adPodLength = 0;
-                            _this8.adSequence = 0;
-                            _this8.adPod = false;
-                            Utils.createApiEvent.call(_this8, 'adpodcompleted');
-                          }
-                          resolve();
                         });
                         // parse companion
                         var creatives = currentAd.creatives;
@@ -19813,7 +20016,7 @@ var RmpVast = /*#__PURE__*/function () {
                         find_default()(creatives).call(creatives, function (creative) {
                           if (creative.type === 'companion') {
                             console.log("".concat(FW.consolePrepend, " Creative type companion detected"), FW.consoleStyle, '');
-                            _this8._parseCompanion(creative);
+                            _this9._parseCompanion(creative);
                             return true;
                           }
                         });
@@ -19823,52 +20026,54 @@ var RmpVast = /*#__PURE__*/function () {
                           if (creative.type === 'companion') {
                             continue;
                           }
-                          _this8.creative.id = creative.id;
-                          _this8.creative.universalAdIds = creative.universalAdIds;
-                          _this8.creative.adId = creative.adId;
-                          _this8.creative.trackingEvents = creative.trackingEvents;
+                          _this9.creative.id = creative.id;
+                          _this9.creative.universalAdIds = creative.universalAdIds;
+                          _this9.creative.adId = creative.adId;
+                          _this9.creative.trackingEvents = creative.trackingEvents;
                           switch (creative.type) {
                             case 'linear':
-                              _this8.creative.duration = creative.duration;
-                              _this8.creative.skipDelay = creative.skipDelay;
-                              if (_this8.creative.skipDelay) {
-                                _this8.creative.skipoffset = creative.skipDelay;
-                                _this8.creative.isSkippableAd = true;
+                              _this9.creative.duration = creative.duration;
+                              _this9.creative.skipDelay = creative.skipDelay;
+                              if (_this9.creative.skipDelay) {
+                                _this9.creative.skipoffset = creative.skipDelay;
+                                _this9.creative.isSkippableAd = true;
                               }
                               if (creative.videoClickThroughURLTemplate && creative.videoClickThroughURLTemplate.url) {
-                                _this8.creative.clickThroughUrl = creative.videoClickThroughURLTemplate.url;
+                                _this9.creative.clickThroughUrl = creative.videoClickThroughURLTemplate.url;
                               }
                               if (creative.videoClickTrackingURLTemplates.length > 0) {
                                 creative.videoClickTrackingURLTemplates.forEach(function (videoClickTrackingURLTemplate) {
                                   if (videoClickTrackingURLTemplate.url) {
-                                    _this8.trackingTags.push({
+                                    _this9.trackingTags.push({
                                       event: 'clickthrough',
                                       url: videoClickTrackingURLTemplate.url
                                     });
                                   }
                                 });
                               }
-                              _this8.creative.isLinear = true;
+                              _this9.creative.isLinear = true;
                               if (creative.interactiveCreativeFile && /simid/i.test(creative.interactiveCreativeFile.apiFramework) && /text\/html/i.test(creative.interactiveCreativeFile.type)) {
-                                _this8.creative.simid = {
+                                _this9.creative.simid = {
                                   fileURL: creative.interactiveCreativeFile.fileURL,
                                   variableDuration: creative.interactiveCreativeFile.variableDuration
                                 };
                                 if (creative.adParameters && creative.adParameters.value) {
-                                  _this8.creative.simid.adParameters = creative.adParameters.value;
+                                  _this9.creative.simid.adParameters = creative.adParameters.value;
                                 }
                               }
-                              _this8._addTrackingEvents(creative.trackingEvents);
-                              linear.parse.call(_this8, creative.icons, creative.adParameters, creative.mediaFiles);
-                              if (_this8.params.omidSupport && currentAd.adVerifications.length > 0) {
-                                var omSdkManager = new omsdk(currentAd.adVerifications, _this8.contentPlayer, _this8.vastPlayer, _this8.params, _this8.getIsSkippableAd(), _this8.getSkipTimeOffset());
+                              _this9._addTrackingEvents(creative.trackingEvents);
+                              _this9.rmpVastLinearCreative = new LinearCreative(_this9);
+                              _this9.rmpVastLinearCreative.parse(creative);
+                              if (_this9.params.omidSupport && currentAd.adVerifications.length > 0) {
+                                var omSdkManager = new OmSdkManager(currentAd.adVerifications, _this9);
                                 omSdkManager.init();
                               }
                               break;
                             case 'nonlinear':
-                              _this8.creative.isLinear = false;
-                              _this8._addTrackingEvents(creative.trackingEvents);
-                              non_linear.parse.call(_this8, creative.variations);
+                              _this9.creative.isLinear = false;
+                              _this9._addTrackingEvents(creative.trackingEvents);
+                              _this9.rmpVastNonLinearCreative = new NonLinearCreative(_this9);
+                              _this9.rmpVastNonLinearCreative.parse(creative.variations);
                               break;
                             default:
                               break;
@@ -19910,14 +20115,14 @@ var RmpVast = /*#__PURE__*/function () {
   }, {
     key: "_handleParsedVast",
     value: function _handleParsedVast(response) {
-      var _this9 = this;
+      var _this10 = this;
       console.log("".concat(FW.consolePrepend, " VAST response follows"), FW.consoleStyle, '');
       console.log(response);
 
       // error at VAST/Error level
       if (response.errorURLTemplates.length > 0) {
         response.errorURLTemplates.forEach(function (errorURLTemplate) {
-          _this9.vastErrorTags.push({
+          _this10.vastErrorTags.push({
             event: 'error',
             url: errorURLTemplate
           });
@@ -19938,7 +20143,7 @@ var RmpVast = /*#__PURE__*/function () {
   }, {
     key: "_getVastTag",
     value: function _getVastTag(vastData) {
-      var _this10 = this;
+      var _this11 = this;
       // we check for required VAST input and API here
       // as we need to have this.currentContentSrc available for iOS
       if (typeof vastData !== 'string' || vastData === '') {
@@ -19960,15 +20165,15 @@ var RmpVast = /*#__PURE__*/function () {
           resolveAll: false,
           allowMultipleAds: true
         };
-        this.adTagUrl = vastData;
-        console.log(concat_default()(_context8 = "".concat(FW.consolePrepend, " Try to load VAST tag at: ")).call(_context8, this.adTagUrl), FW.consoleStyle, '');
-        vastClient.get(this.adTagUrl, options).then(function (response) {
-          Utils.createApiEvent.call(_this10, 'adtagloaded');
-          _this10._handleParsedVast(response);
+        this.__adTagUrl = vastData;
+        console.log(concat_default()(_context8 = "".concat(FW.consolePrepend, " Try to load VAST tag at: ")).call(_context8, this.__adTagUrl), FW.consoleStyle, '');
+        vastClient.get(this.__adTagUrl, options).then(function (response) {
+          Utils.createApiEvent.call(_this11, 'adtagloaded');
+          _this11._handleParsedVast(response);
         }).catch(function (error) {
           console.warn(error);
           // PING 900 Undefined Error.
-          Utils.processVastErrors.call(_this10, 900, true);
+          Utils.processVastErrors.call(_this11, 900, true);
         });
       } else {
         // input is not a VAST URI but raw VAST XML -> we parse it and proceed
@@ -19983,12 +20188,12 @@ var RmpVast = /*#__PURE__*/function () {
         }
         var vastParser = new VASTParser();
         vastParser.parseVAST(vastXml).then(function (response) {
-          Utils.createApiEvent.call(_this10, 'adtagloaded');
-          _this10._handleParsedVast(response);
+          Utils.createApiEvent.call(_this11, 'adtagloaded');
+          _this11._handleParsedVast(response);
         }).catch(function (error) {
           console.warn(error);
           // PING 900 Undefined Error.
-          Utils.processVastErrors.call(_this10, 900, true);
+          Utils.processVastErrors.call(_this11, 900, true);
         });
       }
     }
@@ -20009,7 +20214,7 @@ var RmpVast = /*#__PURE__*/function () {
       console.log("".concat(FW.consolePrepend, " loadAds method starts"), FW.consoleStyle, '');
 
       // if player is not initialized - this must be done now
-      if (!this.rmpVastInitialized) {
+      if (!this.__initialized) {
         this.initialize();
       }
       if (_typeof(regulationsInfo) === 'object') {
@@ -20032,31 +20237,15 @@ var RmpVast = /*#__PURE__*/function () {
       var finalVastData = vastData;
       if (!this.params.vastXmlInput) {
         // we have a VAST URI replaceMacros
-        finalVastData = tracking_events.replaceMacros.call(this, vastData, false);
+        finalVastData = Tracking.replaceMacros.call(this, vastData, false);
       }
 
       // if an ad is already on stage we need to clear it first before we can accept another ad request
-      if (this.getAdOnStage()) {
+      if (this.__adOnStage) {
         console.log("".concat(FW.consolePrepend, " Creative already on stage calling stopAds before loading new ad"), FW.consoleStyle, '');
-        var _onDestroyLoadAds = function _onDestroyLoadAds(vastData) {
-          this.loadAds(vastData);
-        };
-        this.one('addestroyed', _onDestroyLoadAds.bind(this, finalVastData));
+        this.one('addestroyed', this.loadAds.bind(this, finalVastData));
         this.stopAds();
         return;
-      }
-      // for useContentPlayerForAds we need to know early what is the content src
-      // so that we can resume content when ad finishes or on aderror
-      var contentCurrentTime = content_player.getCurrentTime.call(this);
-      if (this.useContentPlayerForAds) {
-        var _context9, _context10;
-        this.currentContentSrc = this.contentPlayer.src;
-        console.log(concat_default()(_context9 = "".concat(FW.consolePrepend, " currentContentSrc is ")).call(_context9, this.currentContentSrc), FW.consoleStyle, '');
-        this.currentContentCurrentTime = contentCurrentTime;
-        console.log(concat_default()(_context10 = "".concat(FW.consolePrepend, " currentContentCurrentTime is ")).call(_context10, this.currentContentCurrentTime), FW.consoleStyle, '');
-
-        // on iOS we need to prevent seeking when linear ad is on stage
-        content_player.preventSeekingForCustomPlayback.call(this);
       }
       this._getVastTag(finalVastData);
     }
@@ -20067,14 +20256,14 @@ var RmpVast = /*#__PURE__*/function () {
   }, {
     key: "play",
     value: function play() {
-      if (this.adOnStage && this.creative && this.creative.isLinear) {
-        if (this.isVPAID) {
-          vpaid.resumeAd.call(this);
-        } else {
-          vast_player.play.call(this);
+      if (this.__adOnStage && this.creative && this.creative.isLinear) {
+        if (this.rmpVastVpaidPlayer) {
+          this.rmpVastVpaidPlayer.resumeAd();
+        } else if (this.rmpVastAdPlayer) {
+          this.rmpVastAdPlayer.play();
         }
       } else {
-        content_player.play.call(this);
+        this.rmpVastContentPlayer.play();
       }
     }
 
@@ -20084,124 +20273,15 @@ var RmpVast = /*#__PURE__*/function () {
   }, {
     key: "pause",
     value: function pause() {
-      if (this.adOnStage && this.creative && this.creative.isLinear) {
-        if (this.isVPAID) {
-          vpaid.pauseAd.call(this);
-        } else {
-          vast_player.pause.call(this);
+      if (this.__adOnStage && this.creative && this.creative.isLinear) {
+        if (this.rmpVastVpaidPlayer) {
+          this.rmpVastVpaidPlayer.pauseAd();
+        } else if (this.rmpVastAdPlayer) {
+          this.rmpVastAdPlayer.pause();
         }
       } else {
-        content_player.pause.call(this);
+        this.rmpVastContentPlayer.pause();
       }
-    }
-
-    /** 
-     * @type {() => boolean} 
-     */
-  }, {
-    key: "getAdPaused",
-    value: function getAdPaused() {
-      if (this.adOnStage && this.creative && this.creative.isLinear) {
-        if (this.isVPAID) {
-          return vpaid.getAdPaused.call(this);
-        } else {
-          return this.vastPlayerPaused;
-        }
-      }
-      return false;
-    }
-
-    /** 
-     * @type {(level: number) => void} 
-     */
-  }, {
-    key: "setVolume",
-    value: function setVolume(level) {
-      if (!FW.isNumber(level)) {
-        return;
-      }
-      var validatedLevel = 0;
-      if (level < 0) {
-        validatedLevel = 0;
-      } else if (level > 1) {
-        validatedLevel = 1;
-      } else {
-        validatedLevel = level;
-      }
-      if (this.adOnStage && this.creative && this.creative.isLinear) {
-        if (this.isVPAID) {
-          vpaid.setAdVolume.call(this, validatedLevel);
-        }
-        vast_player.setVolume.call(this, validatedLevel);
-      }
-      content_player.setVolume.call(this, validatedLevel);
-    }
-
-    /** 
-     * @type {() => number} 
-     */
-  }, {
-    key: "getVolume",
-    value: function getVolume() {
-      if (this.adOnStage && this.creative && this.creative.isLinear) {
-        if (this.isVPAID) {
-          return vpaid.getAdVolume.call(this);
-        } else {
-          return vast_player.getVolume.call(this);
-        }
-      }
-      return content_player.getVolume.call(this);
-    }
-
-    /** 
-     * @type {(muted: boolean) => void} 
-     */
-  }, {
-    key: "setMute",
-    value: function setMute(muted) {
-      if (typeof muted !== 'boolean') {
-        return;
-      }
-      if (this.adOnStage && this.creative && this.creative.isLinear) {
-        if (this.isVPAID) {
-          if (muted) {
-            vpaid.setAdVolume.call(this, 0);
-          } else {
-            vpaid.setAdVolume.call(this, 1);
-          }
-        } else {
-          vast_player.setMute.call(this, muted);
-        }
-      }
-      content_player.setMute.call(this, muted);
-    }
-
-    /** 
-     * @type {() => boolean} 
-     */
-  }, {
-    key: "getMute",
-    value: function getMute() {
-      if (this.adOnStage && this.creative && this.creative.isLinear) {
-        if (this.isVPAID) {
-          if (vpaid.getAdVolume.call(this) === 0) {
-            return true;
-          }
-          return false;
-        } else {
-          return vast_player.getMute.call(this);
-        }
-      }
-      return content_player.getMute.call(this);
-    }
-
-    /** 
-     * @type {() => boolean} 
-     */
-  }, {
-    key: "getFullscreen",
-    value: function getFullscreen() {
-      return this.isInFullscreen;
     }
 
     /** 
@@ -20210,14 +20290,14 @@ var RmpVast = /*#__PURE__*/function () {
   }, {
     key: "stopAds",
     value: function stopAds() {
-      if (this.adOnStage) {
-        if (this.isVPAID) {
-          vpaid.stopAd.call(this);
-        } else if (this.simidPlayer) {
-          this.simidPlayer.stopAd();
-        } else {
+      if (this.__adOnStage) {
+        if (this.rmpVastVpaidPlayer) {
+          this.rmpVastVpaidPlayer.stopAd();
+        } else if (this.rmpVastSimidPlayer) {
+          this.rmpVastSimidPlayer.stopAd();
+        } else if (this.rmpVastAdPlayer) {
           // this will destroy ad
-          vast_player.resumeContent.call(this);
+          this.rmpVastAdPlayer.resumeContent();
         }
       }
     }
@@ -20230,13 +20310,15 @@ var RmpVast = /*#__PURE__*/function () {
   }, {
     key: "destroy",
     value: function destroy() {
-      if (this.contentPlayer) {
-        this.contentPlayer.removeEventListener('webkitbeginfullscreen', this.onFullscreenchange);
-        this.contentPlayer.removeEventListener('webkitendfullscreen', this.onFullscreenchange);
+      if (this.__contentPlayer) {
+        this.__contentPlayer.removeEventListener('webkitbeginfullscreen', this.onFullscreenchangeFn);
+        this.__contentPlayer.removeEventListener('webkitendfullscreen', this.onFullscreenchangeFn);
       } else {
-        document.removeEventListener('fullscreenchange', this.onFullscreenchange);
+        document.removeEventListener('fullscreenchange', this.onFullscreenchangeFn);
       }
-      vast_player.destroy.call(this);
+      if (this.rmpVastAdPlayer) {
+        this.rmpVastAdPlayer.destroy();
+      }
       Utils.initInstanceVariables.call(this);
     }
 
@@ -20246,36 +20328,153 @@ var RmpVast = /*#__PURE__*/function () {
   }, {
     key: "skipAd",
     value: function skipAd() {
-      if (this.adOnStage && this.getAdSkippableState()) {
-        if (this.isVPAID) {
-          vpaid.skipAd.call(this);
-        } else if (this.simidPlayer) {
-          this.simidPlayer.skipAd();
-        } else {
+      if (this.__adOnStage && this.adSkippableState) {
+        if (this.rmpVastVpaidPlayer) {
+          this.rmpVastVpaidPlayer.skipAd();
+        } else if (this.rmpVastSimidPlayer) {
+          this.rmpVastSimidPlayer.skipAd();
+        } else if (this.rmpVastAdPlayer) {
           // this will destroy ad
-          vast_player.resumeContent.call(this);
+          this.rmpVastAdPlayer.resumeContent();
         }
       }
     }
 
     /** 
-     * @type {() => string} 
+    * @typedef {object} Environment
+    * @property {number} devicePixelRatio
+    * @property {number} maxTouchPoints
+    * @property {boolean} isIpadOS
+    * @property {array} isIos
+    * @property {array} isAndroid
+    * @property {boolean} isMacOSSafari
+    * @property {boolean} isFirefox
+    * @property {boolean} isMobile
+    * @property {boolean} hasNativeFullscreenSupport
+    * @return {Environment}
+    */
+  }, {
+    key: "environment",
+    get: function get() {
+      return Environment;
+    }
+
+    /** 
+     * @type {() => boolean} 
      */
   }, {
-    key: "getAdTagUrl",
-    value: function getAdTagUrl() {
-      return this.adTagUrl;
+    key: "adPaused",
+    get: function get() {
+      if (this.__adOnStage && this.creative && this.creative.isLinear) {
+        if (this.rmpVastVpaidPlayer) {
+          return this.rmpVastVpaidPlayer.getAdPaused();
+        } else if (this.__adPlayer) {
+          return this.__adPlayer.paused;
+        }
+      }
+      return false;
+    }
+
+    /** 
+     * @type {(level: number) => void} 
+     */
+  }, {
+    key: "volume",
+    get:
+    /** 
+     * @type {() => number} 
+     */
+    function get() {
+      if (this.__adOnStage && this.creative && this.creative.isLinear) {
+        if (this.rmpVastVpaidPlayer) {
+          return this.rmpVastVpaidPlayer.getAdVolume();
+        } else if (this.rmpVastAdPlayer) {
+          return this.rmpVastAdPlayer.volume;
+        }
+      }
+      return this.rmpVastContentPlayer.volume;
+    }
+
+    /** 
+     * @type {(muted: boolean) => void} 
+     */,
+    set: function set(level) {
+      if (!FW.isNumber(level)) {
+        return;
+      }
+      var validatedLevel = 0;
+      if (level < 0) {
+        validatedLevel = 0;
+      } else if (level > 1) {
+        validatedLevel = 1;
+      } else {
+        validatedLevel = level;
+      }
+      if (this.__adOnStage && this.creative && this.creative.isLinear) {
+        if (this.rmpVastVpaidPlayer) {
+          this.rmpVastVpaidPlayer.setAdVolume(validatedLevel);
+        }
+        if (this.rmpVastAdPlayer) {
+          this.rmpVastAdPlayer.volume = validatedLevel;
+        }
+      }
+      this.rmpVastContentPlayer.volume = validatedLevel;
+    }
+  }, {
+    key: "muted",
+    get:
+    /** 
+     * @type {() => boolean} 
+     */
+    function get() {
+      if (this.__adOnStage && this.creative && this.creative.isLinear) {
+        if (this.rmpVastVpaidPlayer) {
+          if (this.rmpVastVpaidPlayer.getAdVolume() === 0) {
+            return true;
+          }
+          return false;
+        } else if (this.rmpVastAdPlayer) {
+          return this.rmpVastAdPlayer.muted;
+        }
+      }
+      return this.rmpVastContentPlayer.muted;
+    }
+
+    /** 
+     * @type {() => string} 
+     */,
+    set: function set(muted) {
+      if (typeof muted !== 'boolean') {
+        return;
+      }
+      if (this.__adOnStage && this.creative && this.creative.isLinear) {
+        if (this.rmpVastVpaidPlayer) {
+          if (muted) {
+            this.rmpVastVpaidPlayer.setAdVolume(0);
+          } else {
+            this.rmpVastVpaidPlayer.setAdVolume(1);
+          }
+        } else if (this.rmpVastAdPlayer) {
+          this.rmpVastAdPlayer.muted = muted;
+        }
+      }
+      this.rmpVastContentPlayer.muted = muted;
+    }
+  }, {
+    key: "adTagUrl",
+    get: function get() {
+      return this.__adTagUrl;
     }
 
     /** 
      * @type {() => string} 
      */
   }, {
-    key: "getAdMediaUrl",
-    value: function getAdMediaUrl() {
-      if (this.adOnStage) {
-        if (this.isVPAID) {
-          return vpaid.getCreativeUrl.call(this);
+    key: "adMediaUrl",
+    get: function get() {
+      if (this.__adOnStage) {
+        if (this.rmpVastVpaidPlayer) {
+          return this.rmpVastVpaidPlayer.getCreativeUrl();
         } else {
           if (this.creative && this.creative.mediaUrl) {
             return this.creative.mediaUrl;
@@ -20289,8 +20488,8 @@ var RmpVast = /*#__PURE__*/function () {
      * @type {() => boolean} 
      */
   }, {
-    key: "getAdLinear",
-    value: function getAdLinear() {
+    key: "adLinear",
+    get: function get() {
       if (this.creative && this.creative.isLinear) {
         return true;
       }
@@ -20304,8 +20503,8 @@ var RmpVast = /*#__PURE__*/function () {
      * @return {AdSystem}
      */
   }, {
-    key: "getAdSystem",
-    value: function getAdSystem() {
+    key: "adSystem",
+    get: function get() {
       // <AdSystem version="2.0" ><![CDATA[AdServer]]></AdSystem>
       // {value: String, version: String}
       if (this.ad && this.ad.system) {
@@ -20327,8 +20526,8 @@ var RmpVast = /*#__PURE__*/function () {
      * @return {universalAdId[]}
      */
   }, {
-    key: "getAdUniversalAdIds",
-    value: function getAdUniversalAdIds() {
+    key: "adUniversalAdIds",
+    get: function get() {
       // <UniversalAdId idRegistry="daily-motion-L">Linear-12345</UniversalAdId>
       // [{idRegistry: String, value: String}]
       if (this.creative && this.creative.universalAdIds) {
@@ -20341,8 +20540,8 @@ var RmpVast = /*#__PURE__*/function () {
      * @type {() => string} 
      */
   }, {
-    key: "getAdContentType",
-    value: function getAdContentType() {
+    key: "adContentType",
+    get: function get() {
       if (this.creative && this.creative.type) {
         return this.creative.type;
       }
@@ -20353,8 +20552,8 @@ var RmpVast = /*#__PURE__*/function () {
      * @type {() => string} 
      */
   }, {
-    key: "getAdTitle",
-    value: function getAdTitle() {
+    key: "adTitle",
+    get: function get() {
       if (this.ad && this.ad.title) {
         return this.ad.title;
       }
@@ -20365,8 +20564,8 @@ var RmpVast = /*#__PURE__*/function () {
      * @type {() => string} 
      */
   }, {
-    key: "getAdDescription",
-    value: function getAdDescription() {
+    key: "adDescription",
+    get: function get() {
       if (this.ad && this.ad.description) {
         return this.ad.description;
       }
@@ -20380,8 +20579,8 @@ var RmpVast = /*#__PURE__*/function () {
      * @return {Advertiser}
      */
   }, {
-    key: "getAdAdvertiser",
-    value: function getAdAdvertiser() {
+    key: "adAdvertiser",
+    get: function get() {
       // <Advertiser id='advertiser-desc'><![CDATA[Advertiser name]]></Advertiser>
       // {id: String, value: String}
       if (this.ad && this.ad.advertiser && this.ad.advertiser !== null) {
@@ -20401,8 +20600,8 @@ var RmpVast = /*#__PURE__*/function () {
      * @return {Pricing}
      */
   }, {
-    key: "getAdPricing",
-    value: function getAdPricing() {
+    key: "adPricing",
+    get: function get() {
       // <Pricing model="CPM" currency="USD" ><![CDATA[1.09]]></Pricing>
       // {value: String, model: String, currency: String}
       if (this.ad && this.ad.pricing && this.ad.pricing !== null) {
@@ -20419,8 +20618,8 @@ var RmpVast = /*#__PURE__*/function () {
      * @type {() => string} 
      */
   }, {
-    key: "getAdSurvey",
-    value: function getAdSurvey() {
+    key: "adSurvey",
+    get: function get() {
       if (this.ad && this.ad.survey) {
         return this.ad.survey;
       }
@@ -20434,8 +20633,8 @@ var RmpVast = /*#__PURE__*/function () {
      * @type {() => string} 
      */
   }, {
-    key: "getAdAdServingId",
-    value: function getAdAdServingId() {
+    key: "adAdServingId",
+    get: function get() {
       if (this.ad && this.ad.adServingId) {
         return this.ad.adServingId;
       }
@@ -20449,8 +20648,8 @@ var RmpVast = /*#__PURE__*/function () {
      * @return {Category[]}
      */
   }, {
-    key: "getAdCategories",
-    value: function getAdCategories() {
+    key: "adCategories",
+    get: function get() {
       // <Category authority=”iabtechlab.com”>232</Category> 
       if (this.ad && this.ad.categories && this.ad.categories.length > 0) {
         return this.ad.categories;
@@ -20465,8 +20664,8 @@ var RmpVast = /*#__PURE__*/function () {
      * @return {BlockedAdCategory[]}
      */
   }, {
-    key: "getAdBlockedAdCategories",
-    value: function getAdBlockedAdCategories() {
+    key: "adBlockedAdCategories",
+    get: function get() {
       // <BlockedAdCategories authority=”iabtechlab.com”>232</BlockedAdCategories> 
       if (this.ad && this.ad.blockedAdCategories && this.ad.blockedAdCategories.length > 0) {
         return this.ad.blockedAdCategories;
@@ -20478,17 +20677,17 @@ var RmpVast = /*#__PURE__*/function () {
      * @type {() => number} 
      */
   }, {
-    key: "getAdDuration",
-    value: function getAdDuration() {
-      if (this.adOnStage && this.creative && this.creative.isLinear) {
-        if (this.isVPAID) {
-          var duration = vpaid.getAdDuration.call(this);
+    key: "adDuration",
+    get: function get() {
+      if (this.__adOnStage && this.creative && this.creative.isLinear) {
+        if (this.rmpVastVpaidPlayer) {
+          var duration = this.rmpVastVpaidPlayer.getAdDuration();
           if (duration > 0) {
             duration = duration * 1000;
           }
           return duration;
-        } else {
-          return vast_player.getDuration.call(this);
+        } else if (this.rmpVastAdPlayer) {
+          return this.rmpVastAdPlayer.duration;
         }
       }
       return -1;
@@ -20498,18 +20697,18 @@ var RmpVast = /*#__PURE__*/function () {
      * @type {() => number} 
      */
   }, {
-    key: "getAdCurrentTime",
-    value: function getAdCurrentTime() {
-      if (this.adOnStage && this.creative && this.creative.isLinear) {
-        if (this.isVPAID) {
-          var remainingTime = vpaid.getAdRemainingTime.call(this);
-          var duration = vpaid.getAdDuration.call(this);
+    key: "adCurrentTime",
+    get: function get() {
+      if (this.__adOnStage && this.creative && this.creative.isLinear) {
+        if (this.rmpVastVpaidPlayer) {
+          var remainingTime = this.rmpVastVpaidPlayer.getAdRemainingTime();
+          var duration = this.rmpVastVpaidPlayer.getAdDuration();
           if (remainingTime === -1 || duration === -1 || remainingTime > duration) {
             return -1;
           }
           return (duration - remainingTime) * 1000;
-        } else {
-          return vast_player.getCurrentTime.call(this);
+        } else if (this.rmpVastAdPlayer) {
+          return this.rmpVastAdPlayer.currentTime;
         }
       }
       return -1;
@@ -20519,18 +20718,18 @@ var RmpVast = /*#__PURE__*/function () {
      * @type {() => number} 
      */
   }, {
-    key: "getAdRemainingTime",
-    value: function getAdRemainingTime() {
-      if (this.adOnStage && this.creative && this.creative.isLinear) {
-        if (this.isVPAID) {
-          var adRemainingTime = vpaid.getAdRemainingTime.call(this);
+    key: "adRemainingTime",
+    get: function get() {
+      if (this.__adOnStage && this.creative && this.creative.isLinear) {
+        if (this.rmpVastVpaidPlayer) {
+          var adRemainingTime = this.rmpVastVpaidPlayer.getAdRemainingTime();
           if (adRemainingTime > 0) {
             adRemainingTime = adRemainingTime * 1000;
           }
           return adRemainingTime;
-        } else {
-          var currentTime = vast_player.getCurrentTime.call(this);
-          var duration = vast_player.getDuration.call(this);
+        } else if (this.rmpVastAdPlayer) {
+          var currentTime = this.rmpVastAdPlayer.currentTime;
+          var duration = this.rmpVastAdPlayer.duration;
           if (currentTime === -1 || duration === -1 || currentTime > duration) {
             return -1;
           }
@@ -20544,20 +20743,20 @@ var RmpVast = /*#__PURE__*/function () {
      * @type {() => boolean} 
      */
   }, {
-    key: "getAdOnStage",
-    value: function getAdOnStage() {
-      return this.adOnStage;
+    key: "adOnStage",
+    get: function get() {
+      return this.__adOnStage;
     }
 
     /** 
      * @type {() => number} 
      */
   }, {
-    key: "getAdMediaWidth",
-    value: function getAdMediaWidth() {
-      if (this.adOnStage) {
-        if (this.isVPAID) {
-          return vpaid.getAdWidth.call(this);
+    key: "adMediaWidth",
+    get: function get() {
+      if (this.__adOnStage) {
+        if (this.rmpVastVpaidPlayer) {
+          return this.rmpVastVpaidPlayer.getAdWidth();
         } else if (this.creative && this.creative.width) {
           return this.creative.width;
         }
@@ -20569,11 +20768,11 @@ var RmpVast = /*#__PURE__*/function () {
      * @type {() => number} 
      */
   }, {
-    key: "getAdMediaHeight",
-    value: function getAdMediaHeight() {
-      if (this.adOnStage) {
-        if (this.isVPAID) {
-          return vpaid.getAdHeight.call(this);
+    key: "adMediaHeight",
+    get: function get() {
+      if (this.__adOnStage) {
+        if (this.rmpVastVpaidPlayer) {
+          return this.rmpVastVpaidPlayer.getAdHeight();
         } else if (this.creative && this.creative.height) {
           return this.creative.height;
         }
@@ -20585,8 +20784,8 @@ var RmpVast = /*#__PURE__*/function () {
      * @type {() => string} 
      */
   }, {
-    key: "getClickThroughUrl",
-    value: function getClickThroughUrl() {
+    key: "clickThroughUrl",
+    get: function get() {
       if (this.creative && this.creative.clickThroughUrl) {
         return this.creative.clickThroughUrl;
       }
@@ -20597,8 +20796,8 @@ var RmpVast = /*#__PURE__*/function () {
      * @type {() => number} 
      */
   }, {
-    key: "getSkipTimeOffset",
-    value: function getSkipTimeOffset() {
+    key: "skipTimeOffset",
+    get: function get() {
       if (this.creative && this.creative.skipoffset) {
         return this.creative.skipoffset;
       }
@@ -20609,8 +20808,8 @@ var RmpVast = /*#__PURE__*/function () {
      * @type {() => boolean} 
      */
   }, {
-    key: "getIsSkippableAd",
-    value: function getIsSkippableAd() {
+    key: "isSkippableAd",
+    get: function get() {
       if (this.creative && this.creative.isSkippableAd) {
         return true;
       }
@@ -20621,20 +20820,18 @@ var RmpVast = /*#__PURE__*/function () {
      * @type {() => boolean} 
      */
   }, {
-    key: "getContentPlayerCompleted",
-    value: function getContentPlayerCompleted() {
-      return this.contentPlayerCompleted;
+    key: "contentPlayerCompleted",
+    get: function get() {
+      return this.__contentPlayerCompleted;
     }
 
     /** 
      * @param {boolean} value
      * @return {void}
-     */
-  }, {
-    key: "setContentPlayerCompleted",
-    value: function setContentPlayerCompleted(value) {
+     */,
+    set: function set(value) {
       if (typeof value === 'boolean') {
-        this.contentPlayerCompleted = value;
+        this.__contentPlayerCompleted = value;
       }
     }
 
@@ -20642,52 +20839,43 @@ var RmpVast = /*#__PURE__*/function () {
      * @type {() => string} 
      */
   }, {
-    key: "getAdErrorMessage",
-    value: function getAdErrorMessage() {
-      return this.vastErrorMessage;
+    key: "adErrorMessage",
+    get: function get() {
+      return this.__adErrorMessage;
     }
 
     /** 
      * @type {() => number} 
      */
   }, {
-    key: "getAdVastErrorCode",
-    value: function getAdVastErrorCode() {
-      return this.vastErrorCode;
+    key: "adVastErrorCode",
+    get: function get() {
+      return this.__vastErrorCode;
     }
 
     /** 
      * @type {() => string} 
      */
   }, {
-    key: "getAdErrorType",
-    value: function getAdErrorType() {
-      return this.adErrorType;
+    key: "adErrorType",
+    get: function get() {
+      return this.__adErrorType;
     }
 
     /** 
      * @type {() => boolean} 
      */
   }, {
-    key: "getIsUsingContentPlayerForAds",
-    value: function getIsUsingContentPlayerForAds() {
-      return this.useContentPlayerForAds;
-    }
-
-    /** 
-     * @type {() => boolean} 
-     */
-  }, {
-    key: "getAdSkippableState",
-    value: function getAdSkippableState() {
-      if (this.adOnStage) {
-        if (this.isVPAID) {
-          return vpaid.getAdSkippableState.call(this);
-        } else if (this.simidPlayer) {
+    key: "adSkippableState",
+    get: function get() {
+      if (this.__adOnStage) {
+        if (this.rmpVastVpaidPlayer) {
+          return this.rmpVastVpaidPlayer.getAdSkippableState();
+        } else if (this.rmpVastSimidPlayer) {
           return true;
         } else {
-          if (this.getIsSkippableAd()) {
-            return this.skippableAdCanBeSkipped;
+          if (this.isSkippableAd && this.rmpVastLinearCreative) {
+            return this.rmpVastLinearCreative.skippableAdCanBeSkipped;
           }
         }
       }
@@ -20698,18 +20886,57 @@ var RmpVast = /*#__PURE__*/function () {
      * @return {HTMLMediaElement|null}
      */
   }, {
-    key: "getVastPlayer",
-    value: function getVastPlayer() {
-      return this.vastPlayer;
+    key: "adPlayer",
+    get: function get() {
+      return this.__adPlayer;
     }
 
     /** 
      * @return {HTMLMediaElement|null}
      */
   }, {
-    key: "getContentPlayer",
-    value: function getContentPlayer() {
-      return this.contentPlayer;
+    key: "contentPlayer",
+    get: function get() {
+      return this.__contentPlayer;
+    }
+
+    /** 
+     * @type {() => boolean} 
+     */
+  }, {
+    key: "initialized",
+    get: function get() {
+      return this.__initialized;
+    }
+
+    /** 
+     * @typedef {object} AdPod
+     * @property {number} adPodCurrentIndex
+     * @property {number} adPodLength
+     * @return {AdPod}
+     */
+  }, {
+    key: "adPodInfo",
+    get: function get() {
+      if (this.adPod && this.adPodLength) {
+        var result = {};
+        result.adPodCurrentIndex = this.adSequence;
+        result.adPodLength = this.adPodLength;
+        return result;
+      }
+      return {
+        adPodCurrentIndex: -1,
+        adPodLength: 0
+      };
+    }
+
+    /** 
+     * @type {() => string} 
+     */
+  }, {
+    key: "companionAdsRequiredAttribute",
+    get: function get() {
+      return this.__companionAdsRequiredAttribute;
     }
 
     /** 
@@ -20732,8 +20959,8 @@ var RmpVast = /*#__PURE__*/function () {
       if (this.validCompanionAds.length > 0) {
         var availableCompanionAds;
         if (typeof inputWidth === 'number' && inputWidth > 0 && typeof inputHeight === 'number' && inputHeight > 0) {
-          var _context11;
-          availableCompanionAds = filter_default()(_context11 = this.validCompanionAds).call(_context11, function (companionAds) {
+          var _context9;
+          availableCompanionAds = filter_default()(_context9 = this.validCompanionAds).call(_context9, function (companionAds) {
             return inputWidth >= companionAds.width && inputHeight >= companionAds.height;
           });
         } else {
@@ -20748,13 +20975,36 @@ var RmpVast = /*#__PURE__*/function () {
     }
 
     /** 
+     * @private
+     */
+  }, {
+    key: "_onImgClickThrough",
+    value: function _onImgClickThrough(companionClickThroughUrl, companionClickTrackingUrls, event) {
+      var _this12 = this;
+      if (event) {
+        event.stopPropagation();
+        if (event.type === 'touchend') {
+          event.preventDefault();
+        }
+      }
+      if (companionClickTrackingUrls) {
+        companionClickTrackingUrls.forEach(function (companionClickTrackingUrl) {
+          if (companionClickTrackingUrl.url) {
+            Tracking.pingURI.call(_this12, companionClickTrackingUrl.url);
+          }
+        });
+      }
+      FW.openWindow(companionClickThroughUrl);
+    }
+
+    /** 
      * @param {number} index
      * @return {HTMLElement|null}
      */
   }, {
     key: "getCompanionAd",
     value: function getCompanionAd(index) {
-      var _this11 = this;
+      var _this13 = this;
       if (typeof this.companionAdsList[index] === 'undefined') {
         return null;
       }
@@ -20781,11 +21031,11 @@ var RmpVast = /*#__PURE__*/function () {
         if (trackingEventsUrls.length > 0) {
           html.onload = function () {
             trackingEventsUrls.forEach(function (trackingEventsUrl) {
-              tracking_events.pingURI.call(_this11, trackingEventsUrl);
+              Tracking.pingURI.call(_this13, trackingEventsUrl);
             });
           };
           html.onerror = function () {
-            tracking_events.error.call(_this11, 603);
+            Tracking.error.call(_this13, 603);
           };
         }
         var companionClickTrackingUrls = null;
@@ -20794,26 +21044,9 @@ var RmpVast = /*#__PURE__*/function () {
           console.log(companionClickTrackingUrls);
           companionClickTrackingUrls = companionAd.companionClickTrackingUrls;
         }
-        var _onImgClickThrough = function _onImgClickThrough(companionClickThroughUrl, companionClickTrackingUrls, event) {
-          var _this12 = this;
-          if (event) {
-            event.stopPropagation();
-            if (event.type === 'touchend') {
-              event.preventDefault();
-            }
-          }
-          if (companionClickTrackingUrls) {
-            companionClickTrackingUrls.forEach(function (companionClickTrackingUrl) {
-              if (companionClickTrackingUrl.url) {
-                tracking_events.pingURI.call(_this12, companionClickTrackingUrl.url);
-              }
-            });
-          }
-          FW.openWindow(companionClickThroughUrl);
-        };
         if (companionAd.companionClickThroughUrl) {
-          html.addEventListener('touchend', _onImgClickThrough.bind(this, companionAd.companionClickThroughUrl, companionClickTrackingUrls));
-          html.addEventListener('click', _onImgClickThrough.bind(this, companionAd.companionClickThroughUrl, companionClickTrackingUrls));
+          var _onImgClickThroughFn = this._onImgClickThrough.bind(this, companionAd.companionClickThroughUrl, companionClickTrackingUrls);
+          FW.addEvents(['touchend', 'click'], html, _onImgClickThroughFn);
         }
       }
       if (companionAd.imageUrl) {
@@ -20833,57 +21066,16 @@ var RmpVast = /*#__PURE__*/function () {
     }
 
     /** 
-     * @type {() => string} 
-     */
-  }, {
-    key: "getCompanionAdsRequiredAttribute",
-    value: function getCompanionAdsRequiredAttribute() {
-      if (this.adOnStage) {
-        return this.companionAdsRequiredAttribute;
-      }
-      return '';
-    }
-
-    /** 
      * @type {() => void} 
      */
   }, {
     key: "initialize",
     value: function initialize() {
-      if (!this.rmpVastInitialized) {
+      if (!this.__initialized) {
         console.log("".concat(FW.consolePrepend, " Upon user interaction - player needs to be initialized"), FW.consoleStyle, '');
-        vast_player.init.call(this);
+        this.rmpVastAdPlayer = new AdPlayer(this);
+        this.rmpVastAdPlayer.init();
       }
-    }
-
-    /** 
-     * @type {() => boolean} 
-     */
-  }, {
-    key: "getInitialized",
-    value: function getInitialized() {
-      return this.rmpVastInitialized;
-    }
-
-    /** 
-     * @typedef {object} AdPod
-     * @property {number} adPodCurrentIndex
-     * @property {number} adPodLength
-     * @return {AdPod}
-     */
-  }, {
-    key: "getAdPodInfo",
-    value: function getAdPodInfo() {
-      if (this.adPod && this.adPodLength) {
-        var result = {};
-        result.adPodCurrentIndex = this.adSequence;
-        result.adPodLength = this.adPodLength;
-        return result;
-      }
-      return {
-        adPodCurrentIndex: -1,
-        adPodLength: 0
-      };
     }
 
     // VPAID methods
@@ -20893,8 +21085,8 @@ var RmpVast = /*#__PURE__*/function () {
   }, {
     key: "resizeAd",
     value: function resizeAd(width, height, viewMode) {
-      if (this.adOnStage && this.isVPAID) {
-        vpaid.resizeAd.call(this, width, height, viewMode);
+      if (this.rmpVastVpaidPlayer) {
+        this.rmpVastVpaidPlayer.resizeAd(width, height, viewMode);
       }
     }
 
@@ -20904,8 +21096,8 @@ var RmpVast = /*#__PURE__*/function () {
   }, {
     key: "expandAd",
     value: function expandAd() {
-      if (this.adOnStage && this.isVPAID) {
-        vpaid.expandAd.call(this);
+      if (this.rmpVastVpaidPlayer) {
+        this.rmpVastVpaidPlayer.expandAd();
       }
     }
 
@@ -20915,8 +21107,8 @@ var RmpVast = /*#__PURE__*/function () {
   }, {
     key: "collapseAd",
     value: function collapseAd() {
-      if (this.adOnStage && this.isVPAID) {
-        vpaid.collapseAd.call(this);
+      if (this.rmpVastVpaidPlayer) {
+        this.rmpVastVpaidPlayer.collapseAd();
       }
     }
 
@@ -20924,10 +21116,10 @@ var RmpVast = /*#__PURE__*/function () {
      * @type {() => boolean} 
      */
   }, {
-    key: "getAdExpanded",
-    value: function getAdExpanded() {
-      if (this.adOnStage && this.isVPAID) {
-        vpaid.getAdExpanded.call(this);
+    key: "adExpanded",
+    get: function get() {
+      if (this.rmpVastVpaidPlayer) {
+        this.rmpVastVpaidPlayer.getAdExpanded();
       }
       return false;
     }
@@ -20936,10 +21128,10 @@ var RmpVast = /*#__PURE__*/function () {
      * @type {() => string} 
      */
   }, {
-    key: "getVPAIDCompanionAds",
-    value: function getVPAIDCompanionAds() {
-      if (this.adOnStage && this.isVPAID) {
-        vpaid.getAdCompanions.call(this);
+    key: "vpaidCompanionAds",
+    get: function get() {
+      if (this.rmpVastVpaidPlayer) {
+        this.rmpVastVpaidPlayer.getAdCompanions();
       }
       return '';
     }

@@ -15,15 +15,10 @@ const ADTAG = 'https://www.radiantmediaplayer.com/vast/tags/iab/vast2/Inline_Non
 describe('Test for NonLinearSpecIABVAST2', function () {
 
   const id = 'rmp';
-  const container = document.getElementById(id);
   const video = document.querySelector('.rmp-video');
   const rmpVast = new RmpVast(id);
-  const env = rmpVast.getEnvironment();
+  const env = rmpVast.environment;
   video.muted = true;
-  if (env.isAndroid[0] || env.isIos[0]) {
-    container.style.width = '320px';
-    container.style.height = '180px';
-  }
   const title = document.getElementsByTagName('title')[0];
 
   it('should load adTag and play it', function (done) {
@@ -41,7 +36,7 @@ describe('Test for NonLinearSpecIABVAST2', function () {
     });
 
     rmpVast.on('aderror', function (e) {
-      const errorCode = rmpVast.getAdVastErrorCode();
+      const errorCode = rmpVast.adVastErrorCode;
       if ((env.isAndroid[0] || env.isIos[0]) && errorCode === 501) {
         _incrementAndLog(e);
         expect(validSteps).toBe(3);

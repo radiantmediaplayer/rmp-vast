@@ -1,87 +1,92 @@
 import FW from '../framework/fw';
 import Utils from '../framework/utils';
 
-const CONTENT_PLAYER = {};
 
-CONTENT_PLAYER.play = function (firstContentPlayerPlayRequest) {
-  if (this.contentPlayer && this.contentPlayer.paused) {
-    Utils.playPromise.call(this, 'content', firstContentPlayerPlayRequest);
+export default class ContentPlayer {
+
+  constructor(rmpVast) {
+    this._rmpVast = rmpVast;
+    this._contentPlayer = rmpVast.__contentPlayer;
+    this._customPlaybackCurrentTime = 0;
+    this._antiSeekLogicInterval = null;
   }
-};
 
-CONTENT_PLAYER.pause = function () {
-  if (this.contentPlayer && !this.contentPlayer.paused) {
-    this.contentPlayer.pause();
+  destroy() {
+    FW.clearInterval(this._antiSeekLogicInterval);
   }
-};
 
-CONTENT_PLAYER.setVolume = function (level) {
-  if (this.contentPlayer) {
-    this.contentPlayer.volume = level;
-  }
-};
-
-CONTENT_PLAYER.getVolume = function () {
-  if (this.contentPlayer) {
-    return this.contentPlayer.volume;
-  }
-  return -1;
-};
-
-CONTENT_PLAYER.getMute = function () {
-  if (this.contentPlayer) {
-    return this.contentPlayer.muted;
-  }
-  return false;
-};
-
-CONTENT_PLAYER.setMute = function (muted) {
-  if (this.contentPlayer) {
-    if (muted && !this.contentPlayer.muted) {
-      this.contentPlayer.muted = true;
-    } else if (!muted && this.contentPlayer.muted) {
-      this.contentPlayer.muted = false;
+  play(firstContentPlayerPlayRequest) {
+    if (this._contentPlayer && this._contentPlayer.paused) {
+      Utils.playPromise.call(this._rmpVast, 'content', firstContentPlayerPlayRequest);
     }
   }
-};
 
-CONTENT_PLAYER.getDuration = function () {
-  if (this.contentPlayer && FW.isNumber(this.contentPlayer.duration)) {
-    return this.contentPlayer.duration * 1000;
+  pause() {
+    if (this._contentPlayer && !this._contentPlayer.paused) {
+      this._contentPlayer.pause();
+    }
   }
-  return -1;
-};
 
-CONTENT_PLAYER.getCurrentTime = function () {
-  if (this.contentPlayer && FW.isNumber(this.contentPlayer.currentTime)) {
-    return this.contentPlayer.currentTime * 1000;
+  set volume(level) {
+    if (this._contentPlayer) {
+      this._contentPlayer.volume = level;
+    }
   }
-  return -1;
-};
 
-CONTENT_PLAYER.seekTo = function (msSeek) {
-  if (!FW.isNumber(msSeek)) {
-    return;
+  get volume() {
+    if (this._contentPlayer) {
+      return this._contentPlayer.volume;
+    }
+    return -1;
   }
-  if (msSeek >= 0 && this.contentPlayer) {
-    this.contentPlayer.currentTime = msSeek / 1000;
-  }
-};
 
-CONTENT_PLAYER.preventSeekingForCustomPlayback = function () {
-  // after much poking it appears we cannot rely on seek events for iOS to 
-  // set this up reliably - so interval it is
-  if (this.contentPlayer) {
-    this.antiSeekLogicInterval = setInterval(() => {
-      if (this.creative.isLinear && this.adOnStage) {
-        const diff = Math.abs(this.customPlaybackCurrentTime - this.contentPlayer.currentTime);
-        if (diff > 1) {
-          this.contentPlayer.currentTime = this.customPlaybackCurrentTime;
-        }
-        this.customPlaybackCurrentTime = this.contentPlayer.currentTime;
+  get muted() {
+    if (this._contentPlayer) {
+      return this._contentPlayer.muted;
+    }
+    return false;
+  }
+
+  set muted(muted) {
+    if (this._contentPlayer) {
+      if (muted && !this._contentPlayer.muted) {
+        this._contentPlayer.muted = true;
+      } else if (!muted && this._contentPlayer.muted) {
+        this._contentPlayer.muted = false;
       }
-    }, 200);
+    }
   }
-};
 
-export default CONTENT_PLAYER;
+  get currentTime() {
+    if (this._contentPlayer && FW.isNumber(this._contentPlayer.currentTime)) {
+      return this._contentPlayer.currentTime * 1000;
+    }
+    return -1;
+  }
+
+  seekTo(msSeek) {
+    if (!FW.isNumber(msSeek)) {
+      return;
+    }
+    if (msSeek >= 0 && this._contentPlayer) {
+      this._contentPlayer.currentTime = msSeek / 1000;
+    }
+  }
+
+  preventSeekingForCustomPlayback() {
+    // after much poking it appears we cannot rely on seek events for iOS to 
+    // set this up reliably - so interval it is
+    if (this._contentPlayer) {
+      this._antiSeekLogicInterval = setInterval(() => {
+        if (this._rmpVast.creative.isLinear && this._rmpVast.__adOnStage) {
+          const diff = Math.abs(this._customPlaybackCurrentTime - this._contentPlayer.currentTime);
+          if (diff > 1) {
+            this._contentPlayer.currentTime = this._customPlaybackCurrentTime;
+          }
+          this._customPlaybackCurrentTime = this._contentPlayer.currentTime;
+        }
+      }, 200);
+    }
+  }
+
+}

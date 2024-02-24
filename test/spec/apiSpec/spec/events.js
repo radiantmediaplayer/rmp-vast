@@ -6,7 +6,7 @@ describe('Test for API events', function () {
   const id = 'rmp';
   const video = document.querySelector('.rmp-video');
   const rmpVast = new RmpVast(id, {
-    showControlsForVastPlayer: true
+    showControlsForAdPlayer: true
   });
   video.muted = true;
   const title = document.getElementsByTagName('title')[0];
@@ -35,7 +35,6 @@ describe('Test for API events', function () {
       'admidpoint',
       'adthirdquartile',
       'adclick',
-      'adprogress',
       'adskipped'
     ];
 
@@ -61,8 +60,8 @@ describe('Test for API events', function () {
 
     rmpVast.on('addestroyed', function (e) {
       _incrementAndLogEvents(e);
-      expect(eventsSteps).toBe(18);
-      if (eventsSteps === 18) {
+      expect(eventsSteps).toBe(17);
+      if (eventsSteps === 17) {
         title.textContent = 'Test completed';
         done();
       }

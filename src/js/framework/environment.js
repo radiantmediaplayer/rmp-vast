@@ -1,26 +1,7 @@
 import FW from './fw';
 
-const TEST_VIDEO = document.createElement('video');
 
-const IOS_PATTERN = /(ipad|iphone|ipod)/i;
-const IOS_VERSION_PATTERN = /os\s+(\d+)_/i;
-
-const MACOS_PATTERN = /(macintosh|mac\s+os)/i;
-const MACOS_VERSION_PATTERN = /mac\s+os\s+x\s+(\d+)_(\d+)/i;
-
-const SAFARI_PATTERN = /safari\/[.0-9]*/i;
-const SAFARI_VERSION_PATTERN = /version\/(\d+)\./i;
-const NO_SAFARI_PATTERN = /(chrome|chromium|android|crios|fxios)/i;
-
-const MAC_PLATFORM_PATTERN = /macintel/i;
-
-const ANDROID_PATTERN = /android/i;
-const ANDROID_VERSION_PATTERN = /android\s*(\d+)\./i;
-
-/*const FIREFOX_PATTERN = /firefox\//i;
-const SEAMONKEY_PATTERN = /seamonkey\//i;*/
-
-export default class ENV {
+export default class Environment {
 
   static _filterVersion(pattern) {
     if (navigator.userAgent) {
@@ -30,6 +11,10 @@ export default class ENV {
       }
     }
     return -1;
+  }
+
+  static get _testVideo() {
+    return document.createElement('video');
   }
 
   static get hasTouchEvents() {
@@ -63,63 +48,65 @@ export default class ENV {
   }
 
   static get isIos() {
+    const IOS_PATTERN = /(ipad|iphone|ipod)/i;
+    const IOS_VERSION_PATTERN = /os\s+(\d+)_/i;
     let support = [false, -1];
-    if (IOS_PATTERN.test(ENV.userAgent) && ENV.hasTouchEvents) {
-      support = [true, ENV._filterVersion(IOS_VERSION_PATTERN)];
+    if (IOS_PATTERN.test(Environment.userAgent) && Environment.hasTouchEvents) {
+      support = [true, Environment._filterVersion(IOS_VERSION_PATTERN)];
     }
     return support;
   }
 
   static get isIpadOS() {
-    if (!ENV.isIos[0] && ENV.hasTouchEvents && MAC_PLATFORM_PATTERN.test(navigator.platform) && ENV.devicePixelRatio > 1 &&
-      ENV.maxTouchPoints > 1) {
+    const MAC_PLATFORM_PATTERN = /macintel/i;
+    if (!Environment.isIos[0] && Environment.hasTouchEvents && MAC_PLATFORM_PATTERN.test(navigator.platform) &&
+      Environment.devicePixelRatio > 1 && Environment.maxTouchPoints > 1) {
       return true;
     }
     return false;
   }
 
   static get isMacOS() {
+    const MACOS_PATTERN = /(macintosh|mac\s+os)/i;
+    const MACOS_VERSION_PATTERN = /mac\s+os\s+x\s+(\d+)_(\d+)/i;
     let isMacOS = false;
     let macOSXMinorVersion = -1;
-    if (!ENV.isIos[0] && !ENV.isIpadOS && MACOS_PATTERN.test(ENV.userAgent)) {
+    if (!Environment.isIos[0] && !Environment.isIpadOS && MACOS_PATTERN.test(Environment.userAgent)) {
       isMacOS = true;
-      macOSXMinorVersion = ENV._filterVersion(MACOS_VERSION_PATTERN, true);
+      macOSXMinorVersion = Environment._filterVersion(MACOS_VERSION_PATTERN, true);
     }
     return [isMacOS, macOSXMinorVersion];
   }
 
   static get isSafari() {
+    const SAFARI_PATTERN = /safari\/[.0-9]*/i;
+    const SAFARI_VERSION_PATTERN = /version\/(\d+)\./i;
+    const NO_SAFARI_PATTERN = /(chrome|chromium|android|crios|fxios)/i;
     let isSafari = false;
     let safariVersion = -1;
-    if (SAFARI_PATTERN.test(ENV.userAgent) && !NO_SAFARI_PATTERN.test(ENV.userAgent)) {
+    if (SAFARI_PATTERN.test(Environment.userAgent) && !NO_SAFARI_PATTERN.test(Environment.userAgent)) {
       isSafari = true;
-      safariVersion = ENV._filterVersion(SAFARI_VERSION_PATTERN);
+      safariVersion = Environment._filterVersion(SAFARI_VERSION_PATTERN);
     }
     return [isSafari, safariVersion];
   }
 
   static get isMacOSSafari() {
-    return ENV.isMacOS[0] && ENV.isSafari[0];
+    return Environment.isMacOS[0] && Environment.isSafari[0];
   }
 
   static get isAndroid() {
+    const ANDROID_PATTERN = /android/i;
+    const ANDROID_VERSION_PATTERN = /android\s*(\d+)\./i;
     let support = [false, -1];
-    if (!ENV.isIos[0] && ENV.hasTouchEvents && ANDROID_PATTERN.test(ENV.userAgent)) {
-      support = [true, ENV._filterVersion(ANDROID_VERSION_PATTERN)];
+    if (!Environment.isIos[0] && Environment.hasTouchEvents && ANDROID_PATTERN.test(Environment.userAgent)) {
+      support = [true, Environment._filterVersion(ANDROID_VERSION_PATTERN)];
     }
     return support;
   }
 
-  /*// from https://developer.mozilla.org/en-US/docs/Web/HTTP/Browser_detection_using_the_user_agent
-  static get isFirefox() {
-    if (FIREFOX_PATTERN.test(ENV.userAgent) && !SEAMONKEY_PATTERN.test(ENV.userAgent)) {
-      return true;
-    }
-    return false;
-  }*/
-
   static get isMobile() {
-    if (ENV.isIos[0] || ENV.isAndroid[0] || ENV.isIpadOS) {
+    if (Environment.isIos[0] || Environment.isAndroid[0] || Environment.isIpadOS) {
       return true;
     }
     return false;
@@ -127,12 +114,13 @@ export default class ENV {
 
   static get hasNativeFullscreenSupport() {
     const doc = document.documentElement;
+    const testVideo = Environment._testVideo;
     if (doc) {
       if (typeof doc.requestFullscreen !== 'undefined' ||
         typeof doc.webkitRequestFullscreen !== 'undefined' ||
         typeof doc.mozRequestFullScreen !== 'undefined' ||
         typeof doc.msRequestFullscreen !== 'undefined' ||
-        typeof TEST_VIDEO.webkitEnterFullscreen !== 'undefined') {
+        typeof testVideo.webkitEnterFullscreen !== 'undefined') {
         return true;
       }
     }
@@ -140,14 +128,15 @@ export default class ENV {
   }
 
   static checkCanPlayType(type, codec) {
-    if (TEST_VIDEO.canPlayType !== 'undefined') {
+    const testVideo = Environment._testVideo;
+    if (testVideo.canPlayType !== 'undefined') {
       if (type && codec) {
-        const canPlayType = TEST_VIDEO.canPlayType(type + '; codecs="' + codec + '"');
+        const canPlayType = testVideo.canPlayType(type + '; codecs="' + codec + '"');
         if (canPlayType !== '') {
           return true;
         }
       } else if (type && !codec) {
-        const canPlayType = TEST_VIDEO.canPlayType(type);
+        const canPlayType = testVideo.canPlayType(type);
         if (canPlayType !== '') {
           return true;
         }

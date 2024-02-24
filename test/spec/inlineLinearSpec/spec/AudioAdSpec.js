@@ -6,7 +6,7 @@ describe('Test for AudioAdSpec', function () {
   const container = document.getElementById(id);
   const video = document.querySelector('.rmp-video');
   const rmpVast = new RmpVast(id);
-  const env = rmpVast.getEnvironment();
+  const env = rmpVast.environment;
   video.muted = true;
   if (env.isAndroid[0] || env.isIos[0]) {
     container.style.width = '320px';
@@ -24,30 +24,27 @@ describe('Test for AudioAdSpec', function () {
       }
     };
 
-    rmpVast.on('adloaded', function (e) {
-      _incrementAndLog(e);
-    });
-
-    rmpVast.on('addurationchange', function (e) {
-      _incrementAndLog(e);
-    });
-
-    rmpVast.on('adimpression', function (e) {
-      _incrementAndLog(e);
-    });
-
-    rmpVast.on('adstarted', function (e) {
-      _incrementAndLog(e);
-    });
-
     rmpVast.on('adtagstartloading', function (e) {
       _incrementAndLog(e);
     });
-
     rmpVast.on('adtagloaded', function (e) {
       _incrementAndLog(e);
     });
-
+    rmpVast.on('addurationchange', function (e) {
+      _incrementAndLog(e);
+    });
+    rmpVast.on('adloaded', function (e) {
+      _incrementAndLog(e);
+    });
+    rmpVast.on('adimpression', function (e) {
+      _incrementAndLog(e);
+    });
+    rmpVast.on('adstarted', function (e) {
+      _incrementAndLog(e);
+    });
+    rmpVast.on('adcomplete', function (e) {
+      _incrementAndLog(e);
+    });
     rmpVast.on('addestroyed', function (e) {
       _incrementAndLog(e);
       let timeupdateCount = 0;
@@ -55,8 +52,8 @@ describe('Test for AudioAdSpec', function () {
         timeupdateCount++;
         if (timeupdateCount === 5) {
           _incrementAndLog(e);
-          if (validSteps === 8) {
-            expect(validSteps).toBe(8);
+          if (validSteps === 9) {
+            expect(validSteps).toBe(9);
             title.textContent = 'Test completed';
             done();
           }

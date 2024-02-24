@@ -1,543 +1,603 @@
 import FW from '../framework/fw';
-import ENV from '../framework/env';
+import Environment from '../framework/environment';
+import Tracking from '../tracking/tracking';
 import Utils from '../framework/utils';
-import TRACKING_EVENTS from '../tracking/tracking-events';
-import VAST_PLAYER from '../players/vast-player';
-import VPAID from '../players/vpaid';
-import ICONS from './icons';
+import Icons from './icons';
 import RmpConnection from '../../assets/rmp-connection/rmp-connection';
 import SimidPlayer from '../players/simid/simid_player';
+import VpaidPlayer from '../players/vpaid-player';
 
-const LINEAR = {};
 
-const VPAID_PATTERN = /vpaid/i;
-const JS_PATTERN = /\/javascript/i;
-const HTML5_MEDIA_ERROR_TYPES = [
-  'MEDIA_ERR_CUSTOM',
-  'MEDIA_ERR_ABORTED',
-  'MEDIA_ERR_NETWORK',
-  'MEDIA_ERR_DECODE',
-  'MEDIA_ERR_SRC_NOT_SUPPORTED',
-  'MEDIA_ERR_ENCRYPTED'
-];
-const COMMON_VIDEO_FORMATS = [
-  'video/webm',
-  'video/mp4',
-  'video/ogg',
-  'video/3gpp'
-];
+export default class LinearCreative {
 
-const _onDurationChange = function () {
-  this.vastPlayerDuration = VAST_PLAYER.getDuration.call(this);
-  Utils.createApiEvent.call(this, 'addurationchange');
-  // progress event
-  if (this.vastPlayerDuration === -1) {
-    return;
+  constructor(rmpVast) {
+    this._rmpVast = rmpVast;
+    this._params = rmpVast.params;
+    this._container = rmpVast.container;
+    this._adContainer = rmpVast.adContainer;
+    this._adPlayer = rmpVast.__adPlayer;
+    this._contentPlayer = rmpVast.__contentPlayer;
+    this._firstAdPlayerPlayRequest = true;
+    this._interactionMobileUI = null;
+    this._skipWaitingUI = null;
+    this._skipMessageUI = null;
+    this._skipIconUI = null;
+    this._skipButtonUI = null;
+    this._skippableAdCanBeSkipped = false;
+    this._onSkipInteractionFn = null;
+    this._onTimeupdateCheckSkipFn = null;
+    this._onDurationChangeFn = null;
+    this._onLoadedmetadataPlayFn = null;
+    this._onContextMenuFn = null;
+    this._onPlaybackErrorFn = null;
+    this._onInteractionOpenClickThroughUrlFn = null;
+    this._creativeLoadTimeoutCallback = null;
+    // hls.js
+    this._hlsJS = [];
+    this._hlsJSIndex = 0;
+    this._readingHlsJS = false;
   }
-  const keys = Object.keys(this.creative.trackingEvents);
-  keys.forEach((eventName) => {
-    if (/progress-/i.test(eventName)) {
-      const time = eventName.split('-');
-      const time_2 = time[1];
-      if (/%/i.test(time_2)) {
-        let timePerCent = time_2.slice(0, -1);
-        timePerCent = (this.vastPlayerDuration * parseFloat(timePerCent)) / 100;
-        const trackingUrls = this.creative.trackingEvents[eventName];
-        trackingUrls.forEach(url => {
-          this.progressEvents.push({
-            time: timePerCent,
-            url: url
+
+  get hlsJSInstances() {
+    return this._hlsJS;
+  }
+
+  get hlsJSIndex() {
+    return this._hlsJSIndex;
+  }
+
+  set hlsJSIndex(value) {
+    this._hlsJSIndex = value;
+  }
+
+  get readingHlsJS() {
+    return this._readingHlsJS;
+  }
+
+  set readingHlsJS(value) {
+    this._readingHlsJS = value;
+  }
+
+  get skippableAdCanBeSkipped() {
+    return this._skippableAdCanBeSkipped;
+  }
+
+  _onDurationChange() {
+    let adPlayerDuration = -1;
+    if (this._rmpVast.rmpVastAdPlayer) {
+      adPlayerDuration = this._rmpVast.rmpVastAdPlayer.duration;
+    }
+    Utils.createApiEvent.call(this._rmpVast, 'addurationchange');
+    // progress event
+    if (adPlayerDuration === -1) {
+      return;
+    }
+    const keys = Object.keys(this._rmpVast.creative.trackingEvents);
+    keys.forEach((eventName) => {
+      if (/progress-/i.test(eventName)) {
+        const time = eventName.split('-');
+        const time_2 = time[1];
+        if (/%/i.test(time_2)) {
+          let timePerCent = time_2.slice(0, -1);
+          timePerCent = (adPlayerDuration * parseFloat(timePerCent)) / 100;
+          const trackingUrls = this._rmpVast.creative.trackingEvents[eventName];
+          trackingUrls.forEach(url => {
+            this._rmpVast.progressEvents.push({
+              time: timePerCent,
+              url: url
+            });
           });
-        });
+        } else {
+          const trackingUrls = this._rmpVast.creative.trackingEvents[eventName];
+          trackingUrls.forEach(url => {
+            this._rmpVast.progressEvents.push({
+              time: parseFloat(time_2) * 1000,
+              url: url
+            });
+          });
+        }
+      }
+    });
+    // sort progress time ascending
+    if (this._rmpVast.progressEvents.length > 0) {
+      this._rmpVast.progressEvents.sort((a, b) => {
+        return a.time - b.time;
+      });
+    }
+  }
+
+  _onLoadedmetadataPlay() {
+    FW.clearTimeout(this._creativeLoadTimeoutCallback);
+    // adjust volume to make sure content player volume matches ad player volume
+    if (this._adPlayer) {
+      if (this._adPlayer.volume !== this._contentPlayer.volume) {
+        this._adPlayer.volume = this._contentPlayer.volume;
+      }
+      if (this._contentPlayer.muted) {
+        this._adPlayer.muted = true;
       } else {
-        const trackingUrls = this.creative.trackingEvents[eventName];
-        trackingUrls.forEach(url => {
-          this.progressEvents.push({
-            time: parseFloat(time_2) * 1000,
-            url: url
-          });
-        });
+        this._adPlayer.muted = false;
       }
     }
-  });
-  // sort progress time ascending
-  if (this.progressEvents.length > 0) {
-    this.progressEvents.sort(function (a, b) {
-      return a.time - b.time;
-    });
-  }
-};
-
-const _onLoadedmetadataPlay = function () {
-  clearTimeout(this.creativeLoadTimeoutCallback);
-  // adjust volume to make sure content player volume matches vast player volume
-  if (this.vastPlayer) {
-    if (this.vastPlayer.volume !== this.contentPlayer.volume) {
-      this.vastPlayer.volume = this.contentPlayer.volume;
+    // show ad container holding ad player
+    FW.show(this._adContainer);
+    FW.show(this._adPlayer);
+    this._rmpVast.__adOnStage = true;
+    // play ad player
+    if (this._rmpVast.rmpVastAdPlayer) {
+      this._rmpVast.rmpVastAdPlayer.play(this._firstAdPlayerPlayRequest);
+      this._firstAdPlayerPlayRequest = false;
     }
-    if (this.contentPlayer.muted) {
-      this.vastPlayer.muted = true;
-    } else {
-      this.vastPlayer.muted = false;
+    Utils.createApiEvent.call(this._rmpVast, 'adloaded');
+    Tracking.dispatch.call(this._rmpVast, 'loaded');
+  }
+
+  _onInteractionOpenClickThroughUrl(event) {
+    if (event) {
+      event.stopPropagation();
+    }
+    if (!Environment.isMobile) {
+      FW.openWindow(this._rmpVast.creative.clickThroughUrl);
+    }
+    this._rmpVast.pause();
+    Utils.createApiEvent.call(this._rmpVast, 'adclick');
+    Tracking.dispatch.call(this._rmpVast, 'clickthrough');
+  }
+
+  _onPlaybackError(event) {
+    // https://www.w3.org/TR/html50/embedded-content-0.html#mediaerror
+    // MEDIA_ERR_SRC_NOT_SUPPORTED is sign of fatal error
+    // other errors may produce non-fatal error in the browser so we do not 
+    // act upon them
+    if (event && event.target) {
+      const videoElement = event.target;
+      if (videoElement.error && FW.isNumber(videoElement.error.code)) {
+        const errorCode = videoElement.error.code;
+        let errorMessage = '';
+        if (typeof videoElement.error.message === 'string') {
+          errorMessage = videoElement.error.message;
+        }
+
+        const htmlMediaErrorTypes = [
+          'MEDIA_ERR_CUSTOM',
+          'MEDIA_ERR_ABORTED',
+          'MEDIA_ERR_NETWORK',
+          'MEDIA_ERR_DECODE',
+          'MEDIA_ERR_SRC_NOT_SUPPORTED',
+          'MEDIA_ERR_ENCRYPTED'
+        ];
+        console.log(
+          `${FW.consolePrepend} Error on video element with code ${errorCode.toString()} and message ${errorMessage}`,
+          FW.consoleStyle,
+          ''
+        );
+        console.log(
+          `${FW.consolePrepend} error type is ${htmlMediaErrorTypes[errorCode] ? htmlMediaErrorTypes[errorCode] : 'unknown type'}`,
+          FW.consoleStyle,
+          ''
+        );
+
+        // EDIA_ERR_SRC_NOT_SUPPORTED (numeric value 4)
+        if (errorCode === 4) {
+          Utils.processVastErrors.call(this._rmpVast, 401, true);
+        }
+      }
     }
   }
-  // show ad container holding vast player
-  FW.show(this.adContainer);
-  FW.show(this.vastPlayer);
-  this.adOnStage = true;
-  // play VAST player
-  VAST_PLAYER.play.call(this, this.firstVastPlayerPlayRequest);
-  if (this.firstVastPlayerPlayRequest) {
-    this.firstVastPlayerPlayRequest = false;
-  }
-  Utils.createApiEvent.call(this, 'adloaded');
-  TRACKING_EVENTS.dispatch.call(this, 'loaded');
-};
 
-const _onClickThrough = function (event) {
-  if (event) {
-    event.stopPropagation();
+  _onContextMenu(event) {
+    if (event) {
+      event.stopPropagation();
+      event.preventDefault();
+    }
   }
-  if (!ENV.isMobile) {
 
+  _updateWaitingForCanBeSkippedUI(delta) {
+    if (Math.round(delta) > 0) {
+      this._skipWaitingUI.textContent = this._params.labels.skipMessage + ' ' + Math.round(delta) + 's';
+    }
+  }
+
+  _onTimeupdateCheckSkip() {
+    if (this._skipButtonUI.style.display === 'none') {
+      FW.setStyle(this._skipButtonUI, { display: 'block' });
+    }
+    const adPlayerCurrentTime = this._adPlayer.currentTime;
+    if (FW.isNumber(adPlayerCurrentTime) && adPlayerCurrentTime > 0) {
+      if (adPlayerCurrentTime >= this._rmpVast.creative.skipoffset) {
+        this._adPlayer.removeEventListener('timeupdate', this._onTimeupdateCheckSkipFn);
+        FW.setStyle(this._skipWaitingUI, { display: 'none' });
+        FW.setStyle(this._skipMessageUI, { display: 'block' });
+        FW.setStyle(this._skipIconUI, { display: 'block' });
+        this._skippableAdCanBeSkipped = true;
+        Utils.createApiEvent.call(this._rmpVast, 'adskippablestatechanged');
+      } else if (this._rmpVast.creative.skipoffset - adPlayerCurrentTime > 0) {
+        this._updateWaitingForCanBeSkippedUI(this._rmpVast.creative.skipoffset - adPlayerCurrentTime);
+      }
+    }
+  }
+
+  _onSkipInteraction(event) {
+    if (event) {
+      event.stopPropagation();
+      if (event.type === 'touchend') {
+        event.preventDefault();
+      }
+    }
+    if (this._skippableAdCanBeSkipped) {
+      // create API event 
+      Utils.createApiEvent.call(this._rmpVast, 'adskipped');
+      // request ping for skip event
+      Tracking.dispatch.call(this._rmpVast, 'skip');
+      // resume content
+      if (this._rmpVast.rmpVastAdPlayer) {
+        this._rmpVast.rmpVastAdPlayer.resumeContent();
+      }
+    }
+  }
+
+  _appendSkipUI() {
+    this._skipButtonUI = document.createElement('div');
+    this._skipButtonUI.className = 'rmp-ad-container-skip';
+    FW.setStyle(this._skipButtonUI, { display: 'none' });
+    Utils.makeButtonAccessible(this._skipButtonUI, this._params.labels.skipMessage);
+
+    this._skipWaitingUI = document.createElement('div');
+    this._skipWaitingUI.className = 'rmp-ad-container-skip-waiting';
+    this._updateWaitingForCanBeSkippedUI(this._rmpVast.creative.skipoffset);
+    FW.setStyle(this._skipWaitingUI, { display: 'block' });
+
+    this._skipMessageUI = document.createElement('div');
+    this._skipMessageUI.className = 'rmp-ad-container-skip-message';
+    this._skipMessageUI.textContent = this._params.labels.skipMessage;
+    FW.setStyle(this._skipMessageUI, { display: 'none' });
+
+    this._skipIconUI = document.createElement('div');
+    this._skipIconUI.className = 'rmp-ad-container-skip-icon';
+    FW.setStyle(this._skipIconUI, { display: 'none' });
+
+    this._onSkipInteractionFn = this._onSkipInteraction.bind(this);
+    FW.addEvents(['click', 'touchend'], this._skipButtonUI, this._onSkipInteractionFn);
+    this._skipButtonUI.appendChild(this._skipWaitingUI);
+    this._skipButtonUI.appendChild(this._skipMessageUI);
+    this._skipButtonUI.appendChild(this._skipIconUI);
+    this._adContainer.appendChild(this._skipButtonUI);
+    this._onTimeupdateCheckSkipFn = this._onTimeupdateCheckSkip.bind(this);
+    this._adPlayer.addEventListener('timeupdate', this._onTimeupdateCheckSkipFn);
+  }
+
+  _onHlsJSError(event, data) {
+    if (data.fatal) {
+      switch (data.type) {
+        case Hls.ErrorTypes.NETWORK_ERROR:
+          // try to recover network error
+          this._hlsJS[this._hlsJSIndex].startLoad();
+          break;
+        case Hls.ErrorTypes.MEDIA_ERROR:
+          this._hlsJS[this._hlsJSIndex].recoverMediaError();
+          break;
+        default:
+          Utils.processVastErrors.call(this._rmpVast, 900, true);
+          break;
+      }
+    }
+  }
+
+  destroy() {
+    if (this._interactionMobileUI) {
+      this._interactionMobileUI.removeEventListener('touchend', this._onInteractionOpenClickThroughUrlFn);
+      FW.removeElement(this._interactionMobileUI);
+    }
+    FW.clearTimeout(this._creativeLoadTimeoutCallback);
+    FW.removeElement(this._skipButtonUI);
+    FW.removeEvents(['click', 'touchend'], this._skipButtonUI, this._onSkipInteractionFn);
+    if (this._adPlayer) {
+      this._adPlayer.removeEventListener('click', this._onInteractionOpenClickThroughUrlFn);
+      this._adPlayer.removeEventListener('timeupdate', this._onTimeupdateCheckSkipFn);
+      this._adPlayer.removeEventListener('durationchange', this._onDurationChangeFn);
+      this._adPlayer.removeEventListener('loadedmetadata', this._onLoadedmetadataPlayFn);
+      this._adPlayer.removeEventListener('contextmenu', this._onContextMenuFn);
+      this._adPlayer.removeEventListener('error', this._onPlaybackErrorFn);
+    }
+    this._contentPlayer.removeEventListener('error', this._onPlaybackErrorFn);
+  }
+
+  update(url, type) {
     console.log(
-      `${FW.consolePrepend} Opening clickthrough URL at ${this.creative.clickThroughUrl}`,
+      `${FW.consolePrepend} update ad player for linear creative of type ${type} located at ${url}`,
       FW.consoleStyle,
       ''
     );
 
-    FW.openWindow(this.creative.clickThroughUrl);
-  }
-  this.pause();
-  Utils.createApiEvent.call(this, 'adclick');
-  TRACKING_EVENTS.dispatch.call(this, 'clickthrough');
-};
+    this._onDurationChangeFn = this._onDurationChange.bind(this);
+    this._adPlayer.addEventListener('durationchange', this._onDurationChangeFn, { once: true });
 
-const _onPlaybackError = function (event) {
-  // https://www.w3.org/TR/html50/embedded-content-0.html#mediaerror
-  // MEDIA_ERR_SRC_NOT_SUPPORTED is sign of fatal error
-  // other errors may produce non-fatal error in the browser so we do not 
-  // act upon them
-  if (event && event.target) {
-    const videoElement = event.target;
-    if (videoElement.error && FW.isNumber(videoElement.error.code)) {
-      const errorCode = videoElement.error.code;
-      let errorMessage = '';
-      if (typeof videoElement.error.message === 'string') {
-        errorMessage = videoElement.error.message;
-      }
+    // when creative is loaded play it 
+    this._onLoadedmetadataPlayFn = this._onLoadedmetadataPlay.bind(this);
+    this._adPlayer.addEventListener('loadedmetadata', this._onLoadedmetadataPlayFn, { once: true });
 
-      console.log(
-        `${FW.consolePrepend} Error on video element with code ${errorCode.toString()} and message ${errorMessage}`,
-        FW.consoleStyle,
-        ''
-      );
-      console.log(
-        `${FW.consolePrepend} error type is ${HTML5_MEDIA_ERROR_TYPES[errorCode] ? HTML5_MEDIA_ERROR_TYPES[errorCode] : 'unknown type'}`,
-        FW.consoleStyle,
-        ''
-      );
+    // prevent built in menu to show on right click
+    this._onContextMenuFn = this._onContextMenu.bind(this);
+    this._adPlayer.addEventListener('contextmenu', this._onContextMenuFn);
 
-      // EDIA_ERR_SRC_NOT_SUPPORTED (numeric value 4)
-      if (errorCode === 4) {
-        Utils.processVastErrors.call(this, 401, true);
-      }
-    }
-  }
-};
+    this._onPlaybackErrorFn = this._onPlaybackError.bind(this);
 
-const _appendClickUIOnMobile = function () {
-  // we create a <a> tag rather than using window.open 
-  // because it works better in standalone mode and WebView
-  this.clickUIOnMobile = document.createElement('a');
-  this.clickUIOnMobile.className = 'rmp-ad-click-ui-mobile';
-  this.clickUIOnMobile.textContent = this.params.labels.textForClickUIOnMobile;
-  this.clickUIOnMobile.addEventListener('touchend', this.onClickThrough);
-  this.clickUIOnMobile.href = this.creative.clickThroughUrl;
-  this.clickUIOnMobile.target = '_blank';
-  this.adContainer.appendChild(this.clickUIOnMobile);
-};
+    // start creativeLoadTimeout
+    this._creativeLoadTimeoutCallback = setTimeout(() => {
+      Utils.processVastErrors.call(this._rmpVast, 402, true);
+    }, this._params.creativeLoadTimeout);
 
-const _onContextMenu = function (event) {
-  if (event) {
-    event.stopPropagation();
-    event.preventDefault();
-  }
-};
-
-const _setCanBeSkippedUI = function () {
-  FW.setStyle(this.skipWaiting, { display: 'none' });
-  FW.setStyle(this.skipMessage, { display: 'block' });
-  FW.setStyle(this.skipIcon, { display: 'block' });
-};
-
-const _updateWaitingForCanBeSkippedUI = function (delta) {
-  if (Math.round(delta) > 0) {
-    this.skipWaiting.textContent = this.params.labels.skipMessage + ' ' + Math.round(delta) + 's';
-  }
-};
-
-const _onTimeupdateCheckSkip = function () {
-  if (this.skipButton.style.display === 'none') {
-    FW.setStyle(this.skipButton, { display: 'block' });
-  }
-  this.vastPlayerCurrentTime = this.vastPlayer.currentTime;
-  if (FW.isNumber(this.vastPlayerCurrentTime) && this.vastPlayerCurrentTime > 0) {
-    if (this.vastPlayerCurrentTime >= this.creative.skipoffset) {
-      this.vastPlayer.removeEventListener('timeupdate', this.onTimeupdateCheckSkip);
-      _setCanBeSkippedUI.call(this);
-      this.skippableAdCanBeSkipped = true;
-      Utils.createApiEvent.call(this, 'adskippablestatechanged');
-    } else if (this.creative.skipoffset - this.vastPlayerCurrentTime > 0) {
-      _updateWaitingForCanBeSkippedUI.call(this, this.creative.skipoffset - this.vastPlayerCurrentTime);
-    }
-  }
-};
-
-const _onClickSkip = function (event) {
-  if (event) {
-    event.stopPropagation();
-    if (event.type === 'touchend') {
-      event.preventDefault();
-    }
-  }
-  if (this.skippableAdCanBeSkipped) {
-    // create API event 
-    Utils.createApiEvent.call(this, 'adskipped');
-    // request ping for skip event
-    TRACKING_EVENTS.dispatch.call(this, 'skip');
-    // resume content
-    VAST_PLAYER.resumeContent.call(this);
-  }
-};
-
-const _appendSkip = function () {
-  this.skipButton = document.createElement('div');
-  this.skipButton.className = 'rmp-ad-container-skip';
-  FW.setStyle(this.skipButton, { display: 'none' });
-  Utils.makeButtonAccessible(this.skipButton, this.params.labels.skipMessage);
-
-  this.skipWaiting = document.createElement('div');
-  this.skipWaiting.className = 'rmp-ad-container-skip-waiting';
-  _updateWaitingForCanBeSkippedUI.call(this, this.creative.skipoffset);
-  FW.setStyle(this.skipWaiting, { display: 'block' });
-
-  this.skipMessage = document.createElement('div');
-  this.skipMessage.className = 'rmp-ad-container-skip-message';
-  this.skipMessage.textContent = this.params.labels.skipMessage;
-  FW.setStyle(this.skipMessage, { display: 'none' });
-
-  this.skipIcon = document.createElement('div');
-  this.skipIcon.className = 'rmp-ad-container-skip-icon';
-  FW.setStyle(this.skipIcon, { display: 'none' });
-
-  this.onClickSkip = _onClickSkip.bind(this);
-  this.skipButton.addEventListener('click', this.onClickSkip);
-  this.skipButton.addEventListener('touchend', this.onClickSkip);
-  this.skipButton.appendChild(this.skipWaiting);
-  this.skipButton.appendChild(this.skipMessage);
-  this.skipButton.appendChild(this.skipIcon);
-  this.adContainer.appendChild(this.skipButton);
-  this.onTimeupdateCheckSkip = _onTimeupdateCheckSkip.bind(this);
-  this.vastPlayer.addEventListener('timeupdate', this.onTimeupdateCheckSkip);
-};
-
-const _onHlsJSError = function (event, data) {
-  if (data.fatal) {
-    switch (data.type) {
-      case Hls.ErrorTypes.NETWORK_ERROR:
-        // try to recover network error
-        this.hlsJS[this.hlsJSIndex].startLoad();
-        break;
-      case Hls.ErrorTypes.MEDIA_ERROR:
-        this.hlsJS[this.hlsJSIndex].recoverMediaError();
-        break;
-      default:
-        Utils.processVastErrors.call(this, 900, true);
-        break;
-    }
-  }
-};
-
-LINEAR.update = function (url, type) {
-  console.log(
-    `${FW.consolePrepend} update vast player for linear creative of type ${type} located at ${url}`,
-    FW.consoleStyle,
-    ''
-  );
-
-  this.onDurationChange = _onDurationChange.bind(this);
-  this.vastPlayer.addEventListener('durationchange', this.onDurationChange, { once: true });
-
-  // when creative is loaded play it 
-  this.onLoadedmetadataPlay = _onLoadedmetadataPlay.bind(this);
-  this.vastPlayer.addEventListener('loadedmetadata', this.onLoadedmetadataPlay, { once: true });
-
-  // prevent built in menu to show on right click
-  this.onContextMenu = _onContextMenu.bind(this);
-  this.vastPlayer.addEventListener('contextmenu', this.onContextMenu);
-
-  this.onPlaybackError = _onPlaybackError.bind(this);
-
-  // start creativeLoadTimeout
-  this.creativeLoadTimeoutCallback = setTimeout(() => {
-    Utils.processVastErrors.call(this, 402, true);
-  }, this.params.creativeLoadTimeout);
-  // load ad asset
-  if (this.useContentPlayerForAds) {
-    this.contentPlayer.addEventListener('error', this.onPlaybackError);
-    this.contentPlayer.src = url;
-  } else {
-    if (this.params.useHlsJS && type === 'application/vnd.apple.mpegurl' && typeof window.Hls !== 'undefined' &&
-      Hls.isSupported()) {
-      this.readingHlsJS = true;
+    if (this._params.useHlsJS && type === 'application/vnd.apple.mpegurl' &&
+      typeof window.Hls !== 'undefined' && Hls.isSupported()) {
+      this._readingHlsJS = true;
       const hlsJSConfig = {
-        autoStartLoad: true,
-        debug: this.params.debugHlsJS,
+        debug: this._params.debugHlsJS,
         capLevelToPlayerSize: true,
         testBandwidth: true,
-        progressive: false,
-        lowLatencyMode: false,
-        enableWebVTT: false,
-        enableIMSC1: false,
-        enableCEA708Captions: false
+        startLevel: -1,
+        lowLatencyMode: false
       };
-      this.hlsJS[this.hlsJSIndex] = new Hls(hlsJSConfig);
-      this.hlsJS[this.hlsJSIndex].on(Hls.Events.ERROR, _onHlsJSError.bind(this));
-      this.hlsJS[this.hlsJSIndex].loadSource(url);
-      this.hlsJS[this.hlsJSIndex].attachMedia(this.vastPlayer);
+      this._hlsJS[this._hlsJSIndex] = new Hls(hlsJSConfig);
+      this._hlsJS[this._hlsJSIndex].on(Hls.Events.ERROR, this._onHlsJSError.bind(this));
+      this._hlsJS[this._hlsJSIndex].loadSource(url);
+      this._hlsJS[this._hlsJSIndex].attachMedia(this._adPlayer);
     } else {
-      if (typeof this.creative.simid === 'undefined' || (this.creative.simid && !this.params.enableSimid)) {
-        this.vastPlayer.addEventListener('error', this.onPlaybackError);
-        this.vastPlayer.src = url;
+      if (typeof this._rmpVast.creative.simid === 'undefined' ||
+        (this._rmpVast.creative.simid && !this._params.enableSimid)) {
+        this._adPlayer.addEventListener('error', this._onPlaybackErrorFn);
+        this._adPlayer.src = url;
         // we need this extra load for Chrome data saver mode in mobile or desktop
-        this.vastPlayer.load();
+        this._adPlayer.load();
       } else {
-        if (this.simidPlayer) {
-          this.simidPlayer.stopAd();
+        if (this._rmpVast.rmpVastSimidPlayer) {
+          this._rmpVast.rmpVastSimidPlayer.stopAd();
         }
-        this.simidPlayer = new SimidPlayer(
-          this.creative.isLinear,
-          this.creative.simid,
-          url,
-          this.creative.adId,
-          this.creative.id,
-          this.ad.adServingId,
-          this.creative.clickThroughUrl,
-          this
-        );
-        this.simidPlayer.initializeAd();
-        this.simidPlayer.playAd();
+        this._rmpVast.rmpVastSimidPlayer = new SimidPlayer(url, this._rmpVast);
+        this._rmpVast.rmpVastSimidPlayer.initializeAd();
+        this._rmpVast.rmpVastSimidPlayer.playAd();
       }
     }
-  }
 
-  // clickthrough interaction
-  this.onClickThrough = _onClickThrough.bind(this);
-  if (this.creative.clickThroughUrl) {
-    if (ENV.isMobile) {
-      _appendClickUIOnMobile.call(this);
-    } else {
-      this.vastPlayer.addEventListener('click', this.onClickThrough);
+
+    // clickthrough interaction
+    this._onInteractionOpenClickThroughUrlFn = this._onInteractionOpenClickThroughUrl.bind(this);
+    if (this._rmpVast.creative.clickThroughUrl) {
+      if (Environment.isMobile) {
+        // we create a <a> tag rather than using window.open 
+        // because it works better in standalone mode and WebView
+        this._interactionMobileUI = document.createElement('a');
+        this._interactionMobileUI.className = 'rmp-ad-click-ui-mobile';
+        this._interactionMobileUI.textContent = this._params.labels.textForInteractionUIOnMobile;
+        this._interactionMobileUI.addEventListener('touchend', this._onInteractionOpenClickThroughUrlFn);
+        this._interactionMobileUI.href = this._rmpVast.creative.clickThroughUrl;
+        this._interactionMobileUI.target = '_blank';
+        this._adContainer.appendChild(this._interactionMobileUI);
+      } else {
+        this._adPlayer.addEventListener('click', this._onInteractionOpenClickThroughUrlFn);
+      }
+    }
+
+    // skippable - only where ad player is different from 
+    // content player
+    if (this._rmpVast.creative.isSkippableAd) {
+      this._appendSkipUI();
     }
   }
 
-  // skippable - only where vast player is different from 
-  // content player
-  if (this.creative.isSkippableAd) {
-    _appendSkip.call(this);
-  }
-};
-
-LINEAR.parse = function (icons, adParameters, mediaFiles) {
-  if (icons.length > 0) {
-    ICONS.parse.call(this, icons);
-  }
-  // check for AdParameters tag in case we have a VPAID creative
-  this.adParametersData = '';
-  if (adParameters && adParameters.value) {
-    this.adParametersData = adParameters.value;
-  }
-  let mediaFileItems = [];
-  for (let i = 0; i < mediaFiles.length; i++) {
-    const currentMediaFile = mediaFiles[i];
-    const mediaFileValue = currentMediaFile.fileURL;
-    const type = currentMediaFile.mimeType;
-    if (mediaFileValue === null || type === null) {
-      continue;
-    }
-    const newMediaFileItem = {};
-    newMediaFileItem.url = mediaFileValue;
-    newMediaFileItem.type = type;
-    if (currentMediaFile.codec !== null) {
-      newMediaFileItem.codec = currentMediaFile.codec;
-    }
-    // check for potential VPAID - we have a VPAID JS - we break
-    // for VPAID we may not have a width, height or delivery
-    if (this.params.enableVpaid && currentMediaFile.apiFramework &&
-      VPAID_PATTERN.test(currentMediaFile.apiFramework) && JS_PATTERN.test(type)) {
-
-      console.log(`${FW.consolePrepend} VPAID creative detected`, FW.consoleStyle, '');
-
-      mediaFileItems = [newMediaFileItem];
-      this.isVPAID = true;
-      break;
-    }
-    newMediaFileItem.width = currentMediaFile.width;
-    newMediaFileItem.height = currentMediaFile.height;
-    newMediaFileItem.bitrate = currentMediaFile.bitrate;
-    mediaFileItems.push(newMediaFileItem);
-  }
-  // we support HLS; MP4; WebM: VPAID so let us fecth for those
-  const creatives = [];
-  for (let j = 0; j < mediaFileItems.length; j++) {
-    const currentMediaFileItem = mediaFileItems[j];
-    const type = currentMediaFileItem.type;
-    const url = currentMediaFileItem.url;
-    if (this.isVPAID && url) {
-      VPAID.loadCreative.call(this, url, this.params.vpaidSettings);
-      this.creative.type = type;
+  parse(creative) {
+    const icons = creative.icons;
+    const adParameters = creative.adParameters;
+    const mediaFiles = creative.mediaFiles;
+    // some linear tags may pass till here but have empty MediaFiles
+    // this is against specification so we return
+    if (mediaFiles.length === 0) {
       return;
     }
-    // we have HLS > use hls.js where no native support for HLS is available or native HLS otherwise (Apple devices mainly)
-    if (type === 'application/vnd.apple.mpegurl' &&
-      (ENV.checkCanPlayType(type) ||
-        (typeof window.Hls !== 'undefined' && Hls.isSupported()))) {
-      VAST_PLAYER.append.call(this, url, type);
-      this.creative.type = type;
+    if (icons.length > 0) {
+      this._rmpVast.rmpVastIcons = new Icons(this._rmpVast);
+      this._rmpVast.rmpVastIcons.parse(icons);
+    }
+    // check for AdParameters tag in case we have a VPAID creative
+    this._rmpVast.adParametersData = '';
+    if (adParameters && adParameters.value) {
+      this._rmpVast.adParametersData = adParameters.value;
+    }
+    let mediaFileItems = [];
+    let isVpaid = false;
+    for (let i = 0; i < mediaFiles.length; i++) {
+      const currentMediaFile = mediaFiles[i];
+      const mediaFileValue = currentMediaFile.fileURL;
+      const type = currentMediaFile.mimeType;
+      if (mediaFileValue === null || type === null) {
+        continue;
+      }
+      const newMediaFileItem = {};
+      newMediaFileItem.url = mediaFileValue;
+      newMediaFileItem.type = type;
+      if (currentMediaFile.codec !== null) {
+        newMediaFileItem.codec = currentMediaFile.codec;
+      }
+      // check for potential VPAID - we have a VPAID JS - we break
+      // for VPAID we may not have a width, height or delivery
+      const vpaidPattern = /vpaid/i;
+      const jsPattern = /\/javascript/i;
+      if (this._params.enableVpaid && currentMediaFile.apiFramework &&
+        vpaidPattern.test(currentMediaFile.apiFramework) && jsPattern.test(type)) {
+
+        console.log(`${FW.consolePrepend} VPAID creative detected`, FW.consoleStyle, '');
+
+        mediaFileItems = [newMediaFileItem];
+        isVpaid = true;
+        break;
+      }
+      newMediaFileItem.width = currentMediaFile.width;
+      newMediaFileItem.height = currentMediaFile.height;
+      newMediaFileItem.bitrate = currentMediaFile.bitrate;
+      mediaFileItems.push(newMediaFileItem);
+    }
+    // we support HLS; MP4; WebM: VPAID so let us fecth for those
+    const creatives = [];
+    for (let j = 0; j < mediaFileItems.length; j++) {
+      const currentMediaFileItem = mediaFileItems[j];
+      const type = currentMediaFileItem.type;
+      const url = currentMediaFileItem.url;
+      if (isVpaid && url) {
+        this._rmpVast.rmpVastVpaidPlayer = new VpaidPlayer(this._rmpVast);
+        this._rmpVast.rmpVastVpaidPlayer.init(url, this._params.vpaidSettings);
+        this._rmpVast.creative.type = type;
+        return;
+      }
+      // we have HLS > use hls.js where no native support for HLS is available or native HLS otherwise (Apple devices mainly)
+      if (this._rmpVast.rmpVastAdPlayer) {
+        if (type === 'application/vnd.apple.mpegurl' &&
+          (Environment.checkCanPlayType(type) || (typeof window.Hls !== 'undefined' && Hls.isSupported()))) {
+          this._rmpVast.rmpVastAdPlayer.append(url, type);
+          this._rmpVast.creative.type = type;
+          return;
+        }
+        // we have DASH and DASH is natively supported > use DASH
+        if (Environment.checkCanPlayType('application/dash+xml')) {
+          this._rmpVast.rmpVastAdPlayer.append(url, type);
+          this._rmpVast.creative.type = type;
+          return;
+        }
+      }
+      // we gather MP4, WebM, OGG and remaining files
+      creatives.push(currentMediaFileItem);
+    }
+    if (isVpaid) {
       return;
     }
-    // we have DASH and DASH is natively supported > use DASH
-    if (ENV.checkCanPlayType('application/dash+xml')) {
-      VAST_PLAYER.append.call(this, url, type);
-      this.creative.type = type;
-      return;
-    }
-    // we gather MP4, WebM, OGG and remaining files
-    creatives.push(currentMediaFileItem);
-  }
-  let retainedCreatives = [];
-  // first we check for the common formats below ... 
-  const __filterCommonCreatives = function (i, creative) {
-    if (creative.codec && creative.type === COMMON_VIDEO_FORMATS[i]) {
-      return ENV.checkCanPlayType(creative.type, creative.codec);
-    } else if (creative.type === COMMON_VIDEO_FORMATS[i]) {
-      return ENV.checkCanPlayType(creative.type);
-    }
-    return false;
-  };
-  for (let k = 0; k < COMMON_VIDEO_FORMATS.length; k++) {
-    retainedCreatives = creatives.filter(__filterCommonCreatives.bind(null, k));
-    if (retainedCreatives.length > 0) {
-      break;
-    }
-  }
-  // ... if none of the common format work, then we check for exotic format
-  // first we check for those with codec information as it provides more accurate support indication ...
-  if (retainedCreatives.length === 0) {
-    const __filterCodecCreatives = function (codec, type, creative) {
-      return creative.codec === codec && creative.type === type;
+    let retainedCreatives = [];
+    const commonVideoFormats = [
+      'video/webm',
+      'video/mp4',
+      'video/ogg',
+      'video/3gpp'
+    ];
+    // first we check for the common formats below ... 
+    const __filterCommonCreatives = (i, creative) => {
+      if (creative.codec && creative.type === commonVideoFormats[i]) {
+        return Environment.checkCanPlayType(creative.type, creative.codec);
+      } else if (creative.type === commonVideoFormats[i]) {
+        return Environment.checkCanPlayType(creative.type);
+      }
+      return false;
     };
-    creatives.forEach(creative => {
-      if (creative.codec && creative.type && ENV.checkCanPlayType(creative.type, creative.codec)) {
-        retainedCreatives = creatives.filter(__filterCodecCreatives.bind(null, creative.codec, creative.type));
+    for (let k = 0; k < commonVideoFormats.length; k++) {
+      retainedCreatives = creatives.filter(__filterCommonCreatives.bind(null, k));
+      if (retainedCreatives.length > 0) {
+        break;
       }
+    }
+    // ... if none of the common format work, then we check for exotic format
+    // first we check for those with codec information as it provides more accurate support indication ...
+    if (retainedCreatives.length === 0) {
+      const __filterCodecCreatives = (codec, type, creative) => {
+        return creative.codec === codec && creative.type === type;
+      };
+      creatives.forEach(creative => {
+        if (creative.codec && creative.type && Environment.checkCanPlayType(creative.type, creative.codec)) {
+          retainedCreatives = creatives.filter(__filterCodecCreatives.bind(null, creative.codec, creative.type));
+        }
+      });
+    }
+    // ... if codec information are not available then we go first type matching
+    if (retainedCreatives.length === 0) {
+      const __filterTypeCreatives = (type, creative) => {
+        return creative.type === type;
+      };
+      creatives.forEach(creative => {
+        if (creative.type && Environment.checkCanPlayType(creative.type)) {
+          retainedCreatives = creatives.filter(__filterTypeCreatives.bind(null, creative.type));
+        }
+      });
+    }
+
+    // still no match for supported format - we exit
+    if (retainedCreatives.length === 0) {
+      // None of the MediaFile provided are supported by the player
+      Utils.processVastErrors.call(this._rmpVast, 403, true);
+      return;
+    }
+
+    // sort supported creatives by width
+    retainedCreatives.sort((a, b) => {
+      return a.width - b.width;
     });
-  }
-  // ... if codec information are not available then we go first type matching
-  if (retainedCreatives.length === 0) {
-    const __filterTypeCreatives = function (type, creative) {
-      return creative.type === type;
-    };
-    creatives.forEach(creative => {
-      if (creative.type && ENV.checkCanPlayType(creative.type)) {
-        retainedCreatives = creatives.filter(__filterTypeCreatives.bind(null, creative.type));
+
+    console.log(`${FW.consolePrepend} available linear creative follows`, FW.consoleStyle, '');
+    console.log(retainedCreatives);
+
+    // we have files matching device capabilities
+    // select the best one based on player current width
+    let finalCreative;
+    let validCreativesByWidth = [];
+    let validCreativesByBitrate = [];
+    if (retainedCreatives.length > 1) {
+      const containerWidth = FW.getWidth(this._container) * Environment.devicePixelRatio;
+      const containerHeight = FW.getHeight(this._container) * Environment.devicePixelRatio;
+      if (containerWidth > 0 && containerHeight > 0) {
+        validCreativesByWidth = retainedCreatives.filter((creative) => {
+          return containerWidth >= creative.width && containerHeight >= creative.height;
+        });
       }
-    });
-  }
 
-  // still no match for supported format - we exit
-  if (retainedCreatives.length === 0) {
-    // None of the MediaFile provided are supported by the player
-    Utils.processVastErrors.call(this, 403, true);
-    return;
-  }
+      console.log(`${FW.consolePrepend} validCreativesByWidth follow`, FW.consoleStyle, '');
+      console.log(validCreativesByWidth);
 
-  // sort supported creatives by width
-  retainedCreatives.sort((a, b) => {
-    return a.width - b.width;
-  });
+      // if no match by size 
+      if (validCreativesByWidth.length === 0) {
+        validCreativesByWidth = [retainedCreatives[0]];
+      }
 
-  console.log(`${FW.consolePrepend} available linear creative follows`, FW.consoleStyle, '');
-  console.log(retainedCreatives);
+      // filter by bitrate to provide best quality
+      const rmpConnection = new RmpConnection();
+      let availableBandwidth = rmpConnection.bandwidthData.estimate;
 
-  // we have files matching device capabilities
-  // select the best one based on player current width
-  let finalCreative;
-  let validCreativesByWidth = [];
-  let validCreativesByBitrate = [];
-  if (retainedCreatives.length > 1) {
-    const containerWidth = FW.getWidth(this.container) * ENV.devicePixelRatio;
-    const containerHeight = FW.getHeight(this.container) * ENV.devicePixelRatio;
-    if (containerWidth > 0 && containerHeight > 0) {
-      validCreativesByWidth = retainedCreatives.filter((creative) => {
-        return containerWidth >= creative.width && containerHeight >= creative.height;
-      });
+      console.log(`${FW.consolePrepend} availableBandwidth is ${availableBandwidth} Mbps`, FW.consoleStyle, '');
+
+      if (availableBandwidth > -1 && validCreativesByWidth.length > 1) {
+        // sort supported creatives by bitrates
+        validCreativesByWidth.sort((a, b) => {
+          return a.bitrate - b.bitrate;
+        });
+        // convert to kbps
+        availableBandwidth = Math.round(availableBandwidth * 1000);
+        validCreativesByBitrate = validCreativesByWidth.filter((creative) => {
+          return availableBandwidth >= creative.bitrate;
+        });
+
+        console.log(`${FW.consolePrepend} validCreativesByBitrate follow`, FW.consoleStyle, '');
+        console.log(validCreativesByBitrate);
+
+        // pick max available bitrate
+        finalCreative = validCreativesByBitrate[validCreativesByBitrate.length - 1];
+      }
     }
 
-    console.log(`${FW.consolePrepend} validCreativesByWidth follow`, FW.consoleStyle, '');
-    console.log(validCreativesByWidth);
-
-    // if no match by size 
-    if (validCreativesByWidth.length === 0) {
-      validCreativesByWidth = [retainedCreatives[0]];
+    // if no match by bitrate 
+    if (!finalCreative) {
+      if (validCreativesByWidth.length > 0) {
+        finalCreative = validCreativesByWidth[validCreativesByWidth.length - 1];
+      } else {
+        retainedCreatives.sort((a, b) => {
+          return a.bitrate - b.bitrate;
+        });
+        finalCreative = retainedCreatives[retainedCreatives.length - 1];
+      }
     }
 
-    // filter by bitrate to provide best quality
-    const rmpConnection = new RmpConnection();
-    let availableBandwidth = rmpConnection.bandwidthData.estimate;
+    console.log(`${FW.consolePrepend} selected linear creative follows`, FW.consoleStyle, '');
+    console.log(finalCreative);
 
-    console.log(`${FW.consolePrepend} availableBandwidth is ${availableBandwidth} Mbps`, FW.consoleStyle, '');
-
-    if (availableBandwidth > -1 && validCreativesByWidth.length > 1) {
-      // sort supported creatives by bitrates
-      validCreativesByWidth.sort((a, b) => {
-        return a.bitrate - b.bitrate;
-      });
-      // convert to kbps
-      availableBandwidth = Math.round(availableBandwidth * 1000);
-      validCreativesByBitrate = validCreativesByWidth.filter((creative) => {
-        return availableBandwidth >= creative.bitrate;
-      });
-
-      console.log(`${FW.consolePrepend} validCreativesByBitrate follow`, FW.consoleStyle, '');
-      console.log(validCreativesByBitrate);
-
-      // pick max available bitrate
-      finalCreative = validCreativesByBitrate[validCreativesByBitrate.length - 1];
+    this._rmpVast.creative.mediaUrl = finalCreative.url;
+    this._rmpVast.creative.height = finalCreative.height;
+    this._rmpVast.creative.width = finalCreative.width;
+    this._rmpVast.creative.type = finalCreative.type;
+    if (this._rmpVast.rmpVastAdPlayer) {
+      this._rmpVast.rmpVastAdPlayer.append(finalCreative.url, finalCreative.type);
     }
   }
 
-  // if no match by bitrate 
-  if (!finalCreative) {
-    if (validCreativesByWidth.length > 0) {
-      finalCreative = validCreativesByWidth[validCreativesByWidth.length - 1];
-    } else {
-      retainedCreatives.sort((a, b) => {
-        return a.bitrate - b.bitrate;
-      });
-      finalCreative = retainedCreatives[retainedCreatives.length - 1];
-    }
-  }
-
-  console.log(`${FW.consolePrepend} selected linear creative follows`, FW.consoleStyle, '');
-  console.log(finalCreative);
-
-  this.creative.mediaUrl = finalCreative.url;
-  this.creative.height = finalCreative.height;
-  this.creative.width = finalCreative.width;
-  this.creative.type = finalCreative.type;
-  VAST_PLAYER.append.call(this, finalCreative.url, finalCreative.type);
-};
-
-export default LINEAR;
+}

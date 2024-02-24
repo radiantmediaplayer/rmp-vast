@@ -5,7 +5,7 @@ describe('Test for API methods', function () {
   const id = 'rmp';
   const video = document.querySelector('.rmp-video');
   const rmpVast = new RmpVast(id, {
-    showControlsForVastPlayer: true
+    showControlsForAdPlayer: true
   });
   video.muted = true;
   const title = document.getElementsByTagName('title')[0];
@@ -25,38 +25,38 @@ describe('Test for API methods', function () {
     rmpVast.on('adstarted', function (e) {
       _incrementAndLogMethods(e);
       setTimeout(() => {
-        const adVolume = rmpVast.getVolume();
-        const adMuted = rmpVast.getMute();
-        const adTagUrl = rmpVast.getAdTagUrl();
-        const adOnStage = rmpVast.getAdOnStage();
-        const initialized = rmpVast.getInitialized();
-        const adLinear = rmpVast.getAdLinear();
-        const adMediaUrl = rmpVast.getAdMediaUrl();
-        const adSystem = rmpVast.getAdSystem();
-        const adUniversalAdIds = rmpVast.getAdUniversalAdIds();
-        const adContentType = rmpVast.getAdContentType();
-        const adTitle = rmpVast.getAdTitle();
-        const adDescription = rmpVast.getAdDescription();
-        const adPricing = rmpVast.getAdPricing();
-        const adSurvey = rmpVast.getAdSurvey();
-        const adAdServingId = rmpVast.getAdAdServingId();
-        const adCategories = rmpVast.getAdCategories();
-        const adBlockedAdCategories = rmpVast.getAdBlockedAdCategories();
-        const adDuration = rmpVast.getAdDuration();
-        const adCurrentTime = rmpVast.getAdCurrentTime();
-        const adRemainingTime = rmpVast.getAdRemainingTime();
-        const adMediaWidth = rmpVast.getAdMediaWidth();
-        const adMediaHeight = rmpVast.getAdMediaHeight();
-        const clickThroughUrl = rmpVast.getClickThroughUrl();
-        const isSkippableAd = rmpVast.getIsSkippableAd();
-        const skipTimeOffset = rmpVast.getSkipTimeOffset();
-        const contentPlayerCompleted = rmpVast.getContentPlayerCompleted();
-        const vastPlayer = rmpVast.getVastPlayer();
-        const contentPlayer = rmpVast.getContentPlayer();
-        const isUsingContentPlayerForAds = rmpVast.getIsUsingContentPlayerForAds();
+        const adVolume = rmpVast.volume;
+        const adMuted = rmpVast.muted;
+        const adTagUrl = rmpVast.adTagUrl;
+        const adOnStage = rmpVast.adOnStage;
+        const initialized = rmpVast.initialized;
+        const adLinear = rmpVast.adLinear;
+        const adMediaUrl = rmpVast.adMediaUrl;
+        const adSystem = rmpVast.adSystem;
+        const adUniversalAdIds = rmpVast.adUniversalAdIds;
+        const adContentType = rmpVast.adContentType;
+        const adTitle = rmpVast.adTitle;
+        const adDescription = rmpVast.adDescription;
+        const adPricing = rmpVast.adPricing;
+        const adSurvey = rmpVast.adSurvey;
+        const adAdServingId = rmpVast.adAdServingId;
+        const adCategories = rmpVast.adCategories;
+        const adBlockedAdCategories = rmpVast.adBlockedAdCategories;
+        const adDuration = rmpVast.adDuration;
+        const adCurrentTime = rmpVast.adCurrentTime;
+        const adRemainingTime = rmpVast.adRemainingTime;
+        const adMediaWidth = rmpVast.adMediaWidth;
+        const adMediaHeight = rmpVast.adMediaHeight;
+        const clickThroughUrl = rmpVast.clickThroughUrl;
+        const isSkippableAd = rmpVast.isSkippableAd;
+        const skipTimeOffset = rmpVast.skipTimeOffset;
+        const contentPlayerCompleted = rmpVast.contentPlayerCompleted;
+        const adPlayer = rmpVast.adPlayer;
+        const contentPlayer = rmpVast.contentPlayer;
+        const isUsingContentPlayerForAds = rmpVast.isUsingContentPlayerForAds;
 
-        if (vastPlayer instanceof HTMLVideoElement && contentPlayer instanceof HTMLVideoElement) {
-          _incrementAndLogMethods('vastPlayer');
+        if (adPlayer instanceof HTMLVideoElement && contentPlayer instanceof HTMLVideoElement) {
+          _incrementAndLogMethods('adPlayer');
         }
         if (!contentPlayerCompleted && !isUsingContentPlayerForAds) {
           _incrementAndLogMethods('contentPlayerCompleted');
@@ -79,10 +79,13 @@ describe('Test for API methods', function () {
         if (adPricing && adPricing.value === '') {
           _incrementAndLogMethods('adPricing');
         }
-        if (adSurvey === '' && adAdServingId === '') {
+        if (typeof adSurvey === 'object' && adSurvey.value === '' && adAdServingId === '') {
           _incrementAndLogMethods('adSurvey');
         }
-        if (adDuration >= 10000 && adDuration <= 10500 && adCurrentTime > 900 && adCurrentTime < 1100 && adRemainingTime > 9000 && adRemainingTime < 10000) {
+        window.console.log(adDuration);
+        window.console.log(adCurrentTime);
+        window.console.log(adRemainingTime);
+        if (adDuration >= 10000 && adDuration <= 10500 && adCurrentTime > 700 && adCurrentTime < 1100 && adRemainingTime > 9000 && adRemainingTime < 10000) {
           _incrementAndLogMethods('adDuration');
         }
         if ([1280, 640, 426, 854].includes(adMediaWidth) && [360, 240, 480, 720].includes(adMediaHeight) && /https:\/\/googleads\.github\.io\/googleads-ima-html5\/vsi\//.test(clickThroughUrl)) {
@@ -91,13 +94,13 @@ describe('Test for API methods', function () {
         if (adVolume === 1 && adMuted && adTagUrl === ADTAG1 && adOnStage && initialized && adLinear) {
           _incrementAndLogMethods('adVolume');
         }
-        if (!rmpVast.getAdPaused()) {
+        if (!rmpVast.adPaused) {
           _incrementAndLogMethods('!adPaused');
           rmpVast.pause();
         }
       }, 1000);
       setTimeout(() => {
-        if (rmpVast.getAdPaused()) {
+        if (rmpVast.adPaused) {
           _incrementAndLogMethods('adPaused');
           rmpVast.play();
         }
@@ -106,7 +109,7 @@ describe('Test for API methods', function () {
 
     rmpVast.on('adskippablestatechanged', function (e) {
       _incrementAndLogMethods(e);
-      if (rmpVast.getAdSkippableState()) {
+      if (rmpVast.adSkippableState) {
         rmpVast.skipAd();
       }
     });

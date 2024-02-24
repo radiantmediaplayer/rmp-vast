@@ -6,7 +6,7 @@ export default class SimidPlayer {
      * Sets up the creative iframe and starts listening for messages
      * from the creative.
      */
-    constructor(isLinearAd: any, simidData: any, url: any, adId: any, creativeId: any, adServingId: any, clickThroughUrl: any, rmpVast: any);
+    constructor(url: any, rmpVast: any);
     /**
      * The protocol for sending and receiving messages.
      * @protected {!SimidProtocol}
@@ -16,7 +16,7 @@ export default class SimidPlayer {
     simidData_: any;
     adContainer_: any;
     playerDiv_: any;
-    vastPlayerUrl_: any;
+    adPlayerUrl_: any;
     adParameters_: any;
     adId_: any;
     creativeId_: any;
@@ -224,13 +224,12 @@ export default class SimidPlayer {
      */
     stopAd(reason: {
         UNSPECIFIED: number;
-        /**
-         * An object containing the resized nonlinear creative's dimensions.
-         * @private {?Object}
-         */
         USER_INITIATED: number;
         MEDIA_PLAYBACK_COMPLETE: number;
-        PLAYER_INITATED: number;
+        PLAYER_INITATED: number; /** The unique ID for the interval used to compares the requested change
+         *  duration and the current ad time.
+         * @private {number}
+         */
         CREATIVE_INITIATED: number;
         NON_LINEAR_DURATION_COMPLETE: number;
     }, error: any, errorCode: any): void;
