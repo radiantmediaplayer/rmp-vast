@@ -1,6 +1,6 @@
 /**
  * @license Copyright (c) 2015-2022 Radiant Media Player | https://www.radiantmediaplayer.com
- * rmp-connection 2.0.0 | https://github.com/radiantmediaplayer/rmp-connection
+ * rmp-connection 2.1.0 | https://github.com/radiantmediaplayer/rmp-connection
  * rmp-connection is released under MIT | https://github.com/radiantmediaplayer/rmp-connection/blob/master/LICENSE
  */
 /**
