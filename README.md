@@ -39,7 +39,7 @@ First download latest rmp-vast package from the [release tab](https://github.com
 
 You must use rmp-vast in a well-formed HTML document. This means a web-page with a valid HTML5 DOCTYPE and other elements that are commonly available in today's web.
 
-- First we add rmp-vast library (./dist/rmp-vast.min.js) on our page - in &lt;head&gt; for example.
+- Secondly we add rmp-vast library (./dist/rmp-vast.min.js) on our page - in &lt;head&gt; for example.
 
 ```html
 <script src="./dist/rmp-vast.min.js">
@@ -87,6 +87,8 @@ rmpVast.loadAds(adTag);
 
 A complete implementation example is provided in app/index.html. You should look at app/js/app.js.
 This example can be found live at https://www.radiantmediaplayer.com/rmp-vast/app/.
+
+- rmp-vast is written in ES2017 and compiled as a library with [Webpack](https://webpack.js.org/). See .browserslistrc for a list of targeted environments for the compiled library. If you want to use rmp-vast as a module (e.g. not using the compiled library), it is up to you to compile it in your project. Please refer to .babelrc and webpack.dev.config.js for guidance. 
 
 [Back to documentation sections](#documentation-sections)
 
@@ -152,44 +154,6 @@ With the announcement of Apple in december 2019, to remove support for UIWebView
 - Electron 6+ apps
 - Android TV 9+ apps with Cordova or WebView
 - Fire TV apps (Web Apps and Hybrid Apps) with fireOS 6+
-
-[Back to documentation sections](#documentation-sections)
-
-### rmp-vast as a ES2015 module
-
-rmp-vast as a module is written with ES2017. It is up to you to run it in a ES2017 compatible environment or use a tool like Babel to make it work on older versions of ES. Please refer to .babelrc and webpack.dev.config.js for guidance. Code example:
-
-```html
-<div class="rmp-container" id="rmp">
-  <div class="rmp-content">
-    <video
-      class="rmp-video"
-      src="https://www.rmp-streaming.com/media/big-buck-bunny-360p.mp4"
-      playsinline
-      muted
-      controls
-    ></video>
-  </div>
-</div>
-```
-
-- Import rmp-vast as a module and create your set-up:
-
-```javascript
-// import rmp-vast as a module
-import RmpVast from "./src/js/index.js";
-// our VAST tag to be displayed
-const adTag = "https://www.radiantmediaplayer.com/vast/tags/inline-linear-1.xml";
-const id = "rmp";
-const params = {
-  ajaxTimeout: 8000,
-};
-// create RmpVast instance
-const rmpVast = new RmpVast(id, params);
-// call loadAds - this will start the ad loading process, display the ad and resume content automatically
-// in this case we use autoplay
-rmpVast.loadAds(adTag);
-```
 
 [Back to documentation sections](#documentation-sections)
 
@@ -568,7 +532,7 @@ rmp-vast supports displaying outstream ads when parameter `outstream` is set to 
 
 ## TypeScript support
 
-Make sure to inluce ./types folder in your TypeScript configuration file and you can start using rmp-vast in a TypeScript environment. Note: the resulting .d.ts files are generated from JavaScript using JSDoc syntax. Type support is only available when using rmp-vast as a ES2015 module right now.
+Make sure to inluce ./types folder in your TypeScript configuration file and you can start using rmp-vast in a TypeScript environment. Note: the resulting .d.ts files are generated from JavaScript using JSDoc syntax.
 
 ## Contributing
 
