@@ -10,7 +10,6 @@ let testUrls = [
 
 const testUrlsChromeOnly = [
   TEST.pathToTest + 'inlineLinearSpec/AudioAdSpec.html',
-  TEST.pathToTest + 'inlineLinearSpec/IABVAST2Spec.html',
   TEST.pathToTest + 'inlineLinearSpec/IABVAST3Spec.html',
   TEST.pathToTest + 'inlineLinearSpec/hls-creative.html',
   TEST.pathToTest + 'inlineLinearSpec/raw-xml-input.html',

@@ -23,23 +23,23 @@ describe('Test for vpaid-js-linear-2', function () {
   }
   const title = document.getElementsByTagName('title')[0];
 
-  it('should load and play vpaid-js-linear-2', function (done) {
+  it('should load and play vpaid-js-linear-2', done => {
     let validSteps = 0;
 
-    const _incrementAndLog = function (event) {
+    const _incrementAndLog = (event) => {
       validSteps++;
       if (event && event.type) {
         console.log(event.type);
       }
     };
 
-    rmpVast.on('adloaded', function (e) {
+    rmpVast.on('adloaded', e => {
       _incrementAndLog(e);
     });
-    rmpVast.on('addurationchange', function (e) {
+    rmpVast.on('addurationchange', e => {
       _incrementAndLog(e);
     });
-    rmpVast.on('adstarted', function (e) {
+    rmpVast.on('adstarted', e => {
       if (env.isAndroid[0] || env.isIos[0]) {
         rmpVast.resizeAd(320, 180, 'normal');
       }
@@ -48,24 +48,21 @@ describe('Test for vpaid-js-linear-2', function () {
         rmpVast.volume = 0.5;
       }, 400);
     });
-    rmpVast.on('advolumechanged', function (e) {
+    rmpVast.on('advolumechanged', e => {
       if (rmpVast.volume === 0.5) {
         _incrementAndLog(e);
-        setTimeout(function () {
-          rmpVast.stopAds();
-        }, 400);
       }
     });
-    rmpVast.on('adtagstartloading', function (e) {
+    rmpVast.on('adtagstartloading', e => {
       _incrementAndLog(e);
     });
-    rmpVast.on('adtagloaded', function (e) {
+    rmpVast.on('adtagloaded', e => {
       _incrementAndLog(e);
     });
-    rmpVast.on('addestroyed', function (e) {
+    rmpVast.on('addestroyed', e => {
       _incrementAndLog(e);
       let timeupdateCount = 0;
-      video.addEventListener('timeupdate', function (e) {
+      video.addEventListener('timeupdate', e => {
         timeupdateCount++;
         if (timeupdateCount === 5) {
           _incrementAndLog(e);

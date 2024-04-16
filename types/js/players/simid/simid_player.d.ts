@@ -226,10 +226,7 @@ export default class SimidPlayer {
         UNSPECIFIED: number;
         USER_INITIATED: number;
         MEDIA_PLAYBACK_COMPLETE: number;
-        PLAYER_INITATED: number; /** The unique ID for the interval used to compares the requested change
-         *  duration and the current ad time.
-         * @private {number}
-         */
+        PLAYER_INITATED: number;
         CREATIVE_INITIATED: number;
         NON_LINEAR_DURATION_COMPLETE: number;
     }, error: any, errorCode: any): void;

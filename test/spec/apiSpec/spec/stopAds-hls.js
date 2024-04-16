@@ -6,7 +6,6 @@ describe('Test for stopAds-hls', function () {
   const container = document.getElementById(id);
   const video = document.querySelector('.rmp-video');
   const params = {
-    useHlsJS: true,
     debugHlsJS: false
   };
   const rmpVast = new RmpVast(id, params);
@@ -19,7 +18,7 @@ describe('Test for stopAds-hls', function () {
 
   setTimeout(function () {
     rmpVast.stopAds();
-  }, 10000);
+  }, 12000);
 
   const title = document.getElementsByTagName('title')[0];
 

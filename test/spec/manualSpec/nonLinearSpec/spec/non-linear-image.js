@@ -1,4 +1,4 @@
-const _createStdEvent = function (eventName, element) {
+const _createStdEvent = (eventName, element) => {
   let event;
   if (element) {
     try {
@@ -12,7 +12,7 @@ const _createStdEvent = function (eventName, element) {
 
 const ADTAG = 'https://www.radiantmediaplayer.com/vast/tags/non-linear.xml';
 
-describe('Test for non-linear-image', function () {
+describe('Test for non-linear-image', () => {
 
   const id = 'rmp';
   const video = document.querySelector('.rmp-video');
@@ -20,45 +20,48 @@ describe('Test for non-linear-image', function () {
   video.muted = true;
   const title = document.getElementsByTagName('title')[0];
 
-  it('should load adTag and play it', function (done) {
+  it('should load adTag and play it', done => {
     let validSteps = 0;
 
-    const _incrementAndLog = function (event) {
+    const _incrementAndLog = event => {
       validSteps++;
       if (event && event.type) {
         console.log(event.type);
       }
     };
 
-    rmpVast.on('adloaded', function (e) {
+    rmpVast.one('adloaded', e => {
       _incrementAndLog(e);
     });
 
-    rmpVast.on('adimpression', function (e) {
+    rmpVast.one('adimpression', e => {
       _incrementAndLog(e);
     });
 
-    rmpVast.on('adstarted', function (e) {
+    rmpVast.one('adcreativeview', e => {
       _incrementAndLog(e);
-      setTimeout(function () {
+    });
+
+    rmpVast.one('adclick', e => {
+      _incrementAndLog(e);
+      setTimeout(() => {
+        rmpVast.play();
+      }, 2000);
+    });
+
+    rmpVast.on('adstarted', e => {
+      _incrementAndLog(e);
+      setTimeout(() => {
         const close = document.getElementsByClassName('rmp-ad-non-linear-close')[0];
         console.log('click close');
         _createStdEvent('click', close);
       }, 7000);
     });
 
-    rmpVast.on('adtagstartloading', function (e) {
-      _incrementAndLog(e);
-    });
-
-    rmpVast.on('adtagloaded', function (e) {
-      _incrementAndLog(e);
-    });
-
-    rmpVast.on('adclosed', function (e) {
+    rmpVast.on('adclosed', e => {
       _incrementAndLog(e);
       let timeupdateCount = 0;
-      video.addEventListener('timeupdate', function (e) {
+      video.addEventListener('timeupdate', e => {
         timeupdateCount++;
         if (timeupdateCount === 5) {
           _incrementAndLog(e);

@@ -2,7 +2,7 @@
 
 A client-side JavaScript solution to load, parse, ping and display VAST resources (advertising).
 
-It aims at implementing the [IAB VAST specification](https://iabtechlab.com/standards/vast/) for web-based environments (e.g. browser, Ionic, OTT apps ...) where both HTML5 video and JavaScript are available. VAST 2 and VAST 3 support is also provided.
+It aims at implementing the [IAB VAST specification](https://iabtechlab.com/standards/vast/) for web-based environments (e.g. browser, Ionic, Electron, smart TV ...) where both HTML5 video and JavaScript are available. We support VAST 3 and VAST 4 up to VAST 4.3. VAST 2 support has been deprecated with rmp-vast 15 and we no longer test for VAST 2 tags.
 
 rmp-vast comes as a compiled library (./dist/ folder) but it can also be imported as a ES2015 module. rmp-vast is written in ES2017.
 
@@ -23,7 +23,8 @@ rmp-vast is used and maintained by [Radiant Media Player](https://www.radiantmed
 - [AdVerifications OM Web SDK](#adverifications-om-web-sdk)
 - [SIMID support](#simid-support)
 - [VPAID support (DEPRECATED)](#vpaid-support)
-- [HLS creatives support (BETA)](#hls-creatives-support)
+- [HLS creatives support](#hls-creatives-support)
+- [Macros](#macros)
 - [Autoplay support](#autoplay-support)
 - [Fullscreen management](#fullscreen-management)
 - [Pre, mid and post rolls](#pre-mid-and-post-rolls)
@@ -48,7 +49,7 @@ You must use rmp-vast in a well-formed HTML document. This means a web-page with
 - Then we must adhere to a specific HTML layout pattern. This pattern is as follows:
 
 ```html
-<div class="rmp-container" id="rmp">
+<div class="rmp-container" id="vast-player">
   <div class="rmp-content">
     <video
       class="rmp-video"
@@ -67,10 +68,12 @@ Do NOT rename CSS classes or alter this HTML layout. The HTML5 video tag used fo
 
 ```javascript
 // our VAST tag to be displayed
-const adTag = "https://www.radiantmediaplayer.com/vast/tags/inline-linear-1.xml";
-const id = "rmp";
+const adTag =
+  "https://www.radiantmediaplayer.com/vast/tags/inline-linear-1.xml";
+const id = "vast-player";
 const params = {
-  ajaxTimeout: 8000,
+  ajaxTimeout: 5000,
+  maxNumRedirects: 10,
 };
 // create RmpVast instance
 const rmpVast = new RmpVast(id, params);
@@ -88,24 +91,25 @@ rmpVast.loadAds(adTag);
 A complete implementation example is provided in app/index.html. You should look at app/js/app.js.
 This example can be found live at https://www.radiantmediaplayer.com/rmp-vast/app/.
 
-- rmp-vast is written in ES2017 and compiled as a library with [Webpack](https://webpack.js.org/). See .browserslistrc for a list of targeted environments for the compiled library. If you want to use rmp-vast as a module (e.g. not using the compiled library), it is up to you to compile it in your project. Please refer to .babelrc and webpack.dev.config.js for guidance. 
+- rmp-vast is written in ES2017 and compiled as a library with [Webpack](https://webpack.js.org/). See .browserslistrc for a list of targeted environments for the compiled library. If you want to use rmp-vast as a module (e.g. not using the compiled library), it is up to you to compile it in your project. Please refer to .babelrc and webpack.dev.config.js for guidance.
 
 [Back to documentation sections](#documentation-sections)
 
 ## Supported VAST features
 
-We support VAST standard up to VAST 4.2, this includes: 
+We support VAST standard up to VAST 4.3, this includes:
+
 - Inline and Wrapper Ads
 - Linear Ads
 - Skippable Linear Ads
 - Linear creatives in MP4/WebM progressive download
-- Linear creatives in HLS format on all supported devices (with hls.js) - BETA
+- Linear creatives in HLS format on all supported devices (with hls.js where MSE is available or native HLS otherwise)
 - Non Linear Ads (image/iframe/HTML)
 - Companion Ads (image/iframe/HTML)
 - Tracking Events (tracking URLs must return an image - typically a 1px GIF/PNG/JPG/AVIF)
 - Error Reporting
 - Industry Icons (image/iframe/HTML)
-- VAST 4.2 Macros
+- VAST 4.3 Macros
 - AdVerifications with OM Web SDK (support for Creative Access Mode e.g. full only)
 - SIMID (Linear creative only)
 - VPAID 1 and 2 JavaScript <sup>DEPRECATED</sup>
@@ -165,7 +169,7 @@ rmp-vast uses JavaScript XMLHttpRequests to load VAST tags. Hence proper [CORS c
 
 ## Video ads from Google Ads network and rmp-vast
 
-When serving ads from Google Ads network (DFP, ADX, AdSense for Video) you should use [Google IMA HTML5 SDK](https://developers.google.com/interactive-media-ads/docs/sdks/html5/). Radiant Media Player supports [Google IMA HTML5 SDK](https://www.radiantmediaplayer.com/docs/latest/video-ads-documentation.html) and is a certified [Google's video technology partner](https://support.google.com/admanager/answer/186110?hl=en). rmp-vast can display VAST ads from Google Ads network as well.
+When serving ads from Google Ads network (DFP, ADX, AdSense for Video) we recommend using [Google IMA HTML5 SDK](https://developers.google.com/interactive-media-ads/docs/sdks/html5/). Radiant Media Player supports [Google IMA HTML5 SDK](https://www.radiantmediaplayer.com/docs/latest/video-ads-documentation.html) and is a certified [Google's video technology partner](https://support.google.com/admanager/answer/186110?hl=en). rmp-vast can display VAST ads from Google Ads network as well.
 
 [Back to documentation sections](#documentation-sections)
 
@@ -199,19 +203,20 @@ Once rmp-vast is loaded on your page you can create a new rmp-vast instance as f
   - `params.showControlsForAdPlayer: Boolean` Shows ad player HTML5 default video controls. Default: false.
   - `params.vastXmlInput: Boolean` Instead of a VAST URI, we provide directly to rmp-vast VAST XML. Default: false. See test/spec/inlineLinearSpec/raw-xml-input.html for an example.
   - `params.enableSimid: Boolean` Enables SIMID support or not. Default: true.
-  - `params.enableVpaid: Boolean` DEPRECATED. Enables VPAID support or not. Default: true. 
+  - `params.enableVpaid: Boolean` DEPRECATED. Enables VPAID support or not. Default: true.
   - `params.vpaidSettings: Object` DEPRECATED. Information required to properly display VPAID creatives - note that it is up to the parent application of rmp-vast to provide those informations - below values are default (see test/spec/vpaidSpec/ for examples):
     - `params.vpaidSettings.width: Number` Default: 640.
     - `params.vpaidSettings.height: Number` Default: 360.
     - `params.vpaidSettings.viewMode: String` Default: 'normal'. Can be 'fullscreen' as well.
     - `params.vpaidSettings.desiredBitrate: Number` Default: 500. In kbps.
-  - `params.useHlsJS: Boolean` BETA feature. Enables rendering of HLS creatives with hls.js in rmp-vast. Default: false.
-  - `params.debugHlsJS: Boolean` BETA feature. Enables debugging of HLS creatives with hls.js in rmp-vast. Default: false.
+  - `params.useHlsJS: Boolean` Enables rendering of HLS creatives with hls.js in rmp-vast. Default: true.
+  - `params.debugHlsJS: Boolean` Enables debugging of HLS creatives with hls.js in rmp-vast. Default: false.
   - `params.omidSupport: Boolean` Enables OMID (OM Web SDK) support in rmp-vast. Default: false. Refer to the [AdVerifications OM Web SDK](#adverifications-om-web-sdk) section for more information.
   - `params.omidAllowedVendors: Array` List of allowed vendors for ad verification. Vendors not listed will be rejected. Default: [].
   - `params.omidUnderEvaluation: Boolean` When debugging set this parameter to true. Default: false.
   - `params.omidRunValidationScript: Boolean` Allows to run OM Web SDK inside rmp-vast to run against IAB [validation-verification-script](https://interactiveadvertisingbureau.github.io/Open-Measurement-SDKJS/validation.html). Default: false.
   - `params.omidAutoplay: Boolean` The content player will autoplay or not. The possibility of autoplay is not determined by rmp-vast, this information needs to be passed to rmp-vast ([see this script for example](https://github.com/video-dev/can-autoplay)). Default: false (means a click to play is required).
+  - `params.macros: Map` values for Macros to be used by rmp-vast for ping URLs (for those not handled automatically by rmp-vast).
   - `params.partnerName: String` partnerName for OMID. Default: 'rmp-vast'.
   - `params.partnerVersion: String` partnerVersion for OMID. Default: latest rmp-vast version.
 
@@ -285,6 +290,7 @@ Available events are:
 - `adclick`
 - `adclosed`
 - `adimpression`
+- `adcreativeview`
 - `adcollapse`
 - `adstarted`
 - `adtagloaded`
@@ -296,14 +302,20 @@ Available events are:
 - `adpaused`
 - `adresumed`
 - `adtagstartloading`
-- `advolumemuted`
+- `admuted`
+- `adunmuted`
 - `advolumechanged`
-- `adcomplete`
 - `adskipped`
 - `adskippablestatechanged`
 - `adfirstquartile`
 - `admidpoint`
 - `adthirdquartile`
+- `adcomplete`
+- `adplayerexpand`
+- `adplayercollapse`
+- `adfullscreen`
+- `adexitfullscreen`
+- `adiconclick`
 - `aderror`
 - `addestroyed`
 - `adpodcompleted`
@@ -355,6 +367,7 @@ For linear ads rmp-vast exposes 2 players: a content player (for the actual cont
 **API methods getter|setter**
 
 The following getter|setter should be queried after the `adstarted` event has fired:
+
 - `adPaused`: getter-only returns `Boolean`, stating if the ad on stage is paused or not.
 - `volume`: getter returns `Number`, volume of (content|ad) player. Returned value is a number between 0 and 1. -1 is returned if this value is not available | setter sets volume of (content|ad) player.
 - `muted`: getter returns `Boolean`, the mute state of (content|ad) player | setter sets (content|ad) player mute state.
@@ -395,7 +408,7 @@ Additional VPAID-related methods
 - `expandAd()`: expands the VPAID creative on stage.
 - `collapseAd()`: collapses the VPAID creative on stage.
 - `adExpanded`: getter-only return `Boolean`, stating if the VPAID creative on stage is expanded or not.
-- `vpaidCompanionAds`: getter-only  return `String`, providing ad companion details in VAST 3.0 format for the `<CompanionAds>` element.
+- `vpaidCompanionAds`: getter-only return `String`, providing ad companion details in VAST 3.0 format for the `<CompanionAds>` element.
 
 The following methods should be queried after the `aderror` event has fired:
 
@@ -415,9 +428,9 @@ The following methods provide context information for the rmp-vast instance:
 
 We support StaticResource, IFrameResource and HTMLResource in Companion tags.
 
-We also support AltText, CompanionClickThrough, CompanionClickTracking, TrackingEvents tags in Companion tags. 
+We also support AltText, CompanionClickThrough, CompanionClickTracking, TrackingEvents tags in Companion tags.
 
-We support "required" attribute for CompanionAds tag as well as "adSlotId" attribute for Companion tag. 
+We support "required" attribute for CompanionAds tag as well as "adSlotId" attribute for Companion tag.
 
 We also support CompanionAds in wrappers/redirects (The CompanionAds nearer to the final linear creative will be selected).
 
@@ -500,11 +513,28 @@ Current VPAID support limitations:
 
 ## HLS creatives support
 
-### This is a BETA feature - open an issue for bugs and improvements
-
 We support linear creatives in HLS format on all supported devices for rmp-vast. This is made possible thanks to the [hls.js project](https://github.com/video-dev/hls.js). Make sure to add ./externals/hls/hls.min.js to your page and enable this feature with `useHlsJS: true` setting. See ./test/spec/inlineLinearSpec/hls-creative.html for an example.
 
 [Back to documentation sections](#documentation-sections)
+
+## Macros
+
+rmp-vast supports most [VAST 4.3 macros](https://interactiveadvertisingbureau.github.io/vast/vast4macros/vast4-macros-latest.html) automatically. There are however macros that need to be set explicitly or that are not currently supported by rmp-vast. You can pass values for those macros with the `macros` setting (they will be replaced by rmp-vast for ping URLs). Example:
+
+```javascript
+const id = "vast-player";
+const macrosMap = new Map();
+macrosMap.set("CLIENTUA", encodeURIComponent("MyPlayer/1.0 rmp-vast/15.0.0"));
+macrosMap.set("PLAYBACKMETHODS", 2);
+const params = {
+  showControlsForAdPlayer: true,
+  macros: macrosMap,
+};
+const rmpVast = new RmpVast(id, params);
+rmpVast.loadAds("your-ad-tag-url");
+```
+
+Macros that need to be set explicitly if you want to support them: CONTENTCAT, GPPSECTIONID, GPPSTRING, PLAYBACKMETHODS, STOREID, STOREURL, BREAKMAXADLENGTH, BREAKMAXADS, BREAKMAXDURATION, BREAKMINADLENGTH, PLACEMENTTYPE, TRANSACTIONID, CLIENTUA, DEVICEIP, IFA, IFATYPE, LATLONG, SERVERUA, APPBUNDLE, EXTENSIONS, OMIDPARTNER, VERIFICATIONVENDORS, CONTENTID, CONTENTURI, INVENTORYSTATE.
 
 ## Autoplay support
 

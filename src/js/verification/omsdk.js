@@ -1,5 +1,4 @@
-import FW from '../framework/fw';
-import Tracking from '../tracking/tracking';
+import Logger from '../framework/logger';
 
 
 export default class OmSdkManager {
@@ -13,8 +12,8 @@ export default class OmSdkManager {
     this._lastVideoTime = -1;
     this._adVerifications = adVerifications;
     this._onFullscreenChangeFn = null;
-    this._contentPlayer = rmpVast.__contentPlayer;
-    this._adPlayer = rmpVast.__adPlayer;
+    this._contentPlayer = rmpVast.currentContentPlayer;
+    this._adPlayer = rmpVast.currentAdPlayer;
     this._params = rmpVast.params;
     this._isSkippableAd = rmpVast.isSkippableAd;
     this._skipTimeOffset = rmpVast.skipTimeOffset;
@@ -35,13 +34,13 @@ export default class OmSdkManager {
     if (typeof verification.trackingEvents !== 'undefined' &&
       Array.isArray(verification.trackingEvents.verificationNotExecuted) &&
       verification.trackingEvents.verificationNotExecuted.length > 0) {
-      verification.trackingEvents.verificationNotExecuted.forEach((verificationNotExecutedURI) => {
+      verification.trackingEvents.verificationNotExecuted.forEach(verificationNotExecutedURI => {
         let validatedURI = verificationNotExecutedURI;
         const reasonPattern = /\[REASON\]/gi;
         if (reasonPattern.test(validatedURI)) {
           validatedURI = validatedURI.replace(reasonPattern, reasonCode);
         }
-        Tracking.pingURI.call(this._rmpVast, validatedURI);
+        this._rmpVast.rmpVastTracking.pingURI(validatedURI);
       });
     }
   }
@@ -187,7 +186,7 @@ export default class OmSdkManager {
     try {
       sessionClient = OmidSessionClient['default'];
     } catch (error) {
-      console.warn(error);
+      Logger.print('warning', error);
       return;
     }
     const AdSession = sessionClient.AdSession;
@@ -209,7 +208,7 @@ export default class OmSdkManager {
     } else {
       // we support Access Modes Creative Access a.k.a full (we do not support Domain Access for now)
       const accessMode = 'full';
-      resources = this._adVerifications.map((verification) => {
+      resources = this._adVerifications.map(verification => {
         return new VerificationScriptResource(
           verification.resource,
           verification.vendor,
@@ -221,7 +220,7 @@ export default class OmSdkManager {
     const contentUrl = document.location.href;
     const context = new Context(partner, resources, contentUrl);
 
-    console.log(resources);
+    Logger.print('info', ``, resources);
 
     if (this._params.omidUnderEvaluation) {
       context.underEvaluation = true;
@@ -229,29 +228,17 @@ export default class OmSdkManager {
 
     const omdSdkServiceWindow = window.top;
     if (!omdSdkServiceWindow) {
-      console.log(
-        `${FW.consolePrepend}${FW.consolePrepend2} invalid serviceWindow - return`,
-        FW.consoleStyle,
-        FW.consoleStyle2,
-        ''
-      );
+      Logger.print('info', `OMSDK: invalid serviceWindow - return`);
       return;
     }
     context.setServiceWindow(omdSdkServiceWindow);
     context.setVideoElement(this._adPlayer);
-
-    console.log(context);
-
+    Logger.print('info', ``, context);
     this._adSession = new AdSession(context);
     this._adSession.setCreativeType('video');
     this._adSession.setImpressionType('beginToRender');
     if (!this._adSession.isSupported()) {
-      console.log(
-        `${FW.consolePrepend}${FW.consolePrepend2} invalid serviceWindow - return`,
-        FW.consoleStyle,
-        FW.consoleStyle2,
-        ''
-      );
+      Logger.print('info', `OMSDK: invalid serviceWindow - return`);
       return;
     }
     this._adEvents = new AdEvents(this._adSession);
@@ -271,7 +258,7 @@ export default class OmSdkManager {
     ];
 
     // handle ad player events
-    videoEventTypes.forEach((eventType) => {
+    videoEventTypes.forEach(eventType => {
       this._adPlayer.addEventListener(eventType, event => this._adPlayerDidDispatchEvent(event));
     });
     // handle fullscreenchange 

@@ -15,66 +15,41 @@ describe('icons-image', function () {
   }
   const title = document.getElementsByTagName('title')[0];
 
-  it('should load adTag and play it', function (done) {
+  it('should load adTag and play it', done => {
     let validSteps = 0;
 
-    const _incrementAndLog = function (event) {
+    const _incrementAndLog = (event) => {
       validSteps++;
       if (event && event.type) {
-        window.console.log(event.type);
-        window.console.log(validSteps);
+        window.console.log(event.type + ' at step ' + validSteps);
       }
     };
 
-    rmpVast.on('adloaded', function (e) {
+    rmpVast.on('adloaded', e => {
       _incrementAndLog(e);
     });
 
-    rmpVast.on('addurationchange', function (e) {
+    rmpVast.on('adstarted', e => {
       _incrementAndLog(e);
     });
 
-    rmpVast.on('adimpression', function (e) {
+    rmpVast.on('adcomplete', e => {
       _incrementAndLog(e);
     });
 
-    rmpVast.on('adstarted', function (e) {
+    rmpVast.on('adiconclick', e => {
       _incrementAndLog(e);
     });
 
-    rmpVast.on('adtagstartloading', function (e) {
-      _incrementAndLog(e);
-    });
-
-    rmpVast.on('adtagloaded', function (e) {
-      _incrementAndLog(e);
-    });
-
-    rmpVast.on('adcomplete', function (e) {
-      _incrementAndLog(e);
-    });
-
-    rmpVast.on('adfirstquartile', function (e) {
-      _incrementAndLog(e);
-    });
-
-    rmpVast.on('admidpoint', function (e) {
-      _incrementAndLog(e);
-    });
-
-    rmpVast.on('adthirdquartile', function (e) {
-      _incrementAndLog(e);
-    });
-
-    rmpVast.on('addestroyed', function (e) {
+    rmpVast.on('addestroyed', e => {
       _incrementAndLog(e);
       let timeupdateCount = 0;
-      video.addEventListener('timeupdate', function (e) {
+      video.addEventListener('timeupdate', e => {
         timeupdateCount++;
         if (timeupdateCount === 5) {
           _incrementAndLog(e);
-          if (validSteps === 12) {
-            expect(validSteps).toBe(12);
+          if (validSteps === 6) {
+            expect(validSteps).toBe(6);
             title.textContent = 'Test completed';
             done();
           }

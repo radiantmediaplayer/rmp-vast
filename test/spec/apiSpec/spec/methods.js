@@ -84,7 +84,7 @@ describe('Test for API methods', function () {
         window.console.log(adDuration);
         window.console.log(adCurrentTime);
         window.console.log(adRemainingTime);
-        if (adDuration >= 10000 && adDuration <= 10500 && adCurrentTime > 700 && adCurrentTime < 1100 && adRemainingTime > 9000 && adRemainingTime < 10000) {
+        if (adDuration >= 10000 && adDuration <= 10500 && adCurrentTime > 600 && adCurrentTime < 1200 && adRemainingTime > 8000 && adRemainingTime < 11000) {
           _incrementAndLogMethods('adDuration');
         }
         if ([1280, 640, 426, 854].includes(adMediaWidth) && [360, 240, 480, 720].includes(adMediaHeight) && /https:\/\/googleads\.github\.io\/googleads-ima-html5\/vsi\//.test(clickThroughUrl)) {

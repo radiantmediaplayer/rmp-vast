@@ -1,6 +1,5 @@
 import FW from '../framework/fw';
-import Utils from '../framework/utils';
-import Tracking from '../tracking/tracking';
+import Logger from '../framework/logger';
 
 
 export default class NonLinearCreative {
@@ -27,19 +26,15 @@ export default class NonLinearCreative {
   }
 
   _onNonLinearLoadError() {
-    Utils.processVastErrors.call(this._rmpVast, 502, true);
+    this._rmpVast.rmpVastUtils.processVastErrors(502, true);
   }
 
   _onNonLinearLoadSuccess() {
-    console.log(
-      `${FW.consolePrepend} success loading non-linear creative at ${this._rmpVast.creative.mediaUrl}`,
-      FW.consoleStyle,
-      ''
-    );
-
+    Logger.print('info', `success loading non-linear creative at ${this._rmpVast.creative.mediaUrl}`);
     this._rmpVast.__adOnStage = true;
-    Utils.createApiEvent.call(this._rmpVast, ['adloaded', 'adimpression', 'adstarted']);
-    Tracking.dispatch.call(this._rmpVast, ['impression', 'creativeView', 'start', 'loaded']);
+    this._rmpVast.rmpVastTracking.dispatchTrackingAndApiEvent(
+      ['adloaded', 'adimpression', 'adstarted', 'adcreativeview']
+    );
   }
 
   _onNonLinearClickThrough(event) {
@@ -48,10 +43,9 @@ export default class NonLinearCreative {
         event.stopPropagation();
       }
       this._rmpVast.pause();
-      Utils.createApiEvent.call(this._rmpVast, 'adclick');
-      Tracking.dispatch.call(this._rmpVast, 'clickthrough');
-    } catch (e) {
-      console.warn(e);
+      this._rmpVast.rmpVastTracking.dispatchTrackingAndApiEvent('adclick');
+    } catch (error) {
+      Logger.print('warning', error);
     }
   }
 
@@ -63,14 +57,13 @@ export default class NonLinearCreative {
       }
     }
     FW.setStyle(this._nonLinearContainerElement, { display: 'none' });
-    Utils.createApiEvent.call(this._rmpVast, 'adclosed');
-    Tracking.dispatch.call(this._rmpVast, 'close');
+    this._rmpVast.rmpVastTracking.dispatchTrackingAndApiEvent('adclosed');
   }
 
   _appendCloseButton() {
     this._nonLinearCloseElement = document.createElement('div');
     this._nonLinearCloseElement.className = 'rmp-ad-non-linear-close';
-    Utils.makeButtonAccessible(this._nonLinearCloseElement, this._params.labels.closeAd);
+    this._rmpVast.rmpVastUtils.makeButtonAccessible(this._nonLinearCloseElement, this._params.labels.closeAd);
     if (this._nonLinearMinSuggestedDuration > 0) {
       FW.setStyle(this._nonLinearCloseElement, { display: 'none' });
       setTimeout(() => {
@@ -150,8 +143,7 @@ export default class NonLinearCreative {
   }
 
   parse(variations) {
-    console.log(`${FW.consolePrepend} non-linear creatives follow`, FW.consoleStyle, '');
-    console.log(variations);
+    Logger.print('info', `non-linear creatives follow`, variations);
 
     let isDimensionError = false;
     let currentVariation;
@@ -195,9 +187,7 @@ export default class NonLinearCreative {
         this._rmpVast.creative.width = width;
         this._rmpVast.creative.height = height;
         this._rmpVast.creative.type = currentVariation.type;
-
-        console.log(`${FW.consolePrepend} selected non-linear creative`, FW.consoleStyle, '');
-        console.log(this._rmpVast.creative);
+        Logger.print('info', `selected non-linear creative`, this._rmpVast.creative);
         break;
       }
     }
@@ -207,7 +197,7 @@ export default class NonLinearCreative {
       if (isDimensionError) {
         vastErrorCode = 501;
       }
-      Utils.processVastErrors.call(this._rmpVast, vastErrorCode, true);
+      this._rmpVast.rmpVastUtils.processVastErrors(vastErrorCode, true);
       return;
     }
     this._rmpVast.creative.clickThroughUrl = currentVariation.nonlinearClickThroughURLTemplate;

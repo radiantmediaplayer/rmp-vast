@@ -6,15 +6,15 @@ export default class AdPlayer {
     _adContainer: any;
     _contentWrapper: any;
     _adPlayer: any;
-    destroy(): void;
-    init(): void;
-    append(url: any, type: any): void;
     set volume(level: any);
     get volume(): any;
     set muted(muted: any);
     get muted(): any;
     get duration(): number;
     get currentTime(): number;
+    destroy(): void;
+    init(): void;
+    append(url: any, type: any): void;
     play(firstAdPlayerPlayRequest: any): void;
     pause(): void;
     resumeContent(): void;

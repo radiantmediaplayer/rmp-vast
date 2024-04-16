@@ -3,9 +3,10 @@
  * Note: Some browsers do not support promises and a more complete implementation
  *       should consider using a polyfill.
  */
-import FW from '../../framework/fw';
-/** Contains all constants common across SIMID */
+import Logger from '../../framework/logger';
 
+
+/** Contains all constants common across SIMID */
 const ProtocolMessage = {
   CREATE_SESSION: 'createSession',
   RESOLVE: 'resolve',
@@ -243,9 +244,8 @@ class SimidProtocol {
     let data;
     try {
       data = JSON.parse(event.data);
-    } catch (e) {
-      console.log(`${FW.consolePrepend} receiveMessage failed at decoding message`, FW.consoleStyle, '');
-      console.log(e);
+    } catch (error) {
+      Logger.print('warning', `receiveMessage failed at decoding message`, error);
       return;
     }
     if (!data) {
@@ -366,12 +366,12 @@ class SimidProtocol {
    */
   createSession() {
     const sessionCreationResolved = () => {
-      console.log(`${FW.consolePrepend} SIMID: Session created`, FW.consoleStyle, '');
+      Logger.print('info', `SIMID: Session created`);
     };
     const sessionCreationRejected = () => {
       // If this ever happens, it may be impossible for the ad
       // to ever communicate with the player.
-      console.log(`${FW.consolePrepend} SIMID: Session creation was rejected`, FW.consoleStyle, '');
+      Logger.print('info', `SIMID: Session creation was rejected`);
     };
     this.generateSessionId_();
     this.sendMessage(ProtocolMessage.CREATE_SESSION).then(

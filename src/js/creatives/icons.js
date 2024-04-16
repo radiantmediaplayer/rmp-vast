@@ -1,5 +1,5 @@
 import FW from '../framework/fw';
-import Tracking from '../tracking/tracking';
+import Logger from '../framework/logger';
 
 
 export default class Icons {
@@ -7,7 +7,7 @@ export default class Icons {
   constructor(rmpVast) {
     this._rmpVast = rmpVast;
     this._adContainer = rmpVast.adContainer;
-    this._adPlayer = rmpVast.__adPlayer;
+    this._adPlayer = rmpVast.currentAdPlayer;
     this._onPlayingAppendIconsFn = null;
     this._iconsData = [];
   }
@@ -27,22 +27,22 @@ export default class Icons {
     // send trackers if any for IconClickTracking
     const iconClickTrackingUrls = this._iconsData[index].iconClickTrackingUrls;
     if (iconClickTrackingUrls.length > 0) {
-      iconClickTrackingUrls.forEach((tracking) => {
+      iconClickTrackingUrls.forEach(tracking => {
         if (tracking.url) {
-          Tracking.pingURI.call(this._rmpVast, tracking.url);
+          this._rmpVast.rmpVastTracking.pingURI(tracking.url);
         }
       });
     }
+    this._rmpVast.rmpVastUtils.createApiEvent('adiconclick');
   }
 
   _onIconLoadPingTracking(index) {
-    console.log(`${FW.consolePrepend} IconViewTracking for icon at index ${index}`, FW.consoleStyle, '');
-    Tracking.pingURI.call(this._rmpVast, this._iconsData[index].iconViewTrackingUrl);
+    Logger.print('info', `IconViewTracking for icon at index ${index}`);
+    this._rmpVast.rmpVastTracking.pingURI(this._iconsData[index].iconViewTrackingUrl);
   }
 
   _onPlayingAppendIcons() {
-    console.log(`${FW.consolePrepend} playing states has been reached - append icons`, FW.consoleStyle, '');
-
+    Logger.print('info', `playing states has been reached - append icons`);
     this._iconsData.forEach((iconData, index) => {
       let icon;
       let src;
@@ -108,17 +108,13 @@ export default class Icons {
       } else {
         icon.src = src;
       }
-
-      console.log(`${FW.consolePrepend} Selected icon details follow`, FW.consoleStyle, '');
-      console.log(icon);
-
+      Logger.print('info', `Selected icon details follow`, icon);
       this._adContainer.appendChild(icon);
     });
   }
 
   destroy() {
-    console.log(`${FW.consolePrepend} Start destroying icons`, FW.consoleStyle, '');
-
+    Logger.print('info', `Start destroying icons`);
     const icons = this._adContainer.querySelectorAll('.rmp-ad-container-icons');
     if (icons.length > 0) {
       icons.forEach(icon => {
@@ -131,8 +127,7 @@ export default class Icons {
   }
 
   parse(icons) {
-    console.log(`${FW.consolePrepend} Start parsing for icons`, FW.consoleStyle, '');
-
+    Logger.print('info', `Start parsing icons`);
     for (let i = 0; i < icons.length; i++) {
       const currentIcon = icons[i];
       const program = currentIcon.program;
@@ -168,9 +163,7 @@ export default class Icons {
       iconData.iconClickTrackingUrls = currentIcon.iconClickTrackingURLTemplates;
       this._iconsData.push(iconData);
     }
-
-    console.log(`${FW.consolePrepend} Validated parsed icons follows`, FW.consoleStyle, '');
-    console.log(this._iconsData);
+    Logger.print('info', `Validated parsed icons follows`, this._iconsData);
   }
 
   append() {

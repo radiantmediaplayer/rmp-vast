@@ -4,14 +4,14 @@ export default class ContentPlayer {
     _contentPlayer: any;
     _customPlaybackCurrentTime: number;
     _antiSeekLogicInterval: NodeJS.Timeout;
-    destroy(): void;
-    play(firstContentPlayerPlayRequest: any): void;
-    pause(): void;
     set volume(level: any);
     get volume(): any;
     set muted(muted: any);
     get muted(): any;
     get currentTime(): number;
+    destroy(): void;
+    play(firstContentPlayerPlayRequest: any): void;
+    pause(): void;
     seekTo(msSeek: any): void;
     preventSeekingForCustomPlayback(): void;
 }

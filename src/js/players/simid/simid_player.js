@@ -15,9 +15,7 @@ import {
   PlayerErrorCode,
   StopCode
 } from './simid_protocol';
-import Utils from '../../framework/utils';
-import FW from '../../framework/fw';
-import Tracking from '../../tracking/tracking';
+import Logger from '../../framework/logger';
 
 const NO_REQUESTED_DURATION = 0;
 const UNLIMITED_DURATION = -2;
@@ -57,13 +55,13 @@ export default class SimidPlayer {
      * A reference to the video player on the players main page
      * @private {!Element}
      */
-    this.contentVideoElement_ = rmpVast.__contentPlayer;
+    this.contentVideoElement_ = rmpVast.currentContentPlayer;
 
     /**
      * A reference to a video player for playing ads.
      * @private {!Element}
      */
-    this.adVideoElement_ = rmpVast.__adPlayer;
+    this.adVideoElement_ = rmpVast.currentAdPlayer;
 
     /**
      * A reference to the iframe holding the SIMID creative.
@@ -117,7 +115,7 @@ export default class SimidPlayer {
      * A promise that resolves once the creative creates a session.
      * @private {!Promise}
      */
-    this.sessionCreatedPromise_ = new Promise((resolve) => {
+    this.sessionCreatedPromise_ = new Promise(resolve => {
       this.resolveSessionCreatedPromise_ = resolve;
     });
 
@@ -158,7 +156,7 @@ export default class SimidPlayer {
     this.trackEventsOnAdVideoElement_();
     this.trackEventsOnContentVideoElement_();
     this.hideAdPlayer_();
-    console.log(`${FW.consolePrepend} SIMID: player created`, FW.consoleStyle, '');
+    Logger.print('info', `SIMID: player created`);
   }
 
   /**
@@ -169,7 +167,7 @@ export default class SimidPlayer {
    */
   initializeAd() {
     if (!this.isLinearAd_ && !this.isValidDimensions_(this.getNonlinearDimensions_())) {
-      console.log(`${FW.consolePrepend} SIMID: Unable to play a non-linear ad with dimensions bigger than the player. Please modify dimensions to a smaller size.`, FW.consoleStyle, '');
+      Logger.print('info', `SIMID: Unable to play a non-linear ad with dimensions bigger than the player. Please modify dimensions to a smaller size.`);
       return;
     }
 
@@ -187,8 +185,8 @@ export default class SimidPlayer {
     // Prepare for the case that init fails before sending
     // the init message. Initialization failing means abandoning
     // the ad.
-    this.initializationPromise_.catch((e) => {
-      this.onAdInitializedFailed_(e);
+    this.initializationPromise_.catch(error => {
+      this.onAdInitializedFailed_(error);
     });
 
     // Using a promise means that the init message will
@@ -197,7 +195,7 @@ export default class SimidPlayer {
     this.sessionCreatedPromise_.then(() => {
       this.sendInitMessage_();
     });
-    console.log(`${FW.consolePrepend} SIMID: initializeAd`, FW.consoleStyle, '');
+    Logger.print('info', `SIMID: initializeAd`);
   }
 
   /**
@@ -210,9 +208,8 @@ export default class SimidPlayer {
     // before they start playback.
     this.initializationPromise_.then(() => {
       this.startCreativePlayback_();
-    }).catch(e => {
-      console.log(`${FW.consolePrepend} SIMID: playAd failed with following error`, FW.consoleStyle, '');
-      console.log(e);
+    }).catch(error => {
+      Logger.print('warning', `SIMID: playAd failed with following error`, error);
     });
   }
 
@@ -354,7 +351,7 @@ export default class SimidPlayer {
     const newDimensions = this.getNonlinearDimensions_();
 
     if (!this.isValidDimensions_(newDimensions)) {
-      console.log(`${FW.consolePrepend} SIMID: Unable to play a non-linear ad with dimensions bigger than the player. Please modify dimensions to a smaller size.`, FW.consoleStyle, '');
+      Logger.print('info', `SIMID: Unable to play a non-linear ad with dimensions bigger than the player. Please modify dimensions to a smaller size.`);
       return;
     } else {
       this.setSimidIframeDimensions_(newDimensions);
@@ -390,9 +387,7 @@ export default class SimidPlayer {
         message: 'Linear resize not yet supported.'
       };
       this.simidProtocol.reject(incomingMessage, errorMessage);
-      console.log(`${FW.consolePrepend} SIMID: ${errorMessage.message}`, FW.consoleStyle, '');
-
-
+      Logger.print('info', `SIMID: ${errorMessage.message}`);
     } else {
       const fullDimensions = this.getFullDimensions_(this.contentVideoElement_);
       this.setSimidIframeDimensions_(fullDimensions);
@@ -414,19 +409,16 @@ export default class SimidPlayer {
         message: 'Cannot collapse linear ads.'
       };
       this.simidProtocol.reject(incomingMessage, errorMessage);
-      console.log(`${FW.consolePrepend} SIMID: ${errorMessage.message}`, FW.consoleStyle, '');
-
+      Logger.print('info', `SIMID: ${errorMessage.message}`);
     } else if (!this.isValidDimensions_(newDimensions)) {
       const errorMessage = {
         message: 'Unable to collapse to dimensions bigger than the player. Please modify dimensions to a smaller size.'
       };
       this.simidProtocol.reject(incomingMessage, errorMessage);
-      console.log(`${FW.consolePrepend} SIMID: ${errorMessage.message}`, FW.consoleStyle, '');
-
+      Logger.print('info', `SIMID: ${errorMessage.message}`);
     } else {
       this.setSimidIframeDimensions_(newDimensions);
       this.simidIframe_.style.position = 'absolute';
-
       this.contentVideoElement_.play();
       this.simidProtocol.resolve(incomingMessage);
     }
@@ -443,7 +435,7 @@ export default class SimidPlayer {
         message: 'Linear resize not yet supported.'
       };
       this.simidProtocol.reject(incomingMessage, errorMessage);
-      console.log(`${FW.consolePrepend} SIMID: ${errorMessage.message}`, FW.consoleStyle, '');
+      Logger.print('info', `SIMID: ${errorMessage.message}`);
 
     } else if (!this.isValidDimensions_(incomingMessage.args.creativeDimensions)) {
       const errorMessage = {
@@ -451,8 +443,7 @@ export default class SimidPlayer {
         message: 'Unable to resize a non-linear ad with dimensions bigger than the player. Please modify dimensions to a smaller size.'
       };
       this.simidProtocol.reject(incomingMessage, errorMessage);
-      console.log(`${FW.consolePrepend} SIMID: ${errorMessage.message}`, FW.consoleStyle, '');
-
+      Logger.print('info', `SIMID: ${errorMessage.message}`);
     } else {
       this.nonLinearDimensions_ = incomingMessage.args.creativeDimensions;
       this.setSimidIframeDimensions_(incomingMessage.args.creativeDimensions);
@@ -506,9 +497,9 @@ export default class SimidPlayer {
     };
     const initPromise = this.simidProtocol.sendMessage(
       PlayerMessage.INIT, initMessage);
-    initPromise.then((args) => {
+    initPromise.then(args => {
       this.resolveInitializationPromise_(args);
-    }).catch((args) => {
+    }).catch(args => {
       this.rejectInitializationPromise_(args);
     });
   }
@@ -554,7 +545,7 @@ export default class SimidPlayer {
    */
   onAdInitializedFailed_(data) {
     const errorData = JSON.stringify(data);
-    console.log(`${FW.consolePrepend} SIMID: Ad init failed. ${errorData}`, FW.consoleStyle, '');
+    Logger.print('info', ` SIMID: Ad init failed. ${errorData}`);
     this.destroyIframeAndResumeContent_(true, errorData.errorCode);
   }
 
@@ -660,7 +651,7 @@ export default class SimidPlayer {
       };*/
       // Wait for the SIMID creative to acknowledge stop and then clean
       // up the iframe.
-      console.log(`${FW.consolePrepend} SIMID: stopAd ${reason}`, FW.consoleStyle, '');
+      Logger.print('info', ` SIMID: stopAd ${reason}`);
       this.simidProtocol.sendMessage(PlayerMessage.AD_STOPPED)
         .then(() => this.destroyIframeAndResumeContent_(error, errorCode));
     }
@@ -689,7 +680,7 @@ export default class SimidPlayer {
     this.destroySimidIframe_();
     //this.contentVideoElement_.play();
     if (error) {
-      Utils.processVastErrors.call(this.rmpVast_, errorCode, true);
+      this.rmpVast_.rmpVastUtils.processVastErrors(errorCode, true);
     } else if (this.rmpVast_.rmpVastAdPlayer) {
       this.rmpVast_.rmpVastAdPlayer.resumeContent();
     }
@@ -777,10 +768,9 @@ export default class SimidPlayer {
   onReportTracking(incomingMessage) {
     const requestedUrlArray = incomingMessage.args['trackingUrls'];
     requestedUrlArray.forEach(url => {
-      Tracking.pingURI.call(this.rmpVast_, url);
+      this.rmpVast_.rmpVastTracking.pingURI(url);
     });
-
-    console.log(`${FW.consolePrepend} SIMID: The creative has asked for the player to ping ${requestedUrlArray}`, FW.consoleStyle, '');
+    Logger.print('info', `SIMID: The creative has asked for the player to ping ${requestedUrlArray}`);
   }
 
   /**
@@ -860,7 +850,7 @@ export default class SimidPlayer {
 
   onReceiveCreativeLog(incomingMessage) {
     const logMessage = incomingMessage.args['message'];
-    console.log(`${FW.consolePrepend} SIMID: Received message from creative: ${logMessage}`, FW.consoleStyle, '');
+    Logger.print('info', `SIMID: Received message from creative: ${logMessage}`);
   }
 
   sendLog(outgoingMessage) {

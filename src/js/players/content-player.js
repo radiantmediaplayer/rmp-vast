@@ -1,30 +1,13 @@
 import FW from '../framework/fw';
-import Utils from '../framework/utils';
 
 
 export default class ContentPlayer {
 
   constructor(rmpVast) {
     this._rmpVast = rmpVast;
-    this._contentPlayer = rmpVast.__contentPlayer;
+    this._contentPlayer = rmpVast.currentContentPlayer;
     this._customPlaybackCurrentTime = 0;
     this._antiSeekLogicInterval = null;
-  }
-
-  destroy() {
-    FW.clearInterval(this._antiSeekLogicInterval);
-  }
-
-  play(firstContentPlayerPlayRequest) {
-    if (this._contentPlayer && this._contentPlayer.paused) {
-      Utils.playPromise.call(this._rmpVast, 'content', firstContentPlayerPlayRequest);
-    }
-  }
-
-  pause() {
-    if (this._contentPlayer && !this._contentPlayer.paused) {
-      this._contentPlayer.pause();
-    }
   }
 
   set volume(level) {
@@ -62,6 +45,22 @@ export default class ContentPlayer {
       return this._contentPlayer.currentTime * 1000;
     }
     return -1;
+  }
+
+  destroy() {
+    FW.clearInterval(this._antiSeekLogicInterval);
+  }
+
+  play(firstContentPlayerPlayRequest) {
+    if (this._contentPlayer && this._contentPlayer.paused) {
+      this._rmpVast.rmpVastUtils.playPromise('content', firstContentPlayerPlayRequest);
+    }
+  }
+
+  pause() {
+    if (this._contentPlayer && !this._contentPlayer.paused) {
+      this._contentPlayer.pause();
+    }
   }
 
   seekTo(msSeek) {

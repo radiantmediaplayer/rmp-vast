@@ -7,7 +7,6 @@ describe('Test for hls-creative', function () {
   const container = document.getElementById(id);
   const video = document.querySelector('.rmp-video');
   const params = {
-    useHlsJS: true,
     debugHlsJS: false
   };
   const rmpVast = new RmpVast(id, params);

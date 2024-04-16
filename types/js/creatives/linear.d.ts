@@ -2,7 +2,6 @@ export default class LinearCreative {
     constructor(rmpVast: any);
     _rmpVast: any;
     _params: any;
-    _container: any;
     _adContainer: any;
     _adPlayer: any;
     _contentPlayer: any;

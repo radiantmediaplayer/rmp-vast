@@ -10340,7 +10340,7 @@ function _regeneratorRuntime() {
   function makeInvokeMethod(e, r, n) {
     var o = h;
     return function (i, a) {
-      if (o === f) throw new Error("Generator is already running");
+      if (o === f) throw Error("Generator is already running");
       if (o === s) {
         if ("throw" === i) throw a;
         return {
@@ -10484,7 +10484,7 @@ function _regeneratorRuntime() {
           } else if (c) {
             if (this.prev < i.catchLoc) return handle(i.catchLoc, !0);
           } else {
-            if (!u) throw new Error("try statement without catch or finally");
+            if (!u) throw Error("try statement without catch or finally");
             if (this.prev < i.finallyLoc) return handle(i.finallyLoc);
           }
         }
@@ -10524,7 +10524,7 @@ function _regeneratorRuntime() {
           return o;
         }
       }
-      throw new Error("illegal catch attempt");
+      throw Error("illegal catch attempt");
     },
     delegateYield: function delegateYield(e, r, n) {
       return this.delegate = {
@@ -10593,7 +10593,7 @@ function toPrimitive(t, r) {
 
 function toPropertyKey(t) {
   var i = toPrimitive(t, "string");
-  return "symbol" == _typeof(i) ? i : String(i);
+  return "symbol" == _typeof(i) ? i : i + "";
 }
 ;// CONCATENATED MODULE: ./node_modules/@babel/runtime-corejs3/helpers/esm/createClass.js
 
@@ -10621,24 +10621,71 @@ var index_of_default = /*#__PURE__*/__webpack_require__.n(index_of);
 // EXTERNAL MODULE: ./node_modules/@babel/runtime-corejs3/core-js-stable/object/keys.js
 var object_keys = __webpack_require__(697);
 var keys_default = /*#__PURE__*/__webpack_require__.n(object_keys);
-// EXTERNAL MODULE: ./node_modules/@babel/runtime-corejs3/core-js-stable/instance/find.js
-var find = __webpack_require__(1426);
-var find_default = /*#__PURE__*/__webpack_require__.n(find);
 // EXTERNAL MODULE: ./node_modules/@babel/runtime-corejs3/core-js-stable/promise.js
 var core_js_stable_promise = __webpack_require__(1240);
 var core_js_stable_promise_default = /*#__PURE__*/__webpack_require__.n(core_js_stable_promise);
+// EXTERNAL MODULE: ./node_modules/@babel/runtime-corejs3/core-js-stable/instance/find.js
+var find = __webpack_require__(1426);
+var find_default = /*#__PURE__*/__webpack_require__.n(find);
 // EXTERNAL MODULE: ./node_modules/@babel/runtime-corejs3/core-js-stable/instance/reduce.js
 var reduce = __webpack_require__(3363);
 var reduce_default = /*#__PURE__*/__webpack_require__.n(reduce);
-// EXTERNAL MODULE: ./node_modules/@babel/runtime-corejs3/core-js-stable/instance/concat.js
-var concat = __webpack_require__(3774);
-var concat_default = /*#__PURE__*/__webpack_require__.n(concat);
-// EXTERNAL MODULE: ./node_modules/@babel/runtime-corejs3/core-js-stable/instance/filter.js
-var filter = __webpack_require__(6319);
-var filter_default = /*#__PURE__*/__webpack_require__.n(filter);
 // EXTERNAL MODULE: ./node_modules/@babel/runtime-corejs3/core-js-stable/parse-float.js
 var parse_float = __webpack_require__(3981);
 var parse_float_default = /*#__PURE__*/__webpack_require__.n(parse_float);
+// EXTERNAL MODULE: ./node_modules/@babel/runtime-corejs3/core-js-stable/instance/concat.js
+var concat = __webpack_require__(3774);
+var concat_default = /*#__PURE__*/__webpack_require__.n(concat);
+;// CONCATENATED MODULE: ./src/js/framework/logger.js
+
+
+
+var Logger = /*#__PURE__*/function () {
+  function Logger() {
+    _classCallCheck(this, Logger);
+  }
+  return _createClass(Logger, null, [{
+    key: "printVideoEvents",
+    value: function printVideoEvents(video, type) {
+      var events = ['loadstart', 'durationchange', 'playing', 'waiting', 'loadedmetadata', 'loadeddata', 'canplay', 'canplaythrough'];
+      events.forEach(function (value) {
+        video.addEventListener(value, function (e) {
+          if (e && e.type) {
+            var _context;
+            Logger.print('info', concat_default()(_context = "".concat(type, " video player event \"")).call(_context, e.type, "\""));
+          }
+        });
+      });
+    }
+  }, {
+    key: "print",
+    value: function print(type, data, dump) {
+      var classicLogPattern = /(edge|xbox|msie|trident)/i;
+      var consoleStyleRmpVast = 'color: white; background-color: #00ACC1; padding:1px 3px; border-radius: 3px; margin-right: 7px;';
+      if (data) {
+        if (typeof navigator !== 'undefined' && navigator.userAgent && classicLogPattern.test(navigator.userAgent)) {
+          console.log("RMP-VAST: ".concat(data));
+        } else {
+          switch (type) {
+            case 'warning':
+              console.warn(data);
+              break;
+            case 'error':
+              console.error(data);
+              break;
+            default:
+              console.log("%crmp-vast%c".concat(data), consoleStyleRmpVast, '');
+              break;
+          }
+        }
+      }
+      if (dump) {
+        console.log(dump);
+      }
+    }
+  }]);
+}();
+
 ;// CONCATENATED MODULE: ./src/js/framework/fw.js
 
 
@@ -10652,7 +10699,7 @@ var FW = /*#__PURE__*/function () {
   function FW() {
     _classCallCheck(this, FW);
   }
-  _createClass(FW, null, [{
+  return _createClass(FW, null, [{
     key: "_getStyleAttributeData",
     value: function _getStyleAttributeData(element, style) {
       var styleAttributeData = 0;
@@ -10677,8 +10724,8 @@ var FW = /*#__PURE__*/function () {
         try {
           event = new Event(eventName);
           element.dispatchEvent(event);
-        } catch (e) {
-          console.warn(e);
+        } catch (error) {
+          Logger.print('warning', error);
         }
       }
     }
@@ -10736,61 +10783,10 @@ var FW = /*#__PURE__*/function () {
       if (element && element.parentNode) {
         try {
           element.parentNode.removeChild(element);
-        } catch (e) {
-          console.warn(e);
+        } catch (error) {
+          Logger.print('warning', error);
         }
       }
-    }
-  }, {
-    key: "isEmptyObject",
-    value: function isEmptyObject(obj) {
-      if (obj && _typeof(obj) === 'object' && keys_default()(obj).length === 0) {
-        return true;
-      }
-      return false;
-    }
-  }, {
-    key: "consoleStyle",
-    get: function get() {
-      return 'color: white; background-color: #00ACC1; padding:1px 3px; border-radius: 3px; margin-right: 7px';
-    }
-  }, {
-    key: "consoleStyle2",
-    get: function get() {
-      return 'color: white; background-color: #FB8C00; padding:1px 3px; border-radius: 3px; margin-right: 7px';
-    }
-  }, {
-    key: "consolePrepend2",
-    get: function get() {
-      var CLASSIC_LOG_PATTERN = /(edge|xbox|msie|trident)/i;
-      if (navigator && navigator.userAgent && CLASSIC_LOG_PATTERN.test(navigator.userAgent)) {
-        // browsers with no console log styling capabilities
-        return 'om-sdk-manager:';
-      }
-      return 'om-sdk-manager%c';
-    }
-  }, {
-    key: "consolePrepend",
-    get: function get() {
-      var CLASSIC_LOG_PATTERN = /(edge|xbox|msie|trident)/i;
-      if (navigator && navigator.userAgent && CLASSIC_LOG_PATTERN.test(navigator.userAgent)) {
-        // browsers with no console log styling capabilities
-        return 'RMP-VAST:';
-      }
-      return '%crmp-vast%c';
-    }
-  }, {
-    key: "logVideoEvents",
-    value: function logVideoEvents(video, type) {
-      var events = ['loadstart', 'durationchange', 'playing', 'waiting', 'loadedmetadata', 'loadeddata', 'canplay', 'canplaythrough'];
-      events.forEach(function (value) {
-        video.addEventListener(value, function (e) {
-          if (e && e.type) {
-            var _context, _context2;
-            console.log(concat_default()(_context = concat_default()(_context2 = "".concat(FW.consolePrepend, " ")).call(_context2, type, " video player event \"")).call(_context, e.type, "\""), FW.consoleStyle, '');
-          }
-        });
-      });
     }
   }, {
     key: "isNumber",
@@ -10808,8 +10804,8 @@ var FW = /*#__PURE__*/function () {
         // window.open(link, 'rmpVastAdPageArea'); but focus is not set on updated window with such approach
         // in MS Edge and FF - so _blank it is
         window.open(link, '_blank');
-      } catch (e) {
-        console.warn(e);
+      } catch (error) {
+        Logger.print('warning', error);
       }
     }
   }, {
@@ -10868,7 +10864,6 @@ var FW = /*#__PURE__*/function () {
       }
     }
   }]);
-  return FW;
 }();
 
 // EXTERNAL MODULE: ./node_modules/@babel/runtime-corejs3/core-js-stable/parse-int.js
@@ -10883,7 +10878,7 @@ var Environment = /*#__PURE__*/function () {
   function Environment() {
     _classCallCheck(this, Environment);
   }
-  _createClass(Environment, null, [{
+  return _createClass(Environment, null, [{
     key: "_filterVersion",
     value: function _filterVersion(pattern) {
       if (navigator.userAgent) {
@@ -10900,7 +10895,7 @@ var Environment = /*#__PURE__*/function () {
       return document.createElement('video');
     }
   }, {
-    key: "hasTouchEvents",
+    key: "_hasTouchEvents",
     get: function get() {
       if (typeof window.ontouchstart !== 'undefined' || window.DocumentTouch && document instanceof window.DocumentTouch) {
         return true;
@@ -10938,7 +10933,7 @@ var Environment = /*#__PURE__*/function () {
       var IOS_PATTERN = /(ipad|iphone|ipod)/i;
       var IOS_VERSION_PATTERN = /os\s+(\d+)_/i;
       var support = [false, -1];
-      if (IOS_PATTERN.test(Environment.userAgent) && Environment.hasTouchEvents) {
+      if (IOS_PATTERN.test(Environment.userAgent) && Environment._hasTouchEvents) {
         support = [true, Environment._filterVersion(IOS_VERSION_PATTERN)];
       }
       return support;
@@ -10947,7 +10942,7 @@ var Environment = /*#__PURE__*/function () {
     key: "isIpadOS",
     get: function get() {
       var MAC_PLATFORM_PATTERN = /macintel/i;
-      if (!Environment.isIos[0] && Environment.hasTouchEvents && MAC_PLATFORM_PATTERN.test(navigator.platform) && Environment.devicePixelRatio > 1 && Environment.maxTouchPoints > 1) {
+      if (!Environment.isIos[0] && Environment._hasTouchEvents && MAC_PLATFORM_PATTERN.test(navigator.platform) && Environment.devicePixelRatio > 1 && Environment.maxTouchPoints > 1) {
         return true;
       }
       return false;
@@ -10990,7 +10985,7 @@ var Environment = /*#__PURE__*/function () {
       var ANDROID_PATTERN = /android/i;
       var ANDROID_VERSION_PATTERN = /android\s*(\d+)\./i;
       var support = [false, -1];
-      if (!Environment.isIos[0] && Environment.hasTouchEvents && ANDROID_PATTERN.test(Environment.userAgent)) {
+      if (!Environment.isIos[0] && Environment._hasTouchEvents && ANDROID_PATTERN.test(Environment.userAgent)) {
         support = [true, Environment._filterVersion(ANDROID_VERSION_PATTERN)];
       }
       return support;
@@ -11035,555 +11030,14 @@ var Environment = /*#__PURE__*/function () {
       return false;
     }
   }]);
-  return Environment;
 }();
 
-// EXTERNAL MODULE: ./node_modules/core-js-pure/full/array/is-array.js
-var is_array = __webpack_require__(4411);
-;// CONCATENATED MODULE: ./node_modules/@babel/runtime-corejs3/helpers/esm/arrayLikeToArray.js
-function _arrayLikeToArray(arr, len) {
-  if (len == null || len > arr.length) len = arr.length;
-  for (var i = 0, arr2 = new Array(len); i < len; i++) arr2[i] = arr[i];
-  return arr2;
-}
-;// CONCATENATED MODULE: ./node_modules/@babel/runtime-corejs3/helpers/esm/arrayWithoutHoles.js
-
-
-function _arrayWithoutHoles(arr) {
-  if (is_array(arr)) return _arrayLikeToArray(arr);
-}
-// EXTERNAL MODULE: ./node_modules/core-js-pure/full/get-iterator-method.js
-var get_iterator_method = __webpack_require__(8376);
-// EXTERNAL MODULE: ./node_modules/core-js-pure/full/array/from.js
-var from = __webpack_require__(8327);
-;// CONCATENATED MODULE: ./node_modules/@babel/runtime-corejs3/helpers/esm/iterableToArray.js
-
-
-
-function _iterableToArray(iter) {
-  if (typeof symbol !== "undefined" && get_iterator_method(iter) != null || iter["@@iterator"] != null) return from(iter);
-}
-;// CONCATENATED MODULE: ./node_modules/@babel/runtime-corejs3/helpers/esm/unsupportedIterableToArray.js
-
-
-
-function _unsupportedIterableToArray(o, minLen) {
-  var _context;
-  if (!o) return;
-  if (typeof o === "string") return _arrayLikeToArray(o, minLen);
-  var n = slice(_context = Object.prototype.toString.call(o)).call(_context, 8, -1);
-  if (n === "Object" && o.constructor) n = o.constructor.name;
-  if (n === "Map" || n === "Set") return from(o);
-  if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);
-}
-;// CONCATENATED MODULE: ./node_modules/@babel/runtime-corejs3/helpers/esm/nonIterableSpread.js
-function _nonIterableSpread() {
-  throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
-}
-;// CONCATENATED MODULE: ./node_modules/@babel/runtime-corejs3/helpers/esm/toConsumableArray.js
-
-
-
-
-function _toConsumableArray(arr) {
-  return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread();
-}
-// EXTERNAL MODULE: ./node_modules/@babel/runtime-corejs3/core-js-stable/instance/map.js
-var map = __webpack_require__(8079);
+// EXTERNAL MODULE: ./node_modules/@babel/runtime-corejs3/core-js-stable/instance/filter.js
+var filter = __webpack_require__(6319);
+var filter_default = /*#__PURE__*/__webpack_require__.n(filter);
+// EXTERNAL MODULE: ./node_modules/@babel/runtime-corejs3/core-js-stable/map.js
+var map = __webpack_require__(4707);
 var map_default = /*#__PURE__*/__webpack_require__.n(map);
-// EXTERNAL MODULE: ./node_modules/@babel/runtime-corejs3/core-js-stable/instance/slice.js
-var instance_slice = __webpack_require__(8979);
-var instance_slice_default = /*#__PURE__*/__webpack_require__.n(instance_slice);
-;// CONCATENATED MODULE: ./src/js/tracking/tracking.js
-
-
-
-
-
-
-
-
-
-
-
-var Tracking = /*#__PURE__*/function () {
-  function Tracking() {
-    _classCallCheck(this, Tracking);
-  }
-  _createClass(Tracking, null, [{
-    key: "_dispatch",
-    value: function _dispatch(event) {
-      var _context,
-        _context2,
-        _this = this;
-      console.log(concat_default()(_context = "".concat(FW.consolePrepend, " ping tracking for ")).call(_context, event, " VAST event"), FW.consoleStyle, '');
-
-      // filter trackers - may return multiple urls for same event as allowed by VAST spec
-      var trackers = filter_default()(_context2 = this.trackingTags).call(_context2, function (value) {
-        return event === value.event;
-      });
-      // send ping for each valid tracker
-      if (trackers.length > 0) {
-        trackers.forEach(function (element) {
-          Tracking.pingURI.call(_this, element.url);
-        });
-      }
-    }
-  }, {
-    key: "_vastReadableTime",
-    value: function _vastReadableTime(time) {
-      if (FW.isNumber(time) && time >= 0) {
-        var seconds = 0;
-        var minutes = 0;
-        var hours = 0;
-        var ms = Math.floor(time % 1000);
-        if (ms === 0) {
-          ms = '000';
-        } else if (ms < 10) {
-          ms = '00' + ms;
-        } else if (ms < 100) {
-          ms = '0' + ms;
-        } else {
-          ms = ms.toString();
-        }
-        seconds = Math.floor(time * 1.0 / 1000);
-        if (seconds > 59) {
-          minutes = Math.floor(seconds * 1.0 / 60);
-          seconds = seconds - minutes * 60;
-        }
-        if (seconds === 0) {
-          seconds = '00';
-        } else if (seconds < 10) {
-          seconds = '0' + seconds;
-        } else {
-          seconds = seconds.toString();
-        }
-        if (minutes > 59) {
-          hours = Math.floor(minutes * 1.0 / 60);
-          minutes = minutes - hours * 60;
-        }
-        if (minutes === 0) {
-          minutes = '00';
-        } else if (minutes < 10) {
-          minutes = '0' + minutes;
-        } else {
-          minutes = minutes.toString();
-        }
-        if (hours === 0) {
-          hours = '00';
-        } else if (hours < 10) {
-          hours = '0' + hours;
-        } else {
-          if (hours > 23) {
-            hours = '00';
-          } else {
-            hours = hours.toString();
-          }
-        }
-        return hours + ':' + minutes + ':' + seconds + '.' + ms;
-      } else {
-        return '00:00:00.000';
-      }
-    }
-  }, {
-    key: "_generateCacheBusting",
-    value: function _generateCacheBusting() {
-      var text = '';
-      var possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-      for (var i = 0; i < 8; i++) {
-        text += possible.charAt(Math.floor(Math.random() * possible.length));
-      }
-      return text;
-    }
-  }, {
-    key: "_ping",
-    value: function _ping(url) {
-      // we expect an image format for the tracker (generally a 1px GIF/PNG/JPG/AVIF) or JavaScript as 
-      // those are the most common format in the industry 
-      // other format may produce errors and the related tracker may not be requested properly
-      var jsPattern = /\.js$/i;
-      if (jsPattern.test(url)) {
-        var script = document.createElement('script');
-        script.src = url;
-        try {
-          document.head.appendChild(script);
-        } catch (error) {
-          console.warn(error);
-          document.body.appendChild(script);
-        }
-      } else {
-        FW.ajax(url, this.params.ajaxTimeout, false, 'GET').then(function () {
-          var _context3;
-          console.log(concat_default()(_context3 = "".concat(FW.consolePrepend, " VAST tracker successfully loaded ")).call(_context3, url), FW.consoleStyle, '');
-        }).catch(function (error) {
-          var _context4, _context5;
-          console.log(concat_default()(_context4 = concat_default()(_context5 = "".concat(FW.consolePrepend, " VAST tracker failed loading ")).call(_context5, url, " with error ")).call(_context4, error), FW.consoleStyle, '');
-        });
-      }
-    }
-  }, {
-    key: "_onVolumeChange",
-    value: function _onVolumeChange() {
-      if (this.__adPlayer.muted || this.__adPlayer.volume === 0) {
-        Utils.createApiEvent.call(this, 'advolumemuted');
-        Tracking.dispatch.call(this, 'mute');
-      } else if (!this.__adPlayer.muted && this.__adPlayer.volume > 0) {
-        Tracking.dispatch.call(this, 'unmute');
-      }
-      Utils.createApiEvent.call(this, 'advolumechanged');
-    }
-  }, {
-    key: "_onTimeupdate",
-    value: function _onTimeupdate() {
-      var _this2 = this;
-      var adPlayerDuration = -1;
-      var adPlayerCurrentTime = -1;
-      if (this.rmpVastAdPlayer) {
-        adPlayerCurrentTime = this.rmpVastAdPlayer.currentTime;
-        adPlayerDuration = this.rmpVastAdPlayer.duration;
-      }
-      if (adPlayerCurrentTime > 0) {
-        if (adPlayerDuration > 0 && adPlayerDuration > adPlayerCurrentTime) {
-          if (adPlayerCurrentTime >= adPlayerDuration * 0.25 && !this.firstQuartileEventFired) {
-            this.firstQuartileEventFired = true;
-            Utils.createApiEvent.call(this, 'adfirstquartile');
-            Tracking.dispatch.call(this, 'firstQuartile');
-          } else if (adPlayerCurrentTime >= adPlayerDuration * 0.5 && !this.midpointEventFired) {
-            this.midpointEventFired = true;
-            Utils.createApiEvent.call(this, 'admidpoint');
-            Tracking.dispatch.call(this, 'midpoint');
-          } else if (adPlayerCurrentTime >= adPlayerDuration * 0.75 && !this.thirdQuartileEventFired) {
-            this.thirdQuartileEventFired = true;
-            Utils.createApiEvent.call(this, 'adthirdquartile');
-            Tracking.dispatch.call(this, 'thirdQuartile');
-          }
-        }
-        // progress event
-        if (this.progressEvents.length > 0) {
-          if (adPlayerCurrentTime > this.progressEvents[0].time) {
-            var _context6;
-            var filterProgressEvent = filter_default()(_context6 = this.progressEvents).call(_context6, function (progressEvent) {
-              return progressEvent.time === _this2.progressEvents[0].time;
-            });
-            filterProgressEvent.forEach(function (progressEvent) {
-              if (progressEvent.url) {
-                Tracking.pingURI.call(_this2, progressEvent.url);
-              }
-            });
-            this.progressEvents.shift();
-            Utils.createApiEvent.call(this, 'adprogress');
-          }
-        }
-      }
-    }
-  }, {
-    key: "_onPause",
-    value: function _onPause() {
-      if (this.__adPlayer && this.__adPlayer.paused) {
-        var currentTime = this.__adPlayer.currentTime;
-        var currentDuration = this.__adPlayer.duration;
-        // we have reached end of linear creative - a HTML5 video pause event may fire just before ended event
-        // in this case we ignore the adpaused event as adcomplete prevails
-        if (currentTime === currentDuration) {
-          return;
-        }
-        Utils.createApiEvent.call(this, 'adpaused');
-        Tracking.dispatch.call(this, 'pause');
-      }
-    }
-  }, {
-    key: "_onPlay",
-    value: function _onPlay() {
-      if (this.__adPlayer && !this.__adPlayer.paused) {
-        Utils.createApiEvent.call(this, 'adresumed');
-        Tracking.dispatch.call(this, 'resume');
-      }
-    }
-  }, {
-    key: "_onPlaying",
-    value: function _onPlaying() {
-      Utils.createApiEvent.call(this, ['adimpression', 'adstarted']);
-      Tracking.dispatch.call(this, ['impression', 'creativeView', 'start']);
-    }
-  }, {
-    key: "_onEnded",
-    value: function _onEnded() {
-      Utils.createApiEvent.call(this, 'adcomplete');
-      Tracking.dispatch.call(this, 'complete');
-      if (this.rmpVastAdPlayer) {
-        this.rmpVastAdPlayer.resumeContent();
-      }
-    }
-  }, {
-    key: "replaceMacros",
-    value: function replaceMacros(url, trackingPixels) {
-      var _this3 = this;
-      var pattern0 = /\[.+?\]/i;
-      if (!pattern0.test(url)) {
-        return url;
-      }
-      var finalString = url;
-
-      // Marking Macro Values as Unknown or Unavailable 
-      var pattern8 = /\[(ADCOUNT|TRANSACTIONID|PLACEMENTTYPE|BREAKMAXDURATION|BREAKMINDURATION|BREAKMAXADS|BREAKMINADLENGTH|BREAKMAXADLENGTH|IFA|IFATYPE|CLIENTUA|SERVERUA|DEVICEIP|APPBUNDLE|EXTENSIONS|VERIFICATIONVENDORS|OMIDPARTNER|INVENTORYSTATE|CONTENTID|LATLONG)\]/gi;
-      if (pattern8.test(finalString)) {
-        finalString = finalString.replace(pattern8, '-1');
-      }
-      var pattern8bis = /\[(CONTENTURI|CLICKPOS)\]/gi;
-      if (pattern8bis.test(finalString)) {
-        finalString = finalString.replace(pattern8bis, '-2');
-      }
-
-      // available macros
-      var pattern1 = /\[TIMESTAMP\]/gi;
-      var date = new Date().toISOString();
-      if (pattern1.test(finalString)) {
-        finalString = finalString.replace(pattern1, encodeURIComponent(date));
-      }
-      var pattern2 = /\[CACHEBUSTING\]/gi;
-      if (pattern2.test(finalString)) {
-        finalString = finalString.replace(pattern2, Tracking._generateCacheBusting());
-      }
-      var pattern3 = /\[(CONTENTPLAYHEAD|MEDIAPLAYHEAD)\]/gi;
-      var currentContentTime = this.rmpVastContentPlayer.currentTime;
-      if (pattern3.test(finalString) && currentContentTime > -1) {
-        finalString = finalString.replace(pattern3, encodeURIComponent(Tracking._vastReadableTime(currentContentTime)));
-      }
-      var pattern5 = /\[BREAKPOSITION\]/gi;
-      var adPlayerDuration = -1;
-      if (this.rmpVastAdPlayer) {
-        adPlayerDuration = this.rmpVastAdPlayer.duration;
-      }
-      if (pattern5.test(finalString)) {
-        if (currentContentTime === 0) {
-          finalString = finalString.replace(pattern5, '1');
-        } else if (currentContentTime > 0 && currentContentTime < adPlayerDuration) {
-          finalString = finalString.replace(pattern5, '2');
-        } else {
-          finalString = finalString.replace(pattern5, '3');
-        }
-      }
-      var pattern9 = /\[ADTYPE\]/gi;
-      if (pattern9.test(finalString) && this.ad.adType) {
-        finalString = finalString.replace(pattern9, encodeURIComponent(this.ad.adType));
-      }
-      var pattern11 = /\[DEVICEUA\]/gi;
-      if (pattern11.test(finalString) && Environment.userAgent) {
-        finalString = finalString.replace(pattern11, encodeURIComponent(Environment.userAgent));
-      }
-      var pattern11bis = /\[SERVERSIDE\]/gi;
-      if (pattern11bis.test(finalString) && Environment.userAgent) {
-        finalString = finalString.replace(pattern11bis, '0');
-      }
-      var pattern13 = /\[DOMAIN\]/gi;
-      if (pattern13.test(finalString) && window.location.hostname) {
-        finalString = finalString.replace(pattern13, encodeURIComponent(window.location.hostname));
-      }
-      var pattern14 = /\[PAGEURL\]/gi;
-      if (pattern14.test(finalString) && window.location.href) {
-        finalString = finalString.replace(pattern14, encodeURIComponent(window.location.href));
-      }
-      var pattern18 = /\[PLAYERCAPABILITIES\]/gi;
-      if (pattern18.test(finalString)) {
-        finalString = finalString.replace(pattern18, 'skip,mute,autoplay,mautoplay,fullscreen,icon');
-      }
-      var pattern19 = /\[CLICKTYPE\]/gi;
-      if (pattern19.test(finalString)) {
-        var clickType = '1';
-        if (Environment.isMobile) {
-          clickType = '2';
-        }
-        finalString = finalString.replace(pattern19, clickType);
-      }
-      var pattern21 = /\[PLAYERSIZE\]/gi;
-      if (pattern21.test(finalString)) {
-        var width = parse_int_default()(FW.getWidth(this.container));
-        var height = parse_int_default()(FW.getHeight(this.container));
-        finalString = finalString.replace(pattern21, encodeURIComponent(width.toString() + ',' + height.toString()));
-      }
-      if (trackingPixels) {
-        var pattern4 = /\[ADPLAYHEAD\]/gi;
-        var adPlayerCurrentTime = -1;
-        if (this.rmpVastAdPlayer) {
-          adPlayerCurrentTime = this.rmpVastAdPlayer.currentTime;
-        }
-        if (pattern4.test(finalString) && adPlayerCurrentTime > -1) {
-          finalString = finalString.replace(pattern4, encodeURIComponent(Tracking._vastReadableTime(adPlayerCurrentTime)));
-        }
-        var pattern10 = /\[UNIVERSALADID\]/gi;
-        if (pattern10.test(finalString) && this.creative.universalAdIds.length > 0) {
-          var universalAdIdString = '';
-          this.creative.universalAdIds.forEach(function (universalAdId, index) {
-            if (index !== 0 || index !== _this3.creative.universalAdIds.length - 1) {
-              universalAdIdString += ',';
-            }
-            universalAdIdString += universalAdId.idRegistry + ' ' + universalAdId.value;
-          });
-          finalString = finalString.replace(pattern10, encodeURIComponent(universalAdIdString));
-        }
-        var pattern22 = /\[ASSETURI\]/gi;
-        var assetUri = this.adMediaUrl;
-        if (pattern22.test(finalString) && typeof assetUri === 'string' && assetUri !== '') {
-          finalString = finalString.replace(pattern22, encodeURIComponent(assetUri));
-        }
-        var pattern23 = /\[PODSEQUENCE\]/gi;
-        if (pattern23.test(finalString) && this.ad.sequence) {
-          finalString = finalString.replace(pattern23, encodeURIComponent(this.ad.sequence.toString()));
-        }
-        var pattern24 = /\[ADSERVINGID\]/gi;
-        if (pattern24.test(finalString) && this.ad.adServingId) {
-          finalString = finalString.replace(pattern24, encodeURIComponent(this.ad.adServingId));
-        }
-      } else {
-        var pattern6 = /\[ADCATEGORIES\]/gi;
-        if (pattern6.test(finalString) && this.ad.categories.length > 0) {
-          var _context7;
-          var categories = map_default()(_context7 = this.ad.categories).call(_context7, function (categorie) {
-            return categorie.value;
-          }).join(',');
-          finalString = finalString.replace(pattern6, encodeURIComponent(categories));
-        }
-        var pattern7 = /\[BLOCKEDADCATEGORIES\]/gi;
-        if (pattern7.test(finalString) && this.ad.blockedAdCategories.length > 0) {
-          var _context8;
-          var blockedAdCategories = map_default()(_context8 = this.ad.blockedAdCategories).call(_context8, function (blockedAdCategories) {
-            return blockedAdCategories.value;
-          }).join(',');
-          finalString = finalString.replace(pattern7, encodeURIComponent(blockedAdCategories));
-        }
-        var pattern15 = /\[VASTVERSIONS\]/gi;
-        if (pattern15.test(finalString)) {
-          finalString = finalString.replace(pattern15, '2,3,5,6,7,8,11,12,13,14');
-        }
-        var pattern16 = /\[APIFRAMEWORKS\]/gi;
-        if (pattern16.test(finalString)) {
-          finalString = finalString.replace(pattern16, '2');
-        }
-        var pattern17 = /\[MEDIAMIME\]/gi;
-        var mediaMime = ['video/webm', 'video/mp4', 'video/ogg', 'video/3gpp', 'application/vnd.apple.mpegurl', 'application/dash+xml'];
-        if (pattern17.test(finalString)) {
-          var mimeTyepString = '';
-          mediaMime.forEach(function (value) {
-            if (Environment.checkCanPlayType(value)) {
-              mimeTyepString += value + ',';
-            }
-          });
-          if (mimeTyepString) {
-            mimeTyepString = instance_slice_default()(mimeTyepString).call(mimeTyepString, 0, -1);
-            finalString = finalString.replace(pattern17, encodeURIComponent(mimeTyepString));
-          }
-        }
-        var pattern20 = /\[PLAYERSTATE\]/gi;
-        if (pattern20.test(finalString)) {
-          var playerState = '';
-          if (this.rmpVastContentPlayer.muted) {
-            playerState += 'muted';
-          }
-          if (this.isInFullscreen) {
-            if (playerState) {
-              playerState += ',';
-            }
-            playerState += 'fullscreen';
-          }
-          finalString = finalString.replace(pattern20, playerState);
-        }
-      }
-      var pattern25 = /\[LIMITADTRACKING\]/gi;
-      if (pattern25.test(finalString) && this.regulationsInfo.limitAdTracking) {
-        finalString = finalString.replace(pattern25, encodeURIComponent(this.regulationsInfo.limitAdTracking));
-      }
-      var pattern26 = /\[REGULATIONS\]/gi;
-      if (pattern26.test(finalString) && this.regulationsInfo.regulations) {
-        finalString = finalString.replace(pattern26, encodeURIComponent(this.regulationsInfo.regulations));
-      }
-      var pattern27 = /\[GDPRCONSENT\]/gi;
-      if (pattern27.test(finalString) && this.regulationsInfo.gdprConsent) {
-        finalString = finalString.replace(pattern27, encodeURIComponent(this.regulationsInfo.gdprConsent));
-      }
-      return finalString;
-    }
-  }, {
-    key: "pingURI",
-    value: function pingURI(url) {
-      var trackingUrl = Tracking.replaceMacros.call(this, url, true);
-      Tracking._ping.call(this, trackingUrl);
-    }
-  }, {
-    key: "error",
-    value: function error(errorCode) {
-      var _this4 = this;
-      // for each Error tag within an InLine or chain of Wrapper ping error URL
-      var errorTags = this.adErrorTags;
-      if (errorCode === 303 && this.vastErrorTags.length > 0) {
-        var _context9;
-        // here we ping vastErrorTags with error code 303 according to spec
-        // concat array thus
-        errorTags = concat_default()(_context9 = []).call(_context9, _toConsumableArray(errorTags), _toConsumableArray(this.vastErrorTags));
-      }
-      if (errorTags.length > 0) {
-        errorTags.forEach(function (errorTag) {
-          if (errorTag.url) {
-            var errorUrl = errorTag.url;
-            var errorRegExp = /\[ERRORCODE\]/gi;
-            if (errorRegExp.test(errorUrl) && FW.isNumber(errorCode) && errorCode > 0 && errorCode < 1000) {
-              errorUrl = errorUrl.replace(errorRegExp, errorCode);
-            }
-            Tracking._ping.call(_this4, errorUrl);
-          }
-        });
-      }
-    }
-  }, {
-    key: "dispatch",
-    value: function dispatch(event) {
-      var _this5 = this;
-      if (Array.isArray(event)) {
-        event.forEach(function (currentEvent) {
-          Tracking._dispatch.call(_this5, currentEvent);
-        });
-      } else {
-        Tracking._dispatch.call(this, event);
-      }
-    }
-  }, {
-    key: "destroy",
-    value: function destroy() {
-      if (this.__adPlayer) {
-        this.__adPlayer.removeEventListener('pause', this.onPauseFn);
-        this.__adPlayer.removeEventListener('play', this.onPlayFn);
-        this.__adPlayer.removeEventListener('playing', this.onPlayingFn);
-        this.__adPlayer.removeEventListener('ended', this.onEndedFn);
-        this.__adPlayer.removeEventListener('volumechange', this.onVolumeChangeFn);
-        this.__adPlayer.removeEventListener('timeupdate', this.onTimeupdateFn);
-      }
-    }
-  }, {
-    key: "wire",
-    value: function wire() {
-      // we filter through all HTML5 video events and create new VAST events 
-      if (this.__adPlayer && this.creative.isLinear && !this.rmpVastVpaidPlayer) {
-        this.onPauseFn = Tracking._onPause.bind(this);
-        this.__adPlayer.addEventListener('pause', this.onPauseFn);
-        this.onPlayFn = Tracking._onPlay.bind(this);
-        this.__adPlayer.addEventListener('play', this.onPlayFn);
-        this.onPlayingFn = Tracking._onPlaying.bind(this);
-        this.__adPlayer.addEventListener('playing', this.onPlayingFn, {
-          once: true
-        });
-        this.onEndedFn = Tracking._onEnded.bind(this);
-        this.__adPlayer.addEventListener('ended', this.onEndedFn, {
-          once: true
-        });
-        this.onVolumeChangeFn = Tracking._onVolumeChange.bind(this);
-        this.__adPlayer.addEventListener('volumechange', this.onVolumeChangeFn);
-        this.onTimeupdateFn = Tracking._onTimeupdate.bind(this);
-        this.__adPlayer.addEventListener('timeupdate', this.onTimeupdateFn);
-      }
-    }
-  }]);
-  return Tracking;
-}();
-
 ;// CONCATENATED MODULE: ./src/js/framework/utils.js
 
 
@@ -11595,52 +11049,56 @@ var Tracking = /*#__PURE__*/function () {
 
 
 
+
 var Utils = /*#__PURE__*/function () {
-  function Utils() {
+  function Utils(rmpVast) {
     _classCallCheck(this, Utils);
+    this._rmpVast = rmpVast;
+    this._onFullscreenchangeFn = null;
   }
-  _createClass(Utils, null, [{
+
+  // attach fullscreen states
+  // this assumes we have a polyfill for fullscreenchange event 
+  // see app/js/app.js
+  // we need this to handle VAST fullscreen events
+  return _createClass(Utils, [{
     key: "_onFullscreenchange",
-    value:
-    // attach fullscreen states
-    // this assumes we have a polyfill for fullscreenchange event 
-    // see app/js/app.js
-    // we need this to handle VAST fullscreen events
-    function _onFullscreenchange(event) {
+    value: function _onFullscreenchange(event) {
       if (event && event.type) {
-        var _context;
-        console.log(concat_default()(_context = "".concat(FW.consolePrepend, " event is ")).call(_context, event.type), FW.consoleStyle, '');
+        Logger.print('info', "event is ".concat(event.type));
+        var isLinear = this._rmpVast.creative.isLinear;
+        var isOnStage = this._rmpVast.__adOnStage;
         if (event.type === 'fullscreenchange') {
-          if (this.isInFullscreen) {
-            this.isInFullscreen = false;
-            if (this.__adOnStage && this.creative.isLinear) {
-              Tracking.dispatch.call(this, ['exitFullscreen', 'playerCollapse']);
+          if (this._rmpVast.isInFullscreen) {
+            this._rmpVast.isInFullscreen = false;
+            if (isOnStage && isLinear) {
+              this._rmpVast.rmpVastTracking.dispatchTrackingAndApiEvent(['adexitfullscreen', 'adplayercollapse']);
             }
           } else {
-            this.isInFullscreen = true;
-            if (this.__adOnStage && this.creative.isLinear) {
-              Tracking.dispatch.call(this, ['fullscreen', 'playerExpand']);
+            this._rmpVast.isInFullscreen = true;
+            if (isOnStage && isLinear) {
+              this._rmpVast.rmpVastTracking.dispatchTrackingAndApiEvent(['adfullscreen', 'adplayerexpand']);
             }
           }
         } else if (event.type === 'webkitbeginfullscreen') {
           // iOS uses webkitbeginfullscreen
-          if (this.__adOnStage && this.creative.isLinear) {
-            Tracking.dispatch.call(this, ['fullscreen', 'playerExpand']);
+          if (isOnStage && isLinear) {
+            this._rmpVast.rmpVastTracking.dispatchTrackingAndApiEvent(['adfullscreen', 'adplayerexpand']);
           }
-          this.isInFullscreen = true;
+          this._rmpVast.isInFullscreen = true;
         } else if (event.type === 'webkitendfullscreen') {
           // iOS uses webkitendfullscreen
-          if (this.__adOnStage && this.creative.isLinear) {
-            Tracking.dispatch.call(this, ['exitFullscreen', 'playerCollapse']);
+          if (isOnStage && isLinear) {
+            this._rmpVast.rmpVastTracking.dispatchTrackingAndApiEvent(['adexitfullscreen', 'adplayercollapse']);
           }
-          this.isInFullscreen = false;
+          this._rmpVast.isInFullscreen = false;
         }
       }
     }
   }, {
     key: "_updateVastError",
     value: function _updateVastError(errorCode) {
-      var _context2, _context3, _context4;
+      var _context;
       // List of VAST errors according to specs
       var vastErrorsList = [{
         code: 201,
@@ -11776,22 +11234,21 @@ var Utils = /*#__PURE__*/function () {
         return value.code === errorCode;
       });
       if (error.length > 0) {
-        this.__vastErrorCode = error[0].code;
-        this.__adErrorMessage = error[0].description;
+        this._rmpVast.__vastErrorCode = error[0].code;
+        this._rmpVast.__adErrorMessage = error[0].description;
       } else {
-        this.__vastErrorCode = -1;
-        this.__adErrorMessage = 'Error getting VAST error';
+        this._rmpVast.__vastErrorCode = -1;
+        this._rmpVast.__adErrorMessage = 'Error getting VAST error';
       }
-      if (this.__vastErrorCode > -1) {
-        if (index_of_default()(loadErrorsList).call(loadErrorsList, this.__vastErrorCode) > -1) {
-          this.__adErrorType = 'adLoadError';
-        } else if (index_of_default()(playErrorsList).call(playErrorsList, this.__vastErrorCode) > -1) {
-          this.__adErrorType = 'adPlayError';
+      if (this._rmpVast.__vastErrorCode > -1) {
+        if (index_of_default()(loadErrorsList).call(loadErrorsList, this._rmpVast.__vastErrorCode) > -1) {
+          this._rmpVast.__adErrorType = 'adLoadError';
+        } else if (index_of_default()(playErrorsList).call(playErrorsList, this._rmpVast.__vastErrorCode) > -1) {
+          this._rmpVast.__adErrorType = 'adPlayError';
         }
       }
-      console.log(concat_default()(_context2 = "".concat(FW.consolePrepend, " VAST error code is ")).call(_context2, this.__vastErrorCode), FW.consoleStyle, '');
-      console.log(concat_default()(_context3 = "".concat(FW.consolePrepend, " VAST error message is ")).call(_context3, this.__adErrorMessage), FW.consoleStyle, '');
-      console.log(concat_default()(_context4 = "".concat(FW.consolePrepend, " Ad error type is ")).call(_context4, this.__adErrorType), FW.consoleStyle, '');
+      Logger.print('info', concat_default()(_context = "VAST error code is ".concat(this._rmpVast.__vastErrorCode, " with message: ")).call(_context, this._rmpVast.__adErrorMessage));
+      Logger.print('info', "Ad error type is ".concat(this._rmpVast.__adErrorType));
     }
   }, {
     key: "filterParams",
@@ -11799,7 +11256,7 @@ var Utils = /*#__PURE__*/function () {
       var _this = this;
       // default for input parameters
       var defaultParams = {
-        ajaxTimeout: 5000,
+        ajaxTimeout: 8000,
         creativeLoadTimeout: 8000,
         ajaxWithCredentials: false,
         maxNumRedirects: 4,
@@ -11819,7 +11276,7 @@ var Utils = /*#__PURE__*/function () {
           viewMode: 'normal',
           desiredBitrate: 500
         },
-        useHlsJS: false,
+        useHlsJS: true,
         debugHlsJS: false,
         // OM SDK params
         omidSupport: false,
@@ -11827,30 +11284,31 @@ var Utils = /*#__PURE__*/function () {
         omidUnderEvaluation: false,
         omidRunValidationScript: false,
         omidAutoplay: false,
+        macros: new (map_default())(),
         partnerName: 'rmp-vast',
-        partnerVersion: "14.0.1"
+        partnerVersion: "15.0.0"
       };
-      this.params = defaultParams;
+      this._rmpVast.params = defaultParams;
       if (inputParams && _typeof(inputParams) === 'object') {
         var keys = keys_default()(inputParams);
         keys.forEach(function (key) {
-          if (_typeof(inputParams[key]) === _typeof(_this.params[key])) {
+          if (_typeof(inputParams[key]) === _typeof(_this._rmpVast.params[key])) {
             if (FW.isNumber(inputParams[key]) && inputParams[key] > 0 || typeof inputParams[key] !== 'number') {
               if (key === 'vpaidSettings') {
                 if (FW.isNumber(inputParams.vpaidSettings.width) && inputParams.vpaidSettings.width > 0) {
-                  _this.params.vpaidSettings.width = inputParams.vpaidSettings.width;
+                  _this._rmpVast.params.vpaidSettings.width = inputParams.vpaidSettings.width;
                 }
                 if (FW.isNumber(inputParams.vpaidSettings.height) && inputParams.vpaidSettings.height > 0) {
-                  _this.params.vpaidSettings.height = inputParams.vpaidSettings.height;
+                  _this._rmpVast.params.vpaidSettings.height = inputParams.vpaidSettings.height;
                 }
                 if (typeof inputParams.vpaidSettings.viewMode === 'string' && inputParams.vpaidSettings.viewMode === 'fullscreen') {
-                  _this.params.vpaidSettings.viewMode = inputParams.vpaidSettings.viewMode;
+                  _this._rmpVast.params.vpaidSettings.viewMode = inputParams.vpaidSettings.viewMode;
                 }
                 if (FW.isNumber(inputParams.vpaidSettings.desiredBitrate) && inputParams.vpaidSettings.desiredBitrate > 0) {
-                  _this.params.vpaidSettings.desiredBitrate = inputParams.vpaidSettings.desiredBitrate;
+                  _this._rmpVast.params.vpaidSettings.desiredBitrate = inputParams.vpaidSettings.desiredBitrate;
                 }
               } else {
-                _this.params[key] = inputParams[key];
+                _this._rmpVast.params[key] = inputParams[key];
               }
             }
           }
@@ -11861,26 +11319,16 @@ var Utils = /*#__PURE__*/function () {
     key: "createApiEvent",
     value: function createApiEvent(event) {
       var _this2 = this;
-      // adloaded, addurationchange, adclick, adimpression, adstarted, 
-      // adtagloaded, adtagstartloading, adpaused, adresumed 
-      // advolumemuted, advolumechanged, adcomplete, adskipped, 
-      // adskippablestatechanged, adclosed
-      // adfirstquartile, admidpoint, adthirdquartile, aderror, 
-      // addestroyed
-      // adlinearchange, adexpandedchange, adremainingtimechange 
-      // adinteraction, adsizechange
       if (Array.isArray(event)) {
         event.forEach(function (currentEvent) {
           if (currentEvent) {
-            var _context5;
-            console.log(concat_default()(_context5 = "".concat(FW.consolePrepend, " EVENT ")).call(_context5, event), FW.consoleStyle, '');
-            _this2.dispatch(currentEvent);
+            Logger.print('info', "API EVENT - ".concat(event));
+            _this2._rmpVast.dispatch(currentEvent);
           }
         });
       } else if (event) {
-        var _context6;
-        console.log(concat_default()(_context6 = "".concat(FW.consolePrepend, " EVENT ")).call(_context6, event), FW.consoleStyle, '');
-        this.dispatch(event);
+        Logger.print('info', "API EVENT - ".concat(event));
+        this._rmpVast.dispatch(event);
       }
     }
   }, {
@@ -11890,10 +11338,10 @@ var Utils = /*#__PURE__*/function () {
       var targetPlayer;
       switch (whichPlayer) {
         case 'content':
-          targetPlayer = this.__contentPlayer;
+          targetPlayer = this._rmpVast.currentContentPlayer;
           break;
         case 'vast':
-          targetPlayer = this.__adPlayer;
+          targetPlayer = this._rmpVast.currentAdPlayer;
           break;
         default:
           break;
@@ -11904,24 +11352,23 @@ var Utils = /*#__PURE__*/function () {
         // this lets us handle autoplay rejection 
         // https://developers.google.com/web/updates/2016/03/play-returns-promise
         if (playPromise !== undefined) {
+          var isLinear = this._rmpVast.creative.isLinear;
           playPromise.then(function () {
-            var _context7;
-            console.log(concat_default()(_context7 = "".concat(FW.consolePrepend, " playPromise on ")).call(_context7, whichPlayer, " player has succeeded"), FW.consoleStyle, '');
+            Logger.print('info', "playPromise on ".concat(whichPlayer, " player has succeeded"));
             if (firstPlayerPlayRequest) {
-              Utils.createApiEvent.call(_this3, 'adinitialplayrequestsucceeded');
+              _this3.createApiEvent('adinitialplayrequestsucceeded');
             }
           }).catch(function (error) {
-            console.warn(error);
-            if (firstPlayerPlayRequest && whichPlayer === 'vast' && _this3.creative.isLinear) {
-              console.log("".concat(FW.consolePrepend, " initial play promise on ad player has been rejected"), FW.consoleStyle, '');
-              Utils.processVastErrors.call(_this3, 400, true);
-              Utils.createApiEvent.call(_this3, 'adinitialplayrequestfailed');
-            } else if (firstPlayerPlayRequest && whichPlayer === 'content' && !_this3.creative.isLinear) {
-              console.log("".concat(FW.consolePrepend, " initial play promise on content player has been rejected"), FW.consoleStyle, '');
-              Utils.createApiEvent.call(_this3, 'adinitialplayrequestfailed');
+            Logger.print('warning', error);
+            if (firstPlayerPlayRequest && whichPlayer === 'vast' && isLinear) {
+              Logger.print('info', "initial play promise on ad player has been rejected");
+              _this3.processVastErrors(400, true);
+              _this3.createApiEvent('adinitialplayrequestfailed');
+            } else if (firstPlayerPlayRequest && whichPlayer === 'content' && !isLinear) {
+              Logger.print('info', "initial play promise on content player has been rejected");
+              _this3.createApiEvent('adinitialplayrequestfailed');
             } else {
-              var _context8;
-              console.log(concat_default()(_context8 = "".concat(FW.consolePrepend, " playPromise on ")).call(_context8, whichPlayer, " player has been rejected"), FW.consoleStyle, '');
+              Logger.print('info', "playPromise on ".concat(whichPlayer, " player has been rejected"));
             }
           });
         }
@@ -11947,84 +11394,29 @@ var Utils = /*#__PURE__*/function () {
       }
     }
   }, {
-    key: "initInstanceVariables",
-    value: function initInstanceVariables() {
-      this.adContainer = null;
-      this.contentWrapper = null;
-      this.container = null;
-      this.rmpVastContentPlayer = null;
-      this.rmpVastAdPlayer = null;
-      this.currentContentSrc = '';
-      this.currentContentCurrentTime = -1;
-      this.params = {};
-      this.events = {};
-      this.onFullscreenchangeFn = null;
-      this.id = null;
-      this.isInFullscreen = false;
-      // adpod
-      this.adPod = false;
-      this.adPodLength = 0;
-      this.adSequence = 0;
-      // for public getters
-      this.__contentPlayer = null;
-      this.__adPlayer = null;
-      this.__initialized = false;
-      this.__contentPlayerCompleted = false;
-    }
-  }, {
-    key: "resetVariablesForNewLoadAds",
-    value: function resetVariablesForNewLoadAds() {
-      this.off('adstarted', this.attachViewableObserverFn);
-      this.onPauseFn = null;
-      this.onPlayFn = null;
-      this.onPlayingFn = null;
-      this.onEndedFn = null;
-      this.onVolumeChangeFn = null;
-      this.onTimeupdateFn = null;
-      this.trackingTags = [];
-      this.vastErrorTags = [];
-      this.adErrorTags = [];
-      this.firstQuartileEventFired = false;
-      this.midpointEventFired = false;
-      this.thirdQuartileEventFired = false;
-      this.needsSeekAdjust = false;
-      this.seekAdjustAttached = false;
-      this.ad = {};
-      this.creative = {};
-      this.attachViewableObserverFn = null;
-      this.viewableObserver = null;
-      this.viewablePreviousRatio = 0.5;
-      this.regulationsInfo = {};
-      this.requireCategory = false;
-      this.progressEvents = [];
-      this.rmpVastLinearCreative = null;
-      this.rmpVastNonLinearCreative = null;
-      this.validCompanionAds = [];
-      this.companionAdsList = [];
-      this.rmpVastVpaidPlayer = null;
-      this.adParametersData = '';
-      this.rmpVastSimidPlayer = null;
-      this.rmpVastIcons = null;
-      // for public getters
-      this.__adTagUrl = '';
-      this.__companionAdsRequiredAttribute = '';
-      this.__vastErrorCode = -1;
-      this.__adErrorType = '';
-      this.__adErrorMessage = '';
-      this.__adOnStage = false;
+    key: "destroyFullscreen",
+    value: function destroyFullscreen() {
+      if (this._rmpVast.currentContentPlayer) {
+        this._rmpVast.currentContentPlayer.removeEventListener('webkitbeginfullscreen', this._onFullscreenchangeFn);
+        this._rmpVast.currentContentPlayer.removeEventListener('webkitendfullscreen', this._onFullscreenchangeFn);
+      } else {
+        document.removeEventListener('fullscreenchange', this._onFullscreenchangeFn);
+      }
     }
   }, {
     key: "handleFullscreen",
     value: function handleFullscreen() {
       // if we have native fullscreen support we handle fullscreen events
       if (Environment.hasNativeFullscreenSupport) {
-        this.onFullscreenchangeFn = Utils._onFullscreenchange.bind(this);
-        // for our beloved iOS 
+        this._onFullscreenchangeFn = this._onFullscreenchange.bind(this);
+        // for iOS 
         if (Environment.isIos[0]) {
-          this.__contentPlayer.addEventListener('webkitbeginfullscreen', this.onFullscreenchangeFn);
-          this.__contentPlayer.addEventListener('webkitendfullscreen', this.onFullscreenchangeFn);
+          if (this._rmpVast.currentContentPlayer) {
+            this._rmpVast.currentContentPlayer.addEventListener('webkitbeginfullscreen', this._onFullscreenchangeFn);
+            this._rmpVast.currentContentPlayer.addEventListener('webkitendfullscreen', this._onFullscreenchangeFn);
+          }
         } else {
-          document.addEventListener('fullscreenchange', this.onFullscreenchangeFn);
+          document.addEventListener('fullscreenchange', this._onFullscreenchangeFn);
         }
       }
     }
@@ -12032,338 +11424,67 @@ var Utils = /*#__PURE__*/function () {
     key: "processVastErrors",
     value: function processVastErrors(errorCode, ping) {
       if (ping) {
-        Tracking.error.call(this, errorCode);
+        this._rmpVast.rmpVastTracking.error(errorCode);
       }
-      Utils._updateVastError.call(this, errorCode);
-      Utils.createApiEvent.call(this, 'aderror');
-      if (this.rmpVastAdPlayer) {
-        this.rmpVastAdPlayer.resumeContent();
+      this._updateVastError(errorCode);
+      this.createApiEvent('aderror');
+      if (this._rmpVast.rmpVastAdPlayer) {
+        this._rmpVast.rmpVastAdPlayer.resumeContent();
       }
     }
   }]);
-  return Utils;
 }();
 
-// EXTERNAL MODULE: ./node_modules/@babel/runtime-corejs3/core-js-stable/instance/sort.js
-var sort = __webpack_require__(129);
-var sort_default = /*#__PURE__*/__webpack_require__.n(sort);
-;// CONCATENATED MODULE: ./src/js/creatives/icons.js
+// EXTERNAL MODULE: ./node_modules/core-js-pure/full/array/is-array.js
+var is_array = __webpack_require__(4411);
+;// CONCATENATED MODULE: ./node_modules/@babel/runtime-corejs3/helpers/esm/arrayLikeToArray.js
+function _arrayLikeToArray(arr, len) {
+  if (len == null || len > arr.length) len = arr.length;
+  for (var i = 0, arr2 = new Array(len); i < len; i++) arr2[i] = arr[i];
+  return arr2;
+}
+;// CONCATENATED MODULE: ./node_modules/@babel/runtime-corejs3/helpers/esm/arrayWithoutHoles.js
+
+
+function _arrayWithoutHoles(arr) {
+  if (is_array(arr)) return _arrayLikeToArray(arr);
+}
+// EXTERNAL MODULE: ./node_modules/core-js-pure/full/get-iterator-method.js
+var get_iterator_method = __webpack_require__(8376);
+// EXTERNAL MODULE: ./node_modules/core-js-pure/full/array/from.js
+var from = __webpack_require__(8327);
+;// CONCATENATED MODULE: ./node_modules/@babel/runtime-corejs3/helpers/esm/iterableToArray.js
+
+
+
+function _iterableToArray(iter) {
+  if (typeof symbol !== "undefined" && get_iterator_method(iter) != null || iter["@@iterator"] != null) return from(iter);
+}
+;// CONCATENATED MODULE: ./node_modules/@babel/runtime-corejs3/helpers/esm/unsupportedIterableToArray.js
+
+
+
+function _unsupportedIterableToArray(o, minLen) {
+  var _context;
+  if (!o) return;
+  if (typeof o === "string") return _arrayLikeToArray(o, minLen);
+  var n = slice(_context = Object.prototype.toString.call(o)).call(_context, 8, -1);
+  if (n === "Object" && o.constructor) n = o.constructor.name;
+  if (n === "Map" || n === "Set") return from(o);
+  if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);
+}
+;// CONCATENATED MODULE: ./node_modules/@babel/runtime-corejs3/helpers/esm/nonIterableSpread.js
+function _nonIterableSpread() {
+  throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
+}
+;// CONCATENATED MODULE: ./node_modules/@babel/runtime-corejs3/helpers/esm/toConsumableArray.js
 
 
 
 
-
-
-var Icons = /*#__PURE__*/function () {
-  function Icons(rmpVast) {
-    _classCallCheck(this, Icons);
-    this._rmpVast = rmpVast;
-    this._adContainer = rmpVast.adContainer;
-    this._adPlayer = rmpVast.__adPlayer;
-    this._onPlayingAppendIconsFn = null;
-    this._iconsData = [];
-  }
-  _createClass(Icons, [{
-    key: "iconsData",
-    get: function get() {
-      return this._iconsData;
-    }
-  }, {
-    key: "_onIconClickThrough",
-    value: function _onIconClickThrough(index, event) {
-      var _this = this;
-      if (event) {
-        event.stopPropagation();
-        if (event.type === 'touchend') {
-          event.preventDefault();
-        }
-      }
-      FW.openWindow(this._iconsData[index].iconClickThroughUrl);
-      // send trackers if any for IconClickTracking
-      var iconClickTrackingUrls = this._iconsData[index].iconClickTrackingUrls;
-      if (iconClickTrackingUrls.length > 0) {
-        iconClickTrackingUrls.forEach(function (tracking) {
-          if (tracking.url) {
-            Tracking.pingURI.call(_this._rmpVast, tracking.url);
-          }
-        });
-      }
-    }
-  }, {
-    key: "_onIconLoadPingTracking",
-    value: function _onIconLoadPingTracking(index) {
-      var _context;
-      console.log(concat_default()(_context = "".concat(FW.consolePrepend, " IconViewTracking for icon at index ")).call(_context, index), FW.consoleStyle, '');
-      Tracking.pingURI.call(this._rmpVast, this._iconsData[index].iconViewTrackingUrl);
-    }
-  }, {
-    key: "_onPlayingAppendIcons",
-    value: function _onPlayingAppendIcons() {
-      var _this2 = this;
-      console.log("".concat(FW.consolePrepend, " playing states has been reached - append icons"), FW.consoleStyle, '');
-      this._iconsData.forEach(function (iconData, index) {
-        var icon;
-        var src;
-        if (iconData.staticResourceUrl) {
-          icon = document.createElement('img');
-          src = iconData.staticResourceUrl;
-        } else if (iconData.iframeResourceUrl || iconData.htmlContent) {
-          icon = document.createElement('iframe');
-          icon.sandbox = 'allow-scripts allow-same-origin';
-          if (iconData.htmlContent) {
-            src = iconData.htmlContent;
-          } else {
-            src = iconData.iframeResourceUrl;
-          }
-          FW.setStyle(icon, {
-            border: 'none',
-            overflow: 'hidden'
-          });
-          icon.setAttribute('scrolling', 'no');
-          icon.setAttribute('allow', 'autoplay; fullscreen; picture-in-picture; encrypted-media');
-          icon.setAttribute('sandbox', 'allow-scripts allow-presentation allow-same-origin');
-        }
-        icon.className = 'rmp-ad-container-icons';
-        FW.setStyle(icon, {
-          width: parse_int_default()(iconData.width) + 'px',
-          height: parse_int_default()(iconData.height) + 'px'
-        });
-        var xPosition = iconData.xPosition;
-        if (xPosition === 'left') {
-          icon.style.left = '0px';
-        } else if (xPosition === 'right') {
-          icon.style.right = '0px';
-        } else if (parse_int_default()(xPosition) >= 0) {
-          icon.style.left = xPosition + 'px';
-        } else {
-          icon.style.left = '0px';
-        }
-        var yPosition = iconData.yPosition;
-        if (yPosition === 'top') {
-          icon.style.top = '0px';
-        } else if (xPosition === 'bottom') {
-          icon.style.bottom = '0px';
-        } else if (parse_int_default()(yPosition) >= 0) {
-          icon.style.top = yPosition + 'px';
-        } else {
-          icon.style.top = '0px';
-        }
-        if (iconData.iconViewTrackingUrl) {
-          icon.onload = _this2._onIconLoadPingTracking.bind(_this2, index);
-        }
-        if (iconData.iconClickThroughUrl) {
-          var _onIconClickThroughFn = _this2._onIconClickThrough.bind(_this2, index);
-          FW.addEvents(['touchend', 'click'], icon, _onIconClickThroughFn);
-        }
-        if (iconData.htmlContent) {
-          icon.srcdoc = src;
-        } else {
-          icon.src = src;
-        }
-        console.log("".concat(FW.consolePrepend, " Selected icon details follow"), FW.consoleStyle, '');
-        console.log(icon);
-        _this2._adContainer.appendChild(icon);
-      });
-    }
-  }, {
-    key: "destroy",
-    value: function destroy() {
-      console.log("".concat(FW.consolePrepend, " Start destroying icons"), FW.consoleStyle, '');
-      var icons = this._adContainer.querySelectorAll('.rmp-ad-container-icons');
-      if (icons.length > 0) {
-        icons.forEach(function (icon) {
-          FW.removeElement(icon);
-        });
-      }
-      if (this._adPlayer) {
-        this._adPlayer.removeEventListener('playing', this._onPlayingAppendIconsFn);
-      }
-    }
-  }, {
-    key: "parse",
-    value: function parse(icons) {
-      console.log("".concat(FW.consolePrepend, " Start parsing for icons"), FW.consoleStyle, '');
-      for (var i = 0; i < icons.length; i++) {
-        var currentIcon = icons[i];
-        var program = currentIcon.program;
-        if (program === null) {
-          continue;
-        }
-        var width = currentIcon.width;
-        var height = currentIcon.height;
-        var xPosition = currentIcon.xPosition;
-        var yPosition = currentIcon.yPosition;
-        if (width <= 0 || height <= 0 || xPosition < 0 || yPosition < 0) {
-          continue;
-        }
-        var staticResourceUrl = currentIcon.staticResource;
-        var iframeResourceUrl = currentIcon.iframeResource;
-        var htmlResource = currentIcon.htmlResource;
-        // we only support StaticResource (HTMLResource not supported)
-        if (staticResourceUrl === null && iframeResourceUrl === null && htmlResource === null) {
-          continue;
-        }
-        var iconData = {
-          program: program,
-          width: width,
-          height: height,
-          xPosition: xPosition,
-          yPosition: yPosition,
-          staticResourceUrl: staticResourceUrl,
-          iframeResourceUrl: iframeResourceUrl,
-          htmlContent: htmlResource
-        };
-        iconData.iconViewTrackingUrl = currentIcon.iconViewTrackingURLTemplate;
-        iconData.iconClickThroughUrl = currentIcon.iconClickThroughURLTemplate;
-        iconData.iconClickTrackingUrls = currentIcon.iconClickTrackingURLTemplates;
-        this._iconsData.push(iconData);
-      }
-      console.log("".concat(FW.consolePrepend, " Validated parsed icons follows"), FW.consoleStyle, '');
-      console.log(this._iconsData);
-    }
-  }, {
-    key: "append",
-    value: function append() {
-      this._onPlayingAppendIconsFn = this._onPlayingAppendIcons.bind(this);
-      // as per VAST 3 spec only append icon when ad starts playing
-      this._adPlayer.addEventListener('playing', this._onPlayingAppendIconsFn, {
-        once: true
-      });
-    }
-  }]);
-  return Icons;
-}();
-
-;// CONCATENATED MODULE: ./src/assets/rmp-connection/rmp-connection.js
-
-
-/**
- * @license Copyright (c) 2015-2022 Radiant Media Player | https://www.radiantmediaplayer.com
- * rmp-connection 2.1.0 | https://github.com/radiantmediaplayer/rmp-connection
- * rmp-connection is released under MIT | https://github.com/radiantmediaplayer/rmp-connection/blob/master/LICENSE
- */
-/**
- * The class to instantiate RmpConnection
- * @export
- * @class RmpConnection
-*/
-var RmpConnection = /*#__PURE__*/function () {
-  /**
-    * @constructor
-    */
-  function RmpConnection() {
-    _classCallCheck(this, RmpConnection);
-  }
-
-  /**
-    * @private
-    */
-  _createClass(RmpConnection, [{
-    key: "_getConnectionType",
-    value: function _getConnectionType() {
-      if (typeof navigator.connection.type === 'string' && navigator.connection.type !== '') {
-        switch (navigator.connection.type) {
-          case 'ethernet':
-            return 'ethernet';
-          case 'wifi':
-          case 'wimax':
-          case 'mixed':
-          case 'other':
-            return 'wifi';
-          case 'bluetooth':
-          case 'cellular':
-            return 'cellular';
-          case 'none':
-            return 'none';
-          default:
-            break;
-        }
-      }
-      return 'unknown';
-    }
-
-    /**
-      * @private
-      */
-  }, {
-    key: "_getBandwidthEstimate",
-    value: function _getBandwidthEstimate() {
-      if (typeof navigator.connection.downlink === 'number' && navigator.connection.downlink > 0) {
-        return navigator.connection.downlink;
-      } else if (typeof navigator.connection.effectiveType === 'string' && navigator.connection.effectiveType !== '') {
-        switch (navigator.connection.effectiveType) {
-          case 'slow-2g':
-            return 0.025;
-          case '2g':
-            return 0.035;
-          case '3g':
-            return 0.35;
-          case '4g':
-            return 1.4;
-          case '5g':
-            return 5;
-          default:
-            break;
-        }
-      } else if (typeof navigator.connection.type === 'string' && navigator.connection.type !== '') {
-        switch (navigator.connection.type) {
-          case 'ethernet':
-          case 'wifi':
-          case 'wimax':
-          case 'mixed':
-          case 'other':
-            return 1.4;
-          case 'bluetooth':
-          case 'cellular':
-            return 0.35;
-          case 'none':
-            return -1;
-          default:
-            break;
-        }
-      }
-      return 0.35;
-    }
-
-    /** 
-     * @typedef {object} BandwidthData
-     * @property {number} estimate
-     * @property {string} connectionType
-     * @return {BandwidthData}
-     */
-  }, {
-    key: "bandwidthData",
-    get: function get() {
-      // default return values
-      var result = {
-        estimate: -1,
-        connectionType: 'none'
-      };
-
-      // we are offline - exit
-      if (typeof navigator.onLine !== 'undefined' && !navigator.onLine) {
-        return result;
-      }
-
-      // we do not have navigator.connection - exit
-      // for support see https://caniuse.com/#feat=netinfo - works everywhere but in Safari && Firefox 
-      if (typeof navigator.connection === 'undefined') {
-        return {
-          estimate: -1,
-          connectionType: 'unknown'
-        };
-      }
-
-      // we return our internal values
-      return {
-        estimate: this._getBandwidthEstimate(),
-        connectionType: this._getConnectionType()
-      };
-    }
-  }]);
-  return RmpConnection;
-}();
-
+function _toConsumableArray(arr) {
+  return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread();
+}
 ;// CONCATENATED MODULE: ./node_modules/@babel/runtime-corejs3/helpers/esm/arrayWithHoles.js
 
 function _arrayWithHoles(arr) {
@@ -12468,9 +11589,926 @@ function _createForOfIteratorHelper(o, allowArrayLike) {
     }
   };
 }
-// EXTERNAL MODULE: ./node_modules/@babel/runtime-corejs3/core-js-stable/map.js
-var core_js_stable_map = __webpack_require__(4707);
-var core_js_stable_map_default = /*#__PURE__*/__webpack_require__.n(core_js_stable_map);
+// EXTERNAL MODULE: ./node_modules/@babel/runtime-corejs3/core-js-stable/instance/map.js
+var instance_map = __webpack_require__(8079);
+var instance_map_default = /*#__PURE__*/__webpack_require__.n(instance_map);
+// EXTERNAL MODULE: ./node_modules/@babel/runtime-corejs3/core-js-stable/instance/slice.js
+var instance_slice = __webpack_require__(8979);
+var instance_slice_default = /*#__PURE__*/__webpack_require__.n(instance_slice);
+;// CONCATENATED MODULE: ./src/js/framework/tracking.js
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+var Tracking = /*#__PURE__*/function () {
+  function Tracking(rmpVast) {
+    _classCallCheck(this, Tracking);
+    this._rmpVast = rmpVast;
+    this.reset();
+    this._createTrackingApiEventMap();
+  }
+  return _createClass(Tracking, [{
+    key: "_createTrackingApiEventMap",
+    value: function _createTrackingApiEventMap() {
+      this._trackingApiEventMap = new (map_default())();
+      // ViewableImpression
+      this._trackingApiEventMap.set('adviewable', 'viewable');
+      this._trackingApiEventMap.set('adviewundetermined', 'viewundetermined');
+      // Tracking Event Elements
+      this._trackingApiEventMap.set('admuted', 'mute');
+      this._trackingApiEventMap.set('adunmuted', 'unmute');
+      this._trackingApiEventMap.set('adpaused', 'pause');
+      this._trackingApiEventMap.set('adresumed', 'resume');
+      this._trackingApiEventMap.set('adskipped', 'skip');
+      // VAST 4 events
+      this._trackingApiEventMap.set('adplayerexpand', 'playerExpand');
+      this._trackingApiEventMap.set('adplayercollapse', 'playerCollapse');
+      // VAST 3 events
+      this._trackingApiEventMap.set('adfullscreen', 'fullscreen');
+      this._trackingApiEventMap.set('adexitfullscreen', 'exitFullscreen');
+      // Linear Ad Metrics
+      this._trackingApiEventMap.set('adloaded', 'loaded');
+      this._trackingApiEventMap.set('adstarted', 'start');
+      this._trackingApiEventMap.set('adfirstquartile', 'firstQuartile');
+      this._trackingApiEventMap.set('admidpoint', 'midpoint');
+      this._trackingApiEventMap.set('adthirdquartile', 'thirdQuartile');
+      this._trackingApiEventMap.set('adcomplete', 'complete');
+      // tracking progress event happens in _onTimeupdate
+      // InLine > Impression
+      this._trackingApiEventMap.set('adimpression', 'impression');
+
+      // creativeView for companion ads happens in getCompanionAd (index.js)
+      // creativeView tracking needs to happen for linear creative as well (support for VAST 3)
+      this._trackingApiEventMap.set('adcreativeview', 'creativeView');
+
+      // for non-linear and VPAID only
+      this._trackingApiEventMap.set('adcollapse', 'adCollapse');
+
+      // only support for VPAID - PR welcome for non-linear
+      this._trackingApiEventMap.set('aduseracceptinvitation', 'acceptInvitation');
+      this._trackingApiEventMap.set('adclosed', 'close');
+      // VideoClicks > ClickThrough
+      this._trackingApiEventMap.set('adclick', 'clickthrough');
+
+      // Need to investigate overlayViewDuration (non-linear) - interactiveStart (SIMID) further
+    }
+  }, {
+    key: "_dispatch",
+    value: function _dispatch(event) {
+      var _context,
+        _this = this;
+      Logger.print('info', "ping tracking for ".concat(event, " VAST event"));
+      // filter trackers - may return multiple urls for same event as allowed by VAST spec
+      var trackers = filter_default()(_context = this._rmpVast.trackingTags).call(_context, function (value) {
+        return event === value.event;
+      });
+      // send ping for each valid tracker
+      if (trackers.length > 0) {
+        trackers.forEach(function (element) {
+          _this.pingURI(element.url);
+        });
+      }
+    }
+  }, {
+    key: "_vastReadableTime",
+    value: function _vastReadableTime(time) {
+      if (FW.isNumber(time) && time >= 0) {
+        var seconds = 0;
+        var minutes = 0;
+        var hours = 0;
+        var ms = Math.floor(time % 1000);
+        if (ms === 0) {
+          ms = '000';
+        } else if (ms < 10) {
+          ms = '00' + ms;
+        } else if (ms < 100) {
+          ms = '0' + ms;
+        } else {
+          ms = ms.toString();
+        }
+        seconds = Math.floor(time * 1.0 / 1000);
+        if (seconds > 59) {
+          minutes = Math.floor(seconds * 1.0 / 60);
+          seconds = seconds - minutes * 60;
+        }
+        if (seconds === 0) {
+          seconds = '00';
+        } else if (seconds < 10) {
+          seconds = '0' + seconds;
+        } else {
+          seconds = seconds.toString();
+        }
+        if (minutes > 59) {
+          hours = Math.floor(minutes * 1.0 / 60);
+          minutes = minutes - hours * 60;
+        }
+        if (minutes === 0) {
+          minutes = '00';
+        } else if (minutes < 10) {
+          minutes = '0' + minutes;
+        } else {
+          minutes = minutes.toString();
+        }
+        if (hours === 0) {
+          hours = '00';
+        } else if (hours < 10) {
+          hours = '0' + hours;
+        } else {
+          if (hours > 23) {
+            hours = '00';
+          } else {
+            hours = hours.toString();
+          }
+        }
+        return hours + ':' + minutes + ':' + seconds + '.' + ms;
+      } else {
+        return '00:00:00.000';
+      }
+    }
+  }, {
+    key: "_generateCacheBusting",
+    value: function _generateCacheBusting() {
+      var text = '';
+      var possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+      for (var i = 0; i < 8; i++) {
+        text += possible.charAt(Math.floor(Math.random() * possible.length));
+      }
+      return text;
+    }
+  }, {
+    key: "_ping",
+    value: function _ping(url) {
+      // we expect an image format for the tracker (generally a 1px GIF/PNG/JPG/AVIF) or JavaScript as 
+      // those are the most common format in the industry 
+      // other format may produce errors and the related tracker may not be requested properly
+      var jsPattern = /\.js$/i;
+      if (jsPattern.test(url)) {
+        var script = document.createElement('script');
+        script.src = url;
+        try {
+          document.head.appendChild(script);
+        } catch (error) {
+          Logger.print('warning', error);
+          document.body.appendChild(script);
+        }
+      } else {
+        FW.ajax(url, this._rmpVast.params.ajaxTimeout, false, 'GET').then(function () {
+          Logger.print('info', "VAST tracker successfully loaded ".concat(url));
+        }).catch(function (error) {
+          var _context2;
+          Logger.print('warning', concat_default()(_context2 = "VAST tracker failed loading ".concat(url, " with error ")).call(_context2, error));
+        });
+      }
+    }
+  }, {
+    key: "_onVolumeChange",
+    value: function _onVolumeChange() {
+      if (this._rmpVast.currentAdPlayer) {
+        var muted = this._rmpVast.currentAdPlayer.muted;
+        var volume = this._rmpVast.currentAdPlayer.volume;
+        if (muted || volume === 0) {
+          this.dispatchTrackingAndApiEvent('admuted');
+        } else if (!muted && volume > 0) {
+          this.dispatchTrackingAndApiEvent('adunmuted');
+        }
+        this._rmpVast.rmpVastUtils.createApiEvent('advolumechanged');
+      }
+    }
+  }, {
+    key: "_onTimeupdate",
+    value: function _onTimeupdate() {
+      var _this2 = this;
+      var adPlayerDuration = -1;
+      var adPlayerCurrentTime = -1;
+      if (this._rmpVast.rmpVastAdPlayer) {
+        adPlayerCurrentTime = this._rmpVast.rmpVastAdPlayer.currentTime;
+        adPlayerDuration = this._rmpVast.rmpVastAdPlayer.duration;
+      }
+      if (adPlayerCurrentTime > 0) {
+        if (adPlayerDuration > 0 && adPlayerDuration > adPlayerCurrentTime) {
+          if (adPlayerCurrentTime >= adPlayerDuration * 0.25 && !this._firstQuartileEventFired) {
+            this._firstQuartileEventFired = true;
+            this.dispatchTrackingAndApiEvent('adfirstquartile');
+          } else if (adPlayerCurrentTime >= adPlayerDuration * 0.5 && !this._midpointEventFired) {
+            this._midpointEventFired = true;
+            this.dispatchTrackingAndApiEvent('admidpoint');
+          } else if (adPlayerCurrentTime >= adPlayerDuration * 0.75 && !this._thirdQuartileEventFired) {
+            this._thirdQuartileEventFired = true;
+            this.dispatchTrackingAndApiEvent('adthirdquartile');
+          }
+        }
+        // progress event
+        if (this._rmpVast.progressEvents.length > 0) {
+          if (adPlayerCurrentTime > this._rmpVast.progressEvents[0].time) {
+            var _context3;
+            var filterProgressEvent = filter_default()(_context3 = this._rmpVast.progressEvents).call(_context3, function (progressEvent) {
+              return progressEvent.time === _this2._rmpVast.progressEvents[0].time;
+            });
+            filterProgressEvent.forEach(function (progressEvent) {
+              if (progressEvent.url) {
+                _this2.pingURI(progressEvent.url);
+              }
+            });
+            this._rmpVast.progressEvents.shift();
+            this._rmpVast.rmpVastUtils.createApiEvent('adprogress');
+          }
+        }
+      }
+    }
+  }, {
+    key: "_onPause",
+    value: function _onPause() {
+      if (this._rmpVast.currentAdPlayer && this._rmpVast.currentAdPlayer.paused) {
+        var currentTime = this._rmpVast.currentAdPlayer.currentTime;
+        var currentDuration = this._rmpVast.currentAdPlayer.duration;
+        // we have reached end of linear creative - a HTML5 video pause event may fire just before ended event
+        // in this case we ignore the adpaused event as adcomplete prevails
+        if (currentTime === currentDuration) {
+          return;
+        }
+        this.dispatchTrackingAndApiEvent('adpaused');
+      }
+    }
+  }, {
+    key: "_onPlay",
+    value: function _onPlay() {
+      if (this._rmpVast.currentAdPlayer && !this._rmpVast.currentAdPlayer.paused) {
+        this.dispatchTrackingAndApiEvent('adresumed');
+      }
+    }
+  }, {
+    key: "_onPlaying",
+    value: function _onPlaying() {
+      this.dispatchTrackingAndApiEvent(['adimpression', 'adcreativeview', 'adstarted']);
+    }
+  }, {
+    key: "_onEnded",
+    value: function _onEnded() {
+      this.dispatchTrackingAndApiEvent('adcomplete');
+      if (this._rmpVast.rmpVastAdPlayer) {
+        this._rmpVast.rmpVastAdPlayer.resumeContent();
+      }
+    }
+  }, {
+    key: "_dispatchTracking",
+    value: function _dispatchTracking(event) {
+      var _this3 = this;
+      if (Array.isArray(event)) {
+        event.forEach(function (currentEvent) {
+          _this3._dispatch(currentEvent);
+        });
+      } else {
+        this._dispatch(event);
+      }
+    }
+  }, {
+    key: "replaceMacros",
+    value: function replaceMacros(url, trackingPixels) {
+      var _this4 = this;
+      var pattern0 = /\[.+?\]/i;
+      if (!pattern0.test(url)) {
+        return url;
+      }
+      var finalString = url;
+
+      // Macros that need to be set explicitly
+      // CONTENTCAT GPPSECTIONID GPPSTRING PLAYBACKMETHODS STOREID STOREURL BREAKMAXADLENGTH BREAKMAXADS BREAKMAXDURATION
+      // BREAKMINADLENGTH  PLACEMENTTYPE TRANSACTIONID CLIENTUA DEVICEIP IFA IFATYPE LATLONG SERVERUA APPBUNDLE
+      // EXTENSIONS OMIDPARTNER VERIFICATIONVENDORS CONTENTID CONTENTURI INVENTORYSTATE
+      if (this._rmpVast.params.macros.size > 0) {
+        var _iterator = _createForOfIteratorHelper(this._rmpVast.params.macros),
+          _step;
+        try {
+          for (_iterator.s(); !(_step = _iterator.n()).done;) {
+            var _step$value = _slicedToArray(_step.value, 2),
+              key = _step$value[0],
+              value = _step$value[1];
+            var pattern = '\\[' + key + '\\]';
+            var regex = new RegExp(pattern, 'gi');
+            if (regex.test(finalString)) {
+              finalString = finalString.replace(regex, value.toString());
+            }
+          }
+        } catch (err) {
+          _iterator.e(err);
+        } finally {
+          _iterator.f();
+        }
+      }
+
+      // Value is known, but information can't be shared because of policy (unwilling to share)
+      var patternUNWILLING = /\[CLICKPOS\]/gi;
+      if (patternUNWILLING.test(finalString)) {
+        finalString = finalString.replace(patternUNWILLING, '-2');
+      }
+
+      // available macros
+
+      var patternADCOUNT = /\[ADCOUNT\]/gi;
+      if (patternADCOUNT.test(finalString)) {
+        var adCount = 1;
+        if (this._rmpVast.adPodLength > 0) {
+          adCount = this._rmpVast.adSequence;
+        }
+        finalString = finalString.replace(patternADCOUNT, adCount.toString());
+      }
+      var patternSERVERSIDE = /\[SERVERSIDE\]/gi;
+      if (patternSERVERSIDE.test(finalString)) {
+        finalString = finalString.replace(patternADCOUNT, '0');
+      }
+      var pattern1 = /\[TIMESTAMP\]/gi;
+      var date = new Date().toISOString();
+      if (pattern1.test(finalString)) {
+        finalString = finalString.replace(pattern1, encodeURIComponent(date));
+      }
+      var pattern2 = /\[CACHEBUSTING\]/gi;
+      if (pattern2.test(finalString)) {
+        finalString = finalString.replace(pattern2, this._generateCacheBusting());
+      }
+      var pattern3 = /\[(CONTENTPLAYHEAD|MEDIAPLAYHEAD)\]/gi;
+      var currentContentTime = this._rmpVast.rmpVastContentPlayer.currentTime;
+      if (pattern3.test(finalString) && currentContentTime > -1) {
+        finalString = finalString.replace(pattern3, encodeURIComponent(this._vastReadableTime(currentContentTime)));
+      }
+      var pattern5 = /\[BREAKPOSITION\]/gi;
+      var adPlayerDuration = -1;
+      if (this._rmpVast.rmpVastAdPlayer) {
+        adPlayerDuration = this._rmpVast.rmpVastAdPlayer.duration;
+      }
+      if (pattern5.test(finalString)) {
+        if (currentContentTime === 0) {
+          finalString = finalString.replace(pattern5, '1');
+        } else if (currentContentTime > 0 && currentContentTime < adPlayerDuration) {
+          finalString = finalString.replace(pattern5, '2');
+        } else {
+          finalString = finalString.replace(pattern5, '3');
+        }
+      }
+      var pattern9 = /\[ADTYPE\]/gi;
+      if (pattern9.test(finalString) && this._rmpVast.ad.adType) {
+        finalString = finalString.replace(pattern9, encodeURIComponent(this._rmpVast.ad.adType));
+      }
+      var pattern11 = /\[DEVICEUA\]/gi;
+      if (pattern11.test(finalString) && Environment.userAgent) {
+        finalString = finalString.replace(pattern11, encodeURIComponent(Environment.userAgent));
+      }
+      var pattern11bis = /\[SERVERSIDE\]/gi;
+      if (pattern11bis.test(finalString) && Environment.userAgent) {
+        finalString = finalString.replace(pattern11bis, '0');
+      }
+      var pattern13 = /\[DOMAIN\]/gi;
+      if (pattern13.test(finalString) && window.location.hostname) {
+        finalString = finalString.replace(pattern13, encodeURIComponent(window.location.hostname));
+      }
+      var pattern14 = /\[PAGEURL\]/gi;
+      if (pattern14.test(finalString) && window.location.href) {
+        finalString = finalString.replace(pattern14, encodeURIComponent(window.location.href));
+      }
+      var pattern18 = /\[PLAYERCAPABILITIES\]/gi;
+      if (pattern18.test(finalString)) {
+        finalString = finalString.replace(pattern18, 'skip,mute,autoplay,mautoplay,fullscreen,icon');
+      }
+      var pattern19 = /\[CLICKTYPE\]/gi;
+      if (pattern19.test(finalString)) {
+        var clickType = '1';
+        if (Environment.isMobile) {
+          clickType = '2';
+        }
+        finalString = finalString.replace(pattern19, clickType);
+      }
+      var pattern21 = /\[PLAYERSIZE\]/gi;
+      if (pattern21.test(finalString)) {
+        var width = parse_int_default()(FW.getWidth(this._rmpVast.container));
+        var height = parse_int_default()(FW.getHeight(this._rmpVast.container));
+        finalString = finalString.replace(pattern21, encodeURIComponent(width.toString() + ',' + height.toString()));
+      }
+      if (trackingPixels) {
+        var pattern4 = /\[ADPLAYHEAD\]/gi;
+        var adPlayerCurrentTime = -1;
+        if (this._rmpVast.rmpVastAdPlayer) {
+          adPlayerCurrentTime = this._rmpVast.rmpVastAdPlayer.currentTime;
+        }
+        if (pattern4.test(finalString) && adPlayerCurrentTime > -1) {
+          finalString = finalString.replace(pattern4, encodeURIComponent(this._vastReadableTime(adPlayerCurrentTime)));
+        }
+        var pattern10 = /\[UNIVERSALADID\]/gi;
+        if (pattern10.test(finalString) && this._rmpVast.creative.universalAdIds.length > 0) {
+          var universalAdIdString = '';
+          this._rmpVast.creative.universalAdIds.forEach(function (universalAdId, index) {
+            if (index !== 0 || index !== _this4._rmpVast.creative.universalAdIds.length - 1) {
+              universalAdIdString += ',';
+            }
+            universalAdIdString += universalAdId.idRegistry + ' ' + universalAdId.value;
+          });
+          finalString = finalString.replace(pattern10, encodeURIComponent(universalAdIdString));
+        }
+        var pattern22 = /\[ASSETURI\]/gi;
+        var assetUri = this._rmpVast.adMediaUrl;
+        if (pattern22.test(finalString) && typeof assetUri === 'string' && assetUri !== '') {
+          finalString = finalString.replace(pattern22, encodeURIComponent(assetUri));
+        }
+        var pattern23 = /\[PODSEQUENCE\]/gi;
+        if (pattern23.test(finalString) && this._rmpVast.ad.sequence) {
+          finalString = finalString.replace(pattern23, encodeURIComponent(this._rmpVast.ad.sequence.toString()));
+        }
+        var pattern24 = /\[ADSERVINGID\]/gi;
+        if (pattern24.test(finalString) && this._rmpVast.ad.adServingId) {
+          finalString = finalString.replace(pattern24, encodeURIComponent(this._rmpVast.ad.adServingId));
+        }
+      } else {
+        var pattern6 = /\[ADCATEGORIES\]/gi;
+        if (pattern6.test(finalString) && this._rmpVast.ad.categories.length > 0) {
+          var _context4;
+          var categories = instance_map_default()(_context4 = this._rmpVast.ad.categories).call(_context4, function (categorie) {
+            return categorie.value;
+          }).join(',');
+          finalString = finalString.replace(pattern6, encodeURIComponent(categories));
+        }
+        var pattern7 = /\[BLOCKEDADCATEGORIES\]/gi;
+        if (pattern7.test(finalString) && this._rmpVast.ad.blockedAdCategories.length > 0) {
+          var _context5;
+          var blockedAdCategories = instance_map_default()(_context5 = this._rmpVast.ad.blockedAdCategories).call(_context5, function (blockedAdCategories) {
+            return blockedAdCategories.value;
+          }).join(',');
+          finalString = finalString.replace(pattern7, encodeURIComponent(blockedAdCategories));
+        }
+        var pattern15 = /\[VASTVERSIONS\]/gi;
+        if (pattern15.test(finalString)) {
+          finalString = finalString.replace(pattern15, '2,3,5,6,7,8,11,12,13,14');
+        }
+        var pattern16 = /\[APIFRAMEWORKS\]/gi;
+        if (pattern16.test(finalString)) {
+          finalString = finalString.replace(pattern16, '2,7,8,9');
+        }
+        var pattern17 = /\[MEDIAMIME\]/gi;
+        var mediaMime = ['video/webm', 'video/mp4', 'video/ogg', 'video/3gpp', 'application/vnd.apple.mpegurl', 'application/dash+xml'];
+        if (pattern17.test(finalString)) {
+          var mimeTyepString = '';
+          mediaMime.forEach(function (value) {
+            if (value === 'application/vnd.apple.mpegurl') {
+              if (Environment.checkCanPlayType(value) || _this4._rmpVast.rmpVastLinearCreative.readingHlsJS) {
+                mimeTyepString += value + ',';
+              }
+            } else if (Environment.checkCanPlayType(value)) {
+              mimeTyepString += value + ',';
+            }
+          });
+          if (mimeTyepString) {
+            mimeTyepString = instance_slice_default()(mimeTyepString).call(mimeTyepString, 0, -1);
+            finalString = finalString.replace(pattern17, encodeURIComponent(mimeTyepString));
+          }
+        }
+        var pattern20 = /\[PLAYERSTATE\]/gi;
+        if (pattern20.test(finalString)) {
+          var playerState = '';
+          if (this._rmpVast.rmpVastContentPlayer.muted) {
+            playerState += 'muted';
+          }
+          if (this._rmpVast.isInFullscreen) {
+            if (playerState) {
+              playerState += ',';
+            }
+            playerState += 'fullscreen';
+          }
+          finalString = finalString.replace(pattern20, playerState);
+        }
+      }
+      var pattern25 = /\[LIMITADTRACKING\]/gi;
+      var regulationsInfo = this._rmpVast.regulationsInfo;
+      if (pattern25.test(finalString) && regulationsInfo.limitAdTracking) {
+        finalString = finalString.replace(pattern25, encodeURIComponent(regulationsInfo.limitAdTracking));
+      }
+      var pattern26 = /\[REGULATIONS\]/gi;
+      if (pattern26.test(finalString) && regulationsInfo.regulations) {
+        finalString = finalString.replace(pattern26, encodeURIComponent(regulationsInfo.regulations));
+      }
+      var pattern27 = /\[GDPRCONSENT\]/gi;
+      if (pattern27.test(finalString) && regulationsInfo.gdprConsent) {
+        finalString = finalString.replace(pattern27, encodeURIComponent(regulationsInfo.gdprConsent));
+      }
+      return finalString;
+    }
+  }, {
+    key: "pingURI",
+    value: function pingURI(url) {
+      var trackingUrl = this.replaceMacros(url, true);
+      this._ping(trackingUrl);
+    }
+  }, {
+    key: "error",
+    value: function error(errorCode) {
+      var _this5 = this;
+      // for each Error tag within an InLine or chain of Wrapper ping error URL
+      var errorTags = this._rmpVast.adErrorTags;
+      if (errorCode === 303 && this._rmpVast.vastErrorTags.length > 0) {
+        var _context6;
+        // here we ping vastErrorTags with error code 303 according to spec
+        // concat array thus
+        errorTags = concat_default()(_context6 = []).call(_context6, _toConsumableArray(errorTags), _toConsumableArray(this._rmpVast.vastErrorTags));
+      }
+      if (errorTags.length > 0) {
+        errorTags.forEach(function (errorTag) {
+          if (errorTag.url) {
+            var errorUrl = errorTag.url;
+            var errorRegExp = /\[ERRORCODE\]/gi;
+            if (errorRegExp.test(errorUrl) && FW.isNumber(errorCode) && errorCode > 0 && errorCode < 1000) {
+              errorUrl = errorUrl.replace(errorRegExp, errorCode);
+            }
+            _this5._ping(errorUrl);
+          }
+        });
+      }
+    }
+  }, {
+    key: "reset",
+    value: function reset() {
+      this._onPauseFn = null;
+      this._onPlayFn = null;
+      this._onPlayingFn = null;
+      this._onEndedFn = null;
+      this._onVolumeChangeFn = null;
+      this._onTimeupdateFn = null;
+      this._firstQuartileEventFired = false;
+      this._midpointEventFired = false;
+      this._thirdQuartileEventFired = false;
+    }
+  }, {
+    key: "dispatchTrackingAndApiEvent",
+    value: function dispatchTrackingAndApiEvent(apiEvent) {
+      var _this6 = this;
+      if (Array.isArray(apiEvent)) {
+        apiEvent.forEach(function (currentApiEvent) {
+          _this6._rmpVast.rmpVastUtils.createApiEvent(currentApiEvent);
+          _this6._dispatchTracking(_this6._trackingApiEventMap.get(currentApiEvent));
+        });
+      } else {
+        this._rmpVast.rmpVastUtils.createApiEvent(apiEvent);
+        this._dispatchTracking(this._trackingApiEventMap.get(apiEvent));
+      }
+    }
+  }, {
+    key: "destroy",
+    value: function destroy() {
+      if (this._rmpVast.currentAdPlayer) {
+        this._rmpVast.currentAdPlayer.removeEventListener('pause', this._onPauseFn);
+        this._rmpVast.currentAdPlayer.removeEventListener('play', this._onPlayFn);
+        this._rmpVast.currentAdPlayer.removeEventListener('playing', this._onPlayingFn);
+        this._rmpVast.currentAdPlayer.removeEventListener('ended', this._onEndedFn);
+        this._rmpVast.currentAdPlayer.removeEventListener('volumechange', this._onVolumeChangeFn);
+        this._rmpVast.currentAdPlayer.removeEventListener('timeupdate', this._onTimeupdateFn);
+      }
+    }
+  }, {
+    key: "wire",
+    value: function wire() {
+      // we filter through all HTML5 video events and create new VAST events 
+      if (this._rmpVast.currentAdPlayer && this._rmpVast.creative.isLinear && !this._rmpVast.rmpVastVpaidPlayer) {
+        this._onPauseFn = this._onPause.bind(this);
+        this._rmpVast.currentAdPlayer.addEventListener('pause', this._onPauseFn);
+        this._onPlayFn = this._onPlay.bind(this);
+        this._rmpVast.currentAdPlayer.addEventListener('play', this._onPlayFn);
+        this._onPlayingFn = this._onPlaying.bind(this);
+        this._rmpVast.currentAdPlayer.addEventListener('playing', this._onPlayingFn, {
+          once: true
+        });
+        this._onEndedFn = this._onEnded.bind(this);
+        this._rmpVast.currentAdPlayer.addEventListener('ended', this._onEndedFn, {
+          once: true
+        });
+        this._onVolumeChangeFn = this._onVolumeChange.bind(this);
+        this._rmpVast.currentAdPlayer.addEventListener('volumechange', this._onVolumeChangeFn);
+        this._onTimeupdateFn = this._onTimeupdate.bind(this);
+        this._rmpVast.currentAdPlayer.addEventListener('timeupdate', this._onTimeupdateFn);
+      }
+    }
+  }]);
+}();
+
+// EXTERNAL MODULE: ./node_modules/@babel/runtime-corejs3/core-js-stable/instance/sort.js
+var sort = __webpack_require__(129);
+var sort_default = /*#__PURE__*/__webpack_require__.n(sort);
+;// CONCATENATED MODULE: ./src/js/creatives/icons.js
+
+
+
+
+
+var Icons = /*#__PURE__*/function () {
+  function Icons(rmpVast) {
+    _classCallCheck(this, Icons);
+    this._rmpVast = rmpVast;
+    this._adContainer = rmpVast.adContainer;
+    this._adPlayer = rmpVast.currentAdPlayer;
+    this._onPlayingAppendIconsFn = null;
+    this._iconsData = [];
+  }
+  return _createClass(Icons, [{
+    key: "iconsData",
+    get: function get() {
+      return this._iconsData;
+    }
+  }, {
+    key: "_onIconClickThrough",
+    value: function _onIconClickThrough(index, event) {
+      var _this = this;
+      if (event) {
+        event.stopPropagation();
+        if (event.type === 'touchend') {
+          event.preventDefault();
+        }
+      }
+      FW.openWindow(this._iconsData[index].iconClickThroughUrl);
+      // send trackers if any for IconClickTracking
+      var iconClickTrackingUrls = this._iconsData[index].iconClickTrackingUrls;
+      if (iconClickTrackingUrls.length > 0) {
+        iconClickTrackingUrls.forEach(function (tracking) {
+          if (tracking.url) {
+            _this._rmpVast.rmpVastTracking.pingURI(tracking.url);
+          }
+        });
+      }
+      this._rmpVast.rmpVastUtils.createApiEvent('adiconclick');
+    }
+  }, {
+    key: "_onIconLoadPingTracking",
+    value: function _onIconLoadPingTracking(index) {
+      Logger.print('info', "IconViewTracking for icon at index ".concat(index));
+      this._rmpVast.rmpVastTracking.pingURI(this._iconsData[index].iconViewTrackingUrl);
+    }
+  }, {
+    key: "_onPlayingAppendIcons",
+    value: function _onPlayingAppendIcons() {
+      var _this2 = this;
+      Logger.print('info', "playing states has been reached - append icons");
+      this._iconsData.forEach(function (iconData, index) {
+        var icon;
+        var src;
+        if (iconData.staticResourceUrl) {
+          icon = document.createElement('img');
+          src = iconData.staticResourceUrl;
+        } else if (iconData.iframeResourceUrl || iconData.htmlContent) {
+          icon = document.createElement('iframe');
+          icon.sandbox = 'allow-scripts allow-same-origin';
+          if (iconData.htmlContent) {
+            src = iconData.htmlContent;
+          } else {
+            src = iconData.iframeResourceUrl;
+          }
+          FW.setStyle(icon, {
+            border: 'none',
+            overflow: 'hidden'
+          });
+          icon.setAttribute('scrolling', 'no');
+          icon.setAttribute('allow', 'autoplay; fullscreen; picture-in-picture; encrypted-media');
+          icon.setAttribute('sandbox', 'allow-scripts allow-presentation allow-same-origin');
+        }
+        icon.className = 'rmp-ad-container-icons';
+        FW.setStyle(icon, {
+          width: parse_int_default()(iconData.width) + 'px',
+          height: parse_int_default()(iconData.height) + 'px'
+        });
+        var xPosition = iconData.xPosition;
+        if (xPosition === 'left') {
+          icon.style.left = '0px';
+        } else if (xPosition === 'right') {
+          icon.style.right = '0px';
+        } else if (parse_int_default()(xPosition) >= 0) {
+          icon.style.left = xPosition + 'px';
+        } else {
+          icon.style.left = '0px';
+        }
+        var yPosition = iconData.yPosition;
+        if (yPosition === 'top') {
+          icon.style.top = '0px';
+        } else if (xPosition === 'bottom') {
+          icon.style.bottom = '0px';
+        } else if (parse_int_default()(yPosition) >= 0) {
+          icon.style.top = yPosition + 'px';
+        } else {
+          icon.style.top = '0px';
+        }
+        if (iconData.iconViewTrackingUrl) {
+          icon.onload = _this2._onIconLoadPingTracking.bind(_this2, index);
+        }
+        if (iconData.iconClickThroughUrl) {
+          var _onIconClickThroughFn = _this2._onIconClickThrough.bind(_this2, index);
+          FW.addEvents(['touchend', 'click'], icon, _onIconClickThroughFn);
+        }
+        if (iconData.htmlContent) {
+          icon.srcdoc = src;
+        } else {
+          icon.src = src;
+        }
+        Logger.print('info', "Selected icon details follow", icon);
+        _this2._adContainer.appendChild(icon);
+      });
+    }
+  }, {
+    key: "destroy",
+    value: function destroy() {
+      Logger.print('info', "Start destroying icons");
+      var icons = this._adContainer.querySelectorAll('.rmp-ad-container-icons');
+      if (icons.length > 0) {
+        icons.forEach(function (icon) {
+          FW.removeElement(icon);
+        });
+      }
+      if (this._adPlayer) {
+        this._adPlayer.removeEventListener('playing', this._onPlayingAppendIconsFn);
+      }
+    }
+  }, {
+    key: "parse",
+    value: function parse(icons) {
+      Logger.print('info', "Start parsing icons");
+      for (var i = 0; i < icons.length; i++) {
+        var currentIcon = icons[i];
+        var program = currentIcon.program;
+        if (program === null) {
+          continue;
+        }
+        var width = currentIcon.width;
+        var height = currentIcon.height;
+        var xPosition = currentIcon.xPosition;
+        var yPosition = currentIcon.yPosition;
+        if (width <= 0 || height <= 0 || xPosition < 0 || yPosition < 0) {
+          continue;
+        }
+        var staticResourceUrl = currentIcon.staticResource;
+        var iframeResourceUrl = currentIcon.iframeResource;
+        var htmlResource = currentIcon.htmlResource;
+        // we only support StaticResource (HTMLResource not supported)
+        if (staticResourceUrl === null && iframeResourceUrl === null && htmlResource === null) {
+          continue;
+        }
+        var iconData = {
+          program: program,
+          width: width,
+          height: height,
+          xPosition: xPosition,
+          yPosition: yPosition,
+          staticResourceUrl: staticResourceUrl,
+          iframeResourceUrl: iframeResourceUrl,
+          htmlContent: htmlResource
+        };
+        iconData.iconViewTrackingUrl = currentIcon.iconViewTrackingURLTemplate;
+        iconData.iconClickThroughUrl = currentIcon.iconClickThroughURLTemplate;
+        iconData.iconClickTrackingUrls = currentIcon.iconClickTrackingURLTemplates;
+        this._iconsData.push(iconData);
+      }
+      Logger.print('info', "Validated parsed icons follows", this._iconsData);
+    }
+  }, {
+    key: "append",
+    value: function append() {
+      this._onPlayingAppendIconsFn = this._onPlayingAppendIcons.bind(this);
+      // as per VAST 3 spec only append icon when ad starts playing
+      this._adPlayer.addEventListener('playing', this._onPlayingAppendIconsFn, {
+        once: true
+      });
+    }
+  }]);
+}();
+
+;// CONCATENATED MODULE: ./src/assets/rmp-connection/rmp-connection.js
+
+
+/**
+ * @license Copyright (c) 2015-2022 Radiant Media Player | https://www.radiantmediaplayer.com
+ * rmp-connection 2.1.0 | https://github.com/radiantmediaplayer/rmp-connection
+ * rmp-connection is released under MIT | https://github.com/radiantmediaplayer/rmp-connection/blob/master/LICENSE
+ */
+/**
+ * The class to instantiate RmpConnection
+ * @export
+ * @class RmpConnection
+*/
+var RmpConnection = /*#__PURE__*/function () {
+  /**
+    * @constructor
+    */
+  function RmpConnection() {
+    _classCallCheck(this, RmpConnection);
+  }
+
+  /**
+    * @private
+    */
+  return _createClass(RmpConnection, [{
+    key: "_getConnectionType",
+    value: function _getConnectionType() {
+      if (typeof navigator.connection.type === 'string' && navigator.connection.type !== '') {
+        switch (navigator.connection.type) {
+          case 'ethernet':
+            return 'ethernet';
+          case 'wifi':
+          case 'wimax':
+          case 'mixed':
+          case 'other':
+            return 'wifi';
+          case 'bluetooth':
+          case 'cellular':
+            return 'cellular';
+          case 'none':
+            return 'none';
+          default:
+            break;
+        }
+      }
+      return 'unknown';
+    }
+
+    /**
+      * @private
+      */
+  }, {
+    key: "_getBandwidthEstimate",
+    value: function _getBandwidthEstimate() {
+      if (typeof navigator.connection.downlink === 'number' && navigator.connection.downlink > 0) {
+        return navigator.connection.downlink;
+      } else if (typeof navigator.connection.effectiveType === 'string' && navigator.connection.effectiveType !== '') {
+        switch (navigator.connection.effectiveType) {
+          case 'slow-2g':
+            return 0.025;
+          case '2g':
+            return 0.035;
+          case '3g':
+            return 0.35;
+          case '4g':
+            return 1.4;
+          case '5g':
+            return 5;
+          default:
+            break;
+        }
+      } else if (typeof navigator.connection.type === 'string' && navigator.connection.type !== '') {
+        switch (navigator.connection.type) {
+          case 'ethernet':
+          case 'wifi':
+          case 'wimax':
+          case 'mixed':
+          case 'other':
+            return 1.4;
+          case 'bluetooth':
+          case 'cellular':
+            return 0.35;
+          case 'none':
+            return -1;
+          default:
+            break;
+        }
+      }
+      return 0.35;
+    }
+
+    /** 
+     * @typedef {object} BandwidthData
+     * @property {number} estimate
+     * @property {string} connectionType
+     * @return {BandwidthData}
+     */
+  }, {
+    key: "bandwidthData",
+    get: function get() {
+      // default return values
+      var result = {
+        estimate: -1,
+        connectionType: 'none'
+      };
+
+      // we are offline - exit
+      if (typeof navigator.onLine !== 'undefined' && !navigator.onLine) {
+        return result;
+      }
+
+      // we do not have navigator.connection - exit
+      // for support see https://caniuse.com/#feat=netinfo - works everywhere but in Safari && Firefox 
+      if (typeof navigator.connection === 'undefined') {
+        return {
+          estimate: -1,
+          connectionType: 'unknown'
+        };
+      }
+
+      // we return our internal values
+      return {
+        estimate: this._getBandwidthEstimate(),
+        connectionType: this._getConnectionType()
+      };
+    }
+  }]);
+}();
+
 // EXTERNAL MODULE: ./node_modules/@babel/runtime-corejs3/core-js-stable/json/stringify.js
 var stringify = __webpack_require__(5569);
 var stringify_default = /*#__PURE__*/__webpack_require__.n(stringify);
@@ -12507,8 +12545,8 @@ var instance_keys_default = /*#__PURE__*/__webpack_require__.n(keys);
  *       should consider using a polyfill.
  */
 
-/** Contains all constants common across SIMID */
 
+/** Contains all constants common across SIMID */
 var ProtocolMessage = {
   CREATE_SESSION: 'createSession',
   RESOLVE: 'resolve',
@@ -12633,7 +12671,7 @@ var SimidProtocol = /*#__PURE__*/function () {
   }
 
   /* Reverts this protocol to its original state */
-  _createClass(SimidProtocol, [{
+  return _createClass(SimidProtocol, [{
     key: "reset",
     value: function reset() {
       this.listeners_ = {};
@@ -12729,9 +12767,8 @@ var SimidProtocol = /*#__PURE__*/function () {
       var data;
       try {
         data = JSON.parse(event.data);
-      } catch (e) {
-        console.log("".concat(FW.consolePrepend, " receiveMessage failed at decoding message"), FW.consoleStyle, '');
-        console.log(e);
+      } catch (error) {
+        Logger.print('warning', "receiveMessage failed at decoding message", error);
         return;
       }
       if (!data) {
@@ -12861,12 +12898,12 @@ var SimidProtocol = /*#__PURE__*/function () {
     key: "createSession",
     value: function createSession() {
       var sessionCreationResolved = function sessionCreationResolved() {
-        console.log("".concat(FW.consolePrepend, " SIMID: Session created"), FW.consoleStyle, '');
+        Logger.print('info', "SIMID: Session created");
       };
       var sessionCreationRejected = function sessionCreationRejected() {
         // If this ever happens, it may be impossible for the ad
         // to ever communicate with the player.
-        console.log("".concat(FW.consolePrepend, " SIMID: Session creation was rejected"), FW.consoleStyle, '');
+        Logger.print('info', "SIMID: Session creation was rejected");
       };
       this.generateSessionId_();
       this.sendMessage(ProtocolMessage.CREATE_SESSION).then(sessionCreationResolved, sessionCreationRejected);
@@ -12895,7 +12932,7 @@ var SimidProtocol = /*#__PURE__*/function () {
       var random16Uint8s = new Uint8Array(16);
       window.crypto.getRandomValues(random16Uint8s);
       // Split each 8-bit int into two 4-bit ints (4-bit * 32).
-      var random32Uint4s = map_default()(_context2 = array_from_default()(instance_keys_default()(_context3 = Array(32)).call(_context3))).call(_context2, function (index) {
+      var random32Uint4s = instance_map_default()(_context2 = array_from_default()(instance_keys_default()(_context3 = Array(32)).call(_context3))).call(_context2, function (index) {
         var isEven = index % 2 == 0;
         var randomUint8 = random16Uint8s[Math.floor(index / 2)];
         // Pick the high 4 bits for even indices, the low 4 bits for odd.
@@ -12906,7 +12943,7 @@ var SimidProtocol = /*#__PURE__*/function () {
       random32Uint4s[12] = 4;
       // Fix the 16th digit's 2 high bits to 10b for UUID variant 1.
       random32Uint4s[16] = 8 | random32Uint4s[16] & 3;
-      var hexDigits = map_default()(random32Uint4s).call(random32Uint4s, function (v) {
+      var hexDigits = instance_map_default()(random32Uint4s).call(random32Uint4s, function (v) {
         return v.toString(16);
       });
       var uuidComponents = [instance_slice_default()(hexDigits).call(hexDigits, 0, 8).join(''), instance_slice_default()(hexDigits).call(hexDigits, 8, 12).join(''), instance_slice_default()(hexDigits).call(hexDigits, 12, 16).join(''), instance_slice_default()(hexDigits).call(hexDigits, 16, 20).join(''), instance_slice_default()(hexDigits).call(hexDigits, 20).join('')];
@@ -12919,11 +12956,9 @@ var SimidProtocol = /*#__PURE__*/function () {
       this.target_ = target;
     }
   }]);
-  return SimidProtocol;
 }();
 
 ;// CONCATENATED MODULE: ./src/js/players/simid/simid_player.js
-
 
 
 
@@ -12938,8 +12973,6 @@ var SimidProtocol = /*#__PURE__*/function () {
 // Add non-linear support
 // Check mid-post-roll/adpod support
 // Evalaute iOS support
-
-
 
 
 
@@ -12978,13 +13011,13 @@ var SimidPlayer = /*#__PURE__*/function () {
      * A reference to the video player on the players main page
      * @private {!Element}
      */
-    this.contentVideoElement_ = rmpVast.__contentPlayer;
+    this.contentVideoElement_ = rmpVast.currentContentPlayer;
 
     /**
      * A reference to a video player for playing ads.
      * @private {!Element}
      */
-    this.adVideoElement_ = rmpVast.__adPlayer;
+    this.adVideoElement_ = rmpVast.currentAdPlayer;
 
     /**
      * A reference to the iframe holding the SIMID creative.
@@ -13002,13 +13035,13 @@ var SimidPlayer = /*#__PURE__*/function () {
      * A map of events tracked on the ad video element.
      * @private {!Map}
      */
-    this.adVideoTrackingEvents_ = new (core_js_stable_map_default())();
+    this.adVideoTrackingEvents_ = new (map_default())();
 
     /**
      * A map of events tracked on the content video element.
      * @private {!Map}
      */
-    this.contentVideoTrackingEvents_ = new (core_js_stable_map_default())();
+    this.contentVideoTrackingEvents_ = new (map_default())();
 
     /**
      * A boolean indicating what type of creative ad is.
@@ -13077,7 +13110,7 @@ var SimidPlayer = /*#__PURE__*/function () {
     this.trackEventsOnAdVideoElement_();
     this.trackEventsOnContentVideoElement_();
     this.hideAdPlayer_();
-    console.log("".concat(FW.consolePrepend, " SIMID: player created"), FW.consoleStyle, '');
+    Logger.print('info', "SIMID: player created");
   }
 
   /**
@@ -13086,12 +13119,12 @@ var SimidPlayer = /*#__PURE__*/function () {
    * to call init on the creative as soon as the creative initializes
    * a session.
    */
-  _createClass(SimidPlayer, [{
+  return _createClass(SimidPlayer, [{
     key: "initializeAd",
     value: function initializeAd() {
       var _this2 = this;
       if (!this.isLinearAd_ && !this.isValidDimensions_(this.getNonlinearDimensions_())) {
-        console.log("".concat(FW.consolePrepend, " SIMID: Unable to play a non-linear ad with dimensions bigger than the player. Please modify dimensions to a smaller size."), FW.consoleStyle, '');
+        Logger.print('info', "SIMID: Unable to play a non-linear ad with dimensions bigger than the player. Please modify dimensions to a smaller size.");
         return;
       }
 
@@ -13107,8 +13140,8 @@ var SimidPlayer = /*#__PURE__*/function () {
       // Prepare for the case that init fails before sending
       // the init message. Initialization failing means abandoning
       // the ad.
-      this.initializationPromise_.catch(function (e) {
-        _this2.onAdInitializedFailed_(e);
+      this.initializationPromise_.catch(function (error) {
+        _this2.onAdInitializedFailed_(error);
       });
 
       // Using a promise means that the init message will
@@ -13117,7 +13150,7 @@ var SimidPlayer = /*#__PURE__*/function () {
       this.sessionCreatedPromise_.then(function () {
         _this2.sendInitMessage_();
       });
-      console.log("".concat(FW.consolePrepend, " SIMID: initializeAd"), FW.consoleStyle, '');
+      Logger.print('info', "SIMID: initializeAd");
     }
 
     /**
@@ -13132,9 +13165,8 @@ var SimidPlayer = /*#__PURE__*/function () {
       // before they start playback.
       this.initializationPromise_.then(function () {
         _this3.startCreativePlayback_();
-      }).catch(function (e) {
-        console.log("".concat(FW.consolePrepend, " SIMID: playAd failed with following error"), FW.consoleStyle, '');
-        console.log(e);
+      }).catch(function (error) {
+        Logger.print('warning', "SIMID: playAd failed with following error", error);
       });
     }
 
@@ -13309,7 +13341,7 @@ var SimidPlayer = /*#__PURE__*/function () {
     value: function displayNonlinearCreative_() {
       var newDimensions = this.getNonlinearDimensions_();
       if (!this.isValidDimensions_(newDimensions)) {
-        console.log("".concat(FW.consolePrepend, " SIMID: Unable to play a non-linear ad with dimensions bigger than the player. Please modify dimensions to a smaller size."), FW.consoleStyle, '');
+        Logger.print('info', "SIMID: Unable to play a non-linear ad with dimensions bigger than the player. Please modify dimensions to a smaller size.");
         return;
       } else {
         this.setSimidIframeDimensions_(newDimensions);
@@ -13342,13 +13374,12 @@ var SimidPlayer = /*#__PURE__*/function () {
     key: "onExpandResize",
     value: function onExpandResize(incomingMessage) {
       if (this.isLinearAd_) {
-        var _context;
         var errorMessage = {
           errorCode: CreativeErrorCode.EXPAND_NOT_POSSIBLE,
           message: 'Linear resize not yet supported.'
         };
         this.simidProtocol.reject(incomingMessage, errorMessage);
-        console.log(concat_default()(_context = "".concat(FW.consolePrepend, " SIMID: ")).call(_context, errorMessage.message), FW.consoleStyle, '');
+        Logger.print('info', "SIMID: ".concat(errorMessage.message));
       } else {
         var fullDimensions = this.getFullDimensions_(this.contentVideoElement_);
         this.setSimidIframeDimensions_(fullDimensions);
@@ -13366,19 +13397,17 @@ var SimidPlayer = /*#__PURE__*/function () {
     value: function onCollapse(incomingMessage) {
       var newDimensions = this.getNonlinearDimensions_();
       if (this.isLinearAd_) {
-        var _context2;
         var errorMessage = {
           message: 'Cannot collapse linear ads.'
         };
         this.simidProtocol.reject(incomingMessage, errorMessage);
-        console.log(concat_default()(_context2 = "".concat(FW.consolePrepend, " SIMID: ")).call(_context2, errorMessage.message), FW.consoleStyle, '');
+        Logger.print('info', "SIMID: ".concat(errorMessage.message));
       } else if (!this.isValidDimensions_(newDimensions)) {
-        var _context3;
         var _errorMessage = {
           message: 'Unable to collapse to dimensions bigger than the player. Please modify dimensions to a smaller size.'
         };
         this.simidProtocol.reject(incomingMessage, _errorMessage);
-        console.log(concat_default()(_context3 = "".concat(FW.consolePrepend, " SIMID: ")).call(_context3, _errorMessage.message), FW.consoleStyle, '');
+        Logger.print('info', "SIMID: ".concat(_errorMessage.message));
       } else {
         this.setSimidIframeDimensions_(newDimensions);
         this.simidIframe_.style.position = 'absolute';
@@ -13395,21 +13424,19 @@ var SimidPlayer = /*#__PURE__*/function () {
     key: "onRequestResize",
     value: function onRequestResize(incomingMessage) {
       if (this.isLinearAd_) {
-        var _context4;
         var errorMessage = {
           errorCode: CreativeErrorCode.EXPAND_NOT_POSSIBLE,
           message: 'Linear resize not yet supported.'
         };
         this.simidProtocol.reject(incomingMessage, errorMessage);
-        console.log(concat_default()(_context4 = "".concat(FW.consolePrepend, " SIMID: ")).call(_context4, errorMessage.message), FW.consoleStyle, '');
+        Logger.print('info', "SIMID: ".concat(errorMessage.message));
       } else if (!this.isValidDimensions_(incomingMessage.args.creativeDimensions)) {
-        var _context5;
         var _errorMessage2 = {
           errorCode: CreativeErrorCode.EXPAND_NOT_POSSIBLE,
           message: 'Unable to resize a non-linear ad with dimensions bigger than the player. Please modify dimensions to a smaller size.'
         };
         this.simidProtocol.reject(incomingMessage, _errorMessage2);
-        console.log(concat_default()(_context5 = "".concat(FW.consolePrepend, " SIMID: ")).call(_context5, _errorMessage2.message), FW.consoleStyle, '');
+        Logger.print('info', "SIMID: ".concat(_errorMessage2.message));
       } else {
         this.nonLinearDimensions_ = incomingMessage.args.creativeDimensions;
         this.setSimidIframeDimensions_(incomingMessage.args.creativeDimensions);
@@ -13514,9 +13541,8 @@ var SimidPlayer = /*#__PURE__*/function () {
   }, {
     key: "onAdInitializedFailed_",
     value: function onAdInitializedFailed_(data) {
-      var _context6;
       var errorData = stringify_default()(data);
-      console.log(concat_default()(_context6 = "".concat(FW.consolePrepend, " SIMID: Ad init failed. ")).call(_context6, errorData), FW.consoleStyle, '');
+      Logger.print('info', " SIMID: Ad init failed. ".concat(errorData));
       this.destroyIframeAndResumeContent_(true, errorData.errorCode);
     }
 
@@ -13658,14 +13684,13 @@ var SimidPlayer = /*#__PURE__*/function () {
       // The iframe is only hidden on ad stoppage. The ad might still request
       // tracking pixels before it is cleaned up.
       if (this.simidIframe_) {
-        var _context7;
         this.hideSimidIFrame_();
         /*const closeMessage = {
           'code': reason,
         };*/
         // Wait for the SIMID creative to acknowledge stop and then clean
         // up the iframe.
-        console.log(concat_default()(_context7 = "".concat(FW.consolePrepend, " SIMID: stopAd ")).call(_context7, reason), FW.consoleStyle, '');
+        Logger.print('info', " SIMID: stopAd ".concat(reason));
         this.simidProtocol.sendMessage(PlayerMessage.AD_STOPPED).then(function () {
           return _this7.destroyIframeAndResumeContent_(error, errorCode);
         });
@@ -13701,7 +13726,7 @@ var SimidPlayer = /*#__PURE__*/function () {
       this.destroySimidIframe_();
       //this.contentVideoElement_.play();
       if (error) {
-        Utils.processVastErrors.call(this.rmpVast_, errorCode, true);
+        this.rmpVast_.rmpVastUtils.processVastErrors(errorCode, true);
       } else if (this.rmpVast_.rmpVastAdPlayer) {
         this.rmpVast_.rmpVastAdPlayer.resumeContent();
       }
@@ -13807,13 +13832,12 @@ var SimidPlayer = /*#__PURE__*/function () {
   }, {
     key: "onReportTracking",
     value: function onReportTracking(incomingMessage) {
-      var _this11 = this,
-        _context8;
+      var _this11 = this;
       var requestedUrlArray = incomingMessage.args['trackingUrls'];
       requestedUrlArray.forEach(function (url) {
-        Tracking.pingURI.call(_this11.rmpVast_, url);
+        _this11.rmpVast_.rmpVastTracking.pingURI(url);
       });
-      console.log(concat_default()(_context8 = "".concat(FW.consolePrepend, " SIMID: The creative has asked for the player to ping ")).call(_context8, requestedUrlArray), FW.consoleStyle, '');
+      Logger.print('info', "SIMID: The creative has asked for the player to ping ".concat(requestedUrlArray));
     }
 
     /**
@@ -13897,9 +13921,8 @@ var SimidPlayer = /*#__PURE__*/function () {
   }, {
     key: "onReceiveCreativeLog",
     value: function onReceiveCreativeLog(incomingMessage) {
-      var _context9;
       var logMessage = incomingMessage.args['message'];
-      console.log(concat_default()(_context9 = "".concat(FW.consolePrepend, " SIMID: Received message from creative: ")).call(_context9, logMessage), FW.consoleStyle, '');
+      Logger.print('info', "SIMID: Received message from creative: ".concat(logMessage));
     }
   }, {
     key: "sendLog",
@@ -13910,11 +13933,9 @@ var SimidPlayer = /*#__PURE__*/function () {
       this.simidProtocol.sendMessage(PlayerMessage.LOG, logMessage);
     }
   }]);
-  return SimidPlayer;
 }();
 
 ;// CONCATENATED MODULE: ./src/js/players/vpaid-player.js
-
 
 
 
@@ -13927,7 +13948,7 @@ var VpaidPlayer = /*#__PURE__*/function () {
     _classCallCheck(this, VpaidPlayer);
     this._rmpVast = rmpVast;
     this._adContainer = rmpVast.adContainer;
-    this._adPlayer = rmpVast.__adPlayer;
+    this._adPlayer = rmpVast.currentAdPlayer;
     this._params = rmpVast.params;
     this._adParametersData = rmpVast.adParametersData;
     this._initialWidth = 640;
@@ -13957,7 +13978,7 @@ var VpaidPlayer = /*#__PURE__*/function () {
   }
 
   // VPAID creative events
-  _createClass(VpaidPlayer, [{
+  return _createClass(VpaidPlayer, [{
     key: "_onAdLoaded",
     value: function _onAdLoaded() {
       var _this = this;
@@ -13979,8 +14000,7 @@ var VpaidPlayer = /*#__PURE__*/function () {
       }, this._params.creativeLoadTimeout);
       this._rmpVast.__adOnStage = true;
       this._vpaidCreative.startAd();
-      Utils.createApiEvent.call(this._rmpVast, 'adloaded');
-      Tracking.dispatch.call(this._rmpVast, 'loaded');
+      this._rmpVast.rmpVastTracking.dispatchTrackingAndApiEvent('adloaded');
     }
   }, {
     key: "_onAdStarted",
@@ -14008,12 +14028,12 @@ var VpaidPlayer = /*#__PURE__*/function () {
       if (typeof this._vpaidCreative.getAdLinear === 'function') {
         this._rmpVast.creative.isLinear = this._vpaidCreative.getAdLinear();
       }
-      Tracking.dispatch.call(this._rmpVast, 'creativeView');
+      this._rmpVast.rmpVastTracking.dispatchTrackingAndApiEvent('adcreativeview');
     }
   }, {
     key: "_onAdStopped",
     value: function _onAdStopped() {
-      console.log("".concat(FW.consolePrepend, " VPAID AdStopped event"), FW.consoleStyle, '');
+      Logger.print('info', "VPAID AdStopped event");
       FW.clearTimeout(this._adStoppedTimeout);
       if (this._rmpVast.rmpVastAdPlayer) {
         this._rmpVast.rmpVastAdPlayer.resumeContent();
@@ -14023,13 +14043,12 @@ var VpaidPlayer = /*#__PURE__*/function () {
     key: "_onAdSkipped",
     value: function _onAdSkipped() {
       FW.clearTimeout(this._adSkippedTimeout);
-      Utils.createApiEvent.call(this._rmpVast, 'adskipped');
-      Tracking.dispatch.call(this._rmpVast, 'skip');
+      this._rmpVast.rmpVastTracking.dispatchTrackingAndApiEvent('adskipped');
     }
   }, {
     key: "_onAdSkippableStateChange",
     value: function _onAdSkippableStateChange() {
-      Utils.createApiEvent.call(this._rmpVast, 'adskippablestatechanged');
+      this._rmpVast.rmpVastUtils.createApiEvent('adskippablestatechanged');
     }
   }, {
     key: "_onAdDurationChange",
@@ -14049,7 +14068,7 @@ var VpaidPlayer = /*#__PURE__*/function () {
             _this2._vpaidRemainingTime = remainingTime;
           }
         }, 200);
-        Utils.createApiEvent.call(this._rmpVast, 'addurationchange');
+        this._rmpVast.rmpVastUtils.createApiEvent('addurationchange');
       }
     }
   }, {
@@ -14061,19 +14080,18 @@ var VpaidPlayer = /*#__PURE__*/function () {
       }
       if (typeof newVolume === 'number' && newVolume >= 0) {
         if (this._vpaidCurrentVolume > 0 && newVolume === 0) {
-          Tracking.dispatch.call(this._rmpVast, 'mute');
+          this._rmpVast.rmpVastTracking.dispatchTrackingAndApiEvent('admuted');
         } else if (this._vpaidCurrentVolume === 0 && newVolume > 0) {
-          Tracking.dispatch.call(this._rmpVast, 'unmute');
+          this._rmpVast.rmpVastTracking.dispatchTrackingAndApiEvent('adunmuted');
         }
         this._vpaidCurrentVolume = newVolume;
-        Utils.createApiEvent.call(this._rmpVast, 'advolumechanged');
+        this._rmpVast.rmpVastUtils.createApiEvent('advolumechanged');
       }
     }
   }, {
     key: "_onAdImpression",
     value: function _onAdImpression() {
-      Utils.createApiEvent.call(this._rmpVast, 'adimpression');
-      Tracking.dispatch.call(this._rmpVast, 'impression');
+      this._rmpVast.rmpVastTracking.dispatchTrackingAndApiEvent('adimpression');
     }
   }, {
     key: "_onAdVideoStart",
@@ -14085,39 +14103,33 @@ var VpaidPlayer = /*#__PURE__*/function () {
       }
       if (typeof newVolume === 'number' && newVolume >= 0) {
         this._vpaidCurrentVolume = newVolume;
-        Utils.createApiEvent.call(this._rmpVast, 'adstarted');
-        Tracking.dispatch.call(this._rmpVast, 'start');
+        this._rmpVast.rmpVastTracking.dispatchTrackingAndApiEvent('adstarted');
       }
     }
   }, {
     key: "_onAdVideoFirstQuartile",
     value: function _onAdVideoFirstQuartile() {
-      Utils.createApiEvent.call(this._rmpVast, 'adfirstquartile');
-      Tracking.dispatch.call(this._rmpVast, 'firstQuartile');
+      this._rmpVast.rmpVastTracking.dispatchTrackingAndApiEvent('adfirstquartile');
     }
   }, {
     key: "_onAdVideoMidpoint",
     value: function _onAdVideoMidpoint() {
-      Utils.createApiEvent.call(this._rmpVast, 'admidpoint');
-      Tracking.dispatch.call(this._rmpVast, 'midpoint');
+      this._rmpVast.rmpVastTracking.dispatchTrackingAndApiEvent('admidpoint');
     }
   }, {
     key: "_onAdVideoThirdQuartile",
     value: function _onAdVideoThirdQuartile() {
-      Utils.createApiEvent.call(this._rmpVast, 'adthirdquartile');
-      Tracking.dispatch.call(this._rmpVast, 'thirdQuartile');
+      this._rmpVast.rmpVastTracking.dispatchTrackingAndApiEvent('adthirdquartile');
     }
   }, {
     key: "_onAdVideoComplete",
     value: function _onAdVideoComplete() {
-      Utils.createApiEvent.call(this._rmpVast, 'adcomplete');
-      Tracking.dispatch.call(this._rmpVast, 'complete');
+      this._rmpVast.rmpVastTracking.dispatchTrackingAndApiEvent('adcomplete');
     }
   }, {
     key: "_onAdClickThru",
     value: function _onAdClickThru(url, id, playerHandles) {
-      Utils.createApiEvent.call(this._rmpVast, 'adclick');
-      Tracking.dispatch.call(this._rmpVast, 'clickthrough');
+      this._rmpVast.rmpVastTracking.dispatchTrackingAndApiEvent('adclick');
       if (typeof playerHandles !== 'boolean') {
         return;
       }
@@ -14140,69 +14152,62 @@ var VpaidPlayer = /*#__PURE__*/function () {
     key: "_onAdPaused",
     value: function _onAdPaused() {
       this._vpaidPaused = true;
-      Utils.createApiEvent.call(this._rmpVast, 'adpaused');
-      Tracking.dispatch.call(this._rmpVast, 'pause');
+      this._rmpVast.rmpVastTracking.dispatchTrackingAndApiEvent('adpaused');
     }
   }, {
     key: "_onAdPlaying",
     value: function _onAdPlaying() {
       this._vpaidPaused = false;
-      Utils.createApiEvent.call(this._rmpVast, 'adresumed');
-      Tracking.dispatch.call(this._rmpVast, 'resume');
+      this._rmpVast.rmpVastTracking.dispatchTrackingAndApiEvent('adresumed');
     }
   }, {
     key: "_onAdLog",
     value: function _onAdLog(message) {
-      var _context;
-      console.log(concat_default()(_context = "".concat(FW.consolePrepend, " VPAID AdLog event ")).call(_context, message), FW.consoleStyle, '');
+      Logger.print('info', "VPAID AdLog event ".concat(message));
     }
   }, {
     key: "_onAdError",
     value: function _onAdError(message) {
-      var _context2;
-      console.log(concat_default()(_context2 = "".concat(FW.consolePrepend, " VPAID AdError event ")).call(_context2, message), FW.consoleStyle, '');
-      Utils.processVastErrors.call(this._rmpVast, 901, true);
+      Logger.print('info', "VPAID AdError event ".concat(message));
+      this._rmpVast.rmpVastUtils.processVastErrors(901, true);
     }
   }, {
     key: "_onAdInteraction",
     value: function _onAdInteraction() {
-      Utils.createApiEvent.call(this._rmpVast, 'adinteraction');
+      this._rmpVast.rmpVastUtils.createApiEvent('adinteraction');
     }
   }, {
     key: "_onAdUserAcceptInvitation",
     value: function _onAdUserAcceptInvitation() {
-      Utils.createApiEvent.call(this._rmpVast, 'aduseracceptinvitation');
-      Tracking.dispatch.call(this._rmpVast, 'acceptInvitation');
+      this._rmpVast.rmpVastTracking.dispatchTrackingAndApiEvent('aduseracceptinvitation');
     }
   }, {
     key: "_onAdUserMinimize",
     value: function _onAdUserMinimize() {
-      Utils.createApiEvent.call(this._rmpVast, 'adcollapse');
-      Tracking.dispatch.call(this._rmpVast, ['collapse', 'adCollapse']);
+      this._rmpVast.rmpVastTracking.dispatchTrackingAndApiEvent('adcollapse');
     }
   }, {
     key: "_onAdUserClose",
     value: function _onAdUserClose() {
-      Utils.createApiEvent.call(this._rmpVast, 'adclosed');
-      Tracking.dispatch.call(this._rmpVast, 'close');
+      this._rmpVast.rmpVastTracking.dispatchTrackingAndApiEvent('adclosed');
     }
   }, {
     key: "_onAdSizeChange",
     value: function _onAdSizeChange() {
-      Utils.createApiEvent.call(this._rmpVast, 'adsizechange');
+      this._rmpVast.rmpVastUtils.createApiEvent('adsizechange');
     }
   }, {
     key: "_onAdLinearChange",
     value: function _onAdLinearChange() {
       if (this._vpaidCreative && typeof this._vpaidCreative.getAdLinear === 'function') {
         this._rmpVast.creative.isLinear = this._vpaidCreative.getAdLinear();
-        Utils.createApiEvent.call(this._rmpVast, 'adlinearchange');
+        this._rmpVast.rmpVastUtils.createApiEvent('adlinearchange');
       }
     }
   }, {
     key: "_onAdExpandedChange",
     value: function _onAdExpandedChange() {
-      Utils.createApiEvent.call(this._rmpVast, 'adexpandedchange');
+      this._rmpVast.rmpVastUtils.createApiEvent('adexpandedchange');
     }
   }, {
     key: "_onAdRemainingTimeChange",
@@ -14212,7 +14217,7 @@ var VpaidPlayer = /*#__PURE__*/function () {
         if (remainingTime >= 0) {
           this._vpaidRemainingTime = remainingTime;
         }
-        Utils.createApiEvent.call(this._rmpVast, 'adremainingtimechange');
+        this._rmpVast.rmpVastUtils.createApiEvent('adremainingtimechange');
       }
     }
   }, {
@@ -14290,31 +14295,30 @@ var VpaidPlayer = /*#__PURE__*/function () {
         try {
           vpaidVersion = this._vpaidCreative.handshakeVersion('2.0');
         } catch (error) {
-          console.warn(error);
-          console.log("".concat(FW.consolePrepend, " could not validate VPAID ad unit handshakeVersion"), FW.consoleStyle, '');
-          Utils.processVastErrors.call(this._rmpVast, 901, true);
+          Logger.print('warning', error);
+          Logger.print('info', "could not validate VPAID ad unit handshakeVersion");
+          this._rmpVast.rmpVastUtils.processVastErrors(901, true);
           return;
         }
         this._vpaidVersion = parse_int_default()(vpaidVersion);
         if (this._vpaidVersion < 1) {
-          console.log("".concat(FW.consolePrepend, " unsupported VPAID version - exit"), FW.consoleStyle, '');
-          Utils.processVastErrors.call(this._rmpVast, 901, true);
+          Logger.print('info', "unsupported VPAID version - exit");
+          this._rmpVast.rmpVastUtils.processVastErrors(901, true);
           return;
         }
         if (!this._isValidVPAID(this._vpaidCreative)) {
           //The VPAID creative doesn't conform to the VPAID spec
-          console.log("".concat(FW.consolePrepend, " VPAID creative does not conform to VPAID spec - exit"), FW.consoleStyle, '');
-          Utils.processVastErrors.call(this._rmpVast, 901, true);
+          Logger.print('info', "VPAID creative does not conform to VPAID spec - exit");
+          this._rmpVast.rmpVastUtils.processVastErrors(901, true);
           return;
         }
         // wire callback for VPAID events
         this._setCallbacksForCreative();
         // wire tracking events for VAST pings
-        Tracking.wire.call(this._rmpVast);
+        this._rmpVast.rmpVastTracking.wire();
         var creativeData = {};
         creativeData.AdParameters = this._adParametersData;
-        console.log("".concat(FW.consolePrepend, " VPAID AdParameters follow"), FW.consoleStyle, '');
-        console.log(this._adParametersData);
+        Logger.print('info', "VPAID AdParameters follow", this._adParametersData);
         FW.show(this._adContainer);
         FW.show(this._adPlayer);
         var environmentVars = {};
@@ -14328,21 +14332,21 @@ var VpaidPlayer = /*#__PURE__*/function () {
         this._adContainer.appendChild(this._vpaidSlot);
         environmentVars.slot = this._vpaidSlot;
         environmentVars.videoSlot = this._adPlayer;
-        // we assume we can autoplay (or at least muted autoplay) because this._rmpVast.__adPlayer 
+        // we assume we can autoplay (or at least muted autoplay) because this._rmpVast.currentAdPlayer 
         // has been init
         environmentVars.videoSlotCanAutoPlay = true;
         // when we call initAd we expect AdLoaded event to follow closely
         // if not we need to resume content
         this._initAdTimeout = setTimeout(function () {
           if (!_this5._vpaidAdLoaded) {
-            console.log("".concat(FW.consolePrepend, " _initAdTimeout"), FW.consoleStyle, '');
+            Logger.print('info', "_initAdTimeout");
             if (_this5._rmpVast.rmpVastAdPlayer) {
               _this5._rmpVast.rmpVastAdPlayer.resumeContent();
             }
           }
           _this5._vpaidAdLoaded = false;
         }, this._params.creativeLoadTimeout * 10);
-        console.log("".concat(FW.consolePrepend, " calling initAd on VPAID creative now"), FW.consoleStyle, '');
+        Logger.print('info', "calling initAd on VPAID creative now");
         this._vpaidCreative.initAd(this._initialWidth, this._initialHeight, this._initialViewMode, this._desiredBitrate, creativeData, environmentVars);
       }
     }
@@ -14350,7 +14354,7 @@ var VpaidPlayer = /*#__PURE__*/function () {
     key: "_onJSVPAIDLoaded",
     value: function _onJSVPAIDLoaded() {
       var _this6 = this;
-      console.log("".concat(FW.consolePrepend, " VPAID JS loaded"), FW.consoleStyle, '');
+      Logger.print('info', "VPAID JS loaded");
       var iframeWindow = this._vpaidIframe.contentWindow;
       if (typeof iframeWindow.getVPAIDAd === 'function') {
         this._onVPAIDAvailable();
@@ -14367,8 +14371,8 @@ var VpaidPlayer = /*#__PURE__*/function () {
   }, {
     key: "_onJSVPAIDError",
     value: function _onJSVPAIDError() {
-      console.log("".concat(FW.consolePrepend, " VPAID JS error loading"), FW.consoleStyle, '');
-      Utils.processVastErrors.call(this._rmpVast, 901, true);
+      Logger.print('info', "VPAID JS error loading");
+      this._rmpVast.rmpVastUtils.processVastErrors(901, true);
       this._vpaidScript.onload = null;
       this._vpaidScript.onerror = null;
     }
@@ -14460,7 +14464,7 @@ var VpaidPlayer = /*#__PURE__*/function () {
   }, {
     key: "resizeAd",
     value: function resizeAd(width, height, viewMode) {
-      var _context3, _context4, _context5;
+      var _context, _context2;
       if (!this._vpaidCreative) {
         return;
       }
@@ -14474,7 +14478,7 @@ var VpaidPlayer = /*#__PURE__*/function () {
       if (viewMode === 'fullscreen') {
         validViewMode = viewMode;
       }
-      console.log(concat_default()(_context3 = concat_default()(_context4 = concat_default()(_context5 = "".concat(FW.consolePrepend, " VPAID resizeAd with width ")).call(_context5, width, ", height ")).call(_context4, height, ", viewMode ")).call(_context3, viewMode), FW.consoleStyle, '');
+      Logger.print('info', concat_default()(_context = concat_default()(_context2 = "VPAID resizeAd with width ".concat(width, ", height ")).call(_context2, height, ", viewMode ")).call(_context, viewMode));
       this._vpaidCreative.resizeAd(width, height, validViewMode);
     }
   }, {
@@ -14484,7 +14488,7 @@ var VpaidPlayer = /*#__PURE__*/function () {
       if (!this._vpaidCreative) {
         return;
       }
-      console.log("".concat(FW.consolePrepend, " stopAd"), FW.consoleStyle, '');
+      Logger.print('info', "stopAd");
       // when stopAd is called we need to check a 
       // AdStopped event follows
       this._adStoppedTimeout = setTimeout(function () {
@@ -14495,7 +14499,7 @@ var VpaidPlayer = /*#__PURE__*/function () {
   }, {
     key: "pauseAd",
     value: function pauseAd() {
-      console.log("".concat(FW.consolePrepend, " pauseAd"), FW.consoleStyle, '');
+      Logger.print('info', "pauseAd");
       if (this._vpaidCreative && !this._vpaidPaused) {
         this._vpaidCreative.pauseAd();
       }
@@ -14503,7 +14507,7 @@ var VpaidPlayer = /*#__PURE__*/function () {
   }, {
     key: "resumeAd",
     value: function resumeAd() {
-      console.log("".concat(FW.consolePrepend, " resumeAd"), FW.consoleStyle, '');
+      Logger.print('info', "resumeAd");
       if (this._vpaidCreative && this._vpaidPaused) {
         this._vpaidCreative.resumeAd();
       }
@@ -14560,7 +14564,7 @@ var VpaidPlayer = /*#__PURE__*/function () {
           existingAdPlayer = this._adContainer.querySelector('.rmp-ad-vast-video-player');
         }
         if (existingAdPlayer === null) {
-          Utils.processVastErrors.call(this._rmpVast, 900, true);
+          this._rmpVast.rmpVastUtils.processVastErrors(900, true);
           return;
         }
         this._adPlayer = existingAdPlayer;
@@ -14583,11 +14587,11 @@ var VpaidPlayer = /*#__PURE__*/function () {
       // in Asynchronous Ad Environments  http://www.iab.net/media/file/rich_media_ajax_best_practices.pdf
       var src = 'about:blank';
       this._vpaidIframe.onload = function () {
-        console.log("".concat(FW.consolePrepend, " _vpaidIframe.onload"), FW.consoleStyle, '');
+        Logger.print('info', "_vpaidIframe.onload");
         if (!_this9._vpaidIframe.contentWindow || !_this9._vpaidIframe.contentWindow.document || !_this9._vpaidIframe.contentWindow.document.body) {
           // PING error and resume content
 
-          Utils.processVastErrors.call(_this9._rmpVast, 901, true);
+          _this9._rmpVast.rmpVastUtils.processVastErrors(901, true);
           return;
         }
         var iframeWindow = _this9._vpaidIframe.contentWindow;
@@ -14595,7 +14599,7 @@ var VpaidPlayer = /*#__PURE__*/function () {
         var iframeBody = iframeDocument.body;
         _this9._vpaidScript = iframeDocument.createElement('script');
         _this9._vpaidLoadTimeout = setTimeout(function () {
-          console.log("".concat(FW.consolePrepend, " could not load VPAID JS Creative or getVPAIDAd in iframeWindow - resume content"), FW.consoleStyle, '');
+          Logger.print('info', "could not load VPAID JS Creative or getVPAIDAd in iframeWindow - resume content");
           _this9._vpaidScript.onload = null;
           _this9._vpaidScript.onerror = null;
           if (_this9._rmpVast.rmpVastAdPlayer) {
@@ -14613,7 +14617,7 @@ var VpaidPlayer = /*#__PURE__*/function () {
   }, {
     key: "destroy",
     value: function destroy() {
-      console.log("".concat(FW.consolePrepend, " destroy VPAID dependencies"), FW.consoleStyle, '');
+      Logger.print('info', "destroy VPAID dependencies");
       FW.clearInterval(this._vpaidAvailableInterval);
       FW.clearInterval(this._vpaidAdRemainingTimeInterval);
       FW.clearTimeout(this._vpaidLoadTimeout);
@@ -14632,11 +14636,9 @@ var VpaidPlayer = /*#__PURE__*/function () {
       }
     }
   }]);
-  return VpaidPlayer;
 }();
 
 ;// CONCATENATED MODULE: ./src/js/creatives/linear.js
-
 
 
 
@@ -14657,10 +14659,9 @@ var LinearCreative = /*#__PURE__*/function () {
     _classCallCheck(this, LinearCreative);
     this._rmpVast = rmpVast;
     this._params = rmpVast.params;
-    this._container = rmpVast.container;
     this._adContainer = rmpVast.adContainer;
-    this._adPlayer = rmpVast.__adPlayer;
-    this._contentPlayer = rmpVast.__contentPlayer;
+    this._adPlayer = rmpVast.currentAdPlayer;
+    this._contentPlayer = rmpVast.currentContentPlayer;
     this._firstAdPlayerPlayRequest = true;
     this._interactionMobileUI = null;
     this._skipWaitingUI = null;
@@ -14681,7 +14682,7 @@ var LinearCreative = /*#__PURE__*/function () {
     this._hlsJSIndex = 0;
     this._readingHlsJS = false;
   }
-  _createClass(LinearCreative, [{
+  return _createClass(LinearCreative, [{
     key: "hlsJSInstances",
     get: function get() {
       return this._hlsJS;
@@ -14715,7 +14716,7 @@ var LinearCreative = /*#__PURE__*/function () {
       if (this._rmpVast.rmpVastAdPlayer) {
         adPlayerDuration = this._rmpVast.rmpVastAdPlayer.duration;
       }
-      Utils.createApiEvent.call(this._rmpVast, 'addurationchange');
+      this._rmpVast.rmpVastUtils.createApiEvent('addurationchange');
       // progress event
       if (adPlayerDuration === -1) {
         return;
@@ -14778,8 +14779,7 @@ var LinearCreative = /*#__PURE__*/function () {
         this._rmpVast.rmpVastAdPlayer.play(this._firstAdPlayerPlayRequest);
         this._firstAdPlayerPlayRequest = false;
       }
-      Utils.createApiEvent.call(this._rmpVast, 'adloaded');
-      Tracking.dispatch.call(this._rmpVast, 'loaded');
+      this._rmpVast.rmpVastTracking.dispatchTrackingAndApiEvent('adloaded');
     }
   }, {
     key: "_onInteractionOpenClickThroughUrl",
@@ -14791,8 +14791,7 @@ var LinearCreative = /*#__PURE__*/function () {
         FW.openWindow(this._rmpVast.creative.clickThroughUrl);
       }
       this._rmpVast.pause();
-      Utils.createApiEvent.call(this._rmpVast, 'adclick');
-      Tracking.dispatch.call(this._rmpVast, 'clickthrough');
+      this._rmpVast.rmpVastTracking.dispatchTrackingAndApiEvent('adclick');
     }
   }, {
     key: "_onPlaybackError",
@@ -14804,19 +14803,19 @@ var LinearCreative = /*#__PURE__*/function () {
       if (event && event.target) {
         var videoElement = event.target;
         if (videoElement.error && FW.isNumber(videoElement.error.code)) {
-          var _context2, _context3, _context4;
+          var _context2;
           var errorCode = videoElement.error.code;
           var errorMessage = '';
           if (typeof videoElement.error.message === 'string') {
             errorMessage = videoElement.error.message;
           }
           var htmlMediaErrorTypes = ['MEDIA_ERR_CUSTOM', 'MEDIA_ERR_ABORTED', 'MEDIA_ERR_NETWORK', 'MEDIA_ERR_DECODE', 'MEDIA_ERR_SRC_NOT_SUPPORTED', 'MEDIA_ERR_ENCRYPTED'];
-          console.log(concat_default()(_context2 = concat_default()(_context3 = "".concat(FW.consolePrepend, " Error on video element with code ")).call(_context3, errorCode.toString(), " and message ")).call(_context2, errorMessage), FW.consoleStyle, '');
-          console.log(concat_default()(_context4 = "".concat(FW.consolePrepend, " error type is ")).call(_context4, htmlMediaErrorTypes[errorCode] ? htmlMediaErrorTypes[errorCode] : 'unknown type'), FW.consoleStyle, '');
+          Logger.print('error', concat_default()(_context2 = "Error on video element with code ".concat(errorCode.toString(), " and message ")).call(_context2, errorMessage));
+          Logger.print('info', "error type is ".concat(htmlMediaErrorTypes[errorCode] ? htmlMediaErrorTypes[errorCode] : 'unknown type'));
 
-          // EDIA_ERR_SRC_NOT_SUPPORTED (numeric value 4)
+          // MEDIA_ERR_SRC_NOT_SUPPORTED (numeric value 4)
           if (errorCode === 4) {
-            Utils.processVastErrors.call(this._rmpVast, 401, true);
+            this._rmpVast.rmpVastUtils.processVastErrors(401, true);
           }
         }
       }
@@ -14858,7 +14857,7 @@ var LinearCreative = /*#__PURE__*/function () {
             display: 'block'
           });
           this._skippableAdCanBeSkipped = true;
-          Utils.createApiEvent.call(this._rmpVast, 'adskippablestatechanged');
+          this._rmpVast.rmpVastUtils.createApiEvent('adskippablestatechanged');
         } else if (this._rmpVast.creative.skipoffset - adPlayerCurrentTime > 0) {
           this._updateWaitingForCanBeSkippedUI(this._rmpVast.creative.skipoffset - adPlayerCurrentTime);
         }
@@ -14874,10 +14873,7 @@ var LinearCreative = /*#__PURE__*/function () {
         }
       }
       if (this._skippableAdCanBeSkipped) {
-        // create API event 
-        Utils.createApiEvent.call(this._rmpVast, 'adskipped');
-        // request ping for skip event
-        Tracking.dispatch.call(this._rmpVast, 'skip');
+        this._rmpVast.rmpVastTracking.dispatchTrackingAndApiEvent('adskipped');
         // resume content
         if (this._rmpVast.rmpVastAdPlayer) {
           this._rmpVast.rmpVastAdPlayer.resumeContent();
@@ -14887,12 +14883,13 @@ var LinearCreative = /*#__PURE__*/function () {
   }, {
     key: "_appendSkipUI",
     value: function _appendSkipUI() {
+      var skipMessage = this._params.labels.skipMessage;
       this._skipButtonUI = document.createElement('div');
       this._skipButtonUI.className = 'rmp-ad-container-skip';
       FW.setStyle(this._skipButtonUI, {
         display: 'none'
       });
-      Utils.makeButtonAccessible(this._skipButtonUI, this._params.labels.skipMessage);
+      this._rmpVast.rmpVastUtils.makeButtonAccessible(this._skipButtonUI, skipMessage);
       this._skipWaitingUI = document.createElement('div');
       this._skipWaitingUI.className = 'rmp-ad-container-skip-waiting';
       this._updateWaitingForCanBeSkippedUI(this._rmpVast.creative.skipoffset);
@@ -14901,7 +14898,7 @@ var LinearCreative = /*#__PURE__*/function () {
       });
       this._skipMessageUI = document.createElement('div');
       this._skipMessageUI.className = 'rmp-ad-container-skip-message';
-      this._skipMessageUI.textContent = this._params.labels.skipMessage;
+      this._skipMessageUI.textContent = skipMessage;
       FW.setStyle(this._skipMessageUI, {
         display: 'none'
       });
@@ -14932,7 +14929,7 @@ var LinearCreative = /*#__PURE__*/function () {
             this._hlsJS[this._hlsJSIndex].recoverMediaError();
             break;
           default:
-            Utils.processVastErrors.call(this._rmpVast, 900, true);
+            this._rmpVast.rmpVastUtils.processVastErrors(900, true);
             break;
         }
       }
@@ -14960,10 +14957,9 @@ var LinearCreative = /*#__PURE__*/function () {
   }, {
     key: "update",
     value: function update(url, type) {
-      var _context5,
-        _context6,
+      var _context3,
         _this2 = this;
-      console.log(concat_default()(_context5 = concat_default()(_context6 = "".concat(FW.consolePrepend, " update ad player for linear creative of type ")).call(_context6, type, " located at ")).call(_context5, url), FW.consoleStyle, '');
+      Logger.print('info', concat_default()(_context3 = "update ad player for linear creative of type ".concat(type, " located at ")).call(_context3, url));
       this._onDurationChangeFn = this._onDurationChange.bind(this);
       this._adPlayer.addEventListener('durationchange', this._onDurationChangeFn, {
         once: true
@@ -14982,7 +14978,7 @@ var LinearCreative = /*#__PURE__*/function () {
 
       // start creativeLoadTimeout
       this._creativeLoadTimeoutCallback = setTimeout(function () {
-        Utils.processVastErrors.call(_this2._rmpVast, 402, true);
+        _this2._rmpVast.rmpVastUtils.processVastErrors(402, true);
       }, this._params.creativeLoadTimeout);
       if (this._params.useHlsJS && type === 'application/vnd.apple.mpegurl' && typeof window.Hls !== 'undefined' && Hls.isSupported()) {
         this._readingHlsJS = true;
@@ -15077,7 +15073,7 @@ var LinearCreative = /*#__PURE__*/function () {
         var vpaidPattern = /vpaid/i;
         var jsPattern = /\/javascript/i;
         if (this._params.enableVpaid && currentMediaFile.apiFramework && vpaidPattern.test(currentMediaFile.apiFramework) && jsPattern.test(type)) {
-          console.log("".concat(FW.consolePrepend, " VPAID creative detected"), FW.consoleStyle, '');
+          Logger.print('info', "VPAID creative detected");
           mediaFileItems = [newMediaFileItem];
           isVpaid = true;
           break;
@@ -15163,7 +15159,7 @@ var LinearCreative = /*#__PURE__*/function () {
       // still no match for supported format - we exit
       if (retainedCreatives.length === 0) {
         // None of the MediaFile provided are supported by the player
-        Utils.processVastErrors.call(this._rmpVast, 403, true);
+        this._rmpVast.rmpVastUtils.processVastErrors(403, true);
         return;
       }
 
@@ -15171,8 +15167,7 @@ var LinearCreative = /*#__PURE__*/function () {
       sort_default()(retainedCreatives).call(retainedCreatives, function (a, b) {
         return a.width - b.width;
       });
-      console.log("".concat(FW.consolePrepend, " available linear creative follows"), FW.consoleStyle, '');
-      console.log(retainedCreatives);
+      Logger.print('info', "Vavailable linear creative follows", retainedCreatives);
 
       // we have files matching device capabilities
       // select the best one based on player current width
@@ -15180,16 +15175,14 @@ var LinearCreative = /*#__PURE__*/function () {
       var validCreativesByWidth = [];
       var validCreativesByBitrate = [];
       if (retainedCreatives.length > 1) {
-        var _context7;
-        var containerWidth = FW.getWidth(this._container) * Environment.devicePixelRatio;
-        var containerHeight = FW.getHeight(this._container) * Environment.devicePixelRatio;
+        var containerWidth = FW.getWidth(this._rmpVast.container) * Environment.devicePixelRatio;
+        var containerHeight = FW.getHeight(this._rmpVast.container) * Environment.devicePixelRatio;
         if (containerWidth > 0 && containerHeight > 0) {
           validCreativesByWidth = filter_default()(retainedCreatives).call(retainedCreatives, function (creative) {
             return containerWidth >= creative.width && containerHeight >= creative.height;
           });
         }
-        console.log("".concat(FW.consolePrepend, " validCreativesByWidth follow"), FW.consoleStyle, '');
-        console.log(validCreativesByWidth);
+        Logger.print('info', "validCreativesByWidth follow", validCreativesByWidth);
 
         // if no match by size 
         if (validCreativesByWidth.length === 0) {
@@ -15199,7 +15192,7 @@ var LinearCreative = /*#__PURE__*/function () {
         // filter by bitrate to provide best quality
         var rmpConnection = new RmpConnection();
         var availableBandwidth = rmpConnection.bandwidthData.estimate;
-        console.log(concat_default()(_context7 = "".concat(FW.consolePrepend, " availableBandwidth is ")).call(_context7, availableBandwidth, " Mbps"), FW.consoleStyle, '');
+        Logger.print('info', "availableBandwidth is ".concat(availableBandwidth, " Mbps"));
         if (availableBandwidth > -1 && validCreativesByWidth.length > 1) {
           // sort supported creatives by bitrates
           sort_default()(validCreativesByWidth).call(validCreativesByWidth, function (a, b) {
@@ -15210,8 +15203,7 @@ var LinearCreative = /*#__PURE__*/function () {
           validCreativesByBitrate = filter_default()(validCreativesByWidth).call(validCreativesByWidth, function (creative) {
             return availableBandwidth >= creative.bitrate;
           });
-          console.log("".concat(FW.consolePrepend, " validCreativesByBitrate follow"), FW.consoleStyle, '');
-          console.log(validCreativesByBitrate);
+          Logger.print('info', "validCreativesByBitrate follow", validCreativesByBitrate);
 
           // pick max available bitrate
           finalCreative = validCreativesByBitrate[validCreativesByBitrate.length - 1];
@@ -15229,8 +15221,7 @@ var LinearCreative = /*#__PURE__*/function () {
           finalCreative = retainedCreatives[retainedCreatives.length - 1];
         }
       }
-      console.log("".concat(FW.consolePrepend, " selected linear creative follows"), FW.consoleStyle, '');
-      console.log(finalCreative);
+      Logger.print('info', "selected linear creative follows", finalCreative);
       this._rmpVast.creative.mediaUrl = finalCreative.url;
       this._rmpVast.creative.height = finalCreative.height;
       this._rmpVast.creative.width = finalCreative.width;
@@ -15240,12 +15231,9 @@ var LinearCreative = /*#__PURE__*/function () {
       }
     }
   }]);
-  return LinearCreative;
 }();
 
 ;// CONCATENATED MODULE: ./src/js/creatives/non-linear.js
-
-
 
 
 
@@ -15268,7 +15256,7 @@ var NonLinearCreative = /*#__PURE__*/function () {
     this._onNonLinearClickThroughFn = null;
     this._onClickCloseNonLinearFn = null;
   }
-  _createClass(NonLinearCreative, [{
+  return _createClass(NonLinearCreative, [{
     key: "nonLinearContainerElement",
     get: function get() {
       return this._nonLinearContainerElement;
@@ -15276,16 +15264,14 @@ var NonLinearCreative = /*#__PURE__*/function () {
   }, {
     key: "_onNonLinearLoadError",
     value: function _onNonLinearLoadError() {
-      Utils.processVastErrors.call(this._rmpVast, 502, true);
+      this._rmpVast.rmpVastUtils.processVastErrors(502, true);
     }
   }, {
     key: "_onNonLinearLoadSuccess",
     value: function _onNonLinearLoadSuccess() {
-      var _context;
-      console.log(concat_default()(_context = "".concat(FW.consolePrepend, " success loading non-linear creative at ")).call(_context, this._rmpVast.creative.mediaUrl), FW.consoleStyle, '');
+      Logger.print('info', "success loading non-linear creative at ".concat(this._rmpVast.creative.mediaUrl));
       this._rmpVast.__adOnStage = true;
-      Utils.createApiEvent.call(this._rmpVast, ['adloaded', 'adimpression', 'adstarted']);
-      Tracking.dispatch.call(this._rmpVast, ['impression', 'creativeView', 'start', 'loaded']);
+      this._rmpVast.rmpVastTracking.dispatchTrackingAndApiEvent(['adloaded', 'adimpression', 'adstarted', 'adcreativeview']);
     }
   }, {
     key: "_onNonLinearClickThrough",
@@ -15295,10 +15281,9 @@ var NonLinearCreative = /*#__PURE__*/function () {
           event.stopPropagation();
         }
         this._rmpVast.pause();
-        Utils.createApiEvent.call(this._rmpVast, 'adclick');
-        Tracking.dispatch.call(this._rmpVast, 'clickthrough');
-      } catch (e) {
-        console.warn(e);
+        this._rmpVast.rmpVastTracking.dispatchTrackingAndApiEvent('adclick');
+      } catch (error) {
+        Logger.print('warning', error);
       }
     }
   }, {
@@ -15313,8 +15298,7 @@ var NonLinearCreative = /*#__PURE__*/function () {
       FW.setStyle(this._nonLinearContainerElement, {
         display: 'none'
       });
-      Utils.createApiEvent.call(this._rmpVast, 'adclosed');
-      Tracking.dispatch.call(this._rmpVast, 'close');
+      this._rmpVast.rmpVastTracking.dispatchTrackingAndApiEvent('adclosed');
     }
   }, {
     key: "_appendCloseButton",
@@ -15322,7 +15306,7 @@ var NonLinearCreative = /*#__PURE__*/function () {
       var _this = this;
       this._nonLinearCloseElement = document.createElement('div');
       this._nonLinearCloseElement.className = 'rmp-ad-non-linear-close';
-      Utils.makeButtonAccessible(this._nonLinearCloseElement, this._params.labels.closeAd);
+      this._rmpVast.rmpVastUtils.makeButtonAccessible(this._nonLinearCloseElement, this._params.labels.closeAd);
       if (this._nonLinearMinSuggestedDuration > 0) {
         FW.setStyle(this._nonLinearCloseElement, {
           display: 'none'
@@ -15412,8 +15396,7 @@ var NonLinearCreative = /*#__PURE__*/function () {
     key: "parse",
     value: function parse(variations) {
       var _this2 = this;
-      console.log("".concat(FW.consolePrepend, " non-linear creatives follow"), FW.consoleStyle, '');
-      console.log(variations);
+      Logger.print('info', "non-linear creatives follow", variations);
       var isDimensionError = false;
       var currentVariation;
       // The video player should poll each <NonLinear> element to determine 
@@ -15456,8 +15439,7 @@ var NonLinearCreative = /*#__PURE__*/function () {
           this._rmpVast.creative.width = width;
           this._rmpVast.creative.height = height;
           this._rmpVast.creative.type = currentVariation.type;
-          console.log("".concat(FW.consolePrepend, " selected non-linear creative"), FW.consoleStyle, '');
-          console.log(this._rmpVast.creative);
+          Logger.print('info', "selected non-linear creative", this._rmpVast.creative);
           break;
         }
       }
@@ -15467,7 +15449,7 @@ var NonLinearCreative = /*#__PURE__*/function () {
         if (isDimensionError) {
           vastErrorCode = 501;
         }
-        Utils.processVastErrors.call(this._rmpVast, vastErrorCode, true);
+        this._rmpVast.rmpVastUtils.processVastErrors(vastErrorCode, true);
         return;
       }
       this._rmpVast.creative.clickThroughUrl = currentVariation.nonlinearClickThroughURLTemplate;
@@ -15486,11 +15468,212 @@ var NonLinearCreative = /*#__PURE__*/function () {
       }
     }
   }]);
-  return NonLinearCreative;
+}();
+
+;// CONCATENATED MODULE: ./src/js/creatives/companion.js
+
+
+
+
+
+
+var CompanionCreative = /*#__PURE__*/function () {
+  function CompanionCreative(rmpVast) {
+    _classCallCheck(this, CompanionCreative);
+    this._rmpVast = rmpVast;
+    this.reset();
+  }
+  return _createClass(CompanionCreative, [{
+    key: "requiredAttribute",
+    get: function get() {
+      return this._requiredAttribute;
+    }
+  }, {
+    key: "_onImgClickThrough",
+    value: function _onImgClickThrough(companionClickThroughUrl, companionClickTrackingUrls, event) {
+      var _this = this;
+      if (event) {
+        event.stopPropagation();
+        if (event.type === 'touchend') {
+          event.preventDefault();
+        }
+      }
+      if (companionClickTrackingUrls) {
+        companionClickTrackingUrls.forEach(function (companionClickTrackingUrl) {
+          if (companionClickTrackingUrl.url) {
+            _this._rmpVast.rmpVastTracking.pingURI(companionClickTrackingUrl.url);
+          }
+        });
+      }
+      FW.openWindow(companionClickThroughUrl);
+    }
+  }, {
+    key: "reset",
+    value: function reset() {
+      this._requiredAttribute = '';
+      this._validCompanionAds = [];
+      this._companionAdsList = [];
+    }
+  }, {
+    key: "parse",
+    value: function parse(creative) {
+      var _this2 = this;
+      // reset variables in case wrapper
+      this._validCompanionAds = [];
+      this._requiredAttribute = '';
+      if (creative.required) {
+        this._requiredAttribute = creative.required;
+      }
+      var companions = creative.variations;
+      // at least 1 Companion is expected to continue
+      if (companions.length > 0) {
+        var _loop = function _loop() {
+          var _context, _context2, _context3;
+          var companion = companions[i];
+          var newCompanionAds = {
+            width: companion.width,
+            height: companion.height
+          };
+          var staticResourceFound = find_default()(_context = companion.staticResources).call(_context, function (staticResource) {
+            if (staticResource.url) {
+              return true;
+            }
+          });
+          var iframeResourceFound = find_default()(_context2 = companion.iframeResources).call(_context2, function (iframeResource) {
+            if (iframeResource) {
+              return true;
+            }
+          });
+          var htmlResourceFound = find_default()(_context3 = companion.htmlResources).call(_context3, function (htmlResource) {
+            if (htmlResource) {
+              return true;
+            }
+          });
+          if (staticResourceFound && staticResourceFound.url) {
+            newCompanionAds.imageUrl = staticResourceFound.url;
+          }
+          if (iframeResourceFound && iframeResourceFound.length > 0) {
+            newCompanionAds.iframeUrl = iframeResourceFound;
+          }
+          if (htmlResourceFound && htmlResourceFound.length > 0) {
+            newCompanionAds.htmlContent = htmlResourceFound;
+          }
+          // if no companion content for this <Companion> then move on to the next
+          if (typeof staticResourceFound === 'undefined' && typeof iframeResourceFound === 'undefined' && typeof htmlResourceFound === 'undefined') {
+            return 1; // continue
+          }
+          if (companion.companionClickThroughURLTemplate) {
+            newCompanionAds.companionClickThroughUrl = companion.companionClickThroughURLTemplate;
+          }
+          if (companion.companionClickTrackingURLTemplates.length > 0) {
+            newCompanionAds.companionClickTrackingUrls = companion.companionClickTrackingURLTemplates;
+          }
+          if (companion.altText) {
+            newCompanionAds.altText = companion.altText;
+          }
+          if (companion.adSlotId) {
+            newCompanionAds.adSlotId = companion.adSlotId;
+          }
+          newCompanionAds.trackingEventsUrls = [];
+          if (companion.trackingEvents && companion.trackingEvents.creativeView) {
+            companion.trackingEvents.creativeView.forEach(function (creativeView) {
+              newCompanionAds.trackingEventsUrls.push(creativeView);
+            });
+          }
+          _this2._validCompanionAds.push(newCompanionAds);
+        };
+        for (var i = 0; i < companions.length; i++) {
+          if (_loop()) continue;
+        }
+      }
+      Logger.print('info', "Parse companion ads follow", this._validCompanionAds);
+    }
+  }, {
+    key: "getList",
+    value: function getList(inputWidth, inputHeight) {
+      if (this._validCompanionAds.length > 0) {
+        var availableCompanionAds;
+        if (typeof inputWidth === 'number' && inputWidth > 0 && typeof inputHeight === 'number' && inputHeight > 0) {
+          var _context4;
+          availableCompanionAds = filter_default()(_context4 = this._validCompanionAds).call(_context4, function (companionAds) {
+            return inputWidth >= companionAds.width && inputHeight >= companionAds.height;
+          });
+        } else {
+          availableCompanionAds = this._validCompanionAds;
+        }
+        if (availableCompanionAds.length > 0) {
+          this._companionAdsList = availableCompanionAds;
+          return this._companionAdsList;
+        }
+      }
+      return [];
+    }
+  }, {
+    key: "getItem",
+    value: function getItem(index) {
+      var _this3 = this;
+      if (typeof this._companionAdsList[index] === 'undefined') {
+        return null;
+      }
+      var companionAd = this._companionAdsList[index];
+      var html;
+      if (companionAd.imageUrl || companionAd.iframeUrl) {
+        if (companionAd.imageUrl) {
+          html = document.createElement('img');
+        } else {
+          html = document.createElement('iframe');
+          html.sandbox = 'allow-scripts allow-same-origin';
+        }
+        if (companionAd.altText) {
+          html.alt = companionAd.altText;
+        }
+        html.width = companionAd.width;
+        html.height = companionAd.height;
+        html.style.cursor = 'pointer';
+      } else if (companionAd.htmlContent) {
+        html = companionAd.htmlContent;
+      }
+      if (companionAd.imageUrl || companionAd.iframeUrl) {
+        var trackingEventsUrls = companionAd.trackingEventsUrls;
+        if (trackingEventsUrls.length > 0) {
+          html.onload = function () {
+            trackingEventsUrls.forEach(function (trackingEventsUrl) {
+              _this3._rmpVast.rmpVastTracking.pingURI(trackingEventsUrl);
+            });
+          };
+          html.onerror = function () {
+            _this3._rmpVast.rmpVastTracking.error(603);
+          };
+        }
+        var companionClickTrackingUrls = null;
+        if (companionAd.companionClickTrackingUrls) {
+          Logger.print('info', "Companion click tracking URIs", companionClickTrackingUrls);
+          companionClickTrackingUrls = companionAd.companionClickTrackingUrls;
+        }
+        if (companionAd.companionClickThroughUrl) {
+          var _onImgClickThroughFn = this._onImgClickThrough.bind(this, companionAd.companionClickThroughUrl, companionClickTrackingUrls);
+          FW.addEvents(['touchend', 'click'], html, _onImgClickThroughFn);
+        }
+      }
+      if (companionAd.imageUrl) {
+        html.src = companionAd.imageUrl;
+      } else if (companionAd.iframeUrl) {
+        html.src = companionAd.iframeUrl;
+      } else if (companionAd.htmlContent) {
+        try {
+          var parser = new DOMParser();
+          html = parser.parseFromString(companionAd.htmlContent, 'text/html');
+          html = html.documentElement;
+        } catch (e) {
+          return null;
+        }
+      }
+      return html;
+    }
+  }]);
 }();
 
 ;// CONCATENATED MODULE: ./src/js/players/ad-player.js
-
 
 
 
@@ -15501,177 +15684,12 @@ var AdPlayer = /*#__PURE__*/function () {
     _classCallCheck(this, AdPlayer);
     this._rmpVast = rmpVast;
     this._params = rmpVast.params;
-    this._contentPlayer = rmpVast.__contentPlayer;
+    this._contentPlayer = rmpVast.currentContentPlayer;
     this._adContainer = rmpVast.adContainer;
     this._contentWrapper = rmpVast.contentWrapper;
     this._adPlayer = null;
   }
-  _createClass(AdPlayer, [{
-    key: "destroy",
-    value: function destroy() {
-      console.log("".concat(FW.consolePrepend, " start destroying ad player"), FW.consoleStyle, '');
-
-      // destroy icons if any 
-      if (this._rmpVast.rmpVastIcons) {
-        this._rmpVast.rmpVastIcons.destroy();
-      }
-      if (this._rmpVast.rmpVastVpaidPlayer) {
-        this._rmpVast.rmpVastVpaidPlayer.destroy();
-      }
-
-      // reset non-linear creative
-      if (this._rmpVast.rmpVastNonLinearCreative) {
-        this._rmpVast.rmpVastNonLinearCreative.destroy();
-      }
-
-      // reset linear creative
-      if (this._rmpVast.rmpVastLinearCreative) {
-        this._rmpVast.rmpVastLinearCreative.destroy();
-      }
-
-      // unwire events
-      Tracking.destroy.call(this._rmpVast);
-
-      // hide rmp-ad-container
-      FW.hide(this._adContainer);
-
-      // unwire anti-seek logic (iOS)
-      if (this._rmpVast.rmpVastContentPlayer) {
-        this._rmpVast.rmpVastContentPlayer.destroy();
-      }
-      // flush __adPlayer
-      try {
-        if (this._adPlayer) {
-          this._adPlayer.pause();
-          if (this._rmpVast.rmpVastLinearCreative && this._rmpVast.rmpVastLinearCreative.readingHlsJS) {
-            this._rmpVast.rmpVastLinearCreative.readingHlsJS = false;
-            this._rmpVast.rmpVastLinearCreative.hlsJSInstances[this._rmpVast.rmpVastLinearCreative.hlsJSIndex].destroy();
-            this._rmpVast.rmpVastLinearCreative.hlsJSIndex = this._rmpVast.rmpVastLinearCreative.hlsJSIndex++;
-          } else {
-            // empty buffer
-            this._adPlayer.removeAttribute('src');
-            this._adPlayer.load();
-          }
-          FW.hide(this._adPlayer);
-          console.log("".concat(FW.consolePrepend, " flushing __adPlayer buffer after ad"), FW.consoleStyle, '');
-        }
-        if (this._rmpVast.rmpVastNonLinearCreative) {
-          FW.removeElement(this._rmpVast.rmpVastNonLinearCreative.nonLinearContainerElement);
-        }
-      } catch (error) {
-        console.warn(error);
-      }
-      Utils.resetVariablesForNewLoadAds.call(this._rmpVast);
-      Utils.createApiEvent.call(this._rmpVast, 'addestroyed');
-    }
-  }, {
-    key: "init",
-    value: function init() {
-      var _this = this;
-      this._rmpVast.adContainer = this._adContainer = document.createElement('div');
-      this._adContainer.className = 'rmp-ad-container';
-      this._contentWrapper.appendChild(this._adContainer);
-      FW.hide(this._adContainer);
-      this._rmpVast.__adPlayer = this._adPlayer = document.createElement('video');
-      FW.logVideoEvents(this._adPlayer, 'ad');
-      // disable native UI cast/PiP for ad player
-      this._adPlayer.disableRemotePlayback = true;
-      this._adPlayer.disablePictureInPicture = true;
-      this._adPlayer.className = 'rmp-ad-vast-video-player';
-      if (this._params.showControlsForAdPlayer) {
-        this._adPlayer.controls = true;
-      } else {
-        this._adPlayer.controls = false;
-      }
-
-      // this.__contentPlayer.muted may not be set because of a bug in some version of Chromium
-      if (this._contentPlayer.hasAttribute('muted')) {
-        this._contentPlayer.muted = true;
-      }
-      if (this._contentPlayer.muted) {
-        this._adPlayer.muted = true;
-      }
-      // black poster based 64 png
-      this._adPlayer.poster = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=';
-      // note to myself: we use setAttribute for non-standard attribute (instead of . notation)
-      this._adPlayer.setAttribute('x-webkit-airplay', 'allow');
-      if (typeof this._contentPlayer.playsInline === 'boolean' && this._contentPlayer.playsInline) {
-        this._adPlayer.playsInline = true;
-      }
-      // append to rmp-ad-container
-      FW.hide(this._adPlayer);
-      this._adContainer.appendChild(this._adPlayer);
-
-      // we track ended state for content player
-      this._contentPlayer.addEventListener('ended', function () {
-        if (_this._rmpVast.__adOnStage) {
-          return;
-        }
-        _this._rmpVast.__contentPlayerCompleted = true;
-      });
-      // we need to preload as much creative data as possible
-      // also on macOS and iOS Safari we need to force preload to avoid 
-      // playback issues
-      this._adPlayer.preload = 'auto';
-      // we need to init the ad player video tag
-      // according to https://developers.google.com/interactive-media-ads/docs/sdks/html5/mobile_video
-      // to initialize the content element, a call to the load() method is sufficient.
-      if (Environment.isMobile) {
-        // on Android both this.__contentPlayer (to resume content)
-        // and this.__adPlayer (to start ads) needs to be init
-        // on iOS only init this.__adPlayer (as same as this.__contentPlayer)
-        this._contentPlayer.load();
-        this._adPlayer.load();
-      }
-      this._rmpVast.__initialized = true;
-    }
-  }, {
-    key: "append",
-    value: function append(url, type) {
-      // in case loadAds is called several times - __initialized is already true
-      // but we still need to locate the __adPlayer
-      if (!this._adPlayer) {
-        // we use existing ad player as it is already 
-        // available and initialized (no need for user interaction)
-        var existingAdPlayer = null;
-        if (this._adContainer) {
-          existingAdPlayer = this._adContainer.querySelector('.rmp-ad-vast-video-player');
-        }
-        if (existingAdPlayer === null) {
-          Utils.processVastErrors.call(this._rmpVast, 900, true);
-          return;
-        }
-        this._adPlayer = existingAdPlayer;
-      }
-      this._rmpVast.rmpVastContentPlayer.pause();
-      if (!this._rmpVast.creative.isLinear) {
-        // we do not display non-linear ads with outstream ad 
-        // they won't fit the format
-        if (this._params.outstream) {
-          console.log("".concat(FW.consolePrepend, " non-linear creative detected for outstream ad mode - discarding creative"), FW.consoleStyle, '');
-          Utils.processVastErrors.call(this._rmpVast, 201, true);
-          return;
-        } else {
-          if (this._rmpVast.rmpVastNonLinearCreative) this._rmpVast.rmpVastNonLinearCreative.update();
-        }
-      } else {
-        if (url && type && this._rmpVast.rmpVastLinearCreative) {
-          this._rmpVast.rmpVastLinearCreative.update(url, type);
-        }
-      }
-      // wire tracking events
-      Tracking.wire.call(this._rmpVast);
-
-      // append icons - only where ad player is different from 
-      // content player
-      if (this._rmpVast.rmpVastIcons) {
-        var iconsData = this._rmpVast.rmpVastIcons.iconsData;
-        if (iconsData.length > 0) {
-          this._rmpVast.rmpVastIcons.append();
-        }
-      }
-    }
-  }, {
+  return _createClass(AdPlayer, [{
     key: "volume",
     get: function get() {
       if (this._adPlayer) {
@@ -15718,10 +15736,177 @@ var AdPlayer = /*#__PURE__*/function () {
       return -1;
     }
   }, {
+    key: "destroy",
+    value: function destroy() {
+      Logger.print('info', "start destroying ad player");
+
+      // destroy icons if any 
+      if (this._rmpVast.rmpVastIcons) {
+        this._rmpVast.rmpVastIcons.destroy();
+      }
+      if (this._rmpVast.rmpVastVpaidPlayer) {
+        this._rmpVast.rmpVastVpaidPlayer.destroy();
+      }
+
+      // reset non-linear creative
+      if (this._rmpVast.rmpVastNonLinearCreative) {
+        this._rmpVast.rmpVastNonLinearCreative.destroy();
+      }
+
+      // reset linear creative
+      if (this._rmpVast.rmpVastLinearCreative) {
+        this._rmpVast.rmpVastLinearCreative.destroy();
+      }
+
+      // unwire events
+      this._rmpVast.rmpVastTracking.destroy();
+
+      // hide rmp-ad-container
+      FW.hide(this._adContainer);
+
+      // unwire anti-seek logic (iOS)
+      if (this._rmpVast.rmpVastContentPlayer) {
+        this._rmpVast.rmpVastContentPlayer.destroy();
+      }
+      // flush currentAdPlayer
+      try {
+        if (this._adPlayer) {
+          this._adPlayer.pause();
+          if (this._rmpVast.rmpVastLinearCreative && this._rmpVast.rmpVastLinearCreative.readingHlsJS) {
+            this._rmpVast.rmpVastLinearCreative.readingHlsJS = false;
+            this._rmpVast.rmpVastLinearCreative.hlsJSInstances[this._rmpVast.rmpVastLinearCreative.hlsJSIndex].destroy();
+            this._rmpVast.rmpVastLinearCreative.hlsJSIndex = this._rmpVast.rmpVastLinearCreative.hlsJSIndex++;
+          } else {
+            // empty buffer
+            this._adPlayer.removeAttribute('src');
+            this._adPlayer.load();
+          }
+          FW.hide(this._adPlayer);
+          Logger.print('info', "flushing currentAdPlayer buffer after ad");
+        }
+        if (this._rmpVast.rmpVastNonLinearCreative) {
+          FW.removeElement(this._rmpVast.rmpVastNonLinearCreative.nonLinearContainerElement);
+        }
+      } catch (error) {
+        Logger.print('warning', error);
+      }
+      this._rmpVast.resetVariablesForNewLoadAds();
+      this._rmpVast.rmpVastUtils.createApiEvent('addestroyed');
+    }
+  }, {
+    key: "init",
+    value: function init() {
+      var _this = this;
+      this._rmpVast.adContainer = this._adContainer = document.createElement('div');
+      this._adContainer.className = 'rmp-ad-container';
+      this._contentWrapper.appendChild(this._adContainer);
+      FW.hide(this._adContainer);
+      this._rmpVast.currentAdPlayer = this._adPlayer = document.createElement('video');
+      Logger.printVideoEvents(this._adPlayer, 'ad');
+      // disable native UI cast/PiP for ad player
+      this._adPlayer.disableRemotePlayback = true;
+      this._adPlayer.disablePictureInPicture = true;
+      this._adPlayer.className = 'rmp-ad-vast-video-player';
+      if (this._params.showControlsForAdPlayer) {
+        this._adPlayer.controls = true;
+      } else {
+        this._adPlayer.controls = false;
+      }
+
+      // this.currentContentPlayer.muted may not be set because of a bug in some version of Chromium
+      if (this._contentPlayer.hasAttribute('muted')) {
+        this._contentPlayer.muted = true;
+      }
+      if (this._contentPlayer.muted) {
+        this._adPlayer.muted = true;
+      }
+      // black poster based 64 png
+      this._adPlayer.poster = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=';
+      // note to myself: we use setAttribute for non-standard attribute (instead of . notation)
+      this._adPlayer.setAttribute('x-webkit-airplay', 'allow');
+      if (typeof this._contentPlayer.playsInline === 'boolean' && this._contentPlayer.playsInline) {
+        this._adPlayer.playsInline = true;
+      }
+      // append to rmp-ad-container
+      FW.hide(this._adPlayer);
+      this._adContainer.appendChild(this._adPlayer);
+
+      // we track ended state for content player
+      this._contentPlayer.addEventListener('ended', function () {
+        if (_this._rmpVast.__adOnStage) {
+          return;
+        }
+        _this._rmpVast.contentCompleted = true;
+      });
+      // we need to preload as much creative data as possible
+      // also on macOS and iOS Safari we need to force preload to avoid 
+      // playback issues
+      this._adPlayer.preload = 'auto';
+      // we need to init the ad player video tag
+      // according to https://developers.google.com/interactive-media-ads/docs/sdks/html5/mobile_video
+      // to initialize the content element, a call to the load() method is sufficient.
+      if (Environment.isMobile) {
+        // on Android both this.currentContentPlayer (to resume content)
+        // and this.currentAdPlayer (to start ads) needs to be init
+        // on iOS only init this.currentAdPlayer (as same as this.currentContentPlayer)
+        this._contentPlayer.load();
+        this._adPlayer.load();
+      }
+      this._rmpVast.rmpVastInitialized = true;
+    }
+  }, {
+    key: "append",
+    value: function append(url, type) {
+      // in case loadAds is called several times - rmpVastInitialized is already true
+      // but we still need to locate the currentAdPlayer
+      if (!this._adPlayer) {
+        // we use existing ad player as it is already 
+        // available and initialized (no need for user interaction)
+        var existingAdPlayer = null;
+        if (this._adContainer) {
+          existingAdPlayer = this._adContainer.querySelector('.rmp-ad-vast-video-player');
+        }
+        if (existingAdPlayer === null) {
+          this._rmpVast.rmpVastUtils.processVastErrors(900, true);
+          return;
+        }
+        this._adPlayer = existingAdPlayer;
+      }
+      this._rmpVast.rmpVastContentPlayer.pause();
+      if (!this._rmpVast.creative.isLinear) {
+        // we do not display non-linear ads with outstream ad 
+        // they won't fit the format
+        if (this._params.outstream) {
+          Logger.print('info', "non-linear creative detected for outstream ad mode - discarding creative");
+          this._rmpVast.rmpVastUtils.processVastErrors(201, true);
+          return;
+        } else {
+          if (this._rmpVast.rmpVastNonLinearCreative) {
+            this._rmpVast.rmpVastNonLinearCreative.update();
+          }
+        }
+      } else {
+        if (url && type && this._rmpVast.rmpVastLinearCreative) {
+          this._rmpVast.rmpVastLinearCreative.update(url, type);
+        }
+      }
+      // wire tracking events
+      this._rmpVast.rmpVastTracking.wire();
+
+      // append icons - only where ad player is different from 
+      // content player
+      if (this._rmpVast.rmpVastIcons) {
+        var iconsData = this._rmpVast.rmpVastIcons.iconsData;
+        if (iconsData.length > 0) {
+          this._rmpVast.rmpVastIcons.append();
+        }
+      }
+    }
+  }, {
     key: "play",
     value: function play(firstAdPlayerPlayRequest) {
       if (this._adPlayer && this._adPlayer.paused) {
-        Utils.playPromise.call(this._rmpVast, 'vast', firstAdPlayerPlayRequest);
+        this._rmpVast.rmpVastUtils.playPromise('vast', firstAdPlayerPlayRequest);
       }
     }
   }, {
@@ -15734,7 +15919,7 @@ var AdPlayer = /*#__PURE__*/function () {
   }, {
     key: "resumeContent",
     value: function resumeContent() {
-      console.log("".concat(FW.consolePrepend, " AdPlayer resumeContent requested"), FW.consoleStyle, '');
+      Logger.print('info', "AdPlayer resumeContent requested");
       if (this._rmpVast.rmpVastAdPlayer) {
         this._rmpVast.rmpVastAdPlayer.destroy();
       }
@@ -15746,19 +15931,16 @@ var AdPlayer = /*#__PURE__*/function () {
       // you can use contentPlayerCompleted to support 
       // custom use-cases when dynamically changing source for content
       // no need to resume content for outstream ads
-      if (!this._rmpVast.__contentPlayerCompleted && !this._params.outstream) {
-        console.log("".concat(FW.consolePrepend, " content player play requested after ad player resumeContent"), FW.consoleStyle, '');
+      if (!this._rmpVast.contentCompleted && !this._params.outstream) {
+        Logger.print('info', "content player play requested after ad player resumeContent");
         this._rmpVast.rmpVastContentPlayer.play();
       }
-      this._rmpVast.__contentPlayerCompleted = false;
+      this._rmpVast.contentCompleted = false;
     }
   }]);
-  return AdPlayer;
 }();
 
 ;// CONCATENATED MODULE: ./src/js/verification/omsdk.js
-
-
 
 
 
@@ -15776,13 +15958,13 @@ var OmSdkManager = /*#__PURE__*/function () {
     this._lastVideoTime = -1;
     this._adVerifications = adVerifications;
     this._onFullscreenChangeFn = null;
-    this._contentPlayer = rmpVast.__contentPlayer;
-    this._adPlayer = rmpVast.__adPlayer;
+    this._contentPlayer = rmpVast.currentContentPlayer;
+    this._adPlayer = rmpVast.currentAdPlayer;
     this._params = rmpVast.params;
     this._isSkippableAd = rmpVast.isSkippableAd;
     this._skipTimeOffset = rmpVast.skipTimeOffset;
   }
-  _createClass(OmSdkManager, [{
+  return _createClass(OmSdkManager, [{
     key: "_destroy",
     value: function _destroy() {
       document.removeEventListener('fullscreenchange', this._onFullscreenChangeFn);
@@ -15806,7 +15988,7 @@ var OmSdkManager = /*#__PURE__*/function () {
           if (reasonPattern.test(validatedURI)) {
             validatedURI = validatedURI.replace(reasonPattern, reasonCode);
           }
-          Tracking.pingURI.call(_this._rmpVast, validatedURI);
+          _this._rmpVast.rmpVastTracking.pingURI(validatedURI);
         });
       }
     }
@@ -15947,7 +16129,7 @@ var OmSdkManager = /*#__PURE__*/function () {
       try {
         sessionClient = OmidSessionClient['default'];
       } catch (error) {
-        console.warn(error);
+        Logger.print('warning', error);
         return;
       }
       var AdSession = sessionClient.AdSession;
@@ -15971,31 +16153,29 @@ var OmSdkManager = /*#__PURE__*/function () {
         var _context2;
         // we support Access Modes Creative Access a.k.a full (we do not support Domain Access for now)
         var accessMode = 'full';
-        resources = map_default()(_context2 = this._adVerifications).call(_context2, function (verification) {
+        resources = instance_map_default()(_context2 = this._adVerifications).call(_context2, function (verification) {
           return new VerificationScriptResource(verification.resource, verification.vendor, verification.parameters, accessMode);
         });
       }
       var contentUrl = document.location.href;
       var context = new Context(partner, resources, contentUrl);
-      console.log(resources);
+      Logger.print('info', "", resources);
       if (this._params.omidUnderEvaluation) {
         context.underEvaluation = true;
       }
       var omdSdkServiceWindow = window.top;
       if (!omdSdkServiceWindow) {
-        var _context3;
-        console.log(concat_default()(_context3 = "".concat(FW.consolePrepend)).call(_context3, FW.consolePrepend2, " invalid serviceWindow - return"), FW.consoleStyle, FW.consoleStyle2, '');
+        Logger.print('info', "OMSDK: invalid serviceWindow - return");
         return;
       }
       context.setServiceWindow(omdSdkServiceWindow);
       context.setVideoElement(this._adPlayer);
-      console.log(context);
+      Logger.print('info', "", context);
       this._adSession = new AdSession(context);
       this._adSession.setCreativeType('video');
       this._adSession.setImpressionType('beginToRender');
       if (!this._adSession.isSupported()) {
-        var _context4;
-        console.log(concat_default()(_context4 = "".concat(FW.consolePrepend)).call(_context4, FW.consolePrepend2, " invalid serviceWindow - return"), FW.consoleStyle, FW.consoleStyle2, '');
+        Logger.print('info', "OMSDK: invalid serviceWindow - return");
         return;
       }
       this._adEvents = new AdEvents(this._adSession);
@@ -16021,7 +16201,6 @@ var OmSdkManager = /*#__PURE__*/function () {
       this._onOMWebLoaded();
     }
   }]);
-  return OmSdkManager;
 }();
 
 // EXTERNAL MODULE: ./node_modules/@babel/runtime-corejs3/core-js-stable/instance/splice.js
@@ -16039,7 +16218,7 @@ var Dispatcher = /*#__PURE__*/function () {
     this.eventName = eventName;
     this.callbacks = [];
   }
-  _createClass(Dispatcher, [{
+  return _createClass(Dispatcher, [{
     key: "registerCallback",
     value: function registerCallback(callback) {
       this.callbacks.push(callback);
@@ -16064,11 +16243,9 @@ var Dispatcher = /*#__PURE__*/function () {
       });
     }
   }]);
-  return Dispatcher;
 }();
 
 ;// CONCATENATED MODULE: ./src/js/players/content-player.js
-
 
 
 
@@ -16076,30 +16253,11 @@ var ContentPlayer = /*#__PURE__*/function () {
   function ContentPlayer(rmpVast) {
     _classCallCheck(this, ContentPlayer);
     this._rmpVast = rmpVast;
-    this._contentPlayer = rmpVast.__contentPlayer;
+    this._contentPlayer = rmpVast.currentContentPlayer;
     this._customPlaybackCurrentTime = 0;
     this._antiSeekLogicInterval = null;
   }
-  _createClass(ContentPlayer, [{
-    key: "destroy",
-    value: function destroy() {
-      FW.clearInterval(this._antiSeekLogicInterval);
-    }
-  }, {
-    key: "play",
-    value: function play(firstContentPlayerPlayRequest) {
-      if (this._contentPlayer && this._contentPlayer.paused) {
-        Utils.playPromise.call(this._rmpVast, 'content', firstContentPlayerPlayRequest);
-      }
-    }
-  }, {
-    key: "pause",
-    value: function pause() {
-      if (this._contentPlayer && !this._contentPlayer.paused) {
-        this._contentPlayer.pause();
-      }
-    }
-  }, {
+  return _createClass(ContentPlayer, [{
     key: "volume",
     get: function get() {
       if (this._contentPlayer) {
@@ -16138,6 +16296,25 @@ var ContentPlayer = /*#__PURE__*/function () {
       return -1;
     }
   }, {
+    key: "destroy",
+    value: function destroy() {
+      FW.clearInterval(this._antiSeekLogicInterval);
+    }
+  }, {
+    key: "play",
+    value: function play(firstContentPlayerPlayRequest) {
+      if (this._contentPlayer && this._contentPlayer.paused) {
+        this._rmpVast.rmpVastUtils.playPromise('content', firstContentPlayerPlayRequest);
+      }
+    }
+  }, {
+    key: "pause",
+    value: function pause() {
+      if (this._contentPlayer && !this._contentPlayer.paused) {
+        this._contentPlayer.pause();
+      }
+    }
+  }, {
     key: "seekTo",
     value: function seekTo(msSeek) {
       if (!FW.isNumber(msSeek)) {
@@ -16166,7 +16343,6 @@ var ContentPlayer = /*#__PURE__*/function () {
       }
     }
   }]);
-  return ContentPlayer;
 }();
 
 // EXTERNAL MODULE: ./node_modules/@babel/runtime-corejs3/core-js-stable/object/assign.js
@@ -16223,7 +16399,7 @@ var Storage = /*#__PURE__*/function () {
    * Provides a singleton instance of the wrapped storage.
    * @return {Object}
    */
-  _createClass(Storage, [{
+  return _createClass(Storage, [{
     key: "initStorage",
     value: function initStorage() {
       if (storage) {
@@ -16308,7 +16484,6 @@ var Storage = /*#__PURE__*/function () {
       return this.storage.clear();
     }
   }]);
-  return Storage;
 }();
 // EXTERNAL MODULE: ./node_modules/@babel/runtime-corejs3/core-js-stable/reflect/construct.js
 var construct = __webpack_require__(2574);
@@ -16615,7 +16790,7 @@ function replaceMacrosValues(url, macros) {
  */
 function extractURLsFromTemplates(URLTemplates) {
   if (Array.isArray(URLTemplates)) {
-    return map_default()(URLTemplates).call(URLTemplates, function (URLTemplate) {
+    return instance_map_default()(URLTemplates).call(URLTemplates, function (URLTemplate) {
       return URLTemplate && URLTemplate.hasOwnProperty('url') ? URLTemplate.url : URLTemplate;
     });
   }
@@ -17100,7 +17275,7 @@ function parseCreativeCompanion(creativeElement, creativeAttributes) {
   var _context;
   var creative = createCreativeCompanion(creativeAttributes);
   creative.required = creativeElement.getAttribute('required') || null;
-  creative.variations = map_default()(_context = parserUtils.childrenByName(creativeElement, 'Companion')).call(_context, function (companionResource) {
+  creative.variations = instance_map_default()(_context = parserUtils.childrenByName(creativeElement, 'Companion')).call(_context, function (companionResource) {
     var _context2, _context3, _context4, _context5;
     var companionAd = createCompanionAd(parserUtils.parseAttributes(companionResource));
     companionAd.htmlResources = reduce_default()(_context2 = parserUtils.childrenByName(companionResource, 'HTMLResource')).call(_context2, function (urls, resource) {
@@ -17132,7 +17307,7 @@ function parseCreativeCompanion(creativeElement, creativeAttributes) {
         }
       });
     }
-    companionAd.companionClickTrackingURLTemplates = map_default()(_context5 = parserUtils.childrenByName(companionResource, 'CompanionClickTracking')).call(_context5, function (clickTrackingElement) {
+    companionAd.companionClickTrackingURLTemplates = instance_map_default()(_context5 = parserUtils.childrenByName(companionResource, 'CompanionClickTracking')).call(_context5, function (clickTrackingElement) {
       return {
         id: clickTrackingElement.getAttribute('id') || null,
         url: parserUtils.parseNodeText(clickTrackingElement)
@@ -18394,7 +18569,7 @@ var EventEmitter = /*#__PURE__*/function () {
    * @param {Function} handler
    * @returns {EventEmitter}
    */
-  _createClass(EventEmitter, [{
+  return _createClass(EventEmitter, [{
     key: "on",
     value: function on(event, handler) {
       if (typeof handler !== 'function') {
@@ -18525,12 +18700,11 @@ var EventEmitter = /*#__PURE__*/function () {
     key: "eventNames",
     value: function eventNames() {
       var _context6;
-      return map_default()(_context6 = this._handlers).call(_context6, function (item) {
+      return instance_map_default()(_context6 = this._handlers).call(_context6, function (item) {
         return item.event;
       });
     }
   }]);
-  return EventEmitter;
 }();
 function onceWrap(target, event, handler) {
   var state = {
@@ -18716,7 +18890,6 @@ var DEFAULT_EVENT_DATA = {
  * @extends EventEmitter
  */
 var VASTParser = /*#__PURE__*/function (_EventEmitter) {
-  _inherits(VASTParser, _EventEmitter);
   /**
    * Creates an instance of VASTParser.
    * @constructor
@@ -18740,7 +18913,8 @@ var VASTParser = /*#__PURE__*/function (_EventEmitter) {
    * @param  {function} filter - The filter function to be added at the end of the array.
    * @return {void}
    */
-  _createClass(VASTParser, [{
+  _inherits(VASTParser, _EventEmitter);
+  return _createClass(VASTParser, [{
     key: "addURLTemplateFilter",
     value: function addURLTemplateFilter(filter) {
       if (typeof filter === 'function') {
@@ -19290,7 +19464,6 @@ var VASTParser = /*#__PURE__*/function (_EventEmitter) {
       }
     }
   }]);
-  return VASTParser;
 }(EventEmitter);
 ;// CONCATENATED MODULE: ./src/assets/@dailymotion/vast-client/src/vast_client.js
 
@@ -19337,7 +19510,7 @@ var VASTClient = /*#__PURE__*/function () {
       this.totalCallsTimeout = 0;
     }
   }
-  _createClass(VASTClient, [{
+  return _createClass(VASTClient, [{
     key: "getParser",
     value: function getParser() {
       return this.vastParser;
@@ -19439,7 +19612,6 @@ var VASTClient = /*#__PURE__*/function () {
       });
     }
   }]);
-  return VASTClient;
 }();
 // EXTERNAL MODULE: ./node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js
 var injectStylesIntoStyleTag = __webpack_require__(5072);
@@ -19477,9 +19649,7 @@ var options = {};
 
 options.styleTagTransform = (styleTagTransform_default());
 options.setAttributes = (setAttributesWithoutAttributes_default());
-
-      options.insert = insertBySelector_default().bind(null, "head");
-    
+options.insert = insertBySelector_default().bind(null, "head");
 options.domAPI = (styleDomAPI_default());
 options.insertStyleElement = (insertStyleElement_default());
 
@@ -19501,14 +19671,14 @@ var update = injectStylesIntoStyleTag_default()(rmp_vast/* default */.A, options
 
 
 
-
-
 /**
  * @license Copyright (c) 2015-2024 Radiant Media Player | https://www.radiantmediaplayer.com
  * rmp-vast
  * GitHub: https://github.com/radiantmediaplayer/rmp-vast
  * MIT License: https://github.com/radiantmediaplayer/rmp-vast/blob/master/LICENSE
  */
+
+
 
 
 
@@ -19557,7 +19727,7 @@ var RmpVast = /*#__PURE__*/function () {
    * @property {boolean} [enableVpaid] - Enables VPAID support or not. Default: true.
    * @property {VpaidSettings} [vpaidSettings] - Information required to display VPAID creatives - note that it is up 
    *  to the parent application of rmp-vast to provide those informations
-   * @property {boolean} [useHlsJS] - Enables hls.js usage to display creatives delivered in HLS format on all devices. Include hls.js library (./externals/hls/hls.min.js) in your page before usage. Default: false.
+   * @property {boolean} [useHlsJS] - Enables hls.js usage to display creatives delivered in HLS format on all devices. Include hls.js library (./externals/hls/hls.min.js) in your page before usage. Default: true.
    * @property {boolean} [debugHlsJS] - Enables debug log when hls.js is used to stream creatives. Default: false.
    * @property {boolean} [omidSupport] - Enables OMID (OM Web SDK) support in rmp-vast. Default: false.
    * @property {string[]} [omidAllowedVendors] - List of allowed vendors for ad verification. Vendors not listed will 
@@ -19570,44 +19740,107 @@ var RmpVast = /*#__PURE__*/function () {
    * @property {string} [partnerVersion] - partnerVersion for OMID. Default: current rmp-vast version 'x.x.x'.
    * @property {Labels} [labels] - Information required to properly display VPAID creatives - note that it is up to the 
    *  parent application of rmp-vast to provide those informations
+   * @property {object} [macros] - 
    * @param {RmpVastParams} [params] - An object representing various parameters that can be passed to a rmp-vast 
    *  instance and that will affect the player inner-workings. Optional parameter.
    */
   function RmpVast(id, params) {
     _classCallCheck(this, RmpVast);
     // reset instance variables - once per session
-    Utils.initInstanceVariables.call(this);
+    this._initInstanceVariables();
     if (typeof id !== 'string' || id === '') {
-      console.error("Invalid id to create new instance - exit");
+      Logger.print('error', "Invalid id to create new instance - exit");
       return;
     }
     this.id = id;
     this.container = document.getElementById(this.id);
     this.contentWrapper = this.container.querySelector('.rmp-content');
-    this.__contentPlayer = this.container.querySelector('.rmp-video');
-    if (this.container === null || this.contentWrapper === null || this.__contentPlayer === null) {
-      console.error("Invalid DOM layout - missing container or content wrapper or content player - exit");
+    this.currentContentPlayer = this.container.querySelector('.rmp-video');
+    if (this.container === null || this.contentWrapper === null || this.currentContentPlayer === null) {
+      Logger.print('error', "Invalid DOM layout - missing container or content wrapper or content player - exit");
       return;
     }
-    console.log("".concat(FW.consolePrepend, " Creating new RmpVast instance"), FW.consoleStyle, '');
+    Logger.print('info', "Creating new RmpVast instance");
     this.rmpVastContentPlayer = new ContentPlayer(this);
-    FW.logVideoEvents(this.__contentPlayer, 'content');
+    this.rmpVastUtils = new Utils(this);
+    this.rmpVastTracking = new Tracking(this);
+    this.rmpVastCompanionCreative = new CompanionCreative(this);
+    Logger.printVideoEvents(this.currentContentPlayer, 'content');
     // reset loadAds variables - this is reset at addestroyed 
     // so that next loadAds is cleared
-    Utils.resetVariablesForNewLoadAds.call(this);
+    this.resetVariablesForNewLoadAds();
     // handle fullscreen events
-    Utils.handleFullscreen.call(this);
+    this.rmpVastUtils.handleFullscreen();
     // filter input params
-    Utils.filterParams.call(this, params);
-    console.log("".concat(FW.consolePrepend, " Filtered params follow"), FW.consoleStyle, '');
-    console.log(this.params);
+    this.rmpVastUtils.filterParams(params);
+    Logger.print('info', "Filtered params follow", this.params);
   }
+  return _createClass(RmpVast, [{
+    key: "_initInstanceVariables",
+    value: function _initInstanceVariables() {
+      this.adContainer = null;
+      this.contentWrapper = null;
+      this.container = null;
+      this.rmpVastContentPlayer = null;
+      this.rmpVastAdPlayer = null;
+      this.rmpVastUtils = null;
+      this.rmpVastTracking = null;
+      this.rmpVastCompanionCreative = null;
+      this.currentContentSrc = '';
+      this.currentContentCurrentTime = -1;
+      this.params = {};
+      this.events = {};
+      this.id = null;
+      this.isInFullscreen = false;
+      this.contentCompleted = false;
+      this.currentContentPlayer = null;
+      this.currentAdPlayer = null;
+      this.rmpVastInitialized = false;
+      // adpod
+      this.adPod = false;
+      this.adPodLength = 0;
+      this.adSequence = 0;
+    }
+  }, {
+    key: "resetVariablesForNewLoadAds",
+    value: function resetVariablesForNewLoadAds() {
+      if (this.attachViewableObserverFn) {
+        this.off('adstarted', this.attachViewableObserverFn);
+      }
+      this.rmpVastTracking.reset();
+      this.rmpVastCompanionCreative.reset();
+      this.trackingTags = [];
+      this.vastErrorTags = [];
+      this.adErrorTags = [];
+      this.needsSeekAdjust = false;
+      this.seekAdjustAttached = false;
+      this.ad = {};
+      this.creative = {};
+      this.attachViewableObserverFn = null;
+      this.viewableObserver = null;
+      this.viewablePreviousRatio = 0.5;
+      this.regulationsInfo = {};
+      this.requireCategory = false;
+      this.progressEvents = [];
+      this.rmpVastLinearCreative = null;
+      this.rmpVastNonLinearCreative = null;
+      this.rmpVastVpaidPlayer = null;
+      this.adParametersData = '';
+      this.rmpVastSimidPlayer = null;
+      this.rmpVastIcons = null;
+      // for public getters
+      this.__adTagUrl = '';
+      this.__vastErrorCode = -1;
+      this.__adErrorType = '';
+      this.__adErrorMessage = '';
+      this.__adOnStage = false;
+    }
 
-  /** 
-   * Dispatch an event to the custom event system
-   * @type {(eventName: string, data: object) => void} 
-   */
-  _createClass(RmpVast, [{
+    /** 
+     * Dispatch an event to the custom event system
+     * @type {(eventName: string, data: object) => void} 
+     */
+  }, {
     key: "dispatch",
     value: function dispatch(eventName, data) {
       var event = this.events[eventName];
@@ -19746,95 +19979,15 @@ var RmpVast = /*#__PURE__*/function () {
      * @private
      */
   }, {
-    key: "_parseCompanion",
-    value: function _parseCompanion(creative) {
-      var _this6 = this;
-      // reset variables in case wrapper
-      this.validCompanionAds = [];
-      this.__companionAdsRequiredAttribute = '';
-      if (creative.required) {
-        this.__companionAdsRequiredAttribute = creative.required;
-      }
-      var companions = creative.variations;
-      // at least 1 Companion is expected to continue
-      if (companions.length > 0) {
-        var _loop = function _loop() {
-          var _context2, _context3, _context4;
-          var companion = companions[i];
-          var newCompanionAds = {
-            width: companion.width,
-            height: companion.height
-          };
-          var staticResourceFound = find_default()(_context2 = companion.staticResources).call(_context2, function (staticResource) {
-            if (staticResource.url) {
-              return true;
-            }
-          });
-          var iframeResourceFound = find_default()(_context3 = companion.iframeResources).call(_context3, function (iframeResource) {
-            if (iframeResource) {
-              return true;
-            }
-          });
-          var htmlResourceFound = find_default()(_context4 = companion.htmlResources).call(_context4, function (htmlResource) {
-            if (htmlResource) {
-              return true;
-            }
-          });
-          if (staticResourceFound && staticResourceFound.url) {
-            newCompanionAds.imageUrl = staticResourceFound.url;
-          }
-          if (iframeResourceFound && iframeResourceFound.length > 0) {
-            newCompanionAds.iframeUrl = iframeResourceFound;
-          }
-          if (htmlResourceFound && htmlResourceFound.length > 0) {
-            newCompanionAds.htmlContent = htmlResourceFound;
-          }
-          // if no companion content for this <Companion> then move on to the next
-          if (typeof staticResourceFound === 'undefined' && typeof iframeResourceFound === 'undefined' && typeof htmlResourceFound === 'undefined') {
-            return 1; // continue
-          }
-          if (companion.companionClickThroughURLTemplate) {
-            newCompanionAds.companionClickThroughUrl = companion.companionClickThroughURLTemplate;
-          }
-          if (companion.companionClickTrackingURLTemplates.length > 0) {
-            newCompanionAds.companionClickTrackingUrls = companion.companionClickTrackingURLTemplates;
-          }
-          if (companion.altText) {
-            newCompanionAds.altText = companion.altText;
-          }
-          if (companion.adSlotId) {
-            newCompanionAds.adSlotId = companion.adSlotId;
-          }
-          newCompanionAds.trackingEventsUrls = [];
-          if (companion.trackingEvents && companion.trackingEvents.creativeView) {
-            companion.trackingEvents.creativeView.forEach(function (creativeView) {
-              newCompanionAds.trackingEventsUrls.push(creativeView);
-            });
-          }
-          _this6.validCompanionAds.push(newCompanionAds);
-        };
-        for (var i = 0; i < companions.length; i++) {
-          if (_loop()) continue;
-        }
-      }
-      console.log("".concat(FW.consolePrepend, " Parse companion ads follow"), FW.consoleStyle, '');
-      console.log(this.validCompanionAds);
-    }
-
-    /** 
-     * @private
-     */
-  }, {
     key: "_handleIntersect",
     value: function _handleIntersect(entries) {
-      var _this7 = this;
+      var _this6 = this;
       entries.forEach(function (entry) {
-        if (entry.intersectionRatio > _this7.viewablePreviousRatio) {
-          _this7.viewableObserver.unobserve(_this7.container);
-          Utils.createApiEvent.call(_this7, 'adviewable');
-          Tracking.dispatch.call(_this7, 'viewable');
+        if (entry.intersectionRatio > _this6.viewablePreviousRatio) {
+          _this6.viewableObserver.unobserve(_this6.container);
+          _this6.rmpVastTracking.dispatchTrackingAndApiEvent('adviewable');
         }
-        _this7.viewablePreviousRatio = entry.intersectionRatio;
+        _this6.viewablePreviousRatio = entry.intersectionRatio;
       });
     }
 
@@ -19854,8 +20007,7 @@ var RmpVast = /*#__PURE__*/function () {
         this.viewableObserver = new IntersectionObserver(this._handleIntersect.bind(this), options);
         this.viewableObserver.observe(this.container);
       } else {
-        Utils.createApiEvent.call(this, 'adviewundetermined');
-        Tracking.dispatch.call(this, 'viewundetermined');
+        this.rmpVastTracking.dispatchTrackingAndApiEvent('adviewundetermined');
       }
     }
 
@@ -19865,14 +20017,14 @@ var RmpVast = /*#__PURE__*/function () {
   }, {
     key: "_initViewableImpression",
     value: function _initViewableImpression() {
-      var _this8 = this;
+      var _this7 = this;
       if (this.viewableObserver) {
         this.viewableObserver.unobserve(this.container);
       }
       this.ad.viewableImpression.forEach(function (viewableImpression) {
         if (viewableImpression.viewable.length > 0) {
           viewableImpression.viewable.forEach(function (url) {
-            _this8.trackingTags.push({
+            _this7.trackingTags.push({
               event: 'viewable',
               url: url
             });
@@ -19880,7 +20032,7 @@ var RmpVast = /*#__PURE__*/function () {
         }
         if (viewableImpression.notViewable.length > 0) {
           viewableImpression.notViewable.forEach(function (url) {
-            _this8.trackingTags.push({
+            _this7.trackingTags.push({
               event: 'notviewable',
               url: url
             });
@@ -19888,7 +20040,7 @@ var RmpVast = /*#__PURE__*/function () {
         }
         if (viewableImpression.viewUndetermined.length > 0) {
           viewableImpression.viewUndetermined.forEach(function (url) {
-            _this8.trackingTags.push({
+            _this7.trackingTags.push({
               event: 'viewundetermined',
               url: url
             });
@@ -19906,40 +20058,39 @@ var RmpVast = /*#__PURE__*/function () {
     key: "_loopAds",
     value: (function () {
       var _loopAds2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee(ads) {
-        var _this9 = this;
-        var _loop2, i;
-        return _regeneratorRuntime().wrap(function _callee$(_context7) {
-          while (1) switch (_context7.prev = _context7.next) {
+        var _this8 = this;
+        var _loop, i;
+        return _regeneratorRuntime().wrap(function _callee$(_context3) {
+          while (1) switch (_context3.prev = _context3.next) {
             case 0:
-              _loop2 = /*#__PURE__*/_regeneratorRuntime().mark(function _loop2(i) {
-                return _regeneratorRuntime().wrap(function _loop2$(_context6) {
-                  while (1) switch (_context6.prev = _context6.next) {
+              _loop = /*#__PURE__*/_regeneratorRuntime().mark(function _loop(i) {
+                return _regeneratorRuntime().wrap(function _loop$(_context2) {
+                  while (1) switch (_context2.prev = _context2.next) {
                     case 0:
-                      _context6.next = 2;
+                      _context2.next = 2;
                       return new (core_js_stable_promise_default())(function (resolve) {
                         var currentAd = ads[i];
-                        console.log("".concat(FW.consolePrepend, " currentAd follows"), FW.consoleStyle, '');
-                        console.log(currentAd);
-                        _this9.ad.id = currentAd.id;
-                        _this9.ad.adServingId = currentAd.adServingId;
-                        _this9.ad.categories = currentAd.categories;
-                        if (_this9.requireCategory) {
-                          if (_this9.ad.categories.length === 0 || !_this9.ad.categories[0].authority) {
-                            Utils.processVastErrors.call(_this9, 204, true);
+                        Logger.print('info', "currentAd follows", currentAd);
+                        _this8.ad.id = currentAd.id;
+                        _this8.ad.adServingId = currentAd.adServingId;
+                        _this8.ad.categories = currentAd.categories;
+                        if (_this8.requireCategory) {
+                          if (_this8.ad.categories.length === 0 || !_this8.ad.categories[0].authority) {
+                            _this8.rmpVastUtils.processVastErrors(204, true);
                             resolve();
                           }
                         }
-                        _this9.ad.blockedAdCategories = currentAd.blockedAdCategories;
-                        if (_this9.requireCategory) {
+                        _this8.ad.blockedAdCategories = currentAd.blockedAdCategories;
+                        if (_this8.requireCategory) {
                           var haltDueToBlockedAdCategories = false;
-                          _this9.ad.blockedAdCategories.forEach(function (blockedAdCategory) {
+                          _this8.ad.blockedAdCategories.forEach(function (blockedAdCategory) {
                             var blockedAdCategoryAuthority = blockedAdCategory.authority;
                             var blockedAdCategoryValue = blockedAdCategory.value;
-                            _this9.ad.categories.forEach(function (category) {
+                            _this8.ad.categories.forEach(function (category) {
                               var categoriesAuthority = category.authority;
                               var categoriesValue = category.value;
                               if (blockedAdCategoryAuthority === categoriesAuthority && blockedAdCategoryValue === categoriesValue) {
-                                Utils.processVastErrors.call(_this9, 205, true);
+                                _this8.rmpVastUtils.processVastErrors(205, true);
                                 haltDueToBlockedAdCategories = true;
                               }
                             });
@@ -19948,24 +20099,24 @@ var RmpVast = /*#__PURE__*/function () {
                             resolve();
                           }
                         }
-                        _this9.ad.adType = currentAd.adType;
-                        _this9.ad.title = currentAd.title;
-                        _this9.ad.description = currentAd.description;
-                        _this9.ad.system = currentAd.system;
-                        _this9.ad.advertiser = currentAd.advertiser;
-                        _this9.ad.pricing = currentAd.pricing;
-                        _this9.ad.survey = currentAd.survey;
-                        _this9.ad.sequence = currentAd.sequence;
+                        _this8.ad.adType = currentAd.adType;
+                        _this8.ad.title = currentAd.title;
+                        _this8.ad.description = currentAd.description;
+                        _this8.ad.system = currentAd.system;
+                        _this8.ad.advertiser = currentAd.advertiser;
+                        _this8.ad.pricing = currentAd.pricing;
+                        _this8.ad.survey = currentAd.survey;
+                        _this8.ad.sequence = currentAd.sequence;
                         find_default()(ads).call(ads, function (ad) {
-                          _this9.adPod = false;
+                          _this8.adPod = false;
                           if (ad.sequence && ad.sequence > 1) {
-                            _this9.adPod = true;
+                            _this8.adPod = true;
                             return true;
                           }
                         });
                         // this is to fix a weird bug in vast-client-js - sometimes it returns sequence === null for some items when
                         // adpod is made of redirects
-                        if (_this9.adPod) {
+                        if (_this8.adPod) {
                           var max = reduce_default()(ads).call(ads, function (prev, current) {
                             return prev.sequence > current.sequence ? prev : current;
                           }).sequence;
@@ -19975,54 +20126,53 @@ var RmpVast = /*#__PURE__*/function () {
                               max++;
                             }
                           });
-                          _this9.adSequence++;
-                          if (_this9.adPodLength === 0) {
-                            var _context5;
+                          _this8.adSequence++;
+                          if (_this8.adPodLength === 0) {
                             var adPodLength = 0;
                             ads.forEach(function (ad) {
                               if (ad.sequence) {
                                 adPodLength++;
                               }
                             });
-                            _this9.adPodLength = adPodLength;
-                            console.log(concat_default()(_context5 = "".concat(FW.consolePrepend, " AdPod detected with length ")).call(_context5, _this9.adPodLength), FW.consoleStyle, '');
+                            _this8.adPodLength = adPodLength;
+                            Logger.print('info', "AdPod detected with length ".concat(_this8.adPodLength), currentAd);
                           }
-                          _this9.one('addestroyed', function () {
-                            if (_this9.adSequence === _this9.adPodLength) {
-                              _this9.adPodLength = 0;
-                              _this9.adSequence = 0;
-                              _this9.adPod = false;
-                              Utils.createApiEvent.call(_this9, 'adpodcompleted');
+                          _this8.one('addestroyed', function () {
+                            if (_this8.adSequence === _this8.adPodLength) {
+                              _this8.adPodLength = 0;
+                              _this8.adSequence = 0;
+                              _this8.adPod = false;
+                              _this8.rmpVastUtils.createApiEvent('adpodcompleted');
                             }
                             resolve();
                           });
                         }
-                        _this9.ad.viewableImpression = currentAd.viewableImpression;
-                        if (_this9.ad.viewableImpression.length > 0) {
-                          _this9._initViewableImpression();
+                        _this8.ad.viewableImpression = currentAd.viewableImpression;
+                        if (_this8.ad.viewableImpression.length > 0) {
+                          _this8._initViewableImpression();
                         }
                         currentAd.errorURLTemplates.forEach(function (errorURLTemplate) {
-                          _this9.adErrorTags.push({
+                          _this8.adErrorTags.push({
                             event: 'error',
                             url: errorURLTemplate
                           });
                         });
                         currentAd.impressionURLTemplates.forEach(function (impression) {
                           if (impression.url) {
-                            _this9.trackingTags.push({
+                            _this8.trackingTags.push({
                               event: 'impression',
                               url: impression.url
                             });
                           }
                         });
+
                         // parse companion
                         var creatives = currentAd.creatives;
-                        console.log("".concat(FW.consolePrepend, " Parsed creatives follow"), FW.consoleStyle, '');
-                        console.log(creatives);
+                        Logger.print('info', "Parsed creatives follow", creatives);
                         find_default()(creatives).call(creatives, function (creative) {
                           if (creative.type === 'companion') {
-                            console.log("".concat(FW.consolePrepend, " Creative type companion detected"), FW.consoleStyle, '');
-                            _this9._parseCompanion(creative);
+                            Logger.print('info', "Creative type companion detected");
+                            _this8.rmpVastCompanionCreative.parse(creative);
                             return true;
                           }
                         });
@@ -20032,54 +20182,54 @@ var RmpVast = /*#__PURE__*/function () {
                           if (creative.type === 'companion') {
                             continue;
                           }
-                          _this9.creative.id = creative.id;
-                          _this9.creative.universalAdIds = creative.universalAdIds;
-                          _this9.creative.adId = creative.adId;
-                          _this9.creative.trackingEvents = creative.trackingEvents;
+                          _this8.creative.id = creative.id;
+                          _this8.creative.universalAdIds = creative.universalAdIds;
+                          _this8.creative.adId = creative.adId;
+                          _this8.creative.trackingEvents = creative.trackingEvents;
                           switch (creative.type) {
                             case 'linear':
-                              _this9.creative.duration = creative.duration;
-                              _this9.creative.skipDelay = creative.skipDelay;
-                              if (_this9.creative.skipDelay) {
-                                _this9.creative.skipoffset = creative.skipDelay;
-                                _this9.creative.isSkippableAd = true;
+                              _this8.creative.duration = creative.duration;
+                              _this8.creative.skipDelay = creative.skipDelay;
+                              if (_this8.creative.skipDelay) {
+                                _this8.creative.skipoffset = creative.skipDelay;
+                                _this8.creative.isSkippableAd = true;
                               }
                               if (creative.videoClickThroughURLTemplate && creative.videoClickThroughURLTemplate.url) {
-                                _this9.creative.clickThroughUrl = creative.videoClickThroughURLTemplate.url;
+                                _this8.creative.clickThroughUrl = creative.videoClickThroughURLTemplate.url;
                               }
                               if (creative.videoClickTrackingURLTemplates.length > 0) {
                                 creative.videoClickTrackingURLTemplates.forEach(function (videoClickTrackingURLTemplate) {
                                   if (videoClickTrackingURLTemplate.url) {
-                                    _this9.trackingTags.push({
+                                    _this8.trackingTags.push({
                                       event: 'clickthrough',
                                       url: videoClickTrackingURLTemplate.url
                                     });
                                   }
                                 });
                               }
-                              _this9.creative.isLinear = true;
+                              _this8.creative.isLinear = true;
                               if (creative.interactiveCreativeFile && /simid/i.test(creative.interactiveCreativeFile.apiFramework) && /text\/html/i.test(creative.interactiveCreativeFile.type)) {
-                                _this9.creative.simid = {
+                                _this8.creative.simid = {
                                   fileURL: creative.interactiveCreativeFile.fileURL,
                                   variableDuration: creative.interactiveCreativeFile.variableDuration
                                 };
                                 if (creative.adParameters && creative.adParameters.value) {
-                                  _this9.creative.simid.adParameters = creative.adParameters.value;
+                                  _this8.creative.simid.adParameters = creative.adParameters.value;
                                 }
                               }
-                              _this9._addTrackingEvents(creative.trackingEvents);
-                              _this9.rmpVastLinearCreative = new LinearCreative(_this9);
-                              _this9.rmpVastLinearCreative.parse(creative);
-                              if (_this9.params.omidSupport && currentAd.adVerifications.length > 0) {
-                                var omSdkManager = new OmSdkManager(currentAd.adVerifications, _this9);
+                              _this8._addTrackingEvents(creative.trackingEvents);
+                              _this8.rmpVastLinearCreative = new LinearCreative(_this8);
+                              _this8.rmpVastLinearCreative.parse(creative);
+                              if (_this8.params.omidSupport && currentAd.adVerifications.length > 0) {
+                                var omSdkManager = new OmSdkManager(currentAd.adVerifications, _this8);
                                 omSdkManager.init();
                               }
                               break;
                             case 'nonlinear':
-                              _this9.creative.isLinear = false;
-                              _this9._addTrackingEvents(creative.trackingEvents);
-                              _this9.rmpVastNonLinearCreative = new NonLinearCreative(_this9);
-                              _this9.rmpVastNonLinearCreative.parse(creative.variations);
+                              _this8.creative.isLinear = false;
+                              _this8._addTrackingEvents(creative.trackingEvents);
+                              _this8.rmpVastNonLinearCreative = new NonLinearCreative(_this8);
+                              _this8.rmpVastNonLinearCreative.parse(creative.variations);
                               break;
                             default:
                               break;
@@ -20088,24 +20238,24 @@ var RmpVast = /*#__PURE__*/function () {
                       });
                     case 2:
                     case "end":
-                      return _context6.stop();
+                      return _context2.stop();
                   }
-                }, _loop2);
+                }, _loop);
               });
               i = 0;
             case 2:
               if (!(i < ads.length)) {
-                _context7.next = 7;
+                _context3.next = 7;
                 break;
               }
-              return _context7.delegateYield(_loop2(i), "t0", 4);
+              return _context3.delegateYield(_loop(i), "t0", 4);
             case 4:
               i++;
-              _context7.next = 2;
+              _context3.next = 2;
               break;
             case 7:
             case "end":
-              return _context7.stop();
+              return _context3.stop();
           }
         }, _callee);
       }));
@@ -20121,14 +20271,13 @@ var RmpVast = /*#__PURE__*/function () {
   }, {
     key: "_handleParsedVast",
     value: function _handleParsedVast(response) {
-      var _this10 = this;
-      console.log("".concat(FW.consolePrepend, " VAST response follows"), FW.consoleStyle, '');
-      console.log(response);
+      var _this9 = this;
+      Logger.print('info', "VAST response follows", response);
 
       // error at VAST/Error level
       if (response.errorURLTemplates.length > 0) {
         response.errorURLTemplates.forEach(function (errorURLTemplate) {
-          _this10.vastErrorTags.push({
+          _this9.vastErrorTags.push({
             event: 'error',
             url: errorURLTemplate
           });
@@ -20136,7 +20285,7 @@ var RmpVast = /*#__PURE__*/function () {
       }
       // VAST/Ad 
       if (response.ads.length === 0) {
-        Utils.processVastErrors.call(this, 303, true);
+        this.rmpVastUtils.processVastErrors(303, true);
         return;
       } else {
         this._loopAds(response.ads);
@@ -20149,20 +20298,19 @@ var RmpVast = /*#__PURE__*/function () {
   }, {
     key: "_getVastTag",
     value: function _getVastTag(vastData) {
-      var _this11 = this;
+      var _this10 = this;
       // we check for required VAST input and API here
       // as we need to have this.currentContentSrc available for iOS
       if (typeof vastData !== 'string' || vastData === '') {
-        Utils.processVastErrors.call(this, 1001, false);
+        this.rmpVastUtils.processVastErrors(1001, false);
         return;
       }
       if (typeof DOMParser === 'undefined') {
-        Utils.processVastErrors.call(this, 1002, false);
+        this.rmpVastUtils.processVastErrors(1002, false);
         return;
       }
-      Utils.createApiEvent.call(this, 'adtagstartloading');
+      this.rmpVastUtils.createApiEvent('adtagstartloading');
       if (!this.params.vastXmlInput) {
-        var _context8;
         var vastClient = new VASTClient();
         var options = {
           timeout: this.params.ajaxTimeout,
@@ -20172,14 +20320,14 @@ var RmpVast = /*#__PURE__*/function () {
           allowMultipleAds: true
         };
         this.__adTagUrl = vastData;
-        console.log(concat_default()(_context8 = "".concat(FW.consolePrepend, " Try to load VAST tag at: ")).call(_context8, this.__adTagUrl), FW.consoleStyle, '');
+        Logger.print('info', "Try to load VAST tag at: ".concat(this.__adTagUrl));
         vastClient.get(this.__adTagUrl, options).then(function (response) {
-          Utils.createApiEvent.call(_this11, 'adtagloaded');
-          _this11._handleParsedVast(response);
+          _this10.rmpVastUtils.createApiEvent('adtagloaded');
+          _this10._handleParsedVast(response);
         }).catch(function (error) {
-          console.warn(error);
+          Logger.print('warning', error);
           // PING 900 Undefined Error.
-          Utils.processVastErrors.call(_this11, 900, true);
+          _this10.rmpVastUtils.processVastErrors(900, true);
         });
       } else {
         // input is not a VAST URI but raw VAST XML -> we parse it and proceed
@@ -20187,19 +20335,19 @@ var RmpVast = /*#__PURE__*/function () {
         try {
           vastXml = new DOMParser().parseFromString(vastData, 'text/xml');
         } catch (error) {
-          console.warn(error);
+          Logger.print('warning', error);
           // PING 900 Undefined Error.
-          Utils.processVastErrors.call(this, 900, true);
+          this.rmpVastUtils.processVastErrors(900, true);
           return;
         }
         var vastParser = new VASTParser();
         vastParser.parseVAST(vastXml).then(function (response) {
-          Utils.createApiEvent.call(_this11, 'adtagloaded');
-          _this11._handleParsedVast(response);
+          _this10.rmpVastUtils.createApiEvent('adtagloaded');
+          _this10._handleParsedVast(response);
         }).catch(function (error) {
-          console.warn(error);
+          Logger.print('warning', error);
           // PING 900 Undefined Error.
-          Utils.processVastErrors.call(_this11, 900, true);
+          _this10.rmpVastUtils.processVastErrors(900, true);
         });
       }
     }
@@ -20217,10 +20365,10 @@ var RmpVast = /*#__PURE__*/function () {
   }, {
     key: "loadAds",
     value: function loadAds(vastData, regulationsInfo, requireCategory) {
-      console.log("".concat(FW.consolePrepend, " loadAds method starts"), FW.consoleStyle, '');
+      Logger.print('info', "loadAds method starts");
 
       // if player is not initialized - this must be done now
-      if (!this.__initialized) {
+      if (!this.rmpVastInitialized) {
         this.initialize();
       }
       if (_typeof(regulationsInfo) === 'object') {
@@ -20243,12 +20391,12 @@ var RmpVast = /*#__PURE__*/function () {
       var finalVastData = vastData;
       if (!this.params.vastXmlInput) {
         // we have a VAST URI replaceMacros
-        finalVastData = Tracking.replaceMacros.call(this, vastData, false);
+        finalVastData = this.rmpVastTracking.replaceMacros(vastData, false);
       }
 
       // if an ad is already on stage we need to clear it first before we can accept another ad request
       if (this.__adOnStage) {
-        console.log("".concat(FW.consolePrepend, " Creative already on stage calling stopAds before loading new ad"), FW.consoleStyle, '');
+        Logger.print('info', "Creative already on stage calling stopAds before loading new ad");
         this.one('addestroyed', this.loadAds.bind(this, finalVastData));
         this.stopAds();
         return;
@@ -20316,16 +20464,11 @@ var RmpVast = /*#__PURE__*/function () {
   }, {
     key: "destroy",
     value: function destroy() {
-      if (this.__contentPlayer) {
-        this.__contentPlayer.removeEventListener('webkitbeginfullscreen', this.onFullscreenchangeFn);
-        this.__contentPlayer.removeEventListener('webkitendfullscreen', this.onFullscreenchangeFn);
-      } else {
-        document.removeEventListener('fullscreenchange', this.onFullscreenchangeFn);
-      }
+      this.rmpVastUtils.destroyFullscreen();
       if (this.rmpVastAdPlayer) {
         this.rmpVastAdPlayer.destroy();
       }
-      Utils.initInstanceVariables.call(this);
+      this._initInstanceVariables();
     }
 
     /** 
@@ -20374,8 +20517,8 @@ var RmpVast = /*#__PURE__*/function () {
       if (this.__adOnStage && this.creative && this.creative.isLinear) {
         if (this.rmpVastVpaidPlayer) {
           return this.rmpVastVpaidPlayer.getAdPaused();
-        } else if (this.__adPlayer) {
-          return this.__adPlayer.paused;
+        } else if (this.currentAdPlayer) {
+          return this.currentAdPlayer.paused;
         }
       }
       return false;
@@ -20828,7 +20971,7 @@ var RmpVast = /*#__PURE__*/function () {
   }, {
     key: "contentPlayerCompleted",
     get: function get() {
-      return this.__contentPlayerCompleted;
+      return this.contentCompleted;
     }
 
     /** 
@@ -20837,7 +20980,7 @@ var RmpVast = /*#__PURE__*/function () {
      */,
     set: function set(value) {
       if (typeof value === 'boolean') {
-        this.__contentPlayerCompleted = value;
+        this.contentCompleted = value;
       }
     }
 
@@ -20894,7 +21037,7 @@ var RmpVast = /*#__PURE__*/function () {
   }, {
     key: "adPlayer",
     get: function get() {
-      return this.__adPlayer;
+      return this.currentAdPlayer;
     }
 
     /** 
@@ -20903,7 +21046,7 @@ var RmpVast = /*#__PURE__*/function () {
   }, {
     key: "contentPlayer",
     get: function get() {
-      return this.__contentPlayer;
+      return this.currentContentPlayer;
     }
 
     /** 
@@ -20912,7 +21055,7 @@ var RmpVast = /*#__PURE__*/function () {
   }, {
     key: "initialized",
     get: function get() {
-      return this.__initialized;
+      return this.rmpVastInitialized;
     }
 
     /** 
@@ -20942,7 +21085,7 @@ var RmpVast = /*#__PURE__*/function () {
   }, {
     key: "companionAdsRequiredAttribute",
     get: function get() {
-      return this.__companionAdsRequiredAttribute;
+      return this.rmpVastCompanionCreative.requiredAttribute;
     }
 
     /** 
@@ -20962,45 +21105,7 @@ var RmpVast = /*#__PURE__*/function () {
   }, {
     key: "getCompanionAdsList",
     value: function getCompanionAdsList(inputWidth, inputHeight) {
-      if (this.validCompanionAds.length > 0) {
-        var availableCompanionAds;
-        if (typeof inputWidth === 'number' && inputWidth > 0 && typeof inputHeight === 'number' && inputHeight > 0) {
-          var _context9;
-          availableCompanionAds = filter_default()(_context9 = this.validCompanionAds).call(_context9, function (companionAds) {
-            return inputWidth >= companionAds.width && inputHeight >= companionAds.height;
-          });
-        } else {
-          availableCompanionAds = this.validCompanionAds;
-        }
-        if (availableCompanionAds.length > 0) {
-          this.companionAdsList = availableCompanionAds;
-          return this.companionAdsList;
-        }
-      }
-      return [];
-    }
-
-    /** 
-     * @private
-     */
-  }, {
-    key: "_onImgClickThrough",
-    value: function _onImgClickThrough(companionClickThroughUrl, companionClickTrackingUrls, event) {
-      var _this12 = this;
-      if (event) {
-        event.stopPropagation();
-        if (event.type === 'touchend') {
-          event.preventDefault();
-        }
-      }
-      if (companionClickTrackingUrls) {
-        companionClickTrackingUrls.forEach(function (companionClickTrackingUrl) {
-          if (companionClickTrackingUrl.url) {
-            Tracking.pingURI.call(_this12, companionClickTrackingUrl.url);
-          }
-        });
-      }
-      FW.openWindow(companionClickThroughUrl);
+      return this.rmpVastCompanionCreative.getList(inputWidth, inputHeight);
     }
 
     /** 
@@ -21010,65 +21115,7 @@ var RmpVast = /*#__PURE__*/function () {
   }, {
     key: "getCompanionAd",
     value: function getCompanionAd(index) {
-      var _this13 = this;
-      if (typeof this.companionAdsList[index] === 'undefined') {
-        return null;
-      }
-      var companionAd = this.companionAdsList[index];
-      var html;
-      if (companionAd.imageUrl || companionAd.iframeUrl) {
-        if (companionAd.imageUrl) {
-          html = document.createElement('img');
-        } else {
-          html = document.createElement('iframe');
-          html.sandbox = 'allow-scripts allow-same-origin';
-        }
-        if (companionAd.altText) {
-          html.alt = companionAd.altText;
-        }
-        html.width = companionAd.width;
-        html.height = companionAd.height;
-        html.style.cursor = 'pointer';
-      } else if (companionAd.htmlContent) {
-        html = companionAd.htmlContent;
-      }
-      if (companionAd.imageUrl || companionAd.iframeUrl) {
-        var trackingEventsUrls = companionAd.trackingEventsUrls;
-        if (trackingEventsUrls.length > 0) {
-          html.onload = function () {
-            trackingEventsUrls.forEach(function (trackingEventsUrl) {
-              Tracking.pingURI.call(_this13, trackingEventsUrl);
-            });
-          };
-          html.onerror = function () {
-            Tracking.error.call(_this13, 603);
-          };
-        }
-        var companionClickTrackingUrls = null;
-        if (companionAd.companionClickTrackingUrls) {
-          console.log("".concat(FW.consolePrepend, " Companion click tracking URIs"), FW.consoleStyle, '');
-          console.log(companionClickTrackingUrls);
-          companionClickTrackingUrls = companionAd.companionClickTrackingUrls;
-        }
-        if (companionAd.companionClickThroughUrl) {
-          var _onImgClickThroughFn = this._onImgClickThrough.bind(this, companionAd.companionClickThroughUrl, companionClickTrackingUrls);
-          FW.addEvents(['touchend', 'click'], html, _onImgClickThroughFn);
-        }
-      }
-      if (companionAd.imageUrl) {
-        html.src = companionAd.imageUrl;
-      } else if (companionAd.iframeUrl) {
-        html.src = companionAd.iframeUrl;
-      } else if (companionAd.htmlContent) {
-        try {
-          var parser = new DOMParser();
-          html = parser.parseFromString(companionAd.htmlContent, 'text/html');
-          html = html.documentElement;
-        } catch (e) {
-          return null;
-        }
-      }
-      return html;
+      return this.rmpVastCompanionCreative.getItem(index);
     }
 
     /** 
@@ -21077,8 +21124,8 @@ var RmpVast = /*#__PURE__*/function () {
   }, {
     key: "initialize",
     value: function initialize() {
-      if (!this.__initialized) {
-        console.log("".concat(FW.consolePrepend, " Upon user interaction - player needs to be initialized"), FW.consoleStyle, '');
+      if (!this.rmpVastInitialized) {
+        Logger.print('info', "Upon user interaction - player needs to be initialized");
         this.rmpVastAdPlayer = new AdPlayer(this);
         this.rmpVastAdPlayer.init();
       }
@@ -21142,7 +21189,6 @@ var RmpVast = /*#__PURE__*/function () {
       return '';
     }
   }]);
-  return RmpVast;
 }();
 
 }();

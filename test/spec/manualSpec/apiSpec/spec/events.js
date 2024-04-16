@@ -25,11 +25,13 @@ describe('Test for API events', function () {
       'adtagloaded',
       'adloaded',
       'adimpression',
+      'adcreativeview',
       'adinitialplayrequestsucceeded',
       'adfirstquartile',
       'adpaused',
       'advolumechanged',
-      'advolumemuted',
+      'admuted',
+      'adunmuted',
       'adresumed',
       'adskippablestatechanged',
       'admidpoint',
@@ -41,7 +43,7 @@ describe('Test for API events', function () {
     const _incrementAndLogEvents = function (event) {
       eventsSteps++;
       if (event && event.type) {
-        console.log(event.type);
+        console.log(event.type + ' at step ' + eventsSteps);
       }
     };
 
@@ -51,17 +53,17 @@ describe('Test for API events', function () {
       });
     });
 
-    rmpVast.on('adstarted', function (e) {
+    rmpVast.one('adstarted', function (e) {
       _incrementAndLogEvents(e);
       setTimeout(() => {
         rmpVast.pause();
       }, 3000);
     });
 
-    rmpVast.on('addestroyed', function (e) {
+    rmpVast.one('addestroyed', function (e) {
       _incrementAndLogEvents(e);
-      expect(eventsSteps).toBe(17);
-      if (eventsSteps === 17) {
+      expect(eventsSteps).toBe(19);
+      if (eventsSteps === 19) {
         title.textContent = 'Test completed';
         done();
       }

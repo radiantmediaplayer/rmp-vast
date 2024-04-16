@@ -31,7 +31,7 @@ export default class RmpVast {
      * @property {boolean} [enableVpaid] - Enables VPAID support or not. Default: true.
      * @property {VpaidSettings} [vpaidSettings] - Information required to display VPAID creatives - note that it is up
      *  to the parent application of rmp-vast to provide those informations
-     * @property {boolean} [useHlsJS] - Enables hls.js usage to display creatives delivered in HLS format on all devices. Include hls.js library (./externals/hls/hls.min.js) in your page before usage. Default: false.
+     * @property {boolean} [useHlsJS] - Enables hls.js usage to display creatives delivered in HLS format on all devices. Include hls.js library (./externals/hls/hls.min.js) in your page before usage. Default: true.
      * @property {boolean} [debugHlsJS] - Enables debug log when hls.js is used to stream creatives. Default: false.
      * @property {boolean} [omidSupport] - Enables OMID (OM Web SDK) support in rmp-vast. Default: false.
      * @property {string[]} [omidAllowedVendors] - List of allowed vendors for ad verification. Vendors not listed will
@@ -44,6 +44,7 @@ export default class RmpVast {
      * @property {string} [partnerVersion] - partnerVersion for OMID. Default: current rmp-vast version 'x.x.x'.
      * @property {Labels} [labels] - Information required to properly display VPAID creatives - note that it is up to the
      *  parent application of rmp-vast to provide those informations
+     * @property {object} [macros] -
      * @param {RmpVastParams} [params] - An object representing various parameters that can be passed to a rmp-vast
      *  instance and that will affect the player inner-workings. Optional parameter.
      */
@@ -95,7 +96,7 @@ export default class RmpVast {
             desiredBitrate?: number;
         };
         /**
-         * - Enables hls.js usage to display creatives delivered in HLS format on all devices. Include hls.js library (./externals/hls/hls.min.js) in your page before usage. Default: false.
+         * - Enables hls.js usage to display creatives delivered in HLS format on all devices. Include hls.js library (./externals/hls/hls.min.js) in your page before usage. Default: true.
          */
         useHlsJS?: boolean;
         /**
@@ -138,12 +139,58 @@ export default class RmpVast {
             closeAd?: string;
             textForInteractionUIOnMobile?: string;
         };
+        /**
+         * -
+         */
+        macros?: object;
     });
     id: string;
     container: HTMLElement;
     contentWrapper: Element;
-    __contentPlayer: Element;
+    currentContentPlayer: Element;
     rmpVastContentPlayer: ContentPlayer;
+    rmpVastUtils: Utils;
+    rmpVastTracking: Tracking;
+    rmpVastCompanionCreative: CompanionCreative;
+    _initInstanceVariables(): void;
+    adContainer: any;
+    rmpVastAdPlayer: AdPlayer;
+    currentContentSrc: string;
+    currentContentCurrentTime: number;
+    params: {};
+    events: {};
+    isInFullscreen: boolean;
+    contentCompleted: boolean;
+    currentAdPlayer: any;
+    rmpVastInitialized: boolean;
+    adPod: boolean;
+    adPodLength: number;
+    adSequence: number;
+    resetVariablesForNewLoadAds(): void;
+    trackingTags: any[];
+    vastErrorTags: any[];
+    adErrorTags: any[];
+    needsSeekAdjust: boolean;
+    seekAdjustAttached: boolean;
+    ad: {};
+    creative: {};
+    attachViewableObserverFn: any;
+    viewableObserver: IntersectionObserver;
+    viewablePreviousRatio: any;
+    regulationsInfo: {};
+    requireCategory: boolean;
+    progressEvents: any[];
+    rmpVastLinearCreative: LinearCreative;
+    rmpVastNonLinearCreative: NonLinearCreative;
+    rmpVastVpaidPlayer: any;
+    adParametersData: string;
+    rmpVastSimidPlayer: any;
+    rmpVastIcons: any;
+    __adTagUrl: string;
+    __vastErrorCode: number;
+    __adErrorType: string;
+    __adErrorMessage: string;
+    __adOnStage: boolean;
     dispatch(eventName: string, data: object): void;
     /**
      * @private
@@ -167,33 +214,19 @@ export default class RmpVast {
     /**
      * @private
      */
-    private _parseCompanion;
-    validCompanionAds: any[];
-    __companionAdsRequiredAttribute: any;
-    /**
-     * @private
-     */
     private _handleIntersect;
-    viewablePreviousRatio: any;
     /**
      * @private
      */
     private _attachViewableObserver;
-    viewableObserver: IntersectionObserver;
     /**
      * @private
      */
     private _initViewableImpression;
-    attachViewableObserverFn: any;
     /**
      * @private
      */
     private _loopAds;
-    adPod: boolean;
-    adPodLength: number;
-    adSequence: number;
-    rmpVastLinearCreative: LinearCreative;
-    rmpVastNonLinearCreative: NonLinearCreative;
     /**
      * @private
      */
@@ -202,7 +235,6 @@ export default class RmpVast {
      * @private
      */
     private _getVastTag;
-    __adTagUrl: string;
     /**
      * @param {string} vastData - the URI to the VAST resource to be loaded - or raw VAST XML if params.vastXmlInput is true
      * @param {object} [regulationsInfo] - data for regulations as
@@ -218,7 +250,6 @@ export default class RmpVast {
         limitAdTracking?: string;
         gdprConsent?: string;
     }, requireCategory?: boolean): void;
-    requireCategory: boolean;
     play(): void;
     pause(): void;
     stopAds(): void;
@@ -407,7 +438,6 @@ export default class RmpVast {
      * @type {() => boolean}
      */
     get contentPlayerCompleted(): () => boolean;
-    __contentPlayerCompleted: boolean;
     /**
      * @type {() => string}
      */
@@ -474,18 +504,12 @@ export default class RmpVast {
         imageUrl: string;
         trackingEventsUri: string[];
     }[];
-    companionAdsList: any[];
-    /**
-     * @private
-     */
-    private _onImgClickThrough;
     /**
      * @param {number} index
      * @return {HTMLElement|null}
      */
     getCompanionAd(index: number): HTMLElement | null;
     initialize(): void;
-    rmpVastAdPlayer: AdPlayer;
     resizeAd(width: number, height: number, viewMode: string): void;
     expandAd(): void;
     collapseAd(): void;
@@ -499,7 +523,10 @@ export default class RmpVast {
     get vpaidCompanionAds(): () => string;
 }
 import ContentPlayer from './players/content-player';
+import Utils from './framework/utils';
+import Tracking from './framework/tracking';
+import CompanionCreative from './creatives/companion';
+import AdPlayer from './players/ad-player';
 import LinearCreative from './creatives/linear';
 import NonLinearCreative from './creatives/non-linear';
-import AdPlayer from './players/ad-player';
 //# sourceMappingURL=index.d.ts.map

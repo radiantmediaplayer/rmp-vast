@@ -1,22 +1,24 @@
 const child_process = require('child_process');
 
 // these ones require manual testing
-/*const manualTestList = [
-  'node test/spec/main/adBlockerSpec.js chrome',
-];*/
+// spec/manualSpec
 
 const desktopTestList = [
   'node test/spec/main/adPodSpec.js',
   'node test/spec/main/adPodSpec.js chrome',
+  'node test/spec/main/apiSpec.js',
   'node test/spec/main/apiSpec.js chrome',
+  'node test/spec/main/companionSpec.js',
   'node test/spec/main/companionSpec.js chrome',
   'node test/spec/main/errorSpec.js',
   'node test/spec/main/errorSpec.js chrome',
+  'node test/spec/main/iconsSpec.js',
   'node test/spec/main/iconsSpec.js chrome',
   'node test/spec/main/inlineLinearSpec.js',
   'node test/spec/main/inlineLinearSpec.js chrome',
   'node test/spec/main/nonLinearSpec.js',
   'node test/spec/main/nonLinearSpec.js chrome',
+  'node test/spec/main/omWebSpec.js',
   'node test/spec/main/omWebSpec.js chrome',
   'node test/spec/main/outstreamSpec.js',
   'node test/spec/main/outstreamSpec.js chrome',
@@ -29,8 +31,10 @@ const desktopTestList = [
 
 const androidTestList = [
   'node test/spec/main/adPodSpec.js android',
+  'node test/spec/main/apiSpec.js android',
   'node test/spec/main/companionSpec.js android',
   'node test/spec/main/errorSpec.js android',
+  'node test/spec/main/iconsSpec.js android',
   'node test/spec/main/inlineLinearSpec.js android',
   'node test/spec/main/nonLinearSpec.js android',
   'node test/spec/main/outstreamSpec.js android',
@@ -40,8 +44,10 @@ const androidTestList = [
 
 const safariTestList = [
   'node test/spec/main/adPodSpec.js safari',
+  'node test/spec/main/apiSpec.js android',
   'node test/spec/main/companionSpec.js safari',
   'node test/spec/main/errorSpec.js safari',
+  'node test/spec/main/iconsSpec.js android',
   'node test/spec/main/inlineLinearSpec.js safari',
   'node test/spec/main/nonLinearSpec.js safari',
   'node test/spec/main/outstreamSpec.js safari',

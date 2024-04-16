@@ -18,7 +18,7 @@ export default class Dispatcher {
 
   fire(data) {
     const callbacks = this.callbacks.slice(0);
-    callbacks.forEach((callback) => {
+    callbacks.forEach(callback => {
       callback(data);
     });
   }

@@ -7,12 +7,6 @@ export default class FW {
     static show(element: any): void;
     static hide(element: any): void;
     static removeElement(element: any): void;
-    static isEmptyObject(obj: any): boolean;
-    static get consoleStyle(): string;
-    static get consoleStyle2(): string;
-    static get consolePrepend2(): "om-sdk-manager:" | "om-sdk-manager%c";
-    static get consolePrepend(): "RMP-VAST:" | "%crmp-vast%c";
-    static logVideoEvents(video: any, type: any): void;
     static isNumber(n: any): boolean;
     static openWindow(link: any): void;
     static ajax(url: any, timeout: any, withCredentials: any): Promise<any>;

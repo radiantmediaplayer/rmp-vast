@@ -552,7 +552,7 @@
       // Some browsers don't allow to use bind on console object anyway
       // fallback to default if needed
       try {
-        exportedLogger.log("Debug logs enabled for \"" + id + "\" in hls.js version " + "1.5.6");
+        exportedLogger.log("Debug logs enabled for \"" + id + "\" in hls.js version " + "1.5.8");
       } catch (e) {
         exportedLogger = fakeLogger;
       }
@@ -3126,6 +3126,9 @@
     var mms = (preferManagedMediaSource || !self.MediaSource) && self.ManagedMediaSource;
     return mms || self.MediaSource || self.WebKitMediaSource;
   }
+  function isManagedMediaSource(source) {
+    return typeof self !== 'undefined' && source === self.ManagedMediaSource;
+  }
 
   // from http://mp4ra.org/codecs.html
   // values indicate codec selection preference (lower is higher priority)
@@ -3285,7 +3288,7 @@
     if (parsedCodec && parsedCodec !== 'mp4a') {
       return parsedCodec;
     }
-    return levelCodec;
+    return levelCodec ? levelCodec.split(',')[0] : levelCodec;
   }
   function convertAVC1ToAVCOTI(codec) {
     // Convert avc1 codec string from RFC-4281 to RFC-6381 for MediaSource.isTypeSupported
@@ -5177,12 +5180,15 @@
     Yes: "YES",
     v2: "v2"
   };
-  function getSkipValue(details, msn) {
+  function getSkipValue(details) {
     var canSkipUntil = details.canSkipUntil,
       canSkipDateRanges = details.canSkipDateRanges,
-      endSN = details.endSN;
-    var snChangeGoal = msn !== undefined ? msn - endSN : 0;
-    if (canSkipUntil && snChangeGoal < canSkipUntil) {
+      age = details.age;
+    // A Client SHOULD NOT request a Playlist Delta Update unless it already
+    // has a version of the Playlist that is no older than one-half of the Skip Boundary.
+    // @see: https://datatracker.ietf.org/doc/html/draft-pantos-hls-rfc8216bis#section-6.3.7
+    var playlistRecentEnough = age < canSkipUntil / 2;
+    if (canSkipUntil && playlistRecentEnough) {
       if (canSkipDateRanges) {
         return HlsSkip.v2;
       }
@@ -6371,7 +6377,7 @@
       this.canLoad = false;
       this.clearTimer();
     };
-    _proto.switchParams = function switchParams(playlistUri, previous) {
+    _proto.switchParams = function switchParams(playlistUri, previous, current) {
       var renditionReports = previous == null ? void 0 : previous.renditionReports;
       if (renditionReports) {
         var foundIndex = -1;
@@ -6403,7 +6409,8 @@
               part += 1;
             }
           }
-          return new HlsUrlParameters(msn, part >= 0 ? part : undefined, HlsSkip.No);
+          var skip = current && getSkipValue(current);
+          return new HlsUrlParameters(msn, part >= 0 ? part : undefined, skip);
         }
       }
     };
@@ -6532,7 +6539,7 @@
       }
     };
     _proto.getDeliveryDirectives = function getDeliveryDirectives(details, previousDeliveryDirectives, msn, part) {
-      var skip = getSkipValue(details, msn);
+      var skip = getSkipValue(details);
       if (previousDeliveryDirectives != null && previousDeliveryDirectives.skip && details.deltaUpdateFailed) {
         msn = previousDeliveryDirectives.msn;
         part = previousDeliveryDirectives.part;
@@ -7074,6 +7081,9 @@
             return;
           }
           var audioGroup = audioTracksByGroup.groups[audioGroupId];
+          if (!audioGroup) {
+            return;
+          }
           // Default audio is any group with DEFAULT=YES, or if missing then any group with AUTOSELECT=YES, or all variants
           tier.hasDefaultAudio = tier.hasDefaultAudio || audioTracksByGroup.hasDefaultAudio ? audioGroup.hasDefault : audioGroup.hasAutoSelect || !audioTracksByGroup.hasDefaultAudio && !audioTracksByGroup.hasAutoSelectAudio;
           Object.keys(audioGroup.channels).forEach(function (channels) {
@@ -17176,7 +17186,7 @@
       if (trackLoaded) {
         return;
       }
-      var hlsUrlParameters = this.switchParams(track.url, lastTrack == null ? void 0 : lastTrack.details);
+      var hlsUrlParameters = this.switchParams(track.url, lastTrack == null ? void 0 : lastTrack.details, track.details);
       this.loadPlaylist(hlsUrlParameters);
     };
     _proto.findTrackId = function findTrackId(currentTrack) {
@@ -18085,7 +18095,7 @@
         type: type,
         url: url
       });
-      var hlsUrlParameters = this.switchParams(track.url, lastTrack == null ? void 0 : lastTrack.details);
+      var hlsUrlParameters = this.switchParams(track.url, lastTrack == null ? void 0 : lastTrack.details, track.details);
       this.loadPlaylist(hlsUrlParameters);
     };
     _createClass(SubtitleTrackController, [{
@@ -18275,7 +18285,7 @@
       };
       this.hls = hls;
       var logPrefix = '[buffer-controller]';
-      this.appendSource = hls.config.preferManagedMediaSource;
+      this.appendSource = isManagedMediaSource(getMediaSource(hls.config.preferManagedMediaSource));
       this.log = logger.log.bind(logger, logPrefix);
       this.warn = logger.warn.bind(logger, logPrefix);
       this.error = logger.error.bind(logger, logPrefix);
@@ -18365,8 +18375,10 @@
         ms.addEventListener('sourceopen', this._onMediaSourceOpen);
         ms.addEventListener('sourceended', this._onMediaSourceEnded);
         ms.addEventListener('sourceclose', this._onMediaSourceClose);
-        ms.addEventListener('startstreaming', this._onStartStreaming);
-        ms.addEventListener('endstreaming', this._onEndStreaming);
+        if (this.appendSource) {
+          ms.addEventListener('startstreaming', this._onStartStreaming);
+          ms.addEventListener('endstreaming', this._onEndStreaming);
+        }
 
         // cache the locally generated object url
         var objectUrl = this._objectUrl = self.URL.createObjectURL(ms);
@@ -18411,8 +18423,10 @@
         mediaSource.removeEventListener('sourceopen', this._onMediaSourceOpen);
         mediaSource.removeEventListener('sourceended', this._onMediaSourceEnded);
         mediaSource.removeEventListener('sourceclose', this._onMediaSourceClose);
-        mediaSource.removeEventListener('startstreaming', this._onStartStreaming);
-        mediaSource.removeEventListener('endstreaming', this._onEndStreaming);
+        if (this.appendSource) {
+          mediaSource.removeEventListener('startstreaming', this._onStartStreaming);
+          mediaSource.removeEventListener('endstreaming', this._onEndStreaming);
+        }
 
         // Detach properly the MediaSource from the HTMLMediaElement as
         // suggested in https://github.com/w3c/media-source/issues/53.
@@ -18489,7 +18503,7 @@
             var nextCodec = (_trackCodec = trackCodec) == null ? void 0 : _trackCodec.replace(VIDEO_CODEC_PROFILE_REPLACE, '$1');
             if (trackCodec && currentCodec !== nextCodec) {
               if (trackName.slice(0, 5) === 'audio') {
-                trackCodec = getCodecCompatibleName(trackCodec, _this3.hls.config.preferManagedMediaSource);
+                trackCodec = getCodecCompatibleName(trackCodec, _this3.appendSource);
               }
               var mimeType = container + ";codecs=" + trackCodec;
               _this3.appendChangeType(trackName, mimeType);
@@ -18954,15 +18968,16 @@
       }
       var _loop = function _loop(trackName) {
         if (!sourceBuffer[trackName]) {
+          var _track$levelCodec;
           var track = tracks[trackName];
           if (!track) {
             throw Error("source buffer exists for track " + trackName + ", however track does not");
           }
-          // use levelCodec as first priority
-          var codec = track.levelCodec || track.codec;
+          // use levelCodec as first priority unless it contains multiple comma-separated codec values
+          var codec = ((_track$levelCodec = track.levelCodec) == null ? void 0 : _track$levelCodec.indexOf(',')) === -1 ? track.levelCodec : track.codec;
           if (codec) {
             if (trackName.slice(0, 5) === 'audio') {
-              codec = getCodecCompatibleName(codec, _this11.hls.config.preferManagedMediaSource);
+              codec = getCodecCompatibleName(codec, _this11.appendSource);
             }
           }
           var mimeType = track.container + ";codecs=" + codec;
@@ -18974,15 +18989,17 @@
             _this11.addBufferListener(sbName, 'updateend', _this11._onSBUpdateEnd);
             _this11.addBufferListener(sbName, 'error', _this11._onSBUpdateError);
             // ManagedSourceBuffer bufferedchange event
-            _this11.addBufferListener(sbName, 'bufferedchange', function (type, event) {
-              // If media was ejected check for a change. Added ranges are redundant with changes on 'updateend' event.
-              var removedRanges = event.removedRanges;
-              if (removedRanges != null && removedRanges.length) {
-                _this11.hls.trigger(Events.BUFFER_FLUSHED, {
-                  type: trackName
-                });
-              }
-            });
+            if (_this11.appendSource) {
+              _this11.addBufferListener(sbName, 'bufferedchange', function (type, event) {
+                // If media was ejected check for a change. Added ranges are redundant with changes on 'updateend' event.
+                var removedRanges = event.removedRanges;
+                if (removedRanges != null && removedRanges.length) {
+                  _this11.hls.trigger(Events.BUFFER_FLUSHED, {
+                    type: trackName
+                  });
+                }
+              });
+            }
             _this11.tracks[trackName] = {
               buffer: sb,
               codec: codec,
@@ -26543,7 +26560,7 @@
         var levelDetails = level.details;
         if (!levelDetails || levelDetails.live) {
           // level not retrieved yet, or live playlist we need to (re)load it
-          var hlsUrlParameters = this.switchParams(level.uri, lastLevel == null ? void 0 : lastLevel.details);
+          var hlsUrlParameters = this.switchParams(level.uri, lastLevel == null ? void 0 : lastLevel.details, levelDetails);
           this.loadPlaylist(hlsUrlParameters);
         }
       }
@@ -29191,7 +29208,7 @@
        * Get the video-dev/hls.js package version.
        */
       function get() {
-        return "1.5.6";
+        return "1.5.8";
       }
     }, {
       key: "Events",

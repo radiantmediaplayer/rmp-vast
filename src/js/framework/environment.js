@@ -17,7 +17,7 @@ export default class Environment {
     return document.createElement('video');
   }
 
-  static get hasTouchEvents() {
+  static get _hasTouchEvents() {
     if (typeof window.ontouchstart !== 'undefined' ||
       (window.DocumentTouch && document instanceof window.DocumentTouch)) {
       return true;
@@ -51,7 +51,7 @@ export default class Environment {
     const IOS_PATTERN = /(ipad|iphone|ipod)/i;
     const IOS_VERSION_PATTERN = /os\s+(\d+)_/i;
     let support = [false, -1];
-    if (IOS_PATTERN.test(Environment.userAgent) && Environment.hasTouchEvents) {
+    if (IOS_PATTERN.test(Environment.userAgent) && Environment._hasTouchEvents) {
       support = [true, Environment._filterVersion(IOS_VERSION_PATTERN)];
     }
     return support;
@@ -59,7 +59,7 @@ export default class Environment {
 
   static get isIpadOS() {
     const MAC_PLATFORM_PATTERN = /macintel/i;
-    if (!Environment.isIos[0] && Environment.hasTouchEvents && MAC_PLATFORM_PATTERN.test(navigator.platform) &&
+    if (!Environment.isIos[0] && Environment._hasTouchEvents && MAC_PLATFORM_PATTERN.test(navigator.platform) &&
       Environment.devicePixelRatio > 1 && Environment.maxTouchPoints > 1) {
       return true;
     }
@@ -99,7 +99,7 @@ export default class Environment {
     const ANDROID_PATTERN = /android/i;
     const ANDROID_VERSION_PATTERN = /android\s*(\d+)\./i;
     let support = [false, -1];
-    if (!Environment.isIos[0] && Environment.hasTouchEvents && ANDROID_PATTERN.test(Environment.userAgent)) {
+    if (!Environment.isIos[0] && Environment._hasTouchEvents && ANDROID_PATTERN.test(Environment.userAgent)) {
       support = [true, Environment._filterVersion(ANDROID_VERSION_PATTERN)];
     }
     return support;

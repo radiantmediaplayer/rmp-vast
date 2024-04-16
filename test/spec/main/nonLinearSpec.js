@@ -12,7 +12,6 @@ const testUrlsChromeOnly = [
   TEST.pathToTest + 'nonLinearSpec/non-linear-iframe.html',
   TEST.pathToTest + 'nonLinearSpec/non-linear-html.html',
   TEST.pathToTest + 'nonLinearSpec/non-linear-image.html',
-  TEST.pathToTest + 'nonLinearSpec/NonLinearSpecIABVAST2Spec.html',
   TEST.pathToTest + 'nonLinearSpec/NonLinearSpecIABVAST3Spec.html'
 ];
 
