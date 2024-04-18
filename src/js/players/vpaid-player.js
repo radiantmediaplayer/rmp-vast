@@ -129,9 +129,9 @@ export default class VpaidPlayer {
     }
     if (typeof newVolume === 'number' && newVolume >= 0) {
       if (this._vpaidCurrentVolume > 0 && newVolume === 0) {
-        this._rmpVast.rmpVastTracking.dispatchTrackingAndApiEvent('admuted');
+        this._rmpVast.rmpVastTracking.dispatchTrackingAndApiEvent('advolumemuted');
       } else if (this._vpaidCurrentVolume === 0 && newVolume > 0) {
-        this._rmpVast.rmpVastTracking.dispatchTrackingAndApiEvent('adunmuted');
+        this._rmpVast.rmpVastTracking.dispatchTrackingAndApiEvent('advolumeunmuted');
       }
       this._vpaidCurrentVolume = newVolume;
       this._rmpVast.rmpVastUtils.createApiEvent('advolumechanged');

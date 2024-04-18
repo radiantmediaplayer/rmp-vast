@@ -204,7 +204,7 @@ Once rmp-vast is loaded on your page you can create a new rmp-vast instance as f
   - `params.vastXmlInput: Boolean` Instead of a VAST URI, we provide directly to rmp-vast VAST XML. Default: false. See test/spec/inlineLinearSpec/raw-xml-input.html for an example.
   - `params.enableSimid: Boolean` Enables SIMID support or not. Default: true.
   - `params.enableVpaid: Boolean` DEPRECATED. Enables VPAID support or not. Default: true.
-  - `params.vpaidSettings: Object` DEPRECATED. Information required to properly display VPAID creatives - note that it is up to the parent application of rmp-vast to provide those informations - below values are default (see test/spec/vpaidSpec/ for examples):
+  - `params.vpaidSettings: Object` DEPRECATED. Information required to properly display VPAID creatives - note that it is up to the parent application of rmp-vast to provide those information - below values are default (see test/spec/vpaidSpec/ for examples):
     - `params.vpaidSettings.width: Number` Default: 640.
     - `params.vpaidSettings.height: Number` Default: 360.
     - `params.vpaidSettings.viewMode: String` Default: 'normal'. Can be 'fullscreen' as well.
@@ -302,8 +302,8 @@ Available events are:
 - `adpaused`
 - `adresumed`
 - `adtagstartloading`
-- `admuted`
-- `adunmuted`
+- `advolumemuted`
+- `advolumeunmuted`
 - `advolumechanged`
 - `adskipped`
 - `adskippablestatechanged`
@@ -562,7 +562,7 @@ rmp-vast supports displaying outstream ads when parameter `outstream` is set to 
 
 ## TypeScript support
 
-Make sure to inluce ./types folder in your TypeScript configuration file and you can start using rmp-vast in a TypeScript environment. Note: the resulting .d.ts files are generated from JavaScript using JSDoc syntax.
+Make sure to include ./types folder in your TypeScript configuration file and you can start using rmp-vast in a TypeScript environment. Note: the resulting .d.ts files are generated from JavaScript using JSDoc syntax.
 
 ## Contributing
 
@@ -595,7 +595,8 @@ For testing on macOS Safari use:
 
 `npm run testSafari`
 
-Before running `npm run test` make sure to update `TEST.pathToTest` in ./test/helpers/test.js with your local IP address. Running test on Android requires a [runnning adb server](https://developer.android.com/studio/command-line/adb.html).
+Before running `npm run test` make sure to update `TEST.pathToTest` in ./test/helpers/test.js with your local IP address. Running test on Android requires a [running adb server](https://developer.android.com/studio/command-line/adb.html).
+Also note some advanced tests require manual verification and are located in test/spec/manualSpec and need to be run manually in latest Chrome for desktop.
 
 [Back to documentation sections](#documentation-sections)
 

@@ -17,8 +17,8 @@ export default class Tracking {
     this._trackingApiEventMap.set('adviewable', 'viewable');
     this._trackingApiEventMap.set('adviewundetermined', 'viewundetermined');
     // Tracking Event Elements
-    this._trackingApiEventMap.set('admuted', 'mute');
-    this._trackingApiEventMap.set('adunmuted', 'unmute');
+    this._trackingApiEventMap.set('advolumemuted', 'mute');
+    this._trackingApiEventMap.set('advolumeunmuted', 'unmute');
     this._trackingApiEventMap.set('adpaused', 'pause');
     this._trackingApiEventMap.set('adresumed', 'resume');
     this._trackingApiEventMap.set('adskipped', 'skip');
@@ -162,9 +162,9 @@ export default class Tracking {
       const muted = this._rmpVast.currentAdPlayer.muted;
       const volume = this._rmpVast.currentAdPlayer.volume;
       if (muted || volume === 0) {
-        this.dispatchTrackingAndApiEvent('admuted');
+        this.dispatchTrackingAndApiEvent('advolumemuted');
       } else if (!muted && volume > 0) {
-        this.dispatchTrackingAndApiEvent('adunmuted');
+        this.dispatchTrackingAndApiEvent('advolumeunmuted');
       }
       this._rmpVast.rmpVastUtils.createApiEvent('advolumechanged');
     }

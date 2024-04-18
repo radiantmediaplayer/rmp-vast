@@ -307,6 +307,7 @@ const _wireUI = function () {
     'adexpandedchange',
     'adremainingtimechange',
     'advolumemuted',
+    'advolumeunmuted',
     'advolumechanged',
     'adcomplete',
     'adskipped',
