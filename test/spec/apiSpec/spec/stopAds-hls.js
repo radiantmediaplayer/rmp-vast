@@ -21,8 +21,27 @@ describe('Test for stopAds-hls', function () {
   }, 12000);
 
   const title = document.getElementsByTagName('title')[0];
+  const result = document.getElementById('result');
+  const timeout = 30000;
 
   it('should load stopAds-hls', function (done) {
+
+    const _fail = () => {
+      result.textContent = 'failed';
+      title.textContent = 'Test finished';
+      done.fail();
+    };
+
+    const _pass = () => {
+      result.textContent = 'passed';
+      title.textContent = 'Test finished';
+      done();
+    };
+
+    setTimeout(() => {
+      _fail();
+    }, timeout);
+
     let validSteps = 0;
 
     const _incrementAndLog = function (event) {
@@ -48,11 +67,10 @@ describe('Test for stopAds-hls', function () {
       _incrementAndLog(e);
       expect(validSteps).toBe(5);
       if (validSteps === 5) {
-        title.textContent = 'Test completed';
+        _pass();
+      } else {
+        _fail();
       }
-      setTimeout(function () {
-        done();
-      }, 100);
     });
 
     rmpVast.loadAds(ADTAG1);

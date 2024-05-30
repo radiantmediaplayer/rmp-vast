@@ -20,16 +20,13 @@
     </div>
   </div>
   <script>
-    var id = 'vast-player';
-    const macrosMap = new Map();
-    macrosMap.set('CLIENTUA', encodeURIComponent('MyPlayer/1.0 rmp-vast/15.0.0'));
-    macrosMap.set('PLAYBACKMETHODS', 2);
+    const id = 'vast-player';
     const params = {
       showControlsForAdPlayer: true,
-      macros: macrosMap
+      debugRawConsoleLogs: true
     };
     var container = document.getElementById(id);
-    var ADTAG = 'https://www.radiantmediaplayer.com/vast/tags/inline-linear-custom-macros.xml';
+    var ADTAG = 'https://www.radiantmediaplayer.com/vast/tags/inline-linear-1.xml';
     /*ADTAG = 'https://pubads.g.doubleclick.net/gampad/ads?iu=/21775744923/external/simid&description_url=https%3A%2F%2Fdevelopers.google.com%2Finteractive-media-ads&sz=640x480&gdfp_req=1&output=vast&unviewed_position_start=1&env=vp&impl=s&correlator=' + Date.now();*/
 
 

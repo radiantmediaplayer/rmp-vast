@@ -14,8 +14,28 @@ describe('Test for raw-xml-input', function () {
     container.style.height = '180px';
   }
   const title = document.getElementsByTagName('title')[0];
+  const result = document.getElementById('result');
+  const timeout = 30000;
+
 
   it('should load adTag and play it', function (done) {
+
+    const _fail = () => {
+      result.textContent = 'failed';
+      title.textContent = 'Test finished';
+      done.fail();
+    };
+
+    const _pass = () => {
+      result.textContent = 'passed';
+      title.textContent = 'Test finished';
+      done();
+    };
+
+    setTimeout(() => {
+      _fail();
+    }, timeout);
+
     let validSteps = 0;
 
     const _incrementAndLog = function (event) {
@@ -47,10 +67,11 @@ describe('Test for raw-xml-input', function () {
         timeupdateCount++;
         if (timeupdateCount === 5) {
           _incrementAndLog(e);
+          expect(validSteps).toBe(6);
           if (validSteps === 6) {
-            expect(validSteps).toBe(6);
-            title.textContent = 'Test completed';
-            done();
+            _pass();
+          } else {
+            _fail();
           }
         }
       });

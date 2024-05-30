@@ -33,7 +33,8 @@ export default class RmpVast {
      *  to the parent application of rmp-vast to provide those informations
      * @property {boolean} [useHlsJS] - Enables hls.js usage to display creatives delivered in HLS format on all devices. Include hls.js library (./externals/hls/hls.min.js) in your page before usage. Default: true.
      * @property {boolean} [debugHlsJS] - Enables debug log when hls.js is used to stream creatives. Default: false.
-     * @property {boolean} [omidSupport] - Enables OMID (OM Web SDK) support in rmp-vast. Default: false.
+     * @property {boolean} [debugRawConsoleLogs] - Enables raw debug console log for Flutter apps and legacy platforms. Default: false.
+    * @property {boolean} [omidSupport] - Enables OMID (OM Web SDK) support in rmp-vast. Default: false.
      * @property {string[]} [omidAllowedVendors] - List of allowed vendors for ad verification. Vendors not listed will
      *  be rejected. Default: [].
      * @property {boolean} [omidUnderEvaluation] - When in development/testing/staging set this to true. Default: false.
@@ -104,6 +105,10 @@ export default class RmpVast {
          */
         debugHlsJS?: boolean;
         /**
+         * - Enables raw debug console log for Flutter apps and legacy platforms. Default: false.
+         */
+        debugRawConsoleLogs?: boolean;
+        /**
          * - Enables OMID (OM Web SDK) support in rmp-vast. Default: false.
          */
         omidSupport?: boolean;
@@ -148,10 +153,12 @@ export default class RmpVast {
     container: HTMLElement;
     contentWrapper: Element;
     currentContentPlayer: Element;
-    rmpVastContentPlayer: ContentPlayer;
     rmpVastUtils: Utils;
+    debugRawConsoleLogs: boolean;
+    rmpVastContentPlayer: ContentPlayer;
     rmpVastTracking: Tracking;
     rmpVastCompanionCreative: CompanionCreative;
+    environmentData: typeof Environment;
     _initInstanceVariables(): void;
     adContainer: any;
     rmpVastAdPlayer: AdPlayer;
@@ -522,11 +529,24 @@ export default class RmpVast {
      */
     get vpaidCompanionAds(): () => string;
 }
+import Utils from './helpers/utils';
 import ContentPlayer from './players/content-player';
-import Utils from './framework/utils';
-import Tracking from './framework/tracking';
+import Tracking from './helpers/tracking';
 import CompanionCreative from './creatives/companion';
+type Environment = {
+    devicePixelRatio: number;
+    maxTouchPoints: number;
+    isIpadOS: boolean;
+    isIos: any[];
+    isAndroid: any[];
+    isMacOSSafari: boolean;
+    isFirefox: boolean;
+    isMobile: boolean;
+    hasNativeFullscreenSupport: boolean;
+};
+import Environment from './framework/environment';
 import AdPlayer from './players/ad-player';
 import LinearCreative from './creatives/linear';
 import NonLinearCreative from './creatives/non-linear';
+export {};
 //# sourceMappingURL=index.d.ts.map

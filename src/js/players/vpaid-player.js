@@ -10,6 +10,7 @@ export default class VpaidPlayer {
     this._adPlayer = rmpVast.currentAdPlayer;
     this._params = rmpVast.params;
     this._adParametersData = rmpVast.adParametersData;
+    this._debugRawConsoleLogs = rmpVast.debugRawConsoleLogs;
     this._initialWidth = 640;
     this._initialHeight = 360;
     this._initialViewMode = 'normal';
@@ -87,7 +88,7 @@ export default class VpaidPlayer {
   }
 
   _onAdStopped() {
-    Logger.print('info', `VPAID AdStopped event`);
+    Logger.print(this._debugRawConsoleLogs, `VPAID AdStopped event`);
     FW.clearTimeout(this._adStoppedTimeout);
     if (this._rmpVast.rmpVastAdPlayer) {
       this._rmpVast.rmpVastAdPlayer.resumeContent();
@@ -202,11 +203,11 @@ export default class VpaidPlayer {
   }
 
   _onAdLog(message) {
-    Logger.print('info', `VPAID AdLog event ${message}`);
+    Logger.print(this._debugRawConsoleLogs, `VPAID AdLog event ${message}`);
   }
 
   _onAdError(message) {
-    Logger.print('info', `VPAID AdError event ${message}`);
+    Logger.print(this._debugRawConsoleLogs, `VPAID AdError event ${message}`);
     this._rmpVast.rmpVastUtils.processVastErrors(901, true);
   }
 
@@ -301,6 +302,7 @@ export default class VpaidPlayer {
     });
   }
 
+  // eslint-disable-next-line
   _isValidVPAID(creative) {
     if (typeof creative.initAd === 'function' &&
       typeof creative.startAd === 'function' &&
@@ -328,20 +330,20 @@ export default class VpaidPlayer {
       try {
         vpaidVersion = this._vpaidCreative.handshakeVersion('2.0');
       } catch (error) {
-        Logger.print('warning', error);
-        Logger.print('info', `could not validate VPAID ad unit handshakeVersion`);
+        console.warn(error);
+        Logger.print(this._debugRawConsoleLogs, `could not validate VPAID ad unit handshakeVersion`);
         this._rmpVast.rmpVastUtils.processVastErrors(901, true);
         return;
       }
       this._vpaidVersion = parseInt(vpaidVersion);
       if (this._vpaidVersion < 1) {
-        Logger.print('info', `unsupported VPAID version - exit`);
+        Logger.print(this._debugRawConsoleLogs, `unsupported VPAID version - exit`);
         this._rmpVast.rmpVastUtils.processVastErrors(901, true);
         return;
       }
       if (!this._isValidVPAID(this._vpaidCreative)) {
         //The VPAID creative doesn't conform to the VPAID spec
-        Logger.print('info', `VPAID creative does not conform to VPAID spec - exit`);
+        Logger.print(this._debugRawConsoleLogs, `VPAID creative does not conform to VPAID spec - exit`);
         this._rmpVast.rmpVastUtils.processVastErrors(901, true);
         return;
       }
@@ -352,7 +354,7 @@ export default class VpaidPlayer {
       const creativeData = {};
       creativeData.AdParameters = this._adParametersData;
 
-      Logger.print('info', `VPAID AdParameters follow`, this._adParametersData);
+      Logger.print(this._debugRawConsoleLogs, `VPAID AdParameters follow`, this._adParametersData);
 
       FW.show(this._adContainer);
       FW.show(this._adPlayer);
@@ -374,7 +376,7 @@ export default class VpaidPlayer {
       // if not we need to resume content
       this._initAdTimeout = setTimeout(() => {
         if (!this._vpaidAdLoaded) {
-          Logger.print('info', `_initAdTimeout`);
+          Logger.print(this._debugRawConsoleLogs, `_initAdTimeout`);
           if (this._rmpVast.rmpVastAdPlayer) {
             this._rmpVast.rmpVastAdPlayer.resumeContent();
           }
@@ -382,7 +384,7 @@ export default class VpaidPlayer {
         this._vpaidAdLoaded = false;
       }, this._params.creativeLoadTimeout * 10);
 
-      Logger.print('info', `calling initAd on VPAID creative now`);
+      Logger.print(this._debugRawConsoleLogs, `calling initAd on VPAID creative now`);
 
       this._vpaidCreative.initAd(
         this._initialWidth,
@@ -396,7 +398,7 @@ export default class VpaidPlayer {
   }
 
   _onJSVPAIDLoaded() {
-    Logger.print('info', `VPAID JS loaded`);
+    Logger.print(this._debugRawConsoleLogs, `VPAID JS loaded`);
 
     const iframeWindow = this._vpaidIframe.contentWindow;
     if (typeof iframeWindow.getVPAIDAd === 'function') {
@@ -413,7 +415,7 @@ export default class VpaidPlayer {
   }
 
   _onJSVPAIDError() {
-    Logger.print('info', `VPAID JS error loading`);
+    Logger.print(this._debugRawConsoleLogs, `VPAID JS error loading`);
     this._rmpVast.rmpVastUtils.processVastErrors(901, true);
     this._vpaidScript.onload = null;
     this._vpaidScript.onerror = null;
@@ -507,7 +509,7 @@ export default class VpaidPlayer {
     if (viewMode === 'fullscreen') {
       validViewMode = viewMode;
     }
-    Logger.print('info', `VPAID resizeAd with width ${width}, height ${height}, viewMode ${viewMode}`);
+    Logger.print(this._debugRawConsoleLogs, `VPAID resizeAd with width ${width}, height ${height}, viewMode ${viewMode}`);
     this._vpaidCreative.resizeAd(width, height, validViewMode);
   }
 
@@ -515,7 +517,7 @@ export default class VpaidPlayer {
     if (!this._vpaidCreative) {
       return;
     }
-    Logger.print('info', `stopAd`);
+    Logger.print(this._debugRawConsoleLogs, `stopAd`);
     // when stopAd is called we need to check a 
     // AdStopped event follows
     this._adStoppedTimeout = setTimeout(() => {
@@ -525,14 +527,14 @@ export default class VpaidPlayer {
   }
 
   pauseAd() {
-    Logger.print('info', `pauseAd`);
+    Logger.print(this._debugRawConsoleLogs, `pauseAd`);
     if (this._vpaidCreative && !this._vpaidPaused) {
       this._vpaidCreative.pauseAd();
     }
   }
 
   resumeAd() {
-    Logger.print('info', `resumeAd`);
+    Logger.print(this._debugRawConsoleLogs, `resumeAd`);
     if (this._vpaidCreative && this._vpaidPaused) {
       this._vpaidCreative.resumeAd();
     }
@@ -601,7 +603,7 @@ export default class VpaidPlayer {
     // in Asynchronous Ad Environments  http://www.iab.net/media/file/rich_media_ajax_best_practices.pdf
     const src = 'about:blank';
     this._vpaidIframe.onload = () => {
-      Logger.print('info', `_vpaidIframe.onload`);
+      Logger.print(this._debugRawConsoleLogs, `_vpaidIframe.onload`);
       if (!this._vpaidIframe.contentWindow || !this._vpaidIframe.contentWindow.document ||
         !this._vpaidIframe.contentWindow.document.body) {
         // PING error and resume content
@@ -615,7 +617,7 @@ export default class VpaidPlayer {
       this._vpaidScript = iframeDocument.createElement('script');
 
       this._vpaidLoadTimeout = setTimeout(() => {
-        Logger.print('info', `could not load VPAID JS Creative or getVPAIDAd in iframeWindow - resume content`);
+        Logger.print(this._debugRawConsoleLogs, `could not load VPAID JS Creative or getVPAIDAd in iframeWindow - resume content`);
         this._vpaidScript.onload = null;
         this._vpaidScript.onerror = null;
         if (this._rmpVast.rmpVastAdPlayer) {
@@ -633,7 +635,7 @@ export default class VpaidPlayer {
   }
 
   destroy() {
-    Logger.print('info', `destroy VPAID dependencies`);
+    Logger.print(this._debugRawConsoleLogs, `destroy VPAID dependencies`);
     FW.clearInterval(this._vpaidAvailableInterval);
     FW.clearInterval(this._vpaidAdRemainingTimeInterval);
     FW.clearTimeout(this._vpaidLoadTimeout);

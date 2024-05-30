@@ -1,6 +1,5 @@
 const ADTAG = 'https://www.radiantmediaplayer.com/vast/tags/iab/vast4_2/Ad_Verification_OMID-valid-test-2.xml';
 
-
 describe('Ad_Verification-test', function () {
 
   const id = 'rmp';
@@ -19,8 +18,27 @@ describe('Ad_Verification-test', function () {
     container.style.height = '180px';
   }
   const title = document.getElementsByTagName('title')[0];
+  const result = document.getElementById('result');
+  const timeout = 30000;
 
   it('should Ad_Verification-test play it', function (done) {
+
+    const _fail = () => {
+      result.textContent = 'failed';
+      title.textContent = 'Test finished';
+      done.fail();
+    };
+
+    const _pass = () => {
+      result.textContent = 'passed';
+      title.textContent = 'Test finished';
+      done();
+    };
+
+    setTimeout(() => {
+      _fail();
+    }, timeout);
+
     let validSteps = 0;
 
     const _incrementAndLog = function (event) {
@@ -50,10 +68,11 @@ describe('Ad_Verification-test', function () {
         timeupdateCount++;
         if (timeupdateCount === 5) {
           _incrementAndLog(e);
+          expect(validSteps).toBe(5);
           if (validSteps === 5) {
-            expect(validSteps).toBe(5);
-            title.textContent = 'Test completed';
-            done();
+            _pass();
+          } else {
+            _fail();
           }
         }
       });

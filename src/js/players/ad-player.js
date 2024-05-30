@@ -11,6 +11,7 @@ export default class AdPlayer {
     this._contentPlayer = rmpVast.currentContentPlayer;
     this._adContainer = rmpVast.adContainer;
     this._contentWrapper = rmpVast.contentWrapper;
+    this._debugRawConsoleLogs = rmpVast.debugRawConsoleLogs;
     this._adPlayer = null;
   }
 
@@ -59,7 +60,7 @@ export default class AdPlayer {
   }
 
   destroy() {
-    Logger.print('info', `start destroying ad player`);
+    Logger.print(this._debugRawConsoleLogs, `start destroying ad player`);
 
     // destroy icons if any 
     if (this._rmpVast.rmpVastIcons) {
@@ -104,13 +105,13 @@ export default class AdPlayer {
           this._adPlayer.load();
         }
         FW.hide(this._adPlayer);
-        Logger.print('info', `flushing currentAdPlayer buffer after ad`);
+        Logger.print(this._debugRawConsoleLogs, `flushing currentAdPlayer buffer after ad`);
       }
       if (this._rmpVast.rmpVastNonLinearCreative) {
         FW.removeElement(this._rmpVast.rmpVastNonLinearCreative.nonLinearContainerElement);
       }
     } catch (error) {
-      Logger.print('warning', error);
+      console.warn(error);
     }
 
     this._rmpVast.resetVariablesForNewLoadAds();
@@ -124,7 +125,7 @@ export default class AdPlayer {
     FW.hide(this._adContainer);
 
     this._rmpVast.currentAdPlayer = this._adPlayer = document.createElement('video');
-    Logger.printVideoEvents(this._adPlayer, 'ad');
+    Logger.printVideoEvents(this._debugRawConsoleLogs, this._adPlayer, 'ad');
     // disable native UI cast/PiP for ad player
     this._adPlayer.disableRemotePlayback = true;
     this._adPlayer.disablePictureInPicture = true;
@@ -198,7 +199,7 @@ export default class AdPlayer {
       // we do not display non-linear ads with outstream ad 
       // they won't fit the format
       if (this._params.outstream) {
-        Logger.print('info', `non-linear creative detected for outstream ad mode - discarding creative`);
+        Logger.print(this._debugRawConsoleLogs, `non-linear creative detected for outstream ad mode - discarding creative`);
         this._rmpVast.rmpVastUtils.processVastErrors(201, true);
         return;
       } else {
@@ -237,7 +238,7 @@ export default class AdPlayer {
   }
 
   resumeContent() {
-    Logger.print('info', `AdPlayer resumeContent requested`);
+    Logger.print(this._debugRawConsoleLogs, `AdPlayer resumeContent requested`);
     if (this._rmpVast.rmpVastAdPlayer) {
       this._rmpVast.rmpVastAdPlayer.destroy();
     }
@@ -250,7 +251,7 @@ export default class AdPlayer {
     // custom use-cases when dynamically changing source for content
     // no need to resume content for outstream ads
     if (!this._rmpVast.contentCompleted && !this._params.outstream) {
-      Logger.print('info', `content player play requested after ad player resumeContent`);
+      Logger.print(this._debugRawConsoleLogs, `content player play requested after ad player resumeContent`);
       this._rmpVast.rmpVastContentPlayer.play();
     }
     this._rmpVast.contentCompleted = false;

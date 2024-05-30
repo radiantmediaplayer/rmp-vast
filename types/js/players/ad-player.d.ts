@@ -5,6 +5,7 @@ export default class AdPlayer {
     _contentPlayer: any;
     _adContainer: any;
     _contentWrapper: any;
+    _debugRawConsoleLogs: any;
     _adPlayer: any;
     set volume(level: any);
     get volume(): any;

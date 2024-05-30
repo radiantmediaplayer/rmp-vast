@@ -8,6 +8,7 @@ export default class Icons {
     this._rmpVast = rmpVast;
     this._adContainer = rmpVast.adContainer;
     this._adPlayer = rmpVast.currentAdPlayer;
+    this._debugRawConsoleLogs = rmpVast.debugRawConsoleLogs;
     this._onPlayingAppendIconsFn = null;
     this._iconsData = [];
   }
@@ -37,12 +38,12 @@ export default class Icons {
   }
 
   _onIconLoadPingTracking(index) {
-    Logger.print('info', `IconViewTracking for icon at index ${index}`);
+    Logger.print(this._debugRawConsoleLogs, `IconViewTracking for icon at index ${index}`);
     this._rmpVast.rmpVastTracking.pingURI(this._iconsData[index].iconViewTrackingUrl);
   }
 
   _onPlayingAppendIcons() {
-    Logger.print('info', `playing states has been reached - append icons`);
+    Logger.print(this._debugRawConsoleLogs, `playing states has been reached - append icons`);
     this._iconsData.forEach((iconData, index) => {
       let icon;
       let src;
@@ -108,13 +109,13 @@ export default class Icons {
       } else {
         icon.src = src;
       }
-      Logger.print('info', `Selected icon details follow`, icon);
+      Logger.print(this._debugRawConsoleLogs, `Selected icon details follow`, icon);
       this._adContainer.appendChild(icon);
     });
   }
 
   destroy() {
-    Logger.print('info', `Start destroying icons`);
+    Logger.print(this._debugRawConsoleLogs, `Start destroying icons`);
     const icons = this._adContainer.querySelectorAll('.rmp-ad-container-icons');
     if (icons.length > 0) {
       icons.forEach(icon => {
@@ -127,7 +128,7 @@ export default class Icons {
   }
 
   parse(icons) {
-    Logger.print('info', `Start parsing icons`);
+    Logger.print(this._debugRawConsoleLogs, `Start parsing icons`);
     for (let i = 0; i < icons.length; i++) {
       const currentIcon = icons[i];
       const program = currentIcon.program;
@@ -143,27 +144,27 @@ export default class Icons {
       }
       const staticResourceUrl = currentIcon.staticResource;
       const iframeResourceUrl = currentIcon.iframeResource;
-      const htmlResource = currentIcon.htmlResource;
+      const htmlContent = currentIcon.htmlResource;
       // we only support StaticResource (HTMLResource not supported)
-      if (staticResourceUrl === null && iframeResourceUrl === null && htmlResource === null) {
+      if (staticResourceUrl === null && iframeResourceUrl === null && htmlContent === null) {
         continue;
       }
       const iconData = {
-        program: program,
-        width: width,
-        height: height,
-        xPosition: xPosition,
-        yPosition: yPosition,
-        staticResourceUrl: staticResourceUrl,
-        iframeResourceUrl: iframeResourceUrl,
-        htmlContent: htmlResource
+        program,
+        width,
+        height,
+        xPosition,
+        yPosition,
+        staticResourceUrl,
+        iframeResourceUrl,
+        htmlContent
       };
       iconData.iconViewTrackingUrl = currentIcon.iconViewTrackingURLTemplate;
       iconData.iconClickThroughUrl = currentIcon.iconClickThroughURLTemplate;
       iconData.iconClickTrackingUrls = currentIcon.iconClickTrackingURLTemplates;
       this._iconsData.push(iconData);
     }
-    Logger.print('info', `Validated parsed icons follows`, this._iconsData);
+    Logger.print(this._debugRawConsoleLogs, `Validated parsed icons follows`, this._iconsData);
   }
 
   append() {

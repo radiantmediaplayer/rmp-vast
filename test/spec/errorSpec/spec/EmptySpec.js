@@ -1,6 +1,5 @@
 const ADTAG = 'https://www.radiantmediaplayer.com/vast/tags/empty-1.xml';
 
-
 describe('Test for EmptySpec', function () {
 
   const id = 'rmp';
@@ -14,8 +13,27 @@ describe('Test for EmptySpec', function () {
     container.style.height = '180px';
   }
   const title = document.getElementsByTagName('title')[0];
+  const result = document.getElementById('result');
+  const timeout = 10000;
 
   it('should load adTag and trigger an error', function (done) {
+
+    const _fail = () => {
+      result.textContent = 'failed';
+      title.textContent = 'Test finished';
+      done.fail();
+    };
+
+    const _pass = () => {
+      result.textContent = 'passed';
+      title.textContent = 'Test finished';
+      done();
+    };
+
+    setTimeout(() => {
+      _fail();
+    }, timeout);
+
     let validSteps = 0;
 
     const _incrementAndLog = function (event) {
@@ -41,10 +59,11 @@ describe('Test for EmptySpec', function () {
         timeupdateCount++;
         if (timeupdateCount === 5) {
           _incrementAndLog(e);
+          expect(validSteps).toBe(4);
           if (validSteps === 4) {
-            expect(validSteps).toBe(4);
-            title.textContent = 'Test completed';
-            done();
+            _pass();
+          } else {
+            _fail();
           }
         }
       });

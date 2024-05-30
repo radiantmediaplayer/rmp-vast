@@ -1,12 +1,14 @@
-import FW from './fw';
-import Environment from './environment';
-import Logger from './logger';
+import FW from '../framework/fw';
+import Environment from '../framework/environment';
+import Logger from '../framework/logger';
 
 
 export default class Utils {
 
   constructor(rmpVast) {
     this._rmpVast = rmpVast;
+    // we cannot have this here - we need this._rmpVast.debugRawConsoleLogs
+    //this._debugRawConsoleLogs = rmpVast.debugRawConsoleLogs;
     this._onFullscreenchangeFn = null;
   }
 
@@ -16,7 +18,7 @@ export default class Utils {
   // we need this to handle VAST fullscreen events
   _onFullscreenchange(event) {
     if (event && event.type) {
-      Logger.print('info', `event is ${event.type}`);
+      Logger.print(this._rmpVast.debugRawConsoleLogs, `event is ${event.type}`);
       const isLinear = this._rmpVast.creative.isLinear;
       const isOnStage = this._rmpVast.__adOnStage;
       if (event.type === 'fullscreenchange') {
@@ -208,8 +210,8 @@ export default class Utils {
         this._rmpVast.__adErrorType = 'adPlayError';
       }
     }
-    Logger.print('info', `VAST error code is ${this._rmpVast.__vastErrorCode} with message: ${this._rmpVast.__adErrorMessage}`);
-    Logger.print('info', `Ad error type is ${this._rmpVast.__adErrorType}`);
+    Logger.print(this._rmpVast.debugRawConsoleLogs, `VAST error code is ${this._rmpVast.__vastErrorCode} with message: ${this._rmpVast.__adErrorMessage}`);
+    Logger.print(this._rmpVast.debugRawConsoleLogs, `Ad error type is ${this._rmpVast.__adErrorType}`);
   }
 
   filterParams(inputParams) {
@@ -237,6 +239,7 @@ export default class Utils {
       },
       useHlsJS: true,
       debugHlsJS: false,
+      debugRawConsoleLogs: false,
       // OM SDK params
       omidSupport: false,
       omidAllowedVendors: [],
@@ -281,12 +284,12 @@ export default class Utils {
     if (Array.isArray(event)) {
       event.forEach(currentEvent => {
         if (currentEvent) {
-          Logger.print('info', `API EVENT - ${event}`);
+          Logger.print(this._rmpVast.debugRawConsoleLogs, `API EVENT - ${event}`);
           this._rmpVast.dispatch(currentEvent);
         }
       });
     } else if (event) {
-      Logger.print('info', `API EVENT - ${event}`);
+      Logger.print(this._rmpVast.debugRawConsoleLogs, `API EVENT - ${event}`);
       this._rmpVast.dispatch(event);
     }
   }
@@ -311,42 +314,24 @@ export default class Utils {
       if (playPromise !== undefined) {
         const isLinear = this._rmpVast.creative.isLinear;
         playPromise.then(() => {
-          Logger.print('info', `playPromise on ${whichPlayer} player has succeeded`);
+          Logger.print(this._rmpVast.debugRawConsoleLogs, `playPromise on ${whichPlayer} player has succeeded`);
           if (firstPlayerPlayRequest) {
             this.createApiEvent('adinitialplayrequestsucceeded');
           }
         }).catch(error => {
-          Logger.print('warning', error);
+          console.warn(error);
           if (firstPlayerPlayRequest && whichPlayer === 'vast' && isLinear) {
-            Logger.print('info', `initial play promise on ad player has been rejected`);
+            Logger.print(this._rmpVast.debugRawConsoleLogs, `initial play promise on ad player has been rejected`);
             this.processVastErrors(400, true);
             this.createApiEvent('adinitialplayrequestfailed');
           } else if (firstPlayerPlayRequest && whichPlayer === 'content' && !isLinear) {
-            Logger.print('info', `initial play promise on content player has been rejected`);
+            Logger.print(this._rmpVast.debugRawConsoleLogs, `initial play promise on content player has been rejected`);
             this.createApiEvent('adinitialplayrequestfailed');
           } else {
-            Logger.print('info', `playPromise on ${whichPlayer} player has been rejected`);
+            Logger.print(this._rmpVast.debugRawConsoleLogs, `playPromise on ${whichPlayer} player has been rejected`);
           }
         });
       }
-    }
-  }
-
-  makeButtonAccessible(element, ariaLabel) {
-    // make skip button accessible
-    element.tabIndex = 0;
-    element.setAttribute('role', 'button');
-    element.addEventListener('keyup', event => {
-      const code = event.which;
-      // 13 = Return, 32 = Space
-      if ((code === 13) || (code === 32)) {
-        event.stopPropagation();
-        event.preventDefault();
-        FW.createSyntheticEvent('click', element);
-      }
-    });
-    if (ariaLabel) {
-      element.setAttribute('aria-label', ariaLabel);
     }
   }
 

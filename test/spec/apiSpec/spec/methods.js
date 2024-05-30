@@ -9,8 +9,27 @@ describe('Test for API methods', function () {
   });
   video.muted = true;
   const title = document.getElementsByTagName('title')[0];
+  const result = document.getElementById('result');
+  const timeout = 10000;
 
   it('should API methods', function (done) {
+
+    const _fail = () => {
+      result.textContent = 'failed';
+      title.textContent = 'Test finished';
+      done.fail();
+    };
+
+    const _pass = () => {
+      result.textContent = 'passed';
+      title.textContent = 'Test finished';
+      done();
+    };
+
+    setTimeout(() => {
+      _fail();
+    }, timeout);
+
     let methodsSteps = 0;
 
     const _incrementAndLogMethods = function (event) {
@@ -117,8 +136,9 @@ describe('Test for API methods', function () {
       _incrementAndLogMethods(e);
       expect(methodsSteps).toBe(17);
       if (methodsSteps === 17) {
-        title.textContent = 'Test completed';
-        done();
+        _pass();
+      } else {
+        _fail();
       }
     });
 

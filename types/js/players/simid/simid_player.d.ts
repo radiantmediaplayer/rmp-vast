@@ -13,6 +13,7 @@ export default class SimidPlayer {
      */
     protected simidProtocol: SimidProtocol;
     rmpVast_: any;
+    _debugRawConsoleLogs: any;
     simidData_: any;
     adContainer_: any;
     playerDiv_: any;

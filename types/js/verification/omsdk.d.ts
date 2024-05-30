@@ -1,6 +1,12 @@
 export default class OmSdkManager {
     constructor(adVerifications: any, rmpVast: any);
     _rmpVast: any;
+    _contentPlayer: any;
+    _adPlayer: any;
+    _params: any;
+    _isSkippableAd: any;
+    _skipTimeOffset: any;
+    _debugRawConsoleLogs: any;
     VastProperties: any;
     _adEvents: any;
     _mediaEvents: any;
@@ -8,11 +14,6 @@ export default class OmSdkManager {
     _lastVideoTime: number;
     _adVerifications: any;
     _onFullscreenChangeFn: any;
-    _contentPlayer: any;
-    _adPlayer: any;
-    _params: any;
-    _isSkippableAd: any;
-    _skipTimeOffset: any;
     _destroy(): void;
     _onFullscreenChange(): void;
     _pingVerificationNotExecuted(verification: any, reasonCode: any): void;

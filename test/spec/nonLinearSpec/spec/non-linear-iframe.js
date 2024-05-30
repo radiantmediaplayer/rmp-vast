@@ -19,8 +19,27 @@ describe('Test for non-linear-iframe', function () {
   const rmpVast = new RmpVast(id);
   video.muted = true;
   const title = document.getElementsByTagName('title')[0];
+  const result = document.getElementById('result');
+  const timeout = 30000;
 
   it('should load adTag and play it', function (done) {
+
+    const _fail = () => {
+      result.textContent = 'failed';
+      title.textContent = 'Test finished';
+      done.fail();
+    };
+
+    const _pass = () => {
+      result.textContent = 'passed';
+      title.textContent = 'Test finished';
+      done();
+    };
+
+    setTimeout(() => {
+      _fail();
+    }, timeout);
+
     let validSteps = 0;
 
     const _incrementAndLog = function (event) {
@@ -62,10 +81,11 @@ describe('Test for non-linear-iframe', function () {
         timeupdateCount++;
         if (timeupdateCount === 5) {
           _incrementAndLog(e);
+          expect(validSteps).toBe(7);
           if (validSteps === 7) {
-            expect(validSteps).toBe(7);
-            title.textContent = 'Test completed';
-            done();
+            _pass();
+          } else {
+            _fail();
           }
         }
       });

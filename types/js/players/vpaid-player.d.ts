@@ -5,6 +5,7 @@ export default class VpaidPlayer {
     _adPlayer: any;
     _params: any;
     _adParametersData: any;
+    _debugRawConsoleLogs: any;
     _initialWidth: number;
     _initialHeight: number;
     _initialViewMode: string;

@@ -3,7 +3,6 @@
  * Note: Some browsers do not support promises and a more complete implementation
  *       should consider using a polyfill.
  */
-import Logger from '../../framework/logger';
 
 
 /** Contains all constants common across SIMID */
@@ -178,15 +177,16 @@ class SimidProtocol {
     // Only create session does not need to be in the SIMID name space
     // because it is part of the protocol.
     const nameSpacedMessage =
-      messageType == ProtocolMessage.CREATE_SESSION ?
-        messageType : 'SIMID:' + messageType;
+      messageType === ProtocolMessage.CREATE_SESSION ?
+        messageType :
+        'SIMID:' + messageType;
     // The message object as defined by the SIMID spec.
     const message = {
-      'sessionId': this.sessionId_,
-      'messageId': messageId,
-      'type': nameSpacedMessage,
-      'timestamp': Date.now(),
-      'args': messageArgs
+      sessionId: this.sessionId_,
+      messageId,
+      type: nameSpacedMessage,
+      timestamp: Date.now(),
+      args: messageArgs
     };
 
     if (EventsThatRequireResponse.includes(messageType)) {
@@ -223,11 +223,11 @@ class SimidProtocol {
    */
   addResolveRejectListener_(messageId, resolve, reject) {
     const listener = (data) => {
-      const type = data['type'];
-      const args = data['args']['value'];
-      if (type == 'resolve') {
+      const type = data.type;
+      const args = data.args.value;
+      if (type === 'resolve') {
         resolve(args);
-      } else if (type == 'reject') {
+      } else if (type === 'reject') {
         reject(args);
       }
     };
@@ -245,24 +245,24 @@ class SimidProtocol {
     try {
       data = JSON.parse(event.data);
     } catch (error) {
-      Logger.print('warning', `receiveMessage failed at decoding message`, error);
+      console.warn(error);
       return;
     }
     if (!data) {
       // If there is no data in the event this is not a SIMID message.
       return;
     }
-    const sessionId = data['sessionId'];
+    const sessionId = data.sessionId;
 
-    const type = data['type'];
+    const type = data.type;
     // A sessionId is valid in one of two cases:
     // 1. It is not set and the message type is createSession.
     // 2. The session ids match exactly.
-    const isCreatingSession = this.sessionId_ == '' && type == ProtocolMessage.CREATE_SESSION;
-    const isSessionIdMatch = this.sessionId_ == sessionId;
+    const isCreatingSession = this.sessionId_ === '' && type === ProtocolMessage.CREATE_SESSION;
+    const isSessionIdMatch = this.sessionId_ === sessionId;
     const validSessionId = isCreatingSession || isSessionIdMatch;
 
-    if (!validSessionId || type == null) {
+    if (!validSessionId || type === null) {
       // Ignore invalid messages.
       return;
     }
@@ -289,11 +289,11 @@ class SimidProtocol {
    * @private
    */
   handleProtocolMessage_(data) {
-    const type = data['type'];
+    const type = data.type;
     let listeners, args, correlatingId, resolutionFunction;
     switch (type) {
       case ProtocolMessage.CREATE_SESSION:
-        this.sessionId_ = data['sessionId'];
+        this.sessionId_ = data.sessionId;
         this.resolve(data);
         listeners = this.listeners_[type];
         if (listeners) {
@@ -304,8 +304,8 @@ class SimidProtocol {
       case ProtocolMessage.RESOLVE:
       // intentional fallthrough
       case ProtocolMessage.REJECT:
-        args = data['args'];
-        correlatingId = args['messageId'];
+        args = data.args;
+        correlatingId = args.messageId;
         resolutionFunction = this.resolutionListeners_[correlatingId];
         if (resolutionFunction) {
           // If the listener exists call it once only.
@@ -325,15 +325,15 @@ class SimidProtocol {
   resolve(incomingMessage, outgoingArgs) {
     const messageId = this.nextMessageId_++;
     const resolveMessageArgs = {
-      'messageId': incomingMessage['messageId'],
-      'value': outgoingArgs,
+      messageId: incomingMessage.messageId,
+      value: outgoingArgs,
     };
     const message = {
-      'sessionId': this.sessionId_,
-      'messageId': messageId,
-      'type': ProtocolMessage.RESOLVE,
-      'timestamp': Date.now(),
-      'args': resolveMessageArgs
+      sessionId: this.sessionId_,
+      messageId,
+      type: ProtocolMessage.RESOLVE,
+      timestamp: Date.now(),
+      args: resolveMessageArgs
     };
     this.target_.postMessage(JSON.stringify(message), '*');
   }
@@ -346,15 +346,15 @@ class SimidProtocol {
   reject(incomingMessage, outgoingArgs) {
     const messageId = this.nextMessageId_++;
     const rejectMessageArgs = {
-      'messageId': incomingMessage['messageId'],
-      'value': outgoingArgs,
+      messageId: incomingMessage.messageId,
+      value: outgoingArgs,
     };
     const message = {
-      'sessionId': this.sessionId_,
-      'messageId': messageId,
-      'type': ProtocolMessage.REJECT,
-      'timestamp': Date.now(),
-      'args': rejectMessageArgs
+      sessionId: this.sessionId_,
+      messageId,
+      type: ProtocolMessage.REJECT,
+      timestamp: Date.now(),
+      args: rejectMessageArgs
     };
     this.target_.postMessage(JSON.stringify(message), '*');
   }
@@ -366,12 +366,12 @@ class SimidProtocol {
    */
   createSession() {
     const sessionCreationResolved = () => {
-      Logger.print('info', `SIMID: Session created`);
+      console.log(`SIMID: Session created`);
     };
     const sessionCreationRejected = () => {
       // If this ever happens, it may be impossible for the ad
       // to ever communicate with the player.
-      Logger.print('info', `SIMID: Session creation was rejected`);
+      console.log(`SIMID: Session creation was rejected`);
     };
     this.generateSessionId_();
     this.sendMessage(ProtocolMessage.CREATE_SESSION).then(
@@ -399,7 +399,7 @@ class SimidProtocol {
     window.crypto.getRandomValues(random16Uint8s);
     // Split each 8-bit int into two 4-bit ints (4-bit * 32).
     const random32Uint4s = Array.from(Array(32).keys()).map(index => {
-      const isEven = index % 2 == 0;
+      const isEven = index % 2 === 0;
       const randomUint8 = random16Uint8s[Math.floor(index / 2)];
       // Pick the high 4 bits for even indices, the low 4 bits for odd.
       return isEven ? (randomUint8 >> 4) : (randomUint8 & 15);

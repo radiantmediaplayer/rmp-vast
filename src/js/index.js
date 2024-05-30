@@ -1,15 +1,8 @@
-/**
- * @license Copyright (c) 2015-2024 Radiant Media Player | https://www.radiantmediaplayer.com
- * rmp-vast
- * GitHub: https://github.com/radiantmediaplayer/rmp-vast
- * MIT License: https://github.com/radiantmediaplayer/rmp-vast/blob/master/LICENSE
- */
-
 import FW from './framework/fw';
 import Environment from './framework/environment';
 import Logger from './framework/logger';
-import Utils from './framework/utils';
-import Tracking from './framework/tracking';
+import Utils from './helpers/utils';
+import Tracking from './helpers/tracking';
 import LinearCreative from './creatives/linear';
 import NonLinearCreative from './creatives/non-linear';
 import CompanionCreative from './creatives/companion';
@@ -59,7 +52,8 @@ export default class RmpVast {
    *  to the parent application of rmp-vast to provide those informations
    * @property {boolean} [useHlsJS] - Enables hls.js usage to display creatives delivered in HLS format on all devices. Include hls.js library (./externals/hls/hls.min.js) in your page before usage. Default: true.
    * @property {boolean} [debugHlsJS] - Enables debug log when hls.js is used to stream creatives. Default: false.
-   * @property {boolean} [omidSupport] - Enables OMID (OM Web SDK) support in rmp-vast. Default: false.
+   * @property {boolean} [debugRawConsoleLogs] - Enables raw debug console log for Flutter apps and legacy platforms. Default: false.
+  * @property {boolean} [omidSupport] - Enables OMID (OM Web SDK) support in rmp-vast. Default: false.
    * @property {string[]} [omidAllowedVendors] - List of allowed vendors for ad verification. Vendors not listed will 
    *  be rejected. Default: [].
    * @property {boolean} [omidUnderEvaluation] - When in development/testing/staging set this to true. Default: false.
@@ -79,7 +73,7 @@ export default class RmpVast {
     this._initInstanceVariables();
 
     if (typeof id !== 'string' || id === '') {
-      Logger.print('error', `Invalid id to create new instance - exit`);
+      console.error(`Invalid id to create new instance - exit`);
       return;
     }
     this.id = id;
@@ -89,27 +83,32 @@ export default class RmpVast {
     this.currentContentPlayer = this.container.querySelector('.rmp-video');
 
     if (this.container === null || this.contentWrapper === null || this.currentContentPlayer === null) {
-      Logger.print('error', `Invalid DOM layout - missing container or content wrapper or content player - exit`);
+      console.error(`Invalid DOM layout - missing container or content wrapper or content player - exit`);
       return;
     }
 
-    Logger.print('info', `Creating new RmpVast instance`);
+    // filter input params
+    this.rmpVastUtils = new Utils(this);
+    this.rmpVastUtils.filterParams(params);
+    if (this.params.debugRawConsoleLogs) {
+      this.debugRawConsoleLogs = true;
+    }
+
+    Logger.print(this.debugRawConsoleLogs, `Filtered params follow`, this.params);
+
+    Logger.print(this.debugRawConsoleLogs, `Creating new RmpVast instance`);
 
     this.rmpVastContentPlayer = new ContentPlayer(this);
-    this.rmpVastUtils = new Utils(this);
     this.rmpVastTracking = new Tracking(this);
     this.rmpVastCompanionCreative = new CompanionCreative(this);
+    this.environmentData = Environment;
 
-    Logger.printVideoEvents(this.currentContentPlayer, 'content');
+    Logger.printVideoEvents(this.debugRawConsoleLogs, this.currentContentPlayer, 'content');
     // reset loadAds variables - this is reset at addestroyed 
     // so that next loadAds is cleared
     this.resetVariablesForNewLoadAds();
     // handle fullscreen events
     this.rmpVastUtils.handleFullscreen();
-    // filter input params
-    this.rmpVastUtils.filterParams(params);
-
-    Logger.print('info', `Filtered params follow`, this.params);
   }
 
   _initInstanceVariables() {
@@ -121,6 +120,7 @@ export default class RmpVast {
     this.rmpVastUtils = null;
     this.rmpVastTracking = null;
     this.rmpVastCompanionCreative = null;
+    this.environmentData = null;
     this.currentContentSrc = '';
     this.currentContentCurrentTime = -1;
     this.params = {};
@@ -131,6 +131,7 @@ export default class RmpVast {
     this.currentContentPlayer = null;
     this.currentAdPlayer = null;
     this.rmpVastInitialized = false;
+    this.debugRawConsoleLogs = false;
     // adpod
     this.adPod = false;
     this.adPodLength = 0;
@@ -282,7 +283,7 @@ export default class RmpVast {
       trackingEvents[key].forEach(url => {
         this.trackingTags.push({
           event: key,
-          url: url
+          url
         });
       });
     });
@@ -331,7 +332,7 @@ export default class RmpVast {
         viewableImpression.viewable.forEach(url => {
           this.trackingTags.push({
             event: 'viewable',
-            url: url
+            url
           });
         });
       }
@@ -339,7 +340,7 @@ export default class RmpVast {
         viewableImpression.notViewable.forEach(url => {
           this.trackingTags.push({
             event: 'notviewable',
-            url: url
+            url
           });
         });
       }
@@ -347,7 +348,7 @@ export default class RmpVast {
         viewableImpression.viewUndetermined.forEach(url => {
           this.trackingTags.push({
             event: 'viewundetermined',
-            url: url
+            url
           });
         });
       }
@@ -364,7 +365,7 @@ export default class RmpVast {
       await new Promise(resolve => {
         const currentAd = ads[i];
 
-        Logger.print('info', `currentAd follows`, currentAd);
+        Logger.print(this.debugRawConsoleLogs, `currentAd follows`, currentAd);
 
         this.ad.id = currentAd.id;
         this.ad.adServingId = currentAd.adServingId;
@@ -408,6 +409,7 @@ export default class RmpVast {
             this.adPod = true;
             return true;
           }
+          return false;
         });
         // this is to fix a weird bug in vast-client-js - sometimes it returns sequence === null for some items when
         // adpod is made of redirects
@@ -431,7 +433,7 @@ export default class RmpVast {
               }
             });
             this.adPodLength = adPodLength;
-            Logger.print('info', `AdPod detected with length ${this.adPodLength}`, currentAd);
+            Logger.print(this.debugRawConsoleLogs, `AdPod detected with length ${this.adPodLength}`, currentAd);
           }
 
           this.one('addestroyed', () => {
@@ -465,13 +467,14 @@ export default class RmpVast {
 
         // parse companion
         const creatives = currentAd.creatives;
-        Logger.print('info', `Parsed creatives follow`, creatives);
+        Logger.print(this.debugRawConsoleLogs, `Parsed creatives follow`, creatives);
         creatives.find(creative => {
           if (creative.type === 'companion') {
-            Logger.print('info', `Creative type companion detected`);
+            Logger.print(this.debugRawConsoleLogs, `Creative type companion detected`);
             this.rmpVastCompanionCreative.parse(creative);
             return true;
           }
+          return false;
         });
 
         for (let k = 0; k < creatives.length; k++) {
@@ -543,7 +546,7 @@ export default class RmpVast {
    * @private
    */
   _handleParsedVast(response) {
-    Logger.print('info', `VAST response follows`, response);
+    Logger.print(this.debugRawConsoleLogs, `VAST response follows`, response);
 
     // error at VAST/Error level
     if (response.errorURLTemplates.length > 0) {
@@ -589,13 +592,13 @@ export default class RmpVast {
       };
       this.__adTagUrl = vastData;
 
-      Logger.print('info', `Try to load VAST tag at: ${this.__adTagUrl}`);
+      Logger.print(this.debugRawConsoleLogs, `Try to load VAST tag at: ${this.__adTagUrl}`);
 
       vastClient.get(this.__adTagUrl, options).then(response => {
         this.rmpVastUtils.createApiEvent('adtagloaded');
         this._handleParsedVast(response);
       }).catch(error => {
-        Logger.print('warning', error);
+        console.warn(error);
         // PING 900 Undefined Error.
         this.rmpVastUtils.processVastErrors(900, true);
       });
@@ -605,7 +608,7 @@ export default class RmpVast {
       try {
         vastXml = (new DOMParser()).parseFromString(vastData, 'text/xml');
       } catch (error) {
-        Logger.print('warning', error);
+        console.warn(error);
         // PING 900 Undefined Error.
         this.rmpVastUtils.processVastErrors(900, true);
         return;
@@ -615,7 +618,7 @@ export default class RmpVast {
         this.rmpVastUtils.createApiEvent('adtagloaded');
         this._handleParsedVast(response);
       }).catch(error => {
-        Logger.print('warning', error);
+        console.warn(error);
         // PING 900 Undefined Error.
         this.rmpVastUtils.processVastErrors(900, true);
       });
@@ -633,7 +636,7 @@ export default class RmpVast {
    * @return {void}
    */
   loadAds(vastData, regulationsInfo, requireCategory) {
-    Logger.print('info', `loadAds method starts`);
+    Logger.print(this.debugRawConsoleLogs, `loadAds method starts`);
 
     // if player is not initialized - this must be done now
     if (!this.rmpVastInitialized) {
@@ -664,7 +667,7 @@ export default class RmpVast {
 
     // if an ad is already on stage we need to clear it first before we can accept another ad request
     if (this.__adOnStage) {
-      Logger.print('info', `Creative already on stage calling stopAds before loading new ad`);
+      Logger.print(this.debugRawConsoleLogs, `Creative already on stage calling stopAds before loading new ad`);
       this.one('addestroyed', this.loadAds.bind(this, finalVastData));
       this.stopAds();
       return;
@@ -761,7 +764,7 @@ export default class RmpVast {
  * @return {Environment}
  */
   get environment() {
-    return Environment;
+    return this.environmentData;
   }
 
   /** 
@@ -1304,7 +1307,7 @@ export default class RmpVast {
    */
   initialize() {
     if (!this.rmpVastInitialized) {
-      Logger.print('info', `Upon user interaction - player needs to be initialized`);
+      Logger.print(this.debugRawConsoleLogs, `Upon user interaction - player needs to be initialized`);
       this.rmpVastAdPlayer = new AdPlayer(this);
       this.rmpVastAdPlayer.init();
     }

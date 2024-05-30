@@ -1,6 +1,5 @@
 const ADTAG = 'https://pubads.g.doubleclick.net/gampad/ads?iu=/21775744923/external/omid_ad_samples&env=vp&gdfp_req=1&output=vast&sz=640x480&description_url=http%3A%2F%2Ftest_site.com%2Fhomepage&vpmute=0&vpa=0&vad_format=linear&url=http%3A%2F%2Ftest_site.com&vpos=preroll&unviewed_position_start=1&correlator=' + Date.now();
 
-
 describe('om-web-ima', function () {
 
   const id = 'rmp';
@@ -19,8 +18,27 @@ describe('om-web-ima', function () {
     container.style.height = '180px';
   }
   const title = document.getElementsByTagName('title')[0];
+  const result = document.getElementById('result');
+  const timeout = 30000;
 
   it('should om-web-ima and play it', function (done) {
+
+    const _fail = () => {
+      result.textContent = 'failed';
+      title.textContent = 'Test finished';
+      done.fail();
+    };
+
+    const _pass = () => {
+      result.textContent = 'passed';
+      title.textContent = 'Test finished';
+      done();
+    };
+
+    setTimeout(() => {
+      _fail();
+    }, timeout);
+
     let validSteps = 0;
 
     const _incrementAndLog = function (event) {
@@ -50,10 +68,11 @@ describe('om-web-ima', function () {
         timeupdateCount++;
         if (timeupdateCount === 5) {
           _incrementAndLog(e);
+          expect(validSteps).toBe(5);
           if (validSteps === 5) {
-            expect(validSteps).toBe(5);
-            title.textContent = 'Test completed';
-            done();
+            _pass();
+          } else {
+            _fail();
           }
         }
       });

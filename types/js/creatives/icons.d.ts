@@ -3,6 +3,7 @@ export default class Icons {
     _rmpVast: any;
     _adContainer: any;
     _adPlayer: any;
+    _debugRawConsoleLogs: any;
     _onPlayingAppendIconsFn: any;
     _iconsData: any[];
     get iconsData(): any[];

@@ -1,6 +1,7 @@
 export default class CompanionCreative {
     constructor(rmpVast: any);
     _rmpVast: any;
+    _debugRawConsoleLogs: any;
     get requiredAttribute(): any;
     _onImgClickThrough(companionClickThroughUrl: any, companionClickTrackingUrls: any, event: any): void;
     reset(): void;

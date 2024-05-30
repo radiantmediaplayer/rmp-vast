@@ -6,6 +6,7 @@ export default class CompanionCreative {
 
   constructor(rmpVast) {
     this._rmpVast = rmpVast;
+    this._debugRawConsoleLogs = rmpVast.debugRawConsoleLogs;
     this.reset();
   }
 
@@ -56,16 +57,19 @@ export default class CompanionCreative {
           if (staticResource.url) {
             return true;
           }
+          return false;
         });
         const iframeResourceFound = companion.iframeResources.find(iframeResource => {
           if (iframeResource) {
             return true;
           }
+          return false;
         });
         const htmlResourceFound = companion.htmlResources.find(htmlResource => {
           if (htmlResource) {
             return true;
           }
+          return false;
         });
         if (staticResourceFound && staticResourceFound.url) {
           newCompanionAds.imageUrl = staticResourceFound.url;
@@ -103,7 +107,7 @@ export default class CompanionCreative {
         this._validCompanionAds.push(newCompanionAds);
       }
     }
-    Logger.print('info', `Parse companion ads follow`, this._validCompanionAds);
+    Logger.print(this._debugRawConsoleLogs, `Parse companion ads follow`, this._validCompanionAds);
   }
 
   getList(inputWidth, inputHeight) {
@@ -160,7 +164,7 @@ export default class CompanionCreative {
       }
       let companionClickTrackingUrls = null;
       if (companionAd.companionClickTrackingUrls) {
-        Logger.print('info', `Companion click tracking URIs`, companionClickTrackingUrls);
+        Logger.print(this._debugRawConsoleLogs, `Companion click tracking URIs`, companionClickTrackingUrls);
 
         companionClickTrackingUrls = companionAd.companionClickTrackingUrls;
       }
@@ -182,7 +186,8 @@ export default class CompanionCreative {
         const parser = new DOMParser();
         html = parser.parseFromString(companionAd.htmlContent, 'text/html');
         html = html.documentElement;
-      } catch (e) {
+      } catch (error) {
+        console.warn(error);
         return null;
       }
     }

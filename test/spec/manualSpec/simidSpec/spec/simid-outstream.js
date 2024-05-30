@@ -24,8 +24,27 @@ describe('Test for outstream/simid', function () {
   }
 
   const title = document.getElementsByTagName('title')[0];
+  const result = document.getElementById('result');
+  const timeout = 30000;
 
   it('should load outstream/simid', function (done) {
+
+    const _fail = () => {
+      result.textContent = 'failed';
+      title.textContent = 'Test finished';
+      done.fail();
+    };
+
+    const _pass = () => {
+      result.textContent = 'passed';
+      title.textContent = 'Test finished';
+      done();
+    };
+
+    setTimeout(() => {
+      _fail();
+    }, timeout);
+
     let validSteps = 0;
 
     const _incrementAndLog = function (event) {
@@ -55,9 +74,10 @@ describe('Test for outstream/simid', function () {
       setTimeout(function () {
         expect(validSteps).toBe(5);
         if (validSteps === 5) {
-          title.textContent = 'Test completed';
+          _pass();
+        } else {
+          _fail();
         }
-        done();
       }, 100);
     });
 

@@ -4,6 +4,7 @@ export default class NonLinearCreative {
     _params: any;
     _adContainer: any;
     _container: any;
+    _debugRawConsoleLogs: any;
     _nonLinearMinSuggestedDuration: number;
     _firstContentPlayerPlayRequest: boolean;
     _nonLinearCloseElement: HTMLDivElement;

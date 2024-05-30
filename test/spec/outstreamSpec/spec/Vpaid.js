@@ -24,8 +24,27 @@ describe('Test for outstream/vpaid', function () {
   }
 
   const title = document.getElementsByTagName('title')[0];
+  const result = document.getElementById('result');
+  const timeout = 30000;
 
   it('should load outstream/vpaid', function (done) {
+
+    const _fail = () => {
+      result.textContent = 'failed';
+      title.textContent = 'Test finished';
+      done.fail();
+    };
+
+    const _pass = () => {
+      result.textContent = 'passed';
+      title.textContent = 'Test finished';
+      done();
+    };
+
+    setTimeout(() => {
+      _fail();
+    }, timeout);
+
     let validSteps = 0;
 
     const _incrementAndLog = function (event) {
@@ -64,13 +83,12 @@ describe('Test for outstream/vpaid', function () {
     });
     rmpVast.on('addestroyed', function (e) {
       _incrementAndLog(e);
-      setTimeout(function () {
-        expect(validSteps).toBe(9);
-        if (validSteps === 9) {
-          title.textContent = 'Test completed';
-        }
-        done();
-      }, 100);
+      expect(validSteps).toBe(9);
+      if (validSteps === 9) {
+        _pass();
+      } else {
+        _fail();
+      }
     });
 
     rmpVast.loadAds(ADTAG1);

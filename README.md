@@ -2,7 +2,7 @@
 
 A client-side JavaScript solution to load, parse, ping and display VAST resources (advertising).
 
-It aims at implementing the [IAB VAST specification](https://iabtechlab.com/standards/vast/) for web-based environments (e.g. browser, Ionic, Electron, smart TV ...) where both HTML5 video and JavaScript are available. We support VAST 3 and VAST 4 up to VAST 4.3. VAST 2 support has been deprecated with rmp-vast 15 and we no longer test for VAST 2 tags.
+It aims at implementing the [IAB VAST specification](https://iabtechlab.com/standards/vast/) for web-based environments (e.g. browser, Ionic, Flutter, Cordova, Electron, smart TV ...) where both HTML5 video and JavaScript are available. We support VAST 3 and VAST 4 up to VAST 4.3. VAST 2 support has been deprecated with rmp-vast 15 and we no longer test for VAST 2 tags.
 
 rmp-vast comes as a compiled library (./dist/ folder) but it can also be imported as a ES2015 module. rmp-vast is written in ES2017.
 
@@ -144,19 +144,21 @@ We support VAST standard up to VAST 4.3, this includes:
 
 Desktop means Windows 7+, macOS 10.11+, Linux (latest LTS Ubuntu).
 
-#### WebViews (Ionic, Cordova, WebView)
+#### WebViews (Ionic, Flutter, Cordova, WebView created from native code)
 
 - Android 5+
 - iOS 12+ (WKWebView)
 
-With the announcement of Apple in december 2019, to remove support for UIWebView API by end 2020, we only support WKWebView API for iOS apps built with Cordova, Ionic or WebView. [See this blog post](https://www.radiantmediaplayer.com/blog/updating-ios-apps-for-wkwebview.html) to help you update to WKWebView API.
+With the announcement of Apple in december 2019, to remove support for UIWebView API by end 2020, we only support WKWebView API for iOS apps built with Ionic, Flutter, Cordova or WebView created from native code. [See this blog post](https://www.radiantmediaplayer.com/blog/updating-ios-apps-for-wkwebview.html) to help you update to WKWebView API.
 
-#### Smart TV & OTT (Native web, Cordova or WebView)
+For Flutter apps we support using rmp-vast with [webview_flutter](https://pub.dev/packages/webview_flutter) plugin. See a guide for adding WebView to your [Flutter app here](https://codelabs.developers.google.com/codelabs/flutter-webview).
+
+#### Smart TV & OTT (Native web, Cordova or WebView created from native code)
 
 - Samsung Tizen 3+ apps
 - LG webOS 3+ apps
 - Electron 6+ apps
-- Android TV 9+ apps with Cordova or WebView
+- Android TV 9+ apps with Cordova or WebView created from native code
 - Fire TV apps (Web Apps and Hybrid Apps) with fireOS 6+
 
 [Back to documentation sections](#documentation-sections)
@@ -211,6 +213,7 @@ Once rmp-vast is loaded on your page you can create a new rmp-vast instance as f
     - `params.vpaidSettings.desiredBitrate: Number` Default: 500. In kbps.
   - `params.useHlsJS: Boolean` Enables rendering of HLS creatives with hls.js in rmp-vast. Default: true.
   - `params.debugHlsJS: Boolean` Enables debugging of HLS creatives with hls.js in rmp-vast. Default: false.
+  - `params.debugRawConsoleLogs: Boolean` Enables raw debug console log for Flutter apps and legacy platforms. Default: false.
   - `params.omidSupport: Boolean` Enables OMID (OM Web SDK) support in rmp-vast. Default: false. Refer to the [AdVerifications OM Web SDK](#adverifications-om-web-sdk) section for more information.
   - `params.omidAllowedVendors: Array` List of allowed vendors for ad verification. Vendors not listed will be rejected. Default: [].
   - `params.omidUnderEvaluation: Boolean` When debugging set this parameter to true. Default: false.
@@ -585,18 +588,10 @@ When your changes are ready for commit, build rmp-vast:
 
 Before committing for a pull request - run test:
 
-`npm run test`
+`npm run test:patch`
 
-For testing on Android use:
-
-`npm run testAndroid`
-
-For testing on macOS Safari use:
-
-`npm run testSafari`
-
-Before running `npm run test` make sure to update `TEST.pathToTest` in ./test/helpers/test.js with your local IP address. Running test on Android requires a [running adb server](https://developer.android.com/studio/command-line/adb.html).
-Also note some advanced tests require manual verification and are located in test/spec/manualSpec and need to be run manually in latest Chrome for desktop.
+Make sure the ctrf-chrome.json file in report/v${version} has all test passed - test manually for false negative.
+Also note we test on Safari for macOS and Chrome for Android. Some more advanced tests require manual verification and are located in test/spec/manualSpec/ and should be run in latest Chrome for Windows|macOS|Linux.
 
 [Back to documentation sections](#documentation-sections)
 

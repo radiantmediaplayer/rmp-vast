@@ -18,8 +18,27 @@ describe('Test for outstream/reload', function () {
   }
 
   const title = document.getElementsByTagName('title')[0];
+  const result = document.getElementById('result');
+  const timeout = 30000;
 
   it('should load outstream/reload', function (done) {
+
+    const _fail = () => {
+      result.textContent = 'failed';
+      title.textContent = 'Test finished';
+      done.fail();
+    };
+
+    const _pass = () => {
+      result.textContent = 'passed';
+      title.textContent = 'Test finished';
+      done();
+    };
+
+    setTimeout(() => {
+      _fail();
+    }, timeout);
+
     let validSteps = 0;
 
     const _incrementAndLog = function (event) {
@@ -63,9 +82,10 @@ describe('Test for outstream/reload', function () {
         } else {
           expect(validSteps).toBe(18);
           if (validSteps === 18) {
-            title.textContent = 'Test completed';
+            _pass();
+          } else {
+            _fail();
           }
-          done();
         }
       }, 500);
     });

@@ -16,8 +16,26 @@ describe('Test for AdPodAllWrappers', function () {
     container.style.height = '180px';
   }
   const title = document.getElementsByTagName('title')[0];
+  const result = document.getElementById('result');
+  const timeout = 60000;
 
   it('should load adTag play adpod of wrapper items', function (done) {
+
+    const _fail = () => {
+      result.textContent = 'failed';
+      title.textContent = 'Test finished';
+      done.fail();
+    };
+
+    const _pass = () => {
+      result.textContent = 'passed';
+      title.textContent = 'Test finished';
+      done();
+    };
+
+    setTimeout(() => {
+      _fail();
+    }, timeout);
 
     let validSteps = 0;
 
@@ -43,10 +61,11 @@ describe('Test for AdPodAllWrappers', function () {
         timeupdateCount++;
         if (timeupdateCount === 5) {
           _incrementAndLog(e);
+          expect(validSteps).toBe(8);
           if (validSteps === 8) {
-            expect(validSteps).toBe(8);
-            title.textContent = 'Test completed';
-            done();
+            _pass();
+          } else {
+            _fail();
           }
         }
       });
@@ -54,6 +73,5 @@ describe('Test for AdPodAllWrappers', function () {
 
     rmpVast.loadAds(ADTAG);
   });
-
 
 });

@@ -5,6 +5,12 @@ export default class OmSdkManager {
 
   constructor(adVerifications, rmpVast) {
     this._rmpVast = rmpVast;
+    this._contentPlayer = rmpVast.currentContentPlayer;
+    this._adPlayer = rmpVast.currentAdPlayer;
+    this._params = rmpVast.params;
+    this._isSkippableAd = rmpVast.isSkippableAd;
+    this._skipTimeOffset = rmpVast.skipTimeOffset;
+    this._debugRawConsoleLogs = rmpVast.debugRawConsoleLogs;
     this.VastProperties = null;
     this._adEvents = null;
     this._mediaEvents = null;
@@ -12,11 +18,6 @@ export default class OmSdkManager {
     this._lastVideoTime = -1;
     this._adVerifications = adVerifications;
     this._onFullscreenChangeFn = null;
-    this._contentPlayer = rmpVast.currentContentPlayer;
-    this._adPlayer = rmpVast.currentAdPlayer;
-    this._params = rmpVast.params;
-    this._isSkippableAd = rmpVast.isSkippableAd;
-    this._skipTimeOffset = rmpVast.skipTimeOffset;
   }
 
   _destroy() {
@@ -184,9 +185,9 @@ export default class OmSdkManager {
     this._adVerifications = validatedVerificationArray;
     let sessionClient;
     try {
-      sessionClient = OmidSessionClient['default'];
+      sessionClient = OmidSessionClient.default;
     } catch (error) {
-      Logger.print('warning', error);
+      console.warn(error);
       return;
     }
     const AdSession = sessionClient.AdSession;
@@ -203,7 +204,7 @@ export default class OmSdkManager {
       // https://interactiveadvertisingbureau.github.io/Open-Measurement-SDKJS/validation.html
       const VALIDATION_SCRIPT_URL = 'https://cdn.radiantmediatechs.com/rmp/omsdk/1.3.37/omid-validation-verification-script-v1.js';
       const VENDOR_KEY = 'dummyVendor'; // you must use this value as is
-      const PARAMS = JSON.stringify({ 'k': 'v' });
+      const PARAMS = JSON.stringify({ k: 'v' });
       resources.push(new VerificationScriptResource(VALIDATION_SCRIPT_URL, VENDOR_KEY, PARAMS));
     } else {
       // we support Access Modes Creative Access a.k.a full (we do not support Domain Access for now)
@@ -220,7 +221,7 @@ export default class OmSdkManager {
     const contentUrl = document.location.href;
     const context = new Context(partner, resources, contentUrl);
 
-    Logger.print('info', ``, resources);
+    Logger.print(this._debugRawConsoleLogs, ``, resources);
 
     if (this._params.omidUnderEvaluation) {
       context.underEvaluation = true;
@@ -228,17 +229,17 @@ export default class OmSdkManager {
 
     const omdSdkServiceWindow = window.top;
     if (!omdSdkServiceWindow) {
-      Logger.print('info', `OMSDK: invalid serviceWindow - return`);
+      Logger.print(this._debugRawConsoleLogs, `OMSDK: invalid serviceWindow - return`);
       return;
     }
     context.setServiceWindow(omdSdkServiceWindow);
     context.setVideoElement(this._adPlayer);
-    Logger.print('info', ``, context);
+    Logger.print(this._debugRawConsoleLogs, ``, context);
     this._adSession = new AdSession(context);
     this._adSession.setCreativeType('video');
     this._adSession.setImpressionType('beginToRender');
     if (!this._adSession.isSupported()) {
-      Logger.print('info', `OMSDK: invalid serviceWindow - return`);
+      Logger.print(this._debugRawConsoleLogs, `OMSDK: invalid serviceWindow - return`);
       return;
     }
     this._adEvents = new AdEvents(this._adSession);

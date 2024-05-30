@@ -14,5 +14,9 @@ export default class FW {
     static removeEvents(events: any, domElement: any, callback: any): void;
     static clearTimeout(timeoutCallback: any): void;
     static clearInterval(intervalCallback: any): void;
+    static stopPreventEvent(event: any): void;
+    static vastReadableTime(time: any): string;
+    static generateCacheBusting(): string;
+    static makeButtonAccessible(element: any, ariaLabel: any): void;
 }
 //# sourceMappingURL=fw.d.ts.map

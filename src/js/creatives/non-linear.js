@@ -9,6 +9,7 @@ export default class NonLinearCreative {
     this._params = rmpVast.params;
     this._adContainer = rmpVast.adContainer;
     this._container = rmpVast.container;
+    this._debugRawConsoleLogs = rmpVast.debugRawConsoleLogs;
     this._nonLinearMinSuggestedDuration = 0;
     this._firstContentPlayerPlayRequest = true;
     this._nonLinearCloseElement = null;
@@ -30,7 +31,7 @@ export default class NonLinearCreative {
   }
 
   _onNonLinearLoadSuccess() {
-    Logger.print('info', `success loading non-linear creative at ${this._rmpVast.creative.mediaUrl}`);
+    Logger.print(this._debugRawConsoleLogs, `success loading non-linear creative at ${this._rmpVast.creative.mediaUrl}`);
     this._rmpVast.__adOnStage = true;
     this._rmpVast.rmpVastTracking.dispatchTrackingAndApiEvent(
       ['adloaded', 'adimpression', 'adstarted', 'adcreativeview']
@@ -45,7 +46,7 @@ export default class NonLinearCreative {
       this._rmpVast.pause();
       this._rmpVast.rmpVastTracking.dispatchTrackingAndApiEvent('adclick');
     } catch (error) {
-      Logger.print('warning', error);
+      console.warn(error);
     }
   }
 
@@ -63,7 +64,7 @@ export default class NonLinearCreative {
   _appendCloseButton() {
     this._nonLinearCloseElement = document.createElement('div');
     this._nonLinearCloseElement.className = 'rmp-ad-non-linear-close';
-    this._rmpVast.rmpVastUtils.makeButtonAccessible(this._nonLinearCloseElement, this._params.labels.closeAd);
+    FW.makeButtonAccessible(this._nonLinearCloseElement, this._params.labels.closeAd);
     if (this._nonLinearMinSuggestedDuration > 0) {
       FW.setStyle(this._nonLinearCloseElement, { display: 'none' });
       setTimeout(() => {
@@ -143,7 +144,7 @@ export default class NonLinearCreative {
   }
 
   parse(variations) {
-    Logger.print('info', `non-linear creatives follow`, variations);
+    Logger.print(this._debugRawConsoleLogs, `non-linear creatives follow`, variations);
 
     let isDimensionError = false;
     let currentVariation;
@@ -187,7 +188,7 @@ export default class NonLinearCreative {
         this._rmpVast.creative.width = width;
         this._rmpVast.creative.height = height;
         this._rmpVast.creative.type = currentVariation.type;
-        Logger.print('info', `selected non-linear creative`, this._rmpVast.creative);
+        Logger.print(this._debugRawConsoleLogs, `selected non-linear creative`, this._rmpVast.creative);
         break;
       }
     }

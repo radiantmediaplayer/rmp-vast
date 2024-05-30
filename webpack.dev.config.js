@@ -72,6 +72,7 @@ module.exports = {
       inject: 'head'
     }),
     new ESLintPlugin({
+      configType: 'flat', 
       files: './src/**/*.js'
     }),
     new StylelintPlugin({

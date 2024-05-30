@@ -40,6 +40,7 @@ export default class SimidPlayer {
     this.addListeners_();
 
     this.rmpVast_ = rmpVast;
+    this._debugRawConsoleLogs = rmpVast.debugRawConsoleLogs;
     this.simidData_ = rmpVast.creative.simid;
     this.adContainer_ = rmpVast.adContainer;
     this.playerDiv_ = rmpVast.contentWrapper;
@@ -156,7 +157,7 @@ export default class SimidPlayer {
     this.trackEventsOnAdVideoElement_();
     this.trackEventsOnContentVideoElement_();
     this.hideAdPlayer_();
-    Logger.print('info', `SIMID: player created`);
+    Logger.print(this._debugRawConsoleLogs, `SIMID: player created`);
   }
 
   /**
@@ -167,7 +168,7 @@ export default class SimidPlayer {
    */
   initializeAd() {
     if (!this.isLinearAd_ && !this.isValidDimensions_(this.getNonlinearDimensions_())) {
-      Logger.print('info', `SIMID: Unable to play a non-linear ad with dimensions bigger than the player. Please modify dimensions to a smaller size.`);
+      Logger.print(this._debugRawConsoleLogs, `SIMID: Unable to play a non-linear ad with dimensions bigger than the player. Please modify dimensions to a smaller size.`);
       return;
     }
 
@@ -195,7 +196,7 @@ export default class SimidPlayer {
     this.sessionCreatedPromise_.then(() => {
       this.sendInitMessage_();
     });
-    Logger.print('info', `SIMID: initializeAd`);
+    Logger.print(this._debugRawConsoleLogs, `SIMID: initializeAd`);
   }
 
   /**
@@ -209,7 +210,7 @@ export default class SimidPlayer {
     this.initializationPromise_.then(() => {
       this.startCreativePlayback_();
     }).catch(error => {
-      Logger.print('warning', `SIMID: playAd failed with following error`, error);
+      console.warn(error);
     });
   }
 
@@ -300,14 +301,15 @@ export default class SimidPlayer {
    * @private
    * @return {!Object}
    */
+  // eslint-disable-next-line
   getFullDimensions_(elem) {
     const videoRect = elem.getBoundingClientRect();
 
     return {
-      'x': 0,
-      'y': 0,
-      'width': videoRect.width,
-      'height': videoRect.height,
+      x: 0,
+      y: 0,
+      width: videoRect.width,
+      height: videoRect.height
     };
   }
 
@@ -351,7 +353,7 @@ export default class SimidPlayer {
     const newDimensions = this.getNonlinearDimensions_();
 
     if (!this.isValidDimensions_(newDimensions)) {
-      Logger.print('info', `SIMID: Unable to play a non-linear ad with dimensions bigger than the player. Please modify dimensions to a smaller size.`);
+      Logger.print(this._debugRawConsoleLogs, `SIMID: Unable to play a non-linear ad with dimensions bigger than the player. Please modify dimensions to a smaller size.`);
       return;
     } else {
       this.setSimidIframeDimensions_(newDimensions);
@@ -387,7 +389,7 @@ export default class SimidPlayer {
         message: 'Linear resize not yet supported.'
       };
       this.simidProtocol.reject(incomingMessage, errorMessage);
-      Logger.print('info', `SIMID: ${errorMessage.message}`);
+      Logger.print(this._debugRawConsoleLogs, `SIMID: ${errorMessage.message}`);
     } else {
       const fullDimensions = this.getFullDimensions_(this.contentVideoElement_);
       this.setSimidIframeDimensions_(fullDimensions);
@@ -409,13 +411,13 @@ export default class SimidPlayer {
         message: 'Cannot collapse linear ads.'
       };
       this.simidProtocol.reject(incomingMessage, errorMessage);
-      Logger.print('info', `SIMID: ${errorMessage.message}`);
+      Logger.print(this._debugRawConsoleLogs, `SIMID: ${errorMessage.message}`);
     } else if (!this.isValidDimensions_(newDimensions)) {
       const errorMessage = {
         message: 'Unable to collapse to dimensions bigger than the player. Please modify dimensions to a smaller size.'
       };
       this.simidProtocol.reject(incomingMessage, errorMessage);
-      Logger.print('info', `SIMID: ${errorMessage.message}`);
+      Logger.print(this._debugRawConsoleLogs, `SIMID: ${errorMessage.message}`);
     } else {
       this.setSimidIframeDimensions_(newDimensions);
       this.simidIframe_.style.position = 'absolute';
@@ -435,7 +437,7 @@ export default class SimidPlayer {
         message: 'Linear resize not yet supported.'
       };
       this.simidProtocol.reject(incomingMessage, errorMessage);
-      Logger.print('info', `SIMID: ${errorMessage.message}`);
+      Logger.print(this._debugRawConsoleLogs, `SIMID: ${errorMessage.message}`);
 
     } else if (!this.isValidDimensions_(incomingMessage.args.creativeDimensions)) {
       const errorMessage = {
@@ -443,7 +445,7 @@ export default class SimidPlayer {
         message: 'Unable to resize a non-linear ad with dimensions bigger than the player. Please modify dimensions to a smaller size.'
       };
       this.simidProtocol.reject(incomingMessage, errorMessage);
-      Logger.print('info', `SIMID: ${errorMessage.message}`);
+      Logger.print(this._debugRawConsoleLogs, `SIMID: ${errorMessage.message}`);
     } else {
       this.nonLinearDimensions_ = incomingMessage.args.creativeDimensions;
       this.setSimidIframeDimensions_(incomingMessage.args.creativeDimensions);
@@ -464,36 +466,36 @@ export default class SimidPlayer {
       this.getNonlinearDimensions_();
 
     const environmentData = {
-      'videoDimensions': videoDimensions,
-      'creativeDimensions': creativeDimensions,
-      'fullscreen': false,
-      'fullscreenAllowed': true,
-      'variableDurationAllowed': true,
-      'skippableState': 'adHandles', // This player does not render a skip button.
-      'siteUrl': document.location.host,
-      'appId': '', // This is not relevant on desktop
-      'useragent': window.navigator.userAgent, // This should be filled in for sdks and players
-      'deviceId': '', // This should be filled in on mobile
-      'muted': this.adVideoElement_.muted,
-      'volume': this.adVideoElement_.volume
+      videoDimensions,
+      creativeDimensions,
+      fullscreen: false,
+      fullscreenAllowed: true,
+      variableDurationAllowed: true,
+      skippableState: 'adHandles', // This player does not render a skip button.
+      siteUrl: document.location.host,
+      appId: '', // This is not relevant on desktop
+      useragent: window.navigator.userAgent, // This should be filled in for sdks and players
+      deviceId: '', // This should be filled in on mobile
+      muted: this.adVideoElement_.muted,
+      volume: this.adVideoElement_.volume
     };
 
     const creativeData = {
-      'adParameters': this.adParameters_,
+      adParameters: this.adParameters_,
       // These values should be populated from the VAST response.
-      'adId': this.adId_,
-      'creativeId': this.creativeId_,
-      'adServingId': this.adServingId_,
-      'clickThroughUrl': this.clickThroughUrl_
+      adId: this.adId_,
+      creativeId: this.creativeId_,
+      adServingId: this.adServingId_,
+      clickThroughUrl: this.clickThroughUrl_
     };
 
     if (!this.isLinearAd_) {
-      creativeData['duration'] = document.getElementById('duration').value;
+      creativeData.duration = document.getElementById('duration').value;
     }
 
     const initMessage = {
-      'environmentData': environmentData,
-      'creativeData': creativeData
+      environmentData,
+      creativeData
     };
     const initPromise = this.simidProtocol.sendMessage(
       PlayerMessage.INIT, initMessage);
@@ -545,7 +547,7 @@ export default class SimidPlayer {
    */
   onAdInitializedFailed_(data) {
     const errorData = JSON.stringify(data);
-    Logger.print('info', ` SIMID: Ad init failed. ${errorData}`);
+    Logger.print(this._debugRawConsoleLogs, ` SIMID: Ad init failed. ${errorData}`);
     this.destroyIframeAndResumeContent_(true, errorData.errorCode);
   }
 
@@ -580,14 +582,14 @@ export default class SimidPlayer {
   trackEventsOnAdVideoElement_() {
     this.adVideoTrackingEvents_.set('durationchange', () => {
       this.simidProtocol.sendMessage(MediaMessage.DURATION_CHANGE,
-        { 'duration': this.adVideoElement_.duration });
+        { duration: this.adVideoElement_.duration });
     });
     this.adVideoTrackingEvents_.set('ended', this.videoComplete.bind(this));
     this.adVideoTrackingEvents_.set('error', () => {
       this.simidProtocol.sendMessage(MediaMessage.ERROR,
         {
-          'error': '',  // TODO fill in these values correctly
-          'message': ''
+          error: '', // TODO fill in these values correctly
+          message: ''
         });
     });
     this.adVideoTrackingEvents_.set('pause', () => {
@@ -607,12 +609,12 @@ export default class SimidPlayer {
     });
     this.adVideoTrackingEvents_.set('timeupdate', () => {
       this.simidProtocol.sendMessage(MediaMessage.TIME_UPDATE,
-        { 'currentTime': this.adVideoElement_.currentTime });
+        { currentTime: this.adVideoElement_.currentTime });
       this.compareAdAndRequestedDurations_();
     });
     this.adVideoTrackingEvents_.set('volumechange', () => {
       this.simidProtocol.sendMessage(MediaMessage.VOLUME_CHANGE,
-        { 'volume': this.adVideoElement_.volume });
+        { volume: this.adVideoElement_.volume });
     });
 
     for (let [key, func] of this.adVideoTrackingEvents_) {
@@ -651,9 +653,9 @@ export default class SimidPlayer {
       };*/
       // Wait for the SIMID creative to acknowledge stop and then clean
       // up the iframe.
-      Logger.print('info', ` SIMID: stopAd ${reason}`);
-      this.simidProtocol.sendMessage(PlayerMessage.AD_STOPPED)
-        .then(() => this.destroyIframeAndResumeContent_(error, errorCode));
+      Logger.print(this._debugRawConsoleLogs, ` SIMID: stopAd ${reason}`);
+      this.simidProtocol.sendMessage(PlayerMessage.AD_STOPPED).
+        then(() => this.destroyIframeAndResumeContent_(error, errorCode));
     }
   }
 
@@ -666,8 +668,8 @@ export default class SimidPlayer {
     this.hideSimidIFrame_();
     // Wait for the SIMID creative to acknowledge skip and then clean
     // up the iframe.
-    this.simidProtocol.sendMessage(PlayerMessage.AD_SKIPPED)
-      .then(() => this.destroyIframeAndResumeContent_());
+    this.simidProtocol.sendMessage(PlayerMessage.AD_SKIPPED).
+      then(() => this.destroyIframeAndResumeContent_());
   }
 
   /**
@@ -713,9 +715,9 @@ export default class SimidPlayer {
   /** The creative wants to play video. */
   onRequestPlay(incomingMessage) {
     if (this.isLinearAd_) {
-      this.adVideoElement_.play()
-        .then(() => this.simidProtocol.resolve(incomingMessage))
-        .catch(() => {
+      this.adVideoElement_.play().
+        then(() => this.simidProtocol.resolve(incomingMessage)).
+        catch(() => {
           const errorMessage = {
             errorCode: PlayerErrorCode.VIDEO_COULD_NOT_LOAD,
             message: 'The SIMID media could not be loaded.'
@@ -766,11 +768,11 @@ export default class SimidPlayer {
    * replace macros. That should be done using the players standard workflow.
    */
   onReportTracking(incomingMessage) {
-    const requestedUrlArray = incomingMessage.args['trackingUrls'];
+    const requestedUrlArray = incomingMessage.args.trackingUrls;
     requestedUrlArray.forEach(url => {
       this.rmpVast_.rmpVastTracking.pingURI(url);
     });
-    Logger.print('info', `SIMID: The creative has asked for the player to ping ${requestedUrlArray}`);
+    Logger.print(this._debugRawConsoleLogs, `SIMID: The creative has asked for the player to ping ${requestedUrlArray}`);
   }
 
   /**
@@ -780,12 +782,10 @@ export default class SimidPlayer {
   videoComplete() {
     this.simidProtocol.sendMessage(MediaMessage.ENDED);
 
-    if (this.requestedDuration_ == NO_REQUESTED_DURATION) {
+    if (this.requestedDuration_ === NO_REQUESTED_DURATION) {
       this.stopAd(StopCode.MEDIA_PLAYBACK_COMPLETE);
-    }
-
-    //If the request duration is longer than the ad duration, the ad extends for the requested amount of time
-    else if (this.requestedDuration_ != UNLIMITED_DURATION) {
+    } else if (this.requestedDuration_ !== UNLIMITED_DURATION) {
+      //If the request duration is longer than the ad duration, the ad extends for the requested amount of time
       const durationChangeMs = (this.requestedDuration_ - this.adVideoElement_.duration) * 1000;
       setTimeout(() => {
         this.stopAd(StopCode.CREATIVE_INITIATED);
@@ -798,15 +798,14 @@ export default class SimidPlayer {
    * @private
    */
   onRequestChangeAdDuration(incomingMessage) {
-    const newRequestedDuration = incomingMessage.args['duration'];
-    if (newRequestedDuration != UNLIMITED_DURATION && newRequestedDuration < 0) {
+    const newRequestedDuration = incomingMessage.args.duration;
+    if (newRequestedDuration !== UNLIMITED_DURATION && newRequestedDuration < 0) {
       const durationErrorMessage = {
         errorCode: PlayerErrorCode.UNSUPPORTED_TIME,
         message: 'A negative duration is not valid.'
       };
       this.simidProtocol.reject(incomingMessage, durationErrorMessage);
-    }
-    else {
+    } else {
       this.requestedDuration_ = newRequestedDuration;
       //If requested duration is any other acceptable value
       this.compareAdAndRequestedDurations_();
@@ -822,13 +821,12 @@ export default class SimidPlayer {
    * @private
    */
   compareAdAndRequestedDurations_() {
-    if (this.requestedDuration_ == NO_REQUESTED_DURATION ||
-      this.requestedDuration_ == UNLIMITED_DURATION) {
+    if (this.requestedDuration_ === NO_REQUESTED_DURATION ||
+      this.requestedDuration_ === UNLIMITED_DURATION) {
       //Note: Users can end the ad with unlimited duration with
       // the close ad button on the player
       return;
-    }
-    else if (this.adVideoElement_.currentTime >= this.requestedDuration_) {
+    } else if (this.adVideoElement_.currentTime >= this.requestedDuration_) {
       //Creative requested a duration shorter than the ad
       this.stopAd(StopCode.CREATIVE_INITATED);
     }
@@ -836,26 +834,26 @@ export default class SimidPlayer {
 
   onGetMediaState(incomingMessage) {
     const mediaState = {
-      'currentSrc': this.adVideoElement_.currentSrc,
-      'currentTime': this.adVideoElement_.currentTime,
-      'duration': this.adVideoElement_.duration,
-      'ended': this.adVideoElement_.ended,
-      'muted': this.adVideoElement_.muted,
-      'paused': this.adVideoElement_.paused,
-      'volume': this.adVideoElement_.volume,
-      'fullscreen': this.adVideoElement_.fullscreen,
+      currentSrc: this.adVideoElement_.currentSrc,
+      currentTime: this.adVideoElement_.currentTime,
+      duration: this.adVideoElement_.duration,
+      ended: this.adVideoElement_.ended,
+      muted: this.adVideoElement_.muted,
+      paused: this.adVideoElement_.paused,
+      volume: this.adVideoElement_.volume,
+      fullscreen: this.adVideoElement_.fullscreen,
     };
     this.simidProtocol.resolve(incomingMessage, mediaState);
   }
 
   onReceiveCreativeLog(incomingMessage) {
-    const logMessage = incomingMessage.args['message'];
-    Logger.print('info', `SIMID: Received message from creative: ${logMessage}`);
+    const logMessage = incomingMessage.args.message;
+    Logger.print(this._debugRawConsoleLogs, `SIMID: Received message from creative: ${logMessage}`);
   }
 
   sendLog(outgoingMessage) {
     const logMessage = {
-      'message': outgoingMessage,
+      message: outgoingMessage,
     };
     this.simidProtocol.sendMessage(PlayerMessage.LOG, logMessage);
   }

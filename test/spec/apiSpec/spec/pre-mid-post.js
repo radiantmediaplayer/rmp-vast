@@ -1,5 +1,5 @@
 const ADTAG1 = 'https://www.radiantmediaplayer.com/vast/tags/inline-linear-1.xml';
-const ADTAG2 = 'https://www.radiantmediaplayer.com/vast/tags/inline-linear.xml';
+const ADTAG2 = 'https://www.radiantmediaplayer.com/vast/tags/inline-linear-1.xml';
 const ADTAG3 = 'https://www.radiantmediaplayer.com/vast/tags/inline-linear-1.xml';
 
 describe('Test for pre-mid-post', function () {
@@ -25,8 +25,27 @@ describe('Test for pre-mid-post', function () {
   }
 
   const title = document.getElementsByTagName('title')[0];
+  const result = document.getElementById('result');
+  const timeout = 30000;
 
   it('should load pre-mid-post', function (done) {
+
+    const _fail = () => {
+      result.textContent = 'failed';
+      title.textContent = 'Test finished';
+      done.fail();
+    };
+
+    const _pass = () => {
+      result.textContent = 'passed';
+      title.textContent = 'Test finished';
+      done();
+    };
+
+    setTimeout(() => {
+      _fail();
+    }, timeout);
+
     let validSteps = 0;
 
     const _incrementAndLog = function (event) {
@@ -94,11 +113,10 @@ describe('Test for pre-mid-post', function () {
       if (addestroyedCount === 3) {
         expect(validSteps).toBe(27);
         if (validSteps === 27) {
-          title.textContent = 'Test completed';
+          _pass();
+        } else {
+          _fail();
         }
-        setTimeout(function () {
-          done();
-        }, 100);
       }
     });
 

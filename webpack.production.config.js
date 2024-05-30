@@ -6,13 +6,16 @@ const webpack = require('webpack');
 const PACKAGE = require('./package.json');
 
 const terserOptions = {
+  ecma: 5,
   compress: {
     defaults: true,
-    pure_funcs: ['console.log', 'console.warn']
+    pure_funcs: ['Logger.print', 'Logger.printVideoEvents', 'console.log']
+  },
+  format: {
+    comments: false
   },
   module: false,
-  mangle: true,
-  safari10: true
+  mangle: true
 };
 
 module.exports = {
@@ -21,7 +24,7 @@ module.exports = {
       'whatwg-fetch',
       './src/js/index.js'
     ],
-    'rmp-vast.min': [
+    'rmp-vast.min': [ 
       'whatwg-fetch',
       './src/js/index.js'
     ]
@@ -66,6 +69,7 @@ module.exports = {
     minimize: true,
     minimizer: [
       new TerserPlugin({
+        extractComments: false,
         terserOptions,
         include: /\.min\.js$/,
       })

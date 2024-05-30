@@ -5,6 +5,7 @@ export default class LinearCreative {
     _adContainer: any;
     _adPlayer: any;
     _contentPlayer: any;
+    _debugRawConsoleLogs: any;
     _firstAdPlayerPlayRequest: boolean;
     _interactionMobileUI: HTMLAnchorElement;
     _skipWaitingUI: HTMLDivElement;
@@ -16,7 +17,7 @@ export default class LinearCreative {
     _onTimeupdateCheckSkipFn: any;
     _onDurationChangeFn: any;
     _onLoadedmetadataPlayFn: any;
-    _onContextMenuFn: any;
+    _onContextMenuFn: typeof FW.stopPreventEvent;
     _onPlaybackErrorFn: any;
     _onInteractionOpenClickThroughUrlFn: any;
     _creativeLoadTimeoutCallback: NodeJS.Timeout;
@@ -33,7 +34,6 @@ export default class LinearCreative {
     _onLoadedmetadataPlay(): void;
     _onInteractionOpenClickThroughUrl(event: any): void;
     _onPlaybackError(event: any): void;
-    _onContextMenu(event: any): void;
     _updateWaitingForCanBeSkippedUI(delta: any): void;
     _onTimeupdateCheckSkip(): void;
     _onSkipInteraction(event: any): void;
@@ -43,4 +43,5 @@ export default class LinearCreative {
     update(url: any, type: any): void;
     parse(creative: any): void;
 }
+import FW from '../framework/fw';
 //# sourceMappingURL=linear.d.ts.map

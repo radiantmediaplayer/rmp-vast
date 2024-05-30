@@ -15,6 +15,7 @@ export default class LinearCreative {
     this._adContainer = rmpVast.adContainer;
     this._adPlayer = rmpVast.currentAdPlayer;
     this._contentPlayer = rmpVast.currentContentPlayer;
+    this._debugRawConsoleLogs = rmpVast.debugRawConsoleLogs;
     this._firstAdPlayerPlayRequest = true;
     this._interactionMobileUI = null;
     this._skipWaitingUI = null;
@@ -82,7 +83,7 @@ export default class LinearCreative {
           trackingUrls.forEach(url => {
             this._rmpVast.progressEvents.push({
               time: timePerCent,
-              url: url
+              url
             });
           });
         } else {
@@ -90,7 +91,7 @@ export default class LinearCreative {
           trackingUrls.forEach(url => {
             this._rmpVast.progressEvents.push({
               time: parseFloat(time_2) * 1000,
-              url: url
+              url
             });
           });
         }
@@ -163,22 +164,14 @@ export default class LinearCreative {
           'MEDIA_ERR_ENCRYPTED'
         ];
 
-        Logger.print('error', `Error on video element with code ${errorCode.toString()} and message ${errorMessage}`);
-        Logger.print('info',
-          `error type is ${htmlMediaErrorTypes[errorCode] ? htmlMediaErrorTypes[errorCode] : 'unknown type'}`);
+        console.error(`Error on video element with code ${errorCode.toString()} and message ${errorMessage}`);
+        Logger.print(this._debugRawConsoleLogs, `error type is ${htmlMediaErrorTypes[errorCode] ? htmlMediaErrorTypes[errorCode] : 'unknown type'}`);
 
         // MEDIA_ERR_SRC_NOT_SUPPORTED (numeric value 4)
         if (errorCode === 4) {
           this._rmpVast.rmpVastUtils.processVastErrors(401, true);
         }
       }
-    }
-  }
-
-  _onContextMenu(event) {
-    if (event) {
-      event.stopPropagation();
-      event.preventDefault();
     }
   }
 
@@ -228,7 +221,7 @@ export default class LinearCreative {
     this._skipButtonUI = document.createElement('div');
     this._skipButtonUI.className = 'rmp-ad-container-skip';
     FW.setStyle(this._skipButtonUI, { display: 'none' });
-    this._rmpVast.rmpVastUtils.makeButtonAccessible(this._skipButtonUI, skipMessage);
+    FW.makeButtonAccessible(this._skipButtonUI, skipMessage);
 
     this._skipWaitingUI = document.createElement('div');
     this._skipWaitingUI.className = 'rmp-ad-container-skip-waiting';
@@ -291,7 +284,7 @@ export default class LinearCreative {
   }
 
   update(url, type) {
-    Logger.print('info', `update ad player for linear creative of type ${type} located at ${url}`);
+    Logger.print(this._debugRawConsoleLogs, `update ad player for linear creative of type ${type} located at ${url}`);
 
     this._onDurationChangeFn = this._onDurationChange.bind(this);
     this._adPlayer.addEventListener('durationchange', this._onDurationChangeFn, { once: true });
@@ -301,7 +294,7 @@ export default class LinearCreative {
     this._adPlayer.addEventListener('loadedmetadata', this._onLoadedmetadataPlayFn, { once: true });
 
     // prevent built in menu to show on right click
-    this._onContextMenuFn = this._onContextMenu.bind(this);
+    this._onContextMenuFn = FW.stopPreventEvent;
     this._adPlayer.addEventListener('contextmenu', this._onContextMenuFn);
 
     this._onPlaybackErrorFn = this._onPlaybackError.bind(this);
@@ -407,7 +400,7 @@ export default class LinearCreative {
       const jsPattern = /\/javascript/i;
       if (this._params.enableVpaid && currentMediaFile.apiFramework &&
         vpaidPattern.test(currentMediaFile.apiFramework) && jsPattern.test(type)) {
-        Logger.print('info', `VPAID creative detected`);
+        Logger.print(this._debugRawConsoleLogs, `VPAID creative detected`);
         mediaFileItems = [newMediaFileItem];
         isVpaid = true;
         break;
@@ -508,7 +501,7 @@ export default class LinearCreative {
       return a.width - b.width;
     });
 
-    Logger.print('info', `Vavailable linear creative follows`, retainedCreatives);
+    Logger.print(this._debugRawConsoleLogs, `Vavailable linear creative follows`, retainedCreatives);
 
     // we have files matching device capabilities
     // select the best one based on player current width
@@ -524,7 +517,7 @@ export default class LinearCreative {
         });
       }
 
-      Logger.print('info', `validCreativesByWidth follow`, validCreativesByWidth);
+      Logger.print(this._debugRawConsoleLogs, `validCreativesByWidth follow`, validCreativesByWidth);
 
       // if no match by size 
       if (validCreativesByWidth.length === 0) {
@@ -535,7 +528,7 @@ export default class LinearCreative {
       const rmpConnection = new RmpConnection();
       let availableBandwidth = rmpConnection.bandwidthData.estimate;
 
-      Logger.print('info', `availableBandwidth is ${availableBandwidth} Mbps`);
+      Logger.print(this._debugRawConsoleLogs, `availableBandwidth is ${availableBandwidth} Mbps`);
 
       if (availableBandwidth > -1 && validCreativesByWidth.length > 1) {
         // sort supported creatives by bitrates
@@ -548,7 +541,7 @@ export default class LinearCreative {
           return availableBandwidth >= creative.bitrate;
         });
 
-        Logger.print('info', `validCreativesByBitrate follow`, validCreativesByBitrate);
+        Logger.print(this._debugRawConsoleLogs, `validCreativesByBitrate follow`, validCreativesByBitrate);
 
         // pick max available bitrate
         finalCreative = validCreativesByBitrate[validCreativesByBitrate.length - 1];
@@ -567,7 +560,7 @@ export default class LinearCreative {
       }
     }
 
-    Logger.print('info', `selected linear creative follows`, finalCreative);
+    Logger.print(this._debugRawConsoleLogs, `selected linear creative follows`, finalCreative);
 
     this._rmpVast.creative.mediaUrl = finalCreative.url;
     this._rmpVast.creative.height = finalCreative.height;
