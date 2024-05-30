@@ -1,6 +1,6 @@
 /**
  * @license Copyright (c) 2015-present Radiant Media Player | https://www.radiantmediaplayer.com
- * rmp-vast
+ * rmp-vast 15.1.0
  * GitHub: https://github.com/radiantmediaplayer/rmp-vast
  * MIT License: https://github.com/radiantmediaplayer/rmp-vast/blob/master/LICENSE
  */
