@@ -64,6 +64,17 @@ You must use rmp-vast in a well-formed HTML document. This means a web-page with
 
 Do NOT rename CSS classes or alter this HTML layout. The HTML5 video tag used for content must use the src property on the HTML5 video (e.g. do not use &lt;source&gt; tag).
 
+- We need to explicitly set the size of div.rmp-container element, for example with CSS we could add to our page:
+```html
+<style>
+  .rmp-container {
+    width: 960px;
+    height: 540px;
+    margin: auto;
+  }
+</style>
+```
+
 - Init the library with JavaScript:
 
 ```javascript

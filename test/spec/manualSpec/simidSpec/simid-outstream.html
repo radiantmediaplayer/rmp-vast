@@ -13,10 +13,18 @@
   <script src="../../lib/jasmine-5.1.2/jasmine-html.js"></script>
   <script src="../../lib/jasmine-5.1.2/boot0.js"></script>
   <script src="../../lib/jasmine-5.1.2/boot1.js"></script>
-  <link rel="stylesheet" href="../../../app/css/app.css">
 
   <!-- rmp-vast -->
   <script src="../../../dist/rmp-vast.min.js"></script>
+
+  <!-- We need to explicitly set the size of div.rmp-container element -->
+  <style>
+    .rmp-container {
+      width: 960px;
+      height: 540px;
+      margin: auto;
+    }
+  </style>
 
 </head>
 
