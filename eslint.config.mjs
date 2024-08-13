@@ -19,7 +19,8 @@ export default [
       'test/lib/*',
       'test/spec/main/*',
       'test/spec/helpers/*',
-      'test/*.mjs'
+      'test/*.mjs',
+      'babel.config.js'
     ]
   },
   {

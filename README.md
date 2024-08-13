@@ -102,7 +102,7 @@ rmpVast.loadAds(adTag);
 A complete implementation example is provided in app/index.html. You should look at app/js/app.js.
 This example can be found live at https://www.radiantmediaplayer.com/rmp-vast/app/.
 
-- rmp-vast is written in ES2017 and compiled as a library with [Webpack](https://webpack.js.org/). See .browserslistrc for a list of targeted environments for the compiled library. If you want to use rmp-vast as a module (e.g. not using the compiled library), it is up to you to compile it in your project. Please refer to .babelrc and webpack.dev.config.js for guidance.
+- rmp-vast is written in ES2017 and compiled as a library with [Webpack](https://webpack.js.org/). See .browserslistrc for a list of targeted environments for the compiled library. If you want to use rmp-vast as a module (e.g. not using the compiled library), it is up to you to compile it in your project. Please refer to babel.config.js and webpack.dev.config.js for guidance.
 
 [Back to documentation sections](#documentation-sections)
 

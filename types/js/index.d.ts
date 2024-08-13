@@ -440,7 +440,7 @@ export default class RmpVast {
      * @param {boolean} value
      * @return {void}
      */
-    set contentPlayerCompleted(value: () => boolean);
+    set contentPlayerCompleted(value: boolean);
     /**
      * @type {() => boolean}
      */
