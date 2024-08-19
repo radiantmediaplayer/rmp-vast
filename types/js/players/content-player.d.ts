@@ -1,9 +1,5 @@
 export default class ContentPlayer {
     constructor(rmpVast: any);
-    _rmpVast: any;
-    _contentPlayer: any;
-    _customPlaybackCurrentTime: number;
-    _antiSeekLogicInterval: NodeJS.Timeout;
     set volume(level: any);
     get volume(): any;
     set muted(muted: any);
@@ -14,5 +10,6 @@ export default class ContentPlayer {
     pause(): void;
     seekTo(msSeek: any): void;
     preventSeekingForCustomPlayback(): void;
+    #private;
 }
 //# sourceMappingURL=content-player.d.ts.map

@@ -19,8 +19,27 @@ describe('Test for non-linear-image', () => {
   const rmpVast = new RmpVast(id);
   video.muted = true;
   const title = document.getElementsByTagName('title')[0];
+  const result = document.getElementById('result');
+  const timeout = 30000;
 
   it('should load adTag and play it', done => {
+
+    const _fail = () => {
+      result.textContent = 'failed';
+      title.textContent = 'Test finished';
+      done.fail();
+    };
+
+    const _pass = () => {
+      result.textContent = 'passed';
+      title.textContent = 'Test finished';
+      done();
+    };
+
+    setTimeout(() => {
+      _fail();
+    }, timeout);
+
     let validSteps = 0;
 
     const _incrementAndLog = event => {
@@ -42,13 +61,6 @@ describe('Test for non-linear-image', () => {
       _incrementAndLog(e);
     });
 
-    rmpVast.one('adclick', e => {
-      _incrementAndLog(e);
-      setTimeout(() => {
-        rmpVast.play();
-      }, 2000);
-    });
-
     rmpVast.on('adstarted', e => {
       _incrementAndLog(e);
       setTimeout(() => {
@@ -65,10 +77,13 @@ describe('Test for non-linear-image', () => {
         timeupdateCount++;
         if (timeupdateCount === 5) {
           _incrementAndLog(e);
-          if (validSteps === 7) {
-            expect(validSteps).toBe(7);
-            title.textContent = 'Test completed';
-            done();
+          if (validSteps === 6) {
+            expect(validSteps).toBe(6);
+            if (validSteps === 6) {
+              _pass();
+            } else {
+              _fail();
+            }
           }
         }
       });

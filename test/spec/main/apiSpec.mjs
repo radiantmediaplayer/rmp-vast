@@ -8,6 +8,7 @@ let testUrls = [
 
 const testUrlsChromeOnly = [
   SELENIUM.pathToTest + 'apiSpec/methods.html',
+  SELENIUM.pathToTest + 'apiSpec/element-input-constructor.html',
   SELENIUM.pathToTest + 'apiSpec/pre-mid-post.html',
   SELENIUM.pathToTest + 'apiSpec/stopAds-hls.html',
   SELENIUM.pathToTest + 'apiSpec/ThreeConsecutiveWithErrorLinearSpec.html'

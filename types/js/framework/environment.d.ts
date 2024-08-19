@@ -1,7 +1,7 @@
 export default class Environment {
-    static _filterVersion(pattern: any): number;
-    static get _testVideo(): HTMLVideoElement;
-    static get _hasTouchEvents(): boolean;
+    static "__#2@#filterVersion"(pattern: any): number;
+    static get "__#2@#testVideo"(): HTMLVideoElement;
+    static get "__#2@#hasTouchEvents"(): boolean;
     static get userAgent(): string;
     static get devicePixelRatio(): number;
     static get maxTouchPoints(): number;

@@ -1,6 +1,6 @@
 export default class Logger {
 
-  static _rawConsoleLogs(dump) {
+  static #rawConsoleLogs(dump) {
     if (dump === null) {
       console.log('null');
     } else if (typeof dump === 'object') {
@@ -43,7 +43,7 @@ export default class Logger {
         console.log(`RMP-VAST: ${data}`);
       }
       if (typeof dump !== 'undefined') {
-        Logger._rawConsoleLogs(dump);
+        Logger.#rawConsoleLogs(dump);
       }
     } else {
       if (data) {

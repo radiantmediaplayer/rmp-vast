@@ -1,6 +1,6 @@
 {
   "name": "rmp-vast",
-  "version": "16.0.0",
+  "version": "16.1.0",
   "author": "Radiant Media Player <support@radiantmediaplayer.com>",
   "description": "A client-side JavaScript solution to load, parse and display VAST resources (advertising)",
   "repository": {
@@ -10,10 +10,10 @@
   "main": "./dist/rmp-vast.js",
   "types": "./types/js/index.d.ts",
   "scripts": {
-    "test": "node ./test/run.js",
+    "test": "node ./test/run.mjs",
     "test:patch": "node ./test/run.mjs patch",
-    "testAndroid": "node ./test/run.js android",
-    "testSafari": "node ./test/run.js safari",
+    "testAndroid": "node ./test/run.mjs android",
+    "testSafari": "node ./test/run.mjs safari",
     "webpackbuild": "webpack --config webpack.production.config.js",
     "dev": "webpack serve --config webpack.dev.config.js --hot",
     "lint:browser": "npx eslint ./src/ ./test/ ./app/ ./eslint.config*",
@@ -49,7 +49,7 @@
     "@babel/plugin-transform-runtime": "^7.24.7",
     "@babel/preset-env": "^7.25.3",
     "@eslint/js": "^9.9.0",
-    "@stylistic/eslint-plugin": "^2.6.2",
+    "@stylistic/eslint-plugin": "^2.6.4",
     "babel-loader": "^9.1.3",
     "babel-plugin-polyfill-corejs3": "^0.10.6",
     "clean-webpack-plugin": "^4.0.0",
@@ -67,7 +67,7 @@
     "postcss-less": "^6.0.0",
     "selenium-webdriver": "^4.23.0",
     "style-loader": "^4.0.0",
-    "stylelint": "^16.8.1",
+    "stylelint": "^16.8.2",
     "stylelint-config-standard": "^36.0.1",
     "stylelint-webpack-plugin": "^5.0.1",
     "terser": "^5.31.6",
@@ -78,8 +78,8 @@
     "webpack-dev-server": "^5.0.4"
   },
   "dependencies": {
-    "@babel/runtime": "^7.25.0",
-    "@types/node": "^22.2.0",
+    "@babel/runtime-corejs3": "^7.25.0",
+    "@types/node": "^22.4.1",
     "core-js-pure": "^3.38.0",
     "whatwg-fetch": "^3.6.20"
   }

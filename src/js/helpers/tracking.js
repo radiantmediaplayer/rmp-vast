@@ -5,61 +5,70 @@ import Logger from '../framework/logger';
 
 export default class Tracking {
 
+  #rmpVast;
+  #trackingApiEventMap = new Map();
+  #onPauseFn = null;
+  #onPlayFn = null;
+  #onPlayingFn = null;
+  #onEndedFn = null;
+  #onVolumeChangeFn = null;
+  #onTimeupdateFn = null;
+  #firstQuartileEventFired = false;
+  #midpointEventFired = false;
+  #thirdQuartileEventFired = false;
+
   constructor(rmpVast) {
-    this._rmpVast = rmpVast;
-    this._debugRawConsoleLogs = rmpVast.debugRawConsoleLogs;
-    this.reset();
-    this._createTrackingApiEventMap();
+    this.#rmpVast = rmpVast;
+    this.#createTrackingApiEventMap();
   }
 
-  _createTrackingApiEventMap() {
-    this._trackingApiEventMap = new Map();
+  #createTrackingApiEventMap() {
     // ViewableImpression
-    this._trackingApiEventMap.set('adviewable', 'viewable');
-    this._trackingApiEventMap.set('adviewundetermined', 'viewundetermined');
+    this.#trackingApiEventMap.set('adviewable', 'viewable');
+    this.#trackingApiEventMap.set('adviewundetermined', 'viewundetermined');
     // Tracking Event Elements
-    this._trackingApiEventMap.set('advolumemuted', 'mute');
-    this._trackingApiEventMap.set('advolumeunmuted', 'unmute');
-    this._trackingApiEventMap.set('adpaused', 'pause');
-    this._trackingApiEventMap.set('adresumed', 'resume');
-    this._trackingApiEventMap.set('adskipped', 'skip');
+    this.#trackingApiEventMap.set('advolumemuted', 'mute');
+    this.#trackingApiEventMap.set('advolumeunmuted', 'unmute');
+    this.#trackingApiEventMap.set('adpaused', 'pause');
+    this.#trackingApiEventMap.set('adresumed', 'resume');
+    this.#trackingApiEventMap.set('adskipped', 'skip');
     // VAST 4 events
-    this._trackingApiEventMap.set('adplayerexpand', 'playerExpand');
-    this._trackingApiEventMap.set('adplayercollapse', 'playerCollapse');
+    this.#trackingApiEventMap.set('adplayerexpand', 'playerExpand');
+    this.#trackingApiEventMap.set('adplayercollapse', 'playerCollapse');
     // VAST 3 events
-    this._trackingApiEventMap.set('adfullscreen', 'fullscreen');
-    this._trackingApiEventMap.set('adexitfullscreen', 'exitFullscreen');
+    this.#trackingApiEventMap.set('adfullscreen', 'fullscreen');
+    this.#trackingApiEventMap.set('adexitfullscreen', 'exitFullscreen');
     // Linear Ad Metrics
-    this._trackingApiEventMap.set('adloaded', 'loaded');
-    this._trackingApiEventMap.set('adstarted', 'start');
-    this._trackingApiEventMap.set('adfirstquartile', 'firstQuartile');
-    this._trackingApiEventMap.set('admidpoint', 'midpoint');
-    this._trackingApiEventMap.set('adthirdquartile', 'thirdQuartile');
-    this._trackingApiEventMap.set('adcomplete', 'complete');
-    // tracking progress event happens in _onTimeupdate
+    this.#trackingApiEventMap.set('adloaded', 'loaded');
+    this.#trackingApiEventMap.set('adstarted', 'start');
+    this.#trackingApiEventMap.set('adfirstquartile', 'firstQuartile');
+    this.#trackingApiEventMap.set('admidpoint', 'midpoint');
+    this.#trackingApiEventMap.set('adthirdquartile', 'thirdQuartile');
+    this.#trackingApiEventMap.set('adcomplete', 'complete');
+    // tracking progress event happens in #onTimeupdate
     // InLine > Impression
-    this._trackingApiEventMap.set('adimpression', 'impression');
+    this.#trackingApiEventMap.set('adimpression', 'impression');
 
     // creativeView for companion ads happens in getCompanionAd (index.js)
     // creativeView tracking needs to happen for linear creative as well (support for VAST 3)
-    this._trackingApiEventMap.set('adcreativeview', 'creativeView');
+    this.#trackingApiEventMap.set('adcreativeview', 'creativeView');
 
     // for non-linear and VPAID only
-    this._trackingApiEventMap.set('adcollapse', 'adCollapse');
+    this.#trackingApiEventMap.set('adcollapse', 'adCollapse');
 
     // only support for VPAID - PR welcome for non-linear
-    this._trackingApiEventMap.set('aduseracceptinvitation', 'acceptInvitation');
-    this._trackingApiEventMap.set('adclosed', 'close');
+    this.#trackingApiEventMap.set('aduseracceptinvitation', 'acceptInvitation');
+    this.#trackingApiEventMap.set('adclosed', 'close');
     // VideoClicks > ClickThrough
-    this._trackingApiEventMap.set('adclick', 'clickthrough');
+    this.#trackingApiEventMap.set('adclick', 'clickthrough');
 
     // Need to investigate overlayViewDuration (non-linear) - interactiveStart (SIMID) further
   }
 
-  _dispatch(event) {
-    Logger.print(this._debugRawConsoleLogs, `ping tracking for ${event} VAST event`);
+  #dispatch(event) {
+    Logger.print(this.#rmpVast.debugRawConsoleLogs, `ping tracking for ${event} VAST event`);
     // filter trackers - may return multiple urls for same event as allowed by VAST spec
-    const trackers = this._rmpVast.trackingTags.filter(value => {
+    const trackers = this.#rmpVast.trackingTags.filter(value => {
       return event === value.event;
     });
     // send ping for each valid tracker
@@ -70,7 +79,7 @@ export default class Tracking {
     }
   }
 
-  _ping(url) {
+  #ping(url) {
     // we expect an image format for the tracker (generally a 1px GIF/PNG/JPG/AVIF) or JavaScript as 
     // those are the most common format in the industry 
     // other format may produce errors and the related tracker may not be requested properly
@@ -85,70 +94,70 @@ export default class Tracking {
         document.body.appendChild(script);
       }
     } else {
-      FW.ajax(url, this._rmpVast.params.ajaxTimeout, false, 'GET').
+      FW.ajax(url, this.#rmpVast.params.ajaxTimeout, false, 'GET').
         then(() => {
-          Logger.print(this._debugRawConsoleLogs, `VAST tracker successfully loaded ${url}`);
+          Logger.print(this.#rmpVast.debugRawConsoleLogs, `VAST tracker successfully loaded ${url}`);
         }).catch(error => {
           console.warn(error);
         });
     }
   }
 
-  _onVolumeChange() {
-    if (this._rmpVast.currentAdPlayer) {
-      const muted = this._rmpVast.currentAdPlayer.muted;
-      const volume = this._rmpVast.currentAdPlayer.volume;
+  #onVolumeChange() {
+    if (this.#rmpVast.currentAdPlayer) {
+      const muted = this.#rmpVast.currentAdPlayer.muted;
+      const volume = this.#rmpVast.currentAdPlayer.volume;
       if (muted || volume === 0) {
         this.dispatchTrackingAndApiEvent('advolumemuted');
       } else if (!muted && volume > 0) {
         this.dispatchTrackingAndApiEvent('advolumeunmuted');
       }
-      this._rmpVast.rmpVastUtils.createApiEvent('advolumechanged');
+      this.#rmpVast.rmpVastUtils.createApiEvent('advolumechanged');
     }
   }
 
-  _onTimeupdate() {
+  #onTimeupdate() {
     let adPlayerDuration = -1;
     let adPlayerCurrentTime = -1;
-    if (this._rmpVast.rmpVastAdPlayer) {
-      adPlayerCurrentTime = this._rmpVast.rmpVastAdPlayer.currentTime;
-      adPlayerDuration = this._rmpVast.rmpVastAdPlayer.duration;
+    if (this.#rmpVast.rmpVastAdPlayer) {
+      adPlayerCurrentTime = this.#rmpVast.rmpVastAdPlayer.currentTime;
+      adPlayerDuration = this.#rmpVast.rmpVastAdPlayer.duration;
     }
     if (adPlayerCurrentTime > 0) {
       if (adPlayerDuration > 0 && adPlayerDuration > adPlayerCurrentTime) {
-        if (adPlayerCurrentTime >= adPlayerDuration * 0.25 && !this._firstQuartileEventFired) {
-          this._firstQuartileEventFired = true;
+        if (adPlayerCurrentTime >= adPlayerDuration * 0.25 && !this.#firstQuartileEventFired) {
+          this.#firstQuartileEventFired = true;
           this.dispatchTrackingAndApiEvent('adfirstquartile');
-        } else if (adPlayerCurrentTime >= adPlayerDuration * 0.5 && !this._midpointEventFired) {
-          this._midpointEventFired = true;
+        } else if (adPlayerCurrentTime >= adPlayerDuration * 0.5 && !this.#midpointEventFired) {
+          this.#midpointEventFired = true;
           this.dispatchTrackingAndApiEvent('admidpoint');
-        } else if (adPlayerCurrentTime >= adPlayerDuration * 0.75 && !this._thirdQuartileEventFired) {
-          this._thirdQuartileEventFired = true;
+        } else if (adPlayerCurrentTime >= adPlayerDuration * 0.75 && !this.#thirdQuartileEventFired) {
+          this.#thirdQuartileEventFired = true;
           this.dispatchTrackingAndApiEvent('adthirdquartile');
         }
       }
       // progress event
-      if (this._rmpVast.progressEvents.length > 0) {
-        if (adPlayerCurrentTime > this._rmpVast.progressEvents[0].time) {
-          const filterProgressEvent = this._rmpVast.progressEvents.filter(progressEvent => {
-            return progressEvent.time === this._rmpVast.progressEvents[0].time;
+      if (this.#rmpVast.progressEvents.length > 0) {
+        if (adPlayerCurrentTime > this.#rmpVast.progressEvents[0].time) {
+          const filterProgressEvent = this.#rmpVast.progressEvents.filter(progressEvent => {
+            return progressEvent.time === this.#rmpVast.progressEvents[0].time;
           });
           filterProgressEvent.forEach(progressEvent => {
             if (progressEvent.url) {
               this.pingURI(progressEvent.url);
             }
           });
-          this._rmpVast.progressEvents.shift();
-          this._rmpVast.rmpVastUtils.createApiEvent('adprogress');
+          this.#rmpVast.progressEvents.shift();
+          this.#rmpVast.rmpVastUtils.createApiEvent('adprogress');
         }
       }
     }
   }
 
-  _onPause() {
-    if (this._rmpVast.currentAdPlayer && this._rmpVast.currentAdPlayer.paused) {
-      const currentTime = this._rmpVast.currentAdPlayer.currentTime;
-      const currentDuration = this._rmpVast.currentAdPlayer.duration;
+  #onPause() {
+    if (this.#rmpVast.currentAdPlayer && this.#rmpVast.currentAdPlayer.paused) {
+      const currentTime = this.#rmpVast.currentAdPlayer.currentTime;
+      const currentDuration = this.#rmpVast.currentAdPlayer.duration;
       // we have reached end of linear creative - a HTML5 video pause event may fire just before ended event
       // in this case we ignore the adpaused event as adcomplete prevails
       if (currentTime === currentDuration) {
@@ -158,30 +167,30 @@ export default class Tracking {
     }
   }
 
-  _onPlay() {
-    if (this._rmpVast.currentAdPlayer && !this._rmpVast.currentAdPlayer.paused) {
+  #onPlay() {
+    if (this.#rmpVast.currentAdPlayer && !this.#rmpVast.currentAdPlayer.paused) {
       this.dispatchTrackingAndApiEvent('adresumed');
     }
   }
 
-  _onPlaying() {
+  #onPlaying() {
     this.dispatchTrackingAndApiEvent(['adimpression', 'adcreativeview', 'adstarted']);
   }
 
-  _onEnded() {
+  #onEnded() {
     this.dispatchTrackingAndApiEvent('adcomplete');
-    if (this._rmpVast.rmpVastAdPlayer) {
-      this._rmpVast.rmpVastAdPlayer.resumeContent();
+    if (this.#rmpVast.rmpVastAdPlayer) {
+      this.#rmpVast.rmpVastAdPlayer.resumeContent();
     }
   }
 
-  _dispatchTracking(event) {
+  #dispatchTracking(event) {
     if (Array.isArray(event)) {
       event.forEach(currentEvent => {
-        this._dispatch(currentEvent);
+        this.#dispatch(currentEvent);
       });
     } else {
-      this._dispatch(event);
+      this.#dispatch(event);
     }
   }
 
@@ -196,8 +205,8 @@ export default class Tracking {
     // CONTENTCAT GPPSECTIONID GPPSTRING PLAYBACKMETHODS STOREID STOREURL BREAKMAXADLENGTH BREAKMAXADS BREAKMAXDURATION
     // BREAKMINADLENGTH  PLACEMENTTYPE TRANSACTIONID CLIENTUA DEVICEIP IFA IFATYPE LATLONG SERVERUA APPBUNDLE
     // EXTENSIONS OMIDPARTNER VERIFICATIONVENDORS CONTENTID CONTENTURI INVENTORYSTATE
-    if (this._rmpVast.params.macros.size > 0) {
-      for (let [key, value] of this._rmpVast.params.macros) {
+    if (this.#rmpVast.params.macros.size > 0) {
+      for (let [key, value] of this.#rmpVast.params.macros) {
         const pattern = '\\[' + key + '\\]';
         const regex = new RegExp(pattern, 'gi');
         if (regex.test(finalString)) {
@@ -217,8 +226,8 @@ export default class Tracking {
     const patternADCOUNT = /\[ADCOUNT\]/gi;
     if (patternADCOUNT.test(finalString)) {
       let adCount = 1;
-      if (this._rmpVast.adPodLength > 0) {
-        adCount = this._rmpVast.adSequence;
+      if (this.#rmpVast.adPodLength > 0) {
+        adCount = this.#rmpVast.adSequence;
       }
       finalString = finalString.replace(patternADCOUNT, adCount.toString());
     }
@@ -239,15 +248,15 @@ export default class Tracking {
     }
 
     const pattern3 = /\[(CONTENTPLAYHEAD|MEDIAPLAYHEAD)\]/gi;
-    let currentContentTime = this._rmpVast.rmpVastContentPlayer.currentTime;
+    let currentContentTime = this.#rmpVast.rmpVastContentPlayer.currentTime;
     if (pattern3.test(finalString) && currentContentTime > -1) {
       finalString = finalString.replace(pattern3, encodeURIComponent(FW.vastReadableTime(currentContentTime)));
     }
 
     const pattern5 = /\[BREAKPOSITION\]/gi;
     let adPlayerDuration = -1;
-    if (this._rmpVast.rmpVastAdPlayer) {
-      adPlayerDuration = this._rmpVast.rmpVastAdPlayer.duration;
+    if (this.#rmpVast.rmpVastAdPlayer) {
+      adPlayerDuration = this.#rmpVast.rmpVastAdPlayer.duration;
     }
     if (pattern5.test(finalString)) {
       if (currentContentTime === 0) {
@@ -260,8 +269,8 @@ export default class Tracking {
     }
 
     const pattern9 = /\[ADTYPE\]/gi;
-    if (pattern9.test(finalString) && this._rmpVast.ad.adType) {
-      finalString = finalString.replace(pattern9, encodeURIComponent(this._rmpVast.ad.adType));
+    if (pattern9.test(finalString) && this.#rmpVast.ad.adType) {
+      finalString = finalString.replace(pattern9, encodeURIComponent(this.#rmpVast.ad.adType));
     }
 
     const pattern11 = /\[DEVICEUA\]/gi;
@@ -300,8 +309,8 @@ export default class Tracking {
 
     const pattern21 = /\[PLAYERSIZE\]/gi;
     if (pattern21.test(finalString)) {
-      const width = parseInt(FW.getWidth(this._rmpVast.container));
-      const height = parseInt(FW.getHeight(this._rmpVast.container));
+      const width = parseInt(FW.getWidth(this.#rmpVast.container));
+      const height = parseInt(FW.getHeight(this.#rmpVast.container));
       finalString = finalString.replace(
         pattern21, encodeURIComponent(width.toString() + ',' + height.toString())
       );
@@ -310,8 +319,8 @@ export default class Tracking {
     if (trackingPixels) {
       const pattern4 = /\[ADPLAYHEAD\]/gi;
       let adPlayerCurrentTime = -1;
-      if (this._rmpVast.rmpVastAdPlayer) {
-        adPlayerCurrentTime = this._rmpVast.rmpVastAdPlayer.currentTime;
+      if (this.#rmpVast.rmpVastAdPlayer) {
+        adPlayerCurrentTime = this.#rmpVast.rmpVastAdPlayer.currentTime;
       }
       if (pattern4.test(finalString) && adPlayerCurrentTime > -1) {
         finalString = finalString.replace(
@@ -321,10 +330,10 @@ export default class Tracking {
       }
 
       const pattern10 = /\[UNIVERSALADID\]/gi;
-      if (pattern10.test(finalString) && this._rmpVast.creative.universalAdIds.length > 0) {
+      if (pattern10.test(finalString) && this.#rmpVast.creative.universalAdIds.length > 0) {
         let universalAdIdString = '';
-        this._rmpVast.creative.universalAdIds.forEach((universalAdId, index) => {
-          if (index !== 0 || index !== this._rmpVast.creative.universalAdIds.length - 1) {
+        this.#rmpVast.creative.universalAdIds.forEach((universalAdId, index) => {
+          if (index !== 0 || index !== this.#rmpVast.creative.universalAdIds.length - 1) {
             universalAdIdString += ',';
           }
           universalAdIdString += universalAdId.idRegistry + ' ' + universalAdId.value;
@@ -336,31 +345,31 @@ export default class Tracking {
       }
 
       const pattern22 = /\[ASSETURI\]/gi;
-      const assetUri = this._rmpVast.adMediaUrl;
+      const assetUri = this.#rmpVast.adMediaUrl;
       if (pattern22.test(finalString) && typeof assetUri === 'string' && assetUri !== '') {
         finalString = finalString.replace(pattern22, encodeURIComponent(assetUri));
       }
 
       const pattern23 = /\[PODSEQUENCE\]/gi;
-      if (pattern23.test(finalString) && this._rmpVast.ad.sequence) {
-        finalString = finalString.replace(pattern23, encodeURIComponent((this._rmpVast.ad.sequence).toString()));
+      if (pattern23.test(finalString) && this.#rmpVast.ad.sequence) {
+        finalString = finalString.replace(pattern23, encodeURIComponent((this.#rmpVast.ad.sequence).toString()));
       }
 
       const pattern24 = /\[ADSERVINGID\]/gi;
-      if (pattern24.test(finalString) && this._rmpVast.ad.adServingId) {
-        finalString = finalString.replace(pattern24, encodeURIComponent(this._rmpVast.ad.adServingId));
+      if (pattern24.test(finalString) && this.#rmpVast.ad.adServingId) {
+        finalString = finalString.replace(pattern24, encodeURIComponent(this.#rmpVast.ad.adServingId));
       }
     } else {
 
       const pattern6 = /\[ADCATEGORIES\]/gi;
-      if (pattern6.test(finalString) && this._rmpVast.ad.categories.length > 0) {
-        const categories = this._rmpVast.ad.categories.map(categorie => categorie.value).join(',');
+      if (pattern6.test(finalString) && this.#rmpVast.ad.categories.length > 0) {
+        const categories = this.#rmpVast.ad.categories.map(categorie => categorie.value).join(',');
         finalString = finalString.replace(pattern6, encodeURIComponent(categories));
       }
 
       const pattern7 = /\[BLOCKEDADCATEGORIES\]/gi;
-      if (pattern7.test(finalString) && this._rmpVast.ad.blockedAdCategories.length > 0) {
-        const blockedAdCategories = this._rmpVast.ad.blockedAdCategories.map(blockedAdCategories => blockedAdCategories.value).join(',');
+      if (pattern7.test(finalString) && this.#rmpVast.ad.blockedAdCategories.length > 0) {
+        const blockedAdCategories = this.#rmpVast.ad.blockedAdCategories.map(blockedAdCategories => blockedAdCategories.value).join(',');
         finalString = finalString.replace(pattern7, encodeURIComponent(blockedAdCategories));
       }
 
@@ -391,7 +400,7 @@ export default class Tracking {
         let mimeTyepString = '';
         mediaMime.forEach(value => {
           if (value === 'application/vnd.apple.mpegurl') {
-            if (Environment.checkCanPlayType(value) || this._rmpVast.rmpVastLinearCreative.readingHlsJS) {
+            if (Environment.checkCanPlayType(value) || this.#rmpVast.rmpVastLinearCreative.readingHlsJS) {
               mimeTyepString += value + ',';
             }
           } else if (Environment.checkCanPlayType(value)) {
@@ -407,10 +416,10 @@ export default class Tracking {
       const pattern20 = /\[PLAYERSTATE\]/gi;
       if (pattern20.test(finalString)) {
         let playerState = '';
-        if (this._rmpVast.rmpVastContentPlayer.muted) {
+        if (this.#rmpVast.rmpVastContentPlayer.muted) {
           playerState += 'muted';
         }
-        if (this._rmpVast.isInFullscreen) {
+        if (this.#rmpVast.isInFullscreen) {
           if (playerState) {
             playerState += ',';
           }
@@ -421,7 +430,7 @@ export default class Tracking {
     }
 
     const pattern25 = /\[LIMITADTRACKING\]/gi;
-    const regulationsInfo = this._rmpVast.regulationsInfo;
+    const regulationsInfo = this.#rmpVast.regulationsInfo;
     if (pattern25.test(finalString) && regulationsInfo.limitAdTracking) {
       finalString = finalString.replace(pattern25, encodeURIComponent(regulationsInfo.limitAdTracking));
     }
@@ -441,16 +450,16 @@ export default class Tracking {
 
   pingURI(url) {
     const trackingUrl = this.replaceMacros(url, true);
-    this._ping(trackingUrl);
+    this.#ping(trackingUrl);
   }
 
   error(errorCode) {
     // for each Error tag within an InLine or chain of Wrapper ping error URL
-    let errorTags = this._rmpVast.adErrorTags;
-    if (errorCode === 303 && this._rmpVast.vastErrorTags.length > 0) {
+    let errorTags = this.#rmpVast.adErrorTags;
+    if (errorCode === 303 && this.#rmpVast.vastErrorTags.length > 0) {
       // here we ping vastErrorTags with error code 303 according to spec
       // concat array thus
-      errorTags = [...errorTags, ...this._rmpVast.vastErrorTags];
+      errorTags = [...errorTags, ...this.#rmpVast.vastErrorTags];
     }
     if (errorTags.length > 0) {
       errorTags.forEach(errorTag => {
@@ -460,67 +469,67 @@ export default class Tracking {
           if (errorRegExp.test(errorUrl) && FW.isNumber(errorCode) && errorCode > 0 && errorCode < 1000) {
             errorUrl = errorUrl.replace(errorRegExp, errorCode);
           }
-          this._ping(errorUrl);
+          this.#ping(errorUrl);
         }
       });
     }
   }
 
   reset() {
-    this._onPauseFn = null;
-    this._onPlayFn = null;
-    this._onPlayingFn = null;
-    this._onEndedFn = null;
-    this._onVolumeChangeFn = null;
-    this._onTimeupdateFn = null;
-    this._firstQuartileEventFired = false;
-    this._midpointEventFired = false;
-    this._thirdQuartileEventFired = false;
+    this.#onPauseFn = null;
+    this.#onPlayFn = null;
+    this.#onPlayingFn = null;
+    this.#onEndedFn = null;
+    this.#onVolumeChangeFn = null;
+    this.#onTimeupdateFn = null;
+    this.#firstQuartileEventFired = false;
+    this.#midpointEventFired = false;
+    this.#thirdQuartileEventFired = false;
   }
 
   dispatchTrackingAndApiEvent(apiEvent) {
     if (Array.isArray(apiEvent)) {
       apiEvent.forEach(currentApiEvent => {
-        this._rmpVast.rmpVastUtils.createApiEvent(currentApiEvent);
-        this._dispatchTracking(this._trackingApiEventMap.get(currentApiEvent));
+        this.#rmpVast.rmpVastUtils.createApiEvent(currentApiEvent);
+        this.#dispatchTracking(this.#trackingApiEventMap.get(currentApiEvent));
       });
     } else {
-      this._rmpVast.rmpVastUtils.createApiEvent(apiEvent);
-      this._dispatchTracking(this._trackingApiEventMap.get(apiEvent));
+      this.#rmpVast.rmpVastUtils.createApiEvent(apiEvent);
+      this.#dispatchTracking(this.#trackingApiEventMap.get(apiEvent));
     }
   }
 
   destroy() {
-    if (this._rmpVast.currentAdPlayer) {
-      this._rmpVast.currentAdPlayer.removeEventListener('pause', this._onPauseFn);
-      this._rmpVast.currentAdPlayer.removeEventListener('play', this._onPlayFn);
-      this._rmpVast.currentAdPlayer.removeEventListener('playing', this._onPlayingFn);
-      this._rmpVast.currentAdPlayer.removeEventListener('ended', this._onEndedFn);
-      this._rmpVast.currentAdPlayer.removeEventListener('volumechange', this._onVolumeChangeFn);
-      this._rmpVast.currentAdPlayer.removeEventListener('timeupdate', this._onTimeupdateFn);
+    if (this.#rmpVast.currentAdPlayer) {
+      this.#rmpVast.currentAdPlayer.removeEventListener('pause', this.#onPauseFn);
+      this.#rmpVast.currentAdPlayer.removeEventListener('play', this.#onPlayFn);
+      this.#rmpVast.currentAdPlayer.removeEventListener('playing', this.#onPlayingFn);
+      this.#rmpVast.currentAdPlayer.removeEventListener('ended', this.#onEndedFn);
+      this.#rmpVast.currentAdPlayer.removeEventListener('volumechange', this.#onVolumeChangeFn);
+      this.#rmpVast.currentAdPlayer.removeEventListener('timeupdate', this.#onTimeupdateFn);
     }
   }
 
   wire() {
     // we filter through all HTML5 video events and create new VAST events 
-    if (this._rmpVast.currentAdPlayer && this._rmpVast.creative.isLinear && !this._rmpVast.rmpVastVpaidPlayer) {
-      this._onPauseFn = this._onPause.bind(this);
-      this._rmpVast.currentAdPlayer.addEventListener('pause', this._onPauseFn);
+    if (this.#rmpVast.currentAdPlayer && this.#rmpVast.creative.isLinear && !this.#rmpVast.rmpVastVpaidPlayer) {
+      this.#onPauseFn = this.#onPause.bind(this);
+      this.#rmpVast.currentAdPlayer.addEventListener('pause', this.#onPauseFn);
 
-      this._onPlayFn = this._onPlay.bind(this);
-      this._rmpVast.currentAdPlayer.addEventListener('play', this._onPlayFn);
+      this.#onPlayFn = this.#onPlay.bind(this);
+      this.#rmpVast.currentAdPlayer.addEventListener('play', this.#onPlayFn);
 
-      this._onPlayingFn = this._onPlaying.bind(this);
-      this._rmpVast.currentAdPlayer.addEventListener('playing', this._onPlayingFn, { once: true });
+      this.#onPlayingFn = this.#onPlaying.bind(this);
+      this.#rmpVast.currentAdPlayer.addEventListener('playing', this.#onPlayingFn, { once: true });
 
-      this._onEndedFn = this._onEnded.bind(this);
-      this._rmpVast.currentAdPlayer.addEventListener('ended', this._onEndedFn, { once: true });
+      this.#onEndedFn = this.#onEnded.bind(this);
+      this.#rmpVast.currentAdPlayer.addEventListener('ended', this.#onEndedFn, { once: true });
 
-      this._onVolumeChangeFn = this._onVolumeChange.bind(this);
-      this._rmpVast.currentAdPlayer.addEventListener('volumechange', this._onVolumeChangeFn);
+      this.#onVolumeChangeFn = this.#onVolumeChange.bind(this);
+      this.#rmpVast.currentAdPlayer.addEventListener('volumechange', this.#onVolumeChangeFn);
 
-      this._onTimeupdateFn = this._onTimeupdate.bind(this);
-      this._rmpVast.currentAdPlayer.addEventListener('timeupdate', this._onTimeupdateFn);
+      this.#onTimeupdateFn = this.#onTimeupdate.bind(this);
+      this.#rmpVast.currentAdPlayer.addEventListener('timeupdate', this.#onTimeupdateFn);
     }
   }
 

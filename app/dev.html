@@ -22,15 +22,17 @@
   <script>
     const id = 'vast-player';
     const params = {
-      showControlsForAdPlayer: true,
-      debugRawConsoleLogs: true
+      showControlsForAdPlayer: true
     };
     var container = document.getElementById(id);
-    var ADTAG = 'https://www.radiantmediaplayer.com/vast/tags/inline-linear-1.xml';
+    var ADTAG = 'https://www.radiantmediaplayer.com/vast/tags/non-linear.xml';
     /*ADTAG = 'https://pubads.g.doubleclick.net/gampad/ads?iu=/21775744923/external/simid&description_url=https%3A%2F%2Fdevelopers.google.com%2Finteractive-media-ads&sz=640x480&gdfp_req=1&output=vast&unviewed_position_start=1&env=vp&impl=s&correlator=' + Date.now();*/
 
 
     var rmpVast = new RmpVast(id, params);
     rmpVast.loadAds(ADTAG);
+    setTimeout(() => {
+      rmpVast.loadAds('https://pubads.g.doubleclick.net/gampad/ads?iu=/21775744923/external/nonlinear_ad_samples&sz=480x70&cust_params=sample_ct%3Dnonlinear&ciu_szs=300x250%2C728x90&gdfp_req=1&output=vast&unviewed_position_start=1&env=vp&impl=s&correlator=' + Date.now());
+    }, 15000);
   </script>
 </body>

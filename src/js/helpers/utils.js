@@ -5,51 +5,51 @@ import Logger from '../framework/logger';
 
 export default class Utils {
 
+  #rmpVast;
+  #onFullscreenchangeFn = null;
+
   constructor(rmpVast) {
-    this._rmpVast = rmpVast;
-    // we cannot have this here - we need this._rmpVast.debugRawConsoleLogs
-    //this._debugRawConsoleLogs = rmpVast.debugRawConsoleLogs;
-    this._onFullscreenchangeFn = null;
+    this.#rmpVast = rmpVast;
   }
 
   // attach fullscreen states
   // this assumes we have a polyfill for fullscreenchange event 
   // see app/js/app.js
   // we need this to handle VAST fullscreen events
-  _onFullscreenchange(event) {
+  #onFullscreenchange(event) {
     if (event && event.type) {
-      Logger.print(this._rmpVast.debugRawConsoleLogs, `event is ${event.type}`);
-      const isLinear = this._rmpVast.creative.isLinear;
-      const isOnStage = this._rmpVast.__adOnStage;
+      Logger.print(this.#rmpVast.debugRawConsoleLogs, `event is ${event.type}`);
+      const isLinear = this.#rmpVast.creative.isLinear;
+      const isOnStage = this.#rmpVast.__adOnStage;
       if (event.type === 'fullscreenchange') {
-        if (this._rmpVast.isInFullscreen) {
-          this._rmpVast.isInFullscreen = false;
+        if (this.#rmpVast.isInFullscreen) {
+          this.#rmpVast.isInFullscreen = false;
           if (isOnStage && isLinear) {
-            this._rmpVast.rmpVastTracking.dispatchTrackingAndApiEvent(['adexitfullscreen', 'adplayercollapse']);
+            this.#rmpVast.rmpVastTracking.dispatchTrackingAndApiEvent(['adexitfullscreen', 'adplayercollapse']);
           }
         } else {
-          this._rmpVast.isInFullscreen = true;
+          this.#rmpVast.isInFullscreen = true;
           if (isOnStage && isLinear) {
-            this._rmpVast.rmpVastTracking.dispatchTrackingAndApiEvent(['adfullscreen', 'adplayerexpand']);
+            this.#rmpVast.rmpVastTracking.dispatchTrackingAndApiEvent(['adfullscreen', 'adplayerexpand']);
           }
         }
       } else if (event.type === 'webkitbeginfullscreen') {
         // iOS uses webkitbeginfullscreen
         if (isOnStage && isLinear) {
-          this._rmpVast.rmpVastTracking.dispatchTrackingAndApiEvent(['adfullscreen', 'adplayerexpand']);
+          this.#rmpVast.rmpVastTracking.dispatchTrackingAndApiEvent(['adfullscreen', 'adplayerexpand']);
         }
-        this._rmpVast.isInFullscreen = true;
+        this.#rmpVast.isInFullscreen = true;
       } else if (event.type === 'webkitendfullscreen') {
         // iOS uses webkitendfullscreen
         if (isOnStage && isLinear) {
-          this._rmpVast.rmpVastTracking.dispatchTrackingAndApiEvent(['adexitfullscreen', 'adplayercollapse']);
+          this.#rmpVast.rmpVastTracking.dispatchTrackingAndApiEvent(['adexitfullscreen', 'adplayercollapse']);
         }
-        this._rmpVast.isInFullscreen = false;
+        this.#rmpVast.isInFullscreen = false;
       }
     }
   }
 
-  _updateVastError(errorCode) {
+  #updateVastError(errorCode) {
     // List of VAST errors according to specs
     const vastErrorsList = [{
       code: 201,
@@ -197,21 +197,21 @@ export default class Utils {
       return value.code === errorCode;
     });
     if (error.length > 0) {
-      this._rmpVast.__vastErrorCode = error[0].code;
-      this._rmpVast.__adErrorMessage = error[0].description;
+      this.#rmpVast.__vastErrorCode = error[0].code;
+      this.#rmpVast.__adErrorMessage = error[0].description;
     } else {
-      this._rmpVast.__vastErrorCode = -1;
-      this._rmpVast.__adErrorMessage = 'Error getting VAST error';
+      this.#rmpVast.__vastErrorCode = -1;
+      this.#rmpVast.__adErrorMessage = 'Error getting VAST error';
     }
-    if (this._rmpVast.__vastErrorCode > -1) {
-      if (loadErrorsList.indexOf(this._rmpVast.__vastErrorCode) > -1) {
-        this._rmpVast.__adErrorType = 'adLoadError';
-      } else if (playErrorsList.indexOf(this._rmpVast.__vastErrorCode) > -1) {
-        this._rmpVast.__adErrorType = 'adPlayError';
+    if (this.#rmpVast.__vastErrorCode > -1) {
+      if (loadErrorsList.indexOf(this.#rmpVast.__vastErrorCode) > -1) {
+        this.#rmpVast.__adErrorType = 'adLoadError';
+      } else if (playErrorsList.indexOf(this.#rmpVast.__vastErrorCode) > -1) {
+        this.#rmpVast.__adErrorType = 'adPlayError';
       }
     }
-    Logger.print(this._rmpVast.debugRawConsoleLogs, `VAST error code is ${this._rmpVast.__vastErrorCode} with message: ${this._rmpVast.__adErrorMessage}`);
-    Logger.print(this._rmpVast.debugRawConsoleLogs, `Ad error type is ${this._rmpVast.__adErrorType}`);
+    Logger.print(this.#rmpVast.debugRawConsoleLogs, `VAST error code is ${this.#rmpVast.__vastErrorCode} with message: ${this.#rmpVast.__adErrorMessage}`);
+    Logger.print(this.#rmpVast.debugRawConsoleLogs, `Ad error type is ${this.#rmpVast.__adErrorType}`);
   }
 
   filterParams(inputParams) {
@@ -251,28 +251,28 @@ export default class Utils {
       partnerVersion: RMP_VAST_VERSION
     };
 
-    this._rmpVast.params = defaultParams;
+    this.#rmpVast.params = defaultParams;
 
     if (inputParams && typeof inputParams === 'object') {
       const keys = Object.keys(inputParams);
       keys.forEach(key => {
-        if (typeof inputParams[key] === typeof this._rmpVast.params[key]) {
+        if (typeof inputParams[key] === typeof this.#rmpVast.params[key]) {
           if ((FW.isNumber(inputParams[key]) && inputParams[key] > 0) || typeof inputParams[key] !== 'number') {
             if (key === 'vpaidSettings') {
               if (FW.isNumber(inputParams.vpaidSettings.width) && inputParams.vpaidSettings.width > 0) {
-                this._rmpVast.params.vpaidSettings.width = inputParams.vpaidSettings.width;
+                this.#rmpVast.params.vpaidSettings.width = inputParams.vpaidSettings.width;
               }
               if (FW.isNumber(inputParams.vpaidSettings.height) && inputParams.vpaidSettings.height > 0) {
-                this._rmpVast.params.vpaidSettings.height = inputParams.vpaidSettings.height;
+                this.#rmpVast.params.vpaidSettings.height = inputParams.vpaidSettings.height;
               }
               if (typeof inputParams.vpaidSettings.viewMode === 'string' && inputParams.vpaidSettings.viewMode === 'fullscreen') {
-                this._rmpVast.params.vpaidSettings.viewMode = inputParams.vpaidSettings.viewMode;
+                this.#rmpVast.params.vpaidSettings.viewMode = inputParams.vpaidSettings.viewMode;
               }
               if (FW.isNumber(inputParams.vpaidSettings.desiredBitrate) && inputParams.vpaidSettings.desiredBitrate > 0) {
-                this._rmpVast.params.vpaidSettings.desiredBitrate = inputParams.vpaidSettings.desiredBitrate;
+                this.#rmpVast.params.vpaidSettings.desiredBitrate = inputParams.vpaidSettings.desiredBitrate;
               }
             } else {
-              this._rmpVast.params[key] = inputParams[key];
+              this.#rmpVast.params[key] = inputParams[key];
             }
           }
         }
@@ -284,13 +284,13 @@ export default class Utils {
     if (Array.isArray(event)) {
       event.forEach(currentEvent => {
         if (currentEvent) {
-          Logger.print(this._rmpVast.debugRawConsoleLogs, `API EVENT - ${event}`);
-          this._rmpVast.dispatch(currentEvent);
+          Logger.print(this.#rmpVast.debugRawConsoleLogs, `API EVENT - ${event}`);
+          this.#rmpVast.dispatch(currentEvent);
         }
       });
     } else if (event) {
-      Logger.print(this._rmpVast.debugRawConsoleLogs, `API EVENT - ${event}`);
-      this._rmpVast.dispatch(event);
+      Logger.print(this.#rmpVast.debugRawConsoleLogs, `API EVENT - ${event}`);
+      this.#rmpVast.dispatch(event);
     }
   }
 
@@ -298,10 +298,10 @@ export default class Utils {
     let targetPlayer;
     switch (whichPlayer) {
       case 'content':
-        targetPlayer = this._rmpVast.currentContentPlayer;
+        targetPlayer = this.#rmpVast.currentContentPlayer;
         break;
       case 'vast':
-        targetPlayer = this._rmpVast.currentAdPlayer;
+        targetPlayer = this.#rmpVast.currentAdPlayer;
         break;
       default:
         break;
@@ -312,23 +312,23 @@ export default class Utils {
       // this lets us handle autoplay rejection 
       // https://developers.google.com/web/updates/2016/03/play-returns-promise
       if (playPromise !== undefined) {
-        const isLinear = this._rmpVast.creative.isLinear;
+        const isLinear = this.#rmpVast.creative.isLinear;
         playPromise.then(() => {
-          Logger.print(this._rmpVast.debugRawConsoleLogs, `playPromise on ${whichPlayer} player has succeeded`);
+          Logger.print(this.#rmpVast.debugRawConsoleLogs, `playPromise on ${whichPlayer} player has succeeded`);
           if (firstPlayerPlayRequest) {
             this.createApiEvent('adinitialplayrequestsucceeded');
           }
         }).catch(error => {
           console.warn(error);
           if (firstPlayerPlayRequest && whichPlayer === 'vast' && isLinear) {
-            Logger.print(this._rmpVast.debugRawConsoleLogs, `initial play promise on ad player has been rejected`);
+            Logger.print(this.#rmpVast.debugRawConsoleLogs, `initial play promise on ad player has been rejected`);
             this.processVastErrors(400, true);
             this.createApiEvent('adinitialplayrequestfailed');
           } else if (firstPlayerPlayRequest && whichPlayer === 'content' && !isLinear) {
-            Logger.print(this._rmpVast.debugRawConsoleLogs, `initial play promise on content player has been rejected`);
+            Logger.print(this.#rmpVast.debugRawConsoleLogs, `initial play promise on content player has been rejected`);
             this.createApiEvent('adinitialplayrequestfailed');
           } else {
-            Logger.print(this._rmpVast.debugRawConsoleLogs, `playPromise on ${whichPlayer} player has been rejected`);
+            Logger.print(this.#rmpVast.debugRawConsoleLogs, `playPromise on ${whichPlayer} player has been rejected`);
           }
         });
       }
@@ -336,38 +336,38 @@ export default class Utils {
   }
 
   destroyFullscreen() {
-    if (this._rmpVast.currentContentPlayer) {
-      this._rmpVast.currentContentPlayer.removeEventListener('webkitbeginfullscreen', this._onFullscreenchangeFn);
-      this._rmpVast.currentContentPlayer.removeEventListener('webkitendfullscreen', this._onFullscreenchangeFn);
+    if (this.#rmpVast.currentContentPlayer) {
+      this.#rmpVast.currentContentPlayer.removeEventListener('webkitbeginfullscreen', this.#onFullscreenchangeFn);
+      this.#rmpVast.currentContentPlayer.removeEventListener('webkitendfullscreen', this.#onFullscreenchangeFn);
     } else {
-      document.removeEventListener('fullscreenchange', this._onFullscreenchangeFn);
+      document.removeEventListener('fullscreenchange', this.#onFullscreenchangeFn);
     }
   }
 
   handleFullscreen() {
     // if we have native fullscreen support we handle fullscreen events
     if (Environment.hasNativeFullscreenSupport) {
-      this._onFullscreenchangeFn = this._onFullscreenchange.bind(this);
+      this.#onFullscreenchangeFn = this.#onFullscreenchange.bind(this);
       // for iOS 
       if (Environment.isIos[0]) {
-        if (this._rmpVast.currentContentPlayer) {
-          this._rmpVast.currentContentPlayer.addEventListener('webkitbeginfullscreen', this._onFullscreenchangeFn);
-          this._rmpVast.currentContentPlayer.addEventListener('webkitendfullscreen', this._onFullscreenchangeFn);
+        if (this.#rmpVast.currentContentPlayer) {
+          this.#rmpVast.currentContentPlayer.addEventListener('webkitbeginfullscreen', this.#onFullscreenchangeFn);
+          this.#rmpVast.currentContentPlayer.addEventListener('webkitendfullscreen', this.#onFullscreenchangeFn);
         }
       } else {
-        document.addEventListener('fullscreenchange', this._onFullscreenchangeFn);
+        document.addEventListener('fullscreenchange', this.#onFullscreenchangeFn);
       }
     }
   }
 
   processVastErrors(errorCode, ping) {
     if (ping) {
-      this._rmpVast.rmpVastTracking.error(errorCode);
+      this.#rmpVast.rmpVastTracking.error(errorCode);
     }
-    this._updateVastError(errorCode);
+    this.#updateVastError(errorCode);
     this.createApiEvent('aderror');
-    if (this._rmpVast.rmpVastAdPlayer) {
-      this._rmpVast.rmpVastAdPlayer.resumeContent();
+    if (this.#rmpVast.rmpVastAdPlayer) {
+      this.#rmpVast.rmpVastAdPlayer.resumeContent();
     }
   }
 

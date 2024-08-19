@@ -2,9 +2,9 @@
 
 A client-side JavaScript solution to load, parse, ping and display VAST resources (advertising).
 
-It aims at implementing the [IAB VAST specification](https://iabtechlab.com/standards/vast/) for web-based environments (e.g. browser, Ionic, Flutter, Cordova, Electron, smart TV ...) where both HTML5 video and JavaScript are available. We support VAST 3 and VAST 4 up to VAST 4.3. VAST 2 support has been deprecated with rmp-vast 15 and we no longer test for VAST 2 tags.
+It aims at implementing the [IAB VAST specification](https://iabtechlab.com/standards/vast/) for web-based environments - e.g. browser, WebView (Ionic, Flutter, Cordova, Electron ...) & smart TV - where both HTML5 video and JavaScript are available. We support VAST 3 and VAST 4 up to VAST 4.3. VAST 2 support has been deprecated with rmp-vast 15 and we no longer test for VAST 2 tags.
 
-rmp-vast comes as a compiled library (./dist/ folder) but it can also be imported as a ES2015 module. rmp-vast is written in ES2017.
+rmp-vast comes as a compiled library (./dist/ folder) but it can also be imported as a ES2015 module.
 
 rmp-vast makes use of [vast-client-js](https://github.com/dailymotion/vast-client-js) for fetching and parsing VAST XML resources.
 
@@ -102,6 +102,14 @@ rmpVast.loadAds(adTag);
 A complete implementation example is provided in app/index.html. You should look at app/js/app.js.
 This example can be found live at https://www.radiantmediaplayer.com/rmp-vast/app/.
 
+Alternatively, you may also create a RmpVast instance while passing a reference to the player container. This can come in handy for some web frameworks. Note that the element must be an instanceof HTMLElement.
+```javascript
+// We already have a reference to the player container (e.g. element with "rmp-container" class)
+const element = this.element;
+// create RmpVast instance
+const rmpVast = new RmpVast(element, params);
+```
+
 - rmp-vast is written in ES2017 and compiled as a library with [Webpack](https://webpack.js.org/). See .browserslistrc for a list of targeted environments for the compiled library. If you want to use rmp-vast as a module (e.g. not using the compiled library), it is up to you to compile it in your project. Please refer to babel.config.js and webpack.dev.config.js for guidance.
 
 [Back to documentation sections](#documentation-sections)
@@ -141,23 +149,22 @@ We support VAST standard up to VAST 4.3, this includes:
 
 #### Browsers
 
-- Latest Chrome for Android 5+
-- Chrome 36+ for Desktop
-- Latest Firefox for Android 5+
-- Firefox 39+ for Desktop
-- Opera 23+ for Desktop
-- Samsung Internet 9.2+ for Android 5+
-- Safari 10+ for Desktop
-- Safari for iOS 10+ and iPadOS 13+
+- Latest Chrome for Android 6+
+- Chrome 55+ for Desktop
+- Latest Firefox for Android 6+
+- Firefox 53+ for Desktop
+- Opera 42+ for Desktop
+- Samsung Internet 9.2+ for Android 6+
+- Safari 12+ for Desktop
+- Safari for iOS 12+ and iPadOS 13+
 - MS Edge 79+ for Desktop
-- MS Edge Legacy 14+ for Desktop
-- Latest Amazon Silk for fireOS 6+
+- MS Edge Legacy 15+ for Desktop
 
 Desktop means Windows 7+, macOS 10.11+, Linux (latest LTS Ubuntu).
 
 #### WebViews (Ionic, Flutter, Cordova, WebView created from native code)
 
-- Android 5+
+- Android 6+
 - iOS 12+ (WKWebView)
 
 With the announcement of Apple in december 2019, to remove support for UIWebView API by end 2020, we only support WKWebView API for iOS apps built with Ionic, Flutter, Cordova or WebView created from native code. [See this blog post](https://www.radiantmediaplayer.com/blog/updating-ios-apps-for-wkwebview.html) to help you update to WKWebView API.
@@ -166,11 +173,10 @@ For Flutter apps we support using rmp-vast with [webview_flutter](https://pub.de
 
 #### Smart TV & OTT (Native web, Cordova or WebView created from native code)
 
-- Samsung Tizen 3+ apps
-- LG webOS 3+ apps
+- Samsung Tizen 4+ apps
+- LG webOS 4+ apps
 - Electron 6+ apps
 - Android TV 9+ apps with Cordova or WebView created from native code
-- Fire TV apps (Web Apps and Hybrid Apps) with fireOS 6+
 
 [Back to documentation sections](#documentation-sections)
 
@@ -182,7 +188,7 @@ rmp-vast uses JavaScript XMLHttpRequests to load VAST tags. Hence proper [CORS c
 
 ## Video ads from Google Ads network and rmp-vast
 
-When serving ads from Google Ads network (DFP, ADX, AdSense for Video) we recommend using [Google IMA HTML5 SDK](https://developers.google.com/interactive-media-ads/docs/sdks/html5/). Radiant Media Player supports [Google IMA HTML5 SDK](https://www.radiantmediaplayer.com/docs/latest/video-ads-documentation.html) and is a certified [Google's video technology partner](https://support.google.com/admanager/answer/186110?hl=en). rmp-vast can display VAST ads from Google Ads network as well.
+When serving ads from Google Ads network (DFP, ADX, AdSense for Video) we recommend using [Google IMA HTML5 SDK](https://developers.google.com/interactive-media-ads/docs/sdks/html5/). Radiant Media Player supports [Google IMA HTML5 SDK](https://www.radiantmediaplayer.com/docs/latest/video-ads-documentation.html) and is a certified [Google's video technology partner](https://support.google.com/admanager/answer/186110?hl=en). rmp-vast can display VAST ads from Google Ads network as well - though all features from Google Ads network may not be available.
 
 [Back to documentation sections](#documentation-sections)
 
@@ -202,7 +208,7 @@ Once rmp-vast is loaded on your page you can create a new rmp-vast instance as f
 
 `new RmpVast(id: String, params: Object)`
 
-- `id: String` is the id for the player container. This is a required parameter.
+- `idOrElement: String|HTMLElement` the id or element for the player container. This is a required parameter.
 - `params: Object` is an optional object representing various parameters that can be passed to a rmp-vast instance and that will affect the player inner-workings. Available properties for the params object follow:
   - `params.ajaxTimeout: Number` timeout in ms for an AJAX request to load a VAST tag from the ad server. Default 5000.
   - `params.creativeLoadTimeout: Number` timeout in ms to load linear media creative from the server. Default 8000.
@@ -240,9 +246,9 @@ Once rmp-vast is loaded on your page you can create a new rmp-vast instance as f
 
 It is important for the rmp-vast instance to be properly initialized to avoid playback issues.
 
-Playing video ads in HTML5 video is a non-immediate process that requires the overlaying of multiple video tags. On mobile devices a user interaction is required to properly initialized a video tag and various restrictions are set by OSes to limit manipulation of a video tag with JavaScript.
+Playing video ads in HTML5 video is a non-trivial process that requires the overlaying of multiple video tags. On mobile devices a user interaction is required to properly initialized a video tag and various restrictions are set by OSes to limit manipulation of a video tag with JavaScript.
 
-To sum up: use the rmp-vast API `loadAds()` method to start playback. On mobile devices this should be the result of a direct user interaction. You can also use autoplay (desktop) or muted autoplay (mobiles) to start playback. Refer to the [autoplay](#autoplay-support) section.
+To sum up: use the rmp-vast API `loadAds()` method to start playback. On mobile devices this should be the result of a direct user interaction. You can also use muted autoplay to start playback. Refer to the [autoplay](#autoplay-support) section.
 
 If you do not want to call `loadAds()` method directly - call `initialize()` method (as a result of a user interaction) then call `loadAds()` later on when you wish to load a VAST tag.
 

@@ -5,166 +5,171 @@ import Logger from '../framework/logger';
 
 export default class AdPlayer {
 
+  #rmpVast;
+  #params;
+  #contentPlayer;
+  #adContainer;
+  #contentWrapper;
+  #adPlayer = null;
+
   constructor(rmpVast) {
-    this._rmpVast = rmpVast;
-    this._params = rmpVast.params;
-    this._contentPlayer = rmpVast.currentContentPlayer;
-    this._adContainer = rmpVast.adContainer;
-    this._contentWrapper = rmpVast.contentWrapper;
-    this._debugRawConsoleLogs = rmpVast.debugRawConsoleLogs;
-    this._adPlayer = null;
+    this.#rmpVast = rmpVast;
+    this.#params = rmpVast.params;
+    this.#contentPlayer = rmpVast.currentContentPlayer;
+    this.#adContainer = rmpVast.adContainer;
+    this.#contentWrapper = rmpVast.contentWrapper;
   }
 
   set volume(level) {
-    if (this._adPlayer) {
-      this._adPlayer.volume = level;
+    if (this.#adPlayer) {
+      this.#adPlayer.volume = level;
     }
   }
 
   get volume() {
-    if (this._adPlayer) {
-      return this._adPlayer.volume;
+    if (this.#adPlayer) {
+      return this.#adPlayer.volume;
     }
     return -1;
   }
 
   set muted(muted) {
-    if (this._adPlayer) {
-      if (muted && !this._adPlayer.muted) {
-        this._adPlayer.muted = true;
-      } else if (!muted && this._adPlayer.muted) {
-        this._adPlayer.muted = false;
+    if (this.#adPlayer) {
+      if (muted && !this.#adPlayer.muted) {
+        this.#adPlayer.muted = true;
+      } else if (!muted && this.#adPlayer.muted) {
+        this.#adPlayer.muted = false;
       }
     }
   }
 
   get muted() {
-    if (this._adPlayer) {
-      return this._adPlayer.muted;
+    if (this.#adPlayer) {
+      return this.#adPlayer.muted;
     }
     return false;
   }
 
   get duration() {
-    if (this._adPlayer && FW.isNumber(this._adPlayer.duration)) {
-      return this._adPlayer.duration * 1000;
+    if (this.#adPlayer && FW.isNumber(this.#adPlayer.duration)) {
+      return this.#adPlayer.duration * 1000;
     }
     return -1;
   }
 
   get currentTime() {
-    if (this._adPlayer && FW.isNumber(this._adPlayer.currentTime)) {
-      return this._adPlayer.currentTime * 1000;
+    if (this.#adPlayer && FW.isNumber(this.#adPlayer.currentTime)) {
+      return this.#adPlayer.currentTime * 1000;
     }
     return -1;
   }
 
   destroy() {
-    Logger.print(this._debugRawConsoleLogs, `start destroying ad player`);
+    Logger.print(this.#rmpVast.debugRawConsoleLogs, `start destroying ad player`);
 
     // destroy icons if any 
-    if (this._rmpVast.rmpVastIcons) {
-      this._rmpVast.rmpVastIcons.destroy();
+    if (this.#rmpVast.rmpVastIcons) {
+      this.#rmpVast.rmpVastIcons.destroy();
     }
 
-    if (this._rmpVast.rmpVastVpaidPlayer) {
-      this._rmpVast.rmpVastVpaidPlayer.destroy();
+    if (this.#rmpVast.rmpVastVpaidPlayer) {
+      this.#rmpVast.rmpVastVpaidPlayer.destroy();
     }
 
     // reset non-linear creative
-    if (this._rmpVast.rmpVastNonLinearCreative) {
-      this._rmpVast.rmpVastNonLinearCreative.destroy();
+    if (this.#rmpVast.rmpVastNonLinearCreative) {
+      this.#rmpVast.rmpVastNonLinearCreative.destroy();
     }
 
     // reset linear creative
-    if (this._rmpVast.rmpVastLinearCreative) {
-      this._rmpVast.rmpVastLinearCreative.destroy();
+    if (this.#rmpVast.rmpVastLinearCreative) {
+      this.#rmpVast.rmpVastLinearCreative.destroy();
     }
 
     // unwire events
-    this._rmpVast.rmpVastTracking.destroy();
+    this.#rmpVast.rmpVastTracking.destroy();
 
     // hide rmp-ad-container
-    FW.hide(this._adContainer);
+    FW.hide(this.#adContainer);
 
     // unwire anti-seek logic (iOS)
-    if (this._rmpVast.rmpVastContentPlayer) {
-      this._rmpVast.rmpVastContentPlayer.destroy();
+    if (this.#rmpVast.rmpVastContentPlayer) {
+      this.#rmpVast.rmpVastContentPlayer.destroy();
     }
     // flush currentAdPlayer
     try {
-      if (this._adPlayer) {
-        this._adPlayer.pause();
-        if (this._rmpVast.rmpVastLinearCreative && this._rmpVast.rmpVastLinearCreative.readingHlsJS) {
-          this._rmpVast.rmpVastLinearCreative.readingHlsJS = false;
-          this._rmpVast.rmpVastLinearCreative.hlsJSInstances[this._rmpVast.rmpVastLinearCreative.hlsJSIndex].destroy();
-          this._rmpVast.rmpVastLinearCreative.hlsJSIndex = this._rmpVast.rmpVastLinearCreative.hlsJSIndex++;
+      if (this.#adPlayer) {
+        this.#adPlayer.pause();
+        if (this.#rmpVast.rmpVastLinearCreative && this.#rmpVast.rmpVastLinearCreative.readingHlsJS) {
+          this.#rmpVast.rmpVastLinearCreative.readingHlsJS = false;
+          this.#rmpVast.rmpVastLinearCreative.hlsJSInstances[this.#rmpVast.rmpVastLinearCreative.hlsJSIndex].destroy();
+          this.#rmpVast.rmpVastLinearCreative.hlsJSIndex = this.#rmpVast.rmpVastLinearCreative.hlsJSIndex++;
         } else {
           // empty buffer
-          this._adPlayer.removeAttribute('src');
-          this._adPlayer.load();
+          this.#adPlayer.removeAttribute('src');
+          this.#adPlayer.load();
         }
-        FW.hide(this._adPlayer);
-        Logger.print(this._debugRawConsoleLogs, `flushing currentAdPlayer buffer after ad`);
+        FW.hide(this.#adPlayer);
+        Logger.print(this.#rmpVast.debugRawConsoleLogs, `flushing currentAdPlayer buffer after ad`);
       }
-      if (this._rmpVast.rmpVastNonLinearCreative) {
-        FW.removeElement(this._rmpVast.rmpVastNonLinearCreative.nonLinearContainerElement);
+      if (this.#rmpVast.rmpVastNonLinearCreative) {
+        this.#rmpVast.rmpVastNonLinearCreative.destroy();
       }
     } catch (error) {
       console.warn(error);
     }
 
-    this._rmpVast.resetVariablesForNewLoadAds();
-    this._rmpVast.rmpVastUtils.createApiEvent('addestroyed');
+    this.#rmpVast.resetVariablesForNewLoadAds();
+    this.#rmpVast.rmpVastUtils.createApiEvent('addestroyed');
   }
 
   init() {
-    this._rmpVast.adContainer = this._adContainer = document.createElement('div');
-    this._adContainer.className = 'rmp-ad-container';
-    this._contentWrapper.appendChild(this._adContainer);
-    FW.hide(this._adContainer);
+    this.#rmpVast.adContainer = this.#adContainer = document.createElement('div');
+    this.#adContainer.className = 'rmp-ad-container';
+    this.#contentWrapper.appendChild(this.#adContainer);
+    FW.hide(this.#adContainer);
 
-    this._rmpVast.currentAdPlayer = this._adPlayer = document.createElement('video');
-    Logger.printVideoEvents(this._debugRawConsoleLogs, this._adPlayer, 'ad');
+    this.#rmpVast.currentAdPlayer = this.#adPlayer = document.createElement('video');
+    Logger.printVideoEvents(this.#rmpVast.debugRawConsoleLogs, this.#adPlayer, 'ad');
     // disable native UI cast/PiP for ad player
-    this._adPlayer.disableRemotePlayback = true;
-    this._adPlayer.disablePictureInPicture = true;
-    this._adPlayer.className = 'rmp-ad-vast-video-player';
-    if (this._params.showControlsForAdPlayer) {
-      this._adPlayer.controls = true;
+    this.#adPlayer.disableRemotePlayback = true;
+    this.#adPlayer.disablePictureInPicture = true;
+    this.#adPlayer.className = 'rmp-ad-vast-video-player';
+    if (this.#params.showControlsForAdPlayer) {
+      this.#adPlayer.controls = true;
     } else {
-      this._adPlayer.controls = false;
+      this.#adPlayer.controls = false;
     }
 
     // this.currentContentPlayer.muted may not be set because of a bug in some version of Chromium
-    if (this._contentPlayer.hasAttribute('muted')) {
-      this._contentPlayer.muted = true;
+    if (this.#contentPlayer.hasAttribute('muted')) {
+      this.#contentPlayer.muted = true;
     }
-    if (this._contentPlayer.muted) {
-      this._adPlayer.muted = true;
+    if (this.#contentPlayer.muted) {
+      this.#adPlayer.muted = true;
     }
     // black poster based 64 png
-    this._adPlayer.poster = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=';
+    this.#adPlayer.poster = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=';
     // note to myself: we use setAttribute for non-standard attribute (instead of . notation)
-    this._adPlayer.setAttribute('x-webkit-airplay', 'allow');
-    if (typeof this._contentPlayer.playsInline === 'boolean' && this._contentPlayer.playsInline) {
-      this._adPlayer.playsInline = true;
+    this.#adPlayer.setAttribute('x-webkit-airplay', 'allow');
+    if (typeof this.#contentPlayer.playsInline === 'boolean' && this.#contentPlayer.playsInline) {
+      this.#adPlayer.playsInline = true;
     }
     // append to rmp-ad-container
-    FW.hide(this._adPlayer);
-    this._adContainer.appendChild(this._adPlayer);
+    FW.hide(this.#adPlayer);
+    this.#adContainer.appendChild(this.#adPlayer);
 
     // we track ended state for content player
-    this._contentPlayer.addEventListener('ended', () => {
-      if (this._rmpVast.__adOnStage) {
+    this.#contentPlayer.addEventListener('ended', () => {
+      if (this.#rmpVast.__adOnStage) {
         return;
       }
-      this._rmpVast.contentCompleted = true;
+      this.#rmpVast.contentCompleted = true;
     });
     // we need to preload as much creative data as possible
     // also on macOS and iOS Safari we need to force preload to avoid 
     // playback issues
-    this._adPlayer.preload = 'auto';
+    this.#adPlayer.preload = 'auto';
     // we need to init the ad player video tag
     // according to https://developers.google.com/interactive-media-ads/docs/sdks/html5/mobile_video
     // to initialize the content element, a call to the load() method is sufficient.
@@ -172,89 +177,89 @@ export default class AdPlayer {
       // on Android both this.currentContentPlayer (to resume content)
       // and this.currentAdPlayer (to start ads) needs to be init
       // on iOS only init this.currentAdPlayer (as same as this.currentContentPlayer)
-      this._contentPlayer.load();
-      this._adPlayer.load();
+      this.#contentPlayer.load();
+      this.#adPlayer.load();
     }
-    this._rmpVast.rmpVastInitialized = true;
+    this.#rmpVast.rmpVastInitialized = true;
   }
 
   append(url, type) {
     // in case loadAds is called several times - rmpVastInitialized is already true
     // but we still need to locate the currentAdPlayer
-    if (!this._adPlayer) {
+    if (!this.#adPlayer) {
       // we use existing ad player as it is already 
       // available and initialized (no need for user interaction)
       let existingAdPlayer = null;
-      if (this._adContainer) {
-        existingAdPlayer = this._adContainer.querySelector('.rmp-ad-vast-video-player');
+      if (this.#adContainer) {
+        existingAdPlayer = this.#adContainer.querySelector('.rmp-ad-vast-video-player');
       }
       if (existingAdPlayer === null) {
-        this._rmpVast.rmpVastUtils.processVastErrors(900, true);
+        this.#rmpVast.rmpVastUtils.processVastErrors(900, true);
         return;
       }
-      this._adPlayer = existingAdPlayer;
+      this.#adPlayer = existingAdPlayer;
     }
-    this._rmpVast.rmpVastContentPlayer.pause();
-    if (!this._rmpVast.creative.isLinear) {
+    this.#rmpVast.rmpVastContentPlayer.pause();
+    if (!this.#rmpVast.creative.isLinear) {
       // we do not display non-linear ads with outstream ad 
       // they won't fit the format
-      if (this._params.outstream) {
-        Logger.print(this._debugRawConsoleLogs, `non-linear creative detected for outstream ad mode - discarding creative`);
-        this._rmpVast.rmpVastUtils.processVastErrors(201, true);
+      if (this.#params.outstream) {
+        Logger.print(this.#rmpVast.debugRawConsoleLogs, `non-linear creative detected for outstream ad mode - discarding creative`);
+        this.#rmpVast.rmpVastUtils.processVastErrors(201, true);
         return;
       } else {
-        if (this._rmpVast.rmpVastNonLinearCreative) {
-          this._rmpVast.rmpVastNonLinearCreative.update();
+        if (this.#rmpVast.rmpVastNonLinearCreative) {
+          this.#rmpVast.rmpVastNonLinearCreative.update();
         }
       }
     } else {
-      if (url && type && this._rmpVast.rmpVastLinearCreative) {
-        this._rmpVast.rmpVastLinearCreative.update(url, type);
+      if (url && type && this.#rmpVast.rmpVastLinearCreative) {
+        this.#rmpVast.rmpVastLinearCreative.update(url, type);
       }
     }
     // wire tracking events
-    this._rmpVast.rmpVastTracking.wire();
+    this.#rmpVast.rmpVastTracking.wire();
 
     // append icons - only where ad player is different from 
     // content player
-    if (this._rmpVast.rmpVastIcons) {
-      const iconsData = this._rmpVast.rmpVastIcons.iconsData;
+    if (this.#rmpVast.rmpVastIcons) {
+      const iconsData = this.#rmpVast.rmpVastIcons.iconsData;
       if (iconsData.length > 0) {
-        this._rmpVast.rmpVastIcons.append();
+        this.#rmpVast.rmpVastIcons.append();
       }
     }
   }
 
   play(firstAdPlayerPlayRequest) {
-    if (this._adPlayer && this._adPlayer.paused) {
-      this._rmpVast.rmpVastUtils.playPromise('vast', firstAdPlayerPlayRequest);
+    if (this.#adPlayer && this.#adPlayer.paused) {
+      this.#rmpVast.rmpVastUtils.playPromise('vast', firstAdPlayerPlayRequest);
     }
   }
 
   pause() {
-    if (this._adPlayer && !this._adPlayer.paused) {
-      this._adPlayer.pause();
+    if (this.#adPlayer && !this.#adPlayer.paused) {
+      this.#adPlayer.pause();
     }
   }
 
   resumeContent() {
-    Logger.print(this._debugRawConsoleLogs, `AdPlayer resumeContent requested`);
-    if (this._rmpVast.rmpVastAdPlayer) {
-      this._rmpVast.rmpVastAdPlayer.destroy();
+    Logger.print(this.#rmpVast.debugRawConsoleLogs, `AdPlayer resumeContent requested`);
+    if (this.#rmpVast.rmpVastAdPlayer) {
+      this.#rmpVast.rmpVastAdPlayer.destroy();
     }
-    if (this._rmpVast.rmpVastLinearCreative) {
-      this._rmpVast.rmpVastLinearCreative.readingHlsJS = false;
+    if (this.#rmpVast.rmpVastLinearCreative) {
+      this.#rmpVast.rmpVastLinearCreative.readingHlsJS = false;
     }
     // if contentPlayerCompleted = true - we are in a post-roll situation
     // in that case we must not resume content once the post-roll has completed
     // you can use contentPlayerCompleted to support 
     // custom use-cases when dynamically changing source for content
     // no need to resume content for outstream ads
-    if (!this._rmpVast.contentCompleted && !this._params.outstream) {
-      Logger.print(this._debugRawConsoleLogs, `content player play requested after ad player resumeContent`);
-      this._rmpVast.rmpVastContentPlayer.play();
+    if (!this.#rmpVast.contentCompleted && !this.#params.outstream) {
+      Logger.print(this.#rmpVast.debugRawConsoleLogs, `content player play requested after ad player resumeContent`);
+      this.#rmpVast.rmpVastContentPlayer.play();
     }
-    this._rmpVast.contentCompleted = false;
+    this.#rmpVast.contentCompleted = false;
   }
 
 }

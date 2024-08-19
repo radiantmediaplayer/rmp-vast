@@ -1,47 +1,14 @@
 export default class LinearCreative {
     constructor(rmpVast: any);
-    _rmpVast: any;
-    _params: any;
-    _adContainer: any;
-    _adPlayer: any;
-    _contentPlayer: any;
-    _debugRawConsoleLogs: any;
-    _firstAdPlayerPlayRequest: boolean;
-    _interactionMobileUI: HTMLAnchorElement;
-    _skipWaitingUI: HTMLDivElement;
-    _skipMessageUI: HTMLDivElement;
-    _skipIconUI: HTMLDivElement;
-    _skipButtonUI: HTMLDivElement;
-    _skippableAdCanBeSkipped: boolean;
-    _onSkipInteractionFn: any;
-    _onTimeupdateCheckSkipFn: any;
-    _onDurationChangeFn: any;
-    _onLoadedmetadataPlayFn: any;
-    _onContextMenuFn: typeof FW.stopPreventEvent;
-    _onPlaybackErrorFn: any;
-    _onInteractionOpenClickThroughUrlFn: any;
-    _creativeLoadTimeoutCallback: NodeJS.Timeout;
-    _hlsJS: any[];
-    _hlsJSIndex: number;
-    _readingHlsJS: boolean;
     get hlsJSInstances(): any[];
     set hlsJSIndex(value: number);
     get hlsJSIndex(): number;
     set readingHlsJS(value: boolean);
     get readingHlsJS(): boolean;
     get skippableAdCanBeSkipped(): boolean;
-    _onDurationChange(): void;
-    _onLoadedmetadataPlay(): void;
-    _onInteractionOpenClickThroughUrl(event: any): void;
-    _onPlaybackError(event: any): void;
-    _updateWaitingForCanBeSkippedUI(delta: any): void;
-    _onTimeupdateCheckSkip(): void;
-    _onSkipInteraction(event: any): void;
-    _appendSkipUI(): void;
-    _onHlsJSError(event: any, data: any): void;
     destroy(): void;
     update(url: any, type: any): void;
     parse(creative: any): void;
+    #private;
 }
-import FW from '../framework/fw';
 //# sourceMappingURL=linear.d.ts.map

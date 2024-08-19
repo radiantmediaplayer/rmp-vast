@@ -903,6 +903,21 @@ module.exports = getBuiltInPrototypeMethod('String', 'trim');
 
 /***/ }),
 
+/***/ 7173:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+
+__webpack_require__(9363);
+__webpack_require__(3643);
+__webpack_require__(6571);
+var path = __webpack_require__(2046);
+
+module.exports = path.WeakMap;
+
+
+/***/ }),
+
 /***/ 2159:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
@@ -1005,6 +1020,25 @@ module.exports = function (argument) {
 
 /***/ }),
 
+/***/ 6375:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+
+// FF26- bug: ArrayBuffers are non-extensible, but Object.isExtensible does not report it
+var fails = __webpack_require__(8828);
+
+module.exports = fails(function () {
+  if (typeof ArrayBuffer == 'function') {
+    var buffer = new ArrayBuffer(8);
+    // eslint-disable-next-line es/no-object-isextensible, es/no-object-defineproperty -- safe
+    if (Object.isExtensible(buffer)) Object.defineProperty(buffer, 'a', { value: 8 });
+  }
+});
+
+
+/***/ }),
+
 /***/ 4436:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
@@ -1042,6 +1076,88 @@ module.exports = {
   // `Array.prototype.indexOf` method
   // https://tc39.es/ecma262/#sec-array.prototype.indexof
   indexOf: createMethod(false)
+};
+
+
+/***/ }),
+
+/***/ 726:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+
+var bind = __webpack_require__(8311);
+var uncurryThis = __webpack_require__(1907);
+var IndexedObject = __webpack_require__(6946);
+var toObject = __webpack_require__(9298);
+var lengthOfArrayLike = __webpack_require__(575);
+var arraySpeciesCreate = __webpack_require__(6968);
+
+var push = uncurryThis([].push);
+
+// `Array.prototype.{ forEach, map, filter, some, every, find, findIndex, filterReject }` methods implementation
+var createMethod = function (TYPE) {
+  var IS_MAP = TYPE === 1;
+  var IS_FILTER = TYPE === 2;
+  var IS_SOME = TYPE === 3;
+  var IS_EVERY = TYPE === 4;
+  var IS_FIND_INDEX = TYPE === 6;
+  var IS_FILTER_REJECT = TYPE === 7;
+  var NO_HOLES = TYPE === 5 || IS_FIND_INDEX;
+  return function ($this, callbackfn, that, specificCreate) {
+    var O = toObject($this);
+    var self = IndexedObject(O);
+    var length = lengthOfArrayLike(self);
+    var boundFunction = bind(callbackfn, that);
+    var index = 0;
+    var create = specificCreate || arraySpeciesCreate;
+    var target = IS_MAP ? create($this, length) : IS_FILTER || IS_FILTER_REJECT ? create($this, 0) : undefined;
+    var value, result;
+    for (;length > index; index++) if (NO_HOLES || index in self) {
+      value = self[index];
+      result = boundFunction(value, index, O);
+      if (TYPE) {
+        if (IS_MAP) target[index] = result; // map
+        else if (result) switch (TYPE) {
+          case 3: return true;              // some
+          case 5: return value;             // find
+          case 6: return index;             // findIndex
+          case 2: push(target, value);      // filter
+        } else switch (TYPE) {
+          case 4: return false;             // every
+          case 7: push(target, value);      // filterReject
+        }
+      }
+    }
+    return IS_FIND_INDEX ? -1 : IS_SOME || IS_EVERY ? IS_EVERY : target;
+  };
+};
+
+module.exports = {
+  // `Array.prototype.forEach` method
+  // https://tc39.es/ecma262/#sec-array.prototype.foreach
+  forEach: createMethod(0),
+  // `Array.prototype.map` method
+  // https://tc39.es/ecma262/#sec-array.prototype.map
+  map: createMethod(1),
+  // `Array.prototype.filter` method
+  // https://tc39.es/ecma262/#sec-array.prototype.filter
+  filter: createMethod(2),
+  // `Array.prototype.some` method
+  // https://tc39.es/ecma262/#sec-array.prototype.some
+  some: createMethod(3),
+  // `Array.prototype.every` method
+  // https://tc39.es/ecma262/#sec-array.prototype.every
+  every: createMethod(4),
+  // `Array.prototype.find` method
+  // https://tc39.es/ecma262/#sec-array.prototype.find
+  find: createMethod(5),
+  // `Array.prototype.findIndex` method
+  // https://tc39.es/ecma262/#sec-array.prototype.findIndex
+  findIndex: createMethod(6),
+  // `Array.prototype.filterReject` method
+  // https://github.com/tc39/proposal-array-filtering
+  filterReject: createMethod(7)
 };
 
 
@@ -1216,6 +1332,53 @@ module.exports = sort;
 
 /***/ }),
 
+/***/ 4010:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+
+var isArray = __webpack_require__(1793);
+var isConstructor = __webpack_require__(5468);
+var isObject = __webpack_require__(6285);
+var wellKnownSymbol = __webpack_require__(6264);
+
+var SPECIES = wellKnownSymbol('species');
+var $Array = Array;
+
+// a part of `ArraySpeciesCreate` abstract operation
+// https://tc39.es/ecma262/#sec-arrayspeciescreate
+module.exports = function (originalArray) {
+  var C;
+  if (isArray(originalArray)) {
+    C = originalArray.constructor;
+    // cross-realm fallback
+    if (isConstructor(C) && (C === $Array || isArray(C.prototype))) C = undefined;
+    else if (isObject(C)) {
+      C = C[SPECIES];
+      if (C === null) C = undefined;
+    }
+  } return C === undefined ? $Array : C;
+};
+
+
+/***/ }),
+
+/***/ 6968:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+
+var arraySpeciesConstructor = __webpack_require__(4010);
+
+// `ArraySpeciesCreate` abstract operation
+// https://tc39.es/ecma262/#sec-arrayspeciescreate
+module.exports = function (originalArray, length) {
+  return new (arraySpeciesConstructor(originalArray))(length === 0 ? 0 : length);
+};
+
+
+/***/ }),
+
 /***/ 473:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
@@ -1315,6 +1478,230 @@ module.exports = TO_STRING_TAG_SUPPORT ? classofRaw : function (it) {
     : CORRECT_ARGUMENTS ? classofRaw(O)
     // ES3 arguments fallback
     : (result = classofRaw(O)) === 'Object' && isCallable(O.callee) ? 'Arguments' : result;
+};
+
+
+/***/ }),
+
+/***/ 1182:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+
+var uncurryThis = __webpack_require__(1907);
+var defineBuiltIns = __webpack_require__(2802);
+var getWeakData = (__webpack_require__(1548).getWeakData);
+var anInstance = __webpack_require__(9596);
+var anObject = __webpack_require__(6624);
+var isNullOrUndefined = __webpack_require__(7136);
+var isObject = __webpack_require__(6285);
+var iterate = __webpack_require__(4823);
+var ArrayIterationModule = __webpack_require__(726);
+var hasOwn = __webpack_require__(9724);
+var InternalStateModule = __webpack_require__(4932);
+
+var setInternalState = InternalStateModule.set;
+var internalStateGetterFor = InternalStateModule.getterFor;
+var find = ArrayIterationModule.find;
+var findIndex = ArrayIterationModule.findIndex;
+var splice = uncurryThis([].splice);
+var id = 0;
+
+// fallback for uncaught frozen keys
+var uncaughtFrozenStore = function (state) {
+  return state.frozen || (state.frozen = new UncaughtFrozenStore());
+};
+
+var UncaughtFrozenStore = function () {
+  this.entries = [];
+};
+
+var findUncaughtFrozen = function (store, key) {
+  return find(store.entries, function (it) {
+    return it[0] === key;
+  });
+};
+
+UncaughtFrozenStore.prototype = {
+  get: function (key) {
+    var entry = findUncaughtFrozen(this, key);
+    if (entry) return entry[1];
+  },
+  has: function (key) {
+    return !!findUncaughtFrozen(this, key);
+  },
+  set: function (key, value) {
+    var entry = findUncaughtFrozen(this, key);
+    if (entry) entry[1] = value;
+    else this.entries.push([key, value]);
+  },
+  'delete': function (key) {
+    var index = findIndex(this.entries, function (it) {
+      return it[0] === key;
+    });
+    if (~index) splice(this.entries, index, 1);
+    return !!~index;
+  }
+};
+
+module.exports = {
+  getConstructor: function (wrapper, CONSTRUCTOR_NAME, IS_MAP, ADDER) {
+    var Constructor = wrapper(function (that, iterable) {
+      anInstance(that, Prototype);
+      setInternalState(that, {
+        type: CONSTRUCTOR_NAME,
+        id: id++,
+        frozen: undefined
+      });
+      if (!isNullOrUndefined(iterable)) iterate(iterable, that[ADDER], { that: that, AS_ENTRIES: IS_MAP });
+    });
+
+    var Prototype = Constructor.prototype;
+
+    var getInternalState = internalStateGetterFor(CONSTRUCTOR_NAME);
+
+    var define = function (that, key, value) {
+      var state = getInternalState(that);
+      var data = getWeakData(anObject(key), true);
+      if (data === true) uncaughtFrozenStore(state).set(key, value);
+      else data[state.id] = value;
+      return that;
+    };
+
+    defineBuiltIns(Prototype, {
+      // `{ WeakMap, WeakSet }.prototype.delete(key)` methods
+      // https://tc39.es/ecma262/#sec-weakmap.prototype.delete
+      // https://tc39.es/ecma262/#sec-weakset.prototype.delete
+      'delete': function (key) {
+        var state = getInternalState(this);
+        if (!isObject(key)) return false;
+        var data = getWeakData(key);
+        if (data === true) return uncaughtFrozenStore(state)['delete'](key);
+        return data && hasOwn(data, state.id) && delete data[state.id];
+      },
+      // `{ WeakMap, WeakSet }.prototype.has(key)` methods
+      // https://tc39.es/ecma262/#sec-weakmap.prototype.has
+      // https://tc39.es/ecma262/#sec-weakset.prototype.has
+      has: function has(key) {
+        var state = getInternalState(this);
+        if (!isObject(key)) return false;
+        var data = getWeakData(key);
+        if (data === true) return uncaughtFrozenStore(state).has(key);
+        return data && hasOwn(data, state.id);
+      }
+    });
+
+    defineBuiltIns(Prototype, IS_MAP ? {
+      // `WeakMap.prototype.get(key)` method
+      // https://tc39.es/ecma262/#sec-weakmap.prototype.get
+      get: function get(key) {
+        var state = getInternalState(this);
+        if (isObject(key)) {
+          var data = getWeakData(key);
+          if (data === true) return uncaughtFrozenStore(state).get(key);
+          return data ? data[state.id] : undefined;
+        }
+      },
+      // `WeakMap.prototype.set(key, value)` method
+      // https://tc39.es/ecma262/#sec-weakmap.prototype.set
+      set: function set(key, value) {
+        return define(this, key, value);
+      }
+    } : {
+      // `WeakSet.prototype.add(value)` method
+      // https://tc39.es/ecma262/#sec-weakset.prototype.add
+      add: function add(value) {
+        return define(this, value, true);
+      }
+    });
+
+    return Constructor;
+  }
+};
+
+
+/***/ }),
+
+/***/ 7081:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+
+var $ = __webpack_require__(1091);
+var globalThis = __webpack_require__(5951);
+var InternalMetadataModule = __webpack_require__(1548);
+var fails = __webpack_require__(8828);
+var createNonEnumerableProperty = __webpack_require__(1626);
+var iterate = __webpack_require__(4823);
+var anInstance = __webpack_require__(9596);
+var isCallable = __webpack_require__(2250);
+var isObject = __webpack_require__(6285);
+var isNullOrUndefined = __webpack_require__(7136);
+var setToStringTag = __webpack_require__(4840);
+var defineProperty = (__webpack_require__(4284).f);
+var forEach = (__webpack_require__(726).forEach);
+var DESCRIPTORS = __webpack_require__(9447);
+var InternalStateModule = __webpack_require__(4932);
+
+var setInternalState = InternalStateModule.set;
+var internalStateGetterFor = InternalStateModule.getterFor;
+
+module.exports = function (CONSTRUCTOR_NAME, wrapper, common) {
+  var IS_MAP = CONSTRUCTOR_NAME.indexOf('Map') !== -1;
+  var IS_WEAK = CONSTRUCTOR_NAME.indexOf('Weak') !== -1;
+  var ADDER = IS_MAP ? 'set' : 'add';
+  var NativeConstructor = globalThis[CONSTRUCTOR_NAME];
+  var NativePrototype = NativeConstructor && NativeConstructor.prototype;
+  var exported = {};
+  var Constructor;
+
+  if (!DESCRIPTORS || !isCallable(NativeConstructor)
+    || !(IS_WEAK || NativePrototype.forEach && !fails(function () { new NativeConstructor().entries().next(); }))
+  ) {
+    // create collection constructor
+    Constructor = common.getConstructor(wrapper, CONSTRUCTOR_NAME, IS_MAP, ADDER);
+    InternalMetadataModule.enable();
+  } else {
+    Constructor = wrapper(function (target, iterable) {
+      setInternalState(anInstance(target, Prototype), {
+        type: CONSTRUCTOR_NAME,
+        collection: new NativeConstructor()
+      });
+      if (!isNullOrUndefined(iterable)) iterate(iterable, target[ADDER], { that: target, AS_ENTRIES: IS_MAP });
+    });
+
+    var Prototype = Constructor.prototype;
+
+    var getInternalState = internalStateGetterFor(CONSTRUCTOR_NAME);
+
+    forEach(['add', 'clear', 'delete', 'forEach', 'get', 'has', 'set', 'keys', 'values', 'entries'], function (KEY) {
+      var IS_ADDER = KEY === 'add' || KEY === 'set';
+      if (KEY in NativePrototype && !(IS_WEAK && KEY === 'clear')) {
+        createNonEnumerableProperty(Prototype, KEY, function (a, b) {
+          var collection = getInternalState(this).collection;
+          if (!IS_ADDER && IS_WEAK && !isObject(a)) return KEY === 'get' ? undefined : false;
+          var result = collection[KEY](a === 0 ? 0 : a, b);
+          return IS_ADDER ? this : result;
+        });
+      }
+    });
+
+    IS_WEAK || defineProperty(Prototype, 'size', {
+      configurable: true,
+      get: function () {
+        return getInternalState(this).collection.size;
+      }
+    });
+  }
+
+  setToStringTag(Constructor, CONSTRUCTOR_NAME, false, true);
+
+  exported[CONSTRUCTOR_NAME] = Constructor;
+  $({ global: true, forced: true }, exported);
+
+  if (!IS_WEAK) common.setStrong(Constructor, CONSTRUCTOR_NAME, IS_MAP);
+
+  return Constructor;
 };
 
 
@@ -1461,6 +1848,23 @@ module.exports = function (target, key, value, options) {
   if (options && options.enumerable) target[key] = value;
   else createNonEnumerableProperty(target, key, value);
   return target;
+};
+
+
+/***/ }),
+
+/***/ 2802:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+
+var defineBuiltIn = __webpack_require__(8055);
+
+module.exports = function (target, src, options) {
+  for (var key in src) {
+    if (options && options.unsafe && target[key]) target[key] = src[key];
+    else defineBuiltIn(target, key, src[key], options);
+  } return target;
 };
 
 
@@ -1979,6 +2383,21 @@ module.exports = function (exec) {
 
 /***/ }),
 
+/***/ 5681:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+
+var fails = __webpack_require__(8828);
+
+module.exports = !fails(function () {
+  // eslint-disable-next-line es/no-object-isextensible, es/no-object-preventextensions -- required for testing
+  return Object.isExtensible(Object.preventExtensions({}));
+});
+
+
+/***/ }),
+
 /***/ 6024:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
@@ -2401,6 +2820,104 @@ module.exports = function (O, options) {
     createNonEnumerableProperty(O, 'cause', options.cause);
   }
 };
+
+
+/***/ }),
+
+/***/ 1548:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+
+var $ = __webpack_require__(1091);
+var uncurryThis = __webpack_require__(1907);
+var hiddenKeys = __webpack_require__(8530);
+var isObject = __webpack_require__(6285);
+var hasOwn = __webpack_require__(9724);
+var defineProperty = (__webpack_require__(4284).f);
+var getOwnPropertyNamesModule = __webpack_require__(4443);
+var getOwnPropertyNamesExternalModule = __webpack_require__(5407);
+var isExtensible = __webpack_require__(7005);
+var uid = __webpack_require__(6499);
+var FREEZING = __webpack_require__(5681);
+
+var REQUIRED = false;
+var METADATA = uid('meta');
+var id = 0;
+
+var setMetadata = function (it) {
+  defineProperty(it, METADATA, { value: {
+    objectID: 'O' + id++, // object ID
+    weakData: {}          // weak collections IDs
+  } });
+};
+
+var fastKey = function (it, create) {
+  // return a primitive with prefix
+  if (!isObject(it)) return typeof it == 'symbol' ? it : (typeof it == 'string' ? 'S' : 'P') + it;
+  if (!hasOwn(it, METADATA)) {
+    // can't set metadata to uncaught frozen object
+    if (!isExtensible(it)) return 'F';
+    // not necessary to add metadata
+    if (!create) return 'E';
+    // add missing metadata
+    setMetadata(it);
+  // return object ID
+  } return it[METADATA].objectID;
+};
+
+var getWeakData = function (it, create) {
+  if (!hasOwn(it, METADATA)) {
+    // can't set metadata to uncaught frozen object
+    if (!isExtensible(it)) return true;
+    // not necessary to add metadata
+    if (!create) return false;
+    // add missing metadata
+    setMetadata(it);
+  // return the store of weak collections IDs
+  } return it[METADATA].weakData;
+};
+
+// add metadata on freeze-family methods calling
+var onFreeze = function (it) {
+  if (FREEZING && REQUIRED && isExtensible(it) && !hasOwn(it, METADATA)) setMetadata(it);
+  return it;
+};
+
+var enable = function () {
+  meta.enable = function () { /* empty */ };
+  REQUIRED = true;
+  var getOwnPropertyNames = getOwnPropertyNamesModule.f;
+  var splice = uncurryThis([].splice);
+  var test = {};
+  test[METADATA] = 1;
+
+  // prevent exposing of metadata key
+  if (getOwnPropertyNames(test).length) {
+    getOwnPropertyNamesModule.f = function (it) {
+      var result = getOwnPropertyNames(it);
+      for (var i = 0, length = result.length; i < length; i++) {
+        if (result[i] === METADATA) {
+          splice(result, i, 1);
+          break;
+        }
+      } return result;
+    };
+
+    $({ target: 'Object', stat: true, forced: true }, {
+      getOwnPropertyNames: getOwnPropertyNamesExternalModule.f
+    });
+  }
+};
+
+var meta = module.exports = {
+  enable: enable,
+  fastKey: fastKey,
+  getWeakData: getWeakData,
+  onFreeze: onFreeze
+};
+
+hiddenKeys[METADATA] = true;
 
 
 /***/ }),
@@ -3551,6 +4068,38 @@ exports.f = DESCRIPTORS ? $getOwnPropertyDescriptor : function getOwnPropertyDes
 
 /***/ }),
 
+/***/ 5407:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+
+/* eslint-disable es/no-object-getownpropertynames -- safe */
+var classof = __webpack_require__(5807);
+var toIndexedObject = __webpack_require__(7374);
+var $getOwnPropertyNames = (__webpack_require__(4443).f);
+var arraySlice = __webpack_require__(3427);
+
+var windowNames = typeof window == 'object' && window && Object.getOwnPropertyNames
+  ? Object.getOwnPropertyNames(window) : [];
+
+var getWindowNames = function (it) {
+  try {
+    return $getOwnPropertyNames(it);
+  } catch (error) {
+    return arraySlice(windowNames);
+  }
+};
+
+// fallback for IE11 buggy Object.getOwnPropertyNames with iframe and window
+module.exports.f = function getOwnPropertyNames(it) {
+  return windowNames && classof(it) === 'Window'
+    ? getWindowNames(it)
+    : $getOwnPropertyNames(toIndexedObject(it));
+};
+
+
+/***/ }),
+
 /***/ 4443:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
@@ -3608,6 +4157,31 @@ module.exports = CORRECT_PROTOTYPE_GETTER ? $Object.getPrototypeOf : function (O
     return constructor.prototype;
   } return object instanceof $Object ? ObjectPrototype : null;
 };
+
+
+/***/ }),
+
+/***/ 7005:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+
+var fails = __webpack_require__(8828);
+var isObject = __webpack_require__(6285);
+var classof = __webpack_require__(5807);
+var ARRAY_BUFFER_NON_EXTENSIBLE = __webpack_require__(6375);
+
+// eslint-disable-next-line es/no-object-isextensible -- safe
+var $isExtensible = Object.isExtensible;
+var FAILS_ON_PRIMITIVES = fails(function () { $isExtensible(1); });
+
+// `Object.isExtensible` method
+// https://tc39.es/ecma262/#sec-object.isextensible
+module.exports = (FAILS_ON_PRIMITIVES || ARRAY_BUFFER_NON_EXTENSIBLE) ? function isExtensible(it) {
+  if (!isObject(it)) return false;
+  if (ARRAY_BUFFER_NON_EXTENSIBLE && classof(it) === 'ArrayBuffer') return false;
+  return $isExtensible ? $isExtensible(it) : true;
+} : $isExtensible;
 
 
 /***/ }),
@@ -6019,6 +6593,131 @@ $({ target: 'String', proto: true, forced: forcedStringTrimMethod('trim') }, {
 
 /***/ }),
 
+/***/ 7249:
+/***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+
+var FREEZING = __webpack_require__(5681);
+var globalThis = __webpack_require__(5951);
+var uncurryThis = __webpack_require__(1907);
+var defineBuiltIns = __webpack_require__(2802);
+var InternalMetadataModule = __webpack_require__(1548);
+var collection = __webpack_require__(7081);
+var collectionWeak = __webpack_require__(1182);
+var isObject = __webpack_require__(6285);
+var enforceInternalState = (__webpack_require__(4932).enforce);
+var fails = __webpack_require__(8828);
+var NATIVE_WEAK_MAP = __webpack_require__(551);
+
+var $Object = Object;
+// eslint-disable-next-line es/no-array-isarray -- safe
+var isArray = Array.isArray;
+// eslint-disable-next-line es/no-object-isextensible -- safe
+var isExtensible = $Object.isExtensible;
+// eslint-disable-next-line es/no-object-isfrozen -- safe
+var isFrozen = $Object.isFrozen;
+// eslint-disable-next-line es/no-object-issealed -- safe
+var isSealed = $Object.isSealed;
+// eslint-disable-next-line es/no-object-freeze -- safe
+var freeze = $Object.freeze;
+// eslint-disable-next-line es/no-object-seal -- safe
+var seal = $Object.seal;
+
+var IS_IE11 = !globalThis.ActiveXObject && 'ActiveXObject' in globalThis;
+var InternalWeakMap;
+
+var wrapper = function (init) {
+  return function WeakMap() {
+    return init(this, arguments.length ? arguments[0] : undefined);
+  };
+};
+
+// `WeakMap` constructor
+// https://tc39.es/ecma262/#sec-weakmap-constructor
+var $WeakMap = collection('WeakMap', wrapper, collectionWeak);
+var WeakMapPrototype = $WeakMap.prototype;
+var nativeSet = uncurryThis(WeakMapPrototype.set);
+
+// Chakra Edge bug: adding frozen arrays to WeakMap unfreeze them
+var hasMSEdgeFreezingBug = function () {
+  return FREEZING && fails(function () {
+    var frozenArray = freeze([]);
+    nativeSet(new $WeakMap(), frozenArray, 1);
+    return !isFrozen(frozenArray);
+  });
+};
+
+// IE11 WeakMap frozen keys fix
+// We can't use feature detection because it crash some old IE builds
+// https://github.com/zloirock/core-js/issues/485
+if (NATIVE_WEAK_MAP) if (IS_IE11) {
+  InternalWeakMap = collectionWeak.getConstructor(wrapper, 'WeakMap', true);
+  InternalMetadataModule.enable();
+  var nativeDelete = uncurryThis(WeakMapPrototype['delete']);
+  var nativeHas = uncurryThis(WeakMapPrototype.has);
+  var nativeGet = uncurryThis(WeakMapPrototype.get);
+  defineBuiltIns(WeakMapPrototype, {
+    'delete': function (key) {
+      if (isObject(key) && !isExtensible(key)) {
+        var state = enforceInternalState(this);
+        if (!state.frozen) state.frozen = new InternalWeakMap();
+        return nativeDelete(this, key) || state.frozen['delete'](key);
+      } return nativeDelete(this, key);
+    },
+    has: function has(key) {
+      if (isObject(key) && !isExtensible(key)) {
+        var state = enforceInternalState(this);
+        if (!state.frozen) state.frozen = new InternalWeakMap();
+        return nativeHas(this, key) || state.frozen.has(key);
+      } return nativeHas(this, key);
+    },
+    get: function get(key) {
+      if (isObject(key) && !isExtensible(key)) {
+        var state = enforceInternalState(this);
+        if (!state.frozen) state.frozen = new InternalWeakMap();
+        return nativeHas(this, key) ? nativeGet(this, key) : state.frozen.get(key);
+      } return nativeGet(this, key);
+    },
+    set: function set(key, value) {
+      if (isObject(key) && !isExtensible(key)) {
+        var state = enforceInternalState(this);
+        if (!state.frozen) state.frozen = new InternalWeakMap();
+        nativeHas(this, key) ? nativeSet(this, key, value) : state.frozen.set(key, value);
+      } else nativeSet(this, key, value);
+      return this;
+    }
+  });
+// Chakra Edge frozen keys fix
+} else if (hasMSEdgeFreezingBug()) {
+  defineBuiltIns(WeakMapPrototype, {
+    set: function set(key, value) {
+      var arrayIntegrityLevel;
+      if (isArray(key)) {
+        if (isFrozen(key)) arrayIntegrityLevel = freeze;
+        else if (isSealed(key)) arrayIntegrityLevel = seal;
+      }
+      nativeSet(this, key, value);
+      if (arrayIntegrityLevel) arrayIntegrityLevel(key);
+      return this;
+    }
+  });
+}
+
+
+/***/ }),
+
+/***/ 6571:
+/***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+
+// TODO: Remove this module from `core-js@4` since it's replaced to module below
+__webpack_require__(7249);
+
+
+/***/ }),
+
 /***/ 2560:
 /***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
 
@@ -6203,6 +6902,19 @@ module.exports = parent;
 "use strict";
 
 var parent = __webpack_require__(7027);
+__webpack_require__(2560);
+
+module.exports = parent;
+
+
+/***/ }),
+
+/***/ 9428:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+
+var parent = __webpack_require__(7173);
 __webpack_require__(2560);
 
 module.exports = parent;
@@ -6944,6 +7656,23 @@ __webpack_require__.d(__webpack_exports__, {
   "default": () => (/* binding */ RmpVast)
 });
 
+;// CONCATENATED MODULE: ./node_modules/@babel/runtime-corejs3/helpers/esm/checkPrivateRedeclaration.js
+function _checkPrivateRedeclaration(e, t) {
+  if (t.has(e)) throw new TypeError("Cannot initialize the same private elements twice on an object");
+}
+
+;// CONCATENATED MODULE: ./node_modules/@babel/runtime-corejs3/helpers/esm/classPrivateMethodInitSpec.js
+
+function _classPrivateMethodInitSpec(e, a) {
+  _checkPrivateRedeclaration(e, a), a.add(e);
+}
+
+;// CONCATENATED MODULE: ./node_modules/@babel/runtime-corejs3/helpers/esm/assertClassBrand.js
+function _assertClassBrand(e, t, n) {
+  if ("function" == typeof e ? e === t : e.has(t)) return arguments.length < 3 ? t : n;
+  throw new TypeError("Private element is not present on this object");
+}
+
 // EXTERNAL MODULE: ./node_modules/core-js-pure/stable/instance/push.js
 var push = __webpack_require__(3266);
 var push_default = /*#__PURE__*/__webpack_require__.n(push);
@@ -6960,21 +7689,6 @@ var parse_float_default = /*#__PURE__*/__webpack_require__.n(parse_float);
 
 
 class FW {
-  static _getStyleAttributeData(element, style) {
-    let styleAttributeData = 0;
-    if (element && typeof window.getComputedStyle === 'function') {
-      const cs = window.getComputedStyle(element, null);
-      if (cs) {
-        styleAttributeData = cs.getPropertyValue(style);
-        styleAttributeData = styleAttributeData.toString().toLowerCase();
-      }
-    }
-    styleAttributeData = styleAttributeData.toString();
-    if (styleAttributeData.indexOf('px') > -1) {
-      styleAttributeData = styleAttributeData.replace('px', '');
-    }
-    return parse_float_default()(styleAttributeData);
-  }
   static createSyntheticEvent(eventName, element) {
     let event;
     if (element) {
@@ -6999,7 +7713,7 @@ class FW {
       if (FW.isNumber(element.offsetWidth) && element.offsetWidth !== 0) {
         return element.offsetWidth;
       } else {
-        return FW._getStyleAttributeData(element, 'width');
+        return _getStyleAttributeData.call(FW, element, 'width');
       }
     }
     return 0;
@@ -7009,7 +7723,7 @@ class FW {
       if (FW.isNumber(element.offsetHeight) && element.offsetHeight !== 0) {
         return element.offsetHeight;
       } else {
-        return FW._getStyleAttributeData(element, 'height');
+        return _getStyleAttributeData.call(FW, element, 'height');
       }
     }
     return 0;
@@ -7075,23 +7789,6 @@ class FW {
       events.forEach(event => {
         domElement.addEventListener(event, callback);
       });
-    }
-  }
-  static removeEvents(events, domElement, callback) {
-    if (events && events.length > 1 && domElement && typeof callback === 'function') {
-      events.forEach(event => {
-        domElement.removeEventListener(event, callback);
-      });
-    }
-  }
-  static clearTimeout(timeoutCallback) {
-    if (typeof timeoutCallback === 'number') {
-      window.clearTimeout(timeoutCallback);
-    }
-  }
-  static clearInterval(intervalCallback) {
-    if (typeof intervalCallback === 'number') {
-      window.clearInterval(intervalCallback);
     }
   }
   static stopPreventEvent(event) {
@@ -7180,6 +7877,21 @@ class FW {
     }
   }
 }
+function _getStyleAttributeData(element, style) {
+  let styleAttributeData = 0;
+  if (element && typeof window.getComputedStyle === 'function') {
+    const cs = window.getComputedStyle(element, null);
+    if (cs) {
+      styleAttributeData = cs.getPropertyValue(style);
+      styleAttributeData = styleAttributeData.toString().toLowerCase();
+    }
+  }
+  styleAttributeData = styleAttributeData.toString();
+  if (styleAttributeData.indexOf('px') > -1) {
+    styleAttributeData = styleAttributeData.replace('px', '');
+  }
+  return parse_float_default()(styleAttributeData);
+}
 // EXTERNAL MODULE: ./node_modules/core-js-pure/stable/parse-int.js
 var parse_int = __webpack_require__(1921);
 var parse_int_default = /*#__PURE__*/__webpack_require__.n(parse_int);
@@ -7187,24 +7899,6 @@ var parse_int_default = /*#__PURE__*/__webpack_require__.n(parse_int);
 
 
 class Environment {
-  static _filterVersion(pattern) {
-    if (navigator.userAgent) {
-      const versionArray = navigator.userAgent.match(pattern);
-      if (Array.isArray(versionArray) && typeof versionArray[1] !== 'undefined') {
-        return parse_int_default()(versionArray[1], 10);
-      }
-    }
-    return -1;
-  }
-  static get _testVideo() {
-    return document.createElement('video');
-  }
-  static get _hasTouchEvents() {
-    if (typeof window.ontouchstart !== 'undefined' || window.DocumentTouch && document instanceof window.DocumentTouch) {
-      return true;
-    }
-    return false;
-  }
   static get userAgent() {
     if (navigator.userAgent) {
       return navigator.userAgent;
@@ -7228,14 +7922,14 @@ class Environment {
     const IOS_PATTERN = /(ipad|iphone|ipod)/i;
     const IOS_VERSION_PATTERN = /os\s+(\d+)_/i;
     let support = [false, -1];
-    if (IOS_PATTERN.test(Environment.userAgent) && Environment._hasTouchEvents) {
-      support = [true, Environment._filterVersion(IOS_VERSION_PATTERN)];
+    if (IOS_PATTERN.test(Environment.userAgent) && _get_hasTouchEvents(Environment)) {
+      support = [true, _filterVersion.call(Environment, IOS_VERSION_PATTERN)];
     }
     return support;
   }
   static get isIpadOS() {
     const MAC_PLATFORM_PATTERN = /macintel/i;
-    if (!Environment.isIos[0] && Environment._hasTouchEvents && MAC_PLATFORM_PATTERN.test(navigator.platform) && Environment.devicePixelRatio > 1 && Environment.maxTouchPoints > 1) {
+    if (!Environment.isIos[0] && _get_hasTouchEvents(Environment) && MAC_PLATFORM_PATTERN.test(navigator.platform) && Environment.devicePixelRatio > 1 && Environment.maxTouchPoints > 1) {
       return true;
     }
     return false;
@@ -7247,7 +7941,7 @@ class Environment {
     let macOSXMinorVersion = -1;
     if (!Environment.isIos[0] && !Environment.isIpadOS && MACOS_PATTERN.test(Environment.userAgent)) {
       isMacOS = true;
-      macOSXMinorVersion = Environment._filterVersion(MACOS_VERSION_PATTERN, true);
+      macOSXMinorVersion = _filterVersion.call(Environment, MACOS_VERSION_PATTERN, true);
     }
     return [isMacOS, macOSXMinorVersion];
   }
@@ -7259,7 +7953,7 @@ class Environment {
     let safariVersion = -1;
     if (SAFARI_PATTERN.test(Environment.userAgent) && !NO_SAFARI_PATTERN.test(Environment.userAgent)) {
       isSafari = true;
-      safariVersion = Environment._filterVersion(SAFARI_VERSION_PATTERN);
+      safariVersion = _filterVersion.call(Environment, SAFARI_VERSION_PATTERN);
     }
     return [isSafari, safariVersion];
   }
@@ -7270,8 +7964,8 @@ class Environment {
     const ANDROID_PATTERN = /android/i;
     const ANDROID_VERSION_PATTERN = /android\s*(\d+)\./i;
     let support = [false, -1];
-    if (!Environment.isIos[0] && Environment._hasTouchEvents && ANDROID_PATTERN.test(Environment.userAgent)) {
-      support = [true, Environment._filterVersion(ANDROID_VERSION_PATTERN)];
+    if (!Environment.isIos[0] && _get_hasTouchEvents(Environment) && ANDROID_PATTERN.test(Environment.userAgent)) {
+      support = [true, _filterVersion.call(Environment, ANDROID_VERSION_PATTERN)];
     }
     return support;
   }
@@ -7283,7 +7977,7 @@ class Environment {
   }
   static get hasNativeFullscreenSupport() {
     const doc = document.documentElement;
-    const testVideo = Environment._testVideo;
+    const testVideo = _get_testVideo(Environment);
     if (doc) {
       if (typeof doc.requestFullscreen !== 'undefined' || typeof doc.webkitRequestFullscreen !== 'undefined' || typeof doc.mozRequestFullScreen !== 'undefined' || typeof doc.msRequestFullscreen !== 'undefined' || typeof testVideo.webkitEnterFullscreen !== 'undefined') {
         return true;
@@ -7292,7 +7986,7 @@ class Environment {
     return false;
   }
   static checkCanPlayType(type, codec) {
-    const testVideo = Environment._testVideo;
+    const testVideo = _get_testVideo(Environment);
     if (testVideo.canPlayType !== 'undefined') {
       if (type && codec) {
         const canPlayType = testVideo.canPlayType(type + '; codecs="' + codec + '"');
@@ -7309,21 +8003,26 @@ class Environment {
     return false;
   }
 }
-;// CONCATENATED MODULE: ./src/js/framework/logger.js
-class Logger {
-  static _rawConsoleLogs(dump) {
-    if (dump === null) {
-      console.log('null');
-    } else if (typeof dump === 'object') {
-      try {
-        console.log(JSON.stringify(dump));
-      } catch (error) {
-        console.warn(error);
-      }
-    } else if (typeof dump.toString !== 'undefined') {
-      console.log(dump.toString());
+function _filterVersion(pattern) {
+  if (navigator.userAgent) {
+    const versionArray = navigator.userAgent.match(pattern);
+    if (Array.isArray(versionArray) && typeof versionArray[1] !== 'undefined') {
+      return parse_int_default()(versionArray[1], 10);
     }
   }
+  return -1;
+}
+function _get_testVideo(_this) {
+  return document.createElement('video');
+}
+function _get_hasTouchEvents(_this2) {
+  if (typeof window.ontouchstart !== 'undefined' || window.DocumentTouch && document instanceof window.DocumentTouch) {
+    return true;
+  }
+  return false;
+}
+;// CONCATENATED MODULE: ./src/js/framework/logger.js
+class Logger {
   static printVideoEvents(debugRawConsoleLogs, video, type) {
     const events = ['loadstart', 'durationchange', 'playing', 'waiting', 'loadedmetadata', 'loadeddata', 'canplay', 'canplaythrough'];
     events.forEach(value => {
@@ -7341,7 +8040,7 @@ class Logger {
         console.log(`RMP-VAST: ${data}`);
       }
       if (typeof dump !== 'undefined') {
-        Logger._rawConsoleLogs(dump);
+        _rawConsoleLogs.call(Logger, dump);
       }
     } else {
       if (data) {
@@ -7353,205 +8052,63 @@ class Logger {
     }
   }
 }
+function _rawConsoleLogs(dump) {
+  if (dump === null) {
+    console.log('null');
+  } else if (typeof dump === 'object') {
+    try {
+      console.log(JSON.stringify(dump));
+    } catch (error) {
+      console.warn(error);
+    }
+  } else if (typeof dump.toString !== 'undefined') {
+    console.log(dump.toString());
+  }
+}
+;// CONCATENATED MODULE: ./node_modules/@babel/runtime-corejs3/helpers/esm/classPrivateFieldInitSpec.js
+
+function _classPrivateFieldInitSpec(e, t, a) {
+  _checkPrivateRedeclaration(e, t), t.set(e, a);
+}
+
+;// CONCATENATED MODULE: ./node_modules/@babel/runtime-corejs3/helpers/esm/classPrivateFieldGet2.js
+
+function _classPrivateFieldGet2(s, a) {
+  return s.get(_assertClassBrand(s, a));
+}
+
+;// CONCATENATED MODULE: ./node_modules/@babel/runtime-corejs3/helpers/esm/classPrivateFieldSet2.js
+
+function _classPrivateFieldSet2(s, a, r) {
+  return s.set(_assertClassBrand(s, a), r), r;
+}
+
+// EXTERNAL MODULE: ./node_modules/core-js-pure/stable/weak-map/index.js
+var weak_map = __webpack_require__(9428);
+var weak_map_default = /*#__PURE__*/__webpack_require__.n(weak_map);
 ;// CONCATENATED MODULE: ./src/js/helpers/utils.js
 
 
 
+
+
+
+
+
+
+var _rmpVast = /*#__PURE__*/new (weak_map_default())();
+var _onFullscreenchangeFn = /*#__PURE__*/new (weak_map_default())();
+var _Utils_brand = /*#__PURE__*/new WeakSet();
 class Utils {
   constructor(rmpVast) {
-    this._rmpVast = rmpVast;
-    // we cannot have this here - we need this._rmpVast.debugRawConsoleLogs
-    //this._debugRawConsoleLogs = rmpVast.debugRawConsoleLogs;
-    this._onFullscreenchangeFn = null;
-  }
-
-  // attach fullscreen states
-  // this assumes we have a polyfill for fullscreenchange event 
-  // see app/js/app.js
-  // we need this to handle VAST fullscreen events
-  _onFullscreenchange(event) {
-    if (event && event.type) {
-      Logger.print(this._rmpVast.debugRawConsoleLogs, `event is ${event.type}`);
-      const isLinear = this._rmpVast.creative.isLinear;
-      const isOnStage = this._rmpVast.__adOnStage;
-      if (event.type === 'fullscreenchange') {
-        if (this._rmpVast.isInFullscreen) {
-          this._rmpVast.isInFullscreen = false;
-          if (isOnStage && isLinear) {
-            this._rmpVast.rmpVastTracking.dispatchTrackingAndApiEvent(['adexitfullscreen', 'adplayercollapse']);
-          }
-        } else {
-          this._rmpVast.isInFullscreen = true;
-          if (isOnStage && isLinear) {
-            this._rmpVast.rmpVastTracking.dispatchTrackingAndApiEvent(['adfullscreen', 'adplayerexpand']);
-          }
-        }
-      } else if (event.type === 'webkitbeginfullscreen') {
-        // iOS uses webkitbeginfullscreen
-        if (isOnStage && isLinear) {
-          this._rmpVast.rmpVastTracking.dispatchTrackingAndApiEvent(['adfullscreen', 'adplayerexpand']);
-        }
-        this._rmpVast.isInFullscreen = true;
-      } else if (event.type === 'webkitendfullscreen') {
-        // iOS uses webkitendfullscreen
-        if (isOnStage && isLinear) {
-          this._rmpVast.rmpVastTracking.dispatchTrackingAndApiEvent(['adexitfullscreen', 'adplayercollapse']);
-        }
-        this._rmpVast.isInFullscreen = false;
-      }
-    }
-  }
-  _updateVastError(errorCode) {
-    // List of VAST errors according to specs
-    const vastErrorsList = [{
-      code: 201,
-      description: 'Video player expecting different linearity.'
-    }, {
-      code: 204,
-      description: 'Ad category was required but not provided.'
-    }, {
-      code: 205,
-      description: 'Inline Category violates Wrapper BlockedAdCategories.'
-    }, {
-      code: 303,
-      description: 'No VAST response after one or more Wrappers.'
-    }, {
-      code: 400,
-      description: 'General Linear error. Video player is unable to display the Linear Ad.'
-    }, {
-      code: 401,
-      description: 'File not found. Unable to find Linear/MediaFile from URI.'
-    }, {
-      code: 402,
-      description: 'Timeout of MediaFile URI.'
-    }, {
-      code: 403,
-      description: 'Couldn\'t find MediaFile that is supported by this video player, based on the attributes of the MediaFile element.'
-    }, {
-      code: 501,
-      description: 'Unable to display NonLinear Ad because creative dimensions do not align with creative display area (i.e. creative dimension too large).'
-    }, {
-      code: 502,
-      description: 'Unable to fetch NonLinearAds/NonLinear resource.'
-    }, {
-      code: 503,
-      description: 'Couldn\'t find NonLinear resource with supported type.'
-    }, {
-      code: 603,
-      description: 'Unable to fetch CompanionAds/Companion resource.'
-    }, {
-      code: 900,
-      description: 'Undefined Error.'
-    }, {
-      code: 901,
-      description: 'General VPAID error.'
-    }, {
-      code: 1001,
-      description: 'Invalid input for loadAds method'
-    }, {
-      code: 1002,
-      description: 'Required DOMParser API is not available'
-    }, {
-      code: 1100,
-      description: 'SIMID error: UNSPECIFIED_CREATIVE_ERROR'
-    }, {
-      code: 1101,
-      description: 'SIMID error: CANNOT_LOAD_RESOURCE'
-    }, {
-      code: 1102,
-      description: 'SIMID error: PLAYBACK_AREA_UNUSABLE'
-    }, {
-      code: 1103,
-      description: 'SIMID error: INCORRECT_VERSION'
-    }, {
-      code: 1104,
-      description: 'SIMID error: TECHNICAL_ERROR'
-    }, {
-      code: 1105,
-      description: 'SIMID error: EXPAND_NOT_POSSIBLE'
-    }, {
-      code: 1106,
-      description: 'SIMID error: PAUSE_NOT_HONORED'
-    }, {
-      code: 1107,
-      description: 'SIMID error: PLAYMODE_NOT_ADEQUATE'
-    }, {
-      code: 1108,
-      description: 'SIMID error: CREATIVE_INTERNAL_ERROR'
-    }, {
-      code: 1109,
-      description: 'SIMID error: DEVICE_NOT_SUPPORTED'
-    }, {
-      code: 1110,
-      description: 'SIMID error: MESSAGES_NOT_FOLLOWING_SPEC'
-    }, {
-      code: 1111,
-      description: 'SIMID error: PLAYER_RESPONSE_TIMEOUT'
-    }, {
-      code: 1200,
-      description: 'SIMID error: UNSPECIFIED_PLAYER_ERROR'
-    }, {
-      code: 1201,
-      description: 'SIMID error: WRONG_VERSION'
-    }, {
-      code: 1202,
-      description: 'SIMID error: UNSUPPORTED_TIME'
-    }, {
-      code: 1203,
-      description: 'SIMID error: UNSUPPORTED_FUNCTIONALITY_REQUEST'
-    }, {
-      code: 1204,
-      description: 'SIMID error: UNSUPPORTED_ACTIONS'
-    }, {
-      code: 1205,
-      description: 'SIMID error: POSTMESSAGE_CHANNEL_OVERLOADED'
-    }, {
-      code: 1206,
-      description: 'SIMID error: VIDEO_COULD_NOT_LOAD'
-    }, {
-      code: 1207,
-      description: 'SIMID error: VIDEO_TIME_OUT'
-    }, {
-      code: 1208,
-      description: 'SIMID error: RESPONSE_TIMEOUT'
-    }, {
-      code: 1209,
-      description: 'SIMID error: MEDIA_NOT_SUPPORTED'
-    }, {
-      code: 1210,
-      description: 'SIMID error: SPEC_NOT_FOLLOWED_ON_INIT'
-    }, {
-      code: 1211,
-      description: 'SIMID error: SPEC_NOT_FOLLOWED_ON_MESSAGES'
-    }];
-
-    // Indicates that the error was encountered after the ad loaded, during ad play. 
-    // Possible causes: ad assets could not be loaded, etc.
-    const playErrorsList = [201, 204, 205, 400, 401, 402, 403, 501, 502, 503, 603, 901, 1002];
-
-    // Indicates that the error was encountered when the ad was being loaded. 
-    // Possible causes: there was no response from the ad server, malformed ad response was returned ...
-    // 300, 301, 302, 303, 304 Wrapper errors are managed in ast-client-js
-    const loadErrorsList = [303, 900, 1001];
-    const error = vastErrorsList.filter(value => {
-      return value.code === errorCode;
-    });
-    if (error.length > 0) {
-      this._rmpVast.__vastErrorCode = error[0].code;
-      this._rmpVast.__adErrorMessage = error[0].description;
-    } else {
-      this._rmpVast.__vastErrorCode = -1;
-      this._rmpVast.__adErrorMessage = 'Error getting VAST error';
-    }
-    if (this._rmpVast.__vastErrorCode > -1) {
-      if (loadErrorsList.indexOf(this._rmpVast.__vastErrorCode) > -1) {
-        this._rmpVast.__adErrorType = 'adLoadError';
-      } else if (playErrorsList.indexOf(this._rmpVast.__vastErrorCode) > -1) {
-        this._rmpVast.__adErrorType = 'adPlayError';
-      }
-    }
-    Logger.print(this._rmpVast.debugRawConsoleLogs, `VAST error code is ${this._rmpVast.__vastErrorCode} with message: ${this._rmpVast.__adErrorMessage}`);
-    Logger.print(this._rmpVast.debugRawConsoleLogs, `Ad error type is ${this._rmpVast.__adErrorType}`);
+    // attach fullscreen states
+    // this assumes we have a polyfill for fullscreenchange event 
+    // see app/js/app.js
+    // we need this to handle VAST fullscreen events
+    _classPrivateMethodInitSpec(this, _Utils_brand);
+    _classPrivateFieldInitSpec(this, _rmpVast, void 0);
+    _classPrivateFieldInitSpec(this, _onFullscreenchangeFn, null);
+    _classPrivateFieldSet2(_rmpVast, this, rmpVast);
   }
   filterParams(inputParams) {
     // default for input parameters
@@ -7587,29 +8144,29 @@ class Utils {
       omidAutoplay: false,
       macros: new Map(),
       partnerName: 'rmp-vast',
-      partnerVersion: "16.0.0"
+      partnerVersion: "16.1.0"
     };
-    this._rmpVast.params = defaultParams;
+    _classPrivateFieldGet2(_rmpVast, this).params = defaultParams;
     if (inputParams && typeof inputParams === 'object') {
       const keys = Object.keys(inputParams);
       keys.forEach(key => {
-        if (typeof inputParams[key] === typeof this._rmpVast.params[key]) {
+        if (typeof inputParams[key] === typeof _classPrivateFieldGet2(_rmpVast, this).params[key]) {
           if (FW.isNumber(inputParams[key]) && inputParams[key] > 0 || typeof inputParams[key] !== 'number') {
             if (key === 'vpaidSettings') {
               if (FW.isNumber(inputParams.vpaidSettings.width) && inputParams.vpaidSettings.width > 0) {
-                this._rmpVast.params.vpaidSettings.width = inputParams.vpaidSettings.width;
+                _classPrivateFieldGet2(_rmpVast, this).params.vpaidSettings.width = inputParams.vpaidSettings.width;
               }
               if (FW.isNumber(inputParams.vpaidSettings.height) && inputParams.vpaidSettings.height > 0) {
-                this._rmpVast.params.vpaidSettings.height = inputParams.vpaidSettings.height;
+                _classPrivateFieldGet2(_rmpVast, this).params.vpaidSettings.height = inputParams.vpaidSettings.height;
               }
               if (typeof inputParams.vpaidSettings.viewMode === 'string' && inputParams.vpaidSettings.viewMode === 'fullscreen') {
-                this._rmpVast.params.vpaidSettings.viewMode = inputParams.vpaidSettings.viewMode;
+                _classPrivateFieldGet2(_rmpVast, this).params.vpaidSettings.viewMode = inputParams.vpaidSettings.viewMode;
               }
               if (FW.isNumber(inputParams.vpaidSettings.desiredBitrate) && inputParams.vpaidSettings.desiredBitrate > 0) {
-                this._rmpVast.params.vpaidSettings.desiredBitrate = inputParams.vpaidSettings.desiredBitrate;
+                _classPrivateFieldGet2(_rmpVast, this).params.vpaidSettings.desiredBitrate = inputParams.vpaidSettings.desiredBitrate;
               }
             } else {
-              this._rmpVast.params[key] = inputParams[key];
+              _classPrivateFieldGet2(_rmpVast, this).params[key] = inputParams[key];
             }
           }
         }
@@ -7620,23 +8177,23 @@ class Utils {
     if (Array.isArray(event)) {
       event.forEach(currentEvent => {
         if (currentEvent) {
-          Logger.print(this._rmpVast.debugRawConsoleLogs, `API EVENT - ${event}`);
-          this._rmpVast.dispatch(currentEvent);
+          Logger.print(_classPrivateFieldGet2(_rmpVast, this).debugRawConsoleLogs, `API EVENT - ${event}`);
+          _classPrivateFieldGet2(_rmpVast, this).dispatch(currentEvent);
         }
       });
     } else if (event) {
-      Logger.print(this._rmpVast.debugRawConsoleLogs, `API EVENT - ${event}`);
-      this._rmpVast.dispatch(event);
+      Logger.print(_classPrivateFieldGet2(_rmpVast, this).debugRawConsoleLogs, `API EVENT - ${event}`);
+      _classPrivateFieldGet2(_rmpVast, this).dispatch(event);
     }
   }
   playPromise(whichPlayer, firstPlayerPlayRequest) {
     let targetPlayer;
     switch (whichPlayer) {
       case 'content':
-        targetPlayer = this._rmpVast.currentContentPlayer;
+        targetPlayer = _classPrivateFieldGet2(_rmpVast, this).currentContentPlayer;
         break;
       case 'vast':
-        targetPlayer = this._rmpVast.currentAdPlayer;
+        targetPlayer = _classPrivateFieldGet2(_rmpVast, this).currentAdPlayer;
         break;
       default:
         break;
@@ -7647,235 +8204,285 @@ class Utils {
       // this lets us handle autoplay rejection 
       // https://developers.google.com/web/updates/2016/03/play-returns-promise
       if (playPromise !== undefined) {
-        const isLinear = this._rmpVast.creative.isLinear;
+        const isLinear = _classPrivateFieldGet2(_rmpVast, this).creative.isLinear;
         playPromise.then(() => {
-          Logger.print(this._rmpVast.debugRawConsoleLogs, `playPromise on ${whichPlayer} player has succeeded`);
+          Logger.print(_classPrivateFieldGet2(_rmpVast, this).debugRawConsoleLogs, `playPromise on ${whichPlayer} player has succeeded`);
           if (firstPlayerPlayRequest) {
             this.createApiEvent('adinitialplayrequestsucceeded');
           }
         }).catch(error => {
           console.warn(error);
           if (firstPlayerPlayRequest && whichPlayer === 'vast' && isLinear) {
-            Logger.print(this._rmpVast.debugRawConsoleLogs, `initial play promise on ad player has been rejected`);
+            Logger.print(_classPrivateFieldGet2(_rmpVast, this).debugRawConsoleLogs, `initial play promise on ad player has been rejected`);
             this.processVastErrors(400, true);
             this.createApiEvent('adinitialplayrequestfailed');
           } else if (firstPlayerPlayRequest && whichPlayer === 'content' && !isLinear) {
-            Logger.print(this._rmpVast.debugRawConsoleLogs, `initial play promise on content player has been rejected`);
+            Logger.print(_classPrivateFieldGet2(_rmpVast, this).debugRawConsoleLogs, `initial play promise on content player has been rejected`);
             this.createApiEvent('adinitialplayrequestfailed');
           } else {
-            Logger.print(this._rmpVast.debugRawConsoleLogs, `playPromise on ${whichPlayer} player has been rejected`);
+            Logger.print(_classPrivateFieldGet2(_rmpVast, this).debugRawConsoleLogs, `playPromise on ${whichPlayer} player has been rejected`);
           }
         });
       }
     }
   }
   destroyFullscreen() {
-    if (this._rmpVast.currentContentPlayer) {
-      this._rmpVast.currentContentPlayer.removeEventListener('webkitbeginfullscreen', this._onFullscreenchangeFn);
-      this._rmpVast.currentContentPlayer.removeEventListener('webkitendfullscreen', this._onFullscreenchangeFn);
+    if (_classPrivateFieldGet2(_rmpVast, this).currentContentPlayer) {
+      _classPrivateFieldGet2(_rmpVast, this).currentContentPlayer.removeEventListener('webkitbeginfullscreen', _classPrivateFieldGet2(_onFullscreenchangeFn, this));
+      _classPrivateFieldGet2(_rmpVast, this).currentContentPlayer.removeEventListener('webkitendfullscreen', _classPrivateFieldGet2(_onFullscreenchangeFn, this));
     } else {
-      document.removeEventListener('fullscreenchange', this._onFullscreenchangeFn);
+      document.removeEventListener('fullscreenchange', _classPrivateFieldGet2(_onFullscreenchangeFn, this));
     }
   }
   handleFullscreen() {
     // if we have native fullscreen support we handle fullscreen events
     if (Environment.hasNativeFullscreenSupport) {
-      this._onFullscreenchangeFn = this._onFullscreenchange.bind(this);
+      _classPrivateFieldSet2(_onFullscreenchangeFn, this, _assertClassBrand(_Utils_brand, this, _onFullscreenchange).bind(this));
       // for iOS 
       if (Environment.isIos[0]) {
-        if (this._rmpVast.currentContentPlayer) {
-          this._rmpVast.currentContentPlayer.addEventListener('webkitbeginfullscreen', this._onFullscreenchangeFn);
-          this._rmpVast.currentContentPlayer.addEventListener('webkitendfullscreen', this._onFullscreenchangeFn);
+        if (_classPrivateFieldGet2(_rmpVast, this).currentContentPlayer) {
+          _classPrivateFieldGet2(_rmpVast, this).currentContentPlayer.addEventListener('webkitbeginfullscreen', _classPrivateFieldGet2(_onFullscreenchangeFn, this));
+          _classPrivateFieldGet2(_rmpVast, this).currentContentPlayer.addEventListener('webkitendfullscreen', _classPrivateFieldGet2(_onFullscreenchangeFn, this));
         }
       } else {
-        document.addEventListener('fullscreenchange', this._onFullscreenchangeFn);
+        document.addEventListener('fullscreenchange', _classPrivateFieldGet2(_onFullscreenchangeFn, this));
       }
     }
   }
   processVastErrors(errorCode, ping) {
     if (ping) {
-      this._rmpVast.rmpVastTracking.error(errorCode);
+      _classPrivateFieldGet2(_rmpVast, this).rmpVastTracking.error(errorCode);
     }
-    this._updateVastError(errorCode);
+    _assertClassBrand(_Utils_brand, this, _updateVastError).call(this, errorCode);
     this.createApiEvent('aderror');
-    if (this._rmpVast.rmpVastAdPlayer) {
-      this._rmpVast.rmpVastAdPlayer.resumeContent();
+    if (_classPrivateFieldGet2(_rmpVast, this).rmpVastAdPlayer) {
+      _classPrivateFieldGet2(_rmpVast, this).rmpVastAdPlayer.resumeContent();
     }
   }
+}
+function _onFullscreenchange(event) {
+  if (event && event.type) {
+    Logger.print(_classPrivateFieldGet2(_rmpVast, this).debugRawConsoleLogs, `event is ${event.type}`);
+    const isLinear = _classPrivateFieldGet2(_rmpVast, this).creative.isLinear;
+    const isOnStage = _classPrivateFieldGet2(_rmpVast, this).__adOnStage;
+    if (event.type === 'fullscreenchange') {
+      if (_classPrivateFieldGet2(_rmpVast, this).isInFullscreen) {
+        _classPrivateFieldGet2(_rmpVast, this).isInFullscreen = false;
+        if (isOnStage && isLinear) {
+          _classPrivateFieldGet2(_rmpVast, this).rmpVastTracking.dispatchTrackingAndApiEvent(['adexitfullscreen', 'adplayercollapse']);
+        }
+      } else {
+        _classPrivateFieldGet2(_rmpVast, this).isInFullscreen = true;
+        if (isOnStage && isLinear) {
+          _classPrivateFieldGet2(_rmpVast, this).rmpVastTracking.dispatchTrackingAndApiEvent(['adfullscreen', 'adplayerexpand']);
+        }
+      }
+    } else if (event.type === 'webkitbeginfullscreen') {
+      // iOS uses webkitbeginfullscreen
+      if (isOnStage && isLinear) {
+        _classPrivateFieldGet2(_rmpVast, this).rmpVastTracking.dispatchTrackingAndApiEvent(['adfullscreen', 'adplayerexpand']);
+      }
+      _classPrivateFieldGet2(_rmpVast, this).isInFullscreen = true;
+    } else if (event.type === 'webkitendfullscreen') {
+      // iOS uses webkitendfullscreen
+      if (isOnStage && isLinear) {
+        _classPrivateFieldGet2(_rmpVast, this).rmpVastTracking.dispatchTrackingAndApiEvent(['adexitfullscreen', 'adplayercollapse']);
+      }
+      _classPrivateFieldGet2(_rmpVast, this).isInFullscreen = false;
+    }
+  }
+}
+function _updateVastError(errorCode) {
+  // List of VAST errors according to specs
+  const vastErrorsList = [{
+    code: 201,
+    description: 'Video player expecting different linearity.'
+  }, {
+    code: 204,
+    description: 'Ad category was required but not provided.'
+  }, {
+    code: 205,
+    description: 'Inline Category violates Wrapper BlockedAdCategories.'
+  }, {
+    code: 303,
+    description: 'No VAST response after one or more Wrappers.'
+  }, {
+    code: 400,
+    description: 'General Linear error. Video player is unable to display the Linear Ad.'
+  }, {
+    code: 401,
+    description: 'File not found. Unable to find Linear/MediaFile from URI.'
+  }, {
+    code: 402,
+    description: 'Timeout of MediaFile URI.'
+  }, {
+    code: 403,
+    description: 'Couldn\'t find MediaFile that is supported by this video player, based on the attributes of the MediaFile element.'
+  }, {
+    code: 501,
+    description: 'Unable to display NonLinear Ad because creative dimensions do not align with creative display area (i.e. creative dimension too large).'
+  }, {
+    code: 502,
+    description: 'Unable to fetch NonLinearAds/NonLinear resource.'
+  }, {
+    code: 503,
+    description: 'Couldn\'t find NonLinear resource with supported type.'
+  }, {
+    code: 603,
+    description: 'Unable to fetch CompanionAds/Companion resource.'
+  }, {
+    code: 900,
+    description: 'Undefined Error.'
+  }, {
+    code: 901,
+    description: 'General VPAID error.'
+  }, {
+    code: 1001,
+    description: 'Invalid input for loadAds method'
+  }, {
+    code: 1002,
+    description: 'Required DOMParser API is not available'
+  }, {
+    code: 1100,
+    description: 'SIMID error: UNSPECIFIED_CREATIVE_ERROR'
+  }, {
+    code: 1101,
+    description: 'SIMID error: CANNOT_LOAD_RESOURCE'
+  }, {
+    code: 1102,
+    description: 'SIMID error: PLAYBACK_AREA_UNUSABLE'
+  }, {
+    code: 1103,
+    description: 'SIMID error: INCORRECT_VERSION'
+  }, {
+    code: 1104,
+    description: 'SIMID error: TECHNICAL_ERROR'
+  }, {
+    code: 1105,
+    description: 'SIMID error: EXPAND_NOT_POSSIBLE'
+  }, {
+    code: 1106,
+    description: 'SIMID error: PAUSE_NOT_HONORED'
+  }, {
+    code: 1107,
+    description: 'SIMID error: PLAYMODE_NOT_ADEQUATE'
+  }, {
+    code: 1108,
+    description: 'SIMID error: CREATIVE_INTERNAL_ERROR'
+  }, {
+    code: 1109,
+    description: 'SIMID error: DEVICE_NOT_SUPPORTED'
+  }, {
+    code: 1110,
+    description: 'SIMID error: MESSAGES_NOT_FOLLOWING_SPEC'
+  }, {
+    code: 1111,
+    description: 'SIMID error: PLAYER_RESPONSE_TIMEOUT'
+  }, {
+    code: 1200,
+    description: 'SIMID error: UNSPECIFIED_PLAYER_ERROR'
+  }, {
+    code: 1201,
+    description: 'SIMID error: WRONG_VERSION'
+  }, {
+    code: 1202,
+    description: 'SIMID error: UNSUPPORTED_TIME'
+  }, {
+    code: 1203,
+    description: 'SIMID error: UNSUPPORTED_FUNCTIONALITY_REQUEST'
+  }, {
+    code: 1204,
+    description: 'SIMID error: UNSUPPORTED_ACTIONS'
+  }, {
+    code: 1205,
+    description: 'SIMID error: POSTMESSAGE_CHANNEL_OVERLOADED'
+  }, {
+    code: 1206,
+    description: 'SIMID error: VIDEO_COULD_NOT_LOAD'
+  }, {
+    code: 1207,
+    description: 'SIMID error: VIDEO_TIME_OUT'
+  }, {
+    code: 1208,
+    description: 'SIMID error: RESPONSE_TIMEOUT'
+  }, {
+    code: 1209,
+    description: 'SIMID error: MEDIA_NOT_SUPPORTED'
+  }, {
+    code: 1210,
+    description: 'SIMID error: SPEC_NOT_FOLLOWED_ON_INIT'
+  }, {
+    code: 1211,
+    description: 'SIMID error: SPEC_NOT_FOLLOWED_ON_MESSAGES'
+  }];
+
+  // Indicates that the error was encountered after the ad loaded, during ad play. 
+  // Possible causes: ad assets could not be loaded, etc.
+  const playErrorsList = [201, 204, 205, 400, 401, 402, 403, 501, 502, 503, 603, 901, 1002];
+
+  // Indicates that the error was encountered when the ad was being loaded. 
+  // Possible causes: there was no response from the ad server, malformed ad response was returned ...
+  // 300, 301, 302, 303, 304 Wrapper errors are managed in ast-client-js
+  const loadErrorsList = [303, 900, 1001];
+  const error = vastErrorsList.filter(value => {
+    return value.code === errorCode;
+  });
+  if (error.length > 0) {
+    _classPrivateFieldGet2(_rmpVast, this).__vastErrorCode = error[0].code;
+    _classPrivateFieldGet2(_rmpVast, this).__adErrorMessage = error[0].description;
+  } else {
+    _classPrivateFieldGet2(_rmpVast, this).__vastErrorCode = -1;
+    _classPrivateFieldGet2(_rmpVast, this).__adErrorMessage = 'Error getting VAST error';
+  }
+  if (_classPrivateFieldGet2(_rmpVast, this).__vastErrorCode > -1) {
+    if (loadErrorsList.indexOf(_classPrivateFieldGet2(_rmpVast, this).__vastErrorCode) > -1) {
+      _classPrivateFieldGet2(_rmpVast, this).__adErrorType = 'adLoadError';
+    } else if (playErrorsList.indexOf(_classPrivateFieldGet2(_rmpVast, this).__vastErrorCode) > -1) {
+      _classPrivateFieldGet2(_rmpVast, this).__adErrorType = 'adPlayError';
+    }
+  }
+  Logger.print(_classPrivateFieldGet2(_rmpVast, this).debugRawConsoleLogs, `VAST error code is ${_classPrivateFieldGet2(_rmpVast, this).__vastErrorCode} with message: ${_classPrivateFieldGet2(_rmpVast, this).__adErrorMessage}`);
+  Logger.print(_classPrivateFieldGet2(_rmpVast, this).debugRawConsoleLogs, `Ad error type is ${_classPrivateFieldGet2(_rmpVast, this).__adErrorType}`);
 }
 ;// CONCATENATED MODULE: ./src/js/helpers/tracking.js
 
 
 
 
+
+
+
+
+
+
+var tracking_rmpVast = /*#__PURE__*/new (weak_map_default())();
+var _trackingApiEventMap = /*#__PURE__*/new (weak_map_default())();
+var _onPauseFn = /*#__PURE__*/new (weak_map_default())();
+var _onPlayFn = /*#__PURE__*/new (weak_map_default())();
+var _onPlayingFn = /*#__PURE__*/new (weak_map_default())();
+var _onEndedFn = /*#__PURE__*/new (weak_map_default())();
+var _onVolumeChangeFn = /*#__PURE__*/new (weak_map_default())();
+var _onTimeupdateFn = /*#__PURE__*/new (weak_map_default())();
+var _firstQuartileEventFired = /*#__PURE__*/new (weak_map_default())();
+var _midpointEventFired = /*#__PURE__*/new (weak_map_default())();
+var _thirdQuartileEventFired = /*#__PURE__*/new (weak_map_default())();
+var _Tracking_brand = /*#__PURE__*/new WeakSet();
 class Tracking {
   constructor(rmpVast) {
-    this._rmpVast = rmpVast;
-    this._debugRawConsoleLogs = rmpVast.debugRawConsoleLogs;
-    this.reset();
-    this._createTrackingApiEventMap();
-  }
-  _createTrackingApiEventMap() {
-    this._trackingApiEventMap = new Map();
-    // ViewableImpression
-    this._trackingApiEventMap.set('adviewable', 'viewable');
-    this._trackingApiEventMap.set('adviewundetermined', 'viewundetermined');
-    // Tracking Event Elements
-    this._trackingApiEventMap.set('advolumemuted', 'mute');
-    this._trackingApiEventMap.set('advolumeunmuted', 'unmute');
-    this._trackingApiEventMap.set('adpaused', 'pause');
-    this._trackingApiEventMap.set('adresumed', 'resume');
-    this._trackingApiEventMap.set('adskipped', 'skip');
-    // VAST 4 events
-    this._trackingApiEventMap.set('adplayerexpand', 'playerExpand');
-    this._trackingApiEventMap.set('adplayercollapse', 'playerCollapse');
-    // VAST 3 events
-    this._trackingApiEventMap.set('adfullscreen', 'fullscreen');
-    this._trackingApiEventMap.set('adexitfullscreen', 'exitFullscreen');
-    // Linear Ad Metrics
-    this._trackingApiEventMap.set('adloaded', 'loaded');
-    this._trackingApiEventMap.set('adstarted', 'start');
-    this._trackingApiEventMap.set('adfirstquartile', 'firstQuartile');
-    this._trackingApiEventMap.set('admidpoint', 'midpoint');
-    this._trackingApiEventMap.set('adthirdquartile', 'thirdQuartile');
-    this._trackingApiEventMap.set('adcomplete', 'complete');
-    // tracking progress event happens in _onTimeupdate
-    // InLine > Impression
-    this._trackingApiEventMap.set('adimpression', 'impression');
-
-    // creativeView for companion ads happens in getCompanionAd (index.js)
-    // creativeView tracking needs to happen for linear creative as well (support for VAST 3)
-    this._trackingApiEventMap.set('adcreativeview', 'creativeView');
-
-    // for non-linear and VPAID only
-    this._trackingApiEventMap.set('adcollapse', 'adCollapse');
-
-    // only support for VPAID - PR welcome for non-linear
-    this._trackingApiEventMap.set('aduseracceptinvitation', 'acceptInvitation');
-    this._trackingApiEventMap.set('adclosed', 'close');
-    // VideoClicks > ClickThrough
-    this._trackingApiEventMap.set('adclick', 'clickthrough');
-
-    // Need to investigate overlayViewDuration (non-linear) - interactiveStart (SIMID) further
-  }
-  _dispatch(event) {
-    Logger.print(this._debugRawConsoleLogs, `ping tracking for ${event} VAST event`);
-    // filter trackers - may return multiple urls for same event as allowed by VAST spec
-    const trackers = this._rmpVast.trackingTags.filter(value => {
-      return event === value.event;
-    });
-    // send ping for each valid tracker
-    if (trackers.length > 0) {
-      trackers.forEach(element => {
-        this.pingURI(element.url);
-      });
-    }
-  }
-  _ping(url) {
-    // we expect an image format for the tracker (generally a 1px GIF/PNG/JPG/AVIF) or JavaScript as 
-    // those are the most common format in the industry 
-    // other format may produce errors and the related tracker may not be requested properly
-    const jsPattern = /\.js$/i;
-    if (jsPattern.test(url)) {
-      const script = document.createElement('script');
-      script.src = url;
-      try {
-        document.head.appendChild(script);
-      } catch (error) {
-        console.warn(error);
-        document.body.appendChild(script);
-      }
-    } else {
-      FW.ajax(url, this._rmpVast.params.ajaxTimeout, false, 'GET').then(() => {
-        Logger.print(this._debugRawConsoleLogs, `VAST tracker successfully loaded ${url}`);
-      }).catch(error => {
-        console.warn(error);
-      });
-    }
-  }
-  _onVolumeChange() {
-    if (this._rmpVast.currentAdPlayer) {
-      const muted = this._rmpVast.currentAdPlayer.muted;
-      const volume = this._rmpVast.currentAdPlayer.volume;
-      if (muted || volume === 0) {
-        this.dispatchTrackingAndApiEvent('advolumemuted');
-      } else if (!muted && volume > 0) {
-        this.dispatchTrackingAndApiEvent('advolumeunmuted');
-      }
-      this._rmpVast.rmpVastUtils.createApiEvent('advolumechanged');
-    }
-  }
-  _onTimeupdate() {
-    let adPlayerDuration = -1;
-    let adPlayerCurrentTime = -1;
-    if (this._rmpVast.rmpVastAdPlayer) {
-      adPlayerCurrentTime = this._rmpVast.rmpVastAdPlayer.currentTime;
-      adPlayerDuration = this._rmpVast.rmpVastAdPlayer.duration;
-    }
-    if (adPlayerCurrentTime > 0) {
-      if (adPlayerDuration > 0 && adPlayerDuration > adPlayerCurrentTime) {
-        if (adPlayerCurrentTime >= adPlayerDuration * 0.25 && !this._firstQuartileEventFired) {
-          this._firstQuartileEventFired = true;
-          this.dispatchTrackingAndApiEvent('adfirstquartile');
-        } else if (adPlayerCurrentTime >= adPlayerDuration * 0.5 && !this._midpointEventFired) {
-          this._midpointEventFired = true;
-          this.dispatchTrackingAndApiEvent('admidpoint');
-        } else if (adPlayerCurrentTime >= adPlayerDuration * 0.75 && !this._thirdQuartileEventFired) {
-          this._thirdQuartileEventFired = true;
-          this.dispatchTrackingAndApiEvent('adthirdquartile');
-        }
-      }
-      // progress event
-      if (this._rmpVast.progressEvents.length > 0) {
-        if (adPlayerCurrentTime > this._rmpVast.progressEvents[0].time) {
-          const filterProgressEvent = this._rmpVast.progressEvents.filter(progressEvent => {
-            return progressEvent.time === this._rmpVast.progressEvents[0].time;
-          });
-          filterProgressEvent.forEach(progressEvent => {
-            if (progressEvent.url) {
-              this.pingURI(progressEvent.url);
-            }
-          });
-          this._rmpVast.progressEvents.shift();
-          this._rmpVast.rmpVastUtils.createApiEvent('adprogress');
-        }
-      }
-    }
-  }
-  _onPause() {
-    if (this._rmpVast.currentAdPlayer && this._rmpVast.currentAdPlayer.paused) {
-      const currentTime = this._rmpVast.currentAdPlayer.currentTime;
-      const currentDuration = this._rmpVast.currentAdPlayer.duration;
-      // we have reached end of linear creative - a HTML5 video pause event may fire just before ended event
-      // in this case we ignore the adpaused event as adcomplete prevails
-      if (currentTime === currentDuration) {
-        return;
-      }
-      this.dispatchTrackingAndApiEvent('adpaused');
-    }
-  }
-  _onPlay() {
-    if (this._rmpVast.currentAdPlayer && !this._rmpVast.currentAdPlayer.paused) {
-      this.dispatchTrackingAndApiEvent('adresumed');
-    }
-  }
-  _onPlaying() {
-    this.dispatchTrackingAndApiEvent(['adimpression', 'adcreativeview', 'adstarted']);
-  }
-  _onEnded() {
-    this.dispatchTrackingAndApiEvent('adcomplete');
-    if (this._rmpVast.rmpVastAdPlayer) {
-      this._rmpVast.rmpVastAdPlayer.resumeContent();
-    }
-  }
-  _dispatchTracking(event) {
-    if (Array.isArray(event)) {
-      event.forEach(currentEvent => {
-        this._dispatch(currentEvent);
-      });
-    } else {
-      this._dispatch(event);
-    }
+    _classPrivateMethodInitSpec(this, _Tracking_brand);
+    _classPrivateFieldInitSpec(this, tracking_rmpVast, void 0);
+    _classPrivateFieldInitSpec(this, _trackingApiEventMap, new Map());
+    _classPrivateFieldInitSpec(this, _onPauseFn, null);
+    _classPrivateFieldInitSpec(this, _onPlayFn, null);
+    _classPrivateFieldInitSpec(this, _onPlayingFn, null);
+    _classPrivateFieldInitSpec(this, _onEndedFn, null);
+    _classPrivateFieldInitSpec(this, _onVolumeChangeFn, null);
+    _classPrivateFieldInitSpec(this, _onTimeupdateFn, null);
+    _classPrivateFieldInitSpec(this, _firstQuartileEventFired, false);
+    _classPrivateFieldInitSpec(this, _midpointEventFired, false);
+    _classPrivateFieldInitSpec(this, _thirdQuartileEventFired, false);
+    _classPrivateFieldSet2(tracking_rmpVast, this, rmpVast);
+    _assertClassBrand(_Tracking_brand, this, _createTrackingApiEventMap).call(this);
   }
   replaceMacros(url, trackingPixels) {
     const pattern0 = /\[.+?\]/i;
@@ -7888,8 +8495,8 @@ class Tracking {
     // CONTENTCAT GPPSECTIONID GPPSTRING PLAYBACKMETHODS STOREID STOREURL BREAKMAXADLENGTH BREAKMAXADS BREAKMAXDURATION
     // BREAKMINADLENGTH  PLACEMENTTYPE TRANSACTIONID CLIENTUA DEVICEIP IFA IFATYPE LATLONG SERVERUA APPBUNDLE
     // EXTENSIONS OMIDPARTNER VERIFICATIONVENDORS CONTENTID CONTENTURI INVENTORYSTATE
-    if (this._rmpVast.params.macros.size > 0) {
-      for (let [key, value] of this._rmpVast.params.macros) {
+    if (_classPrivateFieldGet2(tracking_rmpVast, this).params.macros.size > 0) {
+      for (let [key, value] of _classPrivateFieldGet2(tracking_rmpVast, this).params.macros) {
         const pattern = '\\[' + key + '\\]';
         const regex = new RegExp(pattern, 'gi');
         if (regex.test(finalString)) {
@@ -7909,8 +8516,8 @@ class Tracking {
     const patternADCOUNT = /\[ADCOUNT\]/gi;
     if (patternADCOUNT.test(finalString)) {
       let adCount = 1;
-      if (this._rmpVast.adPodLength > 0) {
-        adCount = this._rmpVast.adSequence;
+      if (_classPrivateFieldGet2(tracking_rmpVast, this).adPodLength > 0) {
+        adCount = _classPrivateFieldGet2(tracking_rmpVast, this).adSequence;
       }
       finalString = finalString.replace(patternADCOUNT, adCount.toString());
     }
@@ -7928,14 +8535,14 @@ class Tracking {
       finalString = finalString.replace(pattern2, FW.generateCacheBusting());
     }
     const pattern3 = /\[(CONTENTPLAYHEAD|MEDIAPLAYHEAD)\]/gi;
-    let currentContentTime = this._rmpVast.rmpVastContentPlayer.currentTime;
+    let currentContentTime = _classPrivateFieldGet2(tracking_rmpVast, this).rmpVastContentPlayer.currentTime;
     if (pattern3.test(finalString) && currentContentTime > -1) {
       finalString = finalString.replace(pattern3, encodeURIComponent(FW.vastReadableTime(currentContentTime)));
     }
     const pattern5 = /\[BREAKPOSITION\]/gi;
     let adPlayerDuration = -1;
-    if (this._rmpVast.rmpVastAdPlayer) {
-      adPlayerDuration = this._rmpVast.rmpVastAdPlayer.duration;
+    if (_classPrivateFieldGet2(tracking_rmpVast, this).rmpVastAdPlayer) {
+      adPlayerDuration = _classPrivateFieldGet2(tracking_rmpVast, this).rmpVastAdPlayer.duration;
     }
     if (pattern5.test(finalString)) {
       if (currentContentTime === 0) {
@@ -7947,8 +8554,8 @@ class Tracking {
       }
     }
     const pattern9 = /\[ADTYPE\]/gi;
-    if (pattern9.test(finalString) && this._rmpVast.ad.adType) {
-      finalString = finalString.replace(pattern9, encodeURIComponent(this._rmpVast.ad.adType));
+    if (pattern9.test(finalString) && _classPrivateFieldGet2(tracking_rmpVast, this).ad.adType) {
+      finalString = finalString.replace(pattern9, encodeURIComponent(_classPrivateFieldGet2(tracking_rmpVast, this).ad.adType));
     }
     const pattern11 = /\[DEVICEUA\]/gi;
     if (pattern11.test(finalString) && Environment.userAgent) {
@@ -7980,24 +8587,24 @@ class Tracking {
     }
     const pattern21 = /\[PLAYERSIZE\]/gi;
     if (pattern21.test(finalString)) {
-      const width = parse_int_default()(FW.getWidth(this._rmpVast.container));
-      const height = parse_int_default()(FW.getHeight(this._rmpVast.container));
+      const width = parse_int_default()(FW.getWidth(_classPrivateFieldGet2(tracking_rmpVast, this).container));
+      const height = parse_int_default()(FW.getHeight(_classPrivateFieldGet2(tracking_rmpVast, this).container));
       finalString = finalString.replace(pattern21, encodeURIComponent(width.toString() + ',' + height.toString()));
     }
     if (trackingPixels) {
       const pattern4 = /\[ADPLAYHEAD\]/gi;
       let adPlayerCurrentTime = -1;
-      if (this._rmpVast.rmpVastAdPlayer) {
-        adPlayerCurrentTime = this._rmpVast.rmpVastAdPlayer.currentTime;
+      if (_classPrivateFieldGet2(tracking_rmpVast, this).rmpVastAdPlayer) {
+        adPlayerCurrentTime = _classPrivateFieldGet2(tracking_rmpVast, this).rmpVastAdPlayer.currentTime;
       }
       if (pattern4.test(finalString) && adPlayerCurrentTime > -1) {
         finalString = finalString.replace(pattern4, encodeURIComponent(FW.vastReadableTime(adPlayerCurrentTime)));
       }
       const pattern10 = /\[UNIVERSALADID\]/gi;
-      if (pattern10.test(finalString) && this._rmpVast.creative.universalAdIds.length > 0) {
+      if (pattern10.test(finalString) && _classPrivateFieldGet2(tracking_rmpVast, this).creative.universalAdIds.length > 0) {
         let universalAdIdString = '';
-        this._rmpVast.creative.universalAdIds.forEach((universalAdId, index) => {
-          if (index !== 0 || index !== this._rmpVast.creative.universalAdIds.length - 1) {
+        _classPrivateFieldGet2(tracking_rmpVast, this).creative.universalAdIds.forEach((universalAdId, index) => {
+          if (index !== 0 || index !== _classPrivateFieldGet2(tracking_rmpVast, this).creative.universalAdIds.length - 1) {
             universalAdIdString += ',';
           }
           universalAdIdString += universalAdId.idRegistry + ' ' + universalAdId.value;
@@ -8005,27 +8612,27 @@ class Tracking {
         finalString = finalString.replace(pattern10, encodeURIComponent(universalAdIdString));
       }
       const pattern22 = /\[ASSETURI\]/gi;
-      const assetUri = this._rmpVast.adMediaUrl;
+      const assetUri = _classPrivateFieldGet2(tracking_rmpVast, this).adMediaUrl;
       if (pattern22.test(finalString) && typeof assetUri === 'string' && assetUri !== '') {
         finalString = finalString.replace(pattern22, encodeURIComponent(assetUri));
       }
       const pattern23 = /\[PODSEQUENCE\]/gi;
-      if (pattern23.test(finalString) && this._rmpVast.ad.sequence) {
-        finalString = finalString.replace(pattern23, encodeURIComponent(this._rmpVast.ad.sequence.toString()));
+      if (pattern23.test(finalString) && _classPrivateFieldGet2(tracking_rmpVast, this).ad.sequence) {
+        finalString = finalString.replace(pattern23, encodeURIComponent(_classPrivateFieldGet2(tracking_rmpVast, this).ad.sequence.toString()));
       }
       const pattern24 = /\[ADSERVINGID\]/gi;
-      if (pattern24.test(finalString) && this._rmpVast.ad.adServingId) {
-        finalString = finalString.replace(pattern24, encodeURIComponent(this._rmpVast.ad.adServingId));
+      if (pattern24.test(finalString) && _classPrivateFieldGet2(tracking_rmpVast, this).ad.adServingId) {
+        finalString = finalString.replace(pattern24, encodeURIComponent(_classPrivateFieldGet2(tracking_rmpVast, this).ad.adServingId));
       }
     } else {
       const pattern6 = /\[ADCATEGORIES\]/gi;
-      if (pattern6.test(finalString) && this._rmpVast.ad.categories.length > 0) {
-        const categories = this._rmpVast.ad.categories.map(categorie => categorie.value).join(',');
+      if (pattern6.test(finalString) && _classPrivateFieldGet2(tracking_rmpVast, this).ad.categories.length > 0) {
+        const categories = _classPrivateFieldGet2(tracking_rmpVast, this).ad.categories.map(categorie => categorie.value).join(',');
         finalString = finalString.replace(pattern6, encodeURIComponent(categories));
       }
       const pattern7 = /\[BLOCKEDADCATEGORIES\]/gi;
-      if (pattern7.test(finalString) && this._rmpVast.ad.blockedAdCategories.length > 0) {
-        const blockedAdCategories = this._rmpVast.ad.blockedAdCategories.map(blockedAdCategories => blockedAdCategories.value).join(',');
+      if (pattern7.test(finalString) && _classPrivateFieldGet2(tracking_rmpVast, this).ad.blockedAdCategories.length > 0) {
+        const blockedAdCategories = _classPrivateFieldGet2(tracking_rmpVast, this).ad.blockedAdCategories.map(blockedAdCategories => blockedAdCategories.value).join(',');
         finalString = finalString.replace(pattern7, encodeURIComponent(blockedAdCategories));
       }
       const pattern15 = /\[VASTVERSIONS\]/gi;
@@ -8042,7 +8649,7 @@ class Tracking {
         let mimeTyepString = '';
         mediaMime.forEach(value => {
           if (value === 'application/vnd.apple.mpegurl') {
-            if (Environment.checkCanPlayType(value) || this._rmpVast.rmpVastLinearCreative.readingHlsJS) {
+            if (Environment.checkCanPlayType(value) || _classPrivateFieldGet2(tracking_rmpVast, this).rmpVastLinearCreative.readingHlsJS) {
               mimeTyepString += value + ',';
             }
           } else if (Environment.checkCanPlayType(value)) {
@@ -8057,10 +8664,10 @@ class Tracking {
       const pattern20 = /\[PLAYERSTATE\]/gi;
       if (pattern20.test(finalString)) {
         let playerState = '';
-        if (this._rmpVast.rmpVastContentPlayer.muted) {
+        if (_classPrivateFieldGet2(tracking_rmpVast, this).rmpVastContentPlayer.muted) {
           playerState += 'muted';
         }
-        if (this._rmpVast.isInFullscreen) {
+        if (_classPrivateFieldGet2(tracking_rmpVast, this).isInFullscreen) {
           if (playerState) {
             playerState += ',';
           }
@@ -8070,7 +8677,7 @@ class Tracking {
       }
     }
     const pattern25 = /\[LIMITADTRACKING\]/gi;
-    const regulationsInfo = this._rmpVast.regulationsInfo;
+    const regulationsInfo = _classPrivateFieldGet2(tracking_rmpVast, this).regulationsInfo;
     if (pattern25.test(finalString) && regulationsInfo.limitAdTracking) {
       finalString = finalString.replace(pattern25, encodeURIComponent(regulationsInfo.limitAdTracking));
     }
@@ -8086,15 +8693,15 @@ class Tracking {
   }
   pingURI(url) {
     const trackingUrl = this.replaceMacros(url, true);
-    this._ping(trackingUrl);
+    _assertClassBrand(_Tracking_brand, this, _ping).call(this, trackingUrl);
   }
   error(errorCode) {
     // for each Error tag within an InLine or chain of Wrapper ping error URL
-    let errorTags = this._rmpVast.adErrorTags;
-    if (errorCode === 303 && this._rmpVast.vastErrorTags.length > 0) {
+    let errorTags = _classPrivateFieldGet2(tracking_rmpVast, this).adErrorTags;
+    if (errorCode === 303 && _classPrivateFieldGet2(tracking_rmpVast, this).vastErrorTags.length > 0) {
       // here we ping vastErrorTags with error code 303 according to spec
       // concat array thus
-      errorTags = [...errorTags, ...this._rmpVast.vastErrorTags];
+      errorTags = [...errorTags, ..._classPrivateFieldGet2(tracking_rmpVast, this).vastErrorTags];
     }
     if (errorTags.length > 0) {
       errorTags.forEach(errorTag => {
@@ -8104,63 +8711,224 @@ class Tracking {
           if (errorRegExp.test(errorUrl) && FW.isNumber(errorCode) && errorCode > 0 && errorCode < 1000) {
             errorUrl = errorUrl.replace(errorRegExp, errorCode);
           }
-          this._ping(errorUrl);
+          _assertClassBrand(_Tracking_brand, this, _ping).call(this, errorUrl);
         }
       });
     }
   }
   reset() {
-    this._onPauseFn = null;
-    this._onPlayFn = null;
-    this._onPlayingFn = null;
-    this._onEndedFn = null;
-    this._onVolumeChangeFn = null;
-    this._onTimeupdateFn = null;
-    this._firstQuartileEventFired = false;
-    this._midpointEventFired = false;
-    this._thirdQuartileEventFired = false;
+    _classPrivateFieldSet2(_onPauseFn, this, null);
+    _classPrivateFieldSet2(_onPlayFn, this, null);
+    _classPrivateFieldSet2(_onPlayingFn, this, null);
+    _classPrivateFieldSet2(_onEndedFn, this, null);
+    _classPrivateFieldSet2(_onVolumeChangeFn, this, null);
+    _classPrivateFieldSet2(_onTimeupdateFn, this, null);
+    _classPrivateFieldSet2(_firstQuartileEventFired, this, false);
+    _classPrivateFieldSet2(_midpointEventFired, this, false);
+    _classPrivateFieldSet2(_thirdQuartileEventFired, this, false);
   }
   dispatchTrackingAndApiEvent(apiEvent) {
     if (Array.isArray(apiEvent)) {
       apiEvent.forEach(currentApiEvent => {
-        this._rmpVast.rmpVastUtils.createApiEvent(currentApiEvent);
-        this._dispatchTracking(this._trackingApiEventMap.get(currentApiEvent));
+        _classPrivateFieldGet2(tracking_rmpVast, this).rmpVastUtils.createApiEvent(currentApiEvent);
+        _assertClassBrand(_Tracking_brand, this, _dispatchTracking).call(this, _classPrivateFieldGet2(_trackingApiEventMap, this).get(currentApiEvent));
       });
     } else {
-      this._rmpVast.rmpVastUtils.createApiEvent(apiEvent);
-      this._dispatchTracking(this._trackingApiEventMap.get(apiEvent));
+      _classPrivateFieldGet2(tracking_rmpVast, this).rmpVastUtils.createApiEvent(apiEvent);
+      _assertClassBrand(_Tracking_brand, this, _dispatchTracking).call(this, _classPrivateFieldGet2(_trackingApiEventMap, this).get(apiEvent));
     }
   }
   destroy() {
-    if (this._rmpVast.currentAdPlayer) {
-      this._rmpVast.currentAdPlayer.removeEventListener('pause', this._onPauseFn);
-      this._rmpVast.currentAdPlayer.removeEventListener('play', this._onPlayFn);
-      this._rmpVast.currentAdPlayer.removeEventListener('playing', this._onPlayingFn);
-      this._rmpVast.currentAdPlayer.removeEventListener('ended', this._onEndedFn);
-      this._rmpVast.currentAdPlayer.removeEventListener('volumechange', this._onVolumeChangeFn);
-      this._rmpVast.currentAdPlayer.removeEventListener('timeupdate', this._onTimeupdateFn);
+    if (_classPrivateFieldGet2(tracking_rmpVast, this).currentAdPlayer) {
+      _classPrivateFieldGet2(tracking_rmpVast, this).currentAdPlayer.removeEventListener('pause', _classPrivateFieldGet2(_onPauseFn, this));
+      _classPrivateFieldGet2(tracking_rmpVast, this).currentAdPlayer.removeEventListener('play', _classPrivateFieldGet2(_onPlayFn, this));
+      _classPrivateFieldGet2(tracking_rmpVast, this).currentAdPlayer.removeEventListener('playing', _classPrivateFieldGet2(_onPlayingFn, this));
+      _classPrivateFieldGet2(tracking_rmpVast, this).currentAdPlayer.removeEventListener('ended', _classPrivateFieldGet2(_onEndedFn, this));
+      _classPrivateFieldGet2(tracking_rmpVast, this).currentAdPlayer.removeEventListener('volumechange', _classPrivateFieldGet2(_onVolumeChangeFn, this));
+      _classPrivateFieldGet2(tracking_rmpVast, this).currentAdPlayer.removeEventListener('timeupdate', _classPrivateFieldGet2(_onTimeupdateFn, this));
     }
   }
   wire() {
     // we filter through all HTML5 video events and create new VAST events 
-    if (this._rmpVast.currentAdPlayer && this._rmpVast.creative.isLinear && !this._rmpVast.rmpVastVpaidPlayer) {
-      this._onPauseFn = this._onPause.bind(this);
-      this._rmpVast.currentAdPlayer.addEventListener('pause', this._onPauseFn);
-      this._onPlayFn = this._onPlay.bind(this);
-      this._rmpVast.currentAdPlayer.addEventListener('play', this._onPlayFn);
-      this._onPlayingFn = this._onPlaying.bind(this);
-      this._rmpVast.currentAdPlayer.addEventListener('playing', this._onPlayingFn, {
+    if (_classPrivateFieldGet2(tracking_rmpVast, this).currentAdPlayer && _classPrivateFieldGet2(tracking_rmpVast, this).creative.isLinear && !_classPrivateFieldGet2(tracking_rmpVast, this).rmpVastVpaidPlayer) {
+      _classPrivateFieldSet2(_onPauseFn, this, _assertClassBrand(_Tracking_brand, this, _onPause).bind(this));
+      _classPrivateFieldGet2(tracking_rmpVast, this).currentAdPlayer.addEventListener('pause', _classPrivateFieldGet2(_onPauseFn, this));
+      _classPrivateFieldSet2(_onPlayFn, this, _assertClassBrand(_Tracking_brand, this, _onPlay).bind(this));
+      _classPrivateFieldGet2(tracking_rmpVast, this).currentAdPlayer.addEventListener('play', _classPrivateFieldGet2(_onPlayFn, this));
+      _classPrivateFieldSet2(_onPlayingFn, this, _assertClassBrand(_Tracking_brand, this, _onPlaying).bind(this));
+      _classPrivateFieldGet2(tracking_rmpVast, this).currentAdPlayer.addEventListener('playing', _classPrivateFieldGet2(_onPlayingFn, this), {
         once: true
       });
-      this._onEndedFn = this._onEnded.bind(this);
-      this._rmpVast.currentAdPlayer.addEventListener('ended', this._onEndedFn, {
+      _classPrivateFieldSet2(_onEndedFn, this, _assertClassBrand(_Tracking_brand, this, _onEnded).bind(this));
+      _classPrivateFieldGet2(tracking_rmpVast, this).currentAdPlayer.addEventListener('ended', _classPrivateFieldGet2(_onEndedFn, this), {
         once: true
       });
-      this._onVolumeChangeFn = this._onVolumeChange.bind(this);
-      this._rmpVast.currentAdPlayer.addEventListener('volumechange', this._onVolumeChangeFn);
-      this._onTimeupdateFn = this._onTimeupdate.bind(this);
-      this._rmpVast.currentAdPlayer.addEventListener('timeupdate', this._onTimeupdateFn);
+      _classPrivateFieldSet2(_onVolumeChangeFn, this, _assertClassBrand(_Tracking_brand, this, _onVolumeChange).bind(this));
+      _classPrivateFieldGet2(tracking_rmpVast, this).currentAdPlayer.addEventListener('volumechange', _classPrivateFieldGet2(_onVolumeChangeFn, this));
+      _classPrivateFieldSet2(_onTimeupdateFn, this, _assertClassBrand(_Tracking_brand, this, _onTimeupdate).bind(this));
+      _classPrivateFieldGet2(tracking_rmpVast, this).currentAdPlayer.addEventListener('timeupdate', _classPrivateFieldGet2(_onTimeupdateFn, this));
     }
+  }
+}
+function _createTrackingApiEventMap() {
+  // ViewableImpression
+  _classPrivateFieldGet2(_trackingApiEventMap, this).set('adviewable', 'viewable');
+  _classPrivateFieldGet2(_trackingApiEventMap, this).set('adviewundetermined', 'viewundetermined');
+  // Tracking Event Elements
+  _classPrivateFieldGet2(_trackingApiEventMap, this).set('advolumemuted', 'mute');
+  _classPrivateFieldGet2(_trackingApiEventMap, this).set('advolumeunmuted', 'unmute');
+  _classPrivateFieldGet2(_trackingApiEventMap, this).set('adpaused', 'pause');
+  _classPrivateFieldGet2(_trackingApiEventMap, this).set('adresumed', 'resume');
+  _classPrivateFieldGet2(_trackingApiEventMap, this).set('adskipped', 'skip');
+  // VAST 4 events
+  _classPrivateFieldGet2(_trackingApiEventMap, this).set('adplayerexpand', 'playerExpand');
+  _classPrivateFieldGet2(_trackingApiEventMap, this).set('adplayercollapse', 'playerCollapse');
+  // VAST 3 events
+  _classPrivateFieldGet2(_trackingApiEventMap, this).set('adfullscreen', 'fullscreen');
+  _classPrivateFieldGet2(_trackingApiEventMap, this).set('adexitfullscreen', 'exitFullscreen');
+  // Linear Ad Metrics
+  _classPrivateFieldGet2(_trackingApiEventMap, this).set('adloaded', 'loaded');
+  _classPrivateFieldGet2(_trackingApiEventMap, this).set('adstarted', 'start');
+  _classPrivateFieldGet2(_trackingApiEventMap, this).set('adfirstquartile', 'firstQuartile');
+  _classPrivateFieldGet2(_trackingApiEventMap, this).set('admidpoint', 'midpoint');
+  _classPrivateFieldGet2(_trackingApiEventMap, this).set('adthirdquartile', 'thirdQuartile');
+  _classPrivateFieldGet2(_trackingApiEventMap, this).set('adcomplete', 'complete');
+  // tracking progress event happens in #onTimeupdate
+  // InLine > Impression
+  _classPrivateFieldGet2(_trackingApiEventMap, this).set('adimpression', 'impression');
+
+  // creativeView for companion ads happens in getCompanionAd (index.js)
+  // creativeView tracking needs to happen for linear creative as well (support for VAST 3)
+  _classPrivateFieldGet2(_trackingApiEventMap, this).set('adcreativeview', 'creativeView');
+
+  // for non-linear and VPAID only
+  _classPrivateFieldGet2(_trackingApiEventMap, this).set('adcollapse', 'adCollapse');
+
+  // only support for VPAID - PR welcome for non-linear
+  _classPrivateFieldGet2(_trackingApiEventMap, this).set('aduseracceptinvitation', 'acceptInvitation');
+  _classPrivateFieldGet2(_trackingApiEventMap, this).set('adclosed', 'close');
+  // VideoClicks > ClickThrough
+  _classPrivateFieldGet2(_trackingApiEventMap, this).set('adclick', 'clickthrough');
+
+  // Need to investigate overlayViewDuration (non-linear) - interactiveStart (SIMID) further
+}
+function _dispatch(event) {
+  Logger.print(_classPrivateFieldGet2(tracking_rmpVast, this).debugRawConsoleLogs, `ping tracking for ${event} VAST event`);
+  // filter trackers - may return multiple urls for same event as allowed by VAST spec
+  const trackers = _classPrivateFieldGet2(tracking_rmpVast, this).trackingTags.filter(value => {
+    return event === value.event;
+  });
+  // send ping for each valid tracker
+  if (trackers.length > 0) {
+    trackers.forEach(element => {
+      this.pingURI(element.url);
+    });
+  }
+}
+function _ping(url) {
+  // we expect an image format for the tracker (generally a 1px GIF/PNG/JPG/AVIF) or JavaScript as 
+  // those are the most common format in the industry 
+  // other format may produce errors and the related tracker may not be requested properly
+  const jsPattern = /\.js$/i;
+  if (jsPattern.test(url)) {
+    const script = document.createElement('script');
+    script.src = url;
+    try {
+      document.head.appendChild(script);
+    } catch (error) {
+      console.warn(error);
+      document.body.appendChild(script);
+    }
+  } else {
+    FW.ajax(url, _classPrivateFieldGet2(tracking_rmpVast, this).params.ajaxTimeout, false, 'GET').then(() => {
+      Logger.print(_classPrivateFieldGet2(tracking_rmpVast, this).debugRawConsoleLogs, `VAST tracker successfully loaded ${url}`);
+    }).catch(error => {
+      console.warn(error);
+    });
+  }
+}
+function _onVolumeChange() {
+  if (_classPrivateFieldGet2(tracking_rmpVast, this).currentAdPlayer) {
+    const muted = _classPrivateFieldGet2(tracking_rmpVast, this).currentAdPlayer.muted;
+    const volume = _classPrivateFieldGet2(tracking_rmpVast, this).currentAdPlayer.volume;
+    if (muted || volume === 0) {
+      this.dispatchTrackingAndApiEvent('advolumemuted');
+    } else if (!muted && volume > 0) {
+      this.dispatchTrackingAndApiEvent('advolumeunmuted');
+    }
+    _classPrivateFieldGet2(tracking_rmpVast, this).rmpVastUtils.createApiEvent('advolumechanged');
+  }
+}
+function _onTimeupdate() {
+  let adPlayerDuration = -1;
+  let adPlayerCurrentTime = -1;
+  if (_classPrivateFieldGet2(tracking_rmpVast, this).rmpVastAdPlayer) {
+    adPlayerCurrentTime = _classPrivateFieldGet2(tracking_rmpVast, this).rmpVastAdPlayer.currentTime;
+    adPlayerDuration = _classPrivateFieldGet2(tracking_rmpVast, this).rmpVastAdPlayer.duration;
+  }
+  if (adPlayerCurrentTime > 0) {
+    if (adPlayerDuration > 0 && adPlayerDuration > adPlayerCurrentTime) {
+      if (adPlayerCurrentTime >= adPlayerDuration * 0.25 && !_classPrivateFieldGet2(_firstQuartileEventFired, this)) {
+        _classPrivateFieldSet2(_firstQuartileEventFired, this, true);
+        this.dispatchTrackingAndApiEvent('adfirstquartile');
+      } else if (adPlayerCurrentTime >= adPlayerDuration * 0.5 && !_classPrivateFieldGet2(_midpointEventFired, this)) {
+        _classPrivateFieldSet2(_midpointEventFired, this, true);
+        this.dispatchTrackingAndApiEvent('admidpoint');
+      } else if (adPlayerCurrentTime >= adPlayerDuration * 0.75 && !_classPrivateFieldGet2(_thirdQuartileEventFired, this)) {
+        _classPrivateFieldSet2(_thirdQuartileEventFired, this, true);
+        this.dispatchTrackingAndApiEvent('adthirdquartile');
+      }
+    }
+    // progress event
+    if (_classPrivateFieldGet2(tracking_rmpVast, this).progressEvents.length > 0) {
+      if (adPlayerCurrentTime > _classPrivateFieldGet2(tracking_rmpVast, this).progressEvents[0].time) {
+        const filterProgressEvent = _classPrivateFieldGet2(tracking_rmpVast, this).progressEvents.filter(progressEvent => {
+          return progressEvent.time === _classPrivateFieldGet2(tracking_rmpVast, this).progressEvents[0].time;
+        });
+        filterProgressEvent.forEach(progressEvent => {
+          if (progressEvent.url) {
+            this.pingURI(progressEvent.url);
+          }
+        });
+        _classPrivateFieldGet2(tracking_rmpVast, this).progressEvents.shift();
+        _classPrivateFieldGet2(tracking_rmpVast, this).rmpVastUtils.createApiEvent('adprogress');
+      }
+    }
+  }
+}
+function _onPause() {
+  if (_classPrivateFieldGet2(tracking_rmpVast, this).currentAdPlayer && _classPrivateFieldGet2(tracking_rmpVast, this).currentAdPlayer.paused) {
+    const currentTime = _classPrivateFieldGet2(tracking_rmpVast, this).currentAdPlayer.currentTime;
+    const currentDuration = _classPrivateFieldGet2(tracking_rmpVast, this).currentAdPlayer.duration;
+    // we have reached end of linear creative - a HTML5 video pause event may fire just before ended event
+    // in this case we ignore the adpaused event as adcomplete prevails
+    if (currentTime === currentDuration) {
+      return;
+    }
+    this.dispatchTrackingAndApiEvent('adpaused');
+  }
+}
+function _onPlay() {
+  if (_classPrivateFieldGet2(tracking_rmpVast, this).currentAdPlayer && !_classPrivateFieldGet2(tracking_rmpVast, this).currentAdPlayer.paused) {
+    this.dispatchTrackingAndApiEvent('adresumed');
+  }
+}
+function _onPlaying() {
+  this.dispatchTrackingAndApiEvent(['adimpression', 'adcreativeview', 'adstarted']);
+}
+function _onEnded() {
+  this.dispatchTrackingAndApiEvent('adcomplete');
+  if (_classPrivateFieldGet2(tracking_rmpVast, this).rmpVastAdPlayer) {
+    _classPrivateFieldGet2(tracking_rmpVast, this).rmpVastAdPlayer.resumeContent();
+  }
+}
+function _dispatchTracking(event) {
+  if (Array.isArray(event)) {
+    event.forEach(currentEvent => {
+      _assertClassBrand(_Tracking_brand, this, _dispatch).call(this, currentEvent);
+    });
+  } else {
+    _assertClassBrand(_Tracking_brand, this, _dispatch).call(this, event);
   }
 }
 // EXTERNAL MODULE: ./node_modules/core-js-pure/stable/instance/sort.js
@@ -8171,120 +8939,47 @@ var sort_default = /*#__PURE__*/__webpack_require__.n(sort);
 
 
 
+
+
+
+
+
+
+var icons_rmpVast = /*#__PURE__*/new (weak_map_default())();
+var _adContainer = /*#__PURE__*/new (weak_map_default())();
+var _adPlayer = /*#__PURE__*/new (weak_map_default())();
+var _onPlayingAppendIconsFn = /*#__PURE__*/new (weak_map_default())();
+var _iconsData = /*#__PURE__*/new (weak_map_default())();
+var _Icons_brand = /*#__PURE__*/new WeakSet();
 class Icons {
   constructor(rmpVast) {
-    this._rmpVast = rmpVast;
-    this._adContainer = rmpVast.adContainer;
-    this._adPlayer = rmpVast.currentAdPlayer;
-    this._debugRawConsoleLogs = rmpVast.debugRawConsoleLogs;
-    this._onPlayingAppendIconsFn = null;
-    this._iconsData = [];
+    _classPrivateMethodInitSpec(this, _Icons_brand);
+    _classPrivateFieldInitSpec(this, icons_rmpVast, void 0);
+    _classPrivateFieldInitSpec(this, _adContainer, void 0);
+    _classPrivateFieldInitSpec(this, _adPlayer, void 0);
+    _classPrivateFieldInitSpec(this, _onPlayingAppendIconsFn, null);
+    _classPrivateFieldInitSpec(this, _iconsData, []);
+    _classPrivateFieldSet2(icons_rmpVast, this, rmpVast);
+    _classPrivateFieldSet2(_adContainer, this, rmpVast.adContainer);
+    _classPrivateFieldSet2(_adPlayer, this, rmpVast.currentAdPlayer);
   }
   get iconsData() {
-    return this._iconsData;
-  }
-  _onIconClickThrough(index, event) {
-    if (event) {
-      event.stopPropagation();
-      if (event.type === 'touchend') {
-        event.preventDefault();
-      }
-    }
-    FW.openWindow(this._iconsData[index].iconClickThroughUrl);
-    // send trackers if any for IconClickTracking
-    const iconClickTrackingUrls = this._iconsData[index].iconClickTrackingUrls;
-    if (iconClickTrackingUrls.length > 0) {
-      iconClickTrackingUrls.forEach(tracking => {
-        if (tracking.url) {
-          this._rmpVast.rmpVastTracking.pingURI(tracking.url);
-        }
-      });
-    }
-    this._rmpVast.rmpVastUtils.createApiEvent('adiconclick');
-  }
-  _onIconLoadPingTracking(index) {
-    Logger.print(this._debugRawConsoleLogs, `IconViewTracking for icon at index ${index}`);
-    this._rmpVast.rmpVastTracking.pingURI(this._iconsData[index].iconViewTrackingUrl);
-  }
-  _onPlayingAppendIcons() {
-    Logger.print(this._debugRawConsoleLogs, `playing states has been reached - append icons`);
-    this._iconsData.forEach((iconData, index) => {
-      let icon;
-      let src;
-      if (iconData.staticResourceUrl) {
-        icon = document.createElement('img');
-        src = iconData.staticResourceUrl;
-      } else if (iconData.iframeResourceUrl || iconData.htmlContent) {
-        icon = document.createElement('iframe');
-        icon.sandbox = 'allow-scripts allow-same-origin';
-        if (iconData.htmlContent) {
-          src = iconData.htmlContent;
-        } else {
-          src = iconData.iframeResourceUrl;
-        }
-        FW.setStyle(icon, {
-          border: 'none',
-          overflow: 'hidden'
-        });
-        icon.setAttribute('scrolling', 'no');
-        icon.setAttribute('allow', 'autoplay; fullscreen; picture-in-picture; encrypted-media');
-        icon.setAttribute('sandbox', 'allow-scripts allow-presentation allow-same-origin');
-      }
-      icon.className = 'rmp-ad-container-icons';
-      FW.setStyle(icon, {
-        width: parse_int_default()(iconData.width) + 'px',
-        height: parse_int_default()(iconData.height) + 'px'
-      });
-      const xPosition = iconData.xPosition;
-      if (xPosition === 'left') {
-        icon.style.left = '0px';
-      } else if (xPosition === 'right') {
-        icon.style.right = '0px';
-      } else if (parse_int_default()(xPosition) >= 0) {
-        icon.style.left = xPosition + 'px';
-      } else {
-        icon.style.left = '0px';
-      }
-      const yPosition = iconData.yPosition;
-      if (yPosition === 'top') {
-        icon.style.top = '0px';
-      } else if (xPosition === 'bottom') {
-        icon.style.bottom = '0px';
-      } else if (parse_int_default()(yPosition) >= 0) {
-        icon.style.top = yPosition + 'px';
-      } else {
-        icon.style.top = '0px';
-      }
-      if (iconData.iconViewTrackingUrl) {
-        icon.onload = this._onIconLoadPingTracking.bind(this, index);
-      }
-      if (iconData.iconClickThroughUrl) {
-        const _onIconClickThroughFn = this._onIconClickThrough.bind(this, index);
-        FW.addEvents(['touchend', 'click'], icon, _onIconClickThroughFn);
-      }
-      if (iconData.htmlContent) {
-        icon.srcdoc = src;
-      } else {
-        icon.src = src;
-      }
-      Logger.print(this._debugRawConsoleLogs, `Selected icon details follow`, icon);
-      this._adContainer.appendChild(icon);
-    });
+    return _classPrivateFieldGet2(_iconsData, this);
   }
   destroy() {
-    Logger.print(this._debugRawConsoleLogs, `Start destroying icons`);
-    const icons = this._adContainer.querySelectorAll('.rmp-ad-container-icons');
+    Logger.print(_classPrivateFieldGet2(icons_rmpVast, this).debugRawConsoleLogs, `Start destroying icons`);
+    const icons = _classPrivateFieldGet2(_adContainer, this).querySelectorAll('.rmp-ad-container-icons');
     if (icons.length > 0) {
       icons.forEach(icon => {
         FW.removeElement(icon);
       });
     }
-    if (this._adPlayer) {
-      this._adPlayer.removeEventListener('playing', this._onPlayingAppendIconsFn);
+    if (_classPrivateFieldGet2(_adPlayer, this)) {
+      _classPrivateFieldGet2(_adPlayer, this).removeEventListener('playing', _classPrivateFieldGet2(_onPlayingAppendIconsFn, this));
     }
   }
   parse(icons) {
-    Logger.print(this._debugRawConsoleLogs, `Start parsing icons`);
+    Logger.print(_classPrivateFieldGet2(icons_rmpVast, this).debugRawConsoleLogs, `Start parsing icons`);
     for (let i = 0; i < icons.length; i++) {
       var _context;
       const currentIcon = icons[i];
@@ -8319,17 +9014,105 @@ class Icons {
       iconData.iconViewTrackingUrl = currentIcon.iconViewTrackingURLTemplate;
       iconData.iconClickThroughUrl = currentIcon.iconClickThroughURLTemplate;
       iconData.iconClickTrackingUrls = currentIcon.iconClickTrackingURLTemplates;
-      push_default()(_context = this._iconsData).call(_context, iconData);
+      push_default()(_context = _classPrivateFieldGet2(_iconsData, this)).call(_context, iconData);
     }
-    Logger.print(this._debugRawConsoleLogs, `Validated parsed icons follows`, this._iconsData);
+    Logger.print(_classPrivateFieldGet2(icons_rmpVast, this).debugRawConsoleLogs, `Validated parsed icons follows`, _classPrivateFieldGet2(_iconsData, this));
   }
   append() {
-    this._onPlayingAppendIconsFn = this._onPlayingAppendIcons.bind(this);
+    _classPrivateFieldSet2(_onPlayingAppendIconsFn, this, _assertClassBrand(_Icons_brand, this, _onPlayingAppendIcons).bind(this));
     // as per VAST 3 spec only append icon when ad starts playing
-    this._adPlayer.addEventListener('playing', this._onPlayingAppendIconsFn, {
+    _classPrivateFieldGet2(_adPlayer, this).addEventListener('playing', _classPrivateFieldGet2(_onPlayingAppendIconsFn, this), {
       once: true
     });
   }
+}
+function _onIconClickThrough(index, event) {
+  if (event) {
+    event.stopPropagation();
+    if (event.type === 'touchend') {
+      event.preventDefault();
+    }
+  }
+  FW.openWindow(_classPrivateFieldGet2(_iconsData, this)[index].iconClickThroughUrl);
+  // send trackers if any for IconClickTracking
+  const iconClickTrackingUrls = _classPrivateFieldGet2(_iconsData, this)[index].iconClickTrackingUrls;
+  if (iconClickTrackingUrls.length > 0) {
+    iconClickTrackingUrls.forEach(tracking => {
+      if (tracking.url) {
+        _classPrivateFieldGet2(icons_rmpVast, this).rmpVastTracking.pingURI(tracking.url);
+      }
+    });
+  }
+  _classPrivateFieldGet2(icons_rmpVast, this).rmpVastUtils.createApiEvent('adiconclick');
+}
+function _onIconLoadPingTracking(index) {
+  Logger.print(_classPrivateFieldGet2(icons_rmpVast, this).debugRawConsoleLogs, `IconViewTracking for icon at index ${index}`);
+  _classPrivateFieldGet2(icons_rmpVast, this).rmpVastTracking.pingURI(_classPrivateFieldGet2(_iconsData, this)[index].iconViewTrackingUrl);
+}
+function _onPlayingAppendIcons() {
+  Logger.print(_classPrivateFieldGet2(icons_rmpVast, this).debugRawConsoleLogs, `playing states has been reached - append icons`);
+  _classPrivateFieldGet2(_iconsData, this).forEach((iconData, index) => {
+    let icon;
+    let src;
+    if (iconData.staticResourceUrl) {
+      icon = document.createElement('img');
+      src = iconData.staticResourceUrl;
+    } else if (iconData.iframeResourceUrl || iconData.htmlContent) {
+      icon = document.createElement('iframe');
+      icon.sandbox = 'allow-scripts allow-same-origin';
+      if (iconData.htmlContent) {
+        src = iconData.htmlContent;
+      } else {
+        src = iconData.iframeResourceUrl;
+      }
+      FW.setStyle(icon, {
+        border: 'none',
+        overflow: 'hidden'
+      });
+      icon.setAttribute('scrolling', 'no');
+      icon.setAttribute('allow', 'autoplay; fullscreen; picture-in-picture; encrypted-media');
+      icon.setAttribute('sandbox', 'allow-scripts allow-presentation allow-same-origin');
+    }
+    icon.className = 'rmp-ad-container-icons';
+    FW.setStyle(icon, {
+      width: parse_int_default()(iconData.width) + 'px',
+      height: parse_int_default()(iconData.height) + 'px'
+    });
+    const xPosition = iconData.xPosition;
+    if (xPosition === 'left') {
+      icon.style.left = '0px';
+    } else if (xPosition === 'right') {
+      icon.style.right = '0px';
+    } else if (parse_int_default()(xPosition) >= 0) {
+      icon.style.left = xPosition + 'px';
+    } else {
+      icon.style.left = '0px';
+    }
+    const yPosition = iconData.yPosition;
+    if (yPosition === 'top') {
+      icon.style.top = '0px';
+    } else if (xPosition === 'bottom') {
+      icon.style.bottom = '0px';
+    } else if (parse_int_default()(yPosition) >= 0) {
+      icon.style.top = yPosition + 'px';
+    } else {
+      icon.style.top = '0px';
+    }
+    if (iconData.iconViewTrackingUrl) {
+      icon.onload = _assertClassBrand(_Icons_brand, this, _onIconLoadPingTracking).bind(this, index);
+    }
+    if (iconData.iconClickThroughUrl) {
+      const onIconClickThroughFn = _assertClassBrand(_Icons_brand, this, _onIconClickThrough).bind(this, index);
+      FW.addEvents(['touchend', 'click'], icon, onIconClickThroughFn);
+    }
+    if (iconData.htmlContent) {
+      icon.srcdoc = src;
+    } else {
+      icon.src = src;
+    }
+    Logger.print(_classPrivateFieldGet2(icons_rmpVast, this).debugRawConsoleLogs, `Selected icon details follow`, icon);
+    _classPrivateFieldGet2(_adContainer, this).appendChild(icon);
+  });
 }
 ;// CONCATENATED MODULE: ./src/assets/rmp-connection/rmp-connection.js
 /**
@@ -8883,7 +9666,6 @@ class SimidPlayer {
     this.simidProtocol = new SimidProtocol();
     this.addListeners_();
     this.rmpVast_ = rmpVast;
-    this._debugRawConsoleLogs = rmpVast.debugRawConsoleLogs;
     this.simidData_ = rmpVast.creative.simid;
     this.adContainer_ = rmpVast.adContainer;
     this.playerDiv_ = rmpVast.contentWrapper;
@@ -8997,7 +9779,7 @@ class SimidPlayer {
     this.trackEventsOnAdVideoElement_();
     this.trackEventsOnContentVideoElement_();
     this.hideAdPlayer_();
-    Logger.print(this._debugRawConsoleLogs, `SIMID: player created`);
+    Logger.print(this.rmpVast_.debugRawConsoleLogs, `SIMID: player created`);
   }
 
   /**
@@ -9008,7 +9790,7 @@ class SimidPlayer {
    */
   initializeAd() {
     if (!this.isLinearAd_ && !this.isValidDimensions_(this.getNonlinearDimensions_())) {
-      Logger.print(this._debugRawConsoleLogs, `SIMID: Unable to play a non-linear ad with dimensions bigger than the player. Please modify dimensions to a smaller size.`);
+      Logger.print(this.rmpVast_.debugRawConsoleLogs, `SIMID: Unable to play a non-linear ad with dimensions bigger than the player. Please modify dimensions to a smaller size.`);
       return;
     }
 
@@ -9034,7 +9816,7 @@ class SimidPlayer {
     this.sessionCreatedPromise_.then(() => {
       this.sendInitMessage_();
     });
-    Logger.print(this._debugRawConsoleLogs, `SIMID: initializeAd`);
+    Logger.print(this.rmpVast_.debugRawConsoleLogs, `SIMID: initializeAd`);
   }
 
   /**
@@ -9183,7 +9965,7 @@ class SimidPlayer {
   displayNonlinearCreative_() {
     const newDimensions = this.getNonlinearDimensions_();
     if (!this.isValidDimensions_(newDimensions)) {
-      Logger.print(this._debugRawConsoleLogs, `SIMID: Unable to play a non-linear ad with dimensions bigger than the player. Please modify dimensions to a smaller size.`);
+      Logger.print(this.rmpVast_.debugRawConsoleLogs, `SIMID: Unable to play a non-linear ad with dimensions bigger than the player. Please modify dimensions to a smaller size.`);
       return;
     } else {
       this.setSimidIframeDimensions_(newDimensions);
@@ -9217,7 +9999,7 @@ class SimidPlayer {
         message: 'Linear resize not yet supported.'
       };
       this.simidProtocol.reject(incomingMessage, errorMessage);
-      Logger.print(this._debugRawConsoleLogs, `SIMID: ${errorMessage.message}`);
+      Logger.print(this.rmpVast_.debugRawConsoleLogs, `SIMID: ${errorMessage.message}`);
     } else {
       const fullDimensions = this.getFullDimensions_(this.contentVideoElement_);
       this.setSimidIframeDimensions_(fullDimensions);
@@ -9237,13 +10019,13 @@ class SimidPlayer {
         message: 'Cannot collapse linear ads.'
       };
       this.simidProtocol.reject(incomingMessage, errorMessage);
-      Logger.print(this._debugRawConsoleLogs, `SIMID: ${errorMessage.message}`);
+      Logger.print(this.rmpVast_.debugRawConsoleLogs, `SIMID: ${errorMessage.message}`);
     } else if (!this.isValidDimensions_(newDimensions)) {
       const errorMessage = {
         message: 'Unable to collapse to dimensions bigger than the player. Please modify dimensions to a smaller size.'
       };
       this.simidProtocol.reject(incomingMessage, errorMessage);
-      Logger.print(this._debugRawConsoleLogs, `SIMID: ${errorMessage.message}`);
+      Logger.print(this.rmpVast_.debugRawConsoleLogs, `SIMID: ${errorMessage.message}`);
     } else {
       this.setSimidIframeDimensions_(newDimensions);
       this.simidIframe_.style.position = 'absolute';
@@ -9263,14 +10045,14 @@ class SimidPlayer {
         message: 'Linear resize not yet supported.'
       };
       this.simidProtocol.reject(incomingMessage, errorMessage);
-      Logger.print(this._debugRawConsoleLogs, `SIMID: ${errorMessage.message}`);
+      Logger.print(this.rmpVast_.debugRawConsoleLogs, `SIMID: ${errorMessage.message}`);
     } else if (!this.isValidDimensions_(incomingMessage.args.creativeDimensions)) {
       const errorMessage = {
         errorCode: CreativeErrorCode.EXPAND_NOT_POSSIBLE,
         message: 'Unable to resize a non-linear ad with dimensions bigger than the player. Please modify dimensions to a smaller size.'
       };
       this.simidProtocol.reject(incomingMessage, errorMessage);
-      Logger.print(this._debugRawConsoleLogs, `SIMID: ${errorMessage.message}`);
+      Logger.print(this.rmpVast_.debugRawConsoleLogs, `SIMID: ${errorMessage.message}`);
     } else {
       this.nonLinearDimensions_ = incomingMessage.args.creativeDimensions;
       this.setSimidIframeDimensions_(incomingMessage.args.creativeDimensions);
@@ -9367,7 +10149,7 @@ class SimidPlayer {
    */
   onAdInitializedFailed_(data) {
     const errorData = JSON.stringify(data);
-    Logger.print(this._debugRawConsoleLogs, ` SIMID: Ad init failed. ${errorData}`);
+    Logger.print(this.rmpVast_.debugRawConsoleLogs, ` SIMID: Ad init failed. ${errorData}`);
     this.destroyIframeAndResumeContent_(true, errorData.errorCode);
   }
 
@@ -9473,7 +10255,7 @@ class SimidPlayer {
       };*/
       // Wait for the SIMID creative to acknowledge stop and then clean
       // up the iframe.
-      Logger.print(this._debugRawConsoleLogs, ` SIMID: stopAd ${reason}`);
+      Logger.print(this.rmpVast_.debugRawConsoleLogs, ` SIMID: stopAd ${reason}`);
       this.simidProtocol.sendMessage(PlayerMessage.AD_STOPPED).then(() => this.destroyIframeAndResumeContent_(error, errorCode));
     }
   }
@@ -9588,7 +10370,7 @@ class SimidPlayer {
     requestedUrlArray.forEach(url => {
       this.rmpVast_.rmpVastTracking.pingURI(url);
     });
-    Logger.print(this._debugRawConsoleLogs, `SIMID: The creative has asked for the player to ping ${requestedUrlArray}`);
+    Logger.print(this.rmpVast_.debugRawConsoleLogs, `SIMID: The creative has asked for the player to ping ${requestedUrlArray}`);
   }
 
   /**
@@ -9602,7 +10384,7 @@ class SimidPlayer {
     } else if (this.requestedDuration_ !== UNLIMITED_DURATION) {
       //If the request duration is longer than the ad duration, the ad extends for the requested amount of time
       const durationChangeMs = (this.requestedDuration_ - this.adVideoElement_.duration) * 1000;
-      setTimeout(() => {
+      window.setTimeout(() => {
         this.stopAd(StopCode.CREATIVE_INITIATED);
       }, durationChangeMs);
     }
@@ -9660,7 +10442,7 @@ class SimidPlayer {
   }
   onReceiveCreativeLog(incomingMessage) {
     const logMessage = incomingMessage.args.message;
-    Logger.print(this._debugRawConsoleLogs, `SIMID: Received message from creative: ${logMessage}`);
+    Logger.print(this.rmpVast_.debugRawConsoleLogs, `SIMID: Received message from creative: ${logMessage}`);
   }
   sendLog(outgoingMessage) {
     const logMessage = {
@@ -9673,439 +10455,148 @@ class SimidPlayer {
 
 
 
+
+
+
+
+
+
+var vpaid_player_rmpVast = /*#__PURE__*/new (weak_map_default())();
+var vpaid_player_adContainer = /*#__PURE__*/new (weak_map_default())();
+var vpaid_player_adPlayer = /*#__PURE__*/new (weak_map_default())();
+var _params = /*#__PURE__*/new (weak_map_default())();
+var _adParametersData = /*#__PURE__*/new (weak_map_default())();
+var _initialWidth = /*#__PURE__*/new (weak_map_default())();
+var _initialHeight = /*#__PURE__*/new (weak_map_default())();
+var _initialViewMode = /*#__PURE__*/new (weak_map_default())();
+var _desiredBitrate = /*#__PURE__*/new (weak_map_default())();
+var _vpaidCreativeUrl = /*#__PURE__*/new (weak_map_default())();
+var _vpaidCreative = /*#__PURE__*/new (weak_map_default())();
+var _vpaidScript = /*#__PURE__*/new (weak_map_default())();
+var _vpaidIframe = /*#__PURE__*/new (weak_map_default())();
+var _vpaidAdLoaded = /*#__PURE__*/new (weak_map_default())();
+var _initAdTimeout = /*#__PURE__*/new (weak_map_default())();
+var _vpaidCallbacks = /*#__PURE__*/new (weak_map_default())();
+var _startAdTimeout = /*#__PURE__*/new (weak_map_default())();
+var _vpaidAdStarted = /*#__PURE__*/new (weak_map_default())();
+var _vpaidVersion = /*#__PURE__*/new (weak_map_default())();
+var _vpaid1AdDuration = /*#__PURE__*/new (weak_map_default())();
+var _adStoppedTimeout = /*#__PURE__*/new (weak_map_default())();
+var _adSkippedTimeout = /*#__PURE__*/new (weak_map_default())();
+var _vpaidAdRemainingTimeInterval = /*#__PURE__*/new (weak_map_default())();
+var _vpaidRemainingTime = /*#__PURE__*/new (weak_map_default())();
+var _vpaidCurrentVolume = /*#__PURE__*/new (weak_map_default())();
+var _vpaidPaused = /*#__PURE__*/new (weak_map_default())();
+var _vpaidLoadTimeout = /*#__PURE__*/new (weak_map_default())();
+var _vpaidAvailableInterval = /*#__PURE__*/new (weak_map_default())();
+var _vpaidSlot = /*#__PURE__*/new (weak_map_default())();
+var _VpaidPlayer_brand = /*#__PURE__*/new WeakSet();
 class VpaidPlayer {
   constructor(rmpVast) {
-    this._rmpVast = rmpVast;
-    this._adContainer = rmpVast.adContainer;
-    this._adPlayer = rmpVast.currentAdPlayer;
-    this._params = rmpVast.params;
-    this._adParametersData = rmpVast.adParametersData;
-    this._debugRawConsoleLogs = rmpVast.debugRawConsoleLogs;
-    this._initialWidth = 640;
-    this._initialHeight = 360;
-    this._initialViewMode = 'normal';
-    this._desiredBitrate = 500;
-    this._vpaidCreativeUrl = '';
-    this._vpaidCreative = null;
-    this._vpaidScript = null;
-    this._vpaidIframe = null;
-    this._vpaidAdLoaded = false;
-    this._initAdTimeout = null;
-    this._vpaidCallbacks = {};
-    this._startAdTimeout = null;
-    this._vpaidAdStarted = false;
-    this._vpaidVersion = -1;
-    this._vpaid1AdDuration = -1;
-    this._adStoppedTimeout = null;
-    this._adSkippedTimeout = null;
-    this._vpaidAdRemainingTimeInterval = null;
-    this._vpaidRemainingTime = -1;
-    this._vpaidCurrentVolume = 1;
-    this._vpaidPaused = true;
-    this._vpaidLoadTimeout = null;
-    this._vpaidAvailableInterval = null;
-    this._vpaidSlot = null;
+    // VPAID creative events
+    _classPrivateMethodInitSpec(this, _VpaidPlayer_brand);
+    _classPrivateFieldInitSpec(this, vpaid_player_rmpVast, void 0);
+    _classPrivateFieldInitSpec(this, vpaid_player_adContainer, void 0);
+    _classPrivateFieldInitSpec(this, vpaid_player_adPlayer, void 0);
+    _classPrivateFieldInitSpec(this, _params, void 0);
+    _classPrivateFieldInitSpec(this, _adParametersData, void 0);
+    _classPrivateFieldInitSpec(this, _initialWidth, 640);
+    _classPrivateFieldInitSpec(this, _initialHeight, 360);
+    _classPrivateFieldInitSpec(this, _initialViewMode, 'normal');
+    _classPrivateFieldInitSpec(this, _desiredBitrate, 500);
+    _classPrivateFieldInitSpec(this, _vpaidCreativeUrl, '');
+    _classPrivateFieldInitSpec(this, _vpaidCreative, null);
+    _classPrivateFieldInitSpec(this, _vpaidScript, null);
+    _classPrivateFieldInitSpec(this, _vpaidIframe, null);
+    _classPrivateFieldInitSpec(this, _vpaidAdLoaded, false);
+    _classPrivateFieldInitSpec(this, _initAdTimeout, null);
+    _classPrivateFieldInitSpec(this, _vpaidCallbacks, {});
+    _classPrivateFieldInitSpec(this, _startAdTimeout, null);
+    _classPrivateFieldInitSpec(this, _vpaidAdStarted, false);
+    _classPrivateFieldInitSpec(this, _vpaidVersion, -1);
+    _classPrivateFieldInitSpec(this, _vpaid1AdDuration, -1);
+    _classPrivateFieldInitSpec(this, _adStoppedTimeout, null);
+    _classPrivateFieldInitSpec(this, _adSkippedTimeout, null);
+    _classPrivateFieldInitSpec(this, _vpaidAdRemainingTimeInterval, null);
+    _classPrivateFieldInitSpec(this, _vpaidRemainingTime, -1);
+    _classPrivateFieldInitSpec(this, _vpaidCurrentVolume, 1);
+    _classPrivateFieldInitSpec(this, _vpaidPaused, true);
+    _classPrivateFieldInitSpec(this, _vpaidLoadTimeout, null);
+    _classPrivateFieldInitSpec(this, _vpaidAvailableInterval, null);
+    _classPrivateFieldInitSpec(this, _vpaidSlot, null);
+    _classPrivateFieldSet2(vpaid_player_rmpVast, this, rmpVast);
+    _classPrivateFieldSet2(vpaid_player_adContainer, this, rmpVast.adContainer);
+    _classPrivateFieldSet2(vpaid_player_adPlayer, this, rmpVast.currentAdPlayer);
+    _classPrivateFieldSet2(_params, this, rmpVast.params);
+    _classPrivateFieldSet2(_adParametersData, this, rmpVast.adParametersData);
   }
-
-  // VPAID creative events
-  _onAdLoaded() {
-    this._vpaidAdLoaded = true;
-    if (!this._vpaidCreative) {
-      return;
-    }
-    FW.clearTimeout(this._initAdTimeout);
-    if (this._vpaidCallbacks.AdLoaded) {
-      this._vpaidCreative.unsubscribe(this._vpaidCallbacks.AdLoaded, 'AdLoaded');
-    }
-    // when we call startAd we expect AdStarted event to follow closely
-    // otherwise we need to resume content
-    this._startAdTimeout = setTimeout(() => {
-      if (!this._vpaidAdStarted && this._rmpVast.rmpVastAdPlayer) {
-        this._rmpVast.rmpVastAdPlayer.resumeContent();
-      }
-      this._vpaidAdStarted = false;
-    }, this._params.creativeLoadTimeout);
-    this._rmpVast.__adOnStage = true;
-    this._vpaidCreative.startAd();
-    this._rmpVast.rmpVastTracking.dispatchTrackingAndApiEvent('adloaded');
-  }
-  _onAdStarted() {
-    this._vpaidAdStarted = true;
-    if (!this._vpaidCreative) {
-      return;
-    }
-    FW.clearTimeout(this._startAdTimeout);
-    if (this._vpaidCallbacks.AdStarted) {
-      this._vpaidCreative.unsubscribe(this._vpaidCallbacks.AdStarted, 'AdStarted');
-    }
-    // update duration for VPAID 1.*
-    if (this._vpaidVersion === 1) {
-      this._vpaid1AdDuration = this._vpaidCreative.getAdRemainingTime();
-    }
-    // append icons - if VPAID does not handle them
-    const adIcons = this._vpaidCreative.getAdIcons();
-    if (!adIcons && this._rmpVast.rmpVastIcons) {
-      const iconsData = this._rmpVast.rmpVastIcons.iconsData;
-      if (iconsData.length > 0) {
-        this._rmpVast.rmpVastIcons.append();
-      }
-    }
-    if (typeof this._vpaidCreative.getAdLinear === 'function') {
-      this._rmpVast.creative.isLinear = this._vpaidCreative.getAdLinear();
-    }
-    this._rmpVast.rmpVastTracking.dispatchTrackingAndApiEvent('adcreativeview');
-  }
-  _onAdStopped() {
-    Logger.print(this._debugRawConsoleLogs, `VPAID AdStopped event`);
-    FW.clearTimeout(this._adStoppedTimeout);
-    if (this._rmpVast.rmpVastAdPlayer) {
-      this._rmpVast.rmpVastAdPlayer.resumeContent();
-    }
-  }
-  _onAdSkipped() {
-    FW.clearTimeout(this._adSkippedTimeout);
-    this._rmpVast.rmpVastTracking.dispatchTrackingAndApiEvent('adskipped');
-  }
-  _onAdSkippableStateChange() {
-    this._rmpVast.rmpVastUtils.createApiEvent('adskippablestatechanged');
-  }
-  _onAdDurationChange() {
-    if (this._vpaidCreative && typeof this._vpaidCreative.getAdRemainingTime === 'function') {
-      const remainingTime = this._vpaidCreative.getAdRemainingTime();
-      if (remainingTime >= 0) {
-        this._vpaidRemainingTime = remainingTime;
-      }
-      // AdRemainingTimeChange is deprecated in VPAID 2
-      // instead we use setInterval
-      FW.clearInterval(this._vpaidAdRemainingTimeInterval);
-      this._vpaidAdRemainingTimeInterval = setInterval(() => {
-        const remainingTime = this._vpaidCreative.getAdRemainingTime();
-        if (remainingTime >= 0) {
-          this._vpaidRemainingTime = remainingTime;
-        }
-      }, 200);
-      this._rmpVast.rmpVastUtils.createApiEvent('addurationchange');
-    }
-  }
-  _onAdVolumeChange() {
-    let newVolume = -1;
-    if (this._vpaidCreative) {
-      newVolume = this._vpaidCreative.getAdVolume();
-    }
-    if (typeof newVolume === 'number' && newVolume >= 0) {
-      if (this._vpaidCurrentVolume > 0 && newVolume === 0) {
-        this._rmpVast.rmpVastTracking.dispatchTrackingAndApiEvent('advolumemuted');
-      } else if (this._vpaidCurrentVolume === 0 && newVolume > 0) {
-        this._rmpVast.rmpVastTracking.dispatchTrackingAndApiEvent('advolumeunmuted');
-      }
-      this._vpaidCurrentVolume = newVolume;
-      this._rmpVast.rmpVastUtils.createApiEvent('advolumechanged');
-    }
-  }
-  _onAdImpression() {
-    this._rmpVast.rmpVastTracking.dispatchTrackingAndApiEvent('adimpression');
-  }
-  _onAdVideoStart() {
-    this._vpaidPaused = false;
-    let newVolume = -1;
-    if (this._vpaidCreative) {
-      newVolume = this._vpaidCreative.getAdVolume();
-    }
-    if (typeof newVolume === 'number' && newVolume >= 0) {
-      this._vpaidCurrentVolume = newVolume;
-      this._rmpVast.rmpVastTracking.dispatchTrackingAndApiEvent('adstarted');
-    }
-  }
-  _onAdVideoFirstQuartile() {
-    this._rmpVast.rmpVastTracking.dispatchTrackingAndApiEvent('adfirstquartile');
-  }
-  _onAdVideoMidpoint() {
-    this._rmpVast.rmpVastTracking.dispatchTrackingAndApiEvent('admidpoint');
-  }
-  _onAdVideoThirdQuartile() {
-    this._rmpVast.rmpVastTracking.dispatchTrackingAndApiEvent('adthirdquartile');
-  }
-  _onAdVideoComplete() {
-    this._rmpVast.rmpVastTracking.dispatchTrackingAndApiEvent('adcomplete');
-  }
-  _onAdClickThru(url, id, playerHandles) {
-    this._rmpVast.rmpVastTracking.dispatchTrackingAndApiEvent('adclick');
-    if (typeof playerHandles !== 'boolean') {
-      return;
-    }
-    if (!playerHandles) {
-      return;
-    } else {
-      let destUrl;
-      if (url) {
-        destUrl = url;
-      } else if (this._rmpVast.creative.clickThroughUrl) {
-        destUrl = this._rmpVast.creative.clickThroughUrl;
-      }
-      if (destUrl) {
-        this._rmpVast.creative.clickThroughUrl = destUrl;
-        FW.openWindow(this._rmpVast.creative.clickThroughUrl);
-      }
-    }
-  }
-  _onAdPaused() {
-    this._vpaidPaused = true;
-    this._rmpVast.rmpVastTracking.dispatchTrackingAndApiEvent('adpaused');
-  }
-  _onAdPlaying() {
-    this._vpaidPaused = false;
-    this._rmpVast.rmpVastTracking.dispatchTrackingAndApiEvent('adresumed');
-  }
-  _onAdLog(message) {
-    Logger.print(this._debugRawConsoleLogs, `VPAID AdLog event ${message}`);
-  }
-  _onAdError(message) {
-    Logger.print(this._debugRawConsoleLogs, `VPAID AdError event ${message}`);
-    this._rmpVast.rmpVastUtils.processVastErrors(901, true);
-  }
-  _onAdInteraction() {
-    this._rmpVast.rmpVastUtils.createApiEvent('adinteraction');
-  }
-  _onAdUserAcceptInvitation() {
-    this._rmpVast.rmpVastTracking.dispatchTrackingAndApiEvent('aduseracceptinvitation');
-  }
-  _onAdUserMinimize() {
-    this._rmpVast.rmpVastTracking.dispatchTrackingAndApiEvent('adcollapse');
-  }
-  _onAdUserClose() {
-    this._rmpVast.rmpVastTracking.dispatchTrackingAndApiEvent('adclosed');
-  }
-  _onAdSizeChange() {
-    this._rmpVast.rmpVastUtils.createApiEvent('adsizechange');
-  }
-  _onAdLinearChange() {
-    if (this._vpaidCreative && typeof this._vpaidCreative.getAdLinear === 'function') {
-      this._rmpVast.creative.isLinear = this._vpaidCreative.getAdLinear();
-      this._rmpVast.rmpVastUtils.createApiEvent('adlinearchange');
-    }
-  }
-  _onAdExpandedChange() {
-    this._rmpVast.rmpVastUtils.createApiEvent('adexpandedchange');
-  }
-  _onAdRemainingTimeChange() {
-    if (this._vpaidCreative && typeof this._vpaidCreative.getAdRemainingTime === 'function') {
-      const remainingTime = this._vpaidCreative.getAdRemainingTime();
-      if (remainingTime >= 0) {
-        this._vpaidRemainingTime = remainingTime;
-      }
-      this._rmpVast.rmpVastUtils.createApiEvent('adremainingtimechange');
-    }
-  }
-  _setCallbacksForCreative() {
-    if (!this._vpaidCreative) {
-      return;
-    }
-    this._vpaidCallbacks = {
-      AdLoaded: this._onAdLoaded.bind(this),
-      AdStarted: this._onAdStarted.bind(this),
-      AdStopped: this._onAdStopped.bind(this),
-      AdSkipped: this._onAdSkipped.bind(this),
-      AdSkippableStateChange: this._onAdSkippableStateChange.bind(this),
-      AdDurationChange: this._onAdDurationChange.bind(this),
-      AdVolumeChange: this._onAdVolumeChange.bind(this),
-      AdImpression: this._onAdImpression.bind(this),
-      AdVideoStart: this._onAdVideoStart.bind(this),
-      AdVideoFirstQuartile: this._onAdVideoFirstQuartile.bind(this),
-      AdVideoMidpoint: this._onAdVideoMidpoint.bind(this),
-      AdVideoThirdQuartile: this._onAdVideoThirdQuartile.bind(this),
-      AdVideoComplete: this._onAdVideoComplete.bind(this),
-      AdClickThru: this._onAdClickThru.bind(this),
-      AdPaused: this._onAdPaused.bind(this),
-      AdPlaying: this._onAdPlaying.bind(this),
-      AdLog: this._onAdLog.bind(this),
-      AdError: this._onAdError.bind(this),
-      AdInteraction: this._onAdInteraction.bind(this),
-      AdUserAcceptInvitation: this._onAdUserAcceptInvitation.bind(this),
-      AdUserMinimize: this._onAdUserMinimize.bind(this),
-      AdUserClose: this._onAdUserClose.bind(this),
-      AdSizeChange: this._onAdSizeChange.bind(this),
-      AdLinearChange: this._onAdLinearChange.bind(this),
-      AdExpandedChange: this._onAdExpandedChange.bind(this),
-      AdRemainingTimeChange: this._onAdRemainingTimeChange.bind(this)
-    };
-    // Looping through the object and registering each of the callbacks with the creative
-    const callbacksKeys = Object.keys(this._vpaidCallbacks);
-    callbacksKeys.forEach(key => {
-      this._vpaidCreative.subscribe(this._vpaidCallbacks[key], key);
-    });
-  }
-  _unsetCallbacksForCreative() {
-    if (!this._vpaidCreative) {
-      return;
-    }
-    // Looping through the object and registering each of the callbacks with the creative
-    const callbacksKeys = Object.keys(this._vpaidCallbacks);
-    callbacksKeys.forEach(key => {
-      this._vpaidCreative.unsubscribe(this._vpaidCallbacks[key], key);
-    });
-  }
-
-  // eslint-disable-next-line
-  _isValidVPAID(creative) {
-    if (typeof creative.initAd === 'function' && typeof creative.startAd === 'function' && typeof creative.stopAd === 'function' && typeof creative.skipAd === 'function' && typeof creative.resizeAd === 'function' && typeof creative.pauseAd === 'function' && typeof creative.resumeAd === 'function' && typeof creative.expandAd === 'function' && typeof creative.collapseAd === 'function' && typeof creative.subscribe === 'function' && typeof creative.unsubscribe === 'function') {
-      return true;
-    }
-    return false;
-  }
-  _onVPAIDAvailable() {
-    FW.clearInterval(this._vpaidAvailableInterval);
-    FW.clearTimeout(this._vpaidLoadTimeout);
-    this._vpaidCreative = this._vpaidIframe.contentWindow.getVPAIDAd();
-    if (this._vpaidCreative && typeof this._vpaidCreative.handshakeVersion === 'function') {
-      // we need to insure handshakeVersion return
-      let vpaidVersion;
-      try {
-        vpaidVersion = this._vpaidCreative.handshakeVersion('2.0');
-      } catch (error) {
-        console.warn(error);
-        Logger.print(this._debugRawConsoleLogs, `could not validate VPAID ad unit handshakeVersion`);
-        this._rmpVast.rmpVastUtils.processVastErrors(901, true);
-        return;
-      }
-      this._vpaidVersion = parse_int_default()(vpaidVersion);
-      if (this._vpaidVersion < 1) {
-        Logger.print(this._debugRawConsoleLogs, `unsupported VPAID version - exit`);
-        this._rmpVast.rmpVastUtils.processVastErrors(901, true);
-        return;
-      }
-      if (!this._isValidVPAID(this._vpaidCreative)) {
-        //The VPAID creative doesn't conform to the VPAID spec
-        Logger.print(this._debugRawConsoleLogs, `VPAID creative does not conform to VPAID spec - exit`);
-        this._rmpVast.rmpVastUtils.processVastErrors(901, true);
-        return;
-      }
-      // wire callback for VPAID events
-      this._setCallbacksForCreative();
-      // wire tracking events for VAST pings
-      this._rmpVast.rmpVastTracking.wire();
-      const creativeData = {};
-      creativeData.AdParameters = this._adParametersData;
-      Logger.print(this._debugRawConsoleLogs, `VPAID AdParameters follow`, this._adParametersData);
-      FW.show(this._adContainer);
-      FW.show(this._adPlayer);
-      const environmentVars = {};
-      // we create a new slot for VPAID creative - using adContainer can cause some VPAID to ill-render
-      // from spec:
-      // The 'environmentVars' object contains a reference, 'slot', to the HTML element
-      // on the page in which the ad is to be rendered. The ad unit essentially gets
-      // control of that element. 
-      this._vpaidSlot = document.createElement('div');
-      this._vpaidSlot.className = 'rmp-vpaid-container';
-      this._adContainer.appendChild(this._vpaidSlot);
-      environmentVars.slot = this._vpaidSlot;
-      environmentVars.videoSlot = this._adPlayer;
-      // we assume we can autoplay (or at least muted autoplay) because this._rmpVast.currentAdPlayer 
-      // has been init
-      environmentVars.videoSlotCanAutoPlay = true;
-      // when we call initAd we expect AdLoaded event to follow closely
-      // if not we need to resume content
-      this._initAdTimeout = setTimeout(() => {
-        if (!this._vpaidAdLoaded) {
-          Logger.print(this._debugRawConsoleLogs, `_initAdTimeout`);
-          if (this._rmpVast.rmpVastAdPlayer) {
-            this._rmpVast.rmpVastAdPlayer.resumeContent();
-          }
-        }
-        this._vpaidAdLoaded = false;
-      }, this._params.creativeLoadTimeout * 10);
-      Logger.print(this._debugRawConsoleLogs, `calling initAd on VPAID creative now`);
-      this._vpaidCreative.initAd(this._initialWidth, this._initialHeight, this._initialViewMode, this._desiredBitrate, creativeData, environmentVars);
-    }
-  }
-  _onJSVPAIDLoaded() {
-    Logger.print(this._debugRawConsoleLogs, `VPAID JS loaded`);
-    const iframeWindow = this._vpaidIframe.contentWindow;
-    if (typeof iframeWindow.getVPAIDAd === 'function') {
-      this._onVPAIDAvailable();
-    } else {
-      this._vpaidAvailableInterval = setInterval(() => {
-        if (typeof iframeWindow.getVPAIDAd === 'function') {
-          this._onVPAIDAvailable();
-        }
-      }, 100);
-    }
-    this._vpaidScript.onload = null;
-    this._vpaidScript.onerror = null;
-  }
-  _onJSVPAIDError() {
-    Logger.print(this._debugRawConsoleLogs, `VPAID JS error loading`);
-    this._rmpVast.rmpVastUtils.processVastErrors(901, true);
-    this._vpaidScript.onload = null;
-    this._vpaidScript.onerror = null;
-  }
-
-  // _vpaidCreative getters
+  // #vpaidCreative getters
 
   getAdWidth() {
-    if (this._vpaidCreative && typeof this._vpaidCreative.getAdWidth === 'function') {
-      return this._vpaidCreative.getAdWidth();
+    if (_classPrivateFieldGet2(_vpaidCreative, this) && typeof _classPrivateFieldGet2(_vpaidCreative, this).getAdWidth === 'function') {
+      return _classPrivateFieldGet2(_vpaidCreative, this).getAdWidth();
     }
     return -1;
   }
   getAdHeight() {
-    if (this._vpaidCreative && typeof this._vpaidCreative.getAdHeight === 'function') {
-      return this._vpaidCreative.getAdHeight();
+    if (_classPrivateFieldGet2(_vpaidCreative, this) && typeof _classPrivateFieldGet2(_vpaidCreative, this).getAdHeight === 'function') {
+      return _classPrivateFieldGet2(_vpaidCreative, this).getAdHeight();
     }
     return -1;
   }
   getAdDuration() {
-    if (this._vpaidCreative) {
-      if (typeof this._vpaidCreative.getAdDuration === 'function') {
-        return this._vpaidCreative.getAdDuration();
-      } else if (this._vpaid1AdDuration > -1) {
-        return this._vpaid1AdDuration;
+    if (_classPrivateFieldGet2(_vpaidCreative, this)) {
+      if (typeof _classPrivateFieldGet2(_vpaidCreative, this).getAdDuration === 'function') {
+        return _classPrivateFieldGet2(_vpaidCreative, this).getAdDuration();
+      } else if (_classPrivateFieldGet2(_vpaid1AdDuration, this) > -1) {
+        return _classPrivateFieldGet2(_vpaid1AdDuration, this);
       }
     }
     return -1;
   }
   getAdRemainingTime() {
-    if (this._vpaidRemainingTime >= 0) {
-      return this._vpaidRemainingTime;
+    if (_classPrivateFieldGet2(_vpaidRemainingTime, this) >= 0) {
+      return _classPrivateFieldGet2(_vpaidRemainingTime, this);
     }
     return -1;
   }
   getCreativeUrl() {
-    if (this._vpaidCreativeUrl) {
-      return this._vpaidCreativeUrl;
+    if (_classPrivateFieldGet2(_vpaidCreativeUrl, this)) {
+      return _classPrivateFieldGet2(_vpaidCreativeUrl, this);
     }
     return '';
   }
   getAdVolume() {
-    if (this._vpaidCreative && typeof this._vpaidCreative.getAdVolume === 'function') {
-      return this._vpaidCreative.getAdVolume();
+    if (_classPrivateFieldGet2(_vpaidCreative, this) && typeof _classPrivateFieldGet2(_vpaidCreative, this).getAdVolume === 'function') {
+      return _classPrivateFieldGet2(_vpaidCreative, this).getAdVolume();
     }
     return -1;
   }
   getAdPaused() {
-    return this._vpaidPaused;
+    return _classPrivateFieldGet2(_vpaidPaused, this);
   }
   getAdExpanded() {
-    if (this._vpaidCreative && typeof this._vpaidCreative.getAdExpanded === 'function') {
-      return this._vpaidCreative.getAdExpanded();
+    if (_classPrivateFieldGet2(_vpaidCreative, this) && typeof _classPrivateFieldGet2(_vpaidCreative, this).getAdExpanded === 'function') {
+      return _classPrivateFieldGet2(_vpaidCreative, this).getAdExpanded();
     }
     return false;
   }
   getAdSkippableState() {
-    if (this._vpaidCreative && typeof this._vpaidCreative.getAdSkippableState === 'function') {
-      return this._vpaidCreative.getAdSkippableState();
+    if (_classPrivateFieldGet2(_vpaidCreative, this) && typeof _classPrivateFieldGet2(_vpaidCreative, this).getAdSkippableState === 'function') {
+      return _classPrivateFieldGet2(_vpaidCreative, this).getAdSkippableState();
     }
     return false;
   }
   getAdCompanions() {
-    if (this._vpaidCreative && typeof this._vpaidCreative.getAdCompanions === 'function') {
-      return this._vpaidCreative.getAdCompanions();
+    if (_classPrivateFieldGet2(_vpaidCreative, this) && typeof _classPrivateFieldGet2(_vpaidCreative, this).getAdCompanions === 'function') {
+      return _classPrivateFieldGet2(_vpaidCreative, this).getAdCompanions();
     }
     return '';
   }
 
-  // _vpaidCreative methods
+  // #vpaidCreative methods
   resizeAd(width, height, viewMode) {
-    if (!this._vpaidCreative) {
+    if (!_classPrivateFieldGet2(_vpaidCreative, this)) {
       return;
     }
     if (!FW.isNumber(width) || !FW.isNumber(height) || typeof viewMode !== 'string') {
@@ -10118,87 +10609,87 @@ class VpaidPlayer {
     if (viewMode === 'fullscreen') {
       validViewMode = viewMode;
     }
-    Logger.print(this._debugRawConsoleLogs, `VPAID resizeAd with width ${width}, height ${height}, viewMode ${viewMode}`);
-    this._vpaidCreative.resizeAd(width, height, validViewMode);
+    Logger.print(_classPrivateFieldGet2(vpaid_player_rmpVast, this).debugRawConsoleLogs, `VPAID resizeAd with width ${width}, height ${height}, viewMode ${viewMode}`);
+    _classPrivateFieldGet2(_vpaidCreative, this).resizeAd(width, height, validViewMode);
   }
   stopAd() {
-    if (!this._vpaidCreative) {
+    if (!_classPrivateFieldGet2(_vpaidCreative, this)) {
       return;
     }
-    Logger.print(this._debugRawConsoleLogs, `stopAd`);
+    Logger.print(_classPrivateFieldGet2(vpaid_player_rmpVast, this).debugRawConsoleLogs, `stopAd`);
     // when stopAd is called we need to check a 
     // AdStopped event follows
-    this._adStoppedTimeout = setTimeout(() => {
-      this._onAdStopped();
-    }, this._params.creativeLoadTimeout);
-    this._vpaidCreative.stopAd();
+    _classPrivateFieldSet2(_adStoppedTimeout, this, window.setTimeout(() => {
+      _assertClassBrand(_VpaidPlayer_brand, this, _onAdStopped).call(this);
+    }, _classPrivateFieldGet2(_params, this).creativeLoadTimeout));
+    _classPrivateFieldGet2(_vpaidCreative, this).stopAd();
   }
   pauseAd() {
-    Logger.print(this._debugRawConsoleLogs, `pauseAd`);
-    if (this._vpaidCreative && !this._vpaidPaused) {
-      this._vpaidCreative.pauseAd();
+    Logger.print(_classPrivateFieldGet2(vpaid_player_rmpVast, this).debugRawConsoleLogs, `pauseAd`);
+    if (_classPrivateFieldGet2(_vpaidCreative, this) && !_classPrivateFieldGet2(_vpaidPaused, this)) {
+      _classPrivateFieldGet2(_vpaidCreative, this).pauseAd();
     }
   }
   resumeAd() {
-    Logger.print(this._debugRawConsoleLogs, `resumeAd`);
-    if (this._vpaidCreative && this._vpaidPaused) {
-      this._vpaidCreative.resumeAd();
+    Logger.print(_classPrivateFieldGet2(vpaid_player_rmpVast, this).debugRawConsoleLogs, `resumeAd`);
+    if (_classPrivateFieldGet2(_vpaidCreative, this) && _classPrivateFieldGet2(_vpaidPaused, this)) {
+      _classPrivateFieldGet2(_vpaidCreative, this).resumeAd();
     }
   }
   expandAd() {
-    if (this._vpaidCreative) {
-      this._vpaidCreative.expandAd();
+    if (_classPrivateFieldGet2(_vpaidCreative, this)) {
+      _classPrivateFieldGet2(_vpaidCreative, this).expandAd();
     }
   }
   collapseAd() {
-    if (this._vpaidCreative) {
-      this._vpaidCreative.collapseAd();
+    if (_classPrivateFieldGet2(_vpaidCreative, this)) {
+      _classPrivateFieldGet2(_vpaidCreative, this).collapseAd();
     }
   }
   skipAd() {
-    if (!this._vpaidCreative) {
+    if (!_classPrivateFieldGet2(_vpaidCreative, this)) {
       return;
     }
     // when skipAd is called we need to check a 
     // AdSkipped event follows
-    this._adSkippedTimeout = setTimeout(() => {
-      this._onAdStopped();
-    }, this._params.creativeLoadTimeout);
-    this._vpaidCreative.skipAd();
+    _classPrivateFieldSet2(_adSkippedTimeout, this, window.setTimeout(() => {
+      _assertClassBrand(_VpaidPlayer_brand, this, _onAdStopped).call(this);
+    }, _classPrivateFieldGet2(_params, this).creativeLoadTimeout));
+    _classPrivateFieldGet2(_vpaidCreative, this).skipAd();
   }
   setAdVolume(volume) {
-    if (this._vpaidCreative && FW.isNumber(volume) && volume >= 0 && volume <= 1 && typeof this._vpaidCreative.setAdVolume === 'function') {
-      this._vpaidCreative.setAdVolume(volume);
+    if (_classPrivateFieldGet2(_vpaidCreative, this) && FW.isNumber(volume) && volume >= 0 && volume <= 1 && typeof _classPrivateFieldGet2(_vpaidCreative, this).setAdVolume === 'function') {
+      _classPrivateFieldGet2(_vpaidCreative, this).setAdVolume(volume);
     }
   }
   init(creativeUrl, vpaidSettings) {
-    this._initialWidth = vpaidSettings.width;
-    this._initialHeight = vpaidSettings.height;
-    this._initialViewMode = vpaidSettings.viewMode;
-    this._desiredBitrate = vpaidSettings.desiredBitrate;
-    this._vpaidCreativeUrl = creativeUrl;
-    if (!this._adPlayer) {
+    _classPrivateFieldSet2(_initialWidth, this, vpaidSettings.width);
+    _classPrivateFieldSet2(_initialHeight, this, vpaidSettings.height);
+    _classPrivateFieldSet2(_initialViewMode, this, vpaidSettings.viewMode);
+    _classPrivateFieldSet2(_desiredBitrate, this, vpaidSettings.desiredBitrate);
+    _classPrivateFieldSet2(_vpaidCreativeUrl, this, creativeUrl);
+    if (!_classPrivateFieldGet2(vpaid_player_adPlayer, this)) {
       // we use existing ad player as it is already 
       // available and initialized (no need for user interaction)
       let existingAdPlayer = null;
-      if (this._adContainer) {
-        existingAdPlayer = this._adContainer.querySelector('.rmp-ad-vast-video-player');
+      if (_classPrivateFieldGet2(vpaid_player_adContainer, this)) {
+        existingAdPlayer = _classPrivateFieldGet2(vpaid_player_adContainer, this).querySelector('.rmp-ad-vast-video-player');
       }
       if (existingAdPlayer === null) {
-        this._rmpVast.rmpVastUtils.processVastErrors(900, true);
+        _classPrivateFieldGet2(vpaid_player_rmpVast, this).rmpVastUtils.processVastErrors(900, true);
         return;
       }
-      this._adPlayer = existingAdPlayer;
+      _classPrivateFieldSet2(vpaid_player_adPlayer, this, existingAdPlayer);
     }
     // pause content player
-    this._rmpVast.rmpVastContentPlayer.pause();
+    _classPrivateFieldGet2(vpaid_player_rmpVast, this).rmpVastContentPlayer.pause();
     // create FiF 
-    this._vpaidIframe = document.createElement('iframe');
-    this._vpaidIframe.sandbox = 'allow-scripts allow-same-origin';
-    this._vpaidIframe.id = 'vpaid-frame';
+    _classPrivateFieldSet2(_vpaidIframe, this, document.createElement('iframe'));
+    _classPrivateFieldGet2(_vpaidIframe, this).sandbox = 'allow-scripts allow-same-origin';
+    _classPrivateFieldGet2(_vpaidIframe, this).id = 'vpaid-frame';
     // do not use display: none;
     // https://bugzilla.mozilla.org/show_bug.cgi?id=548397
-    FW.setStyle(this._vpaidIframe, {
+    FW.setStyle(_classPrivateFieldGet2(_vpaidIframe, this), {
       visibility: 'hidden',
       width: '0px',
       height: '0px',
@@ -10207,53 +10698,382 @@ class VpaidPlayer {
     // this is to adhere to Best Practices for Rich Media Ads 
     // in Asynchronous Ad Environments  http://www.iab.net/media/file/rich_media_ajax_best_practices.pdf
     const src = 'about:blank';
-    this._vpaidIframe.onload = () => {
-      Logger.print(this._debugRawConsoleLogs, `_vpaidIframe.onload`);
-      if (!this._vpaidIframe.contentWindow || !this._vpaidIframe.contentWindow.document || !this._vpaidIframe.contentWindow.document.body) {
+    _classPrivateFieldGet2(_vpaidIframe, this).onload = () => {
+      Logger.print(_classPrivateFieldGet2(vpaid_player_rmpVast, this).debugRawConsoleLogs, `#vpaidIframe.onload`);
+      if (!_classPrivateFieldGet2(_vpaidIframe, this).contentWindow || !_classPrivateFieldGet2(_vpaidIframe, this).contentWindow.document || !_classPrivateFieldGet2(_vpaidIframe, this).contentWindow.document.body) {
         // PING error and resume content
 
-        this._rmpVast.rmpVastUtils.processVastErrors(901, true);
+        _classPrivateFieldGet2(vpaid_player_rmpVast, this).rmpVastUtils.processVastErrors(901, true);
         return;
       }
-      const iframeWindow = this._vpaidIframe.contentWindow;
+      const iframeWindow = _classPrivateFieldGet2(_vpaidIframe, this).contentWindow;
       const iframeDocument = iframeWindow.document;
       const iframeBody = iframeDocument.body;
-      this._vpaidScript = iframeDocument.createElement('script');
-      this._vpaidLoadTimeout = setTimeout(() => {
-        Logger.print(this._debugRawConsoleLogs, `could not load VPAID JS Creative or getVPAIDAd in iframeWindow - resume content`);
-        this._vpaidScript.onload = null;
-        this._vpaidScript.onerror = null;
-        if (this._rmpVast.rmpVastAdPlayer) {
-          this._rmpVast.rmpVastAdPlayer.resumeContent();
+      _classPrivateFieldSet2(_vpaidScript, this, iframeDocument.createElement('script'));
+      _classPrivateFieldSet2(_vpaidLoadTimeout, this, window.setTimeout(() => {
+        Logger.print(_classPrivateFieldGet2(vpaid_player_rmpVast, this).debugRawConsoleLogs, `could not load VPAID JS Creative or getVPAIDAd in iframeWindow - resume content`);
+        _classPrivateFieldGet2(_vpaidScript, this).onload = null;
+        _classPrivateFieldGet2(_vpaidScript, this).onerror = null;
+        if (_classPrivateFieldGet2(vpaid_player_rmpVast, this).rmpVastAdPlayer) {
+          _classPrivateFieldGet2(vpaid_player_rmpVast, this).rmpVastAdPlayer.resumeContent();
         }
-      }, this._params.creativeLoadTimeout);
-      this._vpaidScript.onload = this._onJSVPAIDLoaded.bind(this);
-      this._vpaidScript.onerror = this._onJSVPAIDError.bind(this);
-      iframeBody.appendChild(this._vpaidScript);
-      this._vpaidScript.src = this._vpaidCreativeUrl;
+      }, _classPrivateFieldGet2(_params, this).creativeLoadTimeout));
+      _classPrivateFieldGet2(_vpaidScript, this).onload = _assertClassBrand(_VpaidPlayer_brand, this, _onJSVPAIDLoaded).bind(this);
+      _classPrivateFieldGet2(_vpaidScript, this).onerror = _assertClassBrand(_VpaidPlayer_brand, this, _onJSVPAIDError).bind(this);
+      iframeBody.appendChild(_classPrivateFieldGet2(_vpaidScript, this));
+      _classPrivateFieldGet2(_vpaidScript, this).src = _classPrivateFieldGet2(_vpaidCreativeUrl, this);
     };
-    this._vpaidIframe.src = src;
-    this._adContainer.appendChild(this._vpaidIframe);
+    _classPrivateFieldGet2(_vpaidIframe, this).src = src;
+    _classPrivateFieldGet2(vpaid_player_adContainer, this).appendChild(_classPrivateFieldGet2(_vpaidIframe, this));
   }
   destroy() {
-    Logger.print(this._debugRawConsoleLogs, `destroy VPAID dependencies`);
-    FW.clearInterval(this._vpaidAvailableInterval);
-    FW.clearInterval(this._vpaidAdRemainingTimeInterval);
-    FW.clearTimeout(this._vpaidLoadTimeout);
-    FW.clearTimeout(this._initAdTimeout);
-    FW.clearTimeout(this._startAdTimeout);
-    this._unsetCallbacksForCreative();
-    if (this._vpaidScript) {
-      this._vpaidScript.onload = null;
-      this._vpaidScript.onerror = null;
+    Logger.print(_classPrivateFieldGet2(vpaid_player_rmpVast, this).debugRawConsoleLogs, `destroy VPAID dependencies`);
+    window.clearInterval(_classPrivateFieldGet2(_vpaidAvailableInterval, this));
+    window.clearInterval(_classPrivateFieldGet2(_vpaidAdRemainingTimeInterval, this));
+    window.clearTimeout(_classPrivateFieldGet2(_vpaidLoadTimeout, this));
+    window.clearTimeout(_classPrivateFieldGet2(_initAdTimeout, this));
+    window.clearTimeout(_classPrivateFieldGet2(_startAdTimeout, this));
+    _assertClassBrand(_VpaidPlayer_brand, this, _unsetCallbacksForCreative).call(this);
+    if (_classPrivateFieldGet2(_vpaidScript, this)) {
+      _classPrivateFieldGet2(_vpaidScript, this).onload = null;
+      _classPrivateFieldGet2(_vpaidScript, this).onerror = null;
     }
-    if (this._vpaidSlot) {
-      FW.removeElement(this._vpaidSlot);
+    if (_classPrivateFieldGet2(_vpaidSlot, this)) {
+      FW.removeElement(_classPrivateFieldGet2(_vpaidSlot, this));
     }
-    if (this._vpaidIframe) {
-      FW.removeElement(this._vpaidIframe);
+    if (_classPrivateFieldGet2(_vpaidIframe, this)) {
+      FW.removeElement(_classPrivateFieldGet2(_vpaidIframe, this));
     }
   }
+}
+function _onAdLoaded() {
+  _classPrivateFieldSet2(_vpaidAdLoaded, this, true);
+  if (!_classPrivateFieldGet2(_vpaidCreative, this)) {
+    return;
+  }
+  window.clearTimeout(_classPrivateFieldGet2(_initAdTimeout, this));
+  if (_classPrivateFieldGet2(_vpaidCallbacks, this).AdLoaded) {
+    _classPrivateFieldGet2(_vpaidCreative, this).unsubscribe(_classPrivateFieldGet2(_vpaidCallbacks, this).AdLoaded, 'AdLoaded');
+  }
+  // when we call startAd we expect AdStarted event to follow closely
+  // otherwise we need to resume content
+  _classPrivateFieldSet2(_startAdTimeout, this, window.setTimeout(() => {
+    if (!_classPrivateFieldGet2(_vpaidAdStarted, this) && _classPrivateFieldGet2(vpaid_player_rmpVast, this).rmpVastAdPlayer) {
+      _classPrivateFieldGet2(vpaid_player_rmpVast, this).rmpVastAdPlayer.resumeContent();
+    }
+    _classPrivateFieldSet2(_vpaidAdStarted, this, false);
+  }, _classPrivateFieldGet2(_params, this).creativeLoadTimeout));
+  _classPrivateFieldGet2(vpaid_player_rmpVast, this).__adOnStage = true;
+  _classPrivateFieldGet2(_vpaidCreative, this).startAd();
+  _classPrivateFieldGet2(vpaid_player_rmpVast, this).rmpVastTracking.dispatchTrackingAndApiEvent('adloaded');
+}
+function _onAdStarted() {
+  _classPrivateFieldSet2(_vpaidAdStarted, this, true);
+  if (!_classPrivateFieldGet2(_vpaidCreative, this)) {
+    return;
+  }
+  window.clearTimeout(_classPrivateFieldGet2(_startAdTimeout, this));
+  if (_classPrivateFieldGet2(_vpaidCallbacks, this).AdStarted) {
+    _classPrivateFieldGet2(_vpaidCreative, this).unsubscribe(_classPrivateFieldGet2(_vpaidCallbacks, this).AdStarted, 'AdStarted');
+  }
+  // update duration for VPAID 1.*
+  if (_classPrivateFieldGet2(_vpaidVersion, this) === 1) {
+    _classPrivateFieldSet2(_vpaid1AdDuration, this, _classPrivateFieldGet2(_vpaidCreative, this).getAdRemainingTime());
+  }
+  // append icons - if VPAID does not handle them
+  const adIcons = _classPrivateFieldGet2(_vpaidCreative, this).getAdIcons();
+  if (!adIcons && _classPrivateFieldGet2(vpaid_player_rmpVast, this).rmpVastIcons) {
+    const iconsData = _classPrivateFieldGet2(vpaid_player_rmpVast, this).rmpVastIcons.iconsData;
+    if (iconsData.length > 0) {
+      _classPrivateFieldGet2(vpaid_player_rmpVast, this).rmpVastIcons.append();
+    }
+  }
+  if (typeof _classPrivateFieldGet2(_vpaidCreative, this).getAdLinear === 'function') {
+    _classPrivateFieldGet2(vpaid_player_rmpVast, this).creative.isLinear = _classPrivateFieldGet2(_vpaidCreative, this).getAdLinear();
+  }
+  _classPrivateFieldGet2(vpaid_player_rmpVast, this).rmpVastTracking.dispatchTrackingAndApiEvent('adcreativeview');
+}
+function _onAdStopped() {
+  Logger.print(_classPrivateFieldGet2(vpaid_player_rmpVast, this).debugRawConsoleLogs, `VPAID AdStopped event`);
+  window.clearTimeout(_classPrivateFieldGet2(_adStoppedTimeout, this));
+  if (_classPrivateFieldGet2(vpaid_player_rmpVast, this).rmpVastAdPlayer) {
+    _classPrivateFieldGet2(vpaid_player_rmpVast, this).rmpVastAdPlayer.resumeContent();
+  }
+}
+function _onAdSkipped() {
+  window.clearTimeout(_classPrivateFieldGet2(_adSkippedTimeout, this));
+  _classPrivateFieldGet2(vpaid_player_rmpVast, this).rmpVastTracking.dispatchTrackingAndApiEvent('adskipped');
+}
+function _onAdSkippableStateChange() {
+  _classPrivateFieldGet2(vpaid_player_rmpVast, this).rmpVastUtils.createApiEvent('adskippablestatechanged');
+}
+function _onAdDurationChange() {
+  if (_classPrivateFieldGet2(_vpaidCreative, this) && typeof _classPrivateFieldGet2(_vpaidCreative, this).getAdRemainingTime === 'function') {
+    const remainingTime = _classPrivateFieldGet2(_vpaidCreative, this).getAdRemainingTime();
+    if (remainingTime >= 0) {
+      _classPrivateFieldSet2(_vpaidRemainingTime, this, remainingTime);
+    }
+    // AdRemainingTimeChange is deprecated in VPAID 2
+    // instead we use setInterval
+    window.clearInterval(_classPrivateFieldGet2(_vpaidAdRemainingTimeInterval, this));
+    _classPrivateFieldSet2(_vpaidAdRemainingTimeInterval, this, window.setInterval(() => {
+      const remainingTime = _classPrivateFieldGet2(_vpaidCreative, this).getAdRemainingTime();
+      if (remainingTime >= 0) {
+        _classPrivateFieldSet2(_vpaidRemainingTime, this, remainingTime);
+      }
+    }, 200));
+    _classPrivateFieldGet2(vpaid_player_rmpVast, this).rmpVastUtils.createApiEvent('addurationchange');
+  }
+}
+function _onAdVolumeChange() {
+  let newVolume = -1;
+  if (_classPrivateFieldGet2(_vpaidCreative, this)) {
+    newVolume = _classPrivateFieldGet2(_vpaidCreative, this).getAdVolume();
+  }
+  if (typeof newVolume === 'number' && newVolume >= 0) {
+    if (_classPrivateFieldGet2(_vpaidCurrentVolume, this) > 0 && newVolume === 0) {
+      _classPrivateFieldGet2(vpaid_player_rmpVast, this).rmpVastTracking.dispatchTrackingAndApiEvent('advolumemuted');
+    } else if (_classPrivateFieldGet2(_vpaidCurrentVolume, this) === 0 && newVolume > 0) {
+      _classPrivateFieldGet2(vpaid_player_rmpVast, this).rmpVastTracking.dispatchTrackingAndApiEvent('advolumeunmuted');
+    }
+    _classPrivateFieldSet2(_vpaidCurrentVolume, this, newVolume);
+    _classPrivateFieldGet2(vpaid_player_rmpVast, this).rmpVastUtils.createApiEvent('advolumechanged');
+  }
+}
+function _onAdImpression() {
+  _classPrivateFieldGet2(vpaid_player_rmpVast, this).rmpVastTracking.dispatchTrackingAndApiEvent('adimpression');
+}
+function _onAdVideoStart() {
+  _classPrivateFieldSet2(_vpaidPaused, this, false);
+  let newVolume = -1;
+  if (_classPrivateFieldGet2(_vpaidCreative, this)) {
+    newVolume = _classPrivateFieldGet2(_vpaidCreative, this).getAdVolume();
+  }
+  if (typeof newVolume === 'number' && newVolume >= 0) {
+    _classPrivateFieldSet2(_vpaidCurrentVolume, this, newVolume);
+    _classPrivateFieldGet2(vpaid_player_rmpVast, this).rmpVastTracking.dispatchTrackingAndApiEvent('adstarted');
+  }
+}
+function _onAdVideoFirstQuartile() {
+  _classPrivateFieldGet2(vpaid_player_rmpVast, this).rmpVastTracking.dispatchTrackingAndApiEvent('adfirstquartile');
+}
+function _onAdVideoMidpoint() {
+  _classPrivateFieldGet2(vpaid_player_rmpVast, this).rmpVastTracking.dispatchTrackingAndApiEvent('admidpoint');
+}
+function _onAdVideoThirdQuartile() {
+  _classPrivateFieldGet2(vpaid_player_rmpVast, this).rmpVastTracking.dispatchTrackingAndApiEvent('adthirdquartile');
+}
+function _onAdVideoComplete() {
+  _classPrivateFieldGet2(vpaid_player_rmpVast, this).rmpVastTracking.dispatchTrackingAndApiEvent('adcomplete');
+}
+function _onAdClickThru(url, id, playerHandles) {
+  _classPrivateFieldGet2(vpaid_player_rmpVast, this).rmpVastTracking.dispatchTrackingAndApiEvent('adclick');
+  if (typeof playerHandles !== 'boolean') {
+    return;
+  }
+  if (!playerHandles) {
+    return;
+  } else {
+    let destUrl;
+    if (url) {
+      destUrl = url;
+    } else if (_classPrivateFieldGet2(vpaid_player_rmpVast, this).creative.clickThroughUrl) {
+      destUrl = _classPrivateFieldGet2(vpaid_player_rmpVast, this).creative.clickThroughUrl;
+    }
+    if (destUrl) {
+      _classPrivateFieldGet2(vpaid_player_rmpVast, this).creative.clickThroughUrl = destUrl;
+      FW.openWindow(_classPrivateFieldGet2(vpaid_player_rmpVast, this).creative.clickThroughUrl);
+    }
+  }
+}
+function _onAdPaused() {
+  _classPrivateFieldSet2(_vpaidPaused, this, true);
+  _classPrivateFieldGet2(vpaid_player_rmpVast, this).rmpVastTracking.dispatchTrackingAndApiEvent('adpaused');
+}
+function _onAdPlaying() {
+  _classPrivateFieldSet2(_vpaidPaused, this, false);
+  _classPrivateFieldGet2(vpaid_player_rmpVast, this).rmpVastTracking.dispatchTrackingAndApiEvent('adresumed');
+}
+function _onAdLog(message) {
+  Logger.print(_classPrivateFieldGet2(vpaid_player_rmpVast, this).debugRawConsoleLogs, `VPAID AdLog event ${message}`);
+}
+function _onAdError(message) {
+  Logger.print(_classPrivateFieldGet2(vpaid_player_rmpVast, this).debugRawConsoleLogs, `VPAID AdError event ${message}`);
+  _classPrivateFieldGet2(vpaid_player_rmpVast, this).rmpVastUtils.processVastErrors(901, true);
+}
+function _onAdInteraction() {
+  _classPrivateFieldGet2(vpaid_player_rmpVast, this).rmpVastUtils.createApiEvent('adinteraction');
+}
+function _onAdUserAcceptInvitation() {
+  _classPrivateFieldGet2(vpaid_player_rmpVast, this).rmpVastTracking.dispatchTrackingAndApiEvent('aduseracceptinvitation');
+}
+function _onAdUserMinimize() {
+  _classPrivateFieldGet2(vpaid_player_rmpVast, this).rmpVastTracking.dispatchTrackingAndApiEvent('adcollapse');
+}
+function _onAdUserClose() {
+  _classPrivateFieldGet2(vpaid_player_rmpVast, this).rmpVastTracking.dispatchTrackingAndApiEvent('adclosed');
+}
+function _onAdSizeChange() {
+  _classPrivateFieldGet2(vpaid_player_rmpVast, this).rmpVastUtils.createApiEvent('adsizechange');
+}
+function _onAdLinearChange() {
+  if (_classPrivateFieldGet2(_vpaidCreative, this) && typeof _classPrivateFieldGet2(_vpaidCreative, this).getAdLinear === 'function') {
+    _classPrivateFieldGet2(vpaid_player_rmpVast, this).creative.isLinear = _classPrivateFieldGet2(_vpaidCreative, this).getAdLinear();
+    _classPrivateFieldGet2(vpaid_player_rmpVast, this).rmpVastUtils.createApiEvent('adlinearchange');
+  }
+}
+function _onAdExpandedChange() {
+  _classPrivateFieldGet2(vpaid_player_rmpVast, this).rmpVastUtils.createApiEvent('adexpandedchange');
+}
+function _onAdRemainingTimeChange() {
+  if (_classPrivateFieldGet2(_vpaidCreative, this) && typeof _classPrivateFieldGet2(_vpaidCreative, this).getAdRemainingTime === 'function') {
+    const remainingTime = _classPrivateFieldGet2(_vpaidCreative, this).getAdRemainingTime();
+    if (remainingTime >= 0) {
+      _classPrivateFieldSet2(_vpaidRemainingTime, this, remainingTime);
+    }
+    _classPrivateFieldGet2(vpaid_player_rmpVast, this).rmpVastUtils.createApiEvent('adremainingtimechange');
+  }
+}
+function _setCallbacksForCreative() {
+  if (!_classPrivateFieldGet2(_vpaidCreative, this)) {
+    return;
+  }
+  _classPrivateFieldSet2(_vpaidCallbacks, this, {
+    AdLoaded: _assertClassBrand(_VpaidPlayer_brand, this, _onAdLoaded).bind(this),
+    AdStarted: _assertClassBrand(_VpaidPlayer_brand, this, _onAdStarted).bind(this),
+    AdStopped: _assertClassBrand(_VpaidPlayer_brand, this, _onAdStopped).bind(this),
+    AdSkipped: _assertClassBrand(_VpaidPlayer_brand, this, _onAdSkipped).bind(this),
+    AdSkippableStateChange: _assertClassBrand(_VpaidPlayer_brand, this, _onAdSkippableStateChange).bind(this),
+    AdDurationChange: _assertClassBrand(_VpaidPlayer_brand, this, _onAdDurationChange).bind(this),
+    AdVolumeChange: _assertClassBrand(_VpaidPlayer_brand, this, _onAdVolumeChange).bind(this),
+    AdImpression: _assertClassBrand(_VpaidPlayer_brand, this, _onAdImpression).bind(this),
+    AdVideoStart: _assertClassBrand(_VpaidPlayer_brand, this, _onAdVideoStart).bind(this),
+    AdVideoFirstQuartile: _assertClassBrand(_VpaidPlayer_brand, this, _onAdVideoFirstQuartile).bind(this),
+    AdVideoMidpoint: _assertClassBrand(_VpaidPlayer_brand, this, _onAdVideoMidpoint).bind(this),
+    AdVideoThirdQuartile: _assertClassBrand(_VpaidPlayer_brand, this, _onAdVideoThirdQuartile).bind(this),
+    AdVideoComplete: _assertClassBrand(_VpaidPlayer_brand, this, _onAdVideoComplete).bind(this),
+    AdClickThru: _assertClassBrand(_VpaidPlayer_brand, this, _onAdClickThru).bind(this),
+    AdPaused: _assertClassBrand(_VpaidPlayer_brand, this, _onAdPaused).bind(this),
+    AdPlaying: _assertClassBrand(_VpaidPlayer_brand, this, _onAdPlaying).bind(this),
+    AdLog: _assertClassBrand(_VpaidPlayer_brand, this, _onAdLog).bind(this),
+    AdError: _assertClassBrand(_VpaidPlayer_brand, this, _onAdError).bind(this),
+    AdInteraction: _assertClassBrand(_VpaidPlayer_brand, this, _onAdInteraction).bind(this),
+    AdUserAcceptInvitation: _assertClassBrand(_VpaidPlayer_brand, this, _onAdUserAcceptInvitation).bind(this),
+    AdUserMinimize: _assertClassBrand(_VpaidPlayer_brand, this, _onAdUserMinimize).bind(this),
+    AdUserClose: _assertClassBrand(_VpaidPlayer_brand, this, _onAdUserClose).bind(this),
+    AdSizeChange: _assertClassBrand(_VpaidPlayer_brand, this, _onAdSizeChange).bind(this),
+    AdLinearChange: _assertClassBrand(_VpaidPlayer_brand, this, _onAdLinearChange).bind(this),
+    AdExpandedChange: _assertClassBrand(_VpaidPlayer_brand, this, _onAdExpandedChange).bind(this),
+    AdRemainingTimeChange: _assertClassBrand(_VpaidPlayer_brand, this, _onAdRemainingTimeChange).bind(this)
+  });
+  // Looping through the object and registering each of the callbacks with the creative
+  const callbacksKeys = Object.keys(_classPrivateFieldGet2(_vpaidCallbacks, this));
+  callbacksKeys.forEach(key => {
+    _classPrivateFieldGet2(_vpaidCreative, this).subscribe(_classPrivateFieldGet2(_vpaidCallbacks, this)[key], key);
+  });
+}
+function _unsetCallbacksForCreative() {
+  if (!_classPrivateFieldGet2(_vpaidCreative, this)) {
+    return;
+  }
+  // Looping through the object and registering each of the callbacks with the creative
+  const callbacksKeys = Object.keys(_classPrivateFieldGet2(_vpaidCallbacks, this));
+  callbacksKeys.forEach(key => {
+    _classPrivateFieldGet2(_vpaidCreative, this).unsubscribe(_classPrivateFieldGet2(_vpaidCallbacks, this)[key], key);
+  });
+}
+// eslint-disable-next-line
+function _isValidVPAID(creative) {
+  if (typeof creative.initAd === 'function' && typeof creative.startAd === 'function' && typeof creative.stopAd === 'function' && typeof creative.skipAd === 'function' && typeof creative.resizeAd === 'function' && typeof creative.pauseAd === 'function' && typeof creative.resumeAd === 'function' && typeof creative.expandAd === 'function' && typeof creative.collapseAd === 'function' && typeof creative.subscribe === 'function' && typeof creative.unsubscribe === 'function') {
+    return true;
+  }
+  return false;
+}
+function _onVPAIDAvailable() {
+  window.clearInterval(_classPrivateFieldGet2(_vpaidAvailableInterval, this));
+  window.clearTimeout(_classPrivateFieldGet2(_vpaidLoadTimeout, this));
+  _classPrivateFieldSet2(_vpaidCreative, this, _classPrivateFieldGet2(_vpaidIframe, this).contentWindow.getVPAIDAd());
+  if (_classPrivateFieldGet2(_vpaidCreative, this) && typeof _classPrivateFieldGet2(_vpaidCreative, this).handshakeVersion === 'function') {
+    // we need to insure handshakeVersion return
+    let vpaidVersion;
+    try {
+      vpaidVersion = _classPrivateFieldGet2(_vpaidCreative, this).handshakeVersion('2.0');
+    } catch (error) {
+      console.warn(error);
+      Logger.print(_classPrivateFieldGet2(vpaid_player_rmpVast, this).debugRawConsoleLogs, `could not validate VPAID ad unit handshakeVersion`);
+      _classPrivateFieldGet2(vpaid_player_rmpVast, this).rmpVastUtils.processVastErrors(901, true);
+      return;
+    }
+    _classPrivateFieldSet2(_vpaidVersion, this, parse_int_default()(vpaidVersion));
+    if (_classPrivateFieldGet2(_vpaidVersion, this) < 1) {
+      Logger.print(_classPrivateFieldGet2(vpaid_player_rmpVast, this).debugRawConsoleLogs, `unsupported VPAID version - exit`);
+      _classPrivateFieldGet2(vpaid_player_rmpVast, this).rmpVastUtils.processVastErrors(901, true);
+      return;
+    }
+    if (!_assertClassBrand(_VpaidPlayer_brand, this, _isValidVPAID).call(this, _classPrivateFieldGet2(_vpaidCreative, this))) {
+      //The VPAID creative doesn't conform to the VPAID spec
+      Logger.print(_classPrivateFieldGet2(vpaid_player_rmpVast, this).debugRawConsoleLogs, `VPAID creative does not conform to VPAID spec - exit`);
+      _classPrivateFieldGet2(vpaid_player_rmpVast, this).rmpVastUtils.processVastErrors(901, true);
+      return;
+    }
+    // wire callback for VPAID events
+    _assertClassBrand(_VpaidPlayer_brand, this, _setCallbacksForCreative).call(this);
+    // wire tracking events for VAST pings
+    _classPrivateFieldGet2(vpaid_player_rmpVast, this).rmpVastTracking.wire();
+    const creativeData = {};
+    creativeData.AdParameters = _classPrivateFieldGet2(_adParametersData, this);
+    Logger.print(_classPrivateFieldGet2(vpaid_player_rmpVast, this).debugRawConsoleLogs, `VPAID AdParameters follow`, _classPrivateFieldGet2(_adParametersData, this));
+    FW.show(_classPrivateFieldGet2(vpaid_player_adContainer, this));
+    FW.show(_classPrivateFieldGet2(vpaid_player_adPlayer, this));
+    const environmentVars = {};
+    // we create a new slot for VPAID creative - using adContainer can cause some VPAID to ill-render
+    // from spec:
+    // The 'environmentVars' object contains a reference, 'slot', to the HTML element
+    // on the page in which the ad is to be rendered. The ad unit essentially gets
+    // control of that element. 
+    _classPrivateFieldSet2(_vpaidSlot, this, document.createElement('div'));
+    _classPrivateFieldGet2(_vpaidSlot, this).className = 'rmp-vpaid-container';
+    _classPrivateFieldGet2(vpaid_player_adContainer, this).appendChild(_classPrivateFieldGet2(_vpaidSlot, this));
+    environmentVars.slot = _classPrivateFieldGet2(_vpaidSlot, this);
+    environmentVars.videoSlot = _classPrivateFieldGet2(vpaid_player_adPlayer, this);
+    // we assume we can autoplay (or at least muted autoplay) because this.#rmpVast.currentAdPlayer 
+    // has been init
+    environmentVars.videoSlotCanAutoPlay = true;
+    // when we call initAd we expect AdLoaded event to follow closely
+    // if not we need to resume content
+    _classPrivateFieldSet2(_initAdTimeout, this, window.setTimeout(() => {
+      if (!_classPrivateFieldGet2(_vpaidAdLoaded, this)) {
+        Logger.print(_classPrivateFieldGet2(vpaid_player_rmpVast, this).debugRawConsoleLogs, `#initAdTimeout`);
+        if (_classPrivateFieldGet2(vpaid_player_rmpVast, this).rmpVastAdPlayer) {
+          _classPrivateFieldGet2(vpaid_player_rmpVast, this).rmpVastAdPlayer.resumeContent();
+        }
+      }
+      _classPrivateFieldSet2(_vpaidAdLoaded, this, false);
+    }, _classPrivateFieldGet2(_params, this).creativeLoadTimeout * 10));
+    Logger.print(_classPrivateFieldGet2(vpaid_player_rmpVast, this).debugRawConsoleLogs, `calling initAd on VPAID creative now`);
+    _classPrivateFieldGet2(_vpaidCreative, this).initAd(_classPrivateFieldGet2(_initialWidth, this), _classPrivateFieldGet2(_initialHeight, this), _classPrivateFieldGet2(_initialViewMode, this), _classPrivateFieldGet2(_desiredBitrate, this), creativeData, environmentVars);
+  }
+}
+function _onJSVPAIDLoaded() {
+  Logger.print(_classPrivateFieldGet2(vpaid_player_rmpVast, this).debugRawConsoleLogs, `VPAID JS loaded`);
+  const iframeWindow = _classPrivateFieldGet2(_vpaidIframe, this).contentWindow;
+  if (typeof iframeWindow.getVPAIDAd === 'function') {
+    _assertClassBrand(_VpaidPlayer_brand, this, _onVPAIDAvailable).call(this);
+  } else {
+    _classPrivateFieldSet2(_vpaidAvailableInterval, this, window.setInterval(() => {
+      if (typeof iframeWindow.getVPAIDAd === 'function') {
+        _assertClassBrand(_VpaidPlayer_brand, this, _onVPAIDAvailable).call(this);
+      }
+    }, 100));
+  }
+  _classPrivateFieldGet2(_vpaidScript, this).onload = null;
+  _classPrivateFieldGet2(_vpaidScript, this).onerror = null;
+}
+function _onJSVPAIDError() {
+  Logger.print(_classPrivateFieldGet2(vpaid_player_rmpVast, this).debugRawConsoleLogs, `VPAID JS error loading`);
+  _classPrivateFieldGet2(vpaid_player_rmpVast, this).rmpVastUtils.processVastErrors(901, true);
+  _classPrivateFieldGet2(_vpaidScript, this).onload = null;
+  _classPrivateFieldGet2(_vpaidScript, this).onerror = null;
 }
 ;// CONCATENATED MODULE: ./src/js/creatives/linear.js
 
@@ -10266,343 +11086,174 @@ class VpaidPlayer {
 
 
 
+
+
+
+
+
+
+var linear_rmpVast = /*#__PURE__*/new (weak_map_default())();
+var linear_params = /*#__PURE__*/new (weak_map_default())();
+var linear_adContainer = /*#__PURE__*/new (weak_map_default())();
+var linear_adPlayer = /*#__PURE__*/new (weak_map_default())();
+var _contentPlayer = /*#__PURE__*/new (weak_map_default())();
+var _firstAdPlayerPlayRequest = /*#__PURE__*/new (weak_map_default())();
+var _interactionMobileUI = /*#__PURE__*/new (weak_map_default())();
+var _skipWaitingUI = /*#__PURE__*/new (weak_map_default())();
+var _skipMessageUI = /*#__PURE__*/new (weak_map_default())();
+var _skipIconUI = /*#__PURE__*/new (weak_map_default())();
+var _skipButtonUI = /*#__PURE__*/new (weak_map_default())();
+var _skippableAdCanBeSkipped = /*#__PURE__*/new (weak_map_default())();
+var _onTimeupdateCheckSkipFn = /*#__PURE__*/new (weak_map_default())();
+var _onDurationChangeFn = /*#__PURE__*/new (weak_map_default())();
+var _onLoadedmetadataPlayFn = /*#__PURE__*/new (weak_map_default())();
+var _onContextMenuFn = /*#__PURE__*/new (weak_map_default())();
+var _onPlaybackErrorFn = /*#__PURE__*/new (weak_map_default())();
+var _onInteractionOpenClickThroughUrlFn = /*#__PURE__*/new (weak_map_default())();
+var _creativeLoadTimeoutCallback = /*#__PURE__*/new (weak_map_default())();
+var _hlsJS = /*#__PURE__*/new (weak_map_default())();
+var _hlsJSIndex = /*#__PURE__*/new (weak_map_default())();
+var _readingHlsJS = /*#__PURE__*/new (weak_map_default())();
+var _LinearCreative_brand = /*#__PURE__*/new WeakSet();
 class LinearCreative {
   constructor(rmpVast) {
-    this._rmpVast = rmpVast;
-    this._params = rmpVast.params;
-    this._adContainer = rmpVast.adContainer;
-    this._adPlayer = rmpVast.currentAdPlayer;
-    this._contentPlayer = rmpVast.currentContentPlayer;
-    this._debugRawConsoleLogs = rmpVast.debugRawConsoleLogs;
-    this._firstAdPlayerPlayRequest = true;
-    this._interactionMobileUI = null;
-    this._skipWaitingUI = null;
-    this._skipMessageUI = null;
-    this._skipIconUI = null;
-    this._skipButtonUI = null;
-    this._skippableAdCanBeSkipped = false;
-    this._onSkipInteractionFn = null;
-    this._onTimeupdateCheckSkipFn = null;
-    this._onDurationChangeFn = null;
-    this._onLoadedmetadataPlayFn = null;
-    this._onContextMenuFn = null;
-    this._onPlaybackErrorFn = null;
-    this._onInteractionOpenClickThroughUrlFn = null;
-    this._creativeLoadTimeoutCallback = null;
-    // hls.js
-    this._hlsJS = [];
-    this._hlsJSIndex = 0;
-    this._readingHlsJS = false;
+    _classPrivateMethodInitSpec(this, _LinearCreative_brand);
+    _classPrivateFieldInitSpec(this, linear_rmpVast, void 0);
+    _classPrivateFieldInitSpec(this, linear_params, void 0);
+    _classPrivateFieldInitSpec(this, linear_adContainer, void 0);
+    _classPrivateFieldInitSpec(this, linear_adPlayer, void 0);
+    _classPrivateFieldInitSpec(this, _contentPlayer, void 0);
+    _classPrivateFieldInitSpec(this, _firstAdPlayerPlayRequest, true);
+    _classPrivateFieldInitSpec(this, _interactionMobileUI, null);
+    _classPrivateFieldInitSpec(this, _skipWaitingUI, null);
+    _classPrivateFieldInitSpec(this, _skipMessageUI, null);
+    _classPrivateFieldInitSpec(this, _skipIconUI, null);
+    _classPrivateFieldInitSpec(this, _skipButtonUI, null);
+    _classPrivateFieldInitSpec(this, _skippableAdCanBeSkipped, false);
+    _classPrivateFieldInitSpec(this, _onTimeupdateCheckSkipFn, null);
+    _classPrivateFieldInitSpec(this, _onDurationChangeFn, null);
+    _classPrivateFieldInitSpec(this, _onLoadedmetadataPlayFn, null);
+    _classPrivateFieldInitSpec(this, _onContextMenuFn, null);
+    _classPrivateFieldInitSpec(this, _onPlaybackErrorFn, null);
+    _classPrivateFieldInitSpec(this, _onInteractionOpenClickThroughUrlFn, null);
+    _classPrivateFieldInitSpec(this, _creativeLoadTimeoutCallback, null);
+    _classPrivateFieldInitSpec(this, _hlsJS, []);
+    _classPrivateFieldInitSpec(this, _hlsJSIndex, 0);
+    _classPrivateFieldInitSpec(this, _readingHlsJS, false);
+    _classPrivateFieldSet2(linear_rmpVast, this, rmpVast);
+    _classPrivateFieldSet2(linear_params, this, rmpVast.params);
+    _classPrivateFieldSet2(linear_adContainer, this, rmpVast.adContainer);
+    _classPrivateFieldSet2(linear_adPlayer, this, rmpVast.currentAdPlayer);
+    _classPrivateFieldSet2(_contentPlayer, this, rmpVast.currentContentPlayer);
   }
   get hlsJSInstances() {
-    return this._hlsJS;
+    return _classPrivateFieldGet2(_hlsJS, this);
   }
   get hlsJSIndex() {
-    return this._hlsJSIndex;
+    return _classPrivateFieldGet2(_hlsJSIndex, this);
   }
   set hlsJSIndex(value) {
-    this._hlsJSIndex = value;
+    _classPrivateFieldSet2(_hlsJSIndex, this, value);
   }
   get readingHlsJS() {
-    return this._readingHlsJS;
+    return _classPrivateFieldGet2(_readingHlsJS, this);
   }
   set readingHlsJS(value) {
-    this._readingHlsJS = value;
+    _classPrivateFieldSet2(_readingHlsJS, this, value);
   }
   get skippableAdCanBeSkipped() {
-    return this._skippableAdCanBeSkipped;
-  }
-  _onDurationChange() {
-    let adPlayerDuration = -1;
-    if (this._rmpVast.rmpVastAdPlayer) {
-      adPlayerDuration = this._rmpVast.rmpVastAdPlayer.duration;
-    }
-    this._rmpVast.rmpVastUtils.createApiEvent('addurationchange');
-    // progress event
-    if (adPlayerDuration === -1) {
-      return;
-    }
-    const keys = Object.keys(this._rmpVast.creative.trackingEvents);
-    keys.forEach(eventName => {
-      if (/progress-/i.test(eventName)) {
-        const time = eventName.split('-');
-        const time_2 = time[1];
-        if (/%/i.test(time_2)) {
-          let timePerCent = time_2.slice(0, -1);
-          timePerCent = adPlayerDuration * parse_float_default()(timePerCent) / 100;
-          const trackingUrls = this._rmpVast.creative.trackingEvents[eventName];
-          trackingUrls.forEach(url => {
-            var _context;
-            push_default()(_context = this._rmpVast.progressEvents).call(_context, {
-              time: timePerCent,
-              url
-            });
-          });
-        } else {
-          const trackingUrls = this._rmpVast.creative.trackingEvents[eventName];
-          trackingUrls.forEach(url => {
-            var _context2;
-            push_default()(_context2 = this._rmpVast.progressEvents).call(_context2, {
-              time: parse_float_default()(time_2) * 1000,
-              url
-            });
-          });
-        }
-      }
-    });
-    // sort progress time ascending
-    if (this._rmpVast.progressEvents.length > 0) {
-      var _context3;
-      sort_default()(_context3 = this._rmpVast.progressEvents).call(_context3, (a, b) => {
-        return a.time - b.time;
-      });
-    }
-  }
-  _onLoadedmetadataPlay() {
-    FW.clearTimeout(this._creativeLoadTimeoutCallback);
-    // adjust volume to make sure content player volume matches ad player volume
-    if (this._adPlayer) {
-      if (this._adPlayer.volume !== this._contentPlayer.volume) {
-        this._adPlayer.volume = this._contentPlayer.volume;
-      }
-      if (this._contentPlayer.muted) {
-        this._adPlayer.muted = true;
-      } else {
-        this._adPlayer.muted = false;
-      }
-    }
-    // show ad container holding ad player
-    FW.show(this._adContainer);
-    FW.show(this._adPlayer);
-    this._rmpVast.__adOnStage = true;
-    // play ad player
-    if (this._rmpVast.rmpVastAdPlayer) {
-      this._rmpVast.rmpVastAdPlayer.play(this._firstAdPlayerPlayRequest);
-      this._firstAdPlayerPlayRequest = false;
-    }
-    this._rmpVast.rmpVastTracking.dispatchTrackingAndApiEvent('adloaded');
-  }
-  _onInteractionOpenClickThroughUrl(event) {
-    if (event) {
-      event.stopPropagation();
-    }
-    if (!Environment.isMobile) {
-      FW.openWindow(this._rmpVast.creative.clickThroughUrl);
-    }
-    this._rmpVast.pause();
-    this._rmpVast.rmpVastTracking.dispatchTrackingAndApiEvent('adclick');
-  }
-  _onPlaybackError(event) {
-    // https://www.w3.org/TR/html50/embedded-content-0.html#mediaerror
-    // MEDIA_ERR_SRC_NOT_SUPPORTED is sign of fatal error
-    // other errors may produce non-fatal error in the browser so we do not 
-    // act upon them
-    if (event && event.target) {
-      const videoElement = event.target;
-      if (videoElement.error && FW.isNumber(videoElement.error.code)) {
-        const errorCode = videoElement.error.code;
-        let errorMessage = '';
-        if (typeof videoElement.error.message === 'string') {
-          errorMessage = videoElement.error.message;
-        }
-        const htmlMediaErrorTypes = ['MEDIA_ERR_CUSTOM', 'MEDIA_ERR_ABORTED', 'MEDIA_ERR_NETWORK', 'MEDIA_ERR_DECODE', 'MEDIA_ERR_SRC_NOT_SUPPORTED', 'MEDIA_ERR_ENCRYPTED'];
-        console.error(`Error on video element with code ${errorCode.toString()} and message ${errorMessage}`);
-        Logger.print(this._debugRawConsoleLogs, `error type is ${htmlMediaErrorTypes[errorCode] ? htmlMediaErrorTypes[errorCode] : 'unknown type'}`);
-
-        // MEDIA_ERR_SRC_NOT_SUPPORTED (numeric value 4)
-        if (errorCode === 4) {
-          this._rmpVast.rmpVastUtils.processVastErrors(401, true);
-        }
-      }
-    }
-  }
-  _updateWaitingForCanBeSkippedUI(delta) {
-    if (Math.round(delta) > 0) {
-      this._skipWaitingUI.textContent = this._params.labels.skipMessage + ' ' + Math.round(delta) + 's';
-    }
-  }
-  _onTimeupdateCheckSkip() {
-    if (this._skipButtonUI.style.display === 'none') {
-      FW.setStyle(this._skipButtonUI, {
-        display: 'block'
-      });
-    }
-    const adPlayerCurrentTime = this._adPlayer.currentTime;
-    if (FW.isNumber(adPlayerCurrentTime) && adPlayerCurrentTime > 0) {
-      if (adPlayerCurrentTime >= this._rmpVast.creative.skipoffset) {
-        this._adPlayer.removeEventListener('timeupdate', this._onTimeupdateCheckSkipFn);
-        FW.setStyle(this._skipWaitingUI, {
-          display: 'none'
-        });
-        FW.setStyle(this._skipMessageUI, {
-          display: 'block'
-        });
-        FW.setStyle(this._skipIconUI, {
-          display: 'block'
-        });
-        this._skippableAdCanBeSkipped = true;
-        this._rmpVast.rmpVastUtils.createApiEvent('adskippablestatechanged');
-      } else if (this._rmpVast.creative.skipoffset - adPlayerCurrentTime > 0) {
-        this._updateWaitingForCanBeSkippedUI(this._rmpVast.creative.skipoffset - adPlayerCurrentTime);
-      }
-    }
-  }
-  _onSkipInteraction(event) {
-    if (event) {
-      event.stopPropagation();
-      if (event.type === 'touchend') {
-        event.preventDefault();
-      }
-    }
-    if (this._skippableAdCanBeSkipped) {
-      this._rmpVast.rmpVastTracking.dispatchTrackingAndApiEvent('adskipped');
-      // resume content
-      if (this._rmpVast.rmpVastAdPlayer) {
-        this._rmpVast.rmpVastAdPlayer.resumeContent();
-      }
-    }
-  }
-  _appendSkipUI() {
-    const skipMessage = this._params.labels.skipMessage;
-    this._skipButtonUI = document.createElement('div');
-    this._skipButtonUI.className = 'rmp-ad-container-skip';
-    FW.setStyle(this._skipButtonUI, {
-      display: 'none'
-    });
-    FW.makeButtonAccessible(this._skipButtonUI, skipMessage);
-    this._skipWaitingUI = document.createElement('div');
-    this._skipWaitingUI.className = 'rmp-ad-container-skip-waiting';
-    this._updateWaitingForCanBeSkippedUI(this._rmpVast.creative.skipoffset);
-    FW.setStyle(this._skipWaitingUI, {
-      display: 'block'
-    });
-    this._skipMessageUI = document.createElement('div');
-    this._skipMessageUI.className = 'rmp-ad-container-skip-message';
-    this._skipMessageUI.textContent = skipMessage;
-    FW.setStyle(this._skipMessageUI, {
-      display: 'none'
-    });
-    this._skipIconUI = document.createElement('div');
-    this._skipIconUI.className = 'rmp-ad-container-skip-icon';
-    FW.setStyle(this._skipIconUI, {
-      display: 'none'
-    });
-    this._onSkipInteractionFn = this._onSkipInteraction.bind(this);
-    FW.addEvents(['click', 'touchend'], this._skipButtonUI, this._onSkipInteractionFn);
-    this._skipButtonUI.appendChild(this._skipWaitingUI);
-    this._skipButtonUI.appendChild(this._skipMessageUI);
-    this._skipButtonUI.appendChild(this._skipIconUI);
-    this._adContainer.appendChild(this._skipButtonUI);
-    this._onTimeupdateCheckSkipFn = this._onTimeupdateCheckSkip.bind(this);
-    this._adPlayer.addEventListener('timeupdate', this._onTimeupdateCheckSkipFn);
-  }
-  _onHlsJSError(event, data) {
-    if (data.fatal) {
-      switch (data.type) {
-        case Hls.ErrorTypes.NETWORK_ERROR:
-          // try to recover network error
-          this._hlsJS[this._hlsJSIndex].startLoad();
-          break;
-        case Hls.ErrorTypes.MEDIA_ERROR:
-          this._hlsJS[this._hlsJSIndex].recoverMediaError();
-          break;
-        default:
-          this._rmpVast.rmpVastUtils.processVastErrors(900, true);
-          break;
-      }
-    }
+    return _classPrivateFieldGet2(_skippableAdCanBeSkipped, this);
   }
   destroy() {
-    if (this._interactionMobileUI) {
-      this._interactionMobileUI.removeEventListener('touchend', this._onInteractionOpenClickThroughUrlFn);
-      FW.removeElement(this._interactionMobileUI);
+    if (_classPrivateFieldGet2(_interactionMobileUI, this)) {
+      _classPrivateFieldGet2(_interactionMobileUI, this).removeEventListener('touchend', _classPrivateFieldGet2(_onInteractionOpenClickThroughUrlFn, this));
+      FW.removeElement(_classPrivateFieldGet2(_interactionMobileUI, this));
     }
-    FW.clearTimeout(this._creativeLoadTimeoutCallback);
-    FW.removeElement(this._skipButtonUI);
-    FW.removeEvents(['click', 'touchend'], this._skipButtonUI, this._onSkipInteractionFn);
-    if (this._adPlayer) {
-      this._adPlayer.removeEventListener('click', this._onInteractionOpenClickThroughUrlFn);
-      this._adPlayer.removeEventListener('timeupdate', this._onTimeupdateCheckSkipFn);
-      this._adPlayer.removeEventListener('durationchange', this._onDurationChangeFn);
-      this._adPlayer.removeEventListener('loadedmetadata', this._onLoadedmetadataPlayFn);
-      this._adPlayer.removeEventListener('contextmenu', this._onContextMenuFn);
-      this._adPlayer.removeEventListener('error', this._onPlaybackErrorFn);
+    window.clearTimeout(_classPrivateFieldGet2(_creativeLoadTimeoutCallback, this));
+    FW.removeElement(_classPrivateFieldGet2(_skipButtonUI, this));
+    if (_classPrivateFieldGet2(linear_adPlayer, this)) {
+      _classPrivateFieldGet2(linear_adPlayer, this).removeEventListener('click', _classPrivateFieldGet2(_onInteractionOpenClickThroughUrlFn, this));
+      _classPrivateFieldGet2(linear_adPlayer, this).removeEventListener('timeupdate', _classPrivateFieldGet2(_onTimeupdateCheckSkipFn, this));
+      _classPrivateFieldGet2(linear_adPlayer, this).removeEventListener('durationchange', _classPrivateFieldGet2(_onDurationChangeFn, this));
+      _classPrivateFieldGet2(linear_adPlayer, this).removeEventListener('loadedmetadata', _classPrivateFieldGet2(_onLoadedmetadataPlayFn, this));
+      _classPrivateFieldGet2(linear_adPlayer, this).removeEventListener('contextmenu', _classPrivateFieldGet2(_onContextMenuFn, this));
+      _classPrivateFieldGet2(linear_adPlayer, this).removeEventListener('error', _classPrivateFieldGet2(_onPlaybackErrorFn, this));
     }
-    this._contentPlayer.removeEventListener('error', this._onPlaybackErrorFn);
+    _classPrivateFieldGet2(_contentPlayer, this).removeEventListener('error', _classPrivateFieldGet2(_onPlaybackErrorFn, this));
   }
   update(url, type) {
-    Logger.print(this._debugRawConsoleLogs, `update ad player for linear creative of type ${type} located at ${url}`);
-    this._onDurationChangeFn = this._onDurationChange.bind(this);
-    this._adPlayer.addEventListener('durationchange', this._onDurationChangeFn, {
+    Logger.print(_classPrivateFieldGet2(linear_rmpVast, this).debugRawConsoleLogs, `update ad player for linear creative of type ${type} located at ${url}`);
+    _classPrivateFieldSet2(_onDurationChangeFn, this, _assertClassBrand(_LinearCreative_brand, this, _onDurationChange).bind(this));
+    _classPrivateFieldGet2(linear_adPlayer, this).addEventListener('durationchange', _classPrivateFieldGet2(_onDurationChangeFn, this), {
       once: true
     });
 
     // when creative is loaded play it 
-    this._onLoadedmetadataPlayFn = this._onLoadedmetadataPlay.bind(this);
-    this._adPlayer.addEventListener('loadedmetadata', this._onLoadedmetadataPlayFn, {
+    _classPrivateFieldSet2(_onLoadedmetadataPlayFn, this, _assertClassBrand(_LinearCreative_brand, this, _onLoadedmetadataPlay).bind(this));
+    _classPrivateFieldGet2(linear_adPlayer, this).addEventListener('loadedmetadata', _classPrivateFieldGet2(_onLoadedmetadataPlayFn, this), {
       once: true
     });
 
     // prevent built in menu to show on right click
-    this._onContextMenuFn = FW.stopPreventEvent;
-    this._adPlayer.addEventListener('contextmenu', this._onContextMenuFn);
-    this._onPlaybackErrorFn = this._onPlaybackError.bind(this);
+    _classPrivateFieldSet2(_onContextMenuFn, this, FW.stopPreventEvent);
+    _classPrivateFieldGet2(linear_adPlayer, this).addEventListener('contextmenu', _classPrivateFieldGet2(_onContextMenuFn, this));
+    _classPrivateFieldSet2(_onPlaybackErrorFn, this, _assertClassBrand(_LinearCreative_brand, this, _onPlaybackError).bind(this));
 
     // start creativeLoadTimeout
-    this._creativeLoadTimeoutCallback = setTimeout(() => {
-      this._rmpVast.rmpVastUtils.processVastErrors(402, true);
-    }, this._params.creativeLoadTimeout);
-    if (this._params.useHlsJS && type === 'application/vnd.apple.mpegurl' && typeof window.Hls !== 'undefined' && Hls.isSupported()) {
-      this._readingHlsJS = true;
+    _classPrivateFieldSet2(_creativeLoadTimeoutCallback, this, window.setTimeout(() => {
+      _classPrivateFieldGet2(linear_rmpVast, this).rmpVastUtils.processVastErrors(402, true);
+    }, _classPrivateFieldGet2(linear_params, this).creativeLoadTimeout));
+    if (_classPrivateFieldGet2(linear_params, this).useHlsJS && type === 'application/vnd.apple.mpegurl' && typeof window.Hls !== 'undefined' && Hls.isSupported()) {
+      _classPrivateFieldSet2(_readingHlsJS, this, true);
       const hlsJSConfig = {
-        debug: this._params.debugHlsJS,
+        debug: _classPrivateFieldGet2(linear_params, this).debugHlsJS,
         capLevelToPlayerSize: true,
         testBandwidth: true,
         startLevel: -1,
         lowLatencyMode: false
       };
-      this._hlsJS[this._hlsJSIndex] = new Hls(hlsJSConfig);
-      this._hlsJS[this._hlsJSIndex].on(Hls.Events.ERROR, this._onHlsJSError.bind(this));
-      this._hlsJS[this._hlsJSIndex].loadSource(url);
-      this._hlsJS[this._hlsJSIndex].attachMedia(this._adPlayer);
+      _classPrivateFieldGet2(_hlsJS, this)[_classPrivateFieldGet2(_hlsJSIndex, this)] = new Hls(hlsJSConfig);
+      _classPrivateFieldGet2(_hlsJS, this)[_classPrivateFieldGet2(_hlsJSIndex, this)].on(Hls.Events.ERROR, _assertClassBrand(_LinearCreative_brand, this, _onHlsJSError).bind(this));
+      _classPrivateFieldGet2(_hlsJS, this)[_classPrivateFieldGet2(_hlsJSIndex, this)].loadSource(url);
+      _classPrivateFieldGet2(_hlsJS, this)[_classPrivateFieldGet2(_hlsJSIndex, this)].attachMedia(_classPrivateFieldGet2(linear_adPlayer, this));
     } else {
-      if (typeof this._rmpVast.creative.simid === 'undefined' || this._rmpVast.creative.simid && !this._params.enableSimid) {
-        this._adPlayer.addEventListener('error', this._onPlaybackErrorFn);
-        this._adPlayer.src = url;
+      if (typeof _classPrivateFieldGet2(linear_rmpVast, this).creative.simid === 'undefined' || _classPrivateFieldGet2(linear_rmpVast, this).creative.simid && !_classPrivateFieldGet2(linear_params, this).enableSimid) {
+        _classPrivateFieldGet2(linear_adPlayer, this).addEventListener('error', _classPrivateFieldGet2(_onPlaybackErrorFn, this));
+        _classPrivateFieldGet2(linear_adPlayer, this).src = url;
         // we need this extra load for Chrome data saver mode in mobile or desktop
-        this._adPlayer.load();
+        _classPrivateFieldGet2(linear_adPlayer, this).load();
       } else {
-        if (this._rmpVast.rmpVastSimidPlayer) {
-          this._rmpVast.rmpVastSimidPlayer.stopAd();
+        if (_classPrivateFieldGet2(linear_rmpVast, this).rmpVastSimidPlayer) {
+          _classPrivateFieldGet2(linear_rmpVast, this).rmpVastSimidPlayer.stopAd();
         }
-        this._rmpVast.rmpVastSimidPlayer = new SimidPlayer(url, this._rmpVast);
-        this._rmpVast.rmpVastSimidPlayer.initializeAd();
-        this._rmpVast.rmpVastSimidPlayer.playAd();
+        _classPrivateFieldGet2(linear_rmpVast, this).rmpVastSimidPlayer = new SimidPlayer(url, _classPrivateFieldGet2(linear_rmpVast, this));
+        _classPrivateFieldGet2(linear_rmpVast, this).rmpVastSimidPlayer.initializeAd();
+        _classPrivateFieldGet2(linear_rmpVast, this).rmpVastSimidPlayer.playAd();
       }
     }
 
     // clickthrough interaction
-    this._onInteractionOpenClickThroughUrlFn = this._onInteractionOpenClickThroughUrl.bind(this);
-    if (this._rmpVast.creative.clickThroughUrl) {
+    _classPrivateFieldSet2(_onInteractionOpenClickThroughUrlFn, this, _assertClassBrand(_LinearCreative_brand, this, _onInteractionOpenClickThroughUrl).bind(this));
+    if (_classPrivateFieldGet2(linear_rmpVast, this).creative.clickThroughUrl) {
       if (Environment.isMobile) {
         // we create a <a> tag rather than using window.open 
         // because it works better in standalone mode and WebView
-        this._interactionMobileUI = document.createElement('a');
-        this._interactionMobileUI.className = 'rmp-ad-click-ui-mobile';
-        this._interactionMobileUI.textContent = this._params.labels.textForInteractionUIOnMobile;
-        this._interactionMobileUI.addEventListener('touchend', this._onInteractionOpenClickThroughUrlFn);
-        this._interactionMobileUI.href = this._rmpVast.creative.clickThroughUrl;
-        this._interactionMobileUI.target = '_blank';
-        this._adContainer.appendChild(this._interactionMobileUI);
+        _classPrivateFieldSet2(_interactionMobileUI, this, document.createElement('a'));
+        _classPrivateFieldGet2(_interactionMobileUI, this).className = 'rmp-ad-click-ui-mobile';
+        _classPrivateFieldGet2(_interactionMobileUI, this).textContent = _classPrivateFieldGet2(linear_params, this).labels.textForInteractionUIOnMobile;
+        _classPrivateFieldGet2(_interactionMobileUI, this).addEventListener('touchend', _classPrivateFieldGet2(_onInteractionOpenClickThroughUrlFn, this));
+        _classPrivateFieldGet2(_interactionMobileUI, this).href = _classPrivateFieldGet2(linear_rmpVast, this).creative.clickThroughUrl;
+        _classPrivateFieldGet2(_interactionMobileUI, this).target = '_blank';
+        _classPrivateFieldGet2(linear_adContainer, this).appendChild(_classPrivateFieldGet2(_interactionMobileUI, this));
       } else {
-        this._adPlayer.addEventListener('click', this._onInteractionOpenClickThroughUrlFn);
+        _classPrivateFieldGet2(linear_adPlayer, this).addEventListener('click', _classPrivateFieldGet2(_onInteractionOpenClickThroughUrlFn, this));
       }
     }
 
     // skippable - only where ad player is different from 
     // content player
-    if (this._rmpVast.creative.isSkippableAd) {
-      this._appendSkipUI();
+    if (_classPrivateFieldGet2(linear_rmpVast, this).creative.isSkippableAd) {
+      _assertClassBrand(_LinearCreative_brand, this, _appendSkipUI).call(this);
     }
   }
   parse(creative) {
@@ -10615,13 +11266,13 @@ class LinearCreative {
       return;
     }
     if (icons.length > 0) {
-      this._rmpVast.rmpVastIcons = new Icons(this._rmpVast);
-      this._rmpVast.rmpVastIcons.parse(icons);
+      _classPrivateFieldGet2(linear_rmpVast, this).rmpVastIcons = new Icons(_classPrivateFieldGet2(linear_rmpVast, this));
+      _classPrivateFieldGet2(linear_rmpVast, this).rmpVastIcons.parse(icons);
     }
     // check for AdParameters tag in case we have a VPAID creative
-    this._rmpVast.adParametersData = '';
+    _classPrivateFieldGet2(linear_rmpVast, this).adParametersData = '';
     if (adParameters && adParameters.value) {
-      this._rmpVast.adParametersData = adParameters.value;
+      _classPrivateFieldGet2(linear_rmpVast, this).adParametersData = adParameters.value;
     }
     let mediaFileItems = [];
     let isVpaid = false;
@@ -10642,8 +11293,8 @@ class LinearCreative {
       // for VPAID we may not have a width, height or delivery
       const vpaidPattern = /vpaid/i;
       const jsPattern = /\/javascript/i;
-      if (this._params.enableVpaid && currentMediaFile.apiFramework && vpaidPattern.test(currentMediaFile.apiFramework) && jsPattern.test(type)) {
-        Logger.print(this._debugRawConsoleLogs, `VPAID creative detected`);
+      if (_classPrivateFieldGet2(linear_params, this).enableVpaid && currentMediaFile.apiFramework && vpaidPattern.test(currentMediaFile.apiFramework) && jsPattern.test(type)) {
+        Logger.print(_classPrivateFieldGet2(linear_rmpVast, this).debugRawConsoleLogs, `VPAID creative detected`);
         mediaFileItems = [newMediaFileItem];
         isVpaid = true;
         break;
@@ -10660,22 +11311,22 @@ class LinearCreative {
       const type = currentMediaFileItem.type;
       const url = currentMediaFileItem.url;
       if (isVpaid && url) {
-        this._rmpVast.rmpVastVpaidPlayer = new VpaidPlayer(this._rmpVast);
-        this._rmpVast.rmpVastVpaidPlayer.init(url, this._params.vpaidSettings);
-        this._rmpVast.creative.type = type;
+        _classPrivateFieldGet2(linear_rmpVast, this).rmpVastVpaidPlayer = new VpaidPlayer(_classPrivateFieldGet2(linear_rmpVast, this));
+        _classPrivateFieldGet2(linear_rmpVast, this).rmpVastVpaidPlayer.init(url, _classPrivateFieldGet2(linear_params, this).vpaidSettings);
+        _classPrivateFieldGet2(linear_rmpVast, this).creative.type = type;
         return;
       }
       // we have HLS > use hls.js where no native support for HLS is available or native HLS otherwise (Apple devices mainly)
-      if (this._rmpVast.rmpVastAdPlayer) {
+      if (_classPrivateFieldGet2(linear_rmpVast, this).rmpVastAdPlayer) {
         if (type === 'application/vnd.apple.mpegurl' && (Environment.checkCanPlayType(type) || typeof window.Hls !== 'undefined' && Hls.isSupported())) {
-          this._rmpVast.rmpVastAdPlayer.append(url, type);
-          this._rmpVast.creative.type = type;
+          _classPrivateFieldGet2(linear_rmpVast, this).rmpVastAdPlayer.append(url, type);
+          _classPrivateFieldGet2(linear_rmpVast, this).creative.type = type;
           return;
         }
         // we have DASH and DASH is natively supported > use DASH
         if (Environment.checkCanPlayType('application/dash+xml')) {
-          this._rmpVast.rmpVastAdPlayer.append(url, type);
-          this._rmpVast.creative.type = type;
+          _classPrivateFieldGet2(linear_rmpVast, this).rmpVastAdPlayer.append(url, type);
+          _classPrivateFieldGet2(linear_rmpVast, this).creative.type = type;
           return;
         }
       }
@@ -10729,7 +11380,7 @@ class LinearCreative {
     // still no match for supported format - we exit
     if (retainedCreatives.length === 0) {
       // None of the MediaFile provided are supported by the player
-      this._rmpVast.rmpVastUtils.processVastErrors(403, true);
+      _classPrivateFieldGet2(linear_rmpVast, this).rmpVastUtils.processVastErrors(403, true);
       return;
     }
 
@@ -10737,7 +11388,7 @@ class LinearCreative {
     sort_default()(retainedCreatives).call(retainedCreatives, (a, b) => {
       return a.width - b.width;
     });
-    Logger.print(this._debugRawConsoleLogs, `Vavailable linear creative follows`, retainedCreatives);
+    Logger.print(_classPrivateFieldGet2(linear_rmpVast, this).debugRawConsoleLogs, `Vavailable linear creative follows`, retainedCreatives);
 
     // we have files matching device capabilities
     // select the best one based on player current width
@@ -10745,14 +11396,14 @@ class LinearCreative {
     let validCreativesByWidth = [];
     let validCreativesByBitrate = [];
     if (retainedCreatives.length > 1) {
-      const containerWidth = FW.getWidth(this._rmpVast.container) * Environment.devicePixelRatio;
-      const containerHeight = FW.getHeight(this._rmpVast.container) * Environment.devicePixelRatio;
+      const containerWidth = FW.getWidth(_classPrivateFieldGet2(linear_rmpVast, this).container) * Environment.devicePixelRatio;
+      const containerHeight = FW.getHeight(_classPrivateFieldGet2(linear_rmpVast, this).container) * Environment.devicePixelRatio;
       if (containerWidth > 0 && containerHeight > 0) {
         validCreativesByWidth = retainedCreatives.filter(creative => {
           return containerWidth >= creative.width && containerHeight >= creative.height;
         });
       }
-      Logger.print(this._debugRawConsoleLogs, `validCreativesByWidth follow`, validCreativesByWidth);
+      Logger.print(_classPrivateFieldGet2(linear_rmpVast, this).debugRawConsoleLogs, `validCreativesByWidth follow`, validCreativesByWidth);
 
       // if no match by size 
       if (validCreativesByWidth.length === 0) {
@@ -10762,7 +11413,7 @@ class LinearCreative {
       // filter by bitrate to provide best quality
       const rmpConnection = new RmpConnection();
       let availableBandwidth = rmpConnection.bandwidthData.estimate;
-      Logger.print(this._debugRawConsoleLogs, `availableBandwidth is ${availableBandwidth} Mbps`);
+      Logger.print(_classPrivateFieldGet2(linear_rmpVast, this).debugRawConsoleLogs, `availableBandwidth is ${availableBandwidth} Mbps`);
       if (availableBandwidth > -1 && validCreativesByWidth.length > 1) {
         // sort supported creatives by bitrates
         sort_default()(validCreativesByWidth).call(validCreativesByWidth, (a, b) => {
@@ -10773,7 +11424,7 @@ class LinearCreative {
         validCreativesByBitrate = validCreativesByWidth.filter(creative => {
           return availableBandwidth >= creative.bitrate;
         });
-        Logger.print(this._debugRawConsoleLogs, `validCreativesByBitrate follow`, validCreativesByBitrate);
+        Logger.print(_classPrivateFieldGet2(linear_rmpVast, this).debugRawConsoleLogs, `validCreativesByBitrate follow`, validCreativesByBitrate);
 
         // pick max available bitrate
         finalCreative = validCreativesByBitrate[validCreativesByBitrate.length - 1];
@@ -10791,13 +11442,213 @@ class LinearCreative {
         finalCreative = retainedCreatives[retainedCreatives.length - 1];
       }
     }
-    Logger.print(this._debugRawConsoleLogs, `selected linear creative follows`, finalCreative);
-    this._rmpVast.creative.mediaUrl = finalCreative.url;
-    this._rmpVast.creative.height = finalCreative.height;
-    this._rmpVast.creative.width = finalCreative.width;
-    this._rmpVast.creative.type = finalCreative.type;
-    if (this._rmpVast.rmpVastAdPlayer) {
-      this._rmpVast.rmpVastAdPlayer.append(finalCreative.url, finalCreative.type);
+    Logger.print(_classPrivateFieldGet2(linear_rmpVast, this).debugRawConsoleLogs, `selected linear creative follows`, finalCreative);
+    _classPrivateFieldGet2(linear_rmpVast, this).creative.mediaUrl = finalCreative.url;
+    _classPrivateFieldGet2(linear_rmpVast, this).creative.height = finalCreative.height;
+    _classPrivateFieldGet2(linear_rmpVast, this).creative.width = finalCreative.width;
+    _classPrivateFieldGet2(linear_rmpVast, this).creative.type = finalCreative.type;
+    if (_classPrivateFieldGet2(linear_rmpVast, this).rmpVastAdPlayer) {
+      _classPrivateFieldGet2(linear_rmpVast, this).rmpVastAdPlayer.append(finalCreative.url, finalCreative.type);
+    }
+  }
+}
+function _onDurationChange() {
+  let adPlayerDuration = -1;
+  if (_classPrivateFieldGet2(linear_rmpVast, this).rmpVastAdPlayer) {
+    adPlayerDuration = _classPrivateFieldGet2(linear_rmpVast, this).rmpVastAdPlayer.duration;
+  }
+  _classPrivateFieldGet2(linear_rmpVast, this).rmpVastUtils.createApiEvent('addurationchange');
+  // progress event
+  if (adPlayerDuration === -1) {
+    return;
+  }
+  const keys = Object.keys(_classPrivateFieldGet2(linear_rmpVast, this).creative.trackingEvents);
+  keys.forEach(eventName => {
+    if (/progress-/i.test(eventName)) {
+      const time = eventName.split('-');
+      const time_2 = time[1];
+      if (/%/i.test(time_2)) {
+        let timePerCent = time_2.slice(0, -1);
+        timePerCent = adPlayerDuration * parse_float_default()(timePerCent) / 100;
+        const trackingUrls = _classPrivateFieldGet2(linear_rmpVast, this).creative.trackingEvents[eventName];
+        trackingUrls.forEach(url => {
+          var _context;
+          push_default()(_context = _classPrivateFieldGet2(linear_rmpVast, this).progressEvents).call(_context, {
+            time: timePerCent,
+            url
+          });
+        });
+      } else {
+        const trackingUrls = _classPrivateFieldGet2(linear_rmpVast, this).creative.trackingEvents[eventName];
+        trackingUrls.forEach(url => {
+          var _context2;
+          push_default()(_context2 = _classPrivateFieldGet2(linear_rmpVast, this).progressEvents).call(_context2, {
+            time: parse_float_default()(time_2) * 1000,
+            url
+          });
+        });
+      }
+    }
+  });
+  // sort progress time ascending
+  if (_classPrivateFieldGet2(linear_rmpVast, this).progressEvents.length > 0) {
+    var _context3;
+    sort_default()(_context3 = _classPrivateFieldGet2(linear_rmpVast, this).progressEvents).call(_context3, (a, b) => {
+      return a.time - b.time;
+    });
+  }
+}
+function _onLoadedmetadataPlay() {
+  window.clearTimeout(_classPrivateFieldGet2(_creativeLoadTimeoutCallback, this));
+  // adjust volume to make sure content player volume matches ad player volume
+  if (_classPrivateFieldGet2(linear_adPlayer, this)) {
+    if (_classPrivateFieldGet2(linear_adPlayer, this).volume !== _classPrivateFieldGet2(_contentPlayer, this).volume) {
+      _classPrivateFieldGet2(linear_adPlayer, this).volume = _classPrivateFieldGet2(_contentPlayer, this).volume;
+    }
+    if (_classPrivateFieldGet2(_contentPlayer, this).muted) {
+      _classPrivateFieldGet2(linear_adPlayer, this).muted = true;
+    } else {
+      _classPrivateFieldGet2(linear_adPlayer, this).muted = false;
+    }
+  }
+  // show ad container holding ad player
+  FW.show(_classPrivateFieldGet2(linear_adContainer, this));
+  FW.show(_classPrivateFieldGet2(linear_adPlayer, this));
+  _classPrivateFieldGet2(linear_rmpVast, this).__adOnStage = true;
+  // play ad player
+  if (_classPrivateFieldGet2(linear_rmpVast, this).rmpVastAdPlayer) {
+    _classPrivateFieldGet2(linear_rmpVast, this).rmpVastAdPlayer.play(_classPrivateFieldGet2(_firstAdPlayerPlayRequest, this));
+    _classPrivateFieldSet2(_firstAdPlayerPlayRequest, this, false);
+  }
+  _classPrivateFieldGet2(linear_rmpVast, this).rmpVastTracking.dispatchTrackingAndApiEvent('adloaded');
+}
+function _onInteractionOpenClickThroughUrl(event) {
+  if (event) {
+    event.stopPropagation();
+  }
+  if (!Environment.isMobile) {
+    FW.openWindow(_classPrivateFieldGet2(linear_rmpVast, this).creative.clickThroughUrl);
+  }
+  _classPrivateFieldGet2(linear_rmpVast, this).pause();
+  _classPrivateFieldGet2(linear_rmpVast, this).rmpVastTracking.dispatchTrackingAndApiEvent('adclick');
+}
+function _onPlaybackError(event) {
+  // https://www.w3.org/TR/html50/embedded-content-0.html#mediaerror
+  // MEDIA_ERR_SRC_NOT_SUPPORTED is sign of fatal error
+  // other errors may produce non-fatal error in the browser so we do not 
+  // act upon them
+  if (event && event.target) {
+    const videoElement = event.target;
+    if (videoElement.error && FW.isNumber(videoElement.error.code)) {
+      const errorCode = videoElement.error.code;
+      let errorMessage = '';
+      if (typeof videoElement.error.message === 'string') {
+        errorMessage = videoElement.error.message;
+      }
+      const htmlMediaErrorTypes = ['MEDIA_ERR_CUSTOM', 'MEDIA_ERR_ABORTED', 'MEDIA_ERR_NETWORK', 'MEDIA_ERR_DECODE', 'MEDIA_ERR_SRC_NOT_SUPPORTED', 'MEDIA_ERR_ENCRYPTED'];
+      console.error(`Error on video element with code ${errorCode.toString()} and message ${errorMessage}`);
+      Logger.print(_classPrivateFieldGet2(linear_rmpVast, this).debugRawConsoleLogs, `error type is ${htmlMediaErrorTypes[errorCode] ? htmlMediaErrorTypes[errorCode] : 'unknown type'}`);
+
+      // MEDIA_ERR_SRC_NOT_SUPPORTED (numeric value 4)
+      if (errorCode === 4) {
+        _classPrivateFieldGet2(linear_rmpVast, this).rmpVastUtils.processVastErrors(401, true);
+      }
+    }
+  }
+}
+function _updateWaitingForCanBeSkippedUI(delta) {
+  if (Math.round(delta) > 0) {
+    _classPrivateFieldGet2(_skipWaitingUI, this).textContent = _classPrivateFieldGet2(linear_params, this).labels.skipMessage + ' ' + Math.round(delta) + 's';
+  }
+}
+function _onTimeupdateCheckSkip() {
+  if (_classPrivateFieldGet2(_skipButtonUI, this).style.display === 'none') {
+    FW.setStyle(_classPrivateFieldGet2(_skipButtonUI, this), {
+      display: 'block'
+    });
+  }
+  const adPlayerCurrentTime = _classPrivateFieldGet2(linear_adPlayer, this).currentTime;
+  if (FW.isNumber(adPlayerCurrentTime) && adPlayerCurrentTime > 0) {
+    if (adPlayerCurrentTime >= _classPrivateFieldGet2(linear_rmpVast, this).creative.skipoffset) {
+      _classPrivateFieldGet2(linear_adPlayer, this).removeEventListener('timeupdate', _classPrivateFieldGet2(_onTimeupdateCheckSkipFn, this));
+      FW.setStyle(_classPrivateFieldGet2(_skipWaitingUI, this), {
+        display: 'none'
+      });
+      FW.setStyle(_classPrivateFieldGet2(_skipMessageUI, this), {
+        display: 'block'
+      });
+      FW.setStyle(_classPrivateFieldGet2(_skipIconUI, this), {
+        display: 'block'
+      });
+      _classPrivateFieldSet2(_skippableAdCanBeSkipped, this, true);
+      _classPrivateFieldGet2(linear_rmpVast, this).rmpVastUtils.createApiEvent('adskippablestatechanged');
+    } else if (_classPrivateFieldGet2(linear_rmpVast, this).creative.skipoffset - adPlayerCurrentTime > 0) {
+      _assertClassBrand(_LinearCreative_brand, this, _updateWaitingForCanBeSkippedUI).call(this, _classPrivateFieldGet2(linear_rmpVast, this).creative.skipoffset - adPlayerCurrentTime);
+    }
+  }
+}
+function _onSkipInteraction(event) {
+  if (event) {
+    event.stopPropagation();
+    if (event.type === 'touchend') {
+      event.preventDefault();
+    }
+  }
+  if (_classPrivateFieldGet2(_skippableAdCanBeSkipped, this)) {
+    _classPrivateFieldGet2(linear_rmpVast, this).rmpVastTracking.dispatchTrackingAndApiEvent('adskipped');
+    // resume content
+    if (_classPrivateFieldGet2(linear_rmpVast, this).rmpVastAdPlayer) {
+      _classPrivateFieldGet2(linear_rmpVast, this).rmpVastAdPlayer.resumeContent();
+    }
+  }
+}
+function _appendSkipUI() {
+  const skipMessage = _classPrivateFieldGet2(linear_params, this).labels.skipMessage;
+  _classPrivateFieldSet2(_skipButtonUI, this, document.createElement('div'));
+  _classPrivateFieldGet2(_skipButtonUI, this).className = 'rmp-ad-container-skip';
+  FW.setStyle(_classPrivateFieldGet2(_skipButtonUI, this), {
+    display: 'none'
+  });
+  FW.makeButtonAccessible(_classPrivateFieldGet2(_skipButtonUI, this), skipMessage);
+  _classPrivateFieldSet2(_skipWaitingUI, this, document.createElement('div'));
+  _classPrivateFieldGet2(_skipWaitingUI, this).className = 'rmp-ad-container-skip-waiting';
+  _assertClassBrand(_LinearCreative_brand, this, _updateWaitingForCanBeSkippedUI).call(this, _classPrivateFieldGet2(linear_rmpVast, this).creative.skipoffset);
+  FW.setStyle(_classPrivateFieldGet2(_skipWaitingUI, this), {
+    display: 'block'
+  });
+  _classPrivateFieldSet2(_skipMessageUI, this, document.createElement('div'));
+  _classPrivateFieldGet2(_skipMessageUI, this).className = 'rmp-ad-container-skip-message';
+  _classPrivateFieldGet2(_skipMessageUI, this).textContent = skipMessage;
+  FW.setStyle(_classPrivateFieldGet2(_skipMessageUI, this), {
+    display: 'none'
+  });
+  _classPrivateFieldSet2(_skipIconUI, this, document.createElement('div'));
+  _classPrivateFieldGet2(_skipIconUI, this).className = 'rmp-ad-container-skip-icon';
+  FW.setStyle(_classPrivateFieldGet2(_skipIconUI, this), {
+    display: 'none'
+  });
+  const onSkipInteractionFn = _assertClassBrand(_LinearCreative_brand, this, _onSkipInteraction).bind(this);
+  FW.addEvents(['click', 'touchend'], _classPrivateFieldGet2(_skipButtonUI, this), onSkipInteractionFn);
+  _classPrivateFieldGet2(_skipButtonUI, this).appendChild(_classPrivateFieldGet2(_skipWaitingUI, this));
+  _classPrivateFieldGet2(_skipButtonUI, this).appendChild(_classPrivateFieldGet2(_skipMessageUI, this));
+  _classPrivateFieldGet2(_skipButtonUI, this).appendChild(_classPrivateFieldGet2(_skipIconUI, this));
+  _classPrivateFieldGet2(linear_adContainer, this).appendChild(_classPrivateFieldGet2(_skipButtonUI, this));
+  _classPrivateFieldSet2(_onTimeupdateCheckSkipFn, this, _assertClassBrand(_LinearCreative_brand, this, _onTimeupdateCheckSkip).bind(this));
+  _classPrivateFieldGet2(linear_adPlayer, this).addEventListener('timeupdate', _classPrivateFieldGet2(_onTimeupdateCheckSkipFn, this));
+}
+function _onHlsJSError(event, data) {
+  if (data.fatal) {
+    switch (data.type) {
+      case Hls.ErrorTypes.NETWORK_ERROR:
+        // try to recover network error
+        _classPrivateFieldGet2(_hlsJS, this)[_classPrivateFieldGet2(_hlsJSIndex, this)].startLoad();
+        break;
+      case Hls.ErrorTypes.MEDIA_ERROR:
+        _classPrivateFieldGet2(_hlsJS, this)[_classPrivateFieldGet2(_hlsJSIndex, this)].recoverMediaError();
+        break;
+      default:
+        _classPrivateFieldGet2(linear_rmpVast, this).rmpVastUtils.processVastErrors(900, true);
+        break;
     }
   }
 }
@@ -10805,145 +11656,108 @@ class LinearCreative {
 
 
 
+
+
+
+
+
+
+var non_linear_rmpVast = /*#__PURE__*/new (weak_map_default())();
+var non_linear_params = /*#__PURE__*/new (weak_map_default())();
+var non_linear_adContainer = /*#__PURE__*/new (weak_map_default())();
+var _container = /*#__PURE__*/new (weak_map_default())();
+var _nonLinearMinSuggestedDuration = /*#__PURE__*/new (weak_map_default())();
+var _firstContentPlayerPlayRequest = /*#__PURE__*/new (weak_map_default())();
+var _nonLinearCloseElement = /*#__PURE__*/new (weak_map_default())();
+var _nonLinearAElement = /*#__PURE__*/new (weak_map_default())();
+var _nonLinearInnerElement = /*#__PURE__*/new (weak_map_default())();
+var _nonLinearContainerElement = /*#__PURE__*/new (weak_map_default())();
+var _closeButtonTimeoutFn = /*#__PURE__*/new (weak_map_default())();
+var _NonLinearCreative_brand = /*#__PURE__*/new WeakSet();
 class NonLinearCreative {
   constructor(rmpVast) {
-    this._rmpVast = rmpVast;
-    this._params = rmpVast.params;
-    this._adContainer = rmpVast.adContainer;
-    this._container = rmpVast.container;
-    this._debugRawConsoleLogs = rmpVast.debugRawConsoleLogs;
-    this._nonLinearMinSuggestedDuration = 0;
-    this._firstContentPlayerPlayRequest = true;
-    this._nonLinearCloseElement = null;
-    this._nonLinearAElement = null;
-    this._nonLinearInnerElement = null;
-    this._nonLinearContainerElement = null;
-    this._onNonLinearLoadSuccessFn = null;
-    this._onNonLinearLoadErrorFn = null;
-    this._onNonLinearClickThroughFn = null;
-    this._onClickCloseNonLinearFn = null;
+    _classPrivateMethodInitSpec(this, _NonLinearCreative_brand);
+    _classPrivateFieldInitSpec(this, non_linear_rmpVast, void 0);
+    _classPrivateFieldInitSpec(this, non_linear_params, void 0);
+    _classPrivateFieldInitSpec(this, non_linear_adContainer, void 0);
+    _classPrivateFieldInitSpec(this, _container, void 0);
+    _classPrivateFieldInitSpec(this, _nonLinearMinSuggestedDuration, 0);
+    _classPrivateFieldInitSpec(this, _firstContentPlayerPlayRequest, true);
+    _classPrivateFieldInitSpec(this, _nonLinearCloseElement, null);
+    _classPrivateFieldInitSpec(this, _nonLinearAElement, null);
+    _classPrivateFieldInitSpec(this, _nonLinearInnerElement, null);
+    _classPrivateFieldInitSpec(this, _nonLinearContainerElement, null);
+    _classPrivateFieldInitSpec(this, _closeButtonTimeoutFn, null);
+    _classPrivateFieldSet2(non_linear_rmpVast, this, rmpVast);
+    _classPrivateFieldSet2(non_linear_params, this, rmpVast.params);
+    _classPrivateFieldSet2(non_linear_adContainer, this, rmpVast.adContainer);
+    _classPrivateFieldSet2(_container, this, rmpVast.container);
   }
-  get nonLinearContainerElement() {
-    return this._nonLinearContainerElement;
-  }
-  _onNonLinearLoadError() {
-    this._rmpVast.rmpVastUtils.processVastErrors(502, true);
-  }
-  _onNonLinearLoadSuccess() {
-    Logger.print(this._debugRawConsoleLogs, `success loading non-linear creative at ${this._rmpVast.creative.mediaUrl}`);
-    this._rmpVast.__adOnStage = true;
-    this._rmpVast.rmpVastTracking.dispatchTrackingAndApiEvent(['adloaded', 'adimpression', 'adstarted', 'adcreativeview']);
-  }
-  _onNonLinearClickThrough(event) {
+  destroy() {
+    window.clearTimeout(_classPrivateFieldGet2(_closeButtonTimeoutFn, this));
     try {
-      if (event) {
-        event.stopPropagation();
-      }
-      this._rmpVast.pause();
-      this._rmpVast.rmpVastTracking.dispatchTrackingAndApiEvent('adclick');
+      FW.removeElement(_classPrivateFieldGet2(_nonLinearContainerElement, this));
     } catch (error) {
       console.warn(error);
     }
   }
-  _onClickCloseNonLinear(event) {
-    if (event) {
-      event.stopPropagation();
-      if (event.type === 'touchend') {
-        event.preventDefault();
-      }
-    }
-    FW.setStyle(this._nonLinearContainerElement, {
-      display: 'none'
-    });
-    this._rmpVast.rmpVastTracking.dispatchTrackingAndApiEvent('adclosed');
-  }
-  _appendCloseButton() {
-    this._nonLinearCloseElement = document.createElement('div');
-    this._nonLinearCloseElement.className = 'rmp-ad-non-linear-close';
-    FW.makeButtonAccessible(this._nonLinearCloseElement, this._params.labels.closeAd);
-    if (this._nonLinearMinSuggestedDuration > 0) {
-      FW.setStyle(this._nonLinearCloseElement, {
-        display: 'none'
-      });
-      setTimeout(() => {
-        FW.setStyle(this._nonLinearCloseElement, {
-          display: 'block'
-        });
-      }, this._nonLinearMinSuggestedDuration * 1000);
-    } else {
-      FW.setStyle(this._nonLinearCloseElement, {
-        display: 'block'
-      });
-    }
-    this._onClickCloseNonLinearFn = this._onClickCloseNonLinear.bind(this);
-    FW.addEvents(['touchend', 'click'], this._nonLinearCloseElement, this._onClickCloseNonLinearFn);
-    this._nonLinearContainerElement.appendChild(this._nonLinearCloseElement);
-  }
-  destroy() {
-    if (this._nonLinearInnerElement) {
-      this._nonLinearInnerElement.removeEventListener('load', this._onNonLinearLoadSuccessFn);
-      this._nonLinearInnerElement.removeEventListener('error', this._onNonLinearLoadErrorFn);
-    }
-    FW.removeEvents(['touchend', 'click'], this._nonLinearAElement, this._onNonLinearClickThroughFn);
-    FW.removeEvents(['touchend', 'click'], this._nonLinearCloseElement, this._onClickCloseNonLinearFn);
-  }
   update() {
     // non-linear ad container
-    this._nonLinearContainerElement = document.createElement('div');
-    this._nonLinearContainerElement.className = 'rmp-ad-non-linear-container';
-    FW.setStyle(this._nonLinearContainerElement, {
-      width: this._rmpVast.creative.width.toString() + 'px',
-      height: this._rmpVast.creative.height.toString() + 'px'
+    _classPrivateFieldSet2(_nonLinearContainerElement, this, document.createElement('div'));
+    _classPrivateFieldGet2(_nonLinearContainerElement, this).className = 'rmp-ad-non-linear-container';
+    FW.setStyle(_classPrivateFieldGet2(_nonLinearContainerElement, this), {
+      width: _classPrivateFieldGet2(non_linear_rmpVast, this).creative.width.toString() + 'px',
+      height: _classPrivateFieldGet2(non_linear_rmpVast, this).creative.height.toString() + 'px'
     });
 
     // a tag to handle click - a tag is best for WebView support
-    this._nonLinearAElement = document.createElement('a');
-    this._nonLinearAElement.className = 'rmp-ad-non-linear-anchor';
-    if (this._rmpVast.creative.clickThroughUrl) {
-      this._nonLinearAElement.href = this._rmpVast.creative.clickThroughUrl;
-      this._nonLinearAElement.target = '_blank';
-      this._onNonLinearClickThroughFn = this._onNonLinearClickThrough.bind(this);
-      FW.addEvents(['touchend', 'click'], this._nonLinearAElement, this._onNonLinearClickThroughFn);
+    _classPrivateFieldSet2(_nonLinearAElement, this, document.createElement('a'));
+    _classPrivateFieldGet2(_nonLinearAElement, this).className = 'rmp-ad-non-linear-anchor';
+    if (_classPrivateFieldGet2(non_linear_rmpVast, this).creative.clickThroughUrl) {
+      _classPrivateFieldGet2(_nonLinearAElement, this).href = _classPrivateFieldGet2(non_linear_rmpVast, this).creative.clickThroughUrl;
+      _classPrivateFieldGet2(_nonLinearAElement, this).target = '_blank';
+      const onNonLinearClickThroughFn = _assertClassBrand(_NonLinearCreative_brand, this, _onNonLinearClickThrough).bind(this);
+      FW.addEvents(['touchend', 'click'], _classPrivateFieldGet2(_nonLinearAElement, this), onNonLinearClickThroughFn);
     }
 
     // non-linear creative image
-    if (this._rmpVast.creative.nonLinearType === 'image') {
-      this._nonLinearInnerElement = document.createElement('img');
+    if (_classPrivateFieldGet2(non_linear_rmpVast, this).creative.nonLinearType === 'image') {
+      _classPrivateFieldSet2(_nonLinearInnerElement, this, document.createElement('img'));
     } else {
-      this._nonLinearInnerElement = document.createElement('iframe');
-      this._nonLinearInnerElement.sandbox = 'allow-scripts allow-same-origin';
-      FW.setStyle(this._nonLinearInnerElement, {
+      _classPrivateFieldSet2(_nonLinearInnerElement, this, document.createElement('iframe'));
+      _classPrivateFieldGet2(_nonLinearInnerElement, this).sandbox = 'allow-scripts allow-same-origin';
+      FW.setStyle(_classPrivateFieldGet2(_nonLinearInnerElement, this), {
         border: 'none',
         overflow: 'hidden'
       });
-      this._nonLinearInnerElement.setAttribute('allow', 'autoplay; fullscreen; picture-in-picture; encrypted-media');
-      this._nonLinearInnerElement.setAttribute('scrolling', 'no');
-      this._nonLinearInnerElement.setAttribute('sandbox', 'allow-scripts allow-presentation allow-same-origin');
+      _classPrivateFieldGet2(_nonLinearInnerElement, this).setAttribute('allow', 'autoplay; fullscreen; picture-in-picture; encrypted-media');
+      _classPrivateFieldGet2(_nonLinearInnerElement, this).setAttribute('scrolling', 'no');
+      _classPrivateFieldGet2(_nonLinearInnerElement, this).setAttribute('sandbox', 'allow-scripts allow-presentation allow-same-origin');
     }
-    this._nonLinearInnerElement.className = 'rmp-ad-non-linear-creative';
-    this._onNonLinearLoadErrorFn = this._onNonLinearLoadError.bind(this);
-    this._nonLinearInnerElement.addEventListener('error', this._onNonLinearLoadErrorFn);
-    this._onNonLinearLoadSuccessFn = this._onNonLinearLoadSuccess.bind(this);
-    this._nonLinearInnerElement.addEventListener('load', this._onNonLinearLoadSuccessFn);
-    if (this._rmpVast.creative.nonLinearType === 'html') {
-      this._nonLinearInnerElement.srcdoc = this._rmpVast.creative.mediaUrl;
+    _classPrivateFieldGet2(_nonLinearInnerElement, this).className = 'rmp-ad-non-linear-creative';
+    const onNonLinearLoadErrorFn = _assertClassBrand(_NonLinearCreative_brand, this, _onNonLinearLoadError).bind(this);
+    _classPrivateFieldGet2(_nonLinearInnerElement, this).addEventListener('error', onNonLinearLoadErrorFn);
+    const onNonLinearLoadSuccessFn = _assertClassBrand(_NonLinearCreative_brand, this, _onNonLinearLoadSuccess).bind(this);
+    _classPrivateFieldGet2(_nonLinearInnerElement, this).addEventListener('load', onNonLinearLoadSuccessFn);
+    if (_classPrivateFieldGet2(non_linear_rmpVast, this).creative.nonLinearType === 'html') {
+      _classPrivateFieldGet2(_nonLinearInnerElement, this).srcdoc = _classPrivateFieldGet2(non_linear_rmpVast, this).creative.mediaUrl;
     } else {
-      this._nonLinearInnerElement.src = this._rmpVast.creative.mediaUrl;
+      _classPrivateFieldGet2(_nonLinearInnerElement, this).src = _classPrivateFieldGet2(non_linear_rmpVast, this).creative.mediaUrl;
     }
 
     // append to adContainer
-    this._nonLinearAElement.appendChild(this._nonLinearInnerElement);
-    this._nonLinearContainerElement.appendChild(this._nonLinearAElement);
-    this._adContainer.appendChild(this._nonLinearContainerElement);
+    _classPrivateFieldGet2(_nonLinearAElement, this).appendChild(_classPrivateFieldGet2(_nonLinearInnerElement, this));
+    _classPrivateFieldGet2(_nonLinearContainerElement, this).appendChild(_classPrivateFieldGet2(_nonLinearAElement, this));
+    _classPrivateFieldGet2(non_linear_adContainer, this).appendChild(_classPrivateFieldGet2(_nonLinearContainerElement, this));
 
     // display a close button when non-linear ad has reached minSuggestedDuration
-    this._appendCloseButton();
-    FW.show(this._adContainer);
-    this._rmpVast.rmpVastContentPlayer.play(this._firstContentPlayerPlayRequest);
-    this._firstContentPlayerPlayRequest = false;
+    _assertClassBrand(_NonLinearCreative_brand, this, _appendCloseButton).call(this);
+    FW.show(_classPrivateFieldGet2(non_linear_adContainer, this));
+    _classPrivateFieldGet2(non_linear_rmpVast, this).rmpVastContentPlayer.play(_classPrivateFieldGet2(_firstContentPlayerPlayRequest, this));
+    _classPrivateFieldSet2(_firstContentPlayerPlayRequest, this, false);
   }
   parse(variations) {
-    Logger.print(this._debugRawConsoleLogs, `non-linear creatives follow`, variations);
+    Logger.print(_classPrivateFieldGet2(non_linear_rmpVast, this).debugRawConsoleLogs, `non-linear creatives follow`, variations);
     let isDimensionError = false;
     let currentVariation;
     // The video player should poll each <NonLinear> element to determine 
@@ -10962,100 +11776,152 @@ class NonLinearCreative {
       }
       // if width of non-linear creative does not fit within current player container width 
       // we should skip this creative
-      if (width > FW.getWidth(this._container) || height > FW.getHeight(this._container)) {
+      if (width > FW.getWidth(_classPrivateFieldGet2(_container, this)) || height > FW.getHeight(_classPrivateFieldGet2(_container, this))) {
         isDimensionError = true;
         continue;
       }
       // get minSuggestedDuration (optional)
-      this._nonLinearMinSuggestedDuration = currentVariation.minSuggestedDuration;
+      _classPrivateFieldSet2(_nonLinearMinSuggestedDuration, this, currentVariation.minSuggestedDuration);
       const staticResource = currentVariation.staticResource;
       const iframeResource = currentVariation.iframeResource;
       const htmlResource = currentVariation.htmlResource;
       // we have a valid NonLinear/StaticResource with supported creativeType - we break
       if (staticResource !== null || iframeResource !== null || htmlResource !== null) {
         if (staticResource) {
-          this._rmpVast.creative.mediaUrl = staticResource;
-          this._rmpVast.creative.nonLinearType = 'image';
+          _classPrivateFieldGet2(non_linear_rmpVast, this).creative.mediaUrl = staticResource;
+          _classPrivateFieldGet2(non_linear_rmpVast, this).creative.nonLinearType = 'image';
         } else if (iframeResource) {
-          this._rmpVast.creative.mediaUrl = iframeResource;
-          this._rmpVast.creative.nonLinearType = 'iframe';
+          _classPrivateFieldGet2(non_linear_rmpVast, this).creative.mediaUrl = iframeResource;
+          _classPrivateFieldGet2(non_linear_rmpVast, this).creative.nonLinearType = 'iframe';
         } else if (htmlResource) {
-          this._rmpVast.creative.mediaUrl = htmlResource;
-          this._rmpVast.creative.nonLinearType = 'html';
+          _classPrivateFieldGet2(non_linear_rmpVast, this).creative.mediaUrl = htmlResource;
+          _classPrivateFieldGet2(non_linear_rmpVast, this).creative.nonLinearType = 'html';
         }
-        this._rmpVast.creative.width = width;
-        this._rmpVast.creative.height = height;
-        this._rmpVast.creative.type = currentVariation.type;
-        Logger.print(this._debugRawConsoleLogs, `selected non-linear creative`, this._rmpVast.creative);
+        _classPrivateFieldGet2(non_linear_rmpVast, this).creative.width = width;
+        _classPrivateFieldGet2(non_linear_rmpVast, this).creative.height = height;
+        _classPrivateFieldGet2(non_linear_rmpVast, this).creative.type = currentVariation.type;
+        Logger.print(_classPrivateFieldGet2(non_linear_rmpVast, this).debugRawConsoleLogs, `selected non-linear creative`, _classPrivateFieldGet2(non_linear_rmpVast, this).creative);
         break;
       }
     }
     // if not supported NonLinear type ping for error
-    if (!this._rmpVast.creative.mediaUrl || isDimensionError) {
+    if (!_classPrivateFieldGet2(non_linear_rmpVast, this).creative.mediaUrl || isDimensionError) {
       let vastErrorCode = 503;
       if (isDimensionError) {
         vastErrorCode = 501;
       }
-      this._rmpVast.rmpVastUtils.processVastErrors(vastErrorCode, true);
+      _classPrivateFieldGet2(non_linear_rmpVast, this).rmpVastUtils.processVastErrors(vastErrorCode, true);
       return;
     }
-    this._rmpVast.creative.clickThroughUrl = currentVariation.nonlinearClickThroughURLTemplate;
+    _classPrivateFieldGet2(non_linear_rmpVast, this).creative.clickThroughUrl = currentVariation.nonlinearClickThroughURLTemplate;
     if (currentVariation.nonlinearClickTrackingURLTemplates.length > 0) {
       currentVariation.nonlinearClickTrackingURLTemplates.forEach(nonlinearClickTrackingURLTemplate => {
         if (nonlinearClickTrackingURLTemplate.url) {
           var _context;
-          push_default()(_context = this._rmpVast.trackingTags).call(_context, {
+          push_default()(_context = _classPrivateFieldGet2(non_linear_rmpVast, this).trackingTags).call(_context, {
             event: 'clickthrough',
             url: nonlinearClickTrackingURLTemplate.url
           });
         }
       });
     }
-    if (this._rmpVast.rmpVastAdPlayer) {
-      this._rmpVast.rmpVastAdPlayer.append();
+    if (_classPrivateFieldGet2(non_linear_rmpVast, this).rmpVastAdPlayer) {
+      _classPrivateFieldGet2(non_linear_rmpVast, this).rmpVastAdPlayer.append();
     }
   }
+}
+function _onNonLinearLoadError() {
+  _classPrivateFieldGet2(non_linear_rmpVast, this).rmpVastUtils.processVastErrors(502, true);
+}
+function _onNonLinearLoadSuccess() {
+  Logger.print(_classPrivateFieldGet2(non_linear_rmpVast, this).debugRawConsoleLogs, `success loading non-linear creative at ${_classPrivateFieldGet2(non_linear_rmpVast, this).creative.mediaUrl}`);
+  _classPrivateFieldGet2(non_linear_rmpVast, this).__adOnStage = true;
+  _classPrivateFieldGet2(non_linear_rmpVast, this).rmpVastTracking.dispatchTrackingAndApiEvent(['adloaded', 'adimpression', 'adstarted', 'adcreativeview']);
+}
+function _onNonLinearClickThrough(event) {
+  try {
+    if (event) {
+      event.stopPropagation();
+    }
+    _classPrivateFieldGet2(non_linear_rmpVast, this).pause();
+    _classPrivateFieldGet2(non_linear_rmpVast, this).rmpVastTracking.dispatchTrackingAndApiEvent('adclick');
+  } catch (error) {
+    console.warn(error);
+  }
+}
+function _onClickCloseNonLinear(event) {
+  if (event) {
+    event.stopPropagation();
+    if (event.type === 'touchend') {
+      event.preventDefault();
+    }
+  }
+  FW.setStyle(_classPrivateFieldGet2(_nonLinearContainerElement, this), {
+    display: 'none'
+  });
+  _classPrivateFieldGet2(non_linear_rmpVast, this).rmpVastTracking.dispatchTrackingAndApiEvent('adclosed');
+}
+function _appendCloseButton() {
+  _classPrivateFieldSet2(_nonLinearCloseElement, this, document.createElement('div'));
+  _classPrivateFieldGet2(_nonLinearCloseElement, this).className = 'rmp-ad-non-linear-close';
+  FW.makeButtonAccessible(_classPrivateFieldGet2(_nonLinearCloseElement, this), _classPrivateFieldGet2(non_linear_params, this).labels.closeAd);
+  if (_classPrivateFieldGet2(_nonLinearMinSuggestedDuration, this) > 0) {
+    FW.setStyle(_classPrivateFieldGet2(_nonLinearCloseElement, this), {
+      display: 'none'
+    });
+    window.clearTimeout(_classPrivateFieldGet2(_closeButtonTimeoutFn, this));
+    _classPrivateFieldSet2(_closeButtonTimeoutFn, this, window.setTimeout(() => {
+      FW.setStyle(_classPrivateFieldGet2(_nonLinearCloseElement, this), {
+        display: 'block'
+      });
+    }, _classPrivateFieldGet2(_nonLinearMinSuggestedDuration, this) * 1000));
+  } else {
+    FW.setStyle(_classPrivateFieldGet2(_nonLinearCloseElement, this), {
+      display: 'block'
+    });
+  }
+  const onClickCloseNonLinearFn = _assertClassBrand(_NonLinearCreative_brand, this, _onClickCloseNonLinear).bind(this);
+  FW.addEvents(['touchend', 'click'], _classPrivateFieldGet2(_nonLinearCloseElement, this), onClickCloseNonLinearFn);
+  _classPrivateFieldGet2(_nonLinearContainerElement, this).appendChild(_classPrivateFieldGet2(_nonLinearCloseElement, this));
 }
 ;// CONCATENATED MODULE: ./src/js/creatives/companion.js
 
 
 
+
+
+
+
+
+
+var companion_rmpVast = /*#__PURE__*/new (weak_map_default())();
+var _requiredAttribute = /*#__PURE__*/new (weak_map_default())();
+var _validCompanionAds = /*#__PURE__*/new (weak_map_default())();
+var _companionAdsList = /*#__PURE__*/new (weak_map_default())();
+var _CompanionCreative_brand = /*#__PURE__*/new WeakSet();
 class CompanionCreative {
   constructor(rmpVast) {
-    this._rmpVast = rmpVast;
-    this._debugRawConsoleLogs = rmpVast.debugRawConsoleLogs;
-    this.reset();
+    _classPrivateMethodInitSpec(this, _CompanionCreative_brand);
+    _classPrivateFieldInitSpec(this, companion_rmpVast, void 0);
+    _classPrivateFieldInitSpec(this, _requiredAttribute, '');
+    _classPrivateFieldInitSpec(this, _validCompanionAds, []);
+    _classPrivateFieldInitSpec(this, _companionAdsList, []);
+    _classPrivateFieldSet2(companion_rmpVast, this, rmpVast);
   }
   get requiredAttribute() {
-    return this._requiredAttribute;
-  }
-  _onImgClickThrough(companionClickThroughUrl, companionClickTrackingUrls, event) {
-    if (event) {
-      event.stopPropagation();
-      if (event.type === 'touchend') {
-        event.preventDefault();
-      }
-    }
-    if (companionClickTrackingUrls) {
-      companionClickTrackingUrls.forEach(companionClickTrackingUrl => {
-        if (companionClickTrackingUrl.url) {
-          this._rmpVast.rmpVastTracking.pingURI(companionClickTrackingUrl.url);
-        }
-      });
-    }
-    FW.openWindow(companionClickThroughUrl);
+    return _classPrivateFieldGet2(_requiredAttribute, this);
   }
   reset() {
-    this._requiredAttribute = '';
-    this._validCompanionAds = [];
-    this._companionAdsList = [];
+    _classPrivateFieldSet2(_requiredAttribute, this, '');
+    _classPrivateFieldSet2(_validCompanionAds, this, []);
+    _classPrivateFieldSet2(_companionAdsList, this, []);
   }
   parse(creative) {
     // reset variables in case wrapper
-    this._validCompanionAds = [];
-    this._requiredAttribute = '';
+    _classPrivateFieldSet2(_validCompanionAds, this, []);
+    _classPrivateFieldSet2(_requiredAttribute, this, '');
     if (creative.required) {
-      this._requiredAttribute = creative.required;
+      _classPrivateFieldSet2(_requiredAttribute, this, creative.required);
     }
     const companions = creative.variations;
     // at least 1 Companion is expected to continue
@@ -11117,33 +11983,33 @@ class CompanionCreative {
             push_default()(_context = newCompanionAds.trackingEventsUrls).call(_context, creativeView);
           });
         }
-        push_default()(_context2 = this._validCompanionAds).call(_context2, newCompanionAds);
+        push_default()(_context2 = _classPrivateFieldGet2(_validCompanionAds, this)).call(_context2, newCompanionAds);
       }
     }
-    Logger.print(this._debugRawConsoleLogs, `Parse companion ads follow`, this._validCompanionAds);
+    Logger.print(_classPrivateFieldGet2(companion_rmpVast, this).debugRawConsoleLogs, `Parse companion ads follow`, _classPrivateFieldGet2(_validCompanionAds, this));
   }
   getList(inputWidth, inputHeight) {
-    if (this._validCompanionAds.length > 0) {
+    if (_classPrivateFieldGet2(_validCompanionAds, this).length > 0) {
       let availableCompanionAds;
       if (typeof inputWidth === 'number' && inputWidth > 0 && typeof inputHeight === 'number' && inputHeight > 0) {
-        availableCompanionAds = this._validCompanionAds.filter(companionAds => {
+        availableCompanionAds = _classPrivateFieldGet2(_validCompanionAds, this).filter(companionAds => {
           return inputWidth >= companionAds.width && inputHeight >= companionAds.height;
         });
       } else {
-        availableCompanionAds = this._validCompanionAds;
+        availableCompanionAds = _classPrivateFieldGet2(_validCompanionAds, this);
       }
       if (availableCompanionAds.length > 0) {
-        this._companionAdsList = availableCompanionAds;
-        return this._companionAdsList;
+        _classPrivateFieldSet2(_companionAdsList, this, availableCompanionAds);
+        return _classPrivateFieldGet2(_companionAdsList, this);
       }
     }
     return [];
   }
   getItem(index) {
-    if (typeof this._companionAdsList[index] === 'undefined') {
+    if (typeof _classPrivateFieldGet2(_companionAdsList, this)[index] === 'undefined') {
       return null;
     }
-    const companionAd = this._companionAdsList[index];
+    const companionAd = _classPrivateFieldGet2(_companionAdsList, this)[index];
     let html;
     if (companionAd.imageUrl || companionAd.iframeUrl) {
       if (companionAd.imageUrl) {
@@ -11166,21 +12032,21 @@ class CompanionCreative {
       if (trackingEventsUrls.length > 0) {
         html.onload = () => {
           trackingEventsUrls.forEach(trackingEventsUrl => {
-            this._rmpVast.rmpVastTracking.pingURI(trackingEventsUrl);
+            _classPrivateFieldGet2(companion_rmpVast, this).rmpVastTracking.pingURI(trackingEventsUrl);
           });
         };
         html.onerror = () => {
-          this._rmpVast.rmpVastTracking.error(603);
+          _classPrivateFieldGet2(companion_rmpVast, this).rmpVastTracking.error(603);
         };
       }
       let companionClickTrackingUrls = null;
       if (companionAd.companionClickTrackingUrls) {
-        Logger.print(this._debugRawConsoleLogs, `Companion click tracking URIs`, companionClickTrackingUrls);
+        Logger.print(_classPrivateFieldGet2(companion_rmpVast, this).debugRawConsoleLogs, `Companion click tracking URIs`, companionClickTrackingUrls);
         companionClickTrackingUrls = companionAd.companionClickTrackingUrls;
       }
       if (companionAd.companionClickThroughUrl) {
-        const _onImgClickThroughFn = this._onImgClickThrough.bind(this, companionAd.companionClickThroughUrl, companionClickTrackingUrls);
-        FW.addEvents(['touchend', 'click'], html, _onImgClickThroughFn);
+        const onImgClickThroughFn = _assertClassBrand(_CompanionCreative_brand, this, _onImgClickThrough).bind(this, companionAd.companionClickThroughUrl, companionClickTrackingUrls);
+        FW.addEvents(['touchend', 'click'], html, onImgClickThroughFn);
       }
     }
     if (companionAd.imageUrl) {
@@ -11200,160 +12066,190 @@ class CompanionCreative {
     return html;
   }
 }
+function _onImgClickThrough(companionClickThroughUrl, companionClickTrackingUrls, event) {
+  if (event) {
+    event.stopPropagation();
+    if (event.type === 'touchend') {
+      event.preventDefault();
+    }
+  }
+  if (companionClickTrackingUrls) {
+    companionClickTrackingUrls.forEach(companionClickTrackingUrl => {
+      if (companionClickTrackingUrl.url) {
+        _classPrivateFieldGet2(companion_rmpVast, this).rmpVastTracking.pingURI(companionClickTrackingUrl.url);
+      }
+    });
+  }
+  FW.openWindow(companionClickThroughUrl);
+}
 ;// CONCATENATED MODULE: ./src/js/players/ad-player.js
 
 
 
+
+
+
+
+var ad_player_rmpVast = /*#__PURE__*/new (weak_map_default())();
+var ad_player_params = /*#__PURE__*/new (weak_map_default())();
+var ad_player_contentPlayer = /*#__PURE__*/new (weak_map_default())();
+var ad_player_adContainer = /*#__PURE__*/new (weak_map_default())();
+var _contentWrapper = /*#__PURE__*/new (weak_map_default())();
+var ad_player_adPlayer = /*#__PURE__*/new (weak_map_default())();
 class AdPlayer {
   constructor(rmpVast) {
-    this._rmpVast = rmpVast;
-    this._params = rmpVast.params;
-    this._contentPlayer = rmpVast.currentContentPlayer;
-    this._adContainer = rmpVast.adContainer;
-    this._contentWrapper = rmpVast.contentWrapper;
-    this._debugRawConsoleLogs = rmpVast.debugRawConsoleLogs;
-    this._adPlayer = null;
+    _classPrivateFieldInitSpec(this, ad_player_rmpVast, void 0);
+    _classPrivateFieldInitSpec(this, ad_player_params, void 0);
+    _classPrivateFieldInitSpec(this, ad_player_contentPlayer, void 0);
+    _classPrivateFieldInitSpec(this, ad_player_adContainer, void 0);
+    _classPrivateFieldInitSpec(this, _contentWrapper, void 0);
+    _classPrivateFieldInitSpec(this, ad_player_adPlayer, null);
+    _classPrivateFieldSet2(ad_player_rmpVast, this, rmpVast);
+    _classPrivateFieldSet2(ad_player_params, this, rmpVast.params);
+    _classPrivateFieldSet2(ad_player_contentPlayer, this, rmpVast.currentContentPlayer);
+    _classPrivateFieldSet2(ad_player_adContainer, this, rmpVast.adContainer);
+    _classPrivateFieldSet2(_contentWrapper, this, rmpVast.contentWrapper);
   }
   set volume(level) {
-    if (this._adPlayer) {
-      this._adPlayer.volume = level;
+    if (_classPrivateFieldGet2(ad_player_adPlayer, this)) {
+      _classPrivateFieldGet2(ad_player_adPlayer, this).volume = level;
     }
   }
   get volume() {
-    if (this._adPlayer) {
-      return this._adPlayer.volume;
+    if (_classPrivateFieldGet2(ad_player_adPlayer, this)) {
+      return _classPrivateFieldGet2(ad_player_adPlayer, this).volume;
     }
     return -1;
   }
   set muted(muted) {
-    if (this._adPlayer) {
-      if (muted && !this._adPlayer.muted) {
-        this._adPlayer.muted = true;
-      } else if (!muted && this._adPlayer.muted) {
-        this._adPlayer.muted = false;
+    if (_classPrivateFieldGet2(ad_player_adPlayer, this)) {
+      if (muted && !_classPrivateFieldGet2(ad_player_adPlayer, this).muted) {
+        _classPrivateFieldGet2(ad_player_adPlayer, this).muted = true;
+      } else if (!muted && _classPrivateFieldGet2(ad_player_adPlayer, this).muted) {
+        _classPrivateFieldGet2(ad_player_adPlayer, this).muted = false;
       }
     }
   }
   get muted() {
-    if (this._adPlayer) {
-      return this._adPlayer.muted;
+    if (_classPrivateFieldGet2(ad_player_adPlayer, this)) {
+      return _classPrivateFieldGet2(ad_player_adPlayer, this).muted;
     }
     return false;
   }
   get duration() {
-    if (this._adPlayer && FW.isNumber(this._adPlayer.duration)) {
-      return this._adPlayer.duration * 1000;
+    if (_classPrivateFieldGet2(ad_player_adPlayer, this) && FW.isNumber(_classPrivateFieldGet2(ad_player_adPlayer, this).duration)) {
+      return _classPrivateFieldGet2(ad_player_adPlayer, this).duration * 1000;
     }
     return -1;
   }
   get currentTime() {
-    if (this._adPlayer && FW.isNumber(this._adPlayer.currentTime)) {
-      return this._adPlayer.currentTime * 1000;
+    if (_classPrivateFieldGet2(ad_player_adPlayer, this) && FW.isNumber(_classPrivateFieldGet2(ad_player_adPlayer, this).currentTime)) {
+      return _classPrivateFieldGet2(ad_player_adPlayer, this).currentTime * 1000;
     }
     return -1;
   }
   destroy() {
-    Logger.print(this._debugRawConsoleLogs, `start destroying ad player`);
+    Logger.print(_classPrivateFieldGet2(ad_player_rmpVast, this).debugRawConsoleLogs, `start destroying ad player`);
 
     // destroy icons if any 
-    if (this._rmpVast.rmpVastIcons) {
-      this._rmpVast.rmpVastIcons.destroy();
+    if (_classPrivateFieldGet2(ad_player_rmpVast, this).rmpVastIcons) {
+      _classPrivateFieldGet2(ad_player_rmpVast, this).rmpVastIcons.destroy();
     }
-    if (this._rmpVast.rmpVastVpaidPlayer) {
-      this._rmpVast.rmpVastVpaidPlayer.destroy();
+    if (_classPrivateFieldGet2(ad_player_rmpVast, this).rmpVastVpaidPlayer) {
+      _classPrivateFieldGet2(ad_player_rmpVast, this).rmpVastVpaidPlayer.destroy();
     }
 
     // reset non-linear creative
-    if (this._rmpVast.rmpVastNonLinearCreative) {
-      this._rmpVast.rmpVastNonLinearCreative.destroy();
+    if (_classPrivateFieldGet2(ad_player_rmpVast, this).rmpVastNonLinearCreative) {
+      _classPrivateFieldGet2(ad_player_rmpVast, this).rmpVastNonLinearCreative.destroy();
     }
 
     // reset linear creative
-    if (this._rmpVast.rmpVastLinearCreative) {
-      this._rmpVast.rmpVastLinearCreative.destroy();
+    if (_classPrivateFieldGet2(ad_player_rmpVast, this).rmpVastLinearCreative) {
+      _classPrivateFieldGet2(ad_player_rmpVast, this).rmpVastLinearCreative.destroy();
     }
 
     // unwire events
-    this._rmpVast.rmpVastTracking.destroy();
+    _classPrivateFieldGet2(ad_player_rmpVast, this).rmpVastTracking.destroy();
 
     // hide rmp-ad-container
-    FW.hide(this._adContainer);
+    FW.hide(_classPrivateFieldGet2(ad_player_adContainer, this));
 
     // unwire anti-seek logic (iOS)
-    if (this._rmpVast.rmpVastContentPlayer) {
-      this._rmpVast.rmpVastContentPlayer.destroy();
+    if (_classPrivateFieldGet2(ad_player_rmpVast, this).rmpVastContentPlayer) {
+      _classPrivateFieldGet2(ad_player_rmpVast, this).rmpVastContentPlayer.destroy();
     }
     // flush currentAdPlayer
     try {
-      if (this._adPlayer) {
-        this._adPlayer.pause();
-        if (this._rmpVast.rmpVastLinearCreative && this._rmpVast.rmpVastLinearCreative.readingHlsJS) {
-          this._rmpVast.rmpVastLinearCreative.readingHlsJS = false;
-          this._rmpVast.rmpVastLinearCreative.hlsJSInstances[this._rmpVast.rmpVastLinearCreative.hlsJSIndex].destroy();
-          this._rmpVast.rmpVastLinearCreative.hlsJSIndex = this._rmpVast.rmpVastLinearCreative.hlsJSIndex++;
+      if (_classPrivateFieldGet2(ad_player_adPlayer, this)) {
+        _classPrivateFieldGet2(ad_player_adPlayer, this).pause();
+        if (_classPrivateFieldGet2(ad_player_rmpVast, this).rmpVastLinearCreative && _classPrivateFieldGet2(ad_player_rmpVast, this).rmpVastLinearCreative.readingHlsJS) {
+          _classPrivateFieldGet2(ad_player_rmpVast, this).rmpVastLinearCreative.readingHlsJS = false;
+          _classPrivateFieldGet2(ad_player_rmpVast, this).rmpVastLinearCreative.hlsJSInstances[_classPrivateFieldGet2(ad_player_rmpVast, this).rmpVastLinearCreative.hlsJSIndex].destroy();
+          _classPrivateFieldGet2(ad_player_rmpVast, this).rmpVastLinearCreative.hlsJSIndex = _classPrivateFieldGet2(ad_player_rmpVast, this).rmpVastLinearCreative.hlsJSIndex++;
         } else {
           // empty buffer
-          this._adPlayer.removeAttribute('src');
-          this._adPlayer.load();
+          _classPrivateFieldGet2(ad_player_adPlayer, this).removeAttribute('src');
+          _classPrivateFieldGet2(ad_player_adPlayer, this).load();
         }
-        FW.hide(this._adPlayer);
-        Logger.print(this._debugRawConsoleLogs, `flushing currentAdPlayer buffer after ad`);
+        FW.hide(_classPrivateFieldGet2(ad_player_adPlayer, this));
+        Logger.print(_classPrivateFieldGet2(ad_player_rmpVast, this).debugRawConsoleLogs, `flushing currentAdPlayer buffer after ad`);
       }
-      if (this._rmpVast.rmpVastNonLinearCreative) {
-        FW.removeElement(this._rmpVast.rmpVastNonLinearCreative.nonLinearContainerElement);
+      if (_classPrivateFieldGet2(ad_player_rmpVast, this).rmpVastNonLinearCreative) {
+        _classPrivateFieldGet2(ad_player_rmpVast, this).rmpVastNonLinearCreative.destroy();
       }
     } catch (error) {
       console.warn(error);
     }
-    this._rmpVast.resetVariablesForNewLoadAds();
-    this._rmpVast.rmpVastUtils.createApiEvent('addestroyed');
+    _classPrivateFieldGet2(ad_player_rmpVast, this).resetVariablesForNewLoadAds();
+    _classPrivateFieldGet2(ad_player_rmpVast, this).rmpVastUtils.createApiEvent('addestroyed');
   }
   init() {
-    this._rmpVast.adContainer = this._adContainer = document.createElement('div');
-    this._adContainer.className = 'rmp-ad-container';
-    this._contentWrapper.appendChild(this._adContainer);
-    FW.hide(this._adContainer);
-    this._rmpVast.currentAdPlayer = this._adPlayer = document.createElement('video');
-    Logger.printVideoEvents(this._debugRawConsoleLogs, this._adPlayer, 'ad');
+    _classPrivateFieldGet2(ad_player_rmpVast, this).adContainer = _classPrivateFieldSet2(ad_player_adContainer, this, document.createElement('div'));
+    _classPrivateFieldGet2(ad_player_adContainer, this).className = 'rmp-ad-container';
+    _classPrivateFieldGet2(_contentWrapper, this).appendChild(_classPrivateFieldGet2(ad_player_adContainer, this));
+    FW.hide(_classPrivateFieldGet2(ad_player_adContainer, this));
+    _classPrivateFieldGet2(ad_player_rmpVast, this).currentAdPlayer = _classPrivateFieldSet2(ad_player_adPlayer, this, document.createElement('video'));
+    Logger.printVideoEvents(_classPrivateFieldGet2(ad_player_rmpVast, this).debugRawConsoleLogs, _classPrivateFieldGet2(ad_player_adPlayer, this), 'ad');
     // disable native UI cast/PiP for ad player
-    this._adPlayer.disableRemotePlayback = true;
-    this._adPlayer.disablePictureInPicture = true;
-    this._adPlayer.className = 'rmp-ad-vast-video-player';
-    if (this._params.showControlsForAdPlayer) {
-      this._adPlayer.controls = true;
+    _classPrivateFieldGet2(ad_player_adPlayer, this).disableRemotePlayback = true;
+    _classPrivateFieldGet2(ad_player_adPlayer, this).disablePictureInPicture = true;
+    _classPrivateFieldGet2(ad_player_adPlayer, this).className = 'rmp-ad-vast-video-player';
+    if (_classPrivateFieldGet2(ad_player_params, this).showControlsForAdPlayer) {
+      _classPrivateFieldGet2(ad_player_adPlayer, this).controls = true;
     } else {
-      this._adPlayer.controls = false;
+      _classPrivateFieldGet2(ad_player_adPlayer, this).controls = false;
     }
 
     // this.currentContentPlayer.muted may not be set because of a bug in some version of Chromium
-    if (this._contentPlayer.hasAttribute('muted')) {
-      this._contentPlayer.muted = true;
+    if (_classPrivateFieldGet2(ad_player_contentPlayer, this).hasAttribute('muted')) {
+      _classPrivateFieldGet2(ad_player_contentPlayer, this).muted = true;
     }
-    if (this._contentPlayer.muted) {
-      this._adPlayer.muted = true;
+    if (_classPrivateFieldGet2(ad_player_contentPlayer, this).muted) {
+      _classPrivateFieldGet2(ad_player_adPlayer, this).muted = true;
     }
     // black poster based 64 png
-    this._adPlayer.poster = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=';
+    _classPrivateFieldGet2(ad_player_adPlayer, this).poster = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=';
     // note to myself: we use setAttribute for non-standard attribute (instead of . notation)
-    this._adPlayer.setAttribute('x-webkit-airplay', 'allow');
-    if (typeof this._contentPlayer.playsInline === 'boolean' && this._contentPlayer.playsInline) {
-      this._adPlayer.playsInline = true;
+    _classPrivateFieldGet2(ad_player_adPlayer, this).setAttribute('x-webkit-airplay', 'allow');
+    if (typeof _classPrivateFieldGet2(ad_player_contentPlayer, this).playsInline === 'boolean' && _classPrivateFieldGet2(ad_player_contentPlayer, this).playsInline) {
+      _classPrivateFieldGet2(ad_player_adPlayer, this).playsInline = true;
     }
     // append to rmp-ad-container
-    FW.hide(this._adPlayer);
-    this._adContainer.appendChild(this._adPlayer);
+    FW.hide(_classPrivateFieldGet2(ad_player_adPlayer, this));
+    _classPrivateFieldGet2(ad_player_adContainer, this).appendChild(_classPrivateFieldGet2(ad_player_adPlayer, this));
 
     // we track ended state for content player
-    this._contentPlayer.addEventListener('ended', () => {
-      if (this._rmpVast.__adOnStage) {
+    _classPrivateFieldGet2(ad_player_contentPlayer, this).addEventListener('ended', () => {
+      if (_classPrivateFieldGet2(ad_player_rmpVast, this).__adOnStage) {
         return;
       }
-      this._rmpVast.contentCompleted = true;
+      _classPrivateFieldGet2(ad_player_rmpVast, this).contentCompleted = true;
     });
     // we need to preload as much creative data as possible
     // also on macOS and iOS Safari we need to force preload to avoid 
     // playback issues
-    this._adPlayer.preload = 'auto';
+    _classPrivateFieldGet2(ad_player_adPlayer, this).preload = 'auto';
     // we need to init the ad player video tag
     // according to https://developers.google.com/interactive-media-ads/docs/sdks/html5/mobile_video
     // to initialize the content element, a call to the load() method is sufficient.
@@ -11361,323 +12257,350 @@ class AdPlayer {
       // on Android both this.currentContentPlayer (to resume content)
       // and this.currentAdPlayer (to start ads) needs to be init
       // on iOS only init this.currentAdPlayer (as same as this.currentContentPlayer)
-      this._contentPlayer.load();
-      this._adPlayer.load();
+      _classPrivateFieldGet2(ad_player_contentPlayer, this).load();
+      _classPrivateFieldGet2(ad_player_adPlayer, this).load();
     }
-    this._rmpVast.rmpVastInitialized = true;
+    _classPrivateFieldGet2(ad_player_rmpVast, this).rmpVastInitialized = true;
   }
   append(url, type) {
     // in case loadAds is called several times - rmpVastInitialized is already true
     // but we still need to locate the currentAdPlayer
-    if (!this._adPlayer) {
+    if (!_classPrivateFieldGet2(ad_player_adPlayer, this)) {
       // we use existing ad player as it is already 
       // available and initialized (no need for user interaction)
       let existingAdPlayer = null;
-      if (this._adContainer) {
-        existingAdPlayer = this._adContainer.querySelector('.rmp-ad-vast-video-player');
+      if (_classPrivateFieldGet2(ad_player_adContainer, this)) {
+        existingAdPlayer = _classPrivateFieldGet2(ad_player_adContainer, this).querySelector('.rmp-ad-vast-video-player');
       }
       if (existingAdPlayer === null) {
-        this._rmpVast.rmpVastUtils.processVastErrors(900, true);
+        _classPrivateFieldGet2(ad_player_rmpVast, this).rmpVastUtils.processVastErrors(900, true);
         return;
       }
-      this._adPlayer = existingAdPlayer;
+      _classPrivateFieldSet2(ad_player_adPlayer, this, existingAdPlayer);
     }
-    this._rmpVast.rmpVastContentPlayer.pause();
-    if (!this._rmpVast.creative.isLinear) {
+    _classPrivateFieldGet2(ad_player_rmpVast, this).rmpVastContentPlayer.pause();
+    if (!_classPrivateFieldGet2(ad_player_rmpVast, this).creative.isLinear) {
       // we do not display non-linear ads with outstream ad 
       // they won't fit the format
-      if (this._params.outstream) {
-        Logger.print(this._debugRawConsoleLogs, `non-linear creative detected for outstream ad mode - discarding creative`);
-        this._rmpVast.rmpVastUtils.processVastErrors(201, true);
+      if (_classPrivateFieldGet2(ad_player_params, this).outstream) {
+        Logger.print(_classPrivateFieldGet2(ad_player_rmpVast, this).debugRawConsoleLogs, `non-linear creative detected for outstream ad mode - discarding creative`);
+        _classPrivateFieldGet2(ad_player_rmpVast, this).rmpVastUtils.processVastErrors(201, true);
         return;
       } else {
-        if (this._rmpVast.rmpVastNonLinearCreative) {
-          this._rmpVast.rmpVastNonLinearCreative.update();
+        if (_classPrivateFieldGet2(ad_player_rmpVast, this).rmpVastNonLinearCreative) {
+          _classPrivateFieldGet2(ad_player_rmpVast, this).rmpVastNonLinearCreative.update();
         }
       }
     } else {
-      if (url && type && this._rmpVast.rmpVastLinearCreative) {
-        this._rmpVast.rmpVastLinearCreative.update(url, type);
+      if (url && type && _classPrivateFieldGet2(ad_player_rmpVast, this).rmpVastLinearCreative) {
+        _classPrivateFieldGet2(ad_player_rmpVast, this).rmpVastLinearCreative.update(url, type);
       }
     }
     // wire tracking events
-    this._rmpVast.rmpVastTracking.wire();
+    _classPrivateFieldGet2(ad_player_rmpVast, this).rmpVastTracking.wire();
 
     // append icons - only where ad player is different from 
     // content player
-    if (this._rmpVast.rmpVastIcons) {
-      const iconsData = this._rmpVast.rmpVastIcons.iconsData;
+    if (_classPrivateFieldGet2(ad_player_rmpVast, this).rmpVastIcons) {
+      const iconsData = _classPrivateFieldGet2(ad_player_rmpVast, this).rmpVastIcons.iconsData;
       if (iconsData.length > 0) {
-        this._rmpVast.rmpVastIcons.append();
+        _classPrivateFieldGet2(ad_player_rmpVast, this).rmpVastIcons.append();
       }
     }
   }
   play(firstAdPlayerPlayRequest) {
-    if (this._adPlayer && this._adPlayer.paused) {
-      this._rmpVast.rmpVastUtils.playPromise('vast', firstAdPlayerPlayRequest);
+    if (_classPrivateFieldGet2(ad_player_adPlayer, this) && _classPrivateFieldGet2(ad_player_adPlayer, this).paused) {
+      _classPrivateFieldGet2(ad_player_rmpVast, this).rmpVastUtils.playPromise('vast', firstAdPlayerPlayRequest);
     }
   }
   pause() {
-    if (this._adPlayer && !this._adPlayer.paused) {
-      this._adPlayer.pause();
+    if (_classPrivateFieldGet2(ad_player_adPlayer, this) && !_classPrivateFieldGet2(ad_player_adPlayer, this).paused) {
+      _classPrivateFieldGet2(ad_player_adPlayer, this).pause();
     }
   }
   resumeContent() {
-    Logger.print(this._debugRawConsoleLogs, `AdPlayer resumeContent requested`);
-    if (this._rmpVast.rmpVastAdPlayer) {
-      this._rmpVast.rmpVastAdPlayer.destroy();
+    Logger.print(_classPrivateFieldGet2(ad_player_rmpVast, this).debugRawConsoleLogs, `AdPlayer resumeContent requested`);
+    if (_classPrivateFieldGet2(ad_player_rmpVast, this).rmpVastAdPlayer) {
+      _classPrivateFieldGet2(ad_player_rmpVast, this).rmpVastAdPlayer.destroy();
     }
-    if (this._rmpVast.rmpVastLinearCreative) {
-      this._rmpVast.rmpVastLinearCreative.readingHlsJS = false;
+    if (_classPrivateFieldGet2(ad_player_rmpVast, this).rmpVastLinearCreative) {
+      _classPrivateFieldGet2(ad_player_rmpVast, this).rmpVastLinearCreative.readingHlsJS = false;
     }
     // if contentPlayerCompleted = true - we are in a post-roll situation
     // in that case we must not resume content once the post-roll has completed
     // you can use contentPlayerCompleted to support 
     // custom use-cases when dynamically changing source for content
     // no need to resume content for outstream ads
-    if (!this._rmpVast.contentCompleted && !this._params.outstream) {
-      Logger.print(this._debugRawConsoleLogs, `content player play requested after ad player resumeContent`);
-      this._rmpVast.rmpVastContentPlayer.play();
+    if (!_classPrivateFieldGet2(ad_player_rmpVast, this).contentCompleted && !_classPrivateFieldGet2(ad_player_params, this).outstream) {
+      Logger.print(_classPrivateFieldGet2(ad_player_rmpVast, this).debugRawConsoleLogs, `content player play requested after ad player resumeContent`);
+      _classPrivateFieldGet2(ad_player_rmpVast, this).rmpVastContentPlayer.play();
     }
-    this._rmpVast.contentCompleted = false;
+    _classPrivateFieldGet2(ad_player_rmpVast, this).contentCompleted = false;
   }
 }
 ;// CONCATENATED MODULE: ./src/js/verification/omsdk.js
 
 
 
+
+
+
+
+
+
+var omsdk_rmpVast = /*#__PURE__*/new (weak_map_default())();
+var omsdk_contentPlayer = /*#__PURE__*/new (weak_map_default())();
+var omsdk_adPlayer = /*#__PURE__*/new (weak_map_default())();
+var omsdk_params = /*#__PURE__*/new (weak_map_default())();
+var _isSkippableAd = /*#__PURE__*/new (weak_map_default())();
+var _skipTimeOffset = /*#__PURE__*/new (weak_map_default())();
+var _adVerifications = /*#__PURE__*/new (weak_map_default())();
+var _VastProperties = /*#__PURE__*/new (weak_map_default())();
+var _adEvents = /*#__PURE__*/new (weak_map_default())();
+var _mediaEvents = /*#__PURE__*/new (weak_map_default())();
+var _adSession = /*#__PURE__*/new (weak_map_default())();
+var _lastVideoTime = /*#__PURE__*/new (weak_map_default())();
+var _onFullscreenChangeFn = /*#__PURE__*/new (weak_map_default())();
+var _OmSdkManager_brand = /*#__PURE__*/new WeakSet();
 class OmSdkManager {
   constructor(adVerifications, rmpVast) {
-    this._rmpVast = rmpVast;
-    this._contentPlayer = rmpVast.currentContentPlayer;
-    this._adPlayer = rmpVast.currentAdPlayer;
-    this._params = rmpVast.params;
-    this._isSkippableAd = rmpVast.isSkippableAd;
-    this._skipTimeOffset = rmpVast.skipTimeOffset;
-    this._debugRawConsoleLogs = rmpVast.debugRawConsoleLogs;
-    this.VastProperties = null;
-    this._adEvents = null;
-    this._mediaEvents = null;
-    this._adSession = null;
-    this._lastVideoTime = -1;
-    this._adVerifications = adVerifications;
-    this._onFullscreenChangeFn = null;
-  }
-  _destroy() {
-    document.removeEventListener('fullscreenchange', this._onFullscreenChangeFn);
-    this._adSession.finish();
-  }
-  _onFullscreenChange() {
-    const isFullscreen = document.fullscreenElement !== null;
-    const playerState = isFullscreen ? 'fullscreen' : 'normal';
-    this._mediaEvents.playerStateChange(playerState);
-  }
-  _pingVerificationNotExecuted(verification, reasonCode) {
-    if (typeof verification.trackingEvents !== 'undefined' && Array.isArray(verification.trackingEvents.verificationNotExecuted) && verification.trackingEvents.verificationNotExecuted.length > 0) {
-      verification.trackingEvents.verificationNotExecuted.forEach(verificationNotExecutedURI => {
-        let validatedURI = verificationNotExecutedURI;
-        const reasonPattern = /\[REASON\]/gi;
-        if (reasonPattern.test(validatedURI)) {
-          validatedURI = validatedURI.replace(reasonPattern, reasonCode);
-        }
-        this._rmpVast.rmpVastTracking.pingURI(validatedURI);
-      });
-    }
-  }
-  _adPlayerDidDispatchTimeUpdate() {
-    if (!this._adEvents || !this._mediaEvents || !this._adPlayer || this._adPlayer.playbackRate === 0) {
-      return;
-    }
-    // Check if playback has crossed a quartile threshold, and report that to
-    // the OMSDK.
-    const adPlayerCurrentTime = this._adPlayer.currentTime;
-    const adPlayerDuration = this._adPlayer.duration;
-    if (adPlayerCurrentTime > -1 && adPlayerDuration > 0) {
-      const currentVideoTimePerCent = adPlayerCurrentTime / adPlayerDuration;
-      if (this._lastVideoTime < 0 && currentVideoTimePerCent >= 0) {
-        this._adEvents.impressionOccurred();
-        this._mediaEvents.start(adPlayerDuration, this._adPlayer.volume);
-      } else if (this._lastVideoTime < 0.25 && currentVideoTimePerCent >= 0.25) {
-        this._mediaEvents.firstQuartile();
-      } else if (this._lastVideoTime < 0.5 && currentVideoTimePerCent >= 0.5) {
-        this._mediaEvents.midpoint();
-      } else if (this._lastVideoTime < 0.75 && currentVideoTimePerCent >= 0.75) {
-        this._mediaEvents.thirdQuartile();
-      } else if (this._lastVideoTime < 1 && currentVideoTimePerCent >= 1) {
-        this._mediaEvents.complete();
-        // to prevent ad pod to fire verification events
-        this._adEvents = null;
-        this._mediaEvents = null;
-        // Wait 300 ms, then finish the session.
-        setTimeout(() => {
-          this._destroy();
-        }, 300);
-      }
-      this._lastVideoTime = currentVideoTimePerCent;
-    }
-  }
-  _adPlayerDidDispatchEvent(event) {
-    if (!this._adSession || !this._adEvents || !this._mediaEvents || !this.VastProperties) {
-      return;
-    }
-    let vastProperties, volume;
-    let videoPosition = 'preroll';
-    switch (event.type) {
-      case 'error':
-        this._adSession.error('video', this._adPlayer.error.message);
-        break;
-      case 'loadeddata':
-        if (this._skipTimeOffset < 0) {
-          this._skipTimeOffset = 0;
-        }
-        if (this._params.outstream) {
-          videoPosition = 'standalone';
-        } else {
-          const contentPlayerCurrentTime = this._contentPlayer.currentTime;
-          const contentPlayerDuration = this._contentPlayer.duration;
-          if (contentPlayerCurrentTime > 0 && contentPlayerCurrentTime < contentPlayerDuration) {
-            videoPosition === 'midroll';
-          } else if (contentPlayerCurrentTime >= contentPlayerDuration) {
-            videoPosition = 'postroll';
-          }
-        }
-        vastProperties = new this.VastProperties(this._isSkippableAd, this._skipTimeOffset, this._params.omidAutoplay, videoPosition);
-        this._adEvents.loaded(vastProperties);
-        break;
-      case 'pause':
-        this._mediaEvents.pause();
-        break;
-      case 'play':
-        if (this._adPlayer.currentTime > 0) {
-          this._mediaEvents.resume();
-        }
-        break;
-      case 'timeupdate':
-        this._adPlayerDidDispatchTimeUpdate();
-        break;
-      case 'volumechange':
-        volume = this._adPlayer.muted ? 0 : this._adPlayer.volume;
-        this._mediaEvents.volumeChange(volume);
-        break;
-      case 'click':
-        this._mediaEvents.adUserInteraction('click');
-        break;
-      default:
-        break;
-    }
-  }
-  _onOMWebLoaded() {
-    // remove executable to only have JavaScriptResource
-    const validatedVerificationArray = [];
-    // we only execute browserOptional="false" unless there are none 
-    // in which case we will look for browserOptional="true"
-    let browserOptional = [];
-    for (let i = 0; i < this._adVerifications.length; i++) {
-      const verification = this._adVerifications[i];
-      if (typeof verification.resource !== 'string' || verification.resource === '') {
-        continue;
-      }
-      // Ping rejection code 2
-      // Verification not supported. The API framework or language type of
-      // verification resources provided are not implemented or supported by
-      // the player/SDK
-      if (typeof verification.type !== 'undefined' && verification.type === 'executable') {
-        this._pingVerificationNotExecuted(verification, '2');
-        continue;
-      }
-      // if not OMID, we reject
-      if (typeof verification.apiFramework !== 'undefined' && verification.apiFramework !== 'omid') {
-        this._pingVerificationNotExecuted(verification, '2');
-        continue;
-      }
-      // reject vendors not in omidAllowedVendors if omidAllowedVendors is not empty
-      if (this._params.omidAllowedVendors.length > 0 && typeof verification.vendor !== 'undefined') {
-        var _context;
-        if (!includes_default()(_context = this._params.omidAllowedVendors).call(_context, verification.vendor)) {
-          continue;
-        }
-      }
-      if (typeof verification.browserOptional !== 'undefined' && verification.browserOptional === true) {
-        push_default()(browserOptional).call(browserOptional, i);
-        continue;
-      }
-      push_default()(validatedVerificationArray).call(validatedVerificationArray, verification);
-    }
-    if (validatedVerificationArray.length === 0 && browserOptional.length > 0) {
-      browserOptional.forEach(browserOptionalItem => {
-        push_default()(validatedVerificationArray).call(validatedVerificationArray, this._adVerifications[browserOptionalItem]);
-      });
-    }
-    this._adVerifications = validatedVerificationArray;
-    let sessionClient;
-    try {
-      sessionClient = OmidSessionClient.default;
-    } catch (error) {
-      console.warn(error);
-      return;
-    }
-    const AdSession = sessionClient.AdSession;
-    const Partner = sessionClient.Partner;
-    const Context = sessionClient.Context;
-    const VerificationScriptResource = sessionClient.VerificationScriptResource;
-    const AdEvents = sessionClient.AdEvents;
-    const MediaEvents = sessionClient.MediaEvents;
-    this.VastProperties = sessionClient.VastProperties;
-    const partner = new Partner(this._params.partnerName, this._params.partnerVersion);
-    let resources = [];
-    if (this._params.omidRunValidationScript) {
-      // https://interactiveadvertisingbureau.github.io/Open-Measurement-SDKJS/validation.html
-      const VALIDATION_SCRIPT_URL = 'https://cdn.radiantmediatechs.com/rmp/omsdk/1.3.37/omid-validation-verification-script-v1.js';
-      const VENDOR_KEY = 'dummyVendor'; // you must use this value as is
-      const PARAMS = JSON.stringify({
-        k: 'v'
-      });
-      push_default()(resources).call(resources, new VerificationScriptResource(VALIDATION_SCRIPT_URL, VENDOR_KEY, PARAMS));
-    } else {
-      // we support Access Modes Creative Access a.k.a full (we do not support Domain Access for now)
-      const accessMode = 'full';
-      resources = this._adVerifications.map(verification => {
-        return new VerificationScriptResource(verification.resource, verification.vendor, verification.parameters, accessMode);
-      });
-    }
-    const contentUrl = document.location.href;
-    const context = new Context(partner, resources, contentUrl);
-    Logger.print(this._debugRawConsoleLogs, ``, resources);
-    if (this._params.omidUnderEvaluation) {
-      context.underEvaluation = true;
-    }
-    const omdSdkServiceWindow = window.top;
-    if (!omdSdkServiceWindow) {
-      Logger.print(this._debugRawConsoleLogs, `OMSDK: invalid serviceWindow - return`);
-      return;
-    }
-    context.setServiceWindow(omdSdkServiceWindow);
-    context.setVideoElement(this._adPlayer);
-    Logger.print(this._debugRawConsoleLogs, ``, context);
-    this._adSession = new AdSession(context);
-    this._adSession.setCreativeType('video');
-    this._adSession.setImpressionType('beginToRender');
-    if (!this._adSession.isSupported()) {
-      Logger.print(this._debugRawConsoleLogs, `OMSDK: invalid serviceWindow - return`);
-      return;
-    }
-    this._adEvents = new AdEvents(this._adSession);
-    this._mediaEvents = new MediaEvents(this._adSession);
-    this._adSession.start();
+    _classPrivateMethodInitSpec(this, _OmSdkManager_brand);
+    _classPrivateFieldInitSpec(this, omsdk_rmpVast, void 0);
+    _classPrivateFieldInitSpec(this, omsdk_contentPlayer, void 0);
+    _classPrivateFieldInitSpec(this, omsdk_adPlayer, void 0);
+    _classPrivateFieldInitSpec(this, omsdk_params, void 0);
+    _classPrivateFieldInitSpec(this, _isSkippableAd, void 0);
+    _classPrivateFieldInitSpec(this, _skipTimeOffset, void 0);
+    _classPrivateFieldInitSpec(this, _adVerifications, void 0);
+    _classPrivateFieldInitSpec(this, _VastProperties, null);
+    _classPrivateFieldInitSpec(this, _adEvents, null);
+    _classPrivateFieldInitSpec(this, _mediaEvents, null);
+    _classPrivateFieldInitSpec(this, _adSession, null);
+    _classPrivateFieldInitSpec(this, _lastVideoTime, -1);
+    _classPrivateFieldInitSpec(this, _onFullscreenChangeFn, null);
+    _classPrivateFieldSet2(omsdk_rmpVast, this, rmpVast);
+    _classPrivateFieldSet2(omsdk_contentPlayer, this, rmpVast.currentContentPlayer);
+    _classPrivateFieldSet2(omsdk_adPlayer, this, rmpVast.currentAdPlayer);
+    _classPrivateFieldSet2(omsdk_params, this, rmpVast.params);
+    _classPrivateFieldSet2(_isSkippableAd, this, rmpVast.isSkippableAd);
+    _classPrivateFieldSet2(_skipTimeOffset, this, rmpVast.skipTimeOffset);
+    _classPrivateFieldSet2(_adVerifications, this, adVerifications);
   }
   init() {
     const videoEventTypes = ['error', 'loadeddata', 'pause', 'play', 'timeupdate', 'volumechange', 'click'];
 
     // handle ad player events
     videoEventTypes.forEach(eventType => {
-      this._adPlayer.addEventListener(eventType, event => this._adPlayerDidDispatchEvent(event));
+      _classPrivateFieldGet2(omsdk_adPlayer, this).addEventListener(eventType, event => _assertClassBrand(_OmSdkManager_brand, this, _adPlayerDidDispatchEvent).call(this, event));
     });
     // handle fullscreenchange 
-    this._onFullscreenChangeFn = this._onFullscreenChange.bind(this);
-    document.addEventListener('fullscreenchange', this._onFullscreenChangeFn);
+    _classPrivateFieldSet2(_onFullscreenChangeFn, this, _assertClassBrand(_OmSdkManager_brand, this, _onFullscreenChange).bind(this));
+    document.addEventListener('fullscreenchange', _classPrivateFieldGet2(_onFullscreenChangeFn, this));
     // Service Script To incorporate omweb-v1.js, use a <script> tag - we are assuming it is there
-    this._onOMWebLoaded();
+    _assertClassBrand(_OmSdkManager_brand, this, _onOMWebLoaded).call(this);
   }
+}
+function _destroy() {
+  document.removeEventListener('fullscreenchange', _classPrivateFieldGet2(_onFullscreenChangeFn, this));
+  _classPrivateFieldGet2(_adSession, this).finish();
+}
+function _onFullscreenChange() {
+  const isFullscreen = document.fullscreenElement !== null;
+  const playerState = isFullscreen ? 'fullscreen' : 'normal';
+  _classPrivateFieldGet2(_mediaEvents, this).playerStateChange(playerState);
+}
+function _pingVerificationNotExecuted(verification, reasonCode) {
+  if (typeof verification.trackingEvents !== 'undefined' && Array.isArray(verification.trackingEvents.verificationNotExecuted) && verification.trackingEvents.verificationNotExecuted.length > 0) {
+    verification.trackingEvents.verificationNotExecuted.forEach(verificationNotExecutedURI => {
+      let validatedURI = verificationNotExecutedURI;
+      const reasonPattern = /\[REASON\]/gi;
+      if (reasonPattern.test(validatedURI)) {
+        validatedURI = validatedURI.replace(reasonPattern, reasonCode);
+      }
+      _classPrivateFieldGet2(omsdk_rmpVast, this).rmpVastTracking.pingURI(validatedURI);
+    });
+  }
+}
+function _adPlayerDidDispatchTimeUpdate() {
+  if (!_classPrivateFieldGet2(_adEvents, this) || !_classPrivateFieldGet2(_mediaEvents, this) || !_classPrivateFieldGet2(omsdk_adPlayer, this) || _classPrivateFieldGet2(omsdk_adPlayer, this).playbackRate === 0) {
+    return;
+  }
+  // Check if playback has crossed a quartile threshold, and report that to
+  // the OMSDK.
+  const adPlayerCurrentTime = _classPrivateFieldGet2(omsdk_adPlayer, this).currentTime;
+  const adPlayerDuration = _classPrivateFieldGet2(omsdk_adPlayer, this).duration;
+  if (adPlayerCurrentTime > -1 && adPlayerDuration > 0) {
+    const currentVideoTimePerCent = adPlayerCurrentTime / adPlayerDuration;
+    if (_classPrivateFieldGet2(_lastVideoTime, this) < 0 && currentVideoTimePerCent >= 0) {
+      _classPrivateFieldGet2(_adEvents, this).impressionOccurred();
+      _classPrivateFieldGet2(_mediaEvents, this).start(adPlayerDuration, _classPrivateFieldGet2(omsdk_adPlayer, this).volume);
+    } else if (_classPrivateFieldGet2(_lastVideoTime, this) < 0.25 && currentVideoTimePerCent >= 0.25) {
+      _classPrivateFieldGet2(_mediaEvents, this).firstQuartile();
+    } else if (_classPrivateFieldGet2(_lastVideoTime, this) < 0.5 && currentVideoTimePerCent >= 0.5) {
+      _classPrivateFieldGet2(_mediaEvents, this).midpoint();
+    } else if (_classPrivateFieldGet2(_lastVideoTime, this) < 0.75 && currentVideoTimePerCent >= 0.75) {
+      _classPrivateFieldGet2(_mediaEvents, this).thirdQuartile();
+    } else if (_classPrivateFieldGet2(_lastVideoTime, this) < 1 && currentVideoTimePerCent >= 1) {
+      _classPrivateFieldGet2(_mediaEvents, this).complete();
+      // to prevent ad pod to fire verification events
+      _classPrivateFieldSet2(_adEvents, this, null);
+      _classPrivateFieldSet2(_mediaEvents, this, null);
+      // Wait 300 ms, then finish the session.
+      window.setTimeout(() => {
+        _assertClassBrand(_OmSdkManager_brand, this, _destroy).call(this);
+      }, 300);
+    }
+    _classPrivateFieldSet2(_lastVideoTime, this, currentVideoTimePerCent);
+  }
+}
+function _adPlayerDidDispatchEvent(event) {
+  if (!_classPrivateFieldGet2(_adSession, this) || !_classPrivateFieldGet2(_adEvents, this) || !_classPrivateFieldGet2(_mediaEvents, this) || !_classPrivateFieldGet2(_VastProperties, this)) {
+    return;
+  }
+  let vastProperties, volume;
+  let videoPosition = 'preroll';
+  switch (event.type) {
+    case 'error':
+      _classPrivateFieldGet2(_adSession, this).error('video', _classPrivateFieldGet2(omsdk_adPlayer, this).error.message);
+      break;
+    case 'loadeddata':
+      if (_classPrivateFieldGet2(_skipTimeOffset, this) < 0) {
+        _classPrivateFieldSet2(_skipTimeOffset, this, 0);
+      }
+      if (_classPrivateFieldGet2(omsdk_params, this).outstream) {
+        videoPosition = 'standalone';
+      } else {
+        const contentPlayerCurrentTime = _classPrivateFieldGet2(omsdk_contentPlayer, this).currentTime;
+        const contentPlayerDuration = _classPrivateFieldGet2(omsdk_contentPlayer, this).duration;
+        if (contentPlayerCurrentTime > 0 && contentPlayerCurrentTime < contentPlayerDuration) {
+          videoPosition === 'midroll';
+        } else if (contentPlayerCurrentTime >= contentPlayerDuration) {
+          videoPosition = 'postroll';
+        }
+      }
+      vastProperties = new (_classPrivateFieldGet2(_VastProperties, this))(_classPrivateFieldGet2(_isSkippableAd, this), _classPrivateFieldGet2(_skipTimeOffset, this), _classPrivateFieldGet2(omsdk_params, this).omidAutoplay, videoPosition);
+      _classPrivateFieldGet2(_adEvents, this).loaded(vastProperties);
+      break;
+    case 'pause':
+      _classPrivateFieldGet2(_mediaEvents, this).pause();
+      break;
+    case 'play':
+      if (_classPrivateFieldGet2(omsdk_adPlayer, this).currentTime > 0) {
+        _classPrivateFieldGet2(_mediaEvents, this).resume();
+      }
+      break;
+    case 'timeupdate':
+      _assertClassBrand(_OmSdkManager_brand, this, _adPlayerDidDispatchTimeUpdate).call(this);
+      break;
+    case 'volumechange':
+      volume = _classPrivateFieldGet2(omsdk_adPlayer, this).muted ? 0 : _classPrivateFieldGet2(omsdk_adPlayer, this).volume;
+      _classPrivateFieldGet2(_mediaEvents, this).volumeChange(volume);
+      break;
+    case 'click':
+      _classPrivateFieldGet2(_mediaEvents, this).adUserInteraction('click');
+      break;
+    default:
+      break;
+  }
+}
+function _onOMWebLoaded() {
+  // remove executable to only have JavaScriptResource
+  const validatedVerificationArray = [];
+  // we only execute browserOptional="false" unless there are none 
+  // in which case we will look for browserOptional="true"
+  let browserOptional = [];
+  for (let i = 0; i < _classPrivateFieldGet2(_adVerifications, this).length; i++) {
+    const verification = _classPrivateFieldGet2(_adVerifications, this)[i];
+    if (typeof verification.resource !== 'string' || verification.resource === '') {
+      continue;
+    }
+    // Ping rejection code 2
+    // Verification not supported. The API framework or language type of
+    // verification resources provided are not implemented or supported by
+    // the player/SDK
+    if (typeof verification.type !== 'undefined' && verification.type === 'executable') {
+      _assertClassBrand(_OmSdkManager_brand, this, _pingVerificationNotExecuted).call(this, verification, '2');
+      continue;
+    }
+    // if not OMID, we reject
+    if (typeof verification.apiFramework !== 'undefined' && verification.apiFramework !== 'omid') {
+      _assertClassBrand(_OmSdkManager_brand, this, _pingVerificationNotExecuted).call(this, verification, '2');
+      continue;
+    }
+    // reject vendors not in omidAllowedVendors if omidAllowedVendors is not empty
+    if (_classPrivateFieldGet2(omsdk_params, this).omidAllowedVendors.length > 0 && typeof verification.vendor !== 'undefined') {
+      var _context;
+      if (!includes_default()(_context = _classPrivateFieldGet2(omsdk_params, this).omidAllowedVendors).call(_context, verification.vendor)) {
+        continue;
+      }
+    }
+    if (typeof verification.browserOptional !== 'undefined' && verification.browserOptional === true) {
+      push_default()(browserOptional).call(browserOptional, i);
+      continue;
+    }
+    push_default()(validatedVerificationArray).call(validatedVerificationArray, verification);
+  }
+  if (validatedVerificationArray.length === 0 && browserOptional.length > 0) {
+    browserOptional.forEach(browserOptionalItem => {
+      push_default()(validatedVerificationArray).call(validatedVerificationArray, _classPrivateFieldGet2(_adVerifications, this)[browserOptionalItem]);
+    });
+  }
+  _classPrivateFieldSet2(_adVerifications, this, validatedVerificationArray);
+  let sessionClient;
+  try {
+    sessionClient = OmidSessionClient.default;
+  } catch (error) {
+    console.warn(error);
+    return;
+  }
+  const AdSession = sessionClient.AdSession;
+  const Partner = sessionClient.Partner;
+  const Context = sessionClient.Context;
+  const VerificationScriptResource = sessionClient.VerificationScriptResource;
+  const AdEvents = sessionClient.AdEvents;
+  const MediaEvents = sessionClient.MediaEvents;
+  _classPrivateFieldSet2(_VastProperties, this, sessionClient.VastProperties);
+  const partner = new Partner(_classPrivateFieldGet2(omsdk_params, this).partnerName, _classPrivateFieldGet2(omsdk_params, this).partnerVersion);
+  let resources = [];
+  if (_classPrivateFieldGet2(omsdk_params, this).omidRunValidationScript) {
+    // https://interactiveadvertisingbureau.github.io/Open-Measurement-SDKJS/validation.html
+    const VALIDATION_SCRIPT_URL = 'https://cdn.radiantmediatechs.com/rmp/omsdk/1.3.37/omid-validation-verification-script-v1.js';
+    const VENDOR_KEY = 'dummyVendor'; // you must use this value as is
+    const PARAMS = JSON.stringify({
+      k: 'v'
+    });
+    push_default()(resources).call(resources, new VerificationScriptResource(VALIDATION_SCRIPT_URL, VENDOR_KEY, PARAMS));
+  } else {
+    // we support Access Modes Creative Access a.k.a full (we do not support Domain Access for now)
+    const accessMode = 'full';
+    resources = _classPrivateFieldGet2(_adVerifications, this).map(verification => {
+      return new VerificationScriptResource(verification.resource, verification.vendor, verification.parameters, accessMode);
+    });
+  }
+  const contentUrl = document.location.href;
+  const context = new Context(partner, resources, contentUrl);
+  Logger.print(_classPrivateFieldGet2(omsdk_rmpVast, this).debugRawConsoleLogs, ``, resources);
+  if (_classPrivateFieldGet2(omsdk_params, this).omidUnderEvaluation) {
+    context.underEvaluation = true;
+  }
+  const omdSdkServiceWindow = window.top;
+  if (!omdSdkServiceWindow) {
+    Logger.print(_classPrivateFieldGet2(omsdk_rmpVast, this).debugRawConsoleLogs, `OMSDK: invalid serviceWindow - return`);
+    return;
+  }
+  context.setServiceWindow(omdSdkServiceWindow);
+  context.setVideoElement(_classPrivateFieldGet2(omsdk_adPlayer, this));
+  Logger.print(_classPrivateFieldGet2(omsdk_rmpVast, this).debugRawConsoleLogs, ``, context);
+  _classPrivateFieldSet2(_adSession, this, new AdSession(context));
+  _classPrivateFieldGet2(_adSession, this).setCreativeType('video');
+  _classPrivateFieldGet2(_adSession, this).setImpressionType('beginToRender');
+  if (!_classPrivateFieldGet2(_adSession, this).isSupported()) {
+    Logger.print(_classPrivateFieldGet2(omsdk_rmpVast, this).debugRawConsoleLogs, `OMSDK: invalid serviceWindow - return`);
+    return;
+  }
+  _classPrivateFieldSet2(_adEvents, this, new AdEvents(_classPrivateFieldGet2(_adSession, this)));
+  _classPrivateFieldSet2(_mediaEvents, this, new MediaEvents(_classPrivateFieldGet2(_adSession, this)));
+  _classPrivateFieldGet2(_adSession, this).start();
 }
 ;// CONCATENATED MODULE: ./src/js/framework/dispatcher.js
 
@@ -11705,79 +12628,89 @@ class Dispatcher {
 }
 ;// CONCATENATED MODULE: ./src/js/players/content-player.js
 
+
+
+
+
+var content_player_rmpVast = /*#__PURE__*/new (weak_map_default())();
+var content_player_contentPlayer = /*#__PURE__*/new (weak_map_default())();
+var _customPlaybackCurrentTime = /*#__PURE__*/new (weak_map_default())();
+var _antiSeekLogicInterval = /*#__PURE__*/new (weak_map_default())();
 class ContentPlayer {
   constructor(rmpVast) {
-    this._rmpVast = rmpVast;
-    this._contentPlayer = rmpVast.currentContentPlayer;
-    this._customPlaybackCurrentTime = 0;
-    this._antiSeekLogicInterval = null;
+    _classPrivateFieldInitSpec(this, content_player_rmpVast, void 0);
+    _classPrivateFieldInitSpec(this, content_player_contentPlayer, void 0);
+    _classPrivateFieldInitSpec(this, _customPlaybackCurrentTime, 0);
+    _classPrivateFieldInitSpec(this, _antiSeekLogicInterval, null);
+    _classPrivateFieldSet2(content_player_rmpVast, this, rmpVast);
+    _classPrivateFieldSet2(content_player_contentPlayer, this, rmpVast.currentContentPlayer);
   }
   set volume(level) {
-    if (this._contentPlayer) {
-      this._contentPlayer.volume = level;
+    if (_classPrivateFieldGet2(content_player_contentPlayer, this)) {
+      _classPrivateFieldGet2(content_player_contentPlayer, this).volume = level;
     }
   }
   get volume() {
-    if (this._contentPlayer) {
-      return this._contentPlayer.volume;
+    if (_classPrivateFieldGet2(content_player_contentPlayer, this)) {
+      return _classPrivateFieldGet2(content_player_contentPlayer, this).volume;
     }
     return -1;
   }
   get muted() {
-    if (this._contentPlayer) {
-      return this._contentPlayer.muted;
+    if (_classPrivateFieldGet2(content_player_contentPlayer, this)) {
+      return _classPrivateFieldGet2(content_player_contentPlayer, this).muted;
     }
     return false;
   }
   set muted(muted) {
-    if (this._contentPlayer) {
-      if (muted && !this._contentPlayer.muted) {
-        this._contentPlayer.muted = true;
-      } else if (!muted && this._contentPlayer.muted) {
-        this._contentPlayer.muted = false;
+    if (_classPrivateFieldGet2(content_player_contentPlayer, this)) {
+      if (muted && !_classPrivateFieldGet2(content_player_contentPlayer, this).muted) {
+        _classPrivateFieldGet2(content_player_contentPlayer, this).muted = true;
+      } else if (!muted && _classPrivateFieldGet2(content_player_contentPlayer, this).muted) {
+        _classPrivateFieldGet2(content_player_contentPlayer, this).muted = false;
       }
     }
   }
   get currentTime() {
-    if (this._contentPlayer && FW.isNumber(this._contentPlayer.currentTime)) {
-      return this._contentPlayer.currentTime * 1000;
+    if (_classPrivateFieldGet2(content_player_contentPlayer, this) && FW.isNumber(_classPrivateFieldGet2(content_player_contentPlayer, this).currentTime)) {
+      return _classPrivateFieldGet2(content_player_contentPlayer, this).currentTime * 1000;
     }
     return -1;
   }
   destroy() {
-    FW.clearInterval(this._antiSeekLogicInterval);
+    window.clearInterval(_classPrivateFieldGet2(_antiSeekLogicInterval, this));
   }
   play(firstContentPlayerPlayRequest) {
-    if (this._contentPlayer && this._contentPlayer.paused) {
-      this._rmpVast.rmpVastUtils.playPromise('content', firstContentPlayerPlayRequest);
+    if (_classPrivateFieldGet2(content_player_contentPlayer, this) && _classPrivateFieldGet2(content_player_contentPlayer, this).paused) {
+      _classPrivateFieldGet2(content_player_rmpVast, this).rmpVastUtils.playPromise('content', firstContentPlayerPlayRequest);
     }
   }
   pause() {
-    if (this._contentPlayer && !this._contentPlayer.paused) {
-      this._contentPlayer.pause();
+    if (_classPrivateFieldGet2(content_player_contentPlayer, this) && !_classPrivateFieldGet2(content_player_contentPlayer, this).paused) {
+      _classPrivateFieldGet2(content_player_contentPlayer, this).pause();
     }
   }
   seekTo(msSeek) {
     if (!FW.isNumber(msSeek)) {
       return;
     }
-    if (msSeek >= 0 && this._contentPlayer) {
-      this._contentPlayer.currentTime = msSeek / 1000;
+    if (msSeek >= 0 && _classPrivateFieldGet2(content_player_contentPlayer, this)) {
+      _classPrivateFieldGet2(content_player_contentPlayer, this).currentTime = msSeek / 1000;
     }
   }
   preventSeekingForCustomPlayback() {
     // after much poking it appears we cannot rely on seek events for iOS to 
     // set this up reliably - so interval it is
-    if (this._contentPlayer) {
-      this._antiSeekLogicInterval = setInterval(() => {
-        if (this._rmpVast.creative.isLinear && this._rmpVast.__adOnStage) {
-          const diff = Math.abs(this._customPlaybackCurrentTime - this._contentPlayer.currentTime);
+    if (_classPrivateFieldGet2(content_player_contentPlayer, this)) {
+      _classPrivateFieldSet2(_antiSeekLogicInterval, this, window.setInterval(() => {
+        if (_classPrivateFieldGet2(content_player_rmpVast, this).creative.isLinear && _classPrivateFieldGet2(content_player_rmpVast, this).__adOnStage) {
+          const diff = Math.abs(_classPrivateFieldGet2(_customPlaybackCurrentTime, this) - _classPrivateFieldGet2(content_player_contentPlayer, this).currentTime);
           if (diff > 1) {
-            this._contentPlayer.currentTime = this._customPlaybackCurrentTime;
+            _classPrivateFieldGet2(content_player_contentPlayer, this).currentTime = _classPrivateFieldGet2(_customPlaybackCurrentTime, this);
           }
-          this._customPlaybackCurrentTime = this._contentPlayer.currentTime;
+          _classPrivateFieldSet2(_customPlaybackCurrentTime, this, _classPrivateFieldGet2(content_player_contentPlayer, this).currentTime);
         }
-      }, 200);
+      }, 200));
     }
   }
 }
@@ -14836,15 +15769,18 @@ var update = injectStylesIntoStyleTag_default()(rmp_vast/* default */.A, options
 
 
 
+
+
 /**
  * The class to instantiate RmpVast
  * @export
  * @class RmpVast
 */
+var _RmpVast_brand = /*#__PURE__*/new WeakSet();
 class RmpVast {
   /**
    * @constructor
-   * @param {string}  id - the id for the player container. Required parameter.
+   * @param {string|HTMLElement}  idOrElement - the id or element for the player container. Required parameter.
    * @typedef {object} VpaidSettings
    * @property {number} [width]
    * @property {number} [height]
@@ -14887,15 +15823,18 @@ class RmpVast {
    * @param {RmpVastParams} [params] - An object representing various parameters that can be passed to a rmp-vast 
    *  instance and that will affect the player inner-workings. Optional parameter.
    */
-  constructor(id, params) {
+  constructor(idOrElement, params) {
+    _classPrivateMethodInitSpec(this, _RmpVast_brand);
     // reset instance variables - once per session
-    this._initInstanceVariables();
-    if (typeof id !== 'string' || id === '') {
-      console.error(`Invalid id to create new instance - exit`);
+    _assertClassBrand(_RmpVast_brand, this, _initInstanceVariables).call(this);
+    if (typeof idOrElement === 'string' && idOrElement !== '') {
+      this.container = document.getElementById(idOrElement);
+    } else if (typeof idOrElement !== 'undefined' && idOrElement instanceof HTMLElement) {
+      this.container = idOrElement;
+    } else {
+      console.error(`Invalid idOrElement to create new instance - exit`);
       return;
     }
-    this.id = id;
-    this.container = document.getElementById(this.id);
     this.contentWrapper = this.container.querySelector('.rmp-content');
     this.currentContentPlayer = this.container.querySelector('.rmp-video');
     if (this.container === null || this.contentWrapper === null || this.currentContentPlayer === null) {
@@ -14921,32 +15860,6 @@ class RmpVast {
     this.resetVariablesForNewLoadAds();
     // handle fullscreen events
     this.rmpVastUtils.handleFullscreen();
-  }
-  _initInstanceVariables() {
-    this.adContainer = null;
-    this.contentWrapper = null;
-    this.container = null;
-    this.rmpVastContentPlayer = null;
-    this.rmpVastAdPlayer = null;
-    this.rmpVastUtils = null;
-    this.rmpVastTracking = null;
-    this.rmpVastCompanionCreative = null;
-    this.environmentData = null;
-    this.currentContentSrc = '';
-    this.currentContentCurrentTime = -1;
-    this.params = {};
-    this.events = {};
-    this.id = null;
-    this.isInFullscreen = false;
-    this.contentCompleted = false;
-    this.currentContentPlayer = null;
-    this.currentAdPlayer = null;
-    this.rmpVastInitialized = false;
-    this.debugRawConsoleLogs = false;
-    // adpod
-    this.adPod = false;
-    this.adPodLength = 0;
-    this.adSequence = 0;
   }
   resetVariablesForNewLoadAds() {
     if (this.attachViewableObserverFn) {
@@ -15001,17 +15914,6 @@ class RmpVast {
   /** 
    * @private
    */
-  _on(eventName, callback) {
-    // First we grab the event from this.events
-    let event = this.events[eventName];
-    // If the event does not exist then we should create it!
-    if (!event) {
-      event = new Dispatcher(eventName);
-      this.events[eventName] = event;
-    }
-    // Now we add the callback to the event
-    event.registerCallback(callback);
-  }
 
   /** 
    * Listen to an event from the custom event system
@@ -15023,20 +15925,13 @@ class RmpVast {
     }
     const split = eventName.split(' ');
     split.forEach(eventItem => {
-      this._on(eventItem, callback);
+      _assertClassBrand(_RmpVast_brand, this, _on).call(this, eventItem, callback);
     });
   }
 
   /** 
    * @private
    */
-  _one(eventName, callback) {
-    const newCallback = e => {
-      this.off(eventName, newCallback);
-      callback(e);
-    };
-    this.on(eventName, newCallback);
-  }
 
   /** 
    * Listen once to an event from the custom event system
@@ -15048,26 +15943,13 @@ class RmpVast {
     }
     const split = eventName.split(' ');
     split.forEach(eventItem => {
-      this._one(eventItem, callback);
+      _assertClassBrand(_RmpVast_brand, this, _one).call(this, eventItem, callback);
     });
   }
 
   /** 
    * @private
    */
-  _off(eventName, callback) {
-    // First get the correct event
-    const event = this.events[eventName];
-    // Check that the event exists and it has the callback registered
-    if (event && event.callbacks.indexOf(callback) > -1) {
-      // if it is registered then unregister it!
-      event.unregisterCallback(callback);
-      // if the event has no callbacks left, delete the event
-      if (event.callbacks.length === 0) {
-        delete this.events[eventName];
-      }
-    }
-  }
 
   /** 
    * Unregister an event from the custom event system
@@ -15079,359 +15961,13 @@ class RmpVast {
     }
     const split = eventName.split(' ');
     split.forEach(eventItem => {
-      this._off(eventItem, callback);
+      _assertClassBrand(_RmpVast_brand, this, _off).call(this, eventItem, callback);
     });
   }
 
   /** 
    * @private
    */
-  _addTrackingEvents(trackingEvents) {
-    const keys = Object.keys(trackingEvents);
-    keys.forEach(key => {
-      trackingEvents[key].forEach(url => {
-        var _context;
-        push_default()(_context = this.trackingTags).call(_context, {
-          event: key,
-          url
-        });
-      });
-    });
-  }
-
-  /** 
-   * @private
-   */
-  _handleIntersect(entries) {
-    entries.forEach(entry => {
-      if (entry.intersectionRatio > this.viewablePreviousRatio) {
-        this.viewableObserver.unobserve(this.container);
-        this.rmpVastTracking.dispatchTrackingAndApiEvent('adviewable');
-      }
-      this.viewablePreviousRatio = entry.intersectionRatio;
-    });
-  }
-
-  /** 
-   * @private
-   */
-  _attachViewableObserver() {
-    this.off('adstarted', this.attachViewableObserverFn);
-    if (typeof window.IntersectionObserver !== 'undefined') {
-      const options = {
-        root: null,
-        rootMargin: '0px',
-        threshold: [0.5]
-      };
-      this.viewableObserver = new IntersectionObserver(this._handleIntersect.bind(this), options);
-      this.viewableObserver.observe(this.container);
-    } else {
-      this.rmpVastTracking.dispatchTrackingAndApiEvent('adviewundetermined');
-    }
-  }
-
-  /** 
-   * @private
-   */
-  _initViewableImpression() {
-    if (this.viewableObserver) {
-      this.viewableObserver.unobserve(this.container);
-    }
-    this.ad.viewableImpression.forEach(viewableImpression => {
-      if (viewableImpression.viewable.length > 0) {
-        viewableImpression.viewable.forEach(url => {
-          var _context2;
-          push_default()(_context2 = this.trackingTags).call(_context2, {
-            event: 'viewable',
-            url
-          });
-        });
-      }
-      if (viewableImpression.notViewable.length > 0) {
-        viewableImpression.notViewable.forEach(url => {
-          var _context3;
-          push_default()(_context3 = this.trackingTags).call(_context3, {
-            event: 'notviewable',
-            url
-          });
-        });
-      }
-      if (viewableImpression.viewUndetermined.length > 0) {
-        viewableImpression.viewUndetermined.forEach(url => {
-          var _context4;
-          push_default()(_context4 = this.trackingTags).call(_context4, {
-            event: 'viewundetermined',
-            url
-          });
-        });
-      }
-    });
-    this.attachViewableObserverFn = this._attachViewableObserver.bind(this);
-    this.on('adstarted', this.attachViewableObserverFn);
-  }
-
-  /** 
-   * @private
-   */
-  async _loopAds(ads) {
-    for (let i = 0; i < ads.length; i++) {
-      await new (promise_default())(resolve => {
-        const currentAd = ads[i];
-        Logger.print(this.debugRawConsoleLogs, `currentAd follows`, currentAd);
-        this.ad.id = currentAd.id;
-        this.ad.adServingId = currentAd.adServingId;
-        this.ad.categories = currentAd.categories;
-        if (this.requireCategory) {
-          if (this.ad.categories.length === 0 || !this.ad.categories[0].authority) {
-            this.rmpVastUtils.processVastErrors(204, true);
-            resolve();
-          }
-        }
-        this.ad.blockedAdCategories = currentAd.blockedAdCategories;
-        if (this.requireCategory) {
-          let haltDueToBlockedAdCategories = false;
-          this.ad.blockedAdCategories.forEach(blockedAdCategory => {
-            const blockedAdCategoryAuthority = blockedAdCategory.authority;
-            const blockedAdCategoryValue = blockedAdCategory.value;
-            this.ad.categories.forEach(category => {
-              const categoriesAuthority = category.authority;
-              const categoriesValue = category.value;
-              if (blockedAdCategoryAuthority === categoriesAuthority && blockedAdCategoryValue === categoriesValue) {
-                this.rmpVastUtils.processVastErrors(205, true);
-                haltDueToBlockedAdCategories = true;
-              }
-            });
-          });
-          if (haltDueToBlockedAdCategories) {
-            resolve();
-          }
-        }
-        this.ad.adType = currentAd.adType;
-        this.ad.title = currentAd.title;
-        this.ad.description = currentAd.description;
-        this.ad.system = currentAd.system;
-        this.ad.advertiser = currentAd.advertiser;
-        this.ad.pricing = currentAd.pricing;
-        this.ad.survey = currentAd.survey;
-        this.ad.sequence = currentAd.sequence;
-        ads.find(ad => {
-          this.adPod = false;
-          if (ad.sequence && ad.sequence > 1) {
-            this.adPod = true;
-            return true;
-          }
-          return false;
-        });
-        // this is to fix a weird bug in vast-client-js - sometimes it returns sequence === null for some items when
-        // adpod is made of redirects
-        if (this.adPod) {
-          let max = reduce_default()(ads).call(ads, (prev, current) => {
-            return prev.sequence > current.sequence ? prev : current;
-          }).sequence;
-          ads.forEach(ad => {
-            if (ad.sequence === null) {
-              ad.sequence = max + 1;
-              max++;
-            }
-          });
-          this.adSequence++;
-          if (this.adPodLength === 0) {
-            let adPodLength = 0;
-            ads.forEach(ad => {
-              if (ad.sequence) {
-                adPodLength++;
-              }
-            });
-            this.adPodLength = adPodLength;
-            Logger.print(this.debugRawConsoleLogs, `AdPod detected with length ${this.adPodLength}`, currentAd);
-          }
-          this.one('addestroyed', () => {
-            if (this.adSequence === this.adPodLength) {
-              this.adPodLength = 0;
-              this.adSequence = 0;
-              this.adPod = false;
-              this.rmpVastUtils.createApiEvent('adpodcompleted');
-            }
-            resolve();
-          });
-        }
-        this.ad.viewableImpression = currentAd.viewableImpression;
-        if (this.ad.viewableImpression.length > 0) {
-          this._initViewableImpression();
-        }
-        currentAd.errorURLTemplates.forEach(errorURLTemplate => {
-          var _context5;
-          push_default()(_context5 = this.adErrorTags).call(_context5, {
-            event: 'error',
-            url: errorURLTemplate
-          });
-        });
-        currentAd.impressionURLTemplates.forEach(impression => {
-          if (impression.url) {
-            var _context6;
-            push_default()(_context6 = this.trackingTags).call(_context6, {
-              event: 'impression',
-              url: impression.url
-            });
-          }
-        });
-
-        // parse companion
-        const creatives = currentAd.creatives;
-        Logger.print(this.debugRawConsoleLogs, `Parsed creatives follow`, creatives);
-        creatives.find(creative => {
-          if (creative.type === 'companion') {
-            Logger.print(this.debugRawConsoleLogs, `Creative type companion detected`);
-            this.rmpVastCompanionCreative.parse(creative);
-            return true;
-          }
-          return false;
-        });
-        for (let k = 0; k < creatives.length; k++) {
-          const creative = creatives[k];
-          // companion >> continue
-          if (creative.type === 'companion') {
-            continue;
-          }
-          this.creative.id = creative.id;
-          this.creative.universalAdIds = creative.universalAdIds;
-          this.creative.adId = creative.adId;
-          this.creative.trackingEvents = creative.trackingEvents;
-          switch (creative.type) {
-            case 'linear':
-              this.creative.duration = creative.duration;
-              this.creative.skipDelay = creative.skipDelay;
-              if (this.creative.skipDelay) {
-                this.creative.skipoffset = creative.skipDelay;
-                this.creative.isSkippableAd = true;
-              }
-              if (creative.videoClickThroughURLTemplate && creative.videoClickThroughURLTemplate.url) {
-                this.creative.clickThroughUrl = creative.videoClickThroughURLTemplate.url;
-              }
-              if (creative.videoClickTrackingURLTemplates.length > 0) {
-                creative.videoClickTrackingURLTemplates.forEach(videoClickTrackingURLTemplate => {
-                  if (videoClickTrackingURLTemplate.url) {
-                    var _context7;
-                    push_default()(_context7 = this.trackingTags).call(_context7, {
-                      event: 'clickthrough',
-                      url: videoClickTrackingURLTemplate.url
-                    });
-                  }
-                });
-              }
-              this.creative.isLinear = true;
-              if (creative.interactiveCreativeFile && /simid/i.test(creative.interactiveCreativeFile.apiFramework) && /text\/html/i.test(creative.interactiveCreativeFile.type)) {
-                this.creative.simid = {
-                  fileURL: creative.interactiveCreativeFile.fileURL,
-                  variableDuration: creative.interactiveCreativeFile.variableDuration
-                };
-                if (creative.adParameters && creative.adParameters.value) {
-                  this.creative.simid.adParameters = creative.adParameters.value;
-                }
-              }
-              this._addTrackingEvents(creative.trackingEvents);
-              this.rmpVastLinearCreative = new LinearCreative(this);
-              this.rmpVastLinearCreative.parse(creative);
-              if (this.params.omidSupport && currentAd.adVerifications.length > 0) {
-                const omSdkManager = new OmSdkManager(currentAd.adVerifications, this);
-                omSdkManager.init();
-              }
-              break;
-            case 'nonlinear':
-              this.creative.isLinear = false;
-              this._addTrackingEvents(creative.trackingEvents);
-              this.rmpVastNonLinearCreative = new NonLinearCreative(this);
-              this.rmpVastNonLinearCreative.parse(creative.variations);
-              break;
-            default:
-              break;
-          }
-        }
-      });
-    }
-  }
-
-  /** 
-   * @private
-   */
-  _handleParsedVast(response) {
-    Logger.print(this.debugRawConsoleLogs, `VAST response follows`, response);
-
-    // error at VAST/Error level
-    if (response.errorURLTemplates.length > 0) {
-      response.errorURLTemplates.forEach(errorURLTemplate => {
-        var _context8;
-        push_default()(_context8 = this.vastErrorTags).call(_context8, {
-          event: 'error',
-          url: errorURLTemplate
-        });
-      });
-    }
-    // VAST/Ad 
-    if (response.ads.length === 0) {
-      this.rmpVastUtils.processVastErrors(303, true);
-      return;
-    } else {
-      this._loopAds(response.ads);
-    }
-  }
-
-  /** 
-   * @private
-   */
-  _getVastTag(vastData) {
-    // we check for required VAST input and API here
-    // as we need to have this.currentContentSrc available for iOS
-    if (typeof vastData !== 'string' || vastData === '') {
-      this.rmpVastUtils.processVastErrors(1001, false);
-      return;
-    }
-    if (typeof DOMParser === 'undefined') {
-      this.rmpVastUtils.processVastErrors(1002, false);
-      return;
-    }
-    this.rmpVastUtils.createApiEvent('adtagstartloading');
-    if (!this.params.vastXmlInput) {
-      const vastClient = new VASTClient();
-      const options = {
-        timeout: this.params.ajaxTimeout,
-        withCredentials: this.params.ajaxWithCredentials,
-        wrapperLimit: this.params.maxNumRedirects,
-        resolveAll: false,
-        allowMultipleAds: true
-      };
-      this.__adTagUrl = vastData;
-      Logger.print(this.debugRawConsoleLogs, `Try to load VAST tag at: ${this.__adTagUrl}`);
-      vastClient.get(this.__adTagUrl, options).then(response => {
-        this.rmpVastUtils.createApiEvent('adtagloaded');
-        this._handleParsedVast(response);
-      }).catch(error => {
-        console.warn(error);
-        // PING 900 Undefined Error.
-        this.rmpVastUtils.processVastErrors(900, true);
-      });
-    } else {
-      // input is not a VAST URI but raw VAST XML -> we parse it and proceed
-      let vastXml;
-      try {
-        vastXml = new DOMParser().parseFromString(vastData, 'text/xml');
-      } catch (error) {
-        console.warn(error);
-        // PING 900 Undefined Error.
-        this.rmpVastUtils.processVastErrors(900, true);
-        return;
-      }
-      const vastParser = new VASTParser();
-      vastParser.parseVAST(vastXml).then(response => {
-        this.rmpVastUtils.createApiEvent('adtagloaded');
-        this._handleParsedVast(response);
-      }).catch(error => {
-        console.warn(error);
-        // PING 900 Undefined Error.
-        this.rmpVastUtils.processVastErrors(900, true);
-      });
-    }
-  }
 
   /** 
    * @param {string} vastData - the URI to the VAST resource to be loaded - or raw VAST XML if params.vastXmlInput is true
@@ -15480,7 +16016,7 @@ class RmpVast {
       this.stopAds();
       return;
     }
-    this._getVastTag(finalVastData);
+    _assertClassBrand(_RmpVast_brand, this, _getVastTag).call(this, finalVastData);
   }
 
   /** 
@@ -15539,7 +16075,7 @@ class RmpVast {
     if (this.rmpVastAdPlayer) {
       this.rmpVastAdPlayer.destroy();
     }
-    this._initInstanceVariables();
+    _assertClassBrand(_RmpVast_brand, this, _initInstanceVariables).call(this);
   }
 
   /** 
@@ -16166,6 +16702,402 @@ class RmpVast {
       this.rmpVastVpaidPlayer.getAdCompanions();
     }
     return '';
+  }
+}
+function _initInstanceVariables() {
+  this.adContainer = null;
+  this.contentWrapper = null;
+  this.container = null;
+  this.rmpVastContentPlayer = null;
+  this.rmpVastAdPlayer = null;
+  this.rmpVastUtils = null;
+  this.rmpVastTracking = null;
+  this.rmpVastCompanionCreative = null;
+  this.environmentData = null;
+  this.currentContentSrc = '';
+  this.currentContentCurrentTime = -1;
+  this.params = {};
+  this.events = {};
+  this.isInFullscreen = false;
+  this.contentCompleted = false;
+  this.currentContentPlayer = null;
+  this.currentAdPlayer = null;
+  this.rmpVastInitialized = false;
+  this.debugRawConsoleLogs = false;
+  // adpod
+  this.adPod = false;
+  this.adPodLength = 0;
+  this.adSequence = 0;
+}
+function _on(eventName, callback) {
+  // First we grab the event from this.events
+  let event = this.events[eventName];
+  // If the event does not exist then we should create it!
+  if (!event) {
+    event = new Dispatcher(eventName);
+    this.events[eventName] = event;
+  }
+  // Now we add the callback to the event
+  event.registerCallback(callback);
+}
+function _one(eventName, callback) {
+  const newCallback = e => {
+    this.off(eventName, newCallback);
+    callback(e);
+  };
+  this.on(eventName, newCallback);
+}
+function _off(eventName, callback) {
+  // First get the correct event
+  const event = this.events[eventName];
+  // Check that the event exists and it has the callback registered
+  if (event && event.callbacks.indexOf(callback) > -1) {
+    // if it is registered then unregister it!
+    event.unregisterCallback(callback);
+    // if the event has no callbacks left, delete the event
+    if (event.callbacks.length === 0) {
+      delete this.events[eventName];
+    }
+  }
+}
+function _addTrackingEvents(trackingEvents) {
+  const keys = Object.keys(trackingEvents);
+  keys.forEach(key => {
+    trackingEvents[key].forEach(url => {
+      var _context;
+      push_default()(_context = this.trackingTags).call(_context, {
+        event: key,
+        url
+      });
+    });
+  });
+}
+/** 
+ * @private
+ */
+function _handleIntersect(entries) {
+  entries.forEach(entry => {
+    if (entry.intersectionRatio > this.viewablePreviousRatio) {
+      this.viewableObserver.unobserve(this.container);
+      this.rmpVastTracking.dispatchTrackingAndApiEvent('adviewable');
+    }
+    this.viewablePreviousRatio = entry.intersectionRatio;
+  });
+}
+/** 
+ * @private
+ */
+function _attachViewableObserver() {
+  this.off('adstarted', this.attachViewableObserverFn);
+  if (typeof window.IntersectionObserver !== 'undefined') {
+    const options = {
+      root: null,
+      rootMargin: '0px',
+      threshold: [0.5]
+    };
+    this.viewableObserver = new IntersectionObserver(_assertClassBrand(_RmpVast_brand, this, _handleIntersect).bind(this), options);
+    this.viewableObserver.observe(this.container);
+  } else {
+    this.rmpVastTracking.dispatchTrackingAndApiEvent('adviewundetermined');
+  }
+}
+/** 
+ * @private
+ */
+function _initViewableImpression() {
+  if (this.viewableObserver) {
+    this.viewableObserver.unobserve(this.container);
+  }
+  this.ad.viewableImpression.forEach(viewableImpression => {
+    if (viewableImpression.viewable.length > 0) {
+      viewableImpression.viewable.forEach(url => {
+        var _context2;
+        push_default()(_context2 = this.trackingTags).call(_context2, {
+          event: 'viewable',
+          url
+        });
+      });
+    }
+    if (viewableImpression.notViewable.length > 0) {
+      viewableImpression.notViewable.forEach(url => {
+        var _context3;
+        push_default()(_context3 = this.trackingTags).call(_context3, {
+          event: 'notviewable',
+          url
+        });
+      });
+    }
+    if (viewableImpression.viewUndetermined.length > 0) {
+      viewableImpression.viewUndetermined.forEach(url => {
+        var _context4;
+        push_default()(_context4 = this.trackingTags).call(_context4, {
+          event: 'viewundetermined',
+          url
+        });
+      });
+    }
+  });
+  this.attachViewableObserverFn = _assertClassBrand(_RmpVast_brand, this, _attachViewableObserver).bind(this);
+  this.on('adstarted', this.attachViewableObserverFn);
+}
+/** 
+ * @private
+ */
+async function _loopAds(ads) {
+  for (let i = 0; i < ads.length; i++) {
+    await new (promise_default())(resolve => {
+      const currentAd = ads[i];
+      Logger.print(this.debugRawConsoleLogs, `currentAd follows`, currentAd);
+      this.ad.id = currentAd.id;
+      this.ad.adServingId = currentAd.adServingId;
+      this.ad.categories = currentAd.categories;
+      if (this.requireCategory) {
+        if (this.ad.categories.length === 0 || !this.ad.categories[0].authority) {
+          this.rmpVastUtils.processVastErrors(204, true);
+          resolve();
+        }
+      }
+      this.ad.blockedAdCategories = currentAd.blockedAdCategories;
+      if (this.requireCategory) {
+        let haltDueToBlockedAdCategories = false;
+        this.ad.blockedAdCategories.forEach(blockedAdCategory => {
+          const blockedAdCategoryAuthority = blockedAdCategory.authority;
+          const blockedAdCategoryValue = blockedAdCategory.value;
+          this.ad.categories.forEach(category => {
+            const categoriesAuthority = category.authority;
+            const categoriesValue = category.value;
+            if (blockedAdCategoryAuthority === categoriesAuthority && blockedAdCategoryValue === categoriesValue) {
+              this.rmpVastUtils.processVastErrors(205, true);
+              haltDueToBlockedAdCategories = true;
+            }
+          });
+        });
+        if (haltDueToBlockedAdCategories) {
+          resolve();
+        }
+      }
+      this.ad.adType = currentAd.adType;
+      this.ad.title = currentAd.title;
+      this.ad.description = currentAd.description;
+      this.ad.system = currentAd.system;
+      this.ad.advertiser = currentAd.advertiser;
+      this.ad.pricing = currentAd.pricing;
+      this.ad.survey = currentAd.survey;
+      this.ad.sequence = currentAd.sequence;
+      ads.find(ad => {
+        this.adPod = false;
+        if (ad.sequence && ad.sequence > 1) {
+          this.adPod = true;
+          return true;
+        }
+        return false;
+      });
+      // this is to fix a weird bug in vast-client-js - sometimes it returns sequence === null for some items when
+      // adpod is made of redirects
+      if (this.adPod) {
+        let max = reduce_default()(ads).call(ads, (prev, current) => {
+          return prev.sequence > current.sequence ? prev : current;
+        }).sequence;
+        ads.forEach(ad => {
+          if (ad.sequence === null) {
+            ad.sequence = max + 1;
+            max++;
+          }
+        });
+        this.adSequence++;
+        if (this.adPodLength === 0) {
+          let adPodLength = 0;
+          ads.forEach(ad => {
+            if (ad.sequence) {
+              adPodLength++;
+            }
+          });
+          this.adPodLength = adPodLength;
+          Logger.print(this.debugRawConsoleLogs, `AdPod detected with length ${this.adPodLength}`, currentAd);
+        }
+        this.one('addestroyed', () => {
+          if (this.adSequence === this.adPodLength) {
+            this.adPodLength = 0;
+            this.adSequence = 0;
+            this.adPod = false;
+            this.rmpVastUtils.createApiEvent('adpodcompleted');
+          }
+          resolve();
+        });
+      }
+      this.ad.viewableImpression = currentAd.viewableImpression;
+      if (this.ad.viewableImpression.length > 0) {
+        _assertClassBrand(_RmpVast_brand, this, _initViewableImpression).call(this);
+      }
+      currentAd.errorURLTemplates.forEach(errorURLTemplate => {
+        var _context5;
+        push_default()(_context5 = this.adErrorTags).call(_context5, {
+          event: 'error',
+          url: errorURLTemplate
+        });
+      });
+      currentAd.impressionURLTemplates.forEach(impression => {
+        if (impression.url) {
+          var _context6;
+          push_default()(_context6 = this.trackingTags).call(_context6, {
+            event: 'impression',
+            url: impression.url
+          });
+        }
+      });
+
+      // parse companion
+      const creatives = currentAd.creatives;
+      Logger.print(this.debugRawConsoleLogs, `Parsed creatives follow`, creatives);
+      creatives.find(creative => {
+        if (creative.type === 'companion') {
+          Logger.print(this.debugRawConsoleLogs, `Creative type companion detected`);
+          this.rmpVastCompanionCreative.parse(creative);
+          return true;
+        }
+        return false;
+      });
+      for (let k = 0; k < creatives.length; k++) {
+        const creative = creatives[k];
+        // companion >> continue
+        if (creative.type === 'companion') {
+          continue;
+        }
+        this.creative.id = creative.id;
+        this.creative.universalAdIds = creative.universalAdIds;
+        this.creative.adId = creative.adId;
+        this.creative.trackingEvents = creative.trackingEvents;
+        switch (creative.type) {
+          case 'linear':
+            this.creative.duration = creative.duration;
+            this.creative.skipDelay = creative.skipDelay;
+            if (this.creative.skipDelay) {
+              this.creative.skipoffset = creative.skipDelay;
+              this.creative.isSkippableAd = true;
+            }
+            if (creative.videoClickThroughURLTemplate && creative.videoClickThroughURLTemplate.url) {
+              this.creative.clickThroughUrl = creative.videoClickThroughURLTemplate.url;
+            }
+            if (creative.videoClickTrackingURLTemplates.length > 0) {
+              creative.videoClickTrackingURLTemplates.forEach(videoClickTrackingURLTemplate => {
+                if (videoClickTrackingURLTemplate.url) {
+                  var _context7;
+                  push_default()(_context7 = this.trackingTags).call(_context7, {
+                    event: 'clickthrough',
+                    url: videoClickTrackingURLTemplate.url
+                  });
+                }
+              });
+            }
+            this.creative.isLinear = true;
+            if (creative.interactiveCreativeFile && /simid/i.test(creative.interactiveCreativeFile.apiFramework) && /text\/html/i.test(creative.interactiveCreativeFile.type)) {
+              this.creative.simid = {
+                fileURL: creative.interactiveCreativeFile.fileURL,
+                variableDuration: creative.interactiveCreativeFile.variableDuration
+              };
+              if (creative.adParameters && creative.adParameters.value) {
+                this.creative.simid.adParameters = creative.adParameters.value;
+              }
+            }
+            _assertClassBrand(_RmpVast_brand, this, _addTrackingEvents).call(this, creative.trackingEvents);
+            this.rmpVastLinearCreative = new LinearCreative(this);
+            this.rmpVastLinearCreative.parse(creative);
+            if (this.params.omidSupport && currentAd.adVerifications.length > 0) {
+              const omSdkManager = new OmSdkManager(currentAd.adVerifications, this);
+              omSdkManager.init();
+            }
+            break;
+          case 'nonlinear':
+            this.creative.isLinear = false;
+            _assertClassBrand(_RmpVast_brand, this, _addTrackingEvents).call(this, creative.trackingEvents);
+            this.rmpVastNonLinearCreative = new NonLinearCreative(this);
+            this.rmpVastNonLinearCreative.parse(creative.variations);
+            break;
+          default:
+            break;
+        }
+      }
+    });
+  }
+}
+/** 
+ * @private
+ */
+function _handleParsedVast(response) {
+  Logger.print(this.debugRawConsoleLogs, `VAST response follows`, response);
+
+  // error at VAST/Error level
+  if (response.errorURLTemplates.length > 0) {
+    response.errorURLTemplates.forEach(errorURLTemplate => {
+      var _context8;
+      push_default()(_context8 = this.vastErrorTags).call(_context8, {
+        event: 'error',
+        url: errorURLTemplate
+      });
+    });
+  }
+  // VAST/Ad 
+  if (response.ads.length === 0) {
+    this.rmpVastUtils.processVastErrors(303, true);
+    return;
+  } else {
+    _assertClassBrand(_RmpVast_brand, this, _loopAds).call(this, response.ads);
+  }
+}
+/** 
+ * @private
+ */
+function _getVastTag(vastData) {
+  // we check for required VAST input and API here
+  // as we need to have this.currentContentSrc available for iOS
+  if (typeof vastData !== 'string' || vastData === '') {
+    this.rmpVastUtils.processVastErrors(1001, false);
+    return;
+  }
+  if (typeof DOMParser === 'undefined') {
+    this.rmpVastUtils.processVastErrors(1002, false);
+    return;
+  }
+  this.rmpVastUtils.createApiEvent('adtagstartloading');
+  if (!this.params.vastXmlInput) {
+    const vastClient = new VASTClient();
+    const options = {
+      timeout: this.params.ajaxTimeout,
+      withCredentials: this.params.ajaxWithCredentials,
+      wrapperLimit: this.params.maxNumRedirects,
+      resolveAll: false,
+      allowMultipleAds: true
+    };
+    this.__adTagUrl = vastData;
+    Logger.print(this.debugRawConsoleLogs, `Try to load VAST tag at: ${this.__adTagUrl}`);
+    vastClient.get(this.__adTagUrl, options).then(response => {
+      this.rmpVastUtils.createApiEvent('adtagloaded');
+      _assertClassBrand(_RmpVast_brand, this, _handleParsedVast).call(this, response);
+    }).catch(error => {
+      console.warn(error);
+      // PING 900 Undefined Error.
+      this.rmpVastUtils.processVastErrors(900, true);
+    });
+  } else {
+    // input is not a VAST URI but raw VAST XML -> we parse it and proceed
+    let vastXml;
+    try {
+      vastXml = new DOMParser().parseFromString(vastData, 'text/xml');
+    } catch (error) {
+      console.warn(error);
+      // PING 900 Undefined Error.
+      this.rmpVastUtils.processVastErrors(900, true);
+      return;
+    }
+    const vastParser = new VASTParser();
+    vastParser.parseVAST(vastXml).then(response => {
+      this.rmpVastUtils.createApiEvent('adtagloaded');
+      _assertClassBrand(_RmpVast_brand, this, _handleParsedVast).call(this, response);
+    }).catch(error => {
+      console.warn(error);
+      // PING 900 Undefined Error.
+      this.rmpVastUtils.processVastErrors(900, true);
+    });
   }
 }
 })();

@@ -25,7 +25,7 @@ export default class RmpVast {
 
   /**
    * @constructor
-   * @param {string}  id - the id for the player container. Required parameter.
+   * @param {string|HTMLElement}  idOrElement - the id or element for the player container. Required parameter.
    * @typedef {object} VpaidSettings
    * @property {number} [width]
    * @property {number} [height]
@@ -68,17 +68,20 @@ export default class RmpVast {
    * @param {RmpVastParams} [params] - An object representing various parameters that can be passed to a rmp-vast 
    *  instance and that will affect the player inner-workings. Optional parameter.
    */
-  constructor(id, params) {
+  constructor(idOrElement, params) {
     // reset instance variables - once per session
-    this._initInstanceVariables();
+    this.#initInstanceVariables();
 
-    if (typeof id !== 'string' || id === '') {
-      console.error(`Invalid id to create new instance - exit`);
+    if (typeof idOrElement === 'string' && idOrElement !== '') {
+      this.container = document.getElementById(idOrElement);
+    } else if (typeof idOrElement !== 'undefined' && idOrElement instanceof HTMLElement) {
+      this.container = idOrElement;
+    } else {
+      console.error(`Invalid idOrElement to create new instance - exit`);
       return;
     }
-    this.id = id;
 
-    this.container = document.getElementById(this.id);
+
     this.contentWrapper = this.container.querySelector('.rmp-content');
     this.currentContentPlayer = this.container.querySelector('.rmp-video');
 
@@ -111,7 +114,7 @@ export default class RmpVast {
     this.rmpVastUtils.handleFullscreen();
   }
 
-  _initInstanceVariables() {
+  #initInstanceVariables() {
     this.adContainer = null;
     this.contentWrapper = null;
     this.container = null;
@@ -125,7 +128,6 @@ export default class RmpVast {
     this.currentContentCurrentTime = -1;
     this.params = {};
     this.events = {};
-    this.id = null;
     this.isInFullscreen = false;
     this.contentCompleted = false;
     this.currentContentPlayer = null;
@@ -192,7 +194,7 @@ export default class RmpVast {
   /** 
    * @private
    */
-  _on(eventName, callback) {
+  #on(eventName, callback) {
     // First we grab the event from this.events
     let event = this.events[eventName];
     // If the event does not exist then we should create it!
@@ -214,14 +216,14 @@ export default class RmpVast {
     }
     const split = eventName.split(' ');
     split.forEach(eventItem => {
-      this._on(eventItem, callback);
+      this.#on(eventItem, callback);
     });
   }
 
   /** 
    * @private
    */
-  _one(eventName, callback) {
+  #one(eventName, callback) {
     const newCallback = (e) => {
       this.off(eventName, newCallback);
       callback(e);
@@ -239,14 +241,14 @@ export default class RmpVast {
     }
     const split = eventName.split(' ');
     split.forEach(eventItem => {
-      this._one(eventItem, callback);
+      this.#one(eventItem, callback);
     });
   }
 
   /** 
    * @private
    */
-  _off(eventName, callback) {
+  #off(eventName, callback) {
     // First get the correct event
     const event = this.events[eventName];
     // Check that the event exists and it has the callback registered
@@ -270,14 +272,14 @@ export default class RmpVast {
     }
     const split = eventName.split(' ');
     split.forEach(eventItem => {
-      this._off(eventItem, callback);
+      this.#off(eventItem, callback);
     });
   }
 
   /** 
    * @private
    */
-  _addTrackingEvents(trackingEvents) {
+  #addTrackingEvents(trackingEvents) {
     const keys = Object.keys(trackingEvents);
     keys.forEach(key => {
       trackingEvents[key].forEach(url => {
@@ -292,7 +294,7 @@ export default class RmpVast {
   /** 
    * @private
    */
-  _handleIntersect(entries) {
+  #handleIntersect(entries) {
     entries.forEach(entry => {
       if (entry.intersectionRatio > this.viewablePreviousRatio) {
         this.viewableObserver.unobserve(this.container);
@@ -305,7 +307,7 @@ export default class RmpVast {
   /** 
    * @private
    */
-  _attachViewableObserver() {
+  #attachViewableObserver() {
     this.off('adstarted', this.attachViewableObserverFn);
     if (typeof window.IntersectionObserver !== 'undefined') {
       const options = {
@@ -313,7 +315,7 @@ export default class RmpVast {
         rootMargin: '0px',
         threshold: [0.5],
       };
-      this.viewableObserver = new IntersectionObserver(this._handleIntersect.bind(this), options);
+      this.viewableObserver = new IntersectionObserver(this.#handleIntersect.bind(this), options);
       this.viewableObserver.observe(this.container);
     } else {
       this.rmpVastTracking.dispatchTrackingAndApiEvent('adviewundetermined');
@@ -323,7 +325,7 @@ export default class RmpVast {
   /** 
    * @private
    */
-  _initViewableImpression() {
+  #initViewableImpression() {
     if (this.viewableObserver) {
       this.viewableObserver.unobserve(this.container);
     }
@@ -353,14 +355,14 @@ export default class RmpVast {
         });
       }
     });
-    this.attachViewableObserverFn = this._attachViewableObserver.bind(this);
+    this.attachViewableObserverFn = this.#attachViewableObserver.bind(this);
     this.on('adstarted', this.attachViewableObserverFn);
   }
 
   /** 
    * @private
    */
-  async _loopAds(ads) {
+  async #loopAds(ads) {
     for (let i = 0; i < ads.length; i++) {
       await new Promise(resolve => {
         const currentAd = ads[i];
@@ -448,7 +450,7 @@ export default class RmpVast {
         }
         this.ad.viewableImpression = currentAd.viewableImpression;
         if (this.ad.viewableImpression.length > 0) {
-          this._initViewableImpression();
+          this.#initViewableImpression();
         }
         currentAd.errorURLTemplates.forEach(errorURLTemplate => {
           this.adErrorTags.push({
@@ -520,7 +522,7 @@ export default class RmpVast {
                   this.creative.simid.adParameters = creative.adParameters.value;
                 }
               }
-              this._addTrackingEvents(creative.trackingEvents);
+              this.#addTrackingEvents(creative.trackingEvents);
               this.rmpVastLinearCreative = new LinearCreative(this);
               this.rmpVastLinearCreative.parse(creative);
               if (this.params.omidSupport && currentAd.adVerifications.length > 0) {
@@ -530,7 +532,7 @@ export default class RmpVast {
               break;
             case 'nonlinear':
               this.creative.isLinear = false;
-              this._addTrackingEvents(creative.trackingEvents);
+              this.#addTrackingEvents(creative.trackingEvents);
               this.rmpVastNonLinearCreative = new NonLinearCreative(this);
               this.rmpVastNonLinearCreative.parse(creative.variations);
               break;
@@ -545,7 +547,7 @@ export default class RmpVast {
   /** 
    * @private
    */
-  _handleParsedVast(response) {
+  #handleParsedVast(response) {
     Logger.print(this.debugRawConsoleLogs, `VAST response follows`, response);
 
     // error at VAST/Error level
@@ -562,14 +564,14 @@ export default class RmpVast {
       this.rmpVastUtils.processVastErrors(303, true);
       return;
     } else {
-      this._loopAds(response.ads);
+      this.#loopAds(response.ads);
     }
   }
 
   /** 
    * @private
    */
-  _getVastTag(vastData) {
+  #getVastTag(vastData) {
     // we check for required VAST input and API here
     // as we need to have this.currentContentSrc available for iOS
     if (typeof vastData !== 'string' || vastData === '') {
@@ -596,7 +598,7 @@ export default class RmpVast {
 
       vastClient.get(this.__adTagUrl, options).then(response => {
         this.rmpVastUtils.createApiEvent('adtagloaded');
-        this._handleParsedVast(response);
+        this.#handleParsedVast(response);
       }).catch(error => {
         console.warn(error);
         // PING 900 Undefined Error.
@@ -616,7 +618,7 @@ export default class RmpVast {
       const vastParser = new VASTParser();
       vastParser.parseVAST(vastXml).then(response => {
         this.rmpVastUtils.createApiEvent('adtagloaded');
-        this._handleParsedVast(response);
+        this.#handleParsedVast(response);
       }).catch(error => {
         console.warn(error);
         // PING 900 Undefined Error.
@@ -672,7 +674,7 @@ export default class RmpVast {
       this.stopAds();
       return;
     }
-    this._getVastTag(finalVastData);
+    this.#getVastTag(finalVastData);
   }
 
   /** 
@@ -731,7 +733,7 @@ export default class RmpVast {
     if (this.rmpVastAdPlayer) {
       this.rmpVastAdPlayer.destroy();
     }
-    this._initInstanceVariables();
+    this.#initInstanceVariables();
   }
 
   /** 

@@ -6,7 +6,7 @@
 export default class RmpVast {
     /**
      * @constructor
-     * @param {string}  id - the id for the player container. Required parameter.
+     * @param {string|HTMLElement}  idOrElement - the id or element for the player container. Required parameter.
      * @typedef {object} VpaidSettings
      * @property {number} [width]
      * @property {number} [height]
@@ -49,7 +49,7 @@ export default class RmpVast {
      * @param {RmpVastParams} [params] - An object representing various parameters that can be passed to a rmp-vast
      *  instance and that will affect the player inner-workings. Optional parameter.
      */
-    constructor(id: string, params?: {
+    constructor(idOrElement: string | HTMLElement, params?: {
         /**
          * - timeout in ms for an AJAX request to load a VAST tag from the ad server.
          * Default 8000.
@@ -149,7 +149,6 @@ export default class RmpVast {
          */
         macros?: object;
     });
-    id: string;
     container: HTMLElement;
     contentWrapper: Element;
     currentContentPlayer: Element;
@@ -159,7 +158,6 @@ export default class RmpVast {
     rmpVastTracking: Tracking;
     rmpVastCompanionCreative: CompanionCreative;
     environmentData: typeof Environment;
-    _initInstanceVariables(): void;
     adContainer: any;
     rmpVastAdPlayer: AdPlayer;
     currentContentSrc: string;
@@ -199,49 +197,9 @@ export default class RmpVast {
     __adErrorMessage: string;
     __adOnStage: boolean;
     dispatch(eventName: string, data: object): void;
-    /**
-     * @private
-     */
-    private _on;
     on(eventName: string, callback: Function): void;
-    /**
-     * @private
-     */
-    private _one;
     one(eventName: string, callback: Function): void;
-    /**
-     * @private
-     */
-    private _off;
     off(eventName: string, callback: Function): void;
-    /**
-     * @private
-     */
-    private _addTrackingEvents;
-    /**
-     * @private
-     */
-    private _handleIntersect;
-    /**
-     * @private
-     */
-    private _attachViewableObserver;
-    /**
-     * @private
-     */
-    private _initViewableImpression;
-    /**
-     * @private
-     */
-    private _loopAds;
-    /**
-     * @private
-     */
-    private _handleParsedVast;
-    /**
-     * @private
-     */
-    private _getVastTag;
     /**
      * @param {string} vastData - the URI to the VAST resource to be loaded - or raw VAST XML if params.vastXmlInput is true
      * @param {object} [regulationsInfo] - data for regulations as
@@ -528,6 +486,7 @@ export default class RmpVast {
      * @type {() => string}
      */
     get vpaidCompanionAds(): () => string;
+    #private;
 }
 import Utils from './helpers/utils';
 import ContentPlayer from './players/content-player';

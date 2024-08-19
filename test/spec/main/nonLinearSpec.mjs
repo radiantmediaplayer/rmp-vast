@@ -7,6 +7,7 @@ let testUrls = [
 ];
 
 const testUrlsChromeOnly = [
+  SELENIUM.pathToTest + 'nonLinearSpec/non-linear-image.html',
   SELENIUM.pathToTest + 'nonLinearSpec/non-linear-iframe.html',
   SELENIUM.pathToTest + 'nonLinearSpec/non-linear-html.html',
   SELENIUM.pathToTest + 'nonLinearSpec/NonLinearSpecIABVAST3Spec.html'

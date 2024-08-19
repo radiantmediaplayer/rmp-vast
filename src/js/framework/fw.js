@@ -1,6 +1,6 @@
 export default class FW {
 
-  static _getStyleAttributeData(element, style) {
+  static #getStyleAttributeData(element, style) {
     let styleAttributeData = 0;
     if (element && typeof window.getComputedStyle === 'function') {
       const cs = window.getComputedStyle(element, null);
@@ -42,7 +42,7 @@ export default class FW {
       if (FW.isNumber(element.offsetWidth) && element.offsetWidth !== 0) {
         return element.offsetWidth;
       } else {
-        return FW._getStyleAttributeData(element, 'width');
+        return FW.#getStyleAttributeData(element, 'width');
       }
     }
     return 0;
@@ -53,7 +53,7 @@ export default class FW {
       if (FW.isNumber(element.offsetHeight) && element.offsetHeight !== 0) {
         return element.offsetHeight;
       } else {
-        return FW._getStyleAttributeData(element, 'height');
+        return FW.#getStyleAttributeData(element, 'height');
       }
     }
     return 0;
@@ -126,26 +126,6 @@ export default class FW {
       events.forEach(event => {
         domElement.addEventListener(event, callback);
       });
-    }
-  }
-
-  static removeEvents(events, domElement, callback) {
-    if (events && events.length > 1 && domElement && typeof callback === 'function') {
-      events.forEach(event => {
-        domElement.removeEventListener(event, callback);
-      });
-    }
-  }
-
-  static clearTimeout(timeoutCallback) {
-    if (typeof timeoutCallback === 'number') {
-      window.clearTimeout(timeoutCallback);
-    }
-  }
-
-  static clearInterval(intervalCallback) {
-    if (typeof intervalCallback === 'number') {
-      window.clearInterval(intervalCallback);
     }
   }
 

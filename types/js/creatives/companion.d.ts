@@ -1,15 +1,10 @@
 export default class CompanionCreative {
     constructor(rmpVast: any);
-    _rmpVast: any;
-    _debugRawConsoleLogs: any;
-    get requiredAttribute(): any;
-    _onImgClickThrough(companionClickThroughUrl: any, companionClickTrackingUrls: any, event: any): void;
+    get requiredAttribute(): string;
     reset(): void;
-    _requiredAttribute: any;
-    _validCompanionAds: any[];
-    _companionAdsList: any[];
     parse(creative: any): void;
     getList(inputWidth: any, inputHeight: any): any[];
     getItem(index: any): any;
+    #private;
 }
 //# sourceMappingURL=companion.d.ts.map

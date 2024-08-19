@@ -4,47 +4,50 @@ import Logger from '../framework/logger';
 
 export default class Icons {
 
+  #rmpVast;
+  #adContainer;
+  #adPlayer;
+  #onPlayingAppendIconsFn = null;
+  #iconsData = [];
+
   constructor(rmpVast) {
-    this._rmpVast = rmpVast;
-    this._adContainer = rmpVast.adContainer;
-    this._adPlayer = rmpVast.currentAdPlayer;
-    this._debugRawConsoleLogs = rmpVast.debugRawConsoleLogs;
-    this._onPlayingAppendIconsFn = null;
-    this._iconsData = [];
+    this.#rmpVast = rmpVast;
+    this.#adContainer = rmpVast.adContainer;
+    this.#adPlayer = rmpVast.currentAdPlayer;
   }
 
   get iconsData() {
-    return this._iconsData;
+    return this.#iconsData;
   }
 
-  _onIconClickThrough(index, event) {
+  #onIconClickThrough(index, event) {
     if (event) {
       event.stopPropagation();
       if (event.type === 'touchend') {
         event.preventDefault();
       }
     }
-    FW.openWindow(this._iconsData[index].iconClickThroughUrl);
+    FW.openWindow(this.#iconsData[index].iconClickThroughUrl);
     // send trackers if any for IconClickTracking
-    const iconClickTrackingUrls = this._iconsData[index].iconClickTrackingUrls;
+    const iconClickTrackingUrls = this.#iconsData[index].iconClickTrackingUrls;
     if (iconClickTrackingUrls.length > 0) {
       iconClickTrackingUrls.forEach(tracking => {
         if (tracking.url) {
-          this._rmpVast.rmpVastTracking.pingURI(tracking.url);
+          this.#rmpVast.rmpVastTracking.pingURI(tracking.url);
         }
       });
     }
-    this._rmpVast.rmpVastUtils.createApiEvent('adiconclick');
+    this.#rmpVast.rmpVastUtils.createApiEvent('adiconclick');
   }
 
-  _onIconLoadPingTracking(index) {
-    Logger.print(this._debugRawConsoleLogs, `IconViewTracking for icon at index ${index}`);
-    this._rmpVast.rmpVastTracking.pingURI(this._iconsData[index].iconViewTrackingUrl);
+  #onIconLoadPingTracking(index) {
+    Logger.print(this.#rmpVast.debugRawConsoleLogs, `IconViewTracking for icon at index ${index}`);
+    this.#rmpVast.rmpVastTracking.pingURI(this.#iconsData[index].iconViewTrackingUrl);
   }
 
-  _onPlayingAppendIcons() {
-    Logger.print(this._debugRawConsoleLogs, `playing states has been reached - append icons`);
-    this._iconsData.forEach((iconData, index) => {
+  #onPlayingAppendIcons() {
+    Logger.print(this.#rmpVast.debugRawConsoleLogs, `playing states has been reached - append icons`);
+    this.#iconsData.forEach((iconData, index) => {
       let icon;
       let src;
       if (iconData.staticResourceUrl) {
@@ -98,37 +101,37 @@ export default class Icons {
         icon.style.top = '0px';
       }
       if (iconData.iconViewTrackingUrl) {
-        icon.onload = this._onIconLoadPingTracking.bind(this, index);
+        icon.onload = this.#onIconLoadPingTracking.bind(this, index);
       }
       if (iconData.iconClickThroughUrl) {
-        const _onIconClickThroughFn = this._onIconClickThrough.bind(this, index);
-        FW.addEvents(['touchend', 'click'], icon, _onIconClickThroughFn);
+        const onIconClickThroughFn = this.#onIconClickThrough.bind(this, index);
+        FW.addEvents(['touchend', 'click'], icon, onIconClickThroughFn);
       }
       if (iconData.htmlContent) {
         icon.srcdoc = src;
       } else {
         icon.src = src;
       }
-      Logger.print(this._debugRawConsoleLogs, `Selected icon details follow`, icon);
-      this._adContainer.appendChild(icon);
+      Logger.print(this.#rmpVast.debugRawConsoleLogs, `Selected icon details follow`, icon);
+      this.#adContainer.appendChild(icon);
     });
   }
 
   destroy() {
-    Logger.print(this._debugRawConsoleLogs, `Start destroying icons`);
-    const icons = this._adContainer.querySelectorAll('.rmp-ad-container-icons');
+    Logger.print(this.#rmpVast.debugRawConsoleLogs, `Start destroying icons`);
+    const icons = this.#adContainer.querySelectorAll('.rmp-ad-container-icons');
     if (icons.length > 0) {
       icons.forEach(icon => {
         FW.removeElement(icon);
       });
     }
-    if (this._adPlayer) {
-      this._adPlayer.removeEventListener('playing', this._onPlayingAppendIconsFn);
+    if (this.#adPlayer) {
+      this.#adPlayer.removeEventListener('playing', this.#onPlayingAppendIconsFn);
     }
   }
 
   parse(icons) {
-    Logger.print(this._debugRawConsoleLogs, `Start parsing icons`);
+    Logger.print(this.#rmpVast.debugRawConsoleLogs, `Start parsing icons`);
     for (let i = 0; i < icons.length; i++) {
       const currentIcon = icons[i];
       const program = currentIcon.program;
@@ -162,15 +165,15 @@ export default class Icons {
       iconData.iconViewTrackingUrl = currentIcon.iconViewTrackingURLTemplate;
       iconData.iconClickThroughUrl = currentIcon.iconClickThroughURLTemplate;
       iconData.iconClickTrackingUrls = currentIcon.iconClickTrackingURLTemplates;
-      this._iconsData.push(iconData);
+      this.#iconsData.push(iconData);
     }
-    Logger.print(this._debugRawConsoleLogs, `Validated parsed icons follows`, this._iconsData);
+    Logger.print(this.#rmpVast.debugRawConsoleLogs, `Validated parsed icons follows`, this.#iconsData);
   }
 
   append() {
-    this._onPlayingAppendIconsFn = this._onPlayingAppendIcons.bind(this);
+    this.#onPlayingAppendIconsFn = this.#onPlayingAppendIcons.bind(this);
     // as per VAST 3 spec only append icon when ad starts playing
-    this._adPlayer.addEventListener('playing', this._onPlayingAppendIconsFn, { once: true });
+    this.#adPlayer.addEventListener('playing', this.#onPlayingAppendIconsFn, { once: true });
   }
 
 }

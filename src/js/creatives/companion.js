@@ -4,17 +4,20 @@ import Logger from '../framework/logger';
 
 export default class CompanionCreative {
 
+  #rmpVast;
+  #requiredAttribute = '';
+  #validCompanionAds = [];
+  #companionAdsList = [];
+
   constructor(rmpVast) {
-    this._rmpVast = rmpVast;
-    this._debugRawConsoleLogs = rmpVast.debugRawConsoleLogs;
-    this.reset();
+    this.#rmpVast = rmpVast;
   }
 
   get requiredAttribute() {
-    return this._requiredAttribute;
+    return this.#requiredAttribute;
   }
 
-  _onImgClickThrough(companionClickThroughUrl, companionClickTrackingUrls, event) {
+  #onImgClickThrough(companionClickThroughUrl, companionClickTrackingUrls, event) {
     if (event) {
       event.stopPropagation();
       if (event.type === 'touchend') {
@@ -24,7 +27,7 @@ export default class CompanionCreative {
     if (companionClickTrackingUrls) {
       companionClickTrackingUrls.forEach(companionClickTrackingUrl => {
         if (companionClickTrackingUrl.url) {
-          this._rmpVast.rmpVastTracking.pingURI(companionClickTrackingUrl.url);
+          this.#rmpVast.rmpVastTracking.pingURI(companionClickTrackingUrl.url);
         }
       });
     }
@@ -32,17 +35,17 @@ export default class CompanionCreative {
   }
 
   reset() {
-    this._requiredAttribute = '';
-    this._validCompanionAds = [];
-    this._companionAdsList = [];
+    this.#requiredAttribute = '';
+    this.#validCompanionAds = [];
+    this.#companionAdsList = [];
   }
 
   parse(creative) {
     // reset variables in case wrapper
-    this._validCompanionAds = [];
-    this._requiredAttribute = '';
+    this.#validCompanionAds = [];
+    this.#requiredAttribute = '';
     if (creative.required) {
-      this._requiredAttribute = creative.required;
+      this.#requiredAttribute = creative.required;
     }
     const companions = creative.variations;
     // at least 1 Companion is expected to continue
@@ -104,35 +107,35 @@ export default class CompanionCreative {
             newCompanionAds.trackingEventsUrls.push(creativeView);
           });
         }
-        this._validCompanionAds.push(newCompanionAds);
+        this.#validCompanionAds.push(newCompanionAds);
       }
     }
-    Logger.print(this._debugRawConsoleLogs, `Parse companion ads follow`, this._validCompanionAds);
+    Logger.print(this.#rmpVast.debugRawConsoleLogs, `Parse companion ads follow`, this.#validCompanionAds);
   }
 
   getList(inputWidth, inputHeight) {
-    if (this._validCompanionAds.length > 0) {
+    if (this.#validCompanionAds.length > 0) {
       let availableCompanionAds;
       if (typeof inputWidth === 'number' && inputWidth > 0 && typeof inputHeight === 'number' && inputHeight > 0) {
-        availableCompanionAds = this._validCompanionAds.filter(companionAds => {
+        availableCompanionAds = this.#validCompanionAds.filter(companionAds => {
           return inputWidth >= companionAds.width && inputHeight >= companionAds.height;
         });
       } else {
-        availableCompanionAds = this._validCompanionAds;
+        availableCompanionAds = this.#validCompanionAds;
       }
       if (availableCompanionAds.length > 0) {
-        this._companionAdsList = availableCompanionAds;
-        return this._companionAdsList;
+        this.#companionAdsList = availableCompanionAds;
+        return this.#companionAdsList;
       }
     }
     return [];
   }
 
   getItem(index) {
-    if (typeof this._companionAdsList[index] === 'undefined') {
+    if (typeof this.#companionAdsList[index] === 'undefined') {
       return null;
     }
-    const companionAd = this._companionAdsList[index];
+    const companionAd = this.#companionAdsList[index];
     let html;
     if (companionAd.imageUrl || companionAd.iframeUrl) {
       if (companionAd.imageUrl) {
@@ -155,26 +158,26 @@ export default class CompanionCreative {
       if (trackingEventsUrls.length > 0) {
         html.onload = () => {
           trackingEventsUrls.forEach(trackingEventsUrl => {
-            this._rmpVast.rmpVastTracking.pingURI(trackingEventsUrl);
+            this.#rmpVast.rmpVastTracking.pingURI(trackingEventsUrl);
           });
         };
         html.onerror = () => {
-          this._rmpVast.rmpVastTracking.error(603);
+          this.#rmpVast.rmpVastTracking.error(603);
         };
       }
       let companionClickTrackingUrls = null;
       if (companionAd.companionClickTrackingUrls) {
-        Logger.print(this._debugRawConsoleLogs, `Companion click tracking URIs`, companionClickTrackingUrls);
+        Logger.print(this.#rmpVast.debugRawConsoleLogs, `Companion click tracking URIs`, companionClickTrackingUrls);
 
         companionClickTrackingUrls = companionAd.companionClickTrackingUrls;
       }
       if (companionAd.companionClickThroughUrl) {
-        const _onImgClickThroughFn = this._onImgClickThrough.bind(
+        const onImgClickThroughFn = this.#onImgClickThrough.bind(
           this,
           companionAd.companionClickThroughUrl,
           companionClickTrackingUrls
         );
-        FW.addEvents(['touchend', 'click'], html, _onImgClickThroughFn);
+        FW.addEvents(['touchend', 'click'], html, onImgClickThroughFn);
       }
     }
     if (companionAd.imageUrl) {

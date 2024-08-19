@@ -4,7 +4,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
-  <title>simid</title>
+  <title>non-linear-image</title>
 
   <!-- jasmine -->
   <link rel="shortcut icon" type="image/png" href="../../lib/jasmine-5.1.2/jasmine_favicon.png">
@@ -31,12 +31,14 @@
 <body>
   <div class="rmp-container" id="rmp">
     <div class="rmp-content">
-      <video class="rmp-video" playsinline disableRemotePlayback disablePictureInPicture></video>
+      <video class="rmp-video" src="https://www.rmp-streaming.com/media/big-buck-bunny-360p.mp4" playsinline
+        disableRemotePlayback disablePictureInPicture>
+      </video>
     </div>
   </div>
   <p id="result"></p>
-  <!-- spec file -->
-  <script type="module" src="spec/simid.js"></script>
+  <!-- include spec files here... -->
+  <script src="spec/non-linear-image.js"></script>
 </body>
 
 </html>

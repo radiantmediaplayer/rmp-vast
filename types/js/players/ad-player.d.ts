@@ -1,12 +1,5 @@
 export default class AdPlayer {
     constructor(rmpVast: any);
-    _rmpVast: any;
-    _params: any;
-    _contentPlayer: any;
-    _adContainer: any;
-    _contentWrapper: any;
-    _debugRawConsoleLogs: any;
-    _adPlayer: any;
     set volume(level: any);
     get volume(): any;
     set muted(muted: any);
@@ -19,5 +12,6 @@ export default class AdPlayer {
     play(firstAdPlayerPlayRequest: any): void;
     pause(): void;
     resumeContent(): void;
+    #private;
 }
 //# sourceMappingURL=ad-player.d.ts.map

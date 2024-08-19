@@ -20,12 +20,14 @@ export default [
       'test/spec/main/*',
       'test/spec/helpers/*',
       'test/*.mjs',
-      'babel.config.js'
+      'babel.config.js',
+      'webpack.dev.config.js',
+      'webpack.production.config.js'
     ]
   },
   {
     languageOptions: {
-      ecmaVersion: 2018,
+      ecmaVersion: 'latest',
       globals: {
         ...globals.browser,
         ...globals.jasmine,
