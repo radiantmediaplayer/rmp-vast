@@ -1,15 +1,14 @@
+# Browsers that we support (woff2)
 defaults
 >0.3%
 chrome 55
 firefox 53
 opera 42
-ios 12
+ios_saf 12
+not ios_saf 11
 safari 12
 edge 15
 samsung 9.2
-not ie 11
-not op_mini all
 not kaios 2.5
 not kaios 3
-not and_qq 10.4
 not dead

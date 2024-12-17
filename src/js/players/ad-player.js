@@ -131,9 +131,10 @@ export default class AdPlayer {
 
     this.#rmpVast.currentAdPlayer = this.#adPlayer = document.createElement('video');
     Logger.printVideoEvents(this.#rmpVast.debugRawConsoleLogs, this.#adPlayer, 'ad');
-    // disable native UI cast/PiP for ad player
-    this.#adPlayer.disableRemotePlayback = true;
-    this.#adPlayer.disablePictureInPicture = true;
+    // disable native UI cast/PiP for ad player 
+    // DEPRECATED - this is no longer necessary 
+    //this.#adPlayer.disableRemotePlayback = true;
+    //this.#adPlayer.disablePictureInPicture = true;
     this.#adPlayer.className = 'rmp-ad-vast-video-player';
     if (this.#params.showControlsForAdPlayer) {
       this.#adPlayer.controls = true;

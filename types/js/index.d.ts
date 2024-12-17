@@ -422,11 +422,11 @@ export default class RmpVast {
     /**
      * @return {HTMLMediaElement|null}
      */
-    get adPlayer(): HTMLMediaElement;
+    get adPlayer(): HTMLMediaElement | null;
     /**
      * @return {HTMLMediaElement|null}
      */
-    get contentPlayer(): HTMLMediaElement;
+    get contentPlayer(): HTMLMediaElement | null;
     /**
      * @type {() => boolean}
      */

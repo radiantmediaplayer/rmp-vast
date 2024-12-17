@@ -460,9 +460,7 @@ export default class SimidPlayer {
     const videoDimensions = this.getFullDimensions_(this.contentVideoElement_);
     // Since the creative starts as hidden it will take on the
     // video element dimensions, so tell the ad about those dimensions.
-    const creativeDimensions = this.isLinearAd_ ?
-      this.getFullDimensions_(this.contentVideoElement_) :
-      this.getNonlinearDimensions_();
+    const creativeDimensions = this.isLinearAd_ ? this.getFullDimensions_(this.contentVideoElement_) : this.getNonlinearDimensions_();
 
     const environmentData = {
       videoDimensions,
