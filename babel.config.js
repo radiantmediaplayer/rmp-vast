@@ -18,6 +18,9 @@ module.exports = function (api) {
     "@babel/plugin-transform-runtime",
     {
       "regenerator": false,
+      "helpers": false,
+      "absoluteRuntime": false,
+      "corejs": false,
       "version": require("@babel/runtime/package.json").version
     }
   ]];

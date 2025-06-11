@@ -20,11 +20,9 @@ const terserOptions = {
 module.exports = {
   entry: {
     'rmp-vast': [
-      'whatwg-fetch',
       './src/js/index.js'
     ],
-    'rmp-vast.min': [ 
-      'whatwg-fetch',
+    'rmp-vast.min': [
       './src/js/index.js'
     ]
   },
@@ -43,14 +41,8 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.less$/i,
-        use: [
-          // compiles Less to CSS to JavaScript
-          'style-loader',
-          // this is for IE11 support 
-          { loader: 'css-loader', options: { url: false } },
-          'less-loader'
-        ],
+        test: /\.css$/i,
+        use: ['style-loader', 'css-loader']
       },
       {
         test: /\.js$/,

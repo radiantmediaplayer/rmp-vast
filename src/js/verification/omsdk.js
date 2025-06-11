@@ -209,12 +209,12 @@ export default class OmSdkManager {
     let resources = [];
     if (this.#params.omidRunValidationScript) {
       // https://interactiveadvertisingbureau.github.io/Open-Measurement-SDKJS/validation.html
-      const VALIDATION_SCRIPT_URL = 'https://cdn.radiantmediatechs.com/rmp/omsdk/1.3.37/omid-validation-verification-script-v1.js';
+      const VALIDATION_SCRIPT_URL = 'https://cdn.radiantmediatechs.com/rmp/omsdk/1.5.5/omid-validation-verification-script-v1.js';
       const VENDOR_KEY = 'dummyVendor'; // you must use this value as is
       const PARAMS = JSON.stringify({ k: 'v' });
       resources.push(new VerificationScriptResource(VALIDATION_SCRIPT_URL, VENDOR_KEY, PARAMS));
     } else {
-      // we support Access Modes Creative Access a.k.a full (we do not support Domain Access for now)
+      // we support Access Modes Creative Access a.k.a full
       const accessMode = 'full';
       resources = this.#adVerifications.map(verification => {
         return new VerificationScriptResource(
@@ -230,9 +230,9 @@ export default class OmSdkManager {
 
     Logger.print(this.#rmpVast.debugRawConsoleLogs, ``, resources);
 
-    if (this.#params.omidUnderEvaluation) {
-      context.underEvaluation = true;
-    }
+
+    context.underEvaluation = true;
+
 
     const omdSdkServiceWindow = window.top;
     if (!omdSdkServiceWindow) {

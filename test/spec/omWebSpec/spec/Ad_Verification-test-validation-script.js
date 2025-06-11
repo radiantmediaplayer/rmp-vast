@@ -9,8 +9,7 @@ describe('AAd_Verification-test-validation-script', function () {
   const params = {
     omidSupport: true,
     omidAutoplay: true,
-    omidRunValidationScript: true,
-    omidUnderEvaluation: true
+    omidRunValidationScript: true
   };
   const rmpVast = new RmpVast(id, params);
   const env = rmpVast.environment;

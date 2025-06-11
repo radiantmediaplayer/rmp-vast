@@ -7,8 +7,7 @@ describe('Ad_Verification-test', function () {
   const video = document.querySelector('.rmp-video');
   const params = {
     omidSupport: true,
-    omidAutoplay: true,
-    omidUnderEvaluation: true
+    omidAutoplay: true
   };
   const rmpVast = new RmpVast(id, params);
   const env = rmpVast.environment;

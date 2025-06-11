@@ -10,10 +10,9 @@ import AdPlayer from './players/ad-player';
 import OmSdkManager from './verification/omsdk';
 import Dispatcher from './framework/dispatcher';
 import ContentPlayer from './players/content-player';
-import { VASTClient } from '../assets/@dailymotion/vast-client/src/vast_client';
-import { VASTParser } from '../assets/@dailymotion/vast-client/src/parser/vast_parser';
+import { VASTClient } from '@dailymotion/vast-client';
 
-import '../less/rmp-vast.less';
+import '../css/rmp-vast.css';
 
 
 /**
@@ -56,7 +55,6 @@ export default class RmpVast {
   * @property {boolean} [omidSupport] - Enables OMID (OM Web SDK) support in rmp-vast. Default: false.
    * @property {string[]} [omidAllowedVendors] - List of allowed vendors for ad verification. Vendors not listed will 
    *  be rejected. Default: [].
-   * @property {boolean} [omidUnderEvaluation] - When in development/testing/staging set this to true. Default: false.
    * @property {boolean} [omidAutoplay] - The content player will autoplay or not. The possibility of autoplay is not 
    *  determined by rmp-vast, this information needs to be passed to rmp-vast (see this 
    *  script for example). Default: false (means a click to play is required).
@@ -615,7 +613,7 @@ export default class RmpVast {
         this.rmpVastUtils.processVastErrors(900, true);
         return;
       }
-      const vastParser = new VASTParser();
+      const vastParser = new VASTClient();
       vastParser.parseVAST(vastXml).then(response => {
         this.rmpVastUtils.createApiEvent('adtagloaded');
         this.#handleParsedVast(response);

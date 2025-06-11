@@ -156,7 +156,6 @@ const params = {
   omidSupport: true,
   omidAllowedVendors: [],
   omidRunValidationScript: false,
-  omidUnderEvaluation: true,
   omidAutoplay: false
 };
 // new RmpVast instance - we pass id (required) and params (optional) 

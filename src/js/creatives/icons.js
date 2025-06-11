@@ -52,9 +52,18 @@ export default class Icons {
       let src;
       if (iconData.staticResourceUrl) {
         icon = document.createElement('img');
+        if (iconData.altText) {
+          icon.alt = iconData.altText;
+        }
+        if (iconData.hoverText) {
+          icon.title = iconData.hoverText;
+        }
         src = iconData.staticResourceUrl;
       } else if (iconData.iframeResourceUrl || iconData.htmlContent) {
         icon = document.createElement('iframe');
+        if (iconData.hoverText) {
+          icon.title = iconData.hoverText;
+        }
         icon.sandbox = 'allow-scripts allow-same-origin';
         if (iconData.htmlContent) {
           src = iconData.htmlContent;
@@ -152,6 +161,8 @@ export default class Icons {
       if (staticResourceUrl === null && iframeResourceUrl === null && htmlContent === null) {
         continue;
       }
+      const altText = currentIcon.altText;
+      const hoverText = currentIcon.hoverText;
       const iconData = {
         program,
         width,
@@ -160,7 +171,9 @@ export default class Icons {
         yPosition,
         staticResourceUrl,
         iframeResourceUrl,
-        htmlContent
+        htmlContent,
+        altText,
+        hoverText
       };
       iconData.iconViewTrackingUrl = currentIcon.iconViewTrackingURLTemplate;
       iconData.iconClickThroughUrl = currentIcon.iconClickThroughURLTemplate;

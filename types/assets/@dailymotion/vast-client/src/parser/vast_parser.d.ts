@@ -5,34 +5,17 @@
  * @extends EventEmitter
  */
 export class VASTParser extends EventEmitter {
-    remainingAds: any[];
-    errorURLTemplates: any[];
-    rootErrorURLTemplates: any[];
+    /**
+     * Creates an instance of VASTParser.
+     * @constructor
+     */
+    constructor({ fetcher }?: {});
     maxWrapperDepth: any;
-    URLTemplateFilters: any[];
-    fetchingOptions: {};
+    rootErrorURLTemplates: any[];
+    errorURLTemplates: any[];
+    remainingAds: any[];
     parsingOptions: {};
-    /**
-     * Adds a filter function to the array of filters which are called before fetching a VAST document.
-     * @param  {function} filter - The filter function to be added at the end of the array.
-     * @return {void}
-     */
-    addURLTemplateFilter(filter: Function): void;
-    /**
-     * Removes the last element of the url templates filters array.
-     * @return {void}
-     */
-    removeURLTemplateFilter(): void;
-    /**
-     * Returns the number of filters of the url templates filters array.
-     * @return {Number}
-     */
-    countURLTemplateFilters(): number;
-    /**
-     * Removes all the filter functions from the url templates filters array.
-     * @return {void}
-     */
-    clearURLTemplateFilters(): void;
+    fetcher: any;
     /**
      * Tracks the error provided in the errorCode parameter and emits a VAST-error event for the given error.
      * @param  {Array} urlTemplates - An Array of url templates to use to make the tracking call.
@@ -53,24 +36,15 @@ export class VASTParser extends EventEmitter {
      */
     getEstimatedBitrate(): number;
     /**
-     * Fetches a VAST document for the given url.
-     * Returns a Promise which resolves,rejects according to the result of the request.
-     * @param  {String} url - The url to request the VAST document.
-     * @param {Number} wrapperDepth - How many times the current url has been wrapped.
-     * @param {String} previousUrl - Url of the previous VAST.
-     * @param {Object} wrapperAd - Previously parsed ad node (Wrapper) related to this fetching.
-     * @emits  VASTParser#VAST-resolving
-     * @emits  VASTParser#VAST-resolved
-     * @return {Promise}
-     */
-    fetchVAST(url: string, wrapperDepth?: number, previousUrl?: string, wrapperAd?: any): Promise<any>;
-    /**
      * Inits the parsing properties of the class with the custom values provided as options.
      * @param {Object} options - The options to initialize a parsing sequence
      */
     initParsingStatus(options?: any): void;
     rootURL: string;
-    urlHandler: any;
+    /**
+     * Reset the parsing property of the class everytime a VAST is parsed
+     */
+    resetParsingStatus(): void;
     vastVersion: any;
     /**
      * Resolves the next group of ads. If all is true resolves all the remaining ads.
@@ -78,17 +52,6 @@ export class VASTParser extends EventEmitter {
      * @return {Promise}
      */
     getRemainingAds(all: boolean): Promise<any>;
-    /**
-     * Fetches and parses a VAST for the given url.
-     * Returns a Promise which resolves with a fully parsed VASTResponse or rejects with an Error.
-     * @param  {String} url - The url to request the VAST document.
-     * @param  {Object} options - An optional Object of parameters to be used in the parsing process.
-     * @emits  VASTParser#VAST-resolving
-     * @emits  VASTParser#VAST-resolved
-     * @emits  VASTParser#VAST-warning
-     * @return {Promise}
-     */
-    getAndParseVAST(url: string, options?: any): Promise<any>;
     /**
      * Parses the given xml Object into a VASTResponse.
      * Returns a Promise which resolves with a fully parsed VASTResponse or rejects with an Error.
@@ -139,12 +102,12 @@ export class VASTParser extends EventEmitter {
     /**
      * Resolves the wrappers for the given ad in a recursive way.
      * Returns a Promise which resolves with the unwrapped ad or rejects with an error.
-     * @param {Object} ad - An ad object to be unwrapped.
+     * @param {Object} adToUnWrap - An ad object to be unwrapped.
      * @param {Number} wrapperDepth - The reached depth in the wrapper resolving chain.
      * @param {String} previousUrl - The previous vast url.
      * @return {Promise}
      */
-    resolveWrappers(ad: any, wrapperDepth: number, previousUrl: string): Promise<any>;
+    resolveWrappers(adToUnWrap: any, wrapperDepth: number, previousUrl: string): Promise<any>;
     /**
      * Takes care of handling errors when the wrappers are resolved.
      * @param {Object} vastResponse - A resolved VASTResponse.

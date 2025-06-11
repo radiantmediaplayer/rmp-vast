@@ -140,12 +140,12 @@ export default class CompanionCreative {
     if (companionAd.imageUrl || companionAd.iframeUrl) {
       if (companionAd.imageUrl) {
         html = document.createElement('img');
+        if (companionAd.altText) {
+          html.alt = companionAd.altText;
+        }
       } else {
         html = document.createElement('iframe');
         html.sandbox = 'allow-scripts allow-same-origin';
-      }
-      if (companionAd.altText) {
-        html.alt = companionAd.altText;
       }
       html.width = companionAd.width;
       html.height = companionAd.height;

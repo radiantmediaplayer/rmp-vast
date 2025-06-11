@@ -243,7 +243,6 @@ export default class Utils {
       // OM SDK params
       omidSupport: false,
       omidAllowedVendors: [],
-      omidUnderEvaluation: false,
       omidRunValidationScript: false,
       omidAutoplay: false,
       macros: new Map(),

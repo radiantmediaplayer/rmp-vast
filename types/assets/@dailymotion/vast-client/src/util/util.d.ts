@@ -2,7 +2,7 @@ export namespace util {
     export { track };
     export { resolveURLTemplates };
     export { extractURLsFromTemplates };
-    export { filterValidUrlTemplates };
+    export { filterUrlTemplates };
     export { containsTemplateObject };
     export { isTemplateObjectEqual };
     export { encodeURIComponentRFC3986 };
@@ -12,6 +12,9 @@ export namespace util {
     export { joinArrayOfUniqueTemplateObjs };
     export { isValidTimeValue };
     export { addLeadingZeros };
+    export { isValidUrl };
+    export { isBrowserEnvironment };
+    export { formatMacrosValues };
 }
 declare function track(URLTemplates: any, macros: any, options: any): void;
 /**
@@ -32,15 +35,21 @@ declare function resolveURLTemplates(URLTemplates: any[], macros?: any, options?
  */
 declare function extractURLsFromTemplates(URLTemplates: any[] | string): string | any[];
 /**
- * Filter URLTemplates elements to keep only valid and safe URL templates.
+ * Filter URLTemplates elements .
  *   To be valid, urls should:
  *   - have the same protocol as the client
  *   or
  *   - be protocol-relative urls
  *
+ * Returns an object with two arrays
+ *    - validUrls : An array of valid URLs
+ *    - invalidUrls: An array of invalid URLs
+ *
  * @param {Array} URLTemplates - A Array of string/object containing urls templates.
+ * @returns {Object}
+ *
  */
-declare function filterValidUrlTemplates(URLTemplates: any[]): boolean | any[];
+declare function filterUrlTemplates(URLTemplates: any[]): any;
 /**
  * Returns a boolean after checking if the object exists in the array.
  *   true - if the object exists, false otherwise
@@ -96,5 +105,12 @@ declare function isValidTimeValue(time: number): boolean;
  * @return {String}
  */
 declare function addLeadingZeros(input: number, length?: number): string;
+declare function isValidUrl(url: any): boolean;
+/**
+ * Check if we are in a browser environment
+ * @returns {Boolean}
+ */
+declare function isBrowserEnvironment(): boolean;
+declare function formatMacrosValues(macros: any): any;
 export {};
 //# sourceMappingURL=util.d.ts.map

@@ -13,7 +13,8 @@ export namespace parserUtils {
     export { copyNodeAttribute };
     export { parseAttributes };
     export { parseDuration };
-    export { splitVAST };
+    export { getStandAloneAds };
+    export { getSortedAdPods };
     export { assignAttributes };
     export { mergeWrapperAdData };
 }
@@ -68,12 +69,17 @@ declare function copyNodeAttribute(attributeName: string, nodeSource: any, nodeD
  */
 declare function parseAttributes(element: Element): any;
 /**
- * Splits an Array of ads into an Array of Arrays of ads.
- * Each subarray contains either one ad or multiple ads (an AdPod)
- * @param  {Array} ads - An Array of ads to split
- * @return {Array}
+ * Filters out AdPods of given ads array and returns only standalone ads without sequence attribute.
+ * @param {Array} ads - An array of ad objects.
+ * @returns {Array} An array of standalone ad.
  */
-declare function splitVAST(ads: any[]): any[];
+declare function getStandAloneAds(ads?: any[]): any[];
+/**
+ * Sorts and filters ads that are part of an Ad Pod.
+ * @param {Array} ads - An array of ad objects.
+ * @returns {Array} An array of sorted ad objects based on the sequence attribute.
+ */
+declare function getSortedAdPods(ads?: any[]): any[];
 /**
  * Parses the attributes and assign them to object
  * @param  {Object} attributes attribute
