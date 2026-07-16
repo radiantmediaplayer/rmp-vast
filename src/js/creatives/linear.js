@@ -285,7 +285,7 @@ export default class LinearCreative {
     this.#contentPlayer.removeEventListener('error', this.#onPlaybackErrorFn);
   }
 
-  update(url, type) {
+  async update(url, type) {
     Logger.print(this.#rmpVast.debugRawConsoleLogs, `update ad player for linear creative of type ${type} located at ${url}`);
 
     this.#onDurationChangeFn = this.#onDurationChange.bind(this);
@@ -324,6 +324,17 @@ export default class LinearCreative {
       if (typeof this.#rmpVast.creative.simid === 'undefined' ||
         (this.#rmpVast.creative.simid && !this.#params.enableSimid)) {
         this.#adPlayer.addEventListener('error', this.#onPlaybackErrorFn);
+        if (typeof this.#params.mediaUrlRewriteFn === 'function') {
+          try {
+            const modifiedUrl = await this.#params.mediaUrlRewriteFn(url);
+            if (typeof modifiedUrl === 'string' && modifiedUrl !== '') {
+              url = modifiedUrl;
+              Logger.print(this.#rmpVast.debugRawConsoleLogs, `mediaUrlRewriteFn resolved - using modified URL: ${url}`);
+            }
+          } catch (e) {
+            Logger.print(this.#rmpVast.debugRawConsoleLogs, `mediaUrlRewriteFn rejected - using original URL: ${url}`, e);
+          }
+        }
         this.#adPlayer.src = url;
         // we need this extra load for Chrome data saver mode in mobile or desktop
         this.#adPlayer.load();
