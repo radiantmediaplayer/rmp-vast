@@ -238,6 +238,7 @@ export default class Utils {
         desiredBitrate: 500
       },
       fetchOptions: {},
+      mediaUrlRewriteFn: () => {},
       useHlsJS: true,
       debugHlsJS: false,
       debugRawConsoleLogs: false,

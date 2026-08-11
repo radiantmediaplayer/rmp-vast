@@ -237,6 +237,7 @@ Once rmp-vast is loaded on your page you can create a new rmp-vast instance as f
   - `params.useHlsJS: Boolean` Enables rendering of HLS creatives with hls.js in rmp-vast. Default: true.
   - `params.debugHlsJS: Boolean` Enables debugging of HLS creatives with hls.js in rmp-vast. Default: false.
   - `params.debugRawConsoleLogs: Boolean` Enables raw debug console log for Flutter apps and legacy platforms. Default: false.
+  - `params.mediaUrlRewriteFn: Function` Optional async callback to rewrite the media file URI of a standard linear video creative before it is passed to the HTML5 video element. Receives the original URI as its argument and must return a Promise that resolves to the replacement URI string. HLS, DASH and VPAID creatives are not affected. Default: undefined.
   - `params.omidSupport: Boolean` Enables OMID (OM Web SDK) support in rmp-vast. Default: false. Refer to the [AdVerifications OM Web SDK](#adverifications-om-web-sdk) section for more information.
   - `params.omidAllowedVendors: Array` List of allowed vendors for ad verification. Vendors not listed will be rejected. Default: [].
   - `params.omidRunValidationScript: Boolean` Allows to run OM Web SDK inside rmp-vast to run against IAB [validation-verification-script](https://interactiveadvertisingbureau.github.io/Open-Measurement-SDKJS/validation.html). Default: false.

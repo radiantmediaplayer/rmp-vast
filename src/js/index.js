@@ -52,6 +52,9 @@ export default class RmpVast {
    * @property {boolean} [useHlsJS] - Enables hls.js usage to display creatives delivered in HLS format on all devices. Include hls.js library (./externals/hls/hls.min.js) in your page before usage. Default: true.
    * @property {boolean} [debugHlsJS] - Enables debug log when hls.js is used to stream creatives. Default: false.
    * @property {boolean} [debugRawConsoleLogs] - Enables raw debug console log for Flutter apps and legacy platforms. Default: false.
+   * @property {function} [mediaUrlRewriteFn] - Optional async callback to replace the media file URI of a standard linear
+   *  video creative before it is passed to the HTML5 video element. Receives the original URI as its argument and must
+   *  return a Promise that resolves to the replacement URI string. HLS, DASH and VPAID creatives are not affected. Default: undefined.
   * @property {boolean} [omidSupport] - Enables OMID (OM Web SDK) support in rmp-vast. Default: false.
    * @property {string[]} [omidAllowedVendors] - List of allowed vendors for ad verification. Vendors not listed will 
    *  be rejected. Default: [].
